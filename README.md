@@ -6,6 +6,111 @@ WLDOS开发平台，基于springboot实现轻量级快速开发框架，SaaS应�
 
 #### 软件架构
 软件架构说明
+统一响应json格式如下：
+
+```js
+// 用户权限模板：
+{
+    "data":{
+        "userInfo":{
+            "id":"1502803624724185094",
+                "name":"nihao",
+                "avatar":"https://pic.zhiletu.com/2021/04/zhiletudouyin-e1618196547818-150x150.png"
+        },
+        "menu":[
+            {
+                "path":"/",
+                "icon":"home",
+                "name":"首页",
+                "id":100,
+                "parentId":0,
+                "isLeaf":true,
+                "childCount":0,
+                "index":0
+            }
+        ],
+        "currentAuthority":[
+            "user"
+        ],
+        "isManageSide":0
+    },
+    "status":200,
+    "message":"ok"
+}
+// 前端菜单模板：
+menu: [
+    {
+        path: '/',
+        name: 'home',
+        icon: 'home',
+    },
+    {
+        path: '/form',
+        icon: 'form',
+        name: 'form',
+        children: [
+            {
+                name: 'basic-form',
+                icon: 'smile',
+                path: '/form/basic-form',
+            },
+            {
+                name: 'step-form',
+                icon: 'smile',
+                path: '/form/step-form',
+            },
+            {
+                name: 'advanced-form',
+                icon: 'smile',
+                path: '/form/advanced-form',
+            },
+        ],
+    },
+    {
+        path: '/list',
+        icon: 'table',
+        name: 'list',
+        children: [
+            {
+                path: '/list/search',
+                name: 'search-list',
+                children: [
+                    {
+                        name: 'articles',
+                        icon: 'smile',
+                        path: '/list/search/articles',
+                    },
+                    {
+                        name: 'projects',
+                        icon: 'smile',
+                        path: '/list/search/projects',
+                    },
+                    {
+                        name: 'applications',
+                        icon: 'smile',
+                        path: '/list/search/applications',
+                    },
+                ],
+            },
+            {
+                name: 'table-list',
+                icon: 'smile',
+                path: '/list/table-list',
+            },
+            {
+                name: 'basic-list',
+                icon: 'smile',
+                path: '/list/basic-list',
+            },
+            {
+                name: 'card-list',
+                icon: 'smile',
+                path: '/list/card-list',
+            },
+        ],
+    },]
+```
+
 
 
 #### 安装教程
