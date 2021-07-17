@@ -1,11 +1,15 @@
 # wldos
 
 #### 介绍
-WLDOS是一款互联网运营平台，本仓库是wldos后端工程。  
+WLDOS是一款互联网运营平台，本仓库是wldos后端工程。由于是新项目，很适合新手跟随学习。  
 WLDOS开发平台，基于springboot实现轻量级快速开发框架，SaaS应用架构。默认支持多租户运行模式，同时支持关闭以单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构。  
 ####关于发音  
 同WorldOS。  
-#### 软件架构
+#### 软件架构  
+框架技术：springboot2.4.6，spring-data-jdbc，定制封装。  
+
+应用架构：springMVC，JWT认证，无状态单实例SaaS架构，兼容springCloud，支持融入serviceMesh。  
+
 软件架构说明
 统一响应json格式如下：
 
