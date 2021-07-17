@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.controller.web.handler;
@@ -10,10 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wldos.support.controller.web.Result;
 import com.wldos.support.util.constant.PubConstants;
-import com.wldos.support.util.exception.AuthException;
-import com.wldos.support.util.exception.auth.TokenForbiddenException;
-import com.wldos.support.util.exception.auth.UserInvalidAuthException;
-import com.wldos.support.util.exception.auth.UserTokenAuthException;
+import com.wldos.system.auth.exception.AuthException;
+import com.wldos.system.auth.exception.TokenForbiddenException;
+import com.wldos.system.auth.exception.UserInvalidAuthException;
+import com.wldos.system.auth.exception.UserTokenAuthException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;

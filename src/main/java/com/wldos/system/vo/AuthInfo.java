@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.vo;
@@ -13,22 +15,19 @@ import lombok.Data;
 /**
  * 授权的资源信息。
  *
- * @Title AuthInfo
- * @Package com.wldos.system.vo
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/4/26
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/4/26
+ * @version 1.0
  */
 @Data
 public class AuthInfo implements Serializable {
-	public String resourceCode;
+	private String resourceCode;
 
-	public String resourceName;
+	private String resourceName;
 
-	public String resourcePath;
+	private String resourcePath;
 
-	public String resourceType;
+	private String resourceType;
 
-	public String requestMethod;
+	private String requestMethod;
 }

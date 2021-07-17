@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
@@ -17,13 +19,13 @@ import org.apache.commons.lang3.EnumUtils;
 import org.json.JSONObject;
 
 /**
- * @Title: ObjectUtil
- * @Package
- * @Description: 类操作工具类。
+ * 类操作工具类。
+ *
  * @author 树悉猿
  * @date 2021-04-13
  * @version V1.0
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public final class ObjectUtil {
 	/**
 	 * Object属性值转数组，自动排除null值。
@@ -34,9 +36,8 @@ public final class ObjectUtil {
 		JSONObject obj = new JSONObject(entity);
 		// JSONObject.toMap默认会排除null值
 		Map<String, Object> map = obj.toMap();
-		Object[] params = map.values().toArray();
 
-		return params;
+		return map.values().toArray();
 	}
 
 	/**
@@ -100,23 +101,23 @@ public final class ObjectUtil {
 	}
 
 	/**
-	 * 实体对象转成Map
+	 * 实体对象转成Map,访问私有属性：{@code field.setAccessible(true);}。
 	 *
 	 * @param obj 实体对象
-	 * @return
+	 * @return map
 	 */
-	public static Map object2Map(Object obj) {
-		Map map = new HashMap<>();
+	public static Map<String, Object> object2Map(Object obj) {
+		Map<String, Object> map = new HashMap<>();
 		if (obj == null) {
 			return map;
 		}
-		@SuppressWarnings("rawtypes")
+
 		Class clazz = obj.getClass();
 		Field[] fields = clazz.getDeclaredFields();
 		try {
 			for (Field field : fields) {
-				field.setAccessible(true);
-				map.put(field.getName(), field.get(obj));
+				if (field.isAccessible())
+					map.put(field.getName(), field.get(obj));
 			}
 		}
 		catch (Exception e) {
@@ -126,11 +127,11 @@ public final class ObjectUtil {
 	}
 
 	/**
-	 * Map转成实体对象
+	 * Map转成实体对象, 访问私有属性：{@code field.setAccessible(true);}。
 	 *
 	 * @param map   map实体对象包含属性
 	 * @param clazz 实体对象类型
-	 * @return
+	 * @return object
 	 */
 	public static Object map2Object(Map map, Class clazz) {
 		if (map == null) {
@@ -146,13 +147,17 @@ public final class ObjectUtil {
 				if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
 					continue;
 				}
-				field.setAccessible(true);
-				field.set(obj, map.get(field.getName()));
+				if (field.isAccessible())
+					field.set(obj, map.get(field.getName()));
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return obj;
+	}
+
+	private ObjectUtil() {
+		throw new IllegalStateException("Utility class");
 	}
 }

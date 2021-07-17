@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.storage.file;
@@ -20,11 +22,9 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.cms.dto.Thumbnail;
 import com.wldos.support.controller.web.DomainResult;
-import com.wldos.support.controller.web.ResultJson;
 import com.wldos.support.util.IpUtils;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.support.util.constant.PubConstants;
@@ -49,12 +49,9 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 文件存储。
  *
- * @Title FileStore
- * @Package com.wldos.system.storage.file
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/5/30
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/5/30
+ * @version 1.0
  */
 @Slf4j
 @Component
@@ -69,15 +66,12 @@ public class FileStore implements IStore {
 	@Value("${wldos.file.store.path}")
 	String uploadPath;
 
-	private final ResultJson json;
-
 	private final RestService restService;
 
 	private final FileService fileService;
 
-	public FileStore(RestService restService, ResultJson json, FileService fileService) {
+	public FileStore(RestService restService, FileService fileService) {
 		this.restService = restService;
-		this.json = json;
 		this.fileService = fileService;
 	}
 
@@ -94,8 +88,8 @@ public class FileStore implements IStore {
 
 		FileInfo avatar = this.getFileInfoById(fileId);
 
-		String url = "";
-		return ObjectUtil.isBlank(avatar) || ObjectUtil.isBlank((url = avatar.getUrl()))
+		String url = avatar.getUrl();
+		return ObjectUtil.isBlank(avatar) || ObjectUtil.isBlank(url)
 				? ObjectUtil.string(defaultUrl) : url;
 	}
 
@@ -126,13 +120,10 @@ public class FileStore implements IStore {
 			fileInfo = this.fileService.storeAndSaveInfo(file, this.storeUrl,
 					Long.parseLong(request.getHeader(PubConstants.CONTEXT_KEY_USER_ID)), IpUtils.getClientIp(request));
 
-			try { // 由于本服务支持本地部署和远程部署，再处理操作仅能用于文件服务器侧，客户端不能操作，所以再处理代码只能用在这里
+			// 由于本服务支持本地部署和远程部署，再处理操作仅能用于文件服务器侧，客户端不能操作，所以再处理代码只能用在这里
+			String src = this.uploadPath + fileInfo.getPath();
+			ImageUtil.imgThumb(src, src, widthHeight[0], widthHeight[1]);
 
-				String src = this.uploadPath + fileInfo.getPath();
-				ImageUtil.imgThumb(src, src, widthHeight[0], widthHeight[1]);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
 		} else { // 转发远程文件服务
 			fileInfo = this.storeRemote(request, response, file);
 		}
@@ -148,42 +139,37 @@ public class FileStore implements IStore {
 			FileInfo fileInfo = this.fileService.storeAndSaveInfo(file, this.storeUrl,
 					Long.parseLong(request.getHeader(PubConstants.CONTEXT_KEY_USER_ID)), IpUtils.getClientIp(request));
 
-			try { // 由于本服务支持本地部署和远程部署，再处理操作仅能用于文件服务器侧，客户端不能操作，所以再处理代码只能用在这里
+			// 由于本服务支持本地部署和远程部署，再处理操作仅能用于文件服务器侧，客户端不能操作，所以再处理代码只能用在这里
+			String src = this.uploadPath + fileInfo.getPath(); // 默认图，全尺寸
+			BufferedImage image = ImageIO.read(new File(src));
+			ImageUtil.imgThumb(src, src, image.getWidth(), image.getHeight()); // 重新压缩全尺寸
 
-				String src = this.uploadPath + fileInfo.getPath(); // 默认图，全尺寸
-				BufferedImage image = ImageIO.read(new File(src));
-				ImageUtil.imgThumb(src, src, image.getWidth(), image.getHeight()); // 重新压缩全尺寸
+			Thumbnail postPicture = new Thumbnail();
+			postPicture.setWidth(image.getWidth());
+			postPicture.setHeight(image.getHeight());
+			postPicture.setPath(fileInfo.getPath());
 
-				Thumbnail postPicture = new Thumbnail();
-				postPicture.setWidth(image.getWidth());
-				postPicture.setHeight(image.getHeight());
-				postPicture.setPath(fileInfo.getPath());
+			thumbnails.add(postPicture);
 
-				thumbnails.add(postPicture);
+			String[] fInfo = fileInfo.getPath().split("\\.");
+			String path = this.uploadPath + fInfo[0];
+			String extName = fInfo[1];
 
-				String[] fInfo = fileInfo.getPath().split("\\.");
-				String path = this.uploadPath + fInfo[0];
-				String extName = fInfo[1];
+			for (Thumbnail tm : thumbnailList) { // 批量创建缩略图
+				// 缩略图文件名
+				String srcT = path + "-" + tm.getWidth() + "x" + tm.getHeight() + "." + extName;
+				ImageUtil.imgThumb(src, srcT, tm.getWidth(), tm.getHeight());
 
-				for (int x = 0; x < thumbnailList.size(); x++) { // 批量创建缩略图
-					Thumbnail tm = thumbnailList.get(x);
-					// 缩略图文件名
-					String srcT = path + "-" + tm.getWidth() + "x" + tm.getHeight() + "." + extName;
-					ImageUtil.imgThumb(src, srcT, tm.getWidth(), tm.getHeight());
+				BufferedImage imageT = ImageIO.read(new File(srcT));
 
-					BufferedImage imageT = ImageIO.read(new File(srcT));
+				Thumbnail thumbnail = new Thumbnail();
+				thumbnail.setWidth(imageT.getWidth()); // 获取实际宽度
+				thumbnail.setHeight(imageT.getHeight()); // 获取实际高度
+				thumbnail.setPath(srcT);
+				thumbnail.setType(tm.getType());
+				thumbnail.setMimeType(file.getContentType());
 
-					Thumbnail thumbnail = new Thumbnail();
-					thumbnail.setWidth(imageT.getWidth()); // 获取实际宽度
-					thumbnail.setHeight(imageT.getHeight()); // 获取实际高度
-					thumbnail.setPath(srcT);
-					thumbnail.setType(tm.getType());
-					thumbnail.setMimeType(file.getContentType());
-
-					thumbnails.add(thumbnail);
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+				thumbnails.add(thumbnail);
 			}
 		} else { // 转发远程文件服务
 			FileInfo fileInfo = this.storeRemote(request, response, file);
@@ -192,6 +178,14 @@ public class FileStore implements IStore {
 		return thumbnails;
 	}
 
+	/**
+	 * 远程文件存储，暂未实现
+	 *
+	 * @param request 请求
+	 * @param response 响应
+	 * @param file 文件
+	 * @return 文件信息
+	 */
 	public FileInfo storeRemote(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
 		FileInfo fileInfo = null;
 		String targetUrl = this.storeUrl + this.gatewayPrefix + "/file/store";
@@ -204,18 +198,10 @@ public class FileStore implements IStore {
 
 			String res = (String) responseEntity.getBody();
 
-			try {
-				DomainResult result = new ObjectMapper().readValue(res, DomainResult.class);
-				fileInfo = (FileInfo) result.getData();
-			}
-			catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
+			DomainResult result = new ObjectMapper().readValue(res, DomainResult.class);
+			fileInfo = (FileInfo) result.getData();
 		}
-		catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		catch (IOException e) {
+		catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
 
@@ -230,7 +216,6 @@ public class FileStore implements IStore {
 		HttpMethod httpMethod = HttpMethod.resolve(method);
 		MultiValueMap<String, String> headers = parseRequestHeader(request);
 		byte[] body = parseRequestBody(request);
-		log.info("body="+body);
 		return new RequestEntity<>(body, headers, httpMethod, new URI(reqUrl));
 	}
 

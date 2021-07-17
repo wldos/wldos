@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.storage.file.util;
@@ -19,28 +21,21 @@ import org.apache.commons.io.FilenameUtils;
 /**
  * 文件上传工具类。
  *
- * @Title UploadUtils
- * @Package com.wldos.system.storage.file.util
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/6/1
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/6/1
+ * @version 1.0
  */
 public class UploadUtils {
 
-	/**
-	 * 日期格式化对象
-	 */
+	/** 日期格式化对象 */
 	public static final DateFormat MONTH_FORMAT = new SimpleDateFormat("/yyyyMM/ddHHmmss");
 
 	public static String genFilename(String ext) {
-		return MONTH_FORMAT.format(new Date())
-				+ UUIDUtils.generateShortUuid() + "." + ext;
+		return MONTH_FORMAT.format(new Date()) + UUIDUtils.generateShortUuid() + "." + ext;
 	}
 
 	public static String genFilename(String path, String ext) {
-		return path + MONTH_FORMAT.format(new Date())
-				+ UUIDUtils.generateShortUuid() + "." + ext;
+		return path + MONTH_FORMAT.format(new Date()) + UUIDUtils.generateShortUuid() + "." + ext;
 	}
 
 	public static String genByFilename(String path, String fileName, String ext) {
@@ -51,15 +46,10 @@ public class UploadUtils {
 			.compile("^[^/]|[^/]$|/\\.{1,2}|\\\\|\\||:|\\?|\\*|\"|<|>|\\p{Cntrl}");
 
 	/**
-	 * Sanitizes a filename from certain chars.<br />
-	 *
-	 * This method enforces the <code>forceSingleExtension</code> property and
-	 * then replaces all occurrences of \, /, |, :, ?, *, &quot;, &lt;, &gt;,
-	 * control chars by _ (underscore).
+	 * 文件名称消毒，去除非法、潜在威胁符号
 	 *
 	 * @param filename
-	 *            a potentially 'malicious' filename
-	 * @return sanitized filename
+	 * @return
 	 */
 	public static String sanitizeFileName(final String filename) {
 
@@ -73,14 +63,10 @@ public class UploadUtils {
 	}
 
 	/**
-	 * Sanitizes a folder name from certain chars.<br />
-	 *
-	 * This method replaces all occurrences of \, /, |, :, ?, *, &quot;, &lt;,
-	 * &gt;, control chars by _ (underscore).
+	 * 文件夹名称消毒，去除非法、潜在威胁符号
 	 *
 	 * @param folderName
-	 *            a potentially 'malicious' folder name
-	 * @return sanitized folder name
+	 * @return
 	 */
 	public static String sanitizeFolderName(final String folderName) {
 
@@ -93,13 +79,10 @@ public class UploadUtils {
 	}
 
 	/**
-	 * Checks whether a path complies with the FCKeditor File Browser <a href="http://docs.fckeditor.net/FCKeditor_2.x/Developers_Guide/Server_Side_Integration#File_Browser_Requests"
-	 * target="_blank">rules</a>.
+	 * 是否有效路径
 	 *
 	 * @param path
-	 *            a potentially 'malicious' path
-	 * @return <code>true</code> if path complies with the rules, else
-	 *         <code>false</code>
+	 * @return
 	 */
 	public static boolean isValidPath(final String path) {
 		if (ObjectUtil.isBlank(path))

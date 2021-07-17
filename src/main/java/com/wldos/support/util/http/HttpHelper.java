@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util.http;
@@ -11,29 +13,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletRequest;
 
+import com.wldos.support.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * http工具类
- */
 @Slf4j
 public class HttpHelper {
+
+	private HttpHelper() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	public static String getBodyString(ServletRequest request) {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader reader = null;
 		try (InputStream inputStream = request.getInputStream()) {
-			reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+			reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				sb.append(line);
 			}
 		}
 		catch (IOException e) {
-			log.warn("getBodyString出现问题！");
+			log.warn("getBodyString IO异常！");
 		}
 		finally {
 			if (reader != null) {
@@ -41,7 +46,7 @@ public class HttpHelper {
 					reader.close();
 				}
 				catch (IOException e) {
-					log.error(e.getMessage(), e);
+					log.error(ObjectUtil.string(e.getMessage()), e);
 				}
 			}
 		}

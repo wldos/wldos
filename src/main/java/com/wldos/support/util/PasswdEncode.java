@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
@@ -17,12 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * 密码加密和密文比对。
  *
- * @Title PasswdEncode
- * @Package com.wldos.support.util
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/5/2
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/5/2
+ * @version 1.0
  */
 public class PasswdEncode implements PasswordEncoder {
 	public static PasswdEncode getInstance() {

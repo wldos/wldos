@@ -1,24 +1,23 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.auth.vo;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * 登录后返回用户认证和权限信息。
  *
- * @Title User
- * @Package com.wldos.system.auth.vo
  * @author 树悉猿
  * @date 2021-04-30
  * @version V1.0
  */
-public class Login implements Serializable {
+public class Login {
 	/** 登录状态 */
 	private String status;
 	/** 访问token和刷新token */
@@ -60,72 +59,3 @@ public class Login implements Serializable {
 		this.type = type;
 	}
 }
-
-/*
-{
-"userName": "MenuManager",
-    "userRoles": [
-      "R_MENUADMIN"
-    ],
-    "userPermissions": [
-      "p_menu_view",
-      "p_menu_edit",
-      "p_menu_menu"
-    ],
-    "accessMenus": [
-      {
-        "title": "系统",
-        "path": "/system",
-        "icon": "cogs",
-        "children": [
-          {
-            "title": "系统设置",
-            "icon": "cogs",
-            "children": [
-              {
-                "title": "菜单管理",
-                "path": "/system/menu",
-                "icon": "th-list"
-              }
-            ]
-          },
-          {
-            "title": "组织架构",
-            "icon": "pie-chart",
-            "children": [
-              {
-                "title": "部门管理",
-                "icon": "html5"
-              },
-              {
-                "title": "职位管理",
-                "icon": "opencart"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "accessInterfaces": [
-      {
-        "path": "/menu/:id",
-        "method": "get"
-      },
-      {
-        "path": "/menu",
-        "method": "get"
-      },
-      {
-        "path": "/menu/save",
-        "method": "post"
-      },
-      {
-        "path": "/interface/paged",
-        "method": "get"
-      }
-    ],
-    "isAdmin": 0,
-    "avatarUrl": "https://api.adorable.io/avatars/85/abott@adorable.png"
-    }
-
- */

@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.repo;
@@ -29,12 +31,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 /**
  * 实现自由的jdbc操作，支持实体级的CRUD 和 自定义复杂SQL，定义公共jdbc操作模板。
  *
- * @Title FreeJdbcTemplate
- * @Package com.wldos.support.repo
  * @author 树悉猿
  * @date 2021-04-16
  * @version V1.0
  */
+@SuppressWarnings("unchecked")
 @Slf4j
 public class FreeJdbcTemplate {
 
@@ -44,25 +45,25 @@ public class FreeJdbcTemplate {
 	 */
 	@Getter
 	@Autowired
-	private transient JdbcAggregateTemplate jdbcAggTemplate;
+	private JdbcAggregateTemplate jdbcAggTemplate;
 
 	/**
-	 * 基于经典jdbc模板包装的命名参数jdbc操作模板。支持对象装配、驼峰和下划线的自动映射，如果实体bean名称或属性名称与数据库不是映射关系，可以用
-	 * @Table @Column等命名策略注解声明数据库物理定义的表名或列名。
+	 * 基于经典jdbc模板包装的命名参数jdbc操作模板。支持对象装配、驼峰和下划线的自动映射，如果实体bean名称或属性名称与数据库不是映射
+	 * 关系，可以用{@code @Table @Column}等命名策略注解声明数据库物理定义的表名或列名。
 	 * 针对复杂业务场景，构建领域关联的和动态参数交互的动态聚合查询。
 	 */
 	@Getter
 	@Autowired
-	private transient NamedParameterJdbcTemplate namedParamJdbcTemplate;
+	private NamedParameterJdbcTemplate namedParamJdbcTemplate;
 
 	/**
 	 * 自定义分页查询，带参数, 返回实体
 	 *
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @param sql 查询sql
+	 * @param params 针对sql排好序的查询参数
+	 * @return 当前实体对象
 	 */
-	public <Entity> Entity queryForObject(Class<Entity> clazz, String sql, Object[] params) {
+	public <E> E queryForObject(Class<E> clazz, String sql, Object[] params) {
 
 		return this.getNamedParamJdbcTemplate().getJdbcTemplate().queryForObject(sql, new BeanPropertyRowMapper<>(clazz), params);
 	}
@@ -70,16 +71,16 @@ public class FreeJdbcTemplate {
 	/**
 	 * 自定义分页查询，带参数, 返回实体
 	 *
-	 * @param sql
-	 * @param currentPage
-	 * @param pageSize
-	 * @param params
-	 * @return
+	 * @param sql 查询sql
+	 * @param currentPage 当前页号
+	 * @param pageSize 每页条数
+	 * @param params 查询参数
+	 * @return 结果集
 	 */
 	public List<Map<String, Object>> execQueryForPage(String sql, int currentPage, int pageSize, Object[] params) {
 
 		int startRow = (currentPage - 1) * pageSize;
-		StringBuffer mysql = new StringBuffer(200);
+		StringBuilder mysql = new StringBuilder(200);
 		mysql.append("select  A.* from ( ").append(sql).append(" ) A limit ").append(startRow).append(",").append(pageSize);
 
 		return this.getNamedParamJdbcTemplate().getJdbcTemplate().queryForList(mysql.toString(), params);
@@ -89,35 +90,39 @@ public class FreeJdbcTemplate {
 	 * 自定义分页查询，带参数, 返回实体
 	 *
 	 * @param clazz 实体bean或者领域bean
-	 * @param sql
-	 * @param currentPage
-	 * @param pageSize
-	 * @param params
-	 * @return
+	 * @param sql 查询sql
+	 * @param currentPage 当前页号
+	 * @param pageSize 每页条数
+	 * @param params 参数
+	 * @return 结果集
 	 */
-	public <Entity> List<Entity> execQueryForPage(Class<Entity> clazz, String sql, int currentPage, int pageSize, Object[] params) {
+	public <E> List<E> execQueryForPage(Class<E> clazz, String sql, int currentPage, int pageSize, Object ...params) {
 
 		int startRow = (currentPage - 1) * pageSize;
-		StringBuffer mysql = new StringBuffer(200);
+		StringBuilder mysql = new StringBuilder(200);
 		mysql.append("select  A.* from ( ").append(sql).append(" ) A limit ").append(startRow).append(",").append(pageSize);
 		log.info(mysql.toString());
 		return this.getNamedParamJdbcTemplate().getJdbcTemplate().query(mysql.toString(), new BeanPropertyRowMapper<>(clazz), params);
 	}
 
+	private String getTotalSql(String sql) {
+		return "select count(1) as total from ( " + sql + " )";
+	}
+
 	/**
 	 * 自定义分页查询，带参数和分页对象，返回通用分页模板结构
 	 *
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @param sql 查询sql
+	 * @param params 查询参数
+	 * @return 一页数据
 	 */
 	public PageableResult<Map<String, Object>> execQueryForPageNoOrder(String sql, int currentPage, int pageSize, Object[] params) {
 
-		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList("select count(1) as total from ( " + sql + " )", params);
+		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList(this.getTotalSql(sql), params);
 		int total = all.isEmpty() ? 0 : all.size();
 
 		int totalPageNum = (total - 1) / pageSize + 1;
-		currentPage = currentPage > totalPageNum ? totalPageNum : currentPage;
+		currentPage = Math.min(currentPage, totalPageNum);
 
 		List<Map<String, Object>> list = this.execQueryForPage(sql, currentPage, pageSize, params);
 
@@ -128,19 +133,19 @@ public class FreeJdbcTemplate {
 	 * 自定义分页查询，带参数和分页对象，返回对象级通用分页模板结构
 	 *
 	 * @param clazz 实体bean或领域bean
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @param sql 查询sql
+	 * @param params sql对应的查询参数
+	 * @return 一页数据
 	 */
-	public <Entity> PageableResult<Entity> execQueryForPageNoOrder(Class<Entity> clazz, String sql, int currentPage, int pageSize, Object[] params) {
+	public <E> PageableResult<E> execQueryForPageNoOrder(Class<E> clazz, String sql, int currentPage, int pageSize, Object[] params) {
 
-		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList("select count(1) as total from ( " + sql + " )", params);
+		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList(this.getTotalSql(sql), params);
 		int total = all.isEmpty() ? 0 : all.size();
 
 		int totalPageNum = (total - 1) / pageSize + 1;
-		currentPage = currentPage > totalPageNum ? totalPageNum : currentPage;
+		currentPage = Math.min(currentPage, totalPageNum);
 
-		List<Entity> list = this.execQueryForPage(clazz, sql, currentPage, pageSize, params);
+		List<E> list = this.execQueryForPage(clazz, sql, currentPage, pageSize, params);
 
 		return new PageableResult<>(total, currentPage, pageSize, list);
 	}
@@ -148,18 +153,18 @@ public class FreeJdbcTemplate {
 	/**
 	 * 自定义分页查询支持排序，带参数和分页对象，返回通用分页模板结构
 	 *
-	 * @param sql
+	 * @param sql 查询sql
 	 * @param sqlOrder 排序
-	 * @param params
-	 * @return
+	 * @param params 查询参数
+	 * @return 结果集
 	 */
 	public PageableResult<Map<String, Object>> execQueryForPage(String sql, String sqlOrder, int currentPage, int pageSize, Object[] params) {
 
-		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList("select count(1) as total from ( " + sql + " )", params);
+		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList(this.getTotalSql(sql), params);
 		int total = all.isEmpty() ? 0 : all.size();
 
 		int totalPageNum = (total - 1) / pageSize + 1;
-		currentPage = currentPage > totalPageNum ? totalPageNum : currentPage;
+		currentPage = Math.min(currentPage, totalPageNum);
 
 		List<Map<String, Object>> list = this.execQueryForPage(sql+ObjectUtil.string(sqlOrder), currentPage, pageSize, params);
 
@@ -172,27 +177,34 @@ public class FreeJdbcTemplate {
 	 * @param clazz 实体bean或领域bean
 	 * @param sql 查询sql
 	 * @param sqlOrder 排序sql
-	 * @param pageQuery
-	 * @param params
-	 * @return
+	 * @param pageQuery 分页查询
+	 * @param params 查询参数
+	 * @return 一页数据
 	 */
-	public <Entity> PageableResult<Entity> execQueryForPage(Class<Entity> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object[] params) {
+	public <E> PageableResult<E> execQueryForPage(Class<E> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object[] params) {
 
 		int currentPage = pageQuery.getCurrent();
 		int pageSize = pageQuery.getPageSize();
 
-		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList("select count(1) as total from ( " + sql + " )", params);
+		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList(this.getTotalSql(sql), params);
 		int total = all.isEmpty() ? 0 : all.size();
 
 		int totalPageNum = (total - 1) / pageSize + 1;
-		currentPage = currentPage > totalPageNum ? totalPageNum : currentPage;
+		currentPage = Math.min(currentPage, totalPageNum);
 
-		List<Entity> list = this.execQueryForPage(clazz, sql+ObjectUtil.string(sqlOrder), currentPage, pageSize, params);
+		List<E> list = this.execQueryForPage(clazz, sql+ObjectUtil.string(sqlOrder), currentPage, pageSize, params);
 
 		return new PageableResult<>(total, currentPage, pageSize, list);
 	}
 
-	public <Entity> String getTableNameByEntity(Class<Entity> clazz) {
+	/**
+	 * 根据实体bean获取实体对应的数据库表名
+	 *
+	 * @param clazz 实体bean的类型
+	 * @param <E> 实体bean的类
+	 * @return 表名
+	 */
+	public <E> String getTableNameByEntity(Class<E> clazz) {
 		// 获取表名
 		Table entityRelTable = clazz.getAnnotation(Table.class);
 		String tableName = entityRelTable.value();
@@ -206,43 +218,40 @@ public class FreeJdbcTemplate {
 	/**
 	 * 通过实体bean的实例获取数据库表主键字段名
 	 *
-	 * @param entity
-	 * @param <Entity>
-	 * @return
+	 * @param entity 实体bean的实例
+	 * @param <E> 实体bean的类
+	 * @return 实体对应的数据库表的主键名称
 	 */
-	public <Entity> String getIdColNameByEntity(Entity entity) {
+	public <E> String getIdColNameByEntity(E entity) {
 		// 取出泛型T的Class
-		Class<Entity> clazz = this.clazz(entity);
+		Class<E> clazz = this.clazz(entity);
 
 		return this.getIdColNameByEntity(clazz);
 	}
 
 	/**
-	 * 通过实体bean的 类型 获取数据库表主键字段名
+	 * 通过实体bean的类型获取数据库表主键字段名，只针对一个主键的实体。
 	 *
-	 * @param clazz
-	 * @param <Entity>
-	 * @return
+	 * @param clazz 实体bean的类型
+	 * @param <E> 实体类
+	 * @return 实体bean的主键名，只支持单主键的实体，建议关系表设计独立的主键不要用外键做组合主键
 	 */
-	public <Entity> String getIdColNameByEntity(Class<Entity> clazz) {
+	public <E> String getIdColNameByEntity(Class<E> clazz) {
 		// 获取字段
 		Field[] fields = clazz.getDeclaredFields();
 		String pKeyName = "";
 
 		for (Field f : fields) {
-			if (ObjectUtil.isBlank(pKeyName)) { // 判断是否主键
-				Id id = f.getAnnotation(Id.class);
-				if (id != null) {
-					Column propRelColumn = f.getAnnotation(Column.class);
-					if (propRelColumn != null) {
-						pKeyName = propRelColumn.value();
-					}
-					else {
-						pKeyName = NameConvert.humpToUnderLine(f.getName());
-					}
-					break;
+			if (f.getAnnotation(Id.class) != null) {
+				Column propRelColumn = f.getAnnotation(Column.class);
+				if (propRelColumn != null) {
+					pKeyName = propRelColumn.value();
 				}
-			}
+				else {
+					pKeyName = NameConvert.humpToUnderLine(f.getName());
+				}
+				break;
+			}  // 判断是否主键
 		}
 
 		return pKeyName;
@@ -251,18 +260,17 @@ public class FreeJdbcTemplate {
 	/**
 	 * 通过实体bean的 类型 和 实例 获取数据库表组合主键字段名
 	 *
-	 * @param clazz
-	 * @param <Entity> 具备组合主键的实体
-	 * @return
+	 * @param clazz 实体bean的类型
+	 * @param <E> 具备组合主键的实体类
+	 * @return 组合主键
 	 */
-	public <Entity> List<String> getMultiIdColNamesByEntity(Class<Entity> clazz) {
+	public <E> List<String> getMultiIdColNamesByEntity(Class<E> clazz) {
 		// 获取字段
 		Field[] fields = clazz.getDeclaredFields();
 		List<String> pKeyNames = new ArrayList<>();
 
 		for (Field f : fields) {
-			Id id = f.getAnnotation(Id.class);
-			if (id != null) {
+			if (f.getAnnotation(Id.class) != null) {
 				Column propRelColumn = f.getAnnotation(Column.class);
 				if (propRelColumn != null) {
 					pKeyNames.add(propRelColumn.value());
@@ -281,17 +289,17 @@ public class FreeJdbcTemplate {
 	 * 获取实体类运行时class
 	 *
 	 * @param entity 实体bean，需要实现默认构造
-	 * @param <Entity>
-	 * @return
+	 * @param <E> 实体类
+	 * @return 实体类的类型
 	 */
-	public <Entity> Class<Entity> clazz(Entity entity) {
+	public <E> Class<E> clazz(E entity) {
 		// 取出泛型T的Class
-		Class<Entity> clazz = null;
+		Class<E> clazz = null;
 		try {
-			clazz = (Class<Entity>) Class.forName(entity.getClass().getName());
+			clazz = (Class<E>) Class.forName(entity.getClass().getName());
 		}
 		catch (ClassNotFoundException e) {
-			throw new RuntimeException("未找到类：", e);
+			throw new JdbcToolsException("未找到类：", e);
 		}
 		return clazz;
 	}

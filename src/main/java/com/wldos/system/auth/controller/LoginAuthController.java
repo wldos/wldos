@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.auth.controller;
@@ -9,7 +11,7 @@ package com.wldos.system.auth.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.support.controller.NoRepoController;
-import com.wldos.system.auth.param.LoginAuthParams;
+import com.wldos.system.auth.dto.LoginAuthParams;
 import com.wldos.system.auth.vo.Login;
 import com.wldos.system.auth.vo.Register;
 import com.wldos.system.vo.User;
@@ -27,12 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 登录相关认证、授权controller。
  *
- * @Title LoginAuthController
- * @Package com.wldos.system.auth.controller
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/4/29
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/4/29
+ * @version 1.0
  */
 @RequestMapping("login")
 @RestController
@@ -46,10 +45,10 @@ public class LoginAuthController extends NoRepoController {
 	@PostMapping("account")
 	public String loginAuth(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams, @Value("${passwd.hexkey.code}") String hexKeyCode) {
 
-		this.getLog().info(loginAuthParams.getUsername() + " login in ");
+		getLog().info("{} login in ", loginAuthParams.getUsername());
 		Login user = this.loginAuthService.login(loginAuthParams, request, hexKeyCode);
 		if (user == null) {
-			this.getLog().info(loginAuthParams.getUsername() + " 登录失败");
+			getLog().info("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
 			user.setStatus("error");
 			user.setType("account");
@@ -71,7 +70,7 @@ public class LoginAuthController extends NoRepoController {
 
 	@PostMapping("register")
 	public String register(@RequestBody Register register) {
-		log.info("register="+register);
+		getLog().info("register= {} ", register);
 		register.setId(this.nextId());
 		register.setRegisterIp(this.getUserIp());
 		register.setLoginName(register.getEmail());

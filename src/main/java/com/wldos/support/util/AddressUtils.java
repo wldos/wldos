@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
@@ -13,15 +15,18 @@ import org.json.JSONObject;
 
 
 /**
- * @Title: AddressUtils
- * @Package
- * @Description: IP地址工具类。
+ * IP地址工具类。
+ *
  * @author 树悉猿
- * @date
+ * @date 2021/04/05
  * @version V1.0
  */
 @Slf4j
-public class AddressUtils {
+public final class AddressUtils {
+
+	private AddressUtils() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	// IP地址查询
 	public static final String IP_URL = "http://whois.pconline.com.cn/ipJson.jsp";

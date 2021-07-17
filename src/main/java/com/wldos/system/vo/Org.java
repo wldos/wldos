@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.vo;
@@ -10,8 +12,6 @@ package com.wldos.system.vo;
 import com.wldos.support.vo.TreeNode;
 
 public class Org extends TreeNode<Org> {
-
-	private Long id;
 
 	private String orgCode;
 
@@ -22,8 +22,6 @@ public class Org extends TreeNode<Org> {
 	private Long archId;
 
 	private Long comId;
-
-	private Long parentId;
 
 	private Long displayOrder;
 
@@ -44,16 +42,6 @@ public class Org extends TreeNode<Org> {
 	private String deleteFlag;
 
 	private Integer versions;
-
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 
 	public String getOrgCode() {
 		return orgCode;
@@ -98,15 +86,6 @@ public class Org extends TreeNode<Org> {
 		this.comId = comId;
 	}
 
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-
 	public Long getDisplayOrder() {
 		return displayOrder;
 	}
@@ -114,7 +93,6 @@ public class Org extends TreeNode<Org> {
 	public void setDisplayOrder(Long displayOrder) {
 		this.displayOrder = displayOrder;
 	}
-
 
 	public String getIsValid() {
 		return isValid;
@@ -124,7 +102,6 @@ public class Org extends TreeNode<Org> {
 		this.isValid = isValid;
 	}
 
-
 	public Long getCreateBy() {
 		return createBy;
 	}
@@ -132,7 +109,6 @@ public class Org extends TreeNode<Org> {
 	public void setCreateBy(Long createBy) {
 		this.createBy = createBy;
 	}
-
 
 	public java.sql.Timestamp getCreateTime() {
 		return createTime;
@@ -142,7 +118,6 @@ public class Org extends TreeNode<Org> {
 		this.createTime = createTime;
 	}
 
-
 	public String getCreateIp() {
 		return createIp;
 	}
@@ -150,7 +125,6 @@ public class Org extends TreeNode<Org> {
 	public void setCreateIp(String createIp) {
 		this.createIp = createIp;
 	}
-
 
 	public Long getUpdateBy() {
 		return updateBy;
@@ -160,7 +134,6 @@ public class Org extends TreeNode<Org> {
 		this.updateBy = updateBy;
 	}
 
-
 	public java.sql.Timestamp getUpdateTime() {
 		return updateTime;
 	}
@@ -168,7 +141,6 @@ public class Org extends TreeNode<Org> {
 	public void setUpdateTime(java.sql.Timestamp updateTime) {
 		this.updateTime = updateTime;
 	}
-
 
 	public String getUpdateIp() {
 		return updateIp;
@@ -178,7 +150,6 @@ public class Org extends TreeNode<Org> {
 		this.updateIp = updateIp;
 	}
 
-
 	public String getDeleteFlag() {
 		return deleteFlag;
 	}
@@ -186,7 +157,6 @@ public class Org extends TreeNode<Org> {
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
 	}
-
 
 	public Integer getVersions() {
 		return versions;

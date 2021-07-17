@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.controller;
@@ -16,10 +18,8 @@ import static java.security.SecureRandom.getInstance;
 import static java.security.SecureRandom.getInstanceStrong;
 
 /**
- * 分布式唯一的雪花算法主键生成器。
+ * 主键生成器。
  *
- * @Title: SnowflakeID
- * @Package com.wldos.support.util
  * @author zhiletu.com
  * @date 2021年3月11日
  * @version V1.0
@@ -70,12 +70,12 @@ public final class SnowflakeID {
 		String os = System.getProperty("os.name");
 		try {
 			if (os.toLowerCase().startsWith("win")) {
-				// windows机器用
+				// for windows
 				this.secureRandom = getInstanceStrong();
 
 			}
 			else {
-				// linux机器用
+				// for linux
 				this.secureRandom = getInstance("NativePRNGNonBlocking");
 			}
 		}

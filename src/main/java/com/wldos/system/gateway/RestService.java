@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.gateway;
@@ -41,9 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 /**
- * @Title RestService
- * @Package com.wldos.system.gateway
- * @Description: 解析请求并转发。
+ * 解析请求并转发。
+ *
  * @author 树悉猿
  * @date 2021-04-01
  * @version V1.0
@@ -58,6 +59,17 @@ public class RestService {
 			redirectUrl = createRedirectUrl(request, routeUrl, prefix);
 			RequestEntity requestEntity = createRequestEntity(request, redirectUrl);
 			ResponseEntity<String> responseEntity = route(requestEntity);
+			//String json = res.ok(responseEntity.getBody());
+			//response.setStatus(responseEntity.getStatusCodeValue());
+			//HttpHeaders headers = responseEntity.getHeaders();
+			//response.getWriter().write(json);
+			//MappingJackson2HttpMessageConverter converter=new MappingJackson2HttpMessageConverter();
+			//converter.write(responseEntity.getBody(), String.class, MediaType.APPLICATION_JSON_UTF8, new ServletServerHttpResponse(response));
+			/* OutputStream out = response.getOutputStream();
+			ObjectMapper mapper = new ObjectMapper();
+			Object obj = responseEntity.getBody();
+			mapper.writeValue(out, obj instanceof DomainResult ? (DomainResult) obj : (PageableResult) obj);
+			out.flush(); */
 			return responseEntity;
 		}
 		catch (URISyntaxException | IOException | ServletException e) {
@@ -88,6 +100,25 @@ public class RestService {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		Object body = null;
 		if (ServletFileUpload.isMultipartContent(request)) {
+			//httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+/*
+			Collection<Part> parts = request.getParts();
+			MultiValueMap<String, MultipartFile> files = new LinkedMultiValueMap<>(parts.size());
+			for (Part part : parts) {
+				String headerValue = part.getHeader(HttpHeaders.CONTENT_DISPOSITION);
+				ContentDisposition disposition = ContentDisposition.parse(headerValue);
+				String filename = disposition.getFilename();
+				if (filename != null) {
+					if (filename.startsWith("=?") && filename.endsWith("?=")) {
+						filename = MimeDelegate.decode(filename);
+					}
+					files.add(part.getName(), new StandardMultipartFile(part, filename));
+				}
+				else {
+					this.multipartParameterNames.add(part.getName());
+				}
+			}
+*/
 			StandardMultipartHttpServletRequest httpServletRequest = (StandardMultipartHttpServletRequest) request;
 			Iterator<String> fileNames = httpServletRequest.getFileNames();
 			Enumeration<String> params = httpServletRequest.getParameterNames();
@@ -125,6 +156,7 @@ public class RestService {
 				multipartRequest.add(paramName, paramValue);
 			}
 
+			// HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity (multipartRequest,headers);
 			body = multipartRequest;
 		}
 		else {
@@ -139,6 +171,8 @@ public class RestService {
 		RestTemplate restTemplate = new RestTemplate();
 		return restTemplate.exchange(requestEntity, String.class);
 	}
+
+	// ResponseEntity<String> entity = restTemplate.postForEntity("http://xxxxx/contract/upload", requestEntity, String.class);
 
 	private byte[] parseRequestBody(HttpServletRequest request) throws IOException {
 

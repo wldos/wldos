@@ -1,60 +1,60 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.auth;
 
-import java.util.Date;
-
-public interface IJWT {
+public interface IJwt {
 	/**
 	 * 获取用户ID
-	 * @return
+	 *
+	 * @return userId
 	 */
 	Long getUserId();
 
 	/**
 	 * 获取用户主企业id(租户)
 	 *
-	 * @return
+	 * @return tenantId
 	 */
 	Long getTenantId();
 
 	/**
 	 * 获取账号
-	 * @return
+	 *
+	 * @return loginName
 	 */
 	String getLoginName();
 
 
 	/**
 	 * 获取账号名称
-	 * @return
+	 *
+	 * @return nickName
 	 */
 	String getAccountName();
 
 	/**
 	 * tokenId
-	 * @return
+	 *
+	 * @return tokenId
 	 */
 	String getId();
 
 	/**
 	 * 超期时间
 	 *
-	 * @return
+	 * @return isExpired
 	 */
 	boolean getIsExpired();
 
-	String key_jwt_sub = "subject"; // userId
+	String KEY_JWT_LOGIN = "loginName";
 
-	String key_jwt_id = "id"; // tokenId
+	String KEY_JWT_NAME = "accountName";
 
-	String key_jwt_login = "loginName";
-
-	String key_jwt_name = "accountName";
-
-	String key_jwt_tenant = "tenantId";
+	String KEY_JWT_TENANT = "tenantId";
 }

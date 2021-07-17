@@ -1,28 +1,35 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class ClientUtil {
+public final class ClientUtil {
+	private ClientUtil() {
+		throw new IllegalStateException("Utility class");
+	}
 	/**
 	 * 获取客户端真实ip
-	 * @param request
-	 * @return
+	 *
+	 * @param request 请求
+	 * @return IP
 	 */
-	public static String getClientIp(HttpServletRequest request){
+	public static String getClientIp(HttpServletRequest request) {
 		String ip = request.getHeader("x-forwarded-for");
-		if (ip==null||ip.length()==0||"unknown".equalsIgnoreCase(ip)) {
+		String unknown = "unknown";
+		if (ip == null || ip.length() == 0 || unknown.equalsIgnoreCase(ip)) {
 			ip = request.getHeader("Proxy-Client-IP");
 		}
-		if (ip==null||ip.length()==0||"unknown".equalsIgnoreCase(ip)) {
+		if (ip == null || ip.length() == 0 || unknown.equalsIgnoreCase(ip)) {
 			ip = request.getHeader("WL-Proxy-Client-IP");
 		}
-		if (ip==null||ip.length()==0||"unknown".equalsIgnoreCase(ip)) {
+		if (ip == null || ip.length() == 0 || unknown.equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
 		return ip;

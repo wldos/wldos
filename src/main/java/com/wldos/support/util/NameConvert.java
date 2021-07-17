@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
@@ -12,24 +14,21 @@ import java.util.regex.Pattern;
 /**
  * 名称中驼峰与下划线互转。
  *
- * @Title NameConvert
- * @Package com.wldos.support.util
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/5/9
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/5/9
+ * @version 1.0
  */
 public class NameConvert {
 
-	private static Pattern linePattern = Pattern.compile("_([a-z])");
+	private static final Pattern linePattern = Pattern.compile("_([a-z])");
 
-	private static Pattern humpPattern = Pattern.compile("\\B(\\p{Upper})(\\p{Lower}*)");
+	private static final Pattern humpPattern = Pattern.compile("\\B(\\p{Upper})(\\p{Lower}*)");
 
 	/**
 	 * 下划线转驼峰
 	 *
-	 * @param column
-	 * @return
+	 * @param column 列名
+	 * @return 属性名
 	 */
 	public static String underlineToHump(String column) {
 		Matcher matcher = linePattern.matcher(column);
@@ -44,8 +43,8 @@ public class NameConvert {
 	/**
 	 * 驼峰转下划线
 	 *
-	 * @param name
-	 * @return
+	 * @param name 属性名
+	 * @return 字段名
 	 */
 	public static String humpToUnderLine(String name) {
 		StringBuffer sb = new StringBuffer();
@@ -58,9 +57,7 @@ public class NameConvert {
 		return sb.toString();
 	}
 
-	public static void main(String[] args) {
-		String key = "createIp,updateIp,isValid,updateTime,archId,userId,orgId,orgType,createBy,versions,updateBy,createTime,id,comId";
-
-		System.out.println(humpToUnderLine(key));
+	private NameConvert() {
+		throw new IllegalStateException("Utility class");
 	}
 }

@@ -1,8 +1,11 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
+
 package com.wldos.cms.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,12 +13,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * 缩略图定义。
  *
- * @Title Thumbnail
- * @Package com.wldos.cms.dto
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/7/4
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/7/4
+ * @version 1.0
  */
 public class Thumbnail {
 	private String type;

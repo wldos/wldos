@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.vo;
@@ -10,8 +12,6 @@ import com.wldos.support.vo.TreeNode;
 
 public class Architecture extends TreeNode<Architecture> {
 
-	private Long id;
-
 	private String archCode;
 
 	private String archName;
@@ -19,8 +19,6 @@ public class Architecture extends TreeNode<Architecture> {
 	private String archDesc;
 
 	private Long comId;
-
-	private Long parentId;
 
 	private Long displayOrder;
 
@@ -41,14 +39,6 @@ public class Architecture extends TreeNode<Architecture> {
 	private String deleteFlag;
 
 	private Integer versions;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getArchCode() {
 		return archCode;
@@ -80,14 +70,6 @@ public class Architecture extends TreeNode<Architecture> {
 
 	public void setComId(Long comId) {
 		this.comId = comId;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
 	}
 
 	public Long getDisplayOrder() {

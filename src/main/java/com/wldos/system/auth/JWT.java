@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.auth;
@@ -12,7 +14,8 @@ import java.util.Objects;
 
 import com.wldos.support.util.UUIDUtils;
 
-public class JWT implements Serializable, IJWT {
+@SuppressWarnings("unused")
+public class JWT implements Serializable, IJwt {
 	private String loginName;
 
 	private Long userId;
@@ -44,9 +47,6 @@ public class JWT implements Serializable, IJWT {
 		this.id = tokenId;
 		this.isExpired = isExpired;
 	}
-
-
-
 
 	@Override
 	public Long getUserId() {
@@ -99,7 +99,7 @@ public class JWT implements Serializable, IJWT {
 		return isExpired;
 	}
 
-	public void setIsExpired(Date expireTime) {
+	public void setIsExpired(boolean isExpired) {
 		this.isExpired = isExpired;
 	}
 

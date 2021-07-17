@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.controller;
@@ -13,8 +15,8 @@ import com.wldos.support.util.IpUtils;
 import com.wldos.support.util.constant.PubConstants;
 import com.wldos.system.storage.IStore;
 import com.wldos.support.Base;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,14 +24,10 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * 顶层controller，共享资源。
  *
- * @Title BaseController
- * @Package com.wldos.support.controller
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/5/5
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/5/5
+ * @version 1.0
  */
-@Slf4j
 public abstract class BaseController extends Base{
 	@Value("${token.access.header}")
 	protected String tokenHeader;
@@ -48,10 +46,9 @@ public abstract class BaseController extends Base{
 	@Autowired
 	protected HttpServletResponse response;
 
-
 	/** 日志对象log */
-	protected static Logger getLog() {
-		return log;
+	protected Logger getLog() {
+		return LoggerFactory.getLogger(this.getClass());
 	}
 
 	/**

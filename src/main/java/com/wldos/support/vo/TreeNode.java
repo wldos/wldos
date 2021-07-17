@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.vo;
@@ -12,12 +14,9 @@ import java.util.List;
 /**
  * 树结构节点。
  *
- * @Title TreeNode
- * @Package com.wldos.support.vo
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/4/30
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/4/30
+ * @version 1.0
  */
 public class TreeNode<T> {
 	protected Long id;

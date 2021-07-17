@@ -1,14 +1,16 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support;
 
 import com.wldos.support.controller.SnowflakeID;
 import com.wldos.system.auth.JWTTool;
-import com.wldos.system.storage.ICache;
+import com.wldos.support.cache.ICache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,12 +21,9 @@ import org.springframework.stereotype.Component;
 /**
  * 基础工具类。
  *
- * @Title Base
- * @Package com.wldos.support
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/6/14
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/6/14
+ * @version 1.0
  */
 @RefreshScope
 @Component
@@ -55,7 +54,7 @@ public class Base {
 	/**
 	 * 判断当前系统是否多租户模式
 	 *
-	 * @return
+	 * @return 是否多租户模式
 	 */
 	protected boolean isMultiTenancy() {
 		return this.multiTenancySwitch.equals("open");

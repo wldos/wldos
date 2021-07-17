@@ -28,8 +28,12 @@
 	</properties>
 	<developers>
 		<developer>
+			<name>zlt</name>
+			<email>zhiletu@88.com</email>
+		</developer>
+		<developer>
 			<name>wldos</name>
-			<email>583716365@qq.com</email>
+			<email>wldos@88.com</email>
 		</developer>
 		<developer>
 			<name>树悉猿</name>

@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.auth;
@@ -15,16 +17,16 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.wldos.support.cache.ICache;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.support.util.constant.PubConstants;
-import com.wldos.system.storage.ICache;
-import com.wldos.system.sysenum.RedisKeyEnum;
-import com.wldos.system.sysenum.UserRoleEnum;
+import com.wldos.system.enums.RedisKeyEnum;
+import com.wldos.system.enums.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.Base64Codec;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,11 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static io.jsonwebtoken.impl.TextCodec.BASE64;
+
 /**
  * 获取token，token验签。
  *
- * @Title JWT token实现类
- * @Package com.wldos.system.auth
  * @author 树悉猿
  * @date 2021-03-23
  * @version V1.0
@@ -44,24 +46,29 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class JWTTool {
-	// 创建token的私钥，产品化应该保证该私钥可以定制
+	/** 创建token的私钥，产品化应该保证该私钥可以定制 */
 	@Value("${app.secret_key}")
 	private String secretKey;
 
-	// jwt有效时间，默认30分钟
+	/** 签发者 */
+	@Value("${app.token.issuer}")
+	private String issuer;
+
+	/** jwt有效时间，默认30分钟 */
 	@Getter
 	@Value("${app.token_timeout}")
 	private long tokenTimeout;
 
-	@Autowired
 	private ICache cache;
-
-	public JWTTool() {
-	}
 
 	private JWTTool(String secretKey, long tokenTimeout) {
 		this.secretKey = secretKey;
 		this.tokenTimeout = tokenTimeout;
+	}
+
+	@Autowired
+	public JWTTool(ICache cache) {
+		this.cache = cache;
 	}
 
 	/**
@@ -71,11 +78,11 @@ public class JWTTool {
 	 * @return token
 	 */
 	public String genToken(JWT jwt) {
-		return this.genToken(null, jwt, "wldos");
+		return this.genToken(jwt, issuer);
 	}
 
 	/** 刷新token时效是访问token时效的倍数 */
-	private static final int refreshTimes = 4;
+	private static final int REFRESH_TIMES = 4;
 
 	/**
 	 * 容器内获取refreshToken, 时限是accessToken设置时限的4倍。刷新token可以被刷新期方案取代，
@@ -85,7 +92,7 @@ public class JWTTool {
 	 * @return token
 	 */
 	public String genRefreshToken(JWT jwt) {
-		return this.genToken(jwt, this.tokenTimeout * refreshTimes);
+		return this.genToken(jwt, this.tokenTimeout * REFRESH_TIMES);
 	}
 
 	/**
@@ -96,15 +103,15 @@ public class JWTTool {
 	 * @return token
 	 */
 	public String genToken(JWT jwt, long tokenTimeout) {
-		return this.genToken(null, jwt, "wldos");
+		return this.genToken(jwt, issuer);
 	}
 
 	/**
 	 * 通过定制的私钥和超时获取一个jwt工具类实例
 	 *
-	 * @param secretKey
-	 * @param tokenTimeout
-	 * @return
+	 * @param secretKey 密钥
+	 * @param tokenTimeout 超时时长
+	 * @return 实例
 	 */
 	public static JWTTool newJWTTool(String secretKey, long tokenTimeout) {
 		return new JWTTool(secretKey, tokenTimeout);
@@ -125,10 +132,10 @@ public class JWTTool {
 	/**
 	 * 静态方式验签并解析jwt
 	 *
-	 * @param token
-	 * @param secretKey
-	 * @param tokenTimeout
-	 * @return
+	 * @param token token
+	 * @param secretKey secretKey
+	 * @param tokenTimeout tokenTimeout
+	 * @return 验签结果
 	 */
 	public Jws<Claims> verifyToken(String token, String secretKey, long tokenTimeout) {
 		return new JWTTool(secretKey, tokenTimeout).verifyToken(token);
@@ -137,29 +144,61 @@ public class JWTTool {
 	/**
 	 * 获取一枚新token
 	 *
-	 * @param header
-	 * @param issuer
-	 * @return
+	 * @param header 令牌的元数据，并且包含签名或加密算法的类型
+	 * @param issuer 签发者
+	 * @return token
 	 */
-	public String genToken(Map<String, Object> header, IJWT jwt,
-			String issuer) {
+	public String genToken(Map<String, Object> header, IJwt jwt, String issuer) {
 		String token = null;
 		try {
 			long now = System.currentTimeMillis();
 			Date startDate = new Date(now);
 			Date expireDate = new Date(now + this.tokenTimeout * 1000 * 60);
-			SecretKey key = this.SecretKeyEncryption();
-			token = Jwts.builder()
-					//.setHeader(header) // 包含了令牌的元数据，并且包含签名或加密算法的类型
+			SecretKey key = this.secretKeyEncryption();
+			JwtBuilder jwtBuilder = Jwts.builder();
+			if (!ObjectUtil.isBlank(header))
+				jwtBuilder.setHeader(header); // 包含了令牌的元数据，并且包含签名或加密算法的类型
+			token = jwtBuilder
 					.setId(jwt.getId()) // 唯一ID防止重放
 					.setSubject(jwt.getUserId().toString())
 					.setIssuedAt(startDate) // 签发时间
 					.setExpiration(expireDate) // 过期时间
 					.setIssuer(issuer) // 签发者
-					.claim(IJWT.key_jwt_login, jwt.getLoginName())
-					.claim(IJWT.key_jwt_name, jwt.getAccountName())
-					.claim(IJWT.key_jwt_tenant, jwt.getTenantId())
-					//.setClaims(jwt) // 携带的信息载荷
+					.claim(IJwt.KEY_JWT_LOGIN, jwt.getLoginName()) // 携带的信息载荷
+					.claim(IJwt.KEY_JWT_NAME, jwt.getAccountName())
+					.claim(IJwt.KEY_JWT_TENANT, jwt.getTenantId())
+					.signWith(SignatureAlgorithm.HS256, key) // 签名算法和密钥，又称签名和签证
+					.compact(); // 执行契约签发token
+		}
+		catch (Exception e) {
+			log.error("token生成异常", e);
+		}
+		return token;
+	}
+
+	/**
+	 * 获取一枚新token
+	 *
+	 * @param issuer 签发者
+	 * @return token
+	 */
+	public String genToken(IJwt jwt, String issuer) {
+		String token = null;
+		try {
+			long now = System.currentTimeMillis();
+			Date startDate = new Date(now);
+			Date expireDate = new Date(now + this.tokenTimeout * 1000 * 60);
+			SecretKey key = this.secretKeyEncryption();
+			JwtBuilder jwtBuilder = Jwts.builder();
+			token = jwtBuilder
+					.setId(jwt.getId()) // 唯一ID防止重放
+					.setSubject(jwt.getUserId().toString())
+					.setIssuedAt(startDate) // 签发时间
+					.setExpiration(expireDate) // 过期时间
+					.setIssuer(issuer) // 签发者
+					.claim(IJwt.KEY_JWT_LOGIN, jwt.getLoginName()) // 携带的信息载荷
+					.claim(IJwt.KEY_JWT_NAME, jwt.getAccountName())
+					.claim(IJwt.KEY_JWT_TENANT, jwt.getTenantId())
 					.signWith(SignatureAlgorithm.HS256, key) // 签名算法和密钥，又称签名和签证
 					.compact(); // 执行契约签发token
 		}
@@ -177,16 +216,13 @@ public class JWTTool {
 	 */
 	public Jws<Claims> verifyToken(String token) {
 		try {
-			SecretKey key = this.SecretKeyEncryption();
-			Jws<Claims> jws = Jwts.parser()
-					.setSigningKey(key)
-					.parseClaimsJws(token);
+			SecretKey key = this.secretKeyEncryption();
 
 			//OK, we can trust this JWT
-			return jws;
+			return Jwts.parser().setSigningKey(key).parseClaimsJws(token);
 		}
 		catch (Exception e) {
-			log.error("token验证异常，token="+token);
+			log.error("token验证异常，token=" + token);
 			return null;
 		}
 	}
@@ -198,10 +234,10 @@ public class JWTTool {
 	 * @return
 	 */
 	public JWT popJwt(String token) {
-		if (ObjectUtil.isBlank(token) || UserRoleEnum.guest.toString().equals(token)) {
+		if (ObjectUtil.isBlank(token) || UserRoleEnum.GUEST.toString().equals(token)) {
 			log.info("发现token为空，请检查是游客，还是非法请求，还是token获取异常");
 			// 游客专门处理，支持游客的默认授权、监控、管理
-			return new JWT(PubConstants.GUEST_ID, PubConstants.TOP_COM_ID, UserRoleEnum.guest.toString(), UserRoleEnum.guest.toString());
+			return new JWT(PubConstants.GUEST_ID, PubConstants.TOP_COM_ID, UserRoleEnum.GUEST.toString(), UserRoleEnum.GUEST.toString());
 		}
 
 		return this.popJwt(this.verifyToken(token));
@@ -223,9 +259,9 @@ public class JWTTool {
 			return null;
 		}
 		boolean isExpired = (System.currentTimeMillis() - claims.getExpiration().getTime()) > 0;
-		JWT jwt = new JWT(Long.parseLong(claims.getSubject()), Long.parseLong((claims.get(IJWT.key_jwt_tenant).toString())),
-				Objects.toString(claims.get(IJWT.key_jwt_login)), Objects.toString(claims.get(IJWT.key_jwt_name)), claims.getId(), isExpired);
-		return jwt;
+
+		return new JWT(Long.parseLong(claims.getSubject()), Long.parseLong((claims.get(IJwt.KEY_JWT_TENANT).toString())),
+				Objects.toString(claims.get(IJwt.KEY_JWT_LOGIN)), Objects.toString(claims.get(IJwt.KEY_JWT_NAME)), claims.getId(), isExpired);
 	}
 
 	/**
@@ -235,11 +271,11 @@ public class JWTTool {
 	 * @return
 	 */
 	public boolean isCanRefresh(String refreshToken) {
-		if (UserRoleEnum.guest.toString().equals(refreshToken))
+		if (UserRoleEnum.GUEST.toString().equals(refreshToken))
 			return false; // 游客不需要刷新
 		Jws<Claims> claimsJws = this.verifyToken(refreshToken);
 		if (claimsJws == null) {
-			log.error("非法token，无法解析="+refreshToken);
+			log.error("非法token，无法解析=" + refreshToken);
 			return false;
 		}
 		Claims claims = claimsJws.getBody();
@@ -250,12 +286,10 @@ public class JWTTool {
 		if (!isExpired) // 没超期，无须刷新
 			return false;
 
-		isExpired = (outTime - (this.tokenTimeout * 1000 * 60 * (refreshTimes - 1))) > 0;
+		isExpired = (outTime - (this.tokenTimeout * 1000 * 60 * (REFRESH_TIMES - 1))) > 0;
 
-		if (isExpired) // 已超出刷新期，拒绝刷新
-			return false;
-
-		return true;
+		// 已超出刷新期，拒绝刷新
+		return !isExpired;
 	}
 
 	/**
@@ -275,17 +309,15 @@ public class JWTTool {
 	 * @return
 	 */
 	public boolean isExpired(JWT jwt) {
-		if (UserRoleEnum.guest.toString().equals(jwt.getLoginName())) { // 游客不设限
+		if (UserRoleEnum.GUEST.toString().equals(jwt.getLoginName())) { // 游客不设限
 			return false;
 		}
 		if (jwt.getIsExpired())
 			return true;
 
-		String token = ObjectUtil.string(this.cache.get(RedisKeyEnum.wldosToken.toString() + ":" + jwt.getId()));
-		if (ObjectUtil.isBlank(token)) {
-			return true;
-		}
-		return false;
+		String token = ObjectUtil.string(this.cache.get(RedisKeyEnum.WLDOS_TOKEN.toString() + ":" + jwt.getId()));
+
+		return ObjectUtil.isBlank(token);
 	}
 
 	/**
@@ -303,7 +335,7 @@ public class JWTTool {
 			// 已过期，略过
 			return;
 		}
-		this.cache.set(RedisKeyEnum.wldosToken.toString() + ":" + tokenId, logJson, this.tokenTimeout/* expire / (1000 * 60) //不整除时为0 token即可过期 */, TimeUnit.MINUTES);
+		this.cache.set(RedisKeyEnum.WLDOS_TOKEN.toString() + ":" + tokenId, logJson, this.tokenTimeout/* expire / (1000 * 60) //不整除时为0 token即可过期 */, TimeUnit.MINUTES);
 	}
 
 	/**
@@ -314,7 +346,7 @@ public class JWTTool {
 	 */
 	public String takTokenRec(JWT jwt) {
 		String tokenId = jwt.getId();
-		return ObjectUtil.string(this.cache.get(RedisKeyEnum.wldosToken.toString() + ":" + tokenId));
+		return ObjectUtil.string(this.cache.get(RedisKeyEnum.WLDOS_TOKEN.toString() + ":" + tokenId));
 	}
 
 	/**
@@ -333,13 +365,12 @@ public class JWTTool {
 	 * @param tokenId
 	 */
 	public void delTokenById(String tokenId) {
-		this.cache.remove(RedisKeyEnum.wldosToken + ":" + tokenId);
+		this.cache.remove(RedisKeyEnum.WLDOS_TOKEN + ":" + tokenId);
 	}
 
-	private SecretKey SecretKeyEncryption() {
-		byte[] encodeKey = Base64Codec.BASE64.encode(this.secretKey).getBytes(StandardCharsets.UTF_8);
-		SecretKey key = new SecretKeySpec(encodeKey, 0, this.secretKey.length(), "AES");
+	private SecretKey secretKeyEncryption() {
+		byte[] encodeKey = BASE64.encode(this.secretKey).getBytes(StandardCharsets.UTF_8);
 
-		return key;
+		return new SecretKeySpec(encodeKey, 0, this.secretKey.length(), "AES");
 	}
 }

@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.service;
@@ -11,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.wldos.support.controller.web.PageableResult;
@@ -33,12 +36,9 @@ import org.springframework.stereotype.Component;
 /**
  * 公共顶层jdbc操作实现类。
  *
- * @Title CommonJdbcOperation
- * @Package com.wldos.support.service
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/5/5
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/5/5
+ * @version 1.0
  */
 @Component
 public class CommonJdbcOperation extends FreeJdbcTemplate {
@@ -47,10 +47,10 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	 * 标准实体的自定义分页查询，带参数和分页对象，返回带实体bean通用分页模板结构
 	 *
 	 * @param clazz 数据库表实体bean，不支持领域对象，领域对象请自定义sql移步上一方法
-	 * @param pageQuery
-	 * @return
+	 * @param pageQuery 分页参数
+	 * @return 一页数据
 	 */
-	public <Entity> PageableResult<Entity> execQueryForPage(Class<Entity> clazz, PageQuery pageQuery) {
+	public <E> PageableResult<E> execQueryForPage(Class<E> clazz, PageQuery pageQuery) {
 
 		return this.execQueryForPage(clazz, pageQuery, clazz, true);
 	}
@@ -58,17 +58,17 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	/**
 	 * 根据实体属性查询数据库组装vo为单元的树结构。
 	 *
-	 * @param clazz
-	 * @param pageQuery
-	 * @param entity 实体bean Entity 的clazz
+	 * @param clazz VO类型
+	 * @param pageQuery 查询参数
+	 * @param entity 实体bean E 的clazz
 	 * @param root 根节点ID
-	 * @param <EntityVO> 属性集是实体bean的副本或子集
-	 * @return
+	 * @param <V> 属性集是实体bean的副本或子集
+	 * @return VO分页
 	 */
-	public <EntityVO extends TreeNode, Entity> PageableResult<EntityVO> execQueryForTree(Class<?> clazz, PageQuery pageQuery, Class<Entity> entity, long root) {
-		PageableResult<EntityVO> voPageableResult = this.execQueryForPage((Class<EntityVO>) clazz, pageQuery, entity, false);
+	public <V extends TreeNode<V>, E> PageableResult<V> execQueryForTree(Class<?> clazz, PageQuery pageQuery, Class<E> entity, long root) {
+		PageableResult<V> voPageableResult = this.execQueryForPage((Class<V>) clazz, pageQuery, entity, false);
 
-		List<EntityVO> entityVOList = TreeUtil.build(voPageableResult.getData().getRows(), root);
+		List<V> entityVOList = TreeUtil.build(voPageableResult.getData().getRows(), root);
 
 		return  voPageableResult.setDataRows(entityVOList);
 	}
@@ -76,38 +76,38 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	/**
 	 * 带条件查询所有单体
 	 *
-	 * @param entity
-	 * @param condition
-	 * @param <Entity>
-	 * @return
+	 * @param entity 实体bean
+	 * @param condition 查询条件
+	 * @param <E> 实体类型
+	 * @return 实体list
 	 */
-	public <Entity> List<Entity> findAllWithCond(Class<Entity> entity, Map<String, Object> condition) {
+	public <E> List<E> findAllWithCond(Class<E> entity, Map<String, Object> condition) {
 
 		String tableName = this.getTableNameByEntity(entity);
-		StringBuffer sql = new StringBuffer(50).append("select a.* from ").append(tableName).append(" a ");
+		StringBuilder sql = new StringBuilder(50).append("select a.* from ").append(tableName).append(" a ");
 		List<Object> params = new ArrayList<>();
 
 		if (!ObjectUtil.isBlank(condition)) {
-			StringBuffer finalSql1 = new StringBuffer("where 1=1 ");
-			condition.entrySet().stream().forEach(entry -> {
-				Field field = ReflectionUtils.findRequiredField(entity, entry.getKey());
+			StringBuilder finalSql1 = new StringBuilder("where 1=1 ");
+			String and = "and";
+			String aliases = "a.";
+			condition.forEach((key, value) -> {
+				Field field = ReflectionUtils.findRequiredField(entity, key);
 				if (field.getType().equals(String.class)) {
-					finalSql1.append(" and instr(a.").append(NameConvert.humpToUnderLine(entry.getKey())).append(", ?) > 0 ");
+					finalSql1.append(and).append(" instr(").append(aliases).append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
 				}
 				else if (field.getType().equals(Timestamp.class)) { // 日期默认匹配当天
-					finalSql1.append(" and DATE_FORMAT(a.").append(NameConvert.humpToUnderLine(entry.getKey())).append(", '%Y-%m-%d') = DATE_FORMAT(?, '%Y-%m-%d') ");
+					finalSql1.append(and).append(" DATE_FORMAT(").append(aliases).append(NameConvert.humpToUnderLine(key)).append(", '%Y-%m-%d') = DATE_FORMAT(?, '%Y-%m-%d') ");
 				}
 				else { // 包含所有的数字类型、日期类型。日期等的有界查询请移步前面自定义sql方法。
-					finalSql1.append(" and a.").append(NameConvert.humpToUnderLine(entry.getKey())).append("= ? ");
+					finalSql1.append(and).append(aliases).append(NameConvert.humpToUnderLine(key)).append("= ? ");
 				}
-				params.add(entry.getValue());
+				params.add(value);
 			});
 			sql.append(finalSql1);
 		}
 
-		List<Entity> list = this.getNamedParamJdbcTemplate().getJdbcOperations().query(sql.toString(), new BeanPropertyRowMapper<>(entity), params.toArray());
-
-		return list == null ? new ArrayList<>() : list;
+		return this.getNamedParamJdbcTemplate().getJdbcOperations().query(sql.toString(), new BeanPropertyRowMapper<>(entity), params.toArray());
 	}
 
 
@@ -116,48 +116,48 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	 * 根据实体bean或实体vo、对应的表名称查询分页，支持查询条件、排序、过滤。
 	 *
 	 * @param clazz EntityVO的clazz
-	 * @param pageQuery
-	 * @param entity 实体bean Entity 的clazz
-	 * @param <EntityVO> 必须和实体Entity保持一致的属性集，可以是子集
-	 * @return
+	 * @param pageQuery 分页参数
+	 * @param entity 实体bean Entity的clazz
+	 * @param <V> 必须和实体Entity保持一致的属性集，可以是子集
+	 * @return VO分页
 	 */
-	public <EntityVO, Entity> PageableResult<EntityVO> execQueryForPage(Class<EntityVO> clazz, PageQuery pageQuery, Class<Entity> entity, boolean isPage) {
-		List<EntityVO> list = new ArrayList<>();
+	public <V, E> PageableResult<V> execQueryForPage(Class<V> clazz, PageQuery pageQuery, Class<E> entity, boolean isPage) {
+		List<V> list;
 		Sort sort = pageQuery.getSorter();
 		Map<String, List<Object>> filter = pageQuery.getFilter();
 		Map<String, Object> condition = pageQuery.getCondition();
 		List<Object> params = new ArrayList<>();
 		String tableName = this.getTableNameByEntity(entity);
-		StringBuffer sql = new StringBuffer(50).append("select a.* from ").append(tableName).append(" a where 1=1 ");
+		StringBuilder sql = new StringBuilder(50).append("select a.* from ").append(tableName).append(" a where 1=1 ");
 		if (!ObjectUtil.isBlank(condition)) {
-			StringBuffer finalSql1 = new StringBuffer();
-			condition.entrySet().stream().forEach(entry -> {
-				Field field = ReflectionUtils.findRequiredField(entity, entry.getKey());
+			StringBuilder finalSql1 = new StringBuilder();
+			condition.forEach((key, value) -> {
+				Field field = ReflectionUtils.findRequiredField(entity, key);
 				if (field.getType().equals(String.class)) {
-					finalSql1.append(" and instr(a.").append(NameConvert.humpToUnderLine(entry.getKey())).append(", ?) > 0 ");
+					finalSql1.append(" and instr(a.").append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
 				}
 				else if (field.getType().equals(Timestamp.class)) { // 日期默认匹配当天
-					finalSql1.append(" and DATE_FORMAT(a.").append(NameConvert.humpToUnderLine(entry.getKey())).append(", '%Y-%m-%d') = DATE_FORMAT(?, '%Y-%m-%d') ");
+					finalSql1.append(" and DATE_FORMAT(a.").append(NameConvert.humpToUnderLine(key)).append(", '%Y-%m-%d') = DATE_FORMAT(?, '%Y-%m-%d') ");
 				}
 				else { // 包含所有的数字类型、日期类型。日期等的有界查询请移步前面自定义sql方法。
-					finalSql1.append(" and a.").append(NameConvert.humpToUnderLine(entry.getKey())).append("= ? ");
+					finalSql1.append(" and a.").append(NameConvert.humpToUnderLine(key)).append("= ? ");
 				}
-				params.add(entry.getValue());
+				params.add(value);
 			});
 			sql.append(finalSql1);
 		}
 
 		if (filter != null && !filter.isEmpty()) {
-			StringBuffer finalSql = new StringBuffer();
-			filter.entrySet().stream().forEach(entry -> {
-				finalSql.append(" and a.").append(NameConvert.humpToUnderLine(entry.getKey())).append(" in (");
-				entry.getValue().stream().forEach(item -> {
+			StringBuilder finalSql = new StringBuilder();
+			filter.forEach((key, value) -> {
+				finalSql.append(" and a.").append(NameConvert.humpToUnderLine(key)).append(" in (");
+				value.forEach(item -> {
 					finalSql.append("?,");
 					params.add(item);
 				});
 			});
 
-			sql = sql.append(finalSql).delete(sql.length() - 1, sql.length());
+			sql.append(finalSql).delete(sql.length() - 1, sql.length());
 
 			sql.append(")");
 		}
@@ -166,10 +166,9 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		int total = all.isEmpty() ? 0 : Integer.parseInt(ObjectUtil.string(all.get(0).get("total")));
 
 		if (!sort.isEmpty()) {
-			StringBuffer temp = new StringBuffer(" order by ");
-			sort.stream().iterator().forEachRemaining(s -> {
-				temp.append(NameConvert.humpToUnderLine(s.getProperty())).append(" ").append(s.isAscending() ? "" : " desc ");
-			});
+			StringBuilder temp = new StringBuilder(" order by ");
+			sort.stream().iterator().forEachRemaining(s ->
+				temp.append(NameConvert.humpToUnderLine(s.getProperty())).append(" ").append(s.isAscending() ? "" : " desc "));
 			sql.append(temp);
 		}
 
@@ -177,7 +176,7 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		int pageSize = pageQuery.getPageSize();
 		if (isPage) {
 			int totalPageNum = (total - 1) / pageSize + 1;
-			currentPage = currentPage > totalPageNum ? totalPageNum : currentPage;
+			currentPage = Math.min(currentPage, totalPageNum);
 			list = this.execQueryForPage(clazz, sql.toString(), currentPage, pageSize, params.toArray());
 		} else {
 			list = this.getNamedParamJdbcTemplate().getJdbcOperations().query(sql.toString(), new BeanPropertyRowMapper<>(clazz), params.toArray());
@@ -185,13 +184,16 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 
 		return new PageableResult<>(total, currentPage, pageSize, list);
 	}
+	
+	private static final String UPDATE = "update ";
+	private static final String WHERE = " where ";
 
 	/**
 	 * 根据实体bean运行时动态拼装更新sql并更新
 	 *
-	 * @param entity
+	 * @param entity 实体
 	 */
-	public <Entity> void dynamicUpdateByEntity(Entity entity) {
+	public <E> void dynamicUpdateByEntity(E entity) {
 		Map<String, Object> params = ObjectUtil.toMap(entity);
 		// 取出泛型T的Class
 		Class<?> clazz = this.clazz(entity);
@@ -202,9 +204,8 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		if (ObjectUtil.isBlank(tableName)) {
 			tableName = NameConvert.humpToUnderLine(clazz.getSimpleName()).toLowerCase();
 		}
-		StringBuffer sql = new StringBuffer("update ")
-				.append(tableName)
-				.append(" set ");
+		
+		StringBuilder sql = new StringBuilder(UPDATE).append(tableName).append(" set ");
 
 		String pKeyName = "";
 		Object pKeyValue = null;
@@ -212,48 +213,39 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		Field[] fields = clazz.getDeclaredFields();
 		List<Object> newParam = new ArrayList<>();
 
-		for (Map.Entry entry : params.entrySet()) {
-			String key = ObjectUtil.string(entry.getKey());
-			Object value = entry.getValue();
-			if (value == null)
-				continue;
-
-			for (Field f : fields) {
+		List<Field> fieldList = params.entrySet().parallelStream().filter(p -> p.getValue() != null).map(item -> {
+			String key = item.getKey();
+			for (Field f : fields)
 				if (key.equals(f.getName())) {
-					if (ObjectUtil.isBlank(pKeyName)) { // 判断是否主键
-						Id id = f.getAnnotation(Id.class);
-						if (id != null) {
-							Column propRelColumn = f.getAnnotation(Column.class);
-							if (propRelColumn != null) {
-								pKeyName = propRelColumn.value();
-							}
-							else {
-								pKeyName = NameConvert.humpToUnderLine(key);
-							}
-							pKeyValue = value;
-							continue;
-						}
-					}
-
-					// 获取普通属性的@Column注解
-					Column propRelColumn = f.getAnnotation(Column.class);
-					if (propRelColumn != null) {
-						String columnName = propRelColumn.value();
-						sql.append(NameConvert.humpToUnderLine(columnName)).append("=?,");
-						newParam.add(value);
-					}
-					else {
-						String hkey = "";
-						sql.append(hkey = NameConvert.humpToUnderLine(key)).append("=?,");
-
-						newParam.add(value);
-					}
+					return f;
 				}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+
+		for (Field f : fieldList) {
+
+			String key = f.getName();
+			Object value = params.get(key);
+			// 获取可能的@Column注解
+			Column propRelColumn = f.getAnnotation(Column.class);
+
+			if (f.getAnnotation(Id.class) == null) { // 不是主键按普通列处理
+
+				String columnName = propRelColumn == null ? NameConvert.humpToUnderLine(key) : propRelColumn.value();
+				sql.append(columnName).append("=?,");
+
+				newParam.add(value);
+
+				continue;
 			}
+
+			// 处理主键
+			pKeyName = propRelColumn != null ? propRelColumn.value() : NameConvert.humpToUnderLine(key);
+			pKeyValue = value;
 		}
 
-		sql = sql.delete(sql.length() - 1, sql.length());
-		sql.append(" where ").append(pKeyName).append(" = ? ");
+		sql.delete(sql.length() - 1, sql.length());
+		sql.append(WHERE).append(pKeyName).append(" = ? ");
 		newParam.add(pKeyValue);
 		this.getNamedParamJdbcTemplate().getJdbcOperations().update(sql.toString(), newParam.toArray());
 	}
@@ -261,9 +253,9 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	/**
 	 * 有选择地insert记录，空值不插入(采用数据库可能存在的默认值)。
 	 *
-	 * @param entity
+	 * @param entity 实体
 	 */
-	public <Entity> void dynamicInsertByEntity(Entity entity) {
+	public <E> void dynamicInsertByEntity(E entity) {
 		Map<String, Object> params = ObjectUtil.toMap(entity);
 
 		// 取出泛型T的Class
@@ -274,7 +266,7 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		if (ObjectUtil.isBlank(tableName)) {
 			tableName = NameConvert.humpToUnderLine(clazz.getSimpleName()).toLowerCase();
 		}
-		StringBuffer sql = new StringBuffer("insert into ")
+		StringBuilder sql = new StringBuilder("insert into ")
 				.append(tableName)
 				.append("(");
 
@@ -284,154 +276,7 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		Field[] fields = clazz.getDeclaredFields();
 		List<Object> newParam = new ArrayList<>();
 
-		for (Map.Entry entry : params.entrySet()) {
-			String key = ObjectUtil.string(entry.getKey());
-			Object value = entry.getValue();
-			if (value == null)
-				continue;
-
-			for (Field f : fields) {
-				if (key.equals(f.getName())) {
-
-					// 获取普通属性的@Column注解
-					Column propRelColumn = f.getAnnotation(Column.class);
-					if (propRelColumn != null) {
-						String columnName = propRelColumn.value();
-						sql.append(NameConvert.humpToUnderLine(columnName)).append(",");
-						newParam.add(value);
-					}
-					else { // 暂时不考虑标注在get方法上的注解
-						String hkey = "";
-						sql.append(hkey = NameConvert.humpToUnderLine(key)).append(",");
-
-						newParam.add(value);
-					}
-					wildCard.append("?,");
-				}
-			}
-		}
-
-		sql = sql.delete(sql.length() - 1, sql.length());
-		wildCard = wildCard.delete(wildCard.length() - 1, wildCard.length());
-		sql.append(") values(").append(wildCard).append(")");
-
-		this.getNamedParamJdbcTemplate().getJdbcOperations().update(sql.toString(), newParam.toArray());
-	}
-
-	/**
-	 * 有选择地批量更新记录，空值不插入(采用数据库可能存在的默认值)。
-	 *
-	 * @param entities
-	 */
-	public <Entity> void dynamicBatchUpdateByEntities(List<Entity> entities) {
-		List<Map<String, Object>> params = entities.parallelStream().map(entity -> {
-			return ObjectUtil.toMap(entity);
-		}).collect(Collectors.toList());
-
-		if (params == null || params.isEmpty())
-			return;
-
-		Class<?> clazz = this.clazz(entities.get(0));
-		// 获取表名
-		Table entityRelTable = clazz.getAnnotation(Table.class);
-		String tableName = entityRelTable.value();
-		if (ObjectUtil.isBlank(tableName)) {
-			tableName = NameConvert.humpToUnderLine(clazz.getSimpleName()).toLowerCase();
-		}
-		StringBuffer sql = new StringBuffer("update ")
-				.append(tableName)
-				.append(" set ");
-
-		String pKeyName = "";
-		String pKeyField = null;
-		// 获取字段
-		Field[] fields = clazz.getDeclaredFields();
-		List<String> wildCardKeys = new ArrayList<>();
-
-		for (Map.Entry entry : params.get(0).entrySet()) {
-			String key = ObjectUtil.string(entry.getKey());
-			Object value = entry.getValue();
-			if (value == null)
-				continue;
-
-			for (Field f : fields) {
-				if (key.equals(f.getName())) {
-					if (ObjectUtil.isBlank(pKeyName)) { // 判断是否主键
-						Id id = f.getAnnotation(Id.class);
-						if (id != null) {
-							Column propRelColumn = f.getAnnotation(Column.class);
-							if (propRelColumn != null) {
-								pKeyName = propRelColumn.value();
-							}
-							else {
-								pKeyName = NameConvert.humpToUnderLine(key);
-							}
-							pKeyField = key;
-							continue;
-						}
-					}
-
-					// 获取普通属性的@Column注解
-					Column propRelColumn = f.getAnnotation(Column.class);
-					if (propRelColumn != null) {
-						String columnName = propRelColumn.value();
-						sql.append(NameConvert.humpToUnderLine(columnName)).append("=?,");
-					}
-					else {
-						sql.append(NameConvert.humpToUnderLine(key)).append("=?,");
-					}
-
-					wildCardKeys.add(key);
-				}
-			}
-		}
-
-		sql = sql.delete(sql.length() - 1, sql.length());
-		sql.append(" where ").append(pKeyName).append(" = ? ");
-		wildCardKeys.add(pKeyField);
-
-		List<Object[]> paramsList = params.parallelStream().map(entityMap -> {
-			Object[] objects = new Object[entityMap.size()];
-			for (int x = 0; x < objects.length; x++) {
-				objects[x] = entityMap.get(wildCardKeys.get(x));
-			}
-			return objects;
-		}).collect(Collectors.toList());
-
-		this.getNamedParamJdbcTemplate().getJdbcOperations().batchUpdate(sql.toString(), paramsList);
-	}
-
-	/**
-	 * 有选择地批量insert记录，空值不插入(采用数据库可能存在的默认值)。
-	 *
-	 * @param entities
-	 */
-	public <Entity> void dynamicBatchInsertByEntities(List<Entity> entities) {
-		List<Map<String, Object>> params = entities.parallelStream().map(entity -> {
-			return ObjectUtil.toMap(entity);
-		}).collect(Collectors.toList());
-
-		if (params == null || params.isEmpty())
-			return;
-
-		Class<?> clazz = this.clazz(entities.get(0));
-		// 获取表名
-		Table entityRelTable = clazz.getAnnotation(Table.class);
-		String tableName = entityRelTable.value();
-		if (ObjectUtil.isBlank(tableName)) {
-			tableName = NameConvert.humpToUnderLine(clazz.getSimpleName()).toLowerCase();
-		}
-		StringBuffer sql = new StringBuffer("insert into ")
-				.append(tableName)
-				.append("(");
-
-		StringBuilder wildCard = new StringBuilder();
-
-		// 获取字段
-		Field[] fields = clazz.getDeclaredFields();
-		List<String> wildCardKeys = new ArrayList<>();
-
-		for (Map.Entry entry : params.get(0).entrySet()) {
+		for (Map.Entry<String, Object> entry : params.entrySet()) {
 			String key = ObjectUtil.string(entry.getKey());
 			Object value = entry.getValue();
 			if (value == null)
@@ -448,15 +293,151 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 					}
 					else { // 暂时不考虑标注在get方法上的注解
 						sql.append(NameConvert.humpToUnderLine(key)).append(",");
+
 					}
+					newParam.add(value);
 					wildCard.append("?,");
-					wildCardKeys.add(key);
 				}
 			}
 		}
 
-		sql = sql.delete(sql.length() - 1, sql.length());
-		wildCard = wildCard.delete(wildCard.length() - 1, wildCard.length());
+		sql.delete(sql.length() - 1, sql.length());
+		wildCard.delete(wildCard.length() - 1, wildCard.length());
+		sql.append(") values(").append(wildCard).append(")");
+
+		this.getNamedParamJdbcTemplate().getJdbcOperations().update(sql.toString(), newParam.toArray());
+	}
+
+	/**
+	 * 有选择地批量更新记录，空值不插入(采用数据库可能存在的默认值)。
+	 *
+	 * @param entities 实体集合
+	 */
+	public <E> void dynamicBatchUpdateByEntities(List<E> entities) {
+		List<Map<String, Object>> params = entities.parallelStream().map(ObjectUtil::toMap).collect(Collectors.toList());
+
+		if (params.isEmpty()) {
+			return;
+		}
+
+		Class<?> clazz = this.clazz(entities.get(0));
+		// 获取表名
+		Table entityRelTable = clazz.getAnnotation(Table.class);
+		String tableName = entityRelTable.value();
+		if (ObjectUtil.isBlank(tableName)) {
+			tableName = NameConvert.humpToUnderLine(clazz.getSimpleName()).toLowerCase();
+		}
+		StringBuilder sql = new StringBuilder(UPDATE).append(tableName).append(" set ");
+
+		String pKeyName = "";
+		String pKeyField = null;
+		// 获取字段
+		Field[] fields = clazz.getDeclaredFields();
+		List<String> wildCardKeys = new ArrayList<>();
+
+		List<Field> fieldList = params.get(0).entrySet().parallelStream().filter(p -> p.getValue() != null).map(item -> {
+			String key = item.getKey();
+			for (Field f : fields) {
+				if (key.equals(f.getName())) {
+					return f;
+				}
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+
+		for (Field f : fieldList) {
+
+			String key = f.getName();
+			// 获取可能的@Column注解
+			Column propRelColumn = f.getAnnotation(Column.class);
+			String columnName = propRelColumn == null ? NameConvert.humpToUnderLine(key) : propRelColumn.value();
+
+			if (f.getAnnotation(Id.class) == null) { // 不是主键按普通列处理
+
+				sql.append(columnName).append("=?,");
+
+				wildCardKeys.add(key);
+
+				continue;
+			}
+
+			// 处理主键
+			pKeyName = columnName;
+			pKeyField = key;
+		}
+
+		sql.delete(sql.length() - 1, sql.length());
+		sql.append(WHERE).append(pKeyName).append(" = ? ");
+		wildCardKeys.add(pKeyField);
+
+		List<Object[]> paramsList = params.parallelStream().map(entityMap -> {
+			Object[] objects = new Object[entityMap.size()];
+			for (int x = 0; x < objects.length; x++) {
+				objects[x] = entityMap.get(wildCardKeys.get(x));
+			}
+			return objects;
+		}).collect(Collectors.toList());
+
+		this.getNamedParamJdbcTemplate().getJdbcOperations().batchUpdate(sql.toString(), paramsList);
+	}
+
+	/**
+	 * 有选择地批量insert记录，空值不插入(采用数据库可能存在的默认值)。
+	 *
+	 * @param entities 实体结合
+	 */
+	public <E> void dynamicBatchInsertByEntities(List<E> entities) {
+		List<Map<String, Object>> params = entities.parallelStream().map(ObjectUtil::toMap).collect(Collectors.toList());
+
+		if (params.isEmpty())
+			return;
+
+		Class<?> clazz = this.clazz(entities.get(0));
+		// 获取表名
+		Table entityRelTable = clazz.getAnnotation(Table.class);
+		String tableName = entityRelTable.value();
+		if (ObjectUtil.isBlank(tableName)) {
+			tableName = NameConvert.humpToUnderLine(clazz.getSimpleName()).toLowerCase();
+		}
+		StringBuilder sql = new StringBuilder("insert into ").append(tableName).append("(");
+
+		StringBuilder wildCard = new StringBuilder();
+
+		// 获取字段
+		Field[] fields = clazz.getDeclaredFields();
+		List<String> wildCardKeys = new ArrayList<>();
+
+		List<Field> fieldList = params.get(0).entrySet().parallelStream().filter(p -> p.getValue() != null).map(item -> {
+			String key = item.getKey();
+			Field field = null;
+			for (Field f : fields) {
+				if (key.equals(f.getName())) {
+					field = f;
+					break;
+				}
+			}
+			return field;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+
+		for (Field f : fieldList) {
+
+			String key = f.getName();
+			// 获取可能的@Column注解
+			Column propRelColumn = f.getAnnotation(Column.class);
+
+			if (propRelColumn != null) {
+				String columnName = propRelColumn.value();
+				sql.append(NameConvert.humpToUnderLine(columnName)).append(",");
+			}
+			else { // 暂时不考虑标注在get方法上的注解
+				sql.append(NameConvert.humpToUnderLine(key)).append(",");
+			}
+			wildCard.append("?,");
+			wildCardKeys.add(key);
+		}
+
+		sql.delete(sql.length() - 1, sql.length());
+		wildCard.delete(wildCard.length() - 1, wildCard.length());
 		sql.append(") values(").append(wildCard).append(")");
 
 		List<Object[]> paramsList = params.parallelStream().map(entityMap -> {
@@ -477,7 +458,7 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	 * @param ids 主键
 	 * @param isLogic 是否逻辑删，原则上使用逻辑删
 	 */
-	public <Entity> void deleteByIds(Entity entity, Object[] ids, boolean isLogic) {
+	public <E> void deleteByIds(E entity, Object[] ids, boolean isLogic) {
 		// 取出泛型T的Class
 		Class<?> clazz = this.clazz(entity);
 		// 获取表名
@@ -489,11 +470,11 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		// 取出主键字段名，兼容非标设计，建议主键名为id
 		String pkName = this.getIdColNameByEntity(entity);
 
-		StringBuffer sql = isLogic ? new StringBuffer("update ")
+		StringBuilder sql = isLogic ? new StringBuilder(UPDATE)
 				.append(tableName).append(" set delete_flag='deleted' ")
-				: new StringBuffer("delete from ")
+				: new StringBuilder("delete from ")
 				.append(tableName);
-		sql.append(" where ").append(pkName).append(" in (?)");
+		sql.append(WHERE).append(pkName).append(" in (?)");
 		this.getNamedParamJdbcTemplate().getJdbcOperations().update(String.format(sql.toString().replace("?", "%s"), StringUtils.joinWith(",", ids)));
 	}
 
@@ -505,7 +486,7 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 	 * @param pid 主因素主键
 	 * @param isLogic 是否逻辑删，原则上使用逻辑删
 	 */
-	public <Entity> void deleteByMultiIds(Entity entity, Object[] ids, Object pid, boolean isLogic) {
+	public <E> void deleteByMultiIds(E entity, Object[] ids, Object pid, boolean isLogic) {
 		// 取出泛型T的Class
 		Class<?> clazz = this.clazz(entity);
 		// 获取表名
@@ -517,13 +498,13 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		// 取出主键字段名，兼容非标设计，建议主键名为id
 		List<String> pkName = this.getMultiIdColNamesByEntity(entity.getClass());
 
-		StringBuffer sql = isLogic ? new StringBuffer("update ")
+		StringBuilder sql = isLogic ? new StringBuilder(UPDATE)
 				.append(tableName).append(" set delete_flag='deleted' ")
-				: new StringBuffer("delete from ")
+				: new StringBuilder("delete from ")
 				.append(tableName);
-		sql.append(" where ").append(pkName.get(0)).append(" in (?) and ");
+		sql.append(WHERE).append(pkName.get(0)).append(" in (?) and ");
 		String sql0 = String.format(sql.toString().replace("?", "%s"), StringUtils.joinWith(",", ids)) + pkName.get(1) + " = ?";
 
-		this.getNamedParamJdbcTemplate().getJdbcOperations().update(sql0, new Object[]{ pid });
+		this.getNamedParamJdbcTemplate().getJdbcOperations().update(sql0, pid);
 	}
 }

@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.auth.service;
@@ -14,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
 import com.wldos.support.util.AddressUtils;
-import com.wldos.support.util.DateUtil;
+import com.wldos.support.util.DateUtils;
 import com.wldos.support.util.IpUtils;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.support.util.PasswdEncode;
@@ -24,15 +26,15 @@ import com.wldos.system.auth.JWT;
 import com.wldos.system.auth.JWTTool;
 import com.wldos.system.auth.dto.Tenant;
 import com.wldos.system.auth.entity.LoginInfo;
-import com.wldos.system.auth.param.LoginAuthParams;
+import com.wldos.system.auth.dto.LoginAuthParams;
 import com.wldos.system.auth.vo.Login;
 import com.wldos.system.auth.vo.Register;
 import com.wldos.system.auth.vo.Token;
 import com.wldos.system.auth.vo.UserInfo;
-import com.wldos.system.service.AuthService;
-import com.wldos.system.service.UserService;
+import com.wldos.system.core.service.AuthService;
+import com.wldos.system.core.service.UserService;
 import com.wldos.system.vo.User;
-import com.wldos.system.entity.WoUser;
+import com.wldos.system.core.entity.WoUser;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.commons.codec.binary.Hex;
 
@@ -43,12 +45,9 @@ import org.springframework.stereotype.Service;
 /**
  * 登录相关认证、授权服务。
  *
- * @Title LoginAuthService
- * @Package com.wldos.system.auth.service
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/4/29
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/4/29
+ * @version 1.0
  */
 @Service
 public class LoginAuthService {
@@ -72,7 +71,7 @@ public class LoginAuthService {
 
 			JWT jwt = new JWT(userInfo.getId(), userInfo.getTenantId(), userInfo.getUsername(), userInfo.getName());
 			String accessToken = this.jwtTool.genToken(jwt);
-			//String refreshToken = this.jwtTool.genRefreshToken(jwt);
+
 			Token token = new Token();
 			token.setAccessToken(accessToken);
 			//token.setRefreshToken(refreshToken); // 不再使用刷新token，使用访问token加超时机制就可以实现刷新机制
@@ -101,7 +100,7 @@ public class LoginAuthService {
 		String os = userAgent.getOperatingSystem().getName();
 		String useragent = userAgent.getBrowser().getName();
 		loginInfo.setId(jwt.getId());
-		loginInfo.setUserId(Long.valueOf(jwt.getUserId()));
+		loginInfo.setUserId(jwt.getUserId());
 		loginInfo.setLoginName(jwt.getLoginName());
 		loginInfo.setUserAgent(useragent);
 		loginInfo.setLoginIP(ip);
@@ -146,12 +145,11 @@ public class LoginAuthService {
 	/**
 	 * 16位16进制密码加密key生成策略
 	 *
-	 * @param username
-	 * @return
-	 * @throws Exception
+	 * @param username 用户登陆名
+	 * @return 加密后的密码
 	 */
 	private String enCryHexKey(String username, String hexKeyCode) {
-		String date = DateUtil.getDay(new Date());
+		String date = DateUtils.getDay(new Date());
 		String firstName = username.charAt(0) + "";
 		String secondName = username.charAt(1) + "";
 		String key = firstName + hexKeyCode + secondName + date;

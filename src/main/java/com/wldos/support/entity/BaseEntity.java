@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.entity;
@@ -11,14 +13,12 @@ import java.sql.Timestamp;
 /**
  * 抽象实体，用于定义公共字段对应的公共属性。
  *
- * @Title BaseEntity
- * @Package com.wldos.support.entity
  * @author 树悉猿
  * @date 2021-02-11
  * @version V1.0
  */
 public class BaseEntity {
-	public Long id;
+	private Long id;
 
 	private Long createBy;
 

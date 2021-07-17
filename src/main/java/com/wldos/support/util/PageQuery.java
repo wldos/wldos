@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import org.springframework.data.domain.Sort;
@@ -26,6 +29,7 @@ import org.springframework.data.domain.Sort.Order;
  * @date 2021-04-16
  * @version 1.0
  */
+@SuppressWarnings("unchecked")
 public class PageQuery {
 
 	// 当前页码
@@ -46,45 +50,53 @@ public class PageQuery {
 	public PageQuery(Map<String, Object> params) {
 		this.condition = new HashMap<>();
 		this.condition.putAll(params);
+		String currentKey = "current";
+		String pageSizeKey = "pageSize";
+		String sorterKey = "sorter";
+		String filterKey = "filter";
 		//分页参数
-		if (params.get("current") != null) {
-			this.current = Integer.parseInt(params.get("current").toString());
+		if (params.get(currentKey) != null) {
+			this.current = Integer.parseInt(params.get(currentKey).toString());
 			if ( this.current == 0 )
 				this.current = 1;
 		}
-		if (params.get("pageSize") != null) {
-			this.pageSize = Integer.parseInt(params.get("pageSize").toString());
+		if (params.get(pageSizeKey) != null) {
+			this.pageSize = Integer.parseInt(params.get(pageSizeKey).toString());
 		}
 
-		if (params.get("sorter") != null) {
-			JSONObject sort = JSONObject.parseObject(ObjectUtil.string(params.get("sorter")));
-			if (sort.isEmpty())
-				this.sorter = Sort.unsorted();
-			else {
-				List<Order> orders = new ArrayList<Order>();
-				sort.entrySet().stream().forEach(item -> {
-					Order order = new Order((ObjectUtil.string(item.getValue()).toLowerCase().startsWith("desc") ? Direction.DESC : Direction.ASC), ObjectUtil.string(item.getKey()));
-					Sort.by(order);
-					orders.add(order);
-				});
-				this.sorter = Sort.by(orders);
-			}
+		if (params.get(sorterKey) != null) {
+			this.sort(params, sorterKey);
 		} else {
 			this.sorter = Sort.unsorted();
 		}
 
-		if (params.get("filter") != null) {
-			JSONObject filters = JSONObject.parseObject(ObjectUtil.string(params.get("filter")));
+		if (params.get(filterKey) != null) {
+			JSONObject filters = JSON.parseObject(ObjectUtil.string(params.get(filterKey)));
 			if (filters != null && !filters.isEmpty()) {
 				this.filter = filters.entrySet().stream().filter(f -> f.getValue() != null).collect(Collectors.toMap(Map.Entry<String, Object>::getKey, s -> (List<Object>) s.getValue(), (k1, k2) -> k1));
 			}
 		}
 
 		// 移除特殊查询设置
-		this.condition.remove("current");
-		this.condition.remove("pageSize");
-		this.condition.remove("sorter");
-		this.condition.remove("filter");
+		this.condition.remove(currentKey);
+		this.condition.remove(pageSizeKey);
+		this.condition.remove(sorterKey);
+		this.condition.remove(filterKey);
+	}
+
+	private void sort(Map<String, Object> params, String sorterKey) {
+		JSONObject sort = JSON.parseObject(ObjectUtil.string(params.get(sorterKey)));
+		if (sort.isEmpty())
+			this.sorter = Sort.unsorted();
+		else {
+			List<Order> orders = new ArrayList<>();
+			sort.forEach((key, value) -> {
+				Order order = new Order((ObjectUtil.string(value).toLowerCase().startsWith("desc") ? Direction.DESC : Direction.ASC), ObjectUtil.string(key));
+				this.sorter = Sort.by(order);
+				orders.add(order);
+			});
+			this.sorter = Sort.by(orders);
+		}
 	}
 
 	public void pushParam(String key, Object value) {
@@ -134,8 +146,8 @@ public class PageQuery {
 	/**
 	 * 追加参数
 	 *
-	 * @param key
-	 * @param value
+	 * @param key 参数key
+	 * @param value 参数值
 	 */
 	public void appendParam(String key, Object value) {
 		if (this.condition == null)

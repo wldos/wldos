@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.system.storage.file.service;
@@ -10,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import com.wldos.support.controller.EntityTools;
+import com.wldos.support.controller.EntityAssists;
 import com.wldos.support.service.BaseService;
 import com.wldos.system.storage.file.entity.WoFile;
 import com.wldos.system.storage.file.repo.FileRepo;
@@ -26,12 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 文件操作service。
  *
- * @Title FileService
- * @Package com.wldos.system.service
- * @Project wldos
- * @Author 树悉猿、wldos
- * @Date 2021/4/28
- * @Version 1.0
+ * @author 树悉猿
+ * @date 2021/4/28
+ * @version 1.0
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -72,7 +71,7 @@ public class FileService extends BaseService<FileRepo, WoFile, Long> {
 		woFile.setName(origName);
 		woFile.setPath(storeName); // 保存相对路径，相对于uploadPath的路径，uploadPath割接时不会影响到数据库
 		woFile.setMimeType(file.getContentType());
-		EntityTools.setInsertInfo(woFile, id, usrId, userIp, true);
+		EntityAssists.beforeInsert(woFile, id, usrId, userIp, true);
 
 		this.save(woFile);
 

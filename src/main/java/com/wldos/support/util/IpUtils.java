@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2020 - 2021. zhiletu.com and/or its affiliates. All rights reserved.
- * zhiletu.com PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * http://www.zhiletu.com
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
  */
 
 package com.wldos.support.util;
@@ -9,22 +11,28 @@ package com.wldos.support.util;
 import javax.servlet.http.HttpServletRequest;
 
 public class IpUtils {
-	public static String getClientIp(HttpServletRequest request){
+	private static final String UNKNOWN = "unknown";
+
+	private IpUtils() {
+		throw new IllegalStateException("Utility class");
+	}
+
+	public static String getClientIp(HttpServletRequest request) {
 		String ip = request.getHeader("x-forwarded-for");
-		if (ip==null||ip.length()==0||"unknown".equalsIgnoreCase(ip)) {
+		if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
 			ip = request.getHeader("Proxy-Client-IP");
 		}
-		if (ip==null||ip.length()==0||"unknown".equalsIgnoreCase(ip)) {
+		if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
 			ip = request.getHeader("WL-Proxy-Client-IP");
 		}
-		if (ip==null||ip.length()==0||"unknown".equalsIgnoreCase(ip)) {
+		if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
 		return ip;
 	}
 
 	public static boolean internalIp(String ip) {
-		byte[] addr = textToNumericFormatV4(ip);
+		byte[] addr = textToNumFormatV4(ip);
 		return internalIp(addr) || "127.0.0.1".equals(ip);
 	}
 
@@ -34,72 +42,95 @@ public class IpUtils {
 	 * @param text IPv4地址
 	 * @return byte 字节
 	 */
-	public static byte[] textToNumericFormatV4(String text) {
+	public static byte[] textToNumFormatV4(String text) {
 		if (text.length() == 0) {
-			return null;
+			return new byte[0];
 		}
 
 		byte[] bytes = new byte[4];
 		String[] elements = text.split("\\.", -1);
 		try {
-			long l;
-			int i;
 			switch (elements.length) {
 				case 1:
-					l = Long.parseLong(elements[0]);
-					if ((l < 0L) || (l > 4294967295L)) {
-						return null;
-					}
-					bytes[0] = (byte) (int) (l >> 24 & 0xFF);
-					bytes[1] = (byte) (int) ((l & 0xFFFFFF) >> 16 & 0xFF);
-					bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
-					bytes[3] = (byte) (int) (l & 0xFF);
-					break;
+					return ipRead(Long.parseLong(elements[0]));
 				case 2:
-					l = Integer.parseInt(elements[0]);
-					if ((l < 0L) || (l > 255L)) {
-						return null;
-					}
-					bytes[0] = (byte) (int) (l & 0xFF);
-					l = Integer.parseInt(elements[1]);
-					if ((l < 0L) || (l > 16777215L)) {
-						return null;
-					}
-					bytes[1] = (byte) (int) (l >> 16 & 0xFF);
-					bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
-					bytes[3] = (byte) (int) (l & 0xFF);
-					break;
+					return ipRead(Integer.parseInt(elements[0]), Integer.parseInt(elements[1]));
 				case 3:
-					for (i = 0; i < 2; ++i) {
-						l = Integer.parseInt(elements[i]);
-						if ((l < 0L) || (l > 255L)) {
-							return null;
-						}
-						bytes[i] = (byte) (int) (l & 0xFF);
-					}
-					l = Integer.parseInt(elements[2]);
-					if ((l < 0L) || (l > 65535L)) {
-						return null;
-					}
-					bytes[2] = (byte) (int) (l >> 8 & 0xFF);
-					bytes[3] = (byte) (int) (l & 0xFF);
-					break;
+					return ipRead(elements);
 				case 4:
-					for (i = 0; i < 4; ++i) {
-						l = Integer.parseInt(elements[i]);
+					for (int i = 0; i < 4; ++i) {
+						long l = Integer.parseInt(elements[i]);
 						if ((l < 0L) || (l > 255L)) {
-							return null;
+							return new byte[0];
 						}
 						bytes[i] = (byte) (int) (l & 0xFF);
 					}
 					break;
 				default:
-					return null;
+					return new byte[0];
 			}
 		}
 		catch (NumberFormatException e) {
-			return null;
+			return new byte[0];
 		}
+		return bytes;
+	}
+
+	private static byte[] ipRead(long l) {
+		byte[] bytes = new byte[0];
+		if ((l < 0L) || (l > 4294967295L)) {
+			return bytes;
+		}
+
+		bytes = new byte[4];
+		bytes[0] = (byte) (int) (l >> 24 & 0xFF);
+		bytes[1] = (byte) (int) ((l & 0xFFFFFF) >> 16 & 0xFF);
+		bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
+		bytes[3] = (byte) (int) (l & 0xFF);
+
+		return bytes;
+	}
+
+	private static byte[] ipRead(long ele1, long ele2) {
+		byte[] bytes = new byte[0];
+
+		if ((ele1 < 0L) || (ele1 > 255L)) {
+			return bytes;
+		}
+
+		if ((ele2 < 0L) || (ele2 > 16777215L)) {
+			return bytes;
+		}
+
+		bytes = new byte[4];
+
+		bytes[0] = (byte) (int) (ele1 & 0xFF);
+		bytes[1] = (byte) (int) (ele2 >> 16 & 0xFF);
+		bytes[2] = (byte) (int) ((ele2 & 0xFFFF) >> 8 & 0xFF);
+		bytes[3] = (byte) (int) (ele2 & 0xFF);
+
+		return bytes;
+	}
+
+	private static byte[] ipRead(String[] elements) {
+		byte[] bytes = new byte[4];
+
+		long l = Integer.parseInt(elements[2]);
+		if ((l < 0L) || (l > 65535L)) {
+			return new byte[0];
+		}
+
+		for (int i = 0; i < elements.length - 1 ; ++i) {
+			l = Integer.parseInt(elements[i]);
+			if ((l < 0L) || (l > 255L)) {
+				return new byte[0];
+			}
+			bytes[i] = (byte) (int) (l & 0xFF);
+		}
+
+		bytes[2] = (byte) (int) (l >> 8 & 0xFF);
+		bytes[3] = (byte) (int) (l & 0xFF);
+
 		return bytes;
 	}
 
@@ -122,14 +153,9 @@ public class IpUtils {
 			case SECTION_1:
 				return true;
 			case SECTION_2:
-				if (b1 >= SECTION_3 && b1 <= SECTION_4) {
-					return true;
-				}
+				return (b1 >= SECTION_3 && b1 <= SECTION_4);
 			case SECTION_5:
-				switch (b1) {
-					case SECTION_6:
-						return true;
-				}
+				return b1 == SECTION_6;
 			default:
 				return false;
 		}
