@@ -44,7 +44,7 @@ WLDOS开发平台，基于springboot实现轻量级快速开发框架，SaaS应�
     "status":200,
     "message":"ok"
 }
-// 前端菜单模板：
+// 前端路由模板：
 menu: [
     {
         path: '/',
@@ -60,11 +60,6 @@ menu: [
                 name: 'basic-form',
                 icon: 'smile',
                 path: '/form/basic-form',
-            },
-            {
-                name: 'advanced-form',
-                icon: 'smile',
-                path: '/form/advanced-form',
             },
         ],
     },
@@ -82,22 +77,7 @@ menu: [
                         icon: 'smile',
                         path: '/list/search/articles',
                     },
-                    {
-                        name: 'projects',
-                        icon: 'smile',
-                        path: '/list/search/projects',
-                    },
-                    {
-                        name: 'applications',
-                        icon: 'smile',
-                        path: '/list/search/applications',
-                    },
                 ],
-            },
-            {
-                name: 'table-list',
-                icon: 'smile',
-                path: '/list/table-list',
             },
         ],
     },]
