@@ -62,11 +62,6 @@ menu: [
                 path: '/form/basic-form',
             },
             {
-                name: 'step-form',
-                icon: 'smile',
-                path: '/form/step-form',
-            },
-            {
                 name: 'advanced-form',
                 icon: 'smile',
                 path: '/form/advanced-form',
@@ -104,16 +99,6 @@ menu: [
                 icon: 'smile',
                 path: '/list/table-list',
             },
-            {
-                name: 'basic-list',
-                icon: 'smile',
-                path: '/list/basic-list',
-            },
-            {
-                name: 'card-list',
-                icon: 'smile',
-                path: '/list/card-list',
-            },
         ],
     },]
 ```  
@@ -134,22 +119,38 @@ menu: [
 2.  点击左侧管理菜单，使用系统管理功能。
 3.  登陆使用JWT认证。
 
+#### 效果预览  
+
+![自带首页展示图表模板](https://images.gitee.com/uploads/images/2021/0722/221040_3d1c748e_7754170.png "屏幕截图.png")
+
+![登陆页](https://images.gitee.com/uploads/images/2021/0722/220955_aacddd4c_7754170.png "登陆页")
+
+![系统管理dashboard](https://images.gitee.com/uploads/images/2021/0722/221124_05ccdd30_7754170.png "dashboard")  
+
+![应用管理，微服务池](https://images.gitee.com/uploads/images/2021/0722/221208_e237514c_7754170.png "应用管理")  
+
+![资源管理，支持嵌套菜单、API、静态资源等](https://images.gitee.com/uploads/images/2021/0722/221253_3b3bb6be_7754170.png "资源管理")  
+
+![角色管理支持继承授权](https://images.gitee.com/uploads/images/2021/0722/221354_162593c1_7754170.png "角色管理")  
+
+![继承父级角色的权限不可编辑](https://images.gitee.com/uploads/images/2021/0722/221443_f811451b_7754170.png "角色管理")  
+
+![租户管理，支持无限级子公司维护](https://images.gitee.com/uploads/images/2021/0722/221528_61653ebc_7754170.png "租户管理")  
+
+![业务体系管理，支持企业创建不同业务方面的组织体系](https://images.gitee.com/uploads/images/2021/0722/221621_3673d17f_7754170.png "体系管理")  
+
+![组织管理，支持组织机构维护、组织赋权、组织人员维护](https://images.gitee.com/uploads/images/2021/0722/221717_b077ef6a_7754170.png "组织管理")  
+
+![组织赋权](https://images.gitee.com/uploads/images/2021/0722/221823_33311de9_7754170.png "组织赋权")  
+
+限于篇幅过长，详情关注：[Java语言开发的SaaS版前后端分离开发平台WLDOS](https://www.zhiletu.com/archives-10982.html)  
+
 #### 参与贡献
 
 1.  Fork 本仓库
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
 
 ### Reference Documentation
 For further reference, please consider the following sections:
