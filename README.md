@@ -136,4 +136,5 @@ menu: [
 
 #### 交流群
 
+第一个为微信群，二维码过期的话，请加第二个qq群。
 ![qq群](https://images.gitee.com/uploads/images/2021/0723/112715_465f29e9_7754170.png "wldos群")![wldos微信交流](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")
