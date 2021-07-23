@@ -91,7 +91,8 @@ menu: [
 4.  在idea控制台执行mvn spring-boot:run运行项目
 再部署前端：  
 1.  下载本地后，打开前端项目，执行npm install安装依赖库。
-2.  执行npm start启动前端项目。    
+2.  执行npm start启动前端项目。  
+3.  超级管理员admin，密码同名称。  
 
 #### 使用说明
 
