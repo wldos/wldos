@@ -4,13 +4,23 @@
 WLDOS是一款互联网运营平台，本仓库是wldos后端工程。由于是新项目，很适合新手跟随学习。  
 WLDOS开发平台，基于springboot实现轻量级快速开发框架，SaaS应用架构。默认支持多租户运行模式，同时支持关闭以单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构。  
 
-#### 关于发音  
-英：[wel'dɑ:s] 美：[wɛl'dɑ:s]。  
+WLDOS是一款面向互联网的开放运营软件支撑平台，基于多域架构，支持多租、多应用的SaaS系统软件，本站基于WLDOS搭建，新功能持续开放中。
+
+WLDOS开发平台，基于springboot二次封装的轻量级快速开发框架，SaaS应用架构，后期支持脱离springboot独立运行。默认支持多域(站)系统，也可以单站模式运行，默认支持多租户运行模式，同时支持单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构，具体部署方式不作强定义，自行规划。
+
+ **适合个人建站、企业建站、搭建业务中台的基础、研发平台，适合技术在起步阶段或想在互联网领域开发项目的团队。**   
+
+关于发音  
+汉：[wodousi] 英：[wel'dɑ:s] 美：[wɛl'dɑ:s]。  
 
 #### 软件架构  
-框架技术：springboot2.4.6，spring-data-jdbc，定制封装。  
+框架技术：springboot2.4.6（支持升级到最新版），spring-data-jdbc，定制封装的框架级原生jdbcAPI让开发者自由发挥。
 
-应用架构：前后端分离，前端ReactJs，后端springMVC，JWT认证，无状态单实例SaaS架构，兼容springCloud，支持融入serviceMesh。  
+应用架构：前后端分离，前端ReactJs，后端springMVC，JWT认证，无状态，原生兼容springCloud，支持融入serviceMesh。
+
+2.0开始推出webflux架构版。
+
+ **1.0核心功能：系统管理（应用、资源、权限、用户、组织、租户、多域、分类），内容管理，信息发布，内容创作、内容付费（在线付费、在线交付）。** 
 
 软件架构说明
 统一响应json格式如下：
@@ -136,5 +146,6 @@ menu: [
 
 #### 交流群
 
-第一个为微信群，二维码过期的话，请加第二个qq群。
-![qq群](https://images.gitee.com/uploads/images/2021/0723/112715_465f29e9_7754170.png "wldos群")![wldos微信交流](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")
+qq群。
+![WLDOS交流qq群](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")
+![WLDOS官方抖音](https://images.gitee.com/uploads/images/2021/1021/141532_37b92edd_5481439.jpeg "WLDOS抖音.jpg")
