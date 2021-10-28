@@ -1,17 +1,15 @@
 # wldos
 
 #### 介绍
-WLDOS是一款互联网运营平台，本仓库是wldos后端工程。由于是新项目，很适合新手跟随学习。  
-WLDOS开发平台，基于springboot实现轻量级快速开发框架，SaaS应用架构。默认支持多租户运行模式，同时支持关闭以单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构。  
-
+WLDOS是云服务应用支撑平台，简称WLDOS云应用支撑平台或WLDOS平台，本仓库是wldos平台后端工程。由于是新项目，很适合新手跟随学习。  
 WLDOS是一款面向互联网的开放运营软件支撑平台，基于多域架构，支持多租、多应用的SaaS系统软件，本站基于WLDOS搭建，新功能持续开放中。
 
-WLDOS开发平台，基于springboot二次封装的轻量级快速开发框架，SaaS应用架构，后期支持脱离springboot独立运行。默认支持多域(站)系统，也可以单站模式运行，默认支持多租户运行模式，同时支持单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构，具体部署方式不作强定义，自行规划。
+WLDOS云应用支撑平台，基于springboot二次封装的轻量级快速开发框架，SaaS应用架构，后期支持脱离springboot独立运行。默认支持多域(站)系统，也可以单站模式运行，默认支持多租户运行模式，同时支持单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构，具体部署方式不作强定义，自行规划。
 
  **适合个人建站、企业建站、搭建业务中台的基础、研发平台，适合技术在起步阶段或想在互联网领域开发项目的团队。**   
 
 关于发音  
-汉：[wodousi] 英：[wel'dɑ:s] 美：[wɛl'dɑ:s]。  
+汉：['wo`dou`si] 英：[wel'dɑ:s] 美：[wɛl'dɑ:s]。  
 
 #### 软件架构  
 框架技术：springboot2.4.6（支持升级到最新版），spring-data-jdbc，定制封装的框架级原生jdbcAPI让开发者自由发挥。
@@ -148,4 +146,4 @@ menu: [
 
 qq群。
 ![WLDOS交流qq群](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")
-![WLDOS官方抖音](https://images.gitee.com/uploads/images/2021/1021/141532_37b92edd_5481439.jpeg "WLDOS抖音.jpg")
+![WLDOS官方抖音](https://images.gitee.com/uploads/images/2021/1028/125106_732de1ca_5481439.png "WLDOS官方抖音.png")
