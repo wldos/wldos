@@ -146,4 +146,4 @@ menu: [
 
 qq群。
 ![WLDOS交流qq群](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")
-![WLDOS官方抖音](https://images.gitee.com/uploads/images/2021/1028/125106_732de1ca_5481439.png "WLDOS官方抖音.png")
+![WLDOS粉丝抖音](https://images.gitee.com/uploads/images/2021/1114/164709_688ab276_7754170.png "wldos代码创客.png")
