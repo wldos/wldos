@@ -42,6 +42,7 @@ wldos
 │  │  │  └─resources────────────────平台配置
 ````
 #### 功能架构  
+WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三大版块构成，组成两个项目模块：WLDOS云应用支撑平台和WLDOS内容管理系统，如下：　　
 ![WLDOS支撑平台](https://images.gitee.com/uploads/images/2021/1116/113101_bbed1cc4_7754170.jpeg "wldos-platform.jpeg")
 ![WLDOS内容管理](https://images.gitee.com/uploads/images/2021/1116/113134_443ea303_7754170.jpeg "在这里输入图片标题")
 
