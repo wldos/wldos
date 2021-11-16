@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 README.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -19,6 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
+!**/src/main/resources/static/
 
 ### NetBeans ###
 /nbproject/private/
@@ -33,23 +33,4 @@ build/
 ### VS Code ###
 .vscode/
 /.mvn/wrapper/
-=======
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
-
-# Other files and folders
-.settings/
-
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
-
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
->>>>>>> ae0862e50ce6e247d75dc92d9ef07eed4a3b1752
+/src/main/resources/static/

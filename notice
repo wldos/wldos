@@ -1,0 +1,103 @@
+  						贡献者许可证协议
+
+当您使用本软件源码或向源码官方及其社区提交贡献时，默认您同意和接受本协议。
+
+通过签署贡献协议（“本协议”），签署的“贡献者”同意接受“本协议”并受“本协议”约束。
+“本协议”适用于“贡献者”提交给 WLDOS及由WLDOS衍生 社区 （“社区”）的全部项目（后称“项目”）
+的“贡献”，无论“贡献”是在签署日期之前，签署时还是之后提供。
+
+“贡献” 是指受版权法保护的，由“贡献者”有意“提交”以包含在“项目”所分发软件中任何作品。
+“提交”是指以电子，口头或书面交流的任何形式送给“社区”管理方或其代表，包括但不限于“社区”管理
+方为管理的为讨论和改进项目所提供的电子邮件列表上的交流，源代码控制系统以及由“社区”管理方或
+其代表管理的问题跟踪系统，但不包括由“我”明确标记或以书面形式指定为“非贡献”的交流。
+
+“贡献者”或“我”是指向WLDOS平台及其衍生项目提交贡献的个人或法人实体。对于法人实体，做出
+“贡献”的实体以及由该实体控制、受其控制或受其共同控制的所有其他实体均被视为“贡献者”。就
+本定义而言，“控制”是指有受控方或共同受控方至少50%直接或间接的投票权，资金或其他有价证券。
+
+“贡献者”授予“社区”管理方和由“项目”所分发的软件的每个接收者永久性的、全球性的、免费的、非独
+占的、不可撤销的、有分许可权的版权许可，供其复制、使用、修改、分发其“贡献”，不论修改与否。
+
+“贡献者”授予“社区”管理方和由“项目”所分发的软件的每个接收者永久性的、全球性的、免费的、非独
+占的、不可撤销的、有分许可权的专利许可，供其制造、委托制造、使用、许诺销售、销售、进口其
+“贡献”或以其他方式转移其“贡献”。前述专利许可仅限于“贡献者”现在或将来拥有或控制的其“贡献”
+本身或其“贡献”与“提交”“贡献”时所针对的“项目”软件的结合而将必然会侵犯的专利权利要求，不包括
+仅因“贡献者”之外的人修改“贡献”或其他结合而将必然会侵犯到的专利权利要求。如由“项目”所分发的
+软件实际采用的许可证对软件接收者的专利授权有进一步限制规定的，如限制接收者对“贡献”或前述软
+件发起专利诉讼或其他维权等，则对前述软件接收者的专利授权以具体项目许可证的对应规定为准。
+
+“贡献者”保证“我”是“贡献”的版权所有者，或者“我”经版权所有者授权进行“贡献”，并且“我”在法律
+上授予“本协议”规定的权利。
+
+“贡献者”保证“我”不知晓“我”的任何“贡献”已经侵犯或将侵犯任何第三方的版权，商标，专利或其他
+知识产权。
+
+除“本协议”明确约定外，“贡献者”的 “贡献”在提供时不带任何明示或默示的担保，“贡献者”或版权
+所有者不对任何人因使用“项目”所分发的软件或其中的“贡献”而引发的任何直接或间接损失承担责任，
+不论因何种原因导致或者基于何种法律理论，即使其曾被建议有此种损失的可能性。
+
+					Contributor License Agreement
+
+When you use the software source code or submit contributions to the source code 
+official and its community, you agree and accept this agreement by default.
+
+By signing the contribution agreement ("this Agreement"), the signed contributor
+agrees to accept and be bound by this agreement. This Agreement applies to the
+"contributions" of all projects (hereinafter referred to as "projects") submitted
+by contributors to wldos and wldos derived communities (the "communities"),
+whether they are provided before, at or after the signing date.
+
+"Contribution" means any work protected by copyright law that is intentionally
+"submitted" by the contributor to be included in the software distributed by the
+project. "Submission" refers to any form of electronic, oral or written
+communication sent to the community manager or its representative, including but
+not limited to the communication on the e-mail list managed by the community
+manager for discussing and improving the project, the source code control system
+and the problem tracking system managed by the community manager or its
+representative, but does not include "I" Communications clearly marked or
+designated in writing as "non contribution".
+
+"Contributor" or "I" refers to the individual or legal entity submitting
+contributions to the wldos platform and its derivative projects. For legal
+entities, the entity making the "contribution" and all other entities controlled,
+controlled or jointly controlled by the entity are regarded as "contributors".
+For the purposes of this definition, "control" means having at least 50% of the
+direct or indirect voting rights, funds or other securities of the controlled
+party or the jointly controlled party.
+
+Contributor grants the community manager and each recipient of the software
+distributed by the project a permanent, global, free, non exclusive, irrevocable
+and sublicense copyright license for its reproduction, use, modification and
+distribution of its contribution, whether modified or not.
+
+The contributor grants the community manager and each recipient of the software
+distributed by the project a permanent, global, free, non exclusive, irrevocable
+and sublicensed patent license to manufacture, commission manufacturing, use,
+offer for sale, sell, import or otherwise transfer its contribution. The
+foregoing patent license is limited to the patent claims that will inevitably be
+infringed by the "contribution" itself or the combination of its "contribution"
+and the "project" software for which the "contribution" is submitted, which is
+owned or controlled by the "contributor" now or in the future, and does not
+include the modification of the "contribution" only by someone other than the
+"contributor" Or other patent claims that will inevitably be infringed in
+combination. If the license actually adopted by the software distributed by the
+"project" further restricts the patent authorization of the software recipient,
+and restricts the recipient from initiating patent litigation or other rights
+protection for the "contribution" or the aforementioned software, the patent
+authorization of the aforementioned software recipient shall be subject to the
+corresponding provisions of the specific project license.
+
+Contributor warrants that I am the copyright owner of the contribution, or that
+I am authorized by the copyright owner to make the contribution, and that I
+legally grant the rights set forth in this agreement.
+
+Contributor warrants that I am not aware that any of my contributions has
+infringed or will infringe the copyright, trademark, patent or other
+intellectual property rights of any third party.
+
+Except as expressly agreed in this agreement, the "contribution" of the
+"contributor" is provided without any express or implied warranty, and the
+"contributor" or copyright owner shall not be liable for any direct or
+indirect loss caused by anyone's use of the software distributed by the
+project or its "contribution", regardless of the cause or legal theory,
+Even if it has been suggested that there is a possibility of such loss.
