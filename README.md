@@ -42,6 +42,8 @@ wldos
 │  │  │  └─resources────────────────平台配置
 ````
 #### 功能架构  
+![WLDOS支撑平台](https://images.gitee.com/uploads/images/2021/1116/113101_bbed1cc4_7754170.jpeg "wldos-platform.jpeg")
+![WLDOS内容管理](https://images.gitee.com/uploads/images/2021/1116/113134_443ea303_7754170.jpeg "在这里输入图片标题")
 
 统一响应json格式如下：
 
