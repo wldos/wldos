@@ -1,4 +1,4 @@
-# wldos
+# WLDOS
 #### 引子
 元宇宙的概念炒得火热，现在发现其中的很多理念与当初的创想不谋而合，身为码农的人们应该做点什么，后生万学，奋起直追，犹未为晚。那我们就从力所能及的地方开始吧，也许我们并不内行，但我们对未来有自己的憧憬和定义，身为一只码农所能做的，最好是从代码开始输出自己的想法，在系统的研发设计中，一步步探求我们最引以为傲的“乌托邦”，然后实现它，驱动它，直到创造美好的世界！而WLDOS（World Operating System）似乎就是为了这样的目开始的涂鸦，这是一个拙劣而平凡的“小板凳”，我们正在不断打磨它、升级它。
 
@@ -190,6 +190,6 @@ menu: [
 QQ群：  
 ![WLDOS交流qq群](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")  
 微信公众号：    
-![微信公众号](https://images.gitee.com/uploads/images/2021/1118/085852_e889e669_7754170.jpeg "wldos订阅号.jpg")
+![微信公众号](https://images.gitee.com/uploads/images/2021/1118/085852_e889e669_7754170.jpeg "wldos订阅号.jpg")  
 抖音:  
 ![WLDOS粉丝抖音](https://images.gitee.com/uploads/images/2021/1114/164709_688ab276_7754170.png "wldos代码创客.png")
