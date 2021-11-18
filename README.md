@@ -187,8 +187,9 @@ menu: [
 4.  新建 Pull Request
 
 #### 交流群
-
-qq群。
+QQ群：  
 ![WLDOS交流qq群](https://images.gitee.com/uploads/images/2021/0723/112715_53a377a2_7754170.png "wldos微信")  
-![WLDOS粉丝抖音](https://images.gitee.com/uploads/images/2021/1114/164709_688ab276_7754170.png "wldos代码创客.png")  
+微信公众号：    
 ![微信公众号](https://images.gitee.com/uploads/images/2021/1118/085852_e889e669_7754170.jpeg "wldos订阅号.jpg")
+抖音:  
+![WLDOS粉丝抖音](https://images.gitee.com/uploads/images/2021/1114/164709_688ab276_7754170.png "wldos代码创客.png")
