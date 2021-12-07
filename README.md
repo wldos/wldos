@@ -13,6 +13,8 @@ WLDOS云应用支撑平台，基于springboot二次封装的轻量级快速开�
 
 **适合个人建站、企业建站、搭建业务中台的基础、研发平台，适合技术在起步阶段或想在互联网领域开发项目的团队。**
 
+[在线体验](https://shuxiyuan.com/user/login?redirect=https%3A%2F%2Fshuxiyuan.com%2Fadmin%2Fres%2Fapp)  
+
 关于发音  
 为统一发音，采用汉语拼音：['wo'dou'si] 。
 
