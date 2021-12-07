@@ -53,9 +53,6 @@ public class AppController extends RepoController<AppService, WoApp> {
 	public PageableResult<WoApp> listDomainApp(@RequestParam Map<String, Object> params) {
 
 		PageQuery pageQuery = new PageQuery(params);
-		if (this.isMultiTenancy() && !this.service.isAdmin(this.getCurUserId())) {
-			pageQuery.appendParam(Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId());
-		}
 
 		return  this.service.queryAppForPage(pageQuery);
 	}
@@ -65,7 +62,7 @@ public class AppController extends RepoController<AppService, WoApp> {
 
 		PageQuery pageQuery = new PageQuery(params);
 		if (this.isMultiTenancy() && !this.service.isAdmin(this.getCurUserId())) {
-			pageQuery.appendParam(Constants.COMMON_KEY_APP_TYPE, AppTypeEnum.APP.getValue());
+			pageQuery.pushFilter(Constants.COMMON_KEY_APP_TYPE, AppTypeEnum.APP.toString(), AppTypeEnum.PRIVATE.toString());
 		}
 
 		return this.service.execQueryForPage(new WoApp(), pageQuery);
@@ -74,7 +71,9 @@ public class AppController extends RepoController<AppService, WoApp> {
 	@GetMapping("type")
 	public List<Map<String, Object>> fetchEnumAppType() {
 
-		return Arrays.stream(AppTypeEnum.values()).map(item -> {
+		return (this.isPlatformAdmin(this.getTenantId()) ?
+				Arrays.stream(AppTypeEnum.values())
+				: Arrays.stream(AppTypeEnum.values()).filter(v -> !v.getValue().equals(Constants.ENUM_TYPE_APP_PLAT))).map(item -> {
 			Map<String, Object> em = new HashMap<>();
 			em.put("label", item.getLabel());
 			em.put("value", item.getValue());

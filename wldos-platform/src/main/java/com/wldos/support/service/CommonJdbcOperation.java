@@ -68,7 +68,12 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 			String and = "and ";
 			String aliases = "a.";
 			condition.forEach((key, value) -> {
-				Field field = ReflectionUtils.findRequiredField(entity, key);
+				Field field = null;
+				try {
+					field = ReflectionUtils.findRequiredField(entity, key);
+				} catch (Exception e) {}
+				if (field == null)
+					return;
 				if (field.getType().equals(String.class)) {
 					finalSql1.append(and).append(" instr(").append(aliases).append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
 				}
@@ -114,6 +119,23 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		return new PageableResult<>(total, currentPage, pageSize, list);
 	}
 
+	public <P, C, V> List<V> execQueryForList(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, String ...pTableAndCTableAndPIdKey) {
+		Sort sort = pageQuery.getSorter();
+		Map<String, List<Object>> filter = pageQuery.getFilter();
+		Map<String, Object> condition = pageQuery.getCondition();
+		List<Object> params = new ArrayList<>();
+
+		StringBuilder sql = this.querySqlByTable(pTableAndCTableAndPIdKey[0], pClass, params, condition, filter)
+				.append(this.existsSql(pTableAndCTableAndPIdKey[1], "b", pTableAndCTableAndPIdKey[2], cClass, params, condition, filter)); // 约定：子表别名为b
+
+		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList("select count(1) as total from ( " + sql + " ) b", params.toArray());
+		int total = all.isEmpty() ? 0 : Integer.parseInt(ObjectUtil.string(all.get(0).get("total")));
+
+		this.orderSql(sort, sql);
+
+		return this.getNamedParamJdbcTemplate().getJdbcOperations().query(sql.toString(), new BeanPropertyRowMapper<>(vo), params.toArray());
+	}
+
 	public <P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String ...pTableAndCTableAndPIdKey) {
 		List<V> list;
 		Sort sort = pageQuery.getSorter();
@@ -122,7 +144,7 @@ public class CommonJdbcOperation extends FreeJdbcTemplate {
 		List<Object> params = new ArrayList<>();
 
 		StringBuilder sql = this.querySqlByTable(pTableAndCTableAndPIdKey[0], pClass, params, condition, filter)
-				.append(this.existsSql(pTableAndCTableAndPIdKey[1], "b", pTableAndCTableAndPIdKey[2], cClass, params, condition, filter));
+				.append(this.existsSql(pTableAndCTableAndPIdKey[1], "b", pTableAndCTableAndPIdKey[2], cClass, params, condition, filter)); // 约定：子表别名为b
 
 		List<Map<String, Object>> all = this.getNamedParamJdbcTemplate().getJdbcOperations().queryForList("select count(1) as total from ( " + sql + " ) b", params.toArray());
 		int total = all.isEmpty() ? 0 : Integer.parseInt(ObjectUtil.string(all.get(0).get("total")));

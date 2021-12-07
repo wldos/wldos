@@ -46,16 +46,17 @@ public class DomainController extends RepoController<DomainService, WoDomain> {
 	public PageableResult<WoDomain> listQuery(@RequestParam Map<String, Object> params) {
 
 		PageQuery pageQuery = new PageQuery(params);
+		if (this.isMultiTenancy() && !this.service.isAdmin(this.getCurUserId())) {
+			pageQuery.appendParam(Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId());
+		}
+
 		return this.service.queryDomainList(pageQuery);
 	}
 
 	@GetMapping("resList")
 	public PageableResult<DomainResource> listDomainRes(@RequestParam Map<String, Object> params) {
-
+		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		if (this.isMultiTenancy() && !this.service.isAdmin(this.getCurUserId())) {
-			pageQuery.appendParam(Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId());
-		}
 		Long domainId = Long.parseLong(params.get("domainId").toString());
 		return this.service.queryDomainRes(domainId, pageQuery);
 	}

@@ -8,7 +8,11 @@
 
 package com.wldos.system.core.controller;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.wldos.support.controller.RepoController;
 import com.wldos.support.controller.web.PageableResult;
@@ -16,6 +20,7 @@ import com.wldos.support.util.PageQuery;
 import com.wldos.support.Constants;
 import com.wldos.system.core.entity.WoArchitecture;
 import com.wldos.system.core.service.ArchitectureService;
+import com.wldos.system.enums.ArchTypeEnum;
 import com.wldos.system.vo.Architecture;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,5 +53,30 @@ public class ArchitectureController extends RepoController<ArchitectureService, 
 	@Override
 	protected void preAdd(WoArchitecture entity) {
 		entity.setComId(this.getTenantId());
+	}
+
+	@Override
+	protected List<WoArchitecture> doFilter(List<WoArchitecture> res) {
+
+		if (this.isPlatformAdmin(this.getTenantId())) {
+			WoArchitecture plat = new WoArchitecture(Constants.TOP_ARCH_ID, "平台");
+			if (res.isEmpty()) {
+				res.add(plat);
+			}else
+				res.set(0, plat);
+		}
+
+		return res;
+	}
+
+	@GetMapping("type")
+	public List<Map<String, Object>> fetchEnumAppType() {
+
+		return Arrays.stream(ArchTypeEnum.values()).map(item -> {
+			Map<String, Object> em = new HashMap<>();
+			em.put("label", item.getLabel());
+			em.put("value", item.getValue());
+			return em;
+		}).collect(Collectors.toList());
 	}
 }

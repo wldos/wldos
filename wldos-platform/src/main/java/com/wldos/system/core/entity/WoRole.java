@@ -48,6 +48,13 @@ public class WoRole {
 	@Version
 	private Integer versions;
 
+	public WoRole() {}
+
+	public WoRole(Long id, String roleName) {
+		this.id = id;
+		this.roleName = roleName;
+	}
+
 	public Long getId() {
 		return id;
 	}

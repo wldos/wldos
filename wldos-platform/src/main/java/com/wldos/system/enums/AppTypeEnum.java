@@ -8,6 +8,8 @@
 
 package com.wldos.system.enums;
 
+import com.wldos.support.Constants;
+
 /**
  * 应用类型枚举。
  *
@@ -17,7 +19,7 @@ package com.wldos.system.enums;
  */
 public enum AppTypeEnum {
 
-	PLATFORM("平台", "platform"),
+	PLATFORM("平台", Constants.ENUM_TYPE_APP_PLAT),
 
 	APP("市场", "app"),
 

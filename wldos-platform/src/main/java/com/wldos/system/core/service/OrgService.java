@@ -29,6 +29,7 @@ import com.wldos.system.core.repo.ComUserRepo;
 import com.wldos.system.core.repo.OrgRepo;
 import com.wldos.system.core.repo.OrgUserRepo;
 import com.wldos.system.core.repo.RoleOrgRepo;
+import com.wldos.system.enums.RedisKeyEnum;
 import com.wldos.system.vo.AuthRes;
 import com.wldos.system.vo.Org;
 import com.wldos.system.vo.OrgRole;
@@ -159,6 +160,8 @@ public class OrgService extends BaseService<OrgRepo, WoOrg, Long> {
 		if (!woComUsers.isEmpty())
 			this.comUserRepo.saveAll(woComUsers);
 
+		this.cache.remove(RedisKeyEnum.WLDOS_ADMIN.toString());
+
 		return mes.toString();
 	}
 
@@ -167,6 +170,12 @@ public class OrgService extends BaseService<OrgRepo, WoOrg, Long> {
 	}
 
 	public void removeOrgStaff(List<Long> ids, Long orgId) {
+		List<WoOrgUser> adminUsers = this.orgUserRepo.existsAdmin(Constants.TOP_COM_ID, Constants.AdminOrgCode, orgId);
+		if (!adminUsers.isEmpty() && adminUsers.size() - ids.size() >= 1 ) {
+			getLog().error("必须保留一个超级管理员，删除失败管理用户组id: {}", orgId);
+			return;
+		}
 		this.orgUserRepo.removeOrgStaff(ids, orgId);
+		this.cache.remove(RedisKeyEnum.WLDOS_ADMIN.toString());
 	}
 }

@@ -22,8 +22,6 @@ public class WoDomainResource {
 
 	private String moduleName;
 
-	private String routePath;
-
 	private Long resourceId;
 
 	private Long appId;
@@ -68,14 +66,6 @@ public class WoDomainResource {
 
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
-	}
-
-	public String getRoutePath() {
-		return routePath;
-	}
-
-	public void setRoutePath(String routePath) {
-		this.routePath = routePath;
 	}
 
 	public Long getResourceId() {

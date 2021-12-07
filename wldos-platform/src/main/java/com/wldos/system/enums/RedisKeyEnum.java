@@ -16,6 +16,8 @@ package com.wldos.system.enums;
  * @version 1.0
  */
 public enum RedisKeyEnum {
+
+	WLDOS_ADMIN("wldos:admin"),
 	
 	WLDOS_AUTH("wldos:auth"),
 	

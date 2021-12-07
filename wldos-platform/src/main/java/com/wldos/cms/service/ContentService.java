@@ -61,6 +61,7 @@ public class ContentService extends BaseService<ContentRepo, KModelContent, Long
 			ObjectMapper om = new ObjectMapper();
 			if (ObjectUtil.isBlank(value)) {
 				List<KModelContent> contents = this.findAll();
+
 				if (ObjectUtil.isBlank(contents)) {
 					return new ArrayList<>();
 				}

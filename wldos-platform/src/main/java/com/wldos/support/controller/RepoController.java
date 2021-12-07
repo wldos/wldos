@@ -119,6 +119,8 @@ public abstract class RepoController<S extends BaseService, E> extends BaseContr
 			return service.findAll();
 	}
 
+	protected List<E> doFilter(List<E> res) { return res;}
+
 	@Deprecated
 	@GetMapping("page")
 	public Page<E> list(@RequestParam Map<String, Object> params) {

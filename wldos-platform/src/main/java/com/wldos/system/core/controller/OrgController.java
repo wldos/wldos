@@ -8,6 +8,8 @@
 
 package com.wldos.system.core.controller;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -93,12 +95,6 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 		return this.resJson.ok(message);
 	}
 
-	@GetMapping("platOrg")
-	public List<Org> queryPlatformRoleOrg() {
-
-		return this.service.queryPlatformRoleOrg(OrgTypeEnum.PLATFORM.toString());
-	}
-
 	@DeleteMapping("staffDel")
 	public Boolean removeOrgStaff(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<String>) params.get("ids")).stream().map(Long::parseLong).collect(Collectors.toList());
@@ -126,5 +122,31 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 	@Override
 	protected void postDeletes(List<Object> ids) {
 		this.refreshAuth();
+	}
+
+	@Override
+	protected List<WoOrg> doFilter(List<WoOrg> res) {
+		if (this.isPlatformAdmin(this.getTenantId())) {
+			WoOrg plat = new WoOrg(Constants.TOP_ORG_ID, "平台");
+			if (res.isEmpty()) {
+				res.add(plat);
+			}else
+				res.set(0, plat);
+		}
+
+		return res;
+	}
+
+	@GetMapping("type")
+	public List<Map<String, Object>> fetchEnumAppType() {
+
+		return (this.isPlatformAdmin(this.getTenantId()) ?
+					Arrays.stream(OrgTypeEnum.values())
+					: Arrays.stream(OrgTypeEnum.values()).filter(v -> !v.getValue().equals(Constants.ENUM_TYPE_ORG_PLAT))).map(item -> {
+			Map<String, Object> em = new HashMap<>();
+			em.put("label", item.getLabel());
+			em.put("value", item.getValue());
+			return em;
+		}).collect(Collectors.toList());
 	}
 }

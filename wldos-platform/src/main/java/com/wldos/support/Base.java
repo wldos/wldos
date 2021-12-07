@@ -74,6 +74,10 @@ public class Base {
 		return this.wldosDomain;
 	}
 
+	protected boolean isPlatformAdmin(Long tenantId) {
+		return tenantId.equals(Constants.TOP_COM_ID);
+	}
+
 	protected void refreshCache(String ...keys) {
 		for (String key : keys) {
 			this.cache.remove(key);

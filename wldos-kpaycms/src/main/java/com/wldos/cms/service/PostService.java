@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
+ */
 
 package com.wldos.cms.service;
 
@@ -22,6 +28,7 @@ import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.MiniPost;
 import com.wldos.cms.vo.PostMember;
 import com.wldos.cms.vo.PostUnit;
+import com.wldos.cms.vo.SPost;
 import com.wldos.cms.vo.Term;
 import com.wldos.support.controller.web.PageableResult;
 import com.wldos.support.service.BaseService;
@@ -37,7 +44,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+/**
+ * 帖子service。
+ *
+ * @author 树悉猿
+ * @date 2021/6/17
+ * @version 1.0
+ */
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -217,6 +230,33 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		postUnitPage.setDataRows(postUnits);
 
 		return postUnitPage;
+	}
+
+	public PageableResult<AuditPost> queryAdminPosts(String domain, PageQuery pageQuery) {
+		List<Object> termTypeIds = this.termService.findAllTermTypeIdsByDomain(domain);
+
+		if (termTypeIds.isEmpty())
+			return new PageableResult<>();
+
+		this.filterByParentTermTypeId(termTypeIds, pageQuery);
+
+		return this.queryAdminPosts(pageQuery);
+	}
+
+	public PageableResult<SPost> searchPosts(String domain, PageQuery pageQuery) {
+		List<Object> termTypeIds = this.termService.findAllTermTypeIdsByDomain(domain);
+
+		if (termTypeIds.isEmpty())
+			return new PageableResult<>();
+
+		this.filterByParentTermTypeId(termTypeIds, pageQuery);
+
+		return this.execQueryForPage(SPost.class, KPosts.class, KTermObject.class, "k_posts", "k_term_object", "object_id", pageQuery);
+	}
+
+	private void filterByParentTermTypeId(List<Object> termTypeIds, PageQuery pageQuery) {
+
+		pageQuery.pushFilter("termTypeId", termTypeIds);
 	}
 
 	public PageableResult<PostUnit> queryArchivesUser(PageQuery pageQuery) {

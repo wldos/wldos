@@ -22,6 +22,7 @@ import com.wldos.support.util.ObjectUtil;
 import com.wldos.system.core.entity.WoDomainResource;
 import com.wldos.system.core.repo.DomainResourceRepo;
 import com.wldos.system.enums.RedisKeyEnum;
+import com.wldos.system.vo.DomainResource;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,14 +44,17 @@ public class DomainResourceService extends BaseService<DomainResourceRepo, WoDom
 		return this.entityRepo.queryDomainDynamicRoutes(domain, appIds, resIds);
 	}
 
-	public List<WoDomainResource> queryDomainDynamicRoutes(Long domainId) {
+	public List<DomainResource> queryDomainDynamicRoutes(Long domainId) {
 		String key = queryDomainDynamicRoutesCacheKey(domainId);
 		String value = ObjectUtil.string(this.cache.get(key));
 
 		try {
 			ObjectMapper om = new ObjectMapper();
 			if (ObjectUtil.isBlank(value)) {
-				List<WoDomainResource> resources = this.entityRepo.queryDomainDynamicRoutes(domainId);
+				List<DomainResource> resources = this.entityRepo.queryDomainDynamicRoutes(domainId);
+
+				if (ObjectUtil.isBlank(resources))
+					return new ArrayList<>();
 
 				value = om.writeValueAsString(resources);
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
@@ -58,7 +62,7 @@ public class DomainResourceService extends BaseService<DomainResourceRepo, WoDom
 				return resources;
 			}
 
-			return om.readValue(value, new TypeReference<List<WoDomainResource>>() {});
+			return om.readValue(value, new TypeReference<List<DomainResource>>() {});
 		}
 		catch (JsonProcessingException e) {
 			this.getLog().error("json解析异常={} {}", value, e.getMessage());

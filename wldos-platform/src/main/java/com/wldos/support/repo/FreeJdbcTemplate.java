@@ -215,7 +215,12 @@ public class FreeJdbcTemplate {
 			fieldList.forEach(f -> {
 				String key = f.getName();
 				Object value = condition.get(key);
-				Field field = ReflectionUtils.findRequiredField(entity, key);
+				Field field = null;
+				try {
+					field = ReflectionUtils.findRequiredField(entity, key);
+				} catch (Exception e) {}
+				if (field == null)
+					return;
 				if (field.getType().equals(String.class)) {
 					querySql.append(" and instr(a.").append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
 				}
@@ -304,7 +309,12 @@ public class FreeJdbcTemplate {
 			fieldList.forEach(f -> {
 				String key = f.getName();
 				Object value = condition.get(key);
-				Field field = ReflectionUtils.findRequiredField(entity, key);
+				Field field = null;
+				try {
+					field = ReflectionUtils.findRequiredField(entity, key);
+				} catch (Exception e) {}
+				if (field == null)
+					return;
 				if (field.getType().equals(String.class)) {
 					existsSql.append(" and instr(").append(cAlias).append(".").append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
 				}

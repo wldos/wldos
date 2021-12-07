@@ -8,6 +8,8 @@
 
 package com.wldos.system.auth.dto;
 
+import java.sql.Timestamp;
+
 public class Tenant {
 
 	private Long id;
@@ -38,7 +40,26 @@ public class Tenant {
 
 	private String deleteFlag;
 
-	private Integer versions;
+	public Tenant() {}
+
+	public Tenant(Long id, String comCode, String comName, String comDesc, Long parentId, Long displayOrder,
+			String isValid, Long createBy, Timestamp createTime, String createIp, Long updateBy, Timestamp updateTime,
+			String updateIp, String deleteFlag) {
+		this.id = id;
+		this.comCode = comCode;
+		this.comName = comName;
+		this.comDesc = comDesc;
+		this.parentId = parentId;
+		this.displayOrder = displayOrder;
+		this.isValid = isValid;
+		this.createBy = createBy;
+		this.createTime = createTime;
+		this.createIp = createIp;
+		this.updateBy = updateBy;
+		this.updateTime = updateTime;
+		this.updateIp = updateIp;
+		this.deleteFlag = deleteFlag;
+	}
 
 	public Long getId() {
 		return id;
@@ -151,15 +172,6 @@ public class Tenant {
 
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
-	}
-
-
-	public Integer getVersions() {
-		return versions;
-	}
-
-	public void setVersions(Integer versions) {
-		this.versions = versions;
 	}
 
 }

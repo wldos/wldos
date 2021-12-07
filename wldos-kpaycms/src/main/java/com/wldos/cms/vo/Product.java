@@ -49,6 +49,8 @@ public class Product extends KModelMeta implements IMeta {
 
 	private SeoCrumbs seoCrumbs;
 
+	private String realNo;
+
 	public Long getId() {
 		return id;
 	}
@@ -191,5 +193,13 @@ public class Product extends KModelMeta implements IMeta {
 
 	public void setSeoCrumbs(SeoCrumbs seoCrumbs) {
 		this.seoCrumbs = seoCrumbs;
+	}
+
+	public String getRealNo() {
+		return realNo;
+	}
+
+	public void setRealNo(String realNo) {
+		this.realNo = realNo;
 	}
 }

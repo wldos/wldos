@@ -28,6 +28,17 @@ public interface OrgUserRepo extends PagingAndSortingRepository<WoOrgUser, Long>
 	@Query("delete from wo_org_user where org_id=:orgId and user_id in (:ids)")
 	void removeOrgStaff(List<Long> ids, Long orgId);
 
+	@Modifying
+	@Query("delete from wo_org_user where user_com_id=:userComId and org_id=:orgId and user_id in (:ids)")
+	void removeTenantAdmin(List<Long> ids, Long userComId, Long orgId);
+
 	@Query("select c.* from wo_org_user c where c.is_valid = :isValid and c.delete_flag = :deleteFlag and c.org_id=:orgId and c.arch_id=:archId and c.com_id=:comId and c.user_id in (:userIds)")
 	List<WoOrgUser> queryAllByUserIds(Long orgId, Long archId, Long comId, List<Long> userIds, String isValid, String deleteFlag);
+
+	@Query("select c.* from wo_org_user c where c.is_valid =:isValid and c.delete_flag =:deleteFlag and c.org_id=:tAdminOrgId and c.user_com_id=:userComId and c.user_id in (:userIds)")
+	List<WoOrgUser> queryAllByUserIds(Long tAdminOrgId, Long userComId, List<Long> userIds, String isValid, String deleteFlag);
+
+	@Query("select u.* from wo_org_user u where exists (select 1 from wo_org g where g.id=u.org_id "
+			+ "and g.arch_id=u.arch_id and g.com_id=u.com_id and g.delete_flag='normal' and g.is_valid='1' and g.com_id=:platComId and g.org_code=:AdminOrgCode and g.id=:orgId)")
+	List<WoOrgUser> existsAdmin(Long platComId, String AdminOrgCode, Long orgId);
 }

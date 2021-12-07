@@ -53,6 +53,12 @@ public class WoOrg {
 	@Version
 	private Integer versions;
 
+	public WoOrg() {}
+
+	public WoOrg(Long id, String orgName) {
+		this.id = id;
+		this.orgName = orgName;
+	}
 
 	public Long getId() {
 		return id;

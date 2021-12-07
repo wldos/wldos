@@ -99,27 +99,4 @@ public class LoginAuthController extends NoRepoController {
 		}
 		return user;
 	}
-
-	@PostMapping("passwd4admin")
-	public Login changePasswd4admin(@RequestBody PasswdModifyParams passwdModifyParams) {
-
-		getLog().info("用户id: {} 密码修改, 修改人id：{}", passwdModifyParams.getId(), this.getCurUserId());
-		Login user = this.loginAuthService.changePasswd4admin(passwdModifyParams);
-		if (user == null) {
-			getLog().info("{} 密码修改失败", passwdModifyParams.getId());
-			user = new Login();
-			user.setStatus("error");
-			user.setNews("密码修改失败，请重试！");
-		}
-		return user;
-	}
-
-	@PostMapping("register4admin")
-	public Login addUser4admin(@RequestBody Register register) {
-		register.setId(this.nextId());
-		register.setRegisterIp(this.getUserIp());
-		register.setLoginName(register.getEmail());
-		getLog().info("register= {} ", register.getLoginName());
-		return this.loginAuthService.addUser4admin(this.getDomain(), register);
-	}
 }

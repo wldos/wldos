@@ -83,4 +83,24 @@ public class RoleController extends RepoController<RoleService, WoRole> {
 	protected void postDeletes(List<Object> ids) {
 		this.refreshAuth();
 	}
+
+	/**
+	 * 查询角色列表时追加平台根角色
+	 *
+	 * @param res 结果集
+	 * @return 过滤后的结果集
+	 */
+	@Override
+	protected List<WoRole> doFilter(List<WoRole> res) {
+
+		if (this.isPlatformAdmin(this.getTenantId())) {
+			WoRole plat = new WoRole(Constants.TOP_ROLE_ID, "根角色");
+			if (res.isEmpty()) {
+				res.add(plat);
+			}else
+				res.set(0, plat);
+		}
+
+		return res;
+	}
 }

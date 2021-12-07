@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
+ */
 
 package com.wldos.cms.controller;
 
@@ -267,8 +273,10 @@ public class KCMSController extends NoRepoController {
 
 		post.setContentExt(contentExtList);
 
-		this.kcmsService.insertSelective(post, this.getCurUserId(), this.getUserIp());
-		return this.resJson.ok("ok");
+		post.setComId(this.getTenantId());
+
+		Long id = this.kcmsService.insertSelective(post, this.getCurUserId(), this.getUserIp());
+		return this.resJson.ok("id", id);
 	}
 
 	

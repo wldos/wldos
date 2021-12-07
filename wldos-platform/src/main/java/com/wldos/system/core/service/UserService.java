@@ -37,6 +37,7 @@ import com.wldos.system.auth.vo.Token;
 import com.wldos.system.auth.vo.UserInfo;
 import com.wldos.system.core.entity.WoDomain;
 import com.wldos.system.core.entity.WoUsermeta;
+import com.wldos.system.core.repo.OrgRepo;
 import com.wldos.system.core.repo.OrgUserRepo;
 import com.wldos.system.enums.ResourceEnum;
 import com.wldos.system.storage.IStore;
@@ -74,6 +75,8 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 
 	private final AuthService authService;
 
+	private final OrgRepo orgRepo;
+
 	private final OrgUserRepo orgUserRepo;
 
 	private final CompanyRepo companyRepo;
@@ -84,8 +87,9 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 
 	private final IStore store;
 
-	public UserService(AuthService authService, OrgUserRepo orgUserRepo, CompanyRepo companyRepo, DomainService domainService, UserMetaService userMetaService, IStore store) {
+	public UserService(AuthService authService, OrgRepo orgRepo, OrgUserRepo orgUserRepo, CompanyRepo companyRepo, DomainService domainService, UserMetaService userMetaService, IStore store) {
 		this.authService = authService;
+		this.orgRepo = orgRepo;
 		this.orgUserRepo = orgUserRepo;
 		this.companyRepo = companyRepo;
 		this.domainService = domainService;
@@ -203,11 +207,13 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 	}
 
 	public Tenant queryTenantInfoByTAdminId(Long userId) {
-		try {
-			return this.companyRepo.queryTenantInfoByTAdminId(userId);
-		} catch (Exception e) {
-			return null;
+		Tenant tenant = this.companyRepo.queryTenantInfoByTAdminId(userId);
+
+		if (tenant == null) {
+			return this.companyRepo.tenant;
 		}
+
+		return tenant;
 	}
 
 	public String getAvatarUrl(String avatar) {
@@ -359,5 +365,10 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		login.setStatus("ok");
 
 		return login;
+	}
+
+	public WoOrg queryTenantAdminOrg() {
+		return this.orgRepo.findByOrgCodeAndIsValidAndDeleteFlag(Constants.TAdminOrgCode, ValidStatusEnum.VALID.toString(),
+				DeleteFlagEnum.NORMAL.toString());
 	}
 }

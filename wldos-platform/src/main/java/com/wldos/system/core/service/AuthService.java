@@ -29,7 +29,6 @@ import com.wldos.support.util.TreeUtil;
 import com.wldos.system.auth.dto.MenuAndRoute;
 import com.wldos.system.auth.vo.Menu;
 import com.wldos.system.auth.vo.Route;
-import com.wldos.system.core.entity.WoDomainResource;
 import com.wldos.system.core.entity.WoResource;
 import com.wldos.system.core.exception.ResourceTermTypeNoFoundException;
 import com.wldos.system.enums.RedisKeyEnum;
@@ -37,6 +36,7 @@ import com.wldos.system.enums.ResourceEnum;
 import com.wldos.system.enums.UserRoleEnum;
 import com.wldos.system.vo.AuthInfo;
 import com.wldos.system.vo.AuthVerify;
+import com.wldos.system.vo.DomainResource;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +73,10 @@ public class AuthService {
 
 	public AuthVerify verifyReqAuth(String domain, String appCode, Long userId, Long comId, String reqUri, String reqMethod) {
 		AuthVerify authVerify = new AuthVerify();
+		if (this.domainService.isAdmin(userId)) {
+			authVerify.setAuth(true);
+			return authVerify;
+		}
 		List<AuthInfo> allMenuAuthInfo = this.queryAllAuth(appCode);
 		List<AuthInfo> matchAuthInfos =
 				allMenuAuthInfo.parallelStream().filter(authInfo -> {
@@ -126,6 +130,9 @@ public class AuthService {
 
 				List<AuthInfo> authInfos = this.resourceService.queryAuthInfo(appCode);
 
+				if (ObjectUtil.isBlank(authInfos))
+					return new ArrayList<>();
+
 				value = om.writeValueAsString(authInfos);
 
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
@@ -157,19 +164,23 @@ public class AuthService {
 
 		List<Menu> menus = this.getMenuByUserId(resources);
 
-		List<WoDomainResource> domRes = this.domainService.queryDynRoutesByDomain(domain);
-		List<Long> termTypeIds = domRes.parallelStream().map(WoDomainResource::getTermTypeId).collect(Collectors.toList());
+		List<DomainResource> domRes = this.domainService.queryDynRoutesByDomain(domain);
+		List<Long> termTypeIds = domRes.parallelStream().map(DomainResource::getTermTypeId).collect(Collectors.toList());
+		if (ObjectUtil.isBlank(termTypeIds)) {
+			log.error("未配置首页模板，内容分类为空");
+			return null;
+		}
 		List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
 		Map<Long, Term> termMap = terms.parallelStream().collect(Collectors.toMap(Term::getTermTypeId, t -> t));
 
-		Map<String, Route> modules = domRes.parallelStream().collect(Collectors.toMap(WoDomainResource::getRoutePath,
+		Map<String, Route> modules = domRes.parallelStream().collect(Collectors.toMap(DomainResource::getResourcePath,
 			d -> {
 				try {
 					Term term = termMap.get(d.getTermTypeId());
 					KModelContent content = this.contentService.findByContentId(term.getContentId());
 					return new Route(d.getModuleName(), term.getSlug(), content.getContentCode());
 				} catch (RuntimeException e) {
-					throw new ResourceTermTypeNoFoundException("资源对应的分类项不存在, 资源id：" + d.getResourceId());
+					throw new ResourceTermTypeNoFoundException("资源对应的分类项不存在, 资源id：" + d.getId());
 				}
 			}));
 

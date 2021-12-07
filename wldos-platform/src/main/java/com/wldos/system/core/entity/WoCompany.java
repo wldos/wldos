@@ -49,6 +49,12 @@ public class WoCompany {
 	@Version
 	private Integer versions;
 
+	public WoCompany() {}
+
+	public WoCompany(Long id, String comName) {
+		this.id = id;
+		this.comName = comName;
+	}
 
 	public Long getId() {
 		return id;

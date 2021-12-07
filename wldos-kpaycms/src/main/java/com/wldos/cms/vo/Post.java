@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
+ */
 
 package com.wldos.cms.vo;
 
@@ -37,6 +43,8 @@ public class Post {
 	private String postType;
 
 	private String contentType;
+
+	private Long comId;
 
 	private String postMimeType;
 
@@ -178,6 +186,14 @@ public class Post {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+
+	public Long getComId() {
+		return comId;
+	}
+
+	public void setComId(Long comId) {
+		this.comId = comId;
 	}
 
 	public String getPostMimeType() {

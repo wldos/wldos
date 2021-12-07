@@ -106,10 +106,12 @@ menu: [
     把zone目录下的store.rar解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有  
     演示数据对应的图片，如果不设置相关图片显示404。  
 3.  项目更新maven库。服务器端口号默认8080。
-4.  在idea控制台执行mvn clean install -Dmaven.test.skip=true安装项目；  
+4.  在idea控制台执行mvn clean install -pl com.wldos:wldos-kpaycms -am -Dmaven.test.skip=true
+    安装项目；  
     目前分2个模块：wldos-platform为wldos支撑平台，wldos-kpaycms为支撑平台基础上  
     开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动  
     后在系统管理后台-资源管理清除cms的菜单；  
+    mvn -pl com.wldos:wldos-kpaycms spring-boot:run启动cms和支撑平台。  
     部署前端：
 1.  下载本地后，打开前端项目，执行tyarn安装依赖js库。
 2.  执行npm start启动前端项目，npm build执行打包编译。前端访问路径：http://localhost:8000

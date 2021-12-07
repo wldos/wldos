@@ -171,6 +171,8 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			if (ObjectUtil.isBlank(value)) {
 				List<Term> terms = this.entityRepo.findAllByClassType(TermTypeEnum.CATEGORY.toString());
 
+				if (ObjectUtil.isBlank(terms))
+					return new ArrayList<>();
 				value = om.writeValueAsString(terms);
 
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
@@ -220,6 +222,8 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			if (ObjectUtil.isBlank(value)) {
 				List<Term> terms = this.entityRepo.findAllByClassType(TermTypeEnum.TAG.toString());
 
+				if (ObjectUtil.isBlank(terms))
+					return new ArrayList<>();
 				value = om.writeValueAsString(terms);
 
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
@@ -380,6 +384,9 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			if (ObjectUtil.isBlank(value)) {
 				List<LevelNode> levelNodes = this.queryTreeByParentId(table, pId);
 
+				if (ObjectUtil.isBlank(levelNodes))
+					return new ArrayList<>();
+
 				value = om.writeValueAsString(levelNodes);
 
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
@@ -406,6 +413,9 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			if (ObjectUtil.isBlank(value)) {
 				List<LevelNode> levelNodes = this.queryTreeByChildId(table, cId);
 
+				if (ObjectUtil.isBlank(levelNodes))
+					return new ArrayList<>();
+
 				value = om.writeValueAsString(levelNodes);
 
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
@@ -425,5 +435,21 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	public void refreshTerm() {
 		this.cache.removeByPrefix(RedisKeyEnum.WLDOS_TERM.toString());
 		this.cache.remove(RedisKeyEnum.WLDOS_TAG.toString());
+	}
+
+	public List<Object> findAllTermTypeIdsByDomain(String domain) {
+		List<Long> termTypeIds = this.domainService.queryTermTypeIdsByDomain(domain);
+
+		return this.queryOwnIds(termTypeIds);
+	}
+
+	private List<Object> queryOwnIds(List<Long> termTypeIds) {
+		List<LevelNode> nodes = new ArrayList<>();
+		for (Long id : termTypeIds) {
+			List<LevelNode> temp = this.queryTermTreeByParentId(id);
+			nodes.addAll(temp);
+		}
+
+		return nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
 	}
 }

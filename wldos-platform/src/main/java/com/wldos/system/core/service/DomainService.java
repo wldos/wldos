@@ -9,6 +9,7 @@
 package com.wldos.system.core.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -141,6 +142,9 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 
 				Map<String, Long> domInfo = domains.parallelStream().collect(Collectors.toMap(WoDomain::getSiteDomain, WoDomain::getId));
 
+				if (ObjectUtil.isBlank(domInfo))
+					return domInfo;
+
 				value = om.writeValueAsString(domInfo);
 				this.cache.set(key, value, 12, TimeUnit.HOURS);
 
@@ -162,6 +166,9 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 			ObjectMapper om = new ObjectMapper();
 			if (ObjectUtil.isBlank(value)) {
 				List<WoDomain> domains = this.entityRepo.findAllByDeleteFlagAndIsValid(DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString());
+
+				if (ObjectUtil.isBlank(domains))
+					return new ArrayList<>();
 
 				value = om.writeValueAsString(domains);
 
@@ -194,6 +201,14 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 				d.setSiteLogo(ObjectUtil.string(this.getDomainLogo(d.getSiteLogo())));
 				return d;
 			}
+			String cnameDomain = d.getCnameDomain();
+			if (ObjectUtil.isBlank(cnameDomain))
+				continue;
+			String[] cname = cnameDomain.split(",");
+			if (Arrays.asList(cname).contains(domain)) { // 根据别名域名返回主域名
+				d.setSiteLogo(ObjectUtil.string(this.getDomainLogo(d.getSiteLogo())));
+				return d;
+			}
 		}
 
 		return null;
@@ -205,11 +220,22 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 			if (d.getSiteDomain().equals(domain)) {
 				return d;
 			}
+			String cnameDomain = d.getCnameDomain();
+			if (ObjectUtil.isBlank(cnameDomain))
+				continue;
+			String[] cname = cnameDomain.split(",");
+			if (Arrays.asList(cname).contains(domain)) { // 根据别名域名返回主域名
+				return d;
+			}
 		}
 
 		return null;
 	}
-	
+
+	public boolean isInValidDomain(String domain) {
+		return this.queryDomainByName(domain) == null;
+	}
+
 	public String getDomainLogo(String logoPath) {
 		return this.store.getFileUrl(logoPath, this.store.getFileUrl(this.defaultLogo, null));
 	}
@@ -238,7 +264,7 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 		return null;
 	}
 
-	public List<WoDomainResource> queryDynRoutesByDomain(String domain) {
+	public List<DomainResource> queryDynRoutesByDomain(String domain) {
 		return this.domainResService.queryDomainDynamicRoutes(this.queryIdByDomain(domain));
 	}
 	
@@ -253,6 +279,9 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 				List<WoDomainResource> dRes = this.domainResService.queryDomainResWithTerm(dom.getId());
 
 				List<Long> dResIds = dRes.parallelStream().map(WoDomainResource::getTermTypeId).collect(Collectors.toList());
+
+				if (ObjectUtil.isBlank(dResIds))
+					return new ArrayList<>();
 
 				value = om.writeValueAsString(dResIds);
 

@@ -50,6 +50,8 @@ public class WoDomain {
 
 	private Long displayOrder;
 
+	private String cnameDomain;
+
 	private String isValid;
 
 	private Long createBy;
@@ -198,6 +200,14 @@ public class WoDomain {
 
 	public void setDisplayOrder(Long displayOrder) {
 		this.displayOrder = displayOrder;
+	}
+
+	public String getCnameDomain() {
+		return cnameDomain;
+	}
+
+	public void setCnameDomain(String cnameDomain) {
+		this.cnameDomain = cnameDomain;
 	}
 
 	public String getIsValid() {

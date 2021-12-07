@@ -16,6 +16,10 @@ public final class Constants {
 
 	public static final long TOP_COM_ID = 0l;
 
+	public static final String TOP_COM_CODE = "platform";
+
+	public static final String TOP_COM_NAME = "平台";
+
 	public static final Long GUEST_ID = 0l;
 
 	public static final long MENU_ROOT_ID = 0l;
@@ -29,6 +33,12 @@ public final class Constants {
 	public static final long TOP_COMMENT_ID = 0l;
 
 	public static final long SYSTEM_USER_ID = 0l;
+
+	public static final String ENUM_TYPE_APP_PLAT = "platform";
+
+	public static final String ENUM_TYPE_ORG_PLAT = "platform";
+
+	public static final String ENUM_TYPE_ARCH_PLAT = "platform";
 
 	public static final Integer EX_USER_INVALID_CODE = 401;
 
@@ -57,4 +67,6 @@ public final class Constants {
 	public static final String COMMON_KEY_PLATFORM_DOMAIN = "platDomain";
 
 	public static final String AdminOrgCode = "admin";
+
+	public static final String TAdminOrgCode = "tadmin";
 }

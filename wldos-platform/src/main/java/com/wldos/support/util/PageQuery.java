@@ -10,6 +10,7 @@ package com.wldos.support.util;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,12 @@ public class PageQuery {
 
 	public void pushParam(String key, Object value) {
 		this.condition.put(key, value);
+	}
+
+	public void pushFilter(String key, Object... value) {
+		if (this.filter == null)
+			this.filter = new HashMap<>();
+		this.filter.put(key, Arrays.asList(value.clone()));
 	}
 
 	public void pushFilter(String key, List<Object> value) {

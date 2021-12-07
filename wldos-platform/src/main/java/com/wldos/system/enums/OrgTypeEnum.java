@@ -8,6 +8,8 @@
 
 package com.wldos.system.enums;
 
+import com.wldos.support.Constants;
+
 /**
  * 组织类型枚举。
  *
@@ -17,26 +19,37 @@ package com.wldos.system.enums;
  */
 public enum OrgTypeEnum {
 
-	PLATFORM("platform"),
+	PLATFORM("系统用户组", Constants.ENUM_TYPE_ORG_PLAT),
 
-	ORG("org"),
+	ORG("组织机构", "org"),
 
-	ROLE_ORG("role_org"),
+	ROLE_ORG("角色组", "role_org"),
 
-	TEAM("team"),
+	TEAM("团队", "team"),
 
-	GROUP("group"),
+	GROUP("群组", "group"),
 
-	CIRCLE("circle");
+	CIRCLE("圈子", "circle");
 
-	private final String roleName;
+	private final String label;
 
-	OrgTypeEnum(String roleName) {
-		this.roleName = roleName;
+	private final String value;
+
+	OrgTypeEnum(String label, String value) {
+		this.label = label;
+		this.value = value;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public String getValue() {
+		return value;
 	}
 
 	@Override
 	public String toString() {
-		return this.roleName;
+		return "{label: '" + this.label + "', value: '" + this.value + "'}";
 	}
 }

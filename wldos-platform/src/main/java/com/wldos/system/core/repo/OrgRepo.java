@@ -26,4 +26,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface OrgRepo extends PagingAndSortingRepository<WoOrg, Long> {
 	@Query("select o.* from wo_org o where o.delete_flag=:deleteFlag and o.is_valid=:isValid and o.org_type=:orgType")
 	List<Org> findAllByOrgType(String deleteFlag, String isValid, String orgType);
+
+	WoOrg findByOrgCodeAndIsValidAndDeleteFlag(String orgCode, String isValid, String deleteFlag);
 }

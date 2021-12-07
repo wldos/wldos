@@ -125,9 +125,6 @@ public class LoginAuthService {
 			this.userCopier.copy(woUser, userInfo, null);
 			userInfo.setUsername(woUser.getLoginName());
 			Tenant tenant = this.userService.queryTenantInfoByTAdminId(userInfo.getId());
-			if (tenant == null)
-				userInfo.setTenantId(Constants.TOP_COM_ID);
-			else
 				userInfo.setTenantId(tenant.getId());
 			return userInfo;
 		}

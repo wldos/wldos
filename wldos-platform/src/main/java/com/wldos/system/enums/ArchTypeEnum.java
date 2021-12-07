@@ -17,28 +17,29 @@ package com.wldos.system.enums;
  */
 public enum ArchTypeEnum {
 
-	PLATFORM("platform"),
+	ORG("组织机构", "org"),
 
-	ORG("org"),
+	ARCH("体系结构", "arch");
 
-	TEAM("team"),
+	private final String label;
 
-	GROUP("group"),
+	private final String value;
 
-	CIRCLE("circle");
-
-	private final String roleName;
-
-	ArchTypeEnum(String roleName) {
-		this.roleName = roleName;
+	ArchTypeEnum(String label, String value) {
+		this.label = label;
+		this.value = value;
 	}
 
-	public String getRoleName() {
-		return roleName;
+	public String getLabel() {
+		return label;
+	}
+
+	public String getValue() {
+		return value;
 	}
 
 	@Override
 	public String toString() {
-		return this.roleName;
+		return "{label: '" + this.label + "', value: '" + this.value + "'}";
 	}
 }

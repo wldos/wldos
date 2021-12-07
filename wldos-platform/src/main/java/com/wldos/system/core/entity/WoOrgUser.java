@@ -19,6 +19,8 @@ public class WoOrgUser {
 
 	private Long userId;
 
+	private Long userComId;
+
 	private Long orgId;
 
 	private Long archId;
@@ -65,6 +67,13 @@ public class WoOrgUser {
 		this.userId = userId;
 	}
 
+	public Long getUserComId() {
+		return userComId;
+	}
+
+	public void setUserComId(Long userComId) {
+		this.userComId = userComId;
+	}
 
 	public Long getOrgId() {
 		return orgId;

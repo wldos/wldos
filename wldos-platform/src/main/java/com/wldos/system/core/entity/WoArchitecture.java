@@ -52,6 +52,12 @@ public class WoArchitecture {
 	@Version
 	private Integer versions;
 
+	public WoArchitecture() {}
+
+	public WoArchitecture(Long id, String archName) {
+		this.id = id;
+		this.archName = archName;
+	}
 
 	public Long getId() {
 		return id;

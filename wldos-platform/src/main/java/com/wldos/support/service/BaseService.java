@@ -12,13 +12,19 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.cms.dto.LevelNode;
 import com.wldos.support.Base;
 import com.wldos.support.controller.web.PageableResult;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.support.util.PageQuery;
 import com.wldos.support.Constants;
+import com.wldos.system.enums.RedisKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,14 +181,48 @@ public class BaseService<R extends PagingAndSortingRepository<E, P>, E, P> exten
 		return this.commonJdbc.execQueryForPage(vo, pClass, cClass, pageQuery, isPage, pTableAndCTableAndPIdKey);
 	}
 
+	public <P, C, V> List<V> execQueryForList(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, String ...pTableAndCTableAndPIdKey) {
+		return this.commonJdbc.execQueryForList(vo, pClass, cClass, pageQuery, pTableAndCTableAndPIdKey);
+	}
+
+	/**
+	 * 安全起见，实时查询当前用户是否超级管理员
+	 *
+	 * @param userId 用户id
+	 * @return 是否管理员
+	 */
 	public boolean isAdmin(Long userId) {
-		String sql = "select 1 from wo_org_user u where u.user_id=? and EXISTS (SELECT 1 from wo_org g where g.id=u.org_id "
-				+ "and g.arch_id=u.arch_id and g.com_id=u.com_id and g.delete_flag='normal' and g.is_valid='1' and g.com_id=? and g.org_code=?)";
 
-		Object[] params = { userId, Constants.TOP_COM_ID, Constants.AdminOrgCode };
-		List<Map<String, Object>> res = this.commonJdbc.getNamedParamJdbcTemplate().getJdbcTemplate().queryForList(sql, params);
+		String key = RedisKeyEnum.WLDOS_ADMIN.toString();
+		String value = ObjectUtil.string(this.cache.get(key));
+		List<Long> adminIds;
+		try {
+			ObjectMapper om = new ObjectMapper();
+			if (ObjectUtil.isBlank(value)) {
+				String sql = "select u.user_id from wo_org_user u where exists (select 1 from wo_org g where g.id=u.org_id "
+						+ "and g.arch_id=u.arch_id and g.com_id=u.com_id and g.delete_flag='normal' and g.is_valid='1' and g.com_id=? and g.org_code=?)";
 
-		return !ObjectUtil.isBlank(res);
+				Object[] params = { Constants.TOP_COM_ID, Constants.AdminOrgCode };
+				List<Map<String, Object>> res = this.commonJdbc.getNamedParamJdbcTemplate().getJdbcTemplate().queryForList(sql, params);
+
+				adminIds = res.parallelStream().map(r -> Long.parseLong(ObjectUtil.string(r.get("user_id")))).collect(Collectors.toList());
+
+				assert !adminIds.isEmpty();
+
+				value = om.writeValueAsString(adminIds);
+
+				this.cache.set(key, value, 12, TimeUnit.HOURS);
+
+				return adminIds.contains(userId);
+			}
+
+			adminIds = new ObjectMapper().readValue(value, new TypeReference<List<Long>>() {});
+			return adminIds.contains(userId);
+		}
+		catch (JsonProcessingException e) {
+			this.getLog().error("json解析异常={} {}", value, e.getMessage());
+			return false;
+		}
 	}
 
 	protected StringBuilder querySqlByTable(String tableName, Class<?> entity, List<Object> params, Map<String, Object> condition, Map<String, List<Object>> filter) {

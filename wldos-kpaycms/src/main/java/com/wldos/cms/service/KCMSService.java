@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see terms.md or https://www.wldos.com/
+ *
+ */
 
 package com.wldos.cms.service;
 
@@ -343,8 +349,10 @@ public class KCMSService extends Base {
 		if (!ObjectUtil.isBlank(contact))
 			product.setContact(ObjectUtil.hideName(contact));
 		String telephone = pubMeta.get(KModelMetaKey.PUB_META_KEY_TELEPHONE);
-		if (!ObjectUtil.isBlank(telephone))
+		if (!ObjectUtil.isBlank(telephone)) {
 			product.setTelephone(ObjectUtil.hidePhone(telephone));
+			product.setRealNo(telephone);
+		}
 		String city = pubMeta.get(KModelMetaKey.PUB_META_KEY_CITY);
 		if (!ObjectUtil.isBlank(city)) {
 			City region = this.regionService.queryRegionInfoByCode(city);
@@ -906,6 +914,9 @@ public class KCMSService extends Base {
 					v.setChildren(vc);
 					return v;
 				}).filter(Objects::nonNull).collect(Collectors.toList());
+
+				if (ObjectUtil.isBlank(viewNodes))
+					return new ArrayList<>();
 
 				value = om.writeValueAsString(viewNodes);
 
