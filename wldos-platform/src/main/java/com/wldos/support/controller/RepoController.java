@@ -113,10 +113,10 @@ public abstract class RepoController<S extends BaseService, E> extends BaseContr
 			Map<String, Object> cond = new HashMap<>();
 			Class<E> clazz = this.service.getEntityClass(1);
 			cond.put(clazz == WoCompany.class ? "id" : Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId());
-			return this.service.findAllWithCond(clazz, cond);
+			return this.doFilter(this.service.findAllWithCond(clazz, cond));
 		}
 		else
-			return service.findAll();
+			return this.doFilter(service.findAll());
 	}
 
 	protected List<E> doFilter(List<E> res) { return res;}
