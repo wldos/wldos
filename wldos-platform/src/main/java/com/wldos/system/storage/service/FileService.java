@@ -16,6 +16,7 @@ import com.wldos.support.controller.EntityAssists;
 import com.wldos.support.service.BaseService;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.system.storage.entity.WoFile;
+import com.wldos.system.storage.enums.FileAccessPolicyEnum;
 import com.wldos.system.storage.repo.FileRepo;
 import com.wldos.system.storage.util.StoreUtils;
 import com.wldos.system.storage.vo.FileInfo;
@@ -86,6 +87,10 @@ public class FileService extends BaseService<FileRepo, WoFile, Long> {
 		return fileInfo;
 	}
 
+	public String genOssUrl(String storeUrl, FileAccessPolicyEnum accessPolicy) {
+		return storeUrl + this.getVirtualPath(accessPolicy);
+	}
+
 	public String genWebUrl(String storeUrl, String filePath) {
 		return storeUrl + this.getVirtualPath() + filePath;
 	}
@@ -100,5 +105,10 @@ public class FileService extends BaseService<FileRepo, WoFile, Long> {
 
 	private String getVirtualPath() {
 		return StoreUtils.PUBLIC_AREA;
+	}
+
+	private String getVirtualPath(FileAccessPolicyEnum accessPolicy) {
+		return accessPolicy.equals(FileAccessPolicyEnum.PUBLIC) ? StoreUtils.PUBLIC_AREA
+				: StoreUtils.PRIVATE_AREA;
 	}
 }

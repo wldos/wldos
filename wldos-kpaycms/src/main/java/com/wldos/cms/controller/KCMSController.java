@@ -10,6 +10,7 @@ package com.wldos.cms.controller;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +32,14 @@ import com.wldos.cms.vo.Article;
 import com.wldos.cms.vo.Book;
 import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Chapter;
+import com.wldos.cms.vo.PostMeta;
 import com.wldos.cms.vo.SeoCrumbs;
 import com.wldos.cms.vo.TypeDomainTerm;
 import com.wldos.support.controller.EntityAssists;
 import com.wldos.support.controller.NoRepoController;
 import com.wldos.support.controller.web.PageableResult;
 import com.wldos.support.controller.web.Result;
+import com.wldos.support.enums.DeleteFlagEnum;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.support.util.PageQuery;
 import com.wldos.cms.enums.MIMETypeEnum;
@@ -48,6 +51,7 @@ import com.wldos.cms.vo.PostUnit;
 import com.wldos.support.vo.ViewNode;
 import com.wldos.system.storage.vo.FileInfo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +77,7 @@ public class KCMSController extends NoRepoController {
 
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryContentList(pageQuery);
 	}
 
@@ -83,6 +88,7 @@ public class KCMSController extends NoRepoController {
 		Map<String, Object> params = this.kcmsService.readParamsSideCar(pageName);
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryContentList(pageQuery);
 	}
 
@@ -94,6 +100,7 @@ public class KCMSController extends NoRepoController {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("contentType", contentType);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryArchivesDomain(this.getDomain(), pageQuery);
 	}
 
@@ -104,6 +111,7 @@ public class KCMSController extends NoRepoController {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("contentType", contentType);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryArchivesCategory(this.getDomain(), slugCategory, pageQuery);
 	}
 
@@ -121,6 +129,7 @@ public class KCMSController extends NoRepoController {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", userId);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryArchivesDomain(this.getDomain(), pageQuery);
 	}
 
@@ -132,6 +141,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("contentType", contentType);
 		pageQuery.pushParam("createBy", userId);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryArchivesDomain(this.getDomain(), pageQuery);
 	}
 
@@ -142,6 +152,7 @@ public class KCMSController extends NoRepoController {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("contentType", contentType);
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryBookChapter(bookId, pageQuery);
 	}
 
@@ -166,6 +177,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("userId", userId);
 		pageQuery.pushParam("likes", "1");
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryArchivesUserDomain(this.getDomain(), pageQuery);
 	}
 
@@ -177,6 +189,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("userId", userId);
 		pageQuery.pushParam("stars", "1");
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryArchivesUserDomain(this.getDomain(), pageQuery);
 	}
 
@@ -199,6 +212,7 @@ public class KCMSController extends NoRepoController {
 
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", this.getCurUserId());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.kcmsService.queryContentList(pageQuery);
 	}
 
@@ -218,6 +232,8 @@ public class KCMSController extends NoRepoController {
 	@PostMapping("space/book/newChapter")
 	public Chapter createChapter(@RequestBody Post chapter) {
 
+		chapter.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
+
 		return this.kcmsService.createChapter(chapter, this.getCurUserId(), this.getUserIp());
 	}
 
@@ -235,9 +251,37 @@ public class KCMSController extends NoRepoController {
 		return this.kcmsService.queryCategoryByDomain(this.getDomain());
 	}
 
-	
+	@Value("${wldos.cms.content.maxLength}")
+	private int maxLength;
+
 	@PostMapping("info/add")
 	public String addContent(@RequestBody String json) throws JsonProcessingException {
+		Post post = this.extractPostInfo(json);
+		int contLen = post.getPostContent().getBytes(StandardCharsets.UTF_8).length;
+		if (contLen > this.maxLength)
+			return this.resJson.ok("error", "正文不能超过"+this.maxLength+"字符");
+		post.setComId(this.getTenantId());
+
+		Long id = this.kcmsService.insertSelective(post, this.getCurUserId(), this.getUserIp());
+		return this.resJson.ok("id", id);
+	}
+
+	@GetMapping("info-{id:\\d+}")
+	public PostMeta preUpdate(@PathVariable Long id) {
+		return this.kcmsService.postInfo(id);
+	}
+
+	@PostMapping("info/update")
+	public String updateContent(@RequestBody String json) throws JsonProcessingException {
+		Post post = this.extractPostInfo(json);
+		int contLen = post.getPostContent().getBytes(StandardCharsets.UTF_8).length;
+		if (contLen > this.maxLength)
+			return this.resJson.ok("error", "正文不能超过"+this.maxLength+"字符");
+		this.kcmsService.update(post, this.getCurUserId(), this.getUserIp());
+		return this.resJson.ok("ok");
+	}
+
+	private Post extractPostInfo(String json) throws JsonProcessingException {
 		Post post = new Post();
 
 		Class<Post> postClass = Post.class;
@@ -273,24 +317,13 @@ public class KCMSController extends NoRepoController {
 
 		post.setContentExt(contentExtList);
 
-		post.setComId(this.getTenantId());
-
-		Long id = this.kcmsService.insertSelective(post, this.getCurUserId(), this.getUserIp());
-		return this.resJson.ok("id", id);
+		return post;
 	}
 
-	
-	@PostMapping("info/update")
-	public String updateContent(@RequestBody Post post) {
-		this.kcmsService.update(post, this.getCurUserId(), this.getUserIp());
-		return this.resJson.ok("ok");
-	}
-
-	
 	@DeleteMapping("info/delete")
 	public String deleteContent(@RequestBody Post post) {
-		this.kcmsService.delete(post, this.getCurUserId(), this.getUserIp());
-		return this.resJson.ok("ok");
+		String res = this.kcmsService.delete(post);
+		return this.resJson.ok(res);
 	}
 
 	

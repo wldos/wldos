@@ -31,6 +31,7 @@ import com.wldos.cms.vo.PostUnit;
 import com.wldos.cms.vo.SPost;
 import com.wldos.cms.vo.Term;
 import com.wldos.support.controller.web.PageableResult;
+import com.wldos.support.enums.DeleteFlagEnum;
 import com.wldos.support.service.BaseService;
 import com.wldos.support.util.AtomicUtil;
 import com.wldos.support.util.ObjectUtil;
@@ -82,7 +83,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return this.entityRepo.queryContSubModel(pid, PostTypeEnum.ATTACHMENT.toString());
 	}
 
-
 	public PageableResult<BookUnit> queryPostWithExtList(PageQuery pageQuery) {
 		PageableResult<BookUnit> postUnitPage = this.execQueryForPage(BookUnit.class, KPosts.class, KTermObject.class, "k_posts", "k_term_object", "object_id", pageQuery);
 
@@ -131,7 +131,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return postUnitPage;
 	}
 
-
 	public PageableResult<PostUnit> queryArchives(PageQuery pageQuery) {
 		PageableResult<PostUnit> postUnitPage = this.execQueryForPage(PostUnit.class, KPosts.class, KTermObject.class, "k_posts", "k_term_object", "object_id", pageQuery);
 
@@ -147,7 +146,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		Map<Long, PostMember> postMembers = this.queryUserInfoByPostIds(ids);
 
 		Map<Long, List<KPostmeta>> maps = postMetas.stream().collect(Collectors.groupingBy(KPostmeta::getPostId));
-
 
 		List<TermObject> terms = this.termService.findTermByObjectId(ids, TermTypeEnum.TAG.toString());
 		Map<Long, List<Term>> termList = terms.parallelStream().collect(Collectors.toMap(TermObject::getId, TermObject::getTerms));
@@ -191,7 +189,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return postUnitPage;
 	}
 
-
 	public PageableResult<AuditPost> queryAdminPosts(PageQuery pageQuery) {
 		PageableResult<AuditPost> postUnitPage = this.execQueryForPage(AuditPost.class, KPosts.class, KTermObject.class, "k_posts", "k_term_object", "object_id", pageQuery);
 
@@ -204,13 +201,11 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 
 		Map<Long, PostMember> postMembers = this.queryUserInfoByPostIds(ids);
 
-
 		List<TermObject> terms = this.termService.findTermByObjectId(ids, TermTypeEnum.TAG.toString());
 		Map<Long, List<Term>> termList = terms.parallelStream().collect(Collectors.toMap(TermObject::getId, TermObject::getTerms));
 
 		List<TermObject> termTypes = this.termService.findTermByObjectId(ids, TermTypeEnum.CATEGORY.toString());
 		Map<Long, List<Term>> termTypeList = termTypes.parallelStream().collect(Collectors.toMap(TermObject::getId, TermObject::getTerms));
-
 
 		List<KPostmeta> postMetas = this.postmetaService.queryAllByPostIdInAndMetaKey(ids, KModelMetaKey.PUB_META_KEY_VIEWS);
 		Map<Long, String> viewsMap = postMetas.parallelStream().collect(Collectors.toMap(KPostmeta::getPostId, KPostmeta::getMetaValue));
@@ -218,7 +213,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		postUnits = postUnits.stream().map(post -> {
 			Long id = post.getId();
 			post.setMember(postMembers.get(id));
-
 
 			post.setTags(termList.get(id));
 			post.setTerms(termTypeList.get(id));
@@ -275,7 +269,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 
 		Map<Long, List<KPostmeta>> maps = postMetas.stream().collect(Collectors.groupingBy(KPostmeta::getPostId));
 
-
 		List<TermObject> terms = this.termService.findTermByObjectId(ids, TermTypeEnum.TAG.toString());
 		Map<Long, List<Term>> termList = terms.parallelStream().collect(Collectors.toMap(TermObject::getId, TermObject::getTerms));
 
@@ -297,14 +290,12 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 			List<KPostmeta> metas = maps.get(post.getId());
 			if (ObjectUtil.isBlank(metas)) {
 
-
 				post.setCover(this.defaultCover(count.getAndIncrement()));
 
 				return post;
 			}
 
 			Map<String, String> meta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
-
 
 			String coverUrl = this.store.getFileUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
 
@@ -317,7 +308,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 
 		return postUnitPage;
 	}
-
 
 	public String defaultCover(int count) {
 
@@ -333,11 +323,9 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return this.store.getFileUrl(((count / coverNum) % 2 == 0 ? covers[count % coverNum] : covers[(coverNum - 1) - (count % coverNum)]), "");
 	}
 
-
 	public List<KPostmeta> queryPostExt(List<Long> ids) {
 		return this.entityRepo.queryPostExt(ids);
 	}
-
 
 	public Map<Long, List<PostMember>> queryUserInfoByBookIds(List<Long> ids) {
 		List<PostMember> postMembers = this.entityRepo.queryMembersByPostIds(ids);
@@ -348,7 +336,6 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return postMembers.stream().collect(Collectors.groupingBy(PostMember::getPostId));
 	}
 
-
 	public Map<Long, PostMember> queryUserInfoByPostIds(List<Long> ids) {
 		List<PostMember> postMembers = this.entityRepo.queryMembersByPostIds(ids);
 		postMembers = postMembers.parallelStream().map(pm -> {
@@ -358,28 +345,23 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return postMembers.stream().collect(Collectors.toMap(PostMember::getPostId, pm -> pm, (p1, p2) -> p1));
 	}
 
-
 	public PostMember queryMemberByPostId(Long postId) {
 		PostMember member = this.entityRepo.queryMemberByPostId(postId);
 		member.setAvatar(this.userService.getAvatarUrl(member.getAvatar()));
 		return member;
 	}
 
-
-	public List<Chapter> queryPostsByParentId(Long bookId) {
-		return this.entityRepo.queryPostsByParentId(bookId, PostTypeEnum.CHAPTER.toString());
+	public List<Chapter> queryPostsByParentId(Long bookId, String deleteFlag) {
+		return this.entityRepo.queryPostsByParentId(bookId, PostTypeEnum.CHAPTER.toString(), deleteFlag);
 	}
-
 
 	public void updateCommentCount(Long postId, int count) {
 		this.entityRepo.updateCommentCountByPostId(postId, count);
 	}
 
-
 	public void updateStarCount(Long postId, int count) {
 		this.entityRepo.updateStarCountByPostId(postId, count);
 	}
-
 
 	public void updateLikeCount(Long postId, int count) {
 		this.entityRepo.updateLikeCountByPostId(postId, count);
@@ -409,11 +391,9 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		return this.entityRepo.queryNextChapter(pid, parentId);
 	}
 
-
 	public List<MiniPost> queryRelatedPosts(String postType, String contentType, List<Long> termTypeIds, int num) {
 		return this.entityRepo.queryRelatedPosts(postType, contentType, termTypeIds, num);
 	}
-
 
 	public String genPostExcerpt(String html, int length) {
 		String content = ObjectUtil.htmlToText(html);
@@ -423,21 +403,17 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 			return content;
 	}
 
-
 	public void publishPost(AuditPost post) {
 		this.entityRepo.changePostStatus(post.getId(), PostStatusEnum.PUBLISH.toString());
 	}
-
 
 	public void offlinePost(AuditPost post) {
 		this.entityRepo.changePostStatus(post.getId(), PostStatusEnum.OFFLINE.toString());
 	}
 
-
 	public void trashPost(AuditPost post) {
 		this.entityRepo.changePostStatus(post.getId(), PostStatusEnum.TRASH.toString());
 	}
-
 
 	public void draftPost(AuditPost post) {
 		this.entityRepo.changePostStatus(post.getId(), PostStatusEnum.DRAFT.toString());

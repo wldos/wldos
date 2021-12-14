@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2021. Owner of wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see terms.md or https://www.wldos.com/
@@ -10,9 +10,13 @@ package com.wldos.cms.vo;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
-
-public class Post {
+/**
+ * 配置内容信息。
+ *
+ */
+public class PostMeta {
 
 	private Long id;
 
@@ -37,8 +41,6 @@ public class Post {
 	private String pinged;
 
 	private Long parentId;
-
-	private String guid;
 
 	private String postType;
 
@@ -68,7 +70,9 @@ public class Post {
 
 	private List<Long> tagIds;
 
-	private List<ContentExt> contentExt;
+	private Geographic geographic;
+
+	private Map<String, String> contentExt;
 
 	public Long getId() {
 		return id;
@@ -164,14 +168,6 @@ public class Post {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
-	}
-
-	public String getGuid() {
-		return guid;
-	}
-
-	public void setGuid(String guid) {
-		this.guid = guid;
 	}
 
 	public String getPostType() {
@@ -286,11 +282,19 @@ public class Post {
 		this.tagIds = tagIds;
 	}
 
-	public List<ContentExt> getContentExt() {
+	public Geographic getGeographic() {
+		return geographic;
+	}
+
+	public void setGeographic(Geographic geographic) {
+		this.geographic = geographic;
+	}
+
+	public Map<String, String> getContentExt() {
 		return contentExt;
 	}
 
-	public void setContentExt(List<ContentExt> contentExt) {
+	public void setContentExt(Map<String, String> contentExt) {
 		this.contentExt = contentExt;
 	}
 }

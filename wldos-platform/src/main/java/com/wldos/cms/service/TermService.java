@@ -75,11 +75,14 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 
 	private final DomainService domainService;
 
-	public TermService(TermTypeRepo termTypeRepo, ContentRepo contentRepo, TermObjectRepo termObjectRepo, DomainService domainService) {
+	private final TermObjectService termObjectService;
+
+	public TermService(TermTypeRepo termTypeRepo, ContentRepo contentRepo, TermObjectRepo termObjectRepo, DomainService domainService, TermObjectService termObjectService) {
 		this.termTypeRepo = termTypeRepo;
 		this.contentRepo = contentRepo;
 		this.termObjectRepo = termObjectRepo;
 		this.domainService = domainService;
+		this.termObjectService = termObjectService;
 	}
 	
 	public PageableResult<TermTree> queryTermForTree(KTerms term, PageQuery pageQuery) {
@@ -355,7 +358,24 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 
 		this.relTermObject(termObject);
 	}
-	
+
+	public void saveTermObject(List<Long> termTypeIds, Long pId) {
+
+		List<KTermObject> termObjects = termTypeIds.parallelStream().map(tId -> {
+			KTermObject termObject = new KTermObject();
+			termObject.setId(this.nextId());
+			termObject.setTermTypeId(tId);
+			termObject.setObjectId(pId);
+			termObject.setTermOrder(0L);
+
+			return termObject;
+		}).collect(Collectors.toList());
+
+		this.termObjectService.insertSelectiveAll(termObjects);
+
+		this.termTypeRepo.countPlus(termTypeIds);
+	}
+
 	public KTermType queryTermTypeBySlug(String slugCategory) {
 		return this.entityRepo.queryTermTypeBySlug(slugCategory);
 	}
@@ -363,7 +383,6 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	public Term queryTermBySlugTerm(String slugTerm) {
 		return this.entityRepo.queryTermBySlugTerm(slugTerm);
 	}
-
 	
 	public List<KTerms> queryKTermsByTermTypeIds(List<Long> termTypeIds) {
 
@@ -371,6 +390,8 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	}
 	
 	public List<Term> queryAllByTermTypeIds(List<Long> termTypeIds) {
+		if (ObjectUtil.isBlank(termTypeIds))
+			return new ArrayList<>();
 		return this.entityRepo.queryAllTermsByTermTypeIds(termTypeIds);
 	}
 	

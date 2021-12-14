@@ -8,6 +8,8 @@
 
 package com.wldos.cms.repo;
 
+import java.util.List;
+
 import com.wldos.cms.entity.KModelContent;
 import com.wldos.cms.entity.KTermType;
 
@@ -26,6 +28,10 @@ public interface TermTypeRepo extends PagingAndSortingRepository<KTermType, Long
 	@Modifying
 	@Query("update k_term_type set count = (count + 1) where id=:termTypeId")
 	void countPlus(Long termTypeId);
+
+	@Modifying
+	@Query("update k_term_type set count = (count + 1) where id in ( :termTypeIds )")
+	void countPlus(List<Long> termTypeIds);
 
 	@Query("select c.* from k_model_content c where c.id=(select t.content_id from k_term_type t where t.id=:termTypeId)")
 	KModelContent queryContentTypeByTermType(Long termTypeId);

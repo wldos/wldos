@@ -35,11 +35,11 @@ public interface RegionRepo extends PagingAndSortingRepository<WoRegion, Long> {
 
 	@Query("select r.id, r.name, r.parent_id, g.`name` prov_name from wo_region r JOIN wo_region g on r.parent_id=g.id "
 			+ "where r.is_valid='1' and r.delete_flag='normal' and g.is_valid='1' and g.delete_flag='normal' "
-			+ "and r.`level`=:cityLevel and r.id=:cityId order by r.display_order")
+			+ "and r.`level`=:cityLevel and r.id=:cityId ")
 	City queryCityById(Long cityId, String cityLevel);
 
 	@Query("select r.id, r.name, r.parent_id, g.`name` prov_name from wo_region r JOIN wo_region g on r.parent_id=g.id "
 			+ "where r.is_valid='1' and r.delete_flag='normal' and g.is_valid='1' and g.delete_flag='normal' "
-			+ "and r.`level`=:cityLevel and r.region_code=:cityCode order by r.display_order")
+			+ "and r.`level`=:cityLevel and r.region_code=:cityCode ")
 	City queryCityByCode(String cityCode, String cityLevel);
 }

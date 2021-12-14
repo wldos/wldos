@@ -31,6 +31,7 @@ import com.wldos.support.Constants;
 import com.wldos.support.util.img.ImageUtil;
 import com.wldos.system.gateway.RestService;
 import com.wldos.system.storage.IStore;
+import com.wldos.system.storage.enums.FileAccessPolicyEnum;
 import com.wldos.system.storage.service.FileService;
 import com.wldos.system.storage.vo.FileInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -99,6 +100,11 @@ public class FileStore implements IStore {
 	@Override
 	public String getFileUrl(String filePath, String defaultUrl) {
 		return ObjectUtil.isBlank(filePath) ? ObjectUtil.string(defaultUrl) : this.fileService.genWebUrl(this.storeUrl, filePath);
+	}
+
+	@Override
+	public String genOssUrl(FileAccessPolicyEnum accessPolicy) {
+		return this.fileService.genOssUrl(this.storeUrl, accessPolicy);
 	}
 
 	@Override

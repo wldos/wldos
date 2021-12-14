@@ -44,6 +44,8 @@ import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Breadcrumb;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.ContentExt;
+import com.wldos.cms.vo.Geographic;
+import com.wldos.cms.vo.PostMeta;
 import com.wldos.cms.vo.SeoCrumbs;
 import com.wldos.cms.vo.MiniPost;
 import com.wldos.cms.vo.Post;
@@ -56,6 +58,7 @@ import com.wldos.support.Base;
 import com.wldos.support.Constants;
 import com.wldos.support.controller.EntityAssists;
 import com.wldos.support.controller.web.PageableResult;
+import com.wldos.support.enums.DeleteFlagEnum;
 import com.wldos.support.util.DateUtils;
 import com.wldos.support.util.ObjectUtil;
 import com.wldos.support.util.PageQuery;
@@ -65,6 +68,7 @@ import com.wldos.system.core.service.DomainService;
 import com.wldos.system.core.service.RegionService;
 import com.wldos.system.enums.RedisKeyEnum;
 import com.wldos.system.storage.IStore;
+import com.wldos.system.storage.enums.FileAccessPolicyEnum;
 import com.wldos.system.vo.City;
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,7 +78,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+/**
+ * cms全局service。
+ *
+ * @author 树悉猿
+ * @date 2021/6/13
+ * @version 1.0
+ */
 @Slf4j
 @RefreshScope
 @Service
@@ -86,6 +96,8 @@ public class KCMSService extends Base {
 	private final BeanCopier artCopier = BeanCopier.create(ContModelDto.class, Article.class, false);
 
 	private final BeanCopier contExtCopier = BeanCopier.create(ContentExt.class, ContentExt.class, false);
+
+	private final BeanCopier postMetaCopier = BeanCopier.create(ContModelDto.class, PostMeta.class, false);
 
 	@Value("${wldos.file.pic.srcset}")
 	private String thumbnail;
@@ -121,37 +133,27 @@ public class KCMSService extends Base {
 		this.store = store;
 	}
 
-
 	public PageableResult<BookUnit> queryContentList(PageQuery pageQuery) {
 		return this.postService.queryPostWithExtList(pageQuery);
 	}
 
-
-
 	private final BeanCopier postCopier = BeanCopier.create(Post.class, KPosts.class, false);
 
-
 	public Long insertSelective(Post post, Long userId, String userIp) {
-
-
 
 		KPosts posts = new KPosts();
 		this.postCopier.copy(post, posts, null);
 
-
-		KModelContent content = this.termService.queryContentTypeByTermType(post.getTermTypeId());
+		KModelContent content = this.termService.queryContentTypeByTermType(post.getTermTypeIds().get(0));
 		posts.setPostType(PostTypeEnum.BOOK.toString());
 		posts.setContentType(content.getContentCode());
 		posts.setPostStatus(PostStatusEnum.PUBLISH.toString());
 		Long id = this.nextId();
 		EntityAssists.beforeInsert(posts, id, userId, userIp, false);
 
-
-
 		this.postService.insertSelective(posts);
 
-
-		this.termService.saveTermObject(post.getTermTypeId(), id);
+		this.termService.saveTermObject(post.getTermTypeIds(), id);
 
 		List<ContentExt> contentExt = post.getContentExt();
 
@@ -160,28 +162,28 @@ public class KCMSService extends Base {
 			this.appendPubMeta(contentExt);
 		}
 
-
-
 		this.createPostMeta(contentExt, id);
 
 		return id;
 	}
-
 
 	public void update(Post post, Long userId, String userIp) {
 		List<ContentExt> contentExt = post.getContentExt();
 
 		if (!ObjectUtil.isBlank(contentExt) && !contentExt.isEmpty()) {
 
+			List<KPostmeta> postMetas = this.postmetaService.queryPostMetaByPostId(post.getId());
 
-			List<KPostmeta> postMetas = contentExt.parallelStream().map(ext -> {
+			Map<String, Long> keyMap = postMetas.parallelStream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getId));
+
+			postMetas = contentExt.parallelStream().map(ext -> {
 				KPostmeta postMeta = new KPostmeta();
 				String key = ext.getMetaKey();
 				String value = ext.getMetaValue();
-				if (ObjectUtil.isBlank(value) && ObjectUtil.isBlank(ext.getMetaId()))
+				if (ObjectUtil.isBlank(value))
 					return null;
-				postMeta.setId(ext.getMetaId());
-				postMeta.setPostId(ext.getPostId());
+				postMeta.setId(keyMap.get(key));
+				postMeta.setPostId(post.getId());
 				postMeta.setMetaKey(key);
 				postMeta.setMetaValue(value);
 				return postMeta;
@@ -190,6 +192,9 @@ public class KCMSService extends Base {
 			List<KPostmeta> postMetasU = postMetas.parallelStream().filter(p -> p.getId() != null).collect(Collectors.toList());
 			List<KPostmeta> postMetasN = postMetas.parallelStream().filter(p -> p.getId() == null).collect(Collectors.toList());
 			if (!postMetasN.isEmpty())
+				postMetasN.forEach(pm -> {
+					pm.setId(this.nextId());
+				});
 				this.postmetaService.insertSelectiveAll(postMetasN);
 			if (!postMetasU.isEmpty())
 				this.postmetaService.updateAll(postMetasU);
@@ -199,47 +204,39 @@ public class KCMSService extends Base {
 		this.postCopier.copy(post, posts, null);
 		EntityAssists.beforeUpdated(posts, userId, userIp);
 
-
-
 		this.postService.update(posts);
 	}
 
+	public String delete(Post post) {
 
-	public void delete(Post post, Long curUserId, String userIp) {
-
+		List<Chapter> chapters = this.postService.queryPostsByParentId(post.getId(), DeleteFlagEnum.NORMAL.toString());
+		if (chapters != null && chapters.size() > 0)
+			return "存在内容，请先删除内容";
 
 		this.postService.deleteById(post.getId());
-
-
+		return "ok";
 	}
-
 
 	public Product productInfo(Long pid) {
 		this.updatePubMeta(pid);
 
-
 		ContModelDto contBody = this.postService.queryContModel(pid);
 
-
 		List<KPostmeta> metas = this.postmetaService.queryPostMetaByPostId(pid);
-
 
 		Product product = new Product();
 		this.contCopier.copy(contBody, product, null);
 
 		this.termAndTagHandle(product, pid);
 
-
 		List<Long> tIds = product.getTermTypeIds();
 		this.genSeoAndCrumbs(product, tIds.get(0));
-
 
 		String[] mainPics = {KModelMetaKey.PUB_META_KEY_MAIN_PIC1, KModelMetaKey.PUB_META_KEY_MAIN_PIC2, KModelMetaKey.PUB_META_KEY_MAIN_PIC3,
 				KModelMetaKey.PUB_META_KEY_MAIN_PIC4};
 		List<MainPicture> pictures = Arrays.stream(mainPics).parallel().map(pic ->
 				exact(metas, pic)).collect(Collectors.toList());
 		product.setMainPic(pictures);
-
 
 		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
 
@@ -419,7 +416,7 @@ public class KCMSService extends Base {
 			}
 		}
 		if (mp.getUrl() == null) {
-			String noPicUrl = this.store.getFileUrl("/noPic.jpg", "");
+			String noPicUrl = this.store.getFileUrl(MainPicture.noMainPicPath, "");
 			mp.setUrl(noPicUrl);
 		}
 
@@ -510,7 +507,7 @@ public class KCMSService extends Base {
 
 	public Book queryBook(Long bookId) {
 		KPosts post = this.postService.findById(bookId);
-		List<Chapter> chapters = this.postService.queryPostsByParentId(bookId);
+		List<Chapter> chapters = this.postService.queryPostsByParentId(bookId, DeleteFlagEnum.NORMAL.toString());
 
 		Book book = new Book();
 		book.setId(post.getId());
@@ -932,5 +929,64 @@ public class KCMSService extends Base {
 		}
 
 		return new ArrayList<>();
+	}
+
+	/**
+	 * 查询内容信息
+	 *
+	 * @param pid 内容id
+	 * @return 内容信息
+	 */
+	public PostMeta postInfo(Long pid) {
+
+		// 根据id找到内容类型、模板类型 用于前端展示
+		ContModelDto contBody = this.postService.queryContModel(pid);
+
+		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
+		List<KPostmeta> metas = this.postmetaService.queryPostMetaByPostId(pid);
+
+		// 合并主体信息
+		PostMeta post = new PostMeta();
+		this.postMetaCopier.copy(contBody, post, null);
+		// 取出分类和标签
+		this.termAndTagFromPost(post, pid);
+
+		// 扩展属性 : 考虑静态模型 和 动态模型 的处理方式
+		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
+
+		// 处理地域信息
+		String city = pubMeta.get(KModelMetaKey.PUB_META_KEY_CITY);
+		if (!ObjectUtil.isBlank(city)) {
+			City region = this.regionService.queryRegionInfoByCode(city);
+			Geographic geo = new Geographic(region);
+			post.setGeographic(geo);
+		}
+
+		// 图片(主图和封面)处理url
+		String[] mainPics = {KModelMetaKey.PUB_META_KEY_MAIN_PIC1, KModelMetaKey.PUB_META_KEY_MAIN_PIC2, KModelMetaKey.PUB_META_KEY_MAIN_PIC3,
+				KModelMetaKey.PUB_META_KEY_MAIN_PIC4, KModelMetaKey.PUB_META_KEY_COVER};
+		Arrays.stream(mainPics).forEach(pic -> {
+			if (!pubMeta.containsKey(pic)) {
+				pubMeta.put(pic, MainPicture.noMainPicPath);
+			}
+		});
+		// 设置ossUrl，用于前端拼装文件类完整url
+		pubMeta.put(IStore.KEY_OSS_URL, this.store.genOssUrl(FileAccessPolicyEnum.PUBLIC));
+
+		post.setContentExt(pubMeta);
+
+		return post;
+	}
+
+	private void termAndTagFromPost(PostMeta post, Long pid) {
+		List<Term> termsType = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.CATEGORY.toString());
+		// 分类目录
+		List<Long> termTypeIds = termsType.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
+		post.setTermTypeIds(termTypeIds);
+		// 标签
+		List<Term> terms = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.TAG.toString());
+		List<Long> tagIds = terms.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
+
+		post.setTagIds(tagIds);
 	}
 }

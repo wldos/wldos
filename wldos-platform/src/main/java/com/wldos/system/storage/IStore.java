@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wldos.cms.dto.Thumbnail;
+import com.wldos.system.storage.enums.FileAccessPolicyEnum;
 import com.wldos.system.storage.vo.FileInfo;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,9 @@ public interface IStore {
 	String getFileUrl(Long fileId, String defaultUrl);
 	
 	String getFileUrl(String filePath, String defaultUrl);
-	
+
+	String genOssUrl(FileAccessPolicyEnum accessPolicy);
+
 	FileInfo storeFile(HttpServletRequest request, HttpServletResponse response, MultipartFile file) throws IOException;
 	
 	FileInfo storeFile(HttpServletRequest request, HttpServletResponse response, MultipartFile file, int[] widthHeight)
@@ -41,4 +44,6 @@ public interface IStore {
 	
 	List<Thumbnail> storePicWithThumbnails(HttpServletRequest request, HttpServletResponse response, MultipartFile file,
 			List<Thumbnail> thumbnailList) throws IOException;
+
+	String KEY_OSS_URL = "ossUrl";
 }
