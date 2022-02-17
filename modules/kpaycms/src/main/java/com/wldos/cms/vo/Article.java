@@ -1,0 +1,293 @@
+/*
+ * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Licensed under AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see term.md or https://www.wldos.com
+ *
+ */
+
+package com.wldos.cms.vo;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
+
+import com.wldos.cms.model.CMeta;
+import com.wldos.cms.model.IMeta;
+import com.wldos.sys.base.dto.Term;
+
+/**
+ * 一篇文章或一个章节。
+ *
+ * @author 树悉猿
+ * @date 2021/8/20
+ * @version 1.0
+ */
+public class Article extends CMeta implements IMeta {
+
+	// 内容post id
+	private Long id;
+
+	private String postTitle;
+
+	private String postContent;
+
+	private String postName;
+
+	private String postType;
+
+	private Long parentId;
+
+	private PostMember member;
+
+	private Long commentCount;
+
+	private Long starCount;
+
+	private Long likeCount;
+
+	private Timestamp updateTime;
+
+	private Long contentId;
+
+	private Long domainId;
+
+	private Long comId;
+
+	private String contentType;
+
+	private List<Comment> comments;
+
+	/** 标签列表 */
+	private List<Term> tags;
+
+	private List<Long> termTypeIds; // 一个帖子可以属于多个分类
+
+	/** 上一篇 */
+	private MiniPost prev;
+
+	/** 下一篇 */
+	private MiniPost next;
+
+	/** 相关文章 */
+	private List<MiniPost> relPosts;
+
+	/** seo和面包屑数据 */
+	private SeoCrumbs seoCrumbs;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getPostTitle() {
+		return postTitle;
+	}
+
+	public void setPostTitle(String postTitle) {
+		this.postTitle = postTitle;
+	}
+
+	public String getPostContent() {
+		return postContent;
+	}
+
+	public void setPostContent(String postContent) {
+		this.postContent = postContent;
+	}
+
+	public String getPostName() {
+		return postName;
+	}
+
+	public void setPostName(String postName) {
+		this.postName = postName;
+	}
+
+	public String getPostType() {
+		return postType;
+	}
+
+	public void setPostType(String postType) {
+		this.postType = postType;
+	}
+
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	public PostMember getMember() {
+		return member;
+	}
+
+	public void setMember(PostMember member) {
+		this.member = member;
+	}
+
+	public Long getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(Long commentCount) {
+		this.commentCount = commentCount;
+	}
+
+	public Long getStarCount() {
+		return starCount;
+	}
+
+	public void setStarCount(Long starCount) {
+		this.starCount = starCount;
+	}
+
+	public Long getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(Long likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Long getContentId() {
+		return contentId;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public void setContentId(Long contentId) {
+		this.contentId = contentId;
+	}
+
+	public Long getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(Long domainId) {
+		this.domainId = domainId;
+	}
+
+	public Long getComId() {
+		return comId;
+	}
+
+	public void setComId(Long comId) {
+		this.comId = comId;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public List<Term> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Term> tags) {
+		this.tags = tags;
+	}
+
+	@Override
+	public void setSubTitle(String subTitle) {
+
+	}
+
+	@Override
+	public void setOrnPrice(BigDecimal bigDecimal) {
+
+	}
+
+	@Override
+	public void setContact(String hideName) {
+
+	}
+
+	@Override
+	public void setTelephone(String hidePhone) {
+
+	}
+
+	@Override
+	public void setRealNo(String telephone) {
+
+	}
+
+	@Override
+	public void setCity(String name) {
+
+	}
+
+	@Override
+	public void setProv(String provName) {
+
+	}
+
+	@Override
+	public void setCounty(String county) {
+
+	}
+
+	public List<Long> getTermTypeIds() {
+		return termTypeIds;
+	}
+
+	public void setTermTypeIds(List<Long> termTypeIds) {
+		this.termTypeIds = termTypeIds;
+	}
+
+	public MiniPost getPrev() {
+		return prev;
+	}
+
+	public void setPrev(MiniPost prev) {
+		this.prev = prev;
+	}
+
+	public MiniPost getNext() {
+		return next;
+	}
+
+	public void setNext(MiniPost next) {
+		this.next = next;
+	}
+
+	public List<MiniPost> getRelPosts() {
+		return relPosts;
+	}
+
+	public void setRelPosts(List<MiniPost> relPosts) {
+		this.relPosts = relPosts;
+	}
+
+	public SeoCrumbs getSeoCrumbs() {
+		return seoCrumbs;
+	}
+
+	public void setSeoCrumbs(SeoCrumbs seoCrumbs) {
+		this.seoCrumbs = seoCrumbs;
+	}
+}

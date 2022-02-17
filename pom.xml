@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
-  ~  Licensed under the AGPL or a commercial license.
-  ~  For AGPL see License in the project root for license information.
-  ~  For commercial licenses see terms.md or https://www.wldos.com/
+  ~ Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+  ~ Licensed under AGPL or a commercial license.
+  ~ For AGPL see License in the project root for license information.
+  ~ For commercial licenses see term.md or https://www.wldos.com
   ~
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -24,7 +25,7 @@
 	<description>
 		WLDOS®平台，基于springboot实现的轻量级快速开发框架，SaaS应用架构。默认支持多租户运行模式，同时支持关闭以单租户模式运行。
 		默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构。WLDOS®寓意：世界的，未来的，开放的系统。
-		读音：汉['wo'dou'si] 英[wel'dɑ:s] 美[wɛl'dɑ:s]。
+		读音：汉['wo'dao'si]。
 	</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -38,21 +39,16 @@
 	</licenses>
 	<developers>
 		<developer>
-			<name>zlt</name>
-			<email>zhiletu@88.com</email>
-		</developer>
-		<developer>
-			<name>wldos</name>
-			<email>wldos.com@88.com</email>
-		</developer>
-		<developer>
 			<name>树悉猿</name>
 			<email>306991142@qq.com</email>
+			<roles><role>leader</role></roles>
 		</developer>
 	</developers>
 	<modules>
-		<module>wldos-platform</module>
-		<module>wldos-kpaycms</module>
+		<module>common</module>
+		<module>modules/platform</module>
+		<module>modules/kpaycms</module>
+		<module>wldos-web</module>
 	</modules>
 	<dependencies>
 		<dependency>
@@ -110,11 +106,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
-		</dependency>
+			<optional>false</optional>
+		</dependency> 干扰构建过程，关闭-->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -219,5 +215,22 @@
 			</plugin -->
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>aliyun-repos</id>
+			<url>https://maven.aliyun.com/repository/public</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>aliyun-repos</id>
+			<url>https://maven.aliyun.com/repository/public</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>

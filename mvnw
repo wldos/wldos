@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# Copyright (c) 2020 - 2021.  Owner of wldos.com. All rights reserved.
-#  Licensed under the AGPL or a commercial license.
-#  For AGPL see License in the project root for license information.
-#  For commercial licenses see terms.md or https://www.wldos.com/
+# Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+# Licensed under AGPL or a commercial license.
+# For AGPL see License in the project root for license information.
+# For commercial licenses see term.md or https://www.wldos.com
 #
 #
 

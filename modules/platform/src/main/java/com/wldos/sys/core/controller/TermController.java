@@ -1,0 +1,192 @@
+/*
+ * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Licensed under AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see term.md or https://www.wldos.com
+ *
+ */
+
+package com.wldos.sys.core.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import com.wldos.sys.base.dto.Term;
+import com.wldos.sys.base.entity.KTerms;
+import com.wldos.sys.base.enums.TermTypeEnum;
+import com.wldos.sys.base.service.TermService;
+import com.wldos.sys.base.vo.TermTree;
+import com.wldos.sys.base.vo.Category;
+import com.wldos.base.controller.NoRepoController;
+import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.vo.SelectOption;
+import com.wldos.common.vo.TreeSelectOption;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 分类管理controller。
+ *
+ * @author 树悉猿
+ * @date 2021/5/2
+ * @version 1.0
+ */
+@RestController
+public class TermController extends NoRepoController {
+	private final TermService service;
+
+	public TermController(TermService service) {
+		this.service = service;
+	}
+
+	/**
+	 * 分类列表，支持查询、排序的分页查询
+	 *
+	 * @param params 分页
+	 * @return 分类项树形列表
+	 */
+	@GetMapping("/admin/cms/category")
+	public PageableResult<TermTree> listCategory(@RequestParam Map<String, Object> params) {
+		params.put("classType", TermTypeEnum.CATEGORY.toString());
+		//查询列表数据
+		PageQuery pageQuery = new PageQuery(params);
+		return this.service.queryTermForTree(new KTerms(), pageQuery);
+	}
+
+	/**
+	 * 标签列表，支持查询、排序的分页查询
+	 *
+	 * @param params 请求参数
+	 * @return 标签列表
+	 */
+	@GetMapping("/admin/cms/tag")
+	public PageableResult<TermTree> listTag(@RequestParam Map<String, Object> params) {
+		params.put("classType", TermTypeEnum.TAG.toString());
+		//查询列表数据
+		PageQuery pageQuery = new PageQuery(params);
+		return this.service.queryTermForTree(new KTerms(), pageQuery);
+	}
+
+	/**
+	 * 获取分类树
+	 * (大类、小类两级矮树, [{title: '', key: '', slug: '', conType: ''}])
+	 *
+	 * @return 两级分类树列表
+	 */
+	@GetMapping("category/flatTree")
+	public List<Category> categoryFlatTree() {
+		return this.service.queryFlatCategoryTree();
+	}
+
+	/**
+	 * 信息发布获取分类树，用于方便权限控制，后期追加路由权限管理
+	 * (大类、小类两级矮树, [{title: '', key: '', slug: '', conType: ''}])
+	 *
+	 * @return 两级分类树列表
+	 */
+	@GetMapping("info/flatTree")
+	public List<Category> infoFlatTree() {
+		return this.service.queryFlatCategoryTree();
+	}
+
+	/**
+	 * 获取分类树状列表
+	 * (常规分层, [{title: '', value: '', key: '', children: [{...}...]},])
+	 *
+	 * @return 分类树状列表
+	 */
+	@GetMapping("category/treeSelect")
+	public List<TreeSelectOption> categoryLayerTree() {
+		return this.service.queryLayerCategoryTree();
+	}
+
+	/**
+	 * 根据父分类id获取所有子分类（包含自身）
+	 * (结构：[{title: '', key: '', slug: '', conType: ''}])
+	 *
+	 * @return 两级分类树列表
+	 */
+	@GetMapping("category/fromPid/{parentId:\\d+}")
+	public List<Category> categoryFromPid(@PathVariable Long parentId) {
+		return this.service.queryCategoriesFromPid(parentId);
+	}
+
+	/**
+	 * 根据父分类别名获取所有子分类（包含自身）
+	 * (结构：[{title: '', key: '', slug: '', conType: ''}])
+	 *
+	 * @return 两级分类树列表
+	 */
+	@GetMapping("category/fromPlug/{slugTerm}")
+	public List<Category> categoryFromPlug(@PathVariable String slugTerm) {
+		return this.service.queryCategoriesFromPlug(slugTerm);
+	}
+
+	/**
+	 * 获取平顶级分类下拉列表([{label: 'l', value: 'v'},])
+	 *
+	 * @return 顶级分类下拉列表
+	 */
+	@GetMapping("category/select")
+	public List<SelectOption> queryTopCategories() {
+		return this.service.queryTopCategories();
+	}
+
+	/**
+	 * 获取平台标签下拉列表([{label: 'l', value: 'v'},])
+	 *
+	 * @return 标签下拉列表
+	 */
+	@GetMapping("tag/select")
+	public List<SelectOption> queryFlatTags() {
+		return this.service.queryFlatTags();
+	}
+
+	@PostMapping("/admin/cms/category/add")
+	public String addCategory(@RequestBody Term term) {
+		term.setClassType(TermTypeEnum.CATEGORY.toString());
+		this.service.addTerm(term);
+		this.service.refreshTerm();
+		return this.resJson.ok("ok");
+	}
+
+	@PostMapping("/admin/cms/category/update")
+	public String updateCategory(@RequestBody Term term) {
+		this.service.updateTerm(term);
+		this.service.refreshTerm();
+		return this.resJson.ok("ok");
+	}
+
+	@DeleteMapping("/admin/cms/category/delete")
+	public String deleteCategory(@RequestBody Term term) {
+		this.service.deleteTerm(term);
+		this.service.refreshTerm();
+		return this.resJson.ok("ok");
+	}
+
+	@SuppressWarnings("unchecked")
+	@DeleteMapping("/admin/cms/category/deletes")
+	public Boolean removeIds(@RequestBody Map jsonObject) {
+		Object ids = jsonObject.get("ids");
+		if (ids != null) {
+			service.deleteByIds(((List<Object>) ids).toArray());
+		}
+		this.service.refreshTerm();
+		return Boolean.TRUE;
+	}
+
+	@PostMapping("/admin/cms/tag/add")
+	public String addTag(@RequestBody Term term) {
+		term.setClassType(TermTypeEnum.TAG.toString());
+		this.service.addTerm(term);
+		this.service.appendCacheTag(term); // 新增标签追加缓存
+		return this.resJson.ok("ok");
+	}
+}
