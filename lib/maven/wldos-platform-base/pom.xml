@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+  ~ Licensed under AGPL or a commercial license.
+  ~ For AGPL see License in the project root for license information.
+  ~ For commercial licenses see term.md or https://www.wldos.com
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>wldos-parent</artifactId>
+		<groupId>com.wldos</groupId>
+		<version>1.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>wldos-platform-base</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>com.wldos</groupId>
+			<artifactId>wldos-framework</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+	</properties>
+</project>

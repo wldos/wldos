@@ -3,7 +3,7 @@
 #### 引子
 
 元宇宙之概念炒得火热，现在发现其中很多理念与当初的创想不谋而合，身为码农的人们应做点什么——后生万学，奋起直追，犹未为晚。那我们就从力所能及的地方开始，并不内行的我们本着对当下以及未来的憧憬和预定，竭老猿之所能事，从代码开始输出。在系统的研发过程中，一步步探求我们最引以为傲的“乌托邦”，然后实现它、驱动它，直到托起更美好的世界！WLDOS（World
-Operating System）算是为了这样的目标所作的涂鸦，这样一个拙劣而平凡的“小板凳”，需要得是在实际应用中积累和锤炼，这与某些业务型项目不同。
+Operating System）算是为了这样的目标所作的涂鸦，这样一个拙劣而平凡的“小板凳”，需要在实际应用中积累和锤炼，这与某些业务型项目不同。
 
 #### 特点
 
@@ -244,8 +244,13 @@ menu: [
     wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。  
     
     安装数据库，数据库脚本在wldos-web/db下，默认mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。
-    数据库正常运行后，以下命令启动项目：
-    mvn -pl com.wldos:wldos-web spring-boot:run启动cms和支撑平台。  
+    数据库正常运行后，以下命令启动项目：  
+    安装依赖jar到本地仓库：  
+    mvn install:install-file -Dfile=./lib/wldos-framework-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
+    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml  
+      
+    启动项目：  
+    mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。  
     部署前端：
 1.  下载本地后，打开前端项目，执行tyarn安装依赖js库。
 2.  执行npm start启动前端项目，npm build执行打包编译。前端访问路径：http://localhost:8000
