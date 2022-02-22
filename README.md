@@ -1,5 +1,5 @@
 <p align="center">
- <img alt="WLDOS" src="https://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px;background: deepskyblue; border-radius: 60px">
+ <img alt="WLDOS" src="https://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px;background: blue; border-radius: 60px">
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <p align="center">
