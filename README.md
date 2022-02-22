@@ -236,7 +236,7 @@ menu: [
     wldos-platform-base：wldos支撑平台基础（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
     wldos-platform: wldos支撑平台    
     wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
-    wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。 
+    wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。  
     
     安装数据库，数据库脚本在wldos-web/db下，默认mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。
     数据库正常运行后，以下命令启动项目：  
