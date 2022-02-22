@@ -1,5 +1,5 @@
 <p align="center">
- <img alt="WLDOS" src="https://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px;background: blue; border-radius: 60px">
+ <img alt="WLDOS" src="https://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px; ">
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <p align="center">
@@ -63,8 +63,8 @@ ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。
 ### 功能模块
 
 WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三大版块构成，组成两个项目模块：WLDOS云应用支撑平台和WLDOS内容管理系统，如下：
-![WLDOS支撑平台](https://images.gitee.com/uploads/images/2021/1116/113101_bbed1cc4_7754170.jpeg "wldos-platform.jpeg")
-![WLDOS内容管理](https://images.gitee.com/uploads/images/2021/1116/113134_443ea303_7754170.jpeg "在这里输入图片标题")
+![WLDOS支撑平台](wldos%E5%8A%9F%E8%83%BD%E6%B8%85%E5%8D%95%20(2).jpeg)
+![WLDOS内容付费](KPayCMS%E6%B5%81%E7%A8%8B%E5%9B%BE%20(2).jpeg)
 
 ### 安装教程
 
