@@ -30,7 +30,7 @@
 QQ 群：830355512   
 公众号：wldos  
 
-![公众号：wldos](wldos.jpg)
+![公众号：wldos输入图片说明](wldos.jpg)
 
 ### 项目介绍
 
@@ -65,8 +65,8 @@ ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。
 ### 功能模块
 
 WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三大版块构成，组成两个项目模块：WLDOS云应用支撑平台和WLDOS内容管理系统，如下：
-![WLDOS支撑平台](wldos%E5%8A%9F%E8%83%BD%E6%B8%85%E5%8D%95%20(2).jpeg)
-![WLDOS内容付费](KPayCMS%E6%B5%81%E7%A8%8B%E5%9B%BE%20(2).jpeg)
+![WLDOS支撑平台](zone/dev/wldos.jpeg)
+![WLDOS内容付费](zone/dev/KPayCMS.jpeg)
 
 ### 安装教程
 
