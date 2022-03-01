@@ -19,18 +19,18 @@
 
 1.干净：框架底层仅引用了springboot等开源包，开发框架会持续优化，在此基础上实现了支撑平台，避免了引入spring全家桶所造成的噪声，按需自研、从零开始有利于开发团队、项目的积累和成长。
 
-2.完整：包含底层到业务应用的完整产品线，是云物互联背景下的小有规模的最佳实践，不迷信业内各种高大上的轮子，崇尚自主研发，为解决实际问题而自研有利于自然成长，虽"土"，但够自由。  
+2.完整：包含底层到业务应用的完整产品线，是云物互联背景下的小有规模的最佳实践，不迷信业内各种高大上的轮子，崇尚自主研发，为解决实际问题而自研有利于自然成长，虽"土"，但够自由。
 
 3.真实：自主研发、自主运营，研发与运营同时进行的模式更务实，不做KPI，现实应用驱动，用什么，做什么。
-  
+
 项目尚浅陋，会慢慢成熟，You can believe！
 
 #### 技术交流
 
 QQ 群：830355512   
-公众号：wldos  
+公众号：wldos
 
-![公众号：wldos输入图片说明](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)
+![公众号：wldos](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)
 
 ### 项目介绍
 
@@ -45,7 +45,7 @@ WLDOS是类SaaS的云支撑平台，与SaaS的区别在于目标是托起云物�
 
 演示地址：<a href="http://www.shuxiyuan.com/user/login?redirect=http%3A%2F%2Fshuxiyuan.com%2Fadmin%2Fres%2Fapp">点击前往</a>（演示环境版本略低于社区版）
 
-###技术说明  
+###技术说明
 语言：Java8、ReactJs17。
 框架：springboot2.4.6（支持升级到最新）。  
 ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。  
@@ -58,7 +58,7 @@ ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。
 
 **1.0核心功能：系统管理（应用、资源、权限、用户、组织、租户、多域、分类），内容管理，信息发布，内容创作、内容付费（在线付费、在线交付）。**
 
-**2.0规划功能：服务集成与开放能力、插件扩展管理能力、类serviceMesh Ad-hoc架构支撑能力。**  
+**2.0规划功能：服务集成与开放能力、插件扩展管理能力、类serviceMesh Ad-hoc架构支撑能力。**
 
 **3.0规划功能：软件工厂、云物互联支撑能力、智能建模与机器人系统。**
 
@@ -85,17 +85,17 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
     wldos-platform-base：wldos支撑平台基础（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
     wldos-platform: wldos支撑平台    
     wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
-    wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。  
-    
+    wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
+
     安装数据库，数据库脚本在wldos-web/db下，默认mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。
     数据库正常运行后，以下命令启动项目：  
     安装依赖jar到本地仓库：  
     mvn install:install-file -Dfile=./lib/wldos-framework-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
-    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml  
-      
+    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml
+
     启动项目：  
-    mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。  
-    
+    mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。
+
     部署前端：
 1.  下载本地后，打开前端项目，执行tyarn安装依赖js库。
 2.  执行npm start启动前端项目，npm build执行打包编译。前端访问路径：http://localhost:8000
@@ -111,7 +111,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
 
 说明：模块包含支撑平台 和 内容管理系统，后者依赖于前者，请根据需求取舍。
 
-### 开源协议与商用许可  
+### 开源协议与商用许可
 
 为了WLDOS平台的独特性和可持续，已申请软件著作权证书，已开发源代码采用Apache2.0协议可商用。
 本社区版默认免费使用，但是限制用户数，如需专业版请购商业授权。
