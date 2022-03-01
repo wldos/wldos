@@ -20,6 +20,7 @@ import com.wldos.cms.vo.PostMember;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 帖子repository操作类
@@ -112,6 +113,15 @@ public interface PostRepo extends PagingAndSortingRepository<KPosts, Long> {
 	@Modifying
 	@Query("update k_posts set like_count=ABS(like_count+(:count)) where id=:postId")
 	void updateLikeCountByPostId(Long postId, int count);
+
+	/**
+	 * 帖子查看数更新
+	 *
+	 * @param postId 帖子id
+	 */
+	@Modifying
+	@Query("update k_posts set views=:views where id=:postId")
+	void updateViewsByPostId(Long postId, @Param("views") int views);
 
 	/**
 	 * 查询上一篇帖子

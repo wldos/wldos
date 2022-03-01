@@ -65,6 +65,9 @@ public class KPosts {
 	@JsonSerialize(using = Integer2JsonSerializer.class)
 	private Integer likeCount;
 
+	@JsonSerialize(using = Integer2JsonSerializer.class)
+	private Integer views;
+
 	private Long createBy;
 
 	private Timestamp createTime;
@@ -240,6 +243,14 @@ public class KPosts {
 
 	public void setLikeCount(Integer likeCount) {
 		this.likeCount = likeCount;
+	}
+
+	public Integer getViews() {
+		return views;
+	}
+
+	public void setViews(Integer views) {
+		this.views = views;
 	}
 
 	public Long getCreateBy() {

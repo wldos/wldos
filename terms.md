@@ -1,4 +1,4 @@
-                                       WLDOS®软件商业授权协议
+WLDOS®软件商业授权协议
 
 当您以任何形式使用WLDOS®软件及其任何衍生软件时，默认您遵循以下服务条款：
 
@@ -16,7 +16,7 @@
 
 5.若您已经购买本产品许可文件或以其它方式获得的许可文件，将被视为您对本服务条款全部的完全接受，如果您未能遵守本服务条款，您的许可授权将被终止，许可的权利将被收回，同时您应承担相应法律责任。
 
-                           WLDOS® software Business license agreement
+WLDOS® software Business license agreement
 
 When you use WLDOS® software and any derivative software in any form, you will abide by
 the following terms of service by default:

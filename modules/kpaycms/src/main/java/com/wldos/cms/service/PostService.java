@@ -537,6 +537,16 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 		this.entityRepo.updateLikeCountByPostId(postId, count);
 	}
 
+	/**
+	 * 更新帖子查看数
+	 *
+	 * @param postId 帖子id
+	 * @param views 当前查看数
+	 */
+	public void updateViews(Long postId, int views) {
+		this.entityRepo.updateViewsByPostId(postId, views);
+	}
+
 	public MiniPost queryPrevPost(Long pid) {
 		return this.entityRepo.queryPrev(pid);
 	}

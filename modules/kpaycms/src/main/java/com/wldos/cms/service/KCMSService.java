@@ -982,14 +982,21 @@ public class KCMSService extends Base {
 	 *
 	 * @param pid 帖子id
 	 */
-	public void updatePubMeta(Long pid) { // @todo 需要开启缓存
+	public void updatePubMeta(Long pid) { // @todo 需要开启缓存、消息缓冲机制
 		if (!this.postmetaService.isExistsViews(pid)) {
 			List<ContentExt> contentExtList = new ArrayList<>();
 			this.appendPubMeta(contentExtList);
 			this.createPostMeta(contentExtList, pid);
 		}
-		else
+		else {
 			this.postmetaService.increasePostViews(1, pid);
+			KPostmeta views = this.postmetaService.queryByPostIdAndMetaKey(pid, KModelMetaKey.PUB_META_KEY_VIEWS);
+			int viewNum = Integer.parseInt(views.getMetaValue());
+			if (viewNum % 10 == 0) {
+				// 每增加一定数量，更新一次帖子热度，默认增加10，后期加入缓冲机制和调节机制
+				this.postService.updateViews(pid, viewNum);
+			}
+		}
 	}
 
 	/**

@@ -33,6 +33,10 @@ public class PostmetaService extends BaseService<PostmetaRepo, KPostmeta, Long> 
 		return this.entityRepo.queryPostMetaByPostId(pid);
 	}
 
+	KPostmeta queryByPostIdAndMetaKey(Long postId, String metaKey) {
+		return this.entityRepo.queryByPostIdAndMetaKey(postId, metaKey);
+	}
+
 	List<KPostmeta> queryAllByPostIdInAndMetaKey(List<Long> postId, String metaKey) {
 		return this.entityRepo.queryAllByPostIdInAndMetaKey(postId, metaKey);
 	}
