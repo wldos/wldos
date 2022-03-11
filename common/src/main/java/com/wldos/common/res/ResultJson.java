@@ -51,6 +51,12 @@ public class ResultJson {
 		this.objectMapper = objectMapper;
 	}
 
+	/**
+	 * 封装方法返回的数据到统一的数据结构中，以形成统一格式的json。
+	 *
+	 * @param res 操作返回的数据对象
+	 * @return 格式化后的json
+	 */
 	public Result format(Object res) {
 		if (ObjectUtils.isBlank(res)) {
 			return new DomainResult().data("");
@@ -59,6 +65,12 @@ public class ResultJson {
 		return new DomainResult().data(res);
 	}
 
+	/**
+	 * 返回json字符串
+	 *
+	 * @param obj 要转换的对象实例
+	 * @return 转换的json
+	 */
 	public String ok(Object obj) {
 		Result res = this.format(obj);
 		try {
@@ -70,6 +82,13 @@ public class ResultJson {
 		return "";
 	}
 
+	/**
+	 * 简单键值对，返回json字符串
+	 *
+	 * @param key 参数键
+	 * @param value 参数值
+	 * @return <k,v>json字符串
+	 */
 	public String ok(String key, Object value) {
 		Map<String, Object> obj = new HashMap<>();
 		obj.put(key, value);
@@ -83,6 +102,13 @@ public class ResultJson {
 		return "";
 	}
 
+	/**
+	 * 返回json字符串
+	 *
+	 * @param obj 待处理对象
+	 * @param isLong2Str 是否long转字符串，防止js精度丢失
+	 * @return 已转换json字符串
+	 */
 	public String ok(Object obj, boolean isLong2Str) {
 		Result res = this.format(obj);
 		try {
@@ -97,6 +123,13 @@ public class ResultJson {
 		return "";
 	}
 
+	/**
+	 * json转对象，接收前端传递的json
+	 *
+	 * @param json 待读json字符串
+	 * @param isString2Long 是否把前端给的字符串转成实体真实类型long
+	 * @return 已转换对象
+	 */
 	public <AnyEntity> AnyEntity readEntity(String json, boolean isString2Long) {
 		try {
 			if (isString2Long) {
@@ -110,6 +143,13 @@ public class ResultJson {
 		return null;
 	}
 
+	/**
+	 * 返回直译json字符串
+	 *
+	 * @param obj 待处理对象
+	 * @param isLong2String 是否Long转字符串，前端js不支持长度数字需要转，后端交换不需要
+	 * @return json字符串
+	 */
 	public String toJson(Object obj, boolean isLong2String) {
 		try {
 			if (isLong2String) {
@@ -128,6 +168,13 @@ public class ResultJson {
 		return this.objectMapper;
 	}
 
+	/**
+	 * 复杂对象返回json字符串
+	 *
+	 * @param obj 待处理对象
+	 * @param type 对象类型
+	 * @return 已转换json字符串
+	 */
 	public String ok(Object obj, Type type) {
 		Gson g = new Gson();
 		String complex = g.toJson(obj, type);

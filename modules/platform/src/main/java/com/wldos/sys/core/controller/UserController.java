@@ -39,12 +39,22 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class UserController extends RepoController<UserService, WoUser> {
 	
+	/**
+	 * 通过用户访问token获取用户信息、权限和菜单
+	 *
+	 * @return 用户信息
+	 */
 	@GetMapping("currentUser")
 	public User currentUser() {
 
 		return this.service.queryUser(this.getDomainId(), this.request, this.getTenantId(), this.getCurUserId());
 	}
 	
+	/**
+	 * 通过用户访问token获取用户账户设置信息，必须登录
+	 *
+	 * @return 账户信息
+	 */
 	@GetMapping("curAccount")
 	public AccountInfo currentAccount() {
 
@@ -53,7 +63,7 @@ public class UserController extends RepoController<UserService, WoUser> {
 
 	@PostMapping("uploadAvatar")
 	public String uploadAvatar(@RequestParam("avatar") MultipartFile file) throws IOException {
-
+		// 调用文件存储服务, 头像尺寸规定144x144px
 		FileInfo fileInfo = this.store.storeFile(this.request, this.response, file, new int[]{144, 144});
 
 		WoUser user = new WoUser();

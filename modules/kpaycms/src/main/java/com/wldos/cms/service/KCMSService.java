@@ -410,13 +410,18 @@ public class KCMSService extends Base {
 		seoCrumbs.setCrumbs(crumb);
 		return seoCrumbs;
 	}
-
+	// 仅考虑动态模板
 	private TempTypeEnum getTemplateTypeByValue(String value) {
 		if (TempTypeEnum.PRODUCT.getValue().equals(value))
 			return TempTypeEnum.PRODUCT;
 		if (TempTypeEnum.ARCHIVES.getValue().equals(value))
 			return TempTypeEnum.ARCHIVES;
+		if (TempTypeEnum.CATEGORY.getValue().equals(value))
+			return TempTypeEnum.CATEGORY;
+		if (TempTypeEnum.INFO.getValue().equals(value))
 		return TempTypeEnum.INFO;
+
+		return TempTypeEnum.UNKNOWN;
 	}
 
 	// 目前支持目录和标签，根据分类项的类型决定面包屑的url类型

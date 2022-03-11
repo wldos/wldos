@@ -108,7 +108,7 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		User user = new User();
 		UserInfo userInfo = this.queryUserInfo(userId);
 		user.setUserInfo(userInfo);
-		MenuAndRoute mar = this.authService.queryMenuAndRouteByUserId(domainId, comId, ResourceEnum.MENU.toString(), userId);
+		MenuAndRoute mar = this.authService.queryMenuAndRouteByUserId(domainId, comId, ResourceEnum.MENU.getValue(), userId);
 		if (!ObjectUtils.isBlank(mar)) {
 			user.setMenu(mar.getMenu());
 			user.setRoute(mar.getRoute());
@@ -131,7 +131,7 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 	 * @return 管理菜单列表
 	 */
 	public List<Menu> queryAdminMenuByUser(Long domainId, Long comId, Long curUserId) {
-		return this.authService.queryMenuByUserId(domainId, comId, ResourceEnum.ADMIN_MENU.toString(), curUserId);
+		return this.authService.queryMenuByUserId(domainId, comId, ResourceEnum.ADMIN_MENU.getValue(), curUserId);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		User user = new User();
 		UserInfo userInfo = this.queryUserInfo(Constants.GUEST_ID);
 		user.setUserInfo(userInfo);
-		MenuAndRoute mar = this.authService.queryMenuAndRouteByUserId(domainId, Constants.TOP_COM_ID, ResourceEnum.MENU.toString(), Constants.GUEST_ID);
+		MenuAndRoute mar = this.authService.queryMenuAndRouteByUserId(domainId, Constants.TOP_COM_ID, ResourceEnum.MENU.getValue(), Constants.GUEST_ID);
 		if (!ObjectUtils.isBlank(mar)) {
 			user.setMenu(mar.getMenu());
 			user.setRoute(mar.getRoute());

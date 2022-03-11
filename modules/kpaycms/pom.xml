@@ -38,15 +38,4 @@
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
 
-	<build>
-		<resources>
-			<resource>
-				<directory>lib</directory>
-				<targetPath>/WEB-INF/lib/</targetPath><!-- 如果是可执行jar，改成BOOT-INF -->
-				<includes>
-					<include>**/*.jar</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
 </project>

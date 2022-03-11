@@ -23,6 +23,7 @@
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
+		<projectName>wldos</projectName>
 	</properties>
 
 	<dependencies>
@@ -40,6 +41,10 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
+
+	<build><!-- 构建不带版本号的包 -->
+		<finalName>${projectName}</finalName>
+	</build>
 
 	<repositories>
 		<repository>

@@ -55,6 +55,16 @@ public class ScriptingAPI {
         inv.invokeFunction("doSwing", "Scripting Swing" );
     }
 
+
+    /**
+     * 调用js脚本并传递java参数，返回执行结果
+     * @param script
+     * @param funName
+     * @param params
+     * @return
+     * @throws ScriptException
+     * @throws NoSuchMethodException
+     */
     public static String invokeScript(String script, String funName, Object... params) throws ScriptException, NoSuchMethodException{
     	ScriptEngine engine = getJavaScriptEngine();
     	engine.eval(script);
@@ -64,6 +74,10 @@ public class ScriptingAPI {
         return res;
     }
 
+    /**
+     * 获取js引擎
+     * @return
+     */
     protected static ScriptEngine getJavaScriptEngine(){
     	ScriptEngineManager manager = new ScriptEngineManager(); 
     	

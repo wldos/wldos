@@ -97,6 +97,12 @@ public final class ObjectUtils {
 		return o.toString();
 	}
 
+	public static Long nvlToZero(Long o) {
+		if (o == null)
+			return 0L;
+		return o;
+	}
+
 	/**
 	 * 实体对象转成Map,访问私有属性：{@code field.setAccessible(true);}。
 	 *
