@@ -17,8 +17,9 @@ package com.wldos.common.enums;
  */
 public enum FileAccessPolicyEnum {
 
+	/** 公开访问 */
 	PUBLIC("store"),
-
+	/** 私密文件 */
 	PRIVATE("oss");
 
 	private final String enumName;

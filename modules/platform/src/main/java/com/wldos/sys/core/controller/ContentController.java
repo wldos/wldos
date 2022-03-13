@@ -53,16 +53,29 @@ public class ContentController extends RepoController<ContentService, KModelCont
 	}
 
 	/**
-	 * 查询所有内容模型下拉列表, 后端不经常用，内容模型数据流量小，暂不使用
-	 * [{label: '', value: ''}, ...]
+	 * 查询所有内容模型下拉列表
+	 * [{label: '', value: 'id'}, ...]
 	 *
 	 * @return 内容模型下拉列表
 	 */
-	@GetMapping("select")
-	public List<SelectOption> contentSelectList() {
+	@GetMapping("select/id")
+	public List<SelectOption> contIdSelectList() {
 		List<KModelContent> contents = this.service.queryAllContent();
 
 		return contents.parallelStream().map(t -> new SelectOption(t.getContentName(), t.getId().toString())).collect(Collectors.toList());
+	}
+
+	/**
+	 * 查询所有内容模型下拉列表
+	 * [{label: '', value: 'code'}, ...]
+	 *
+	 * @return 内容模型下拉列表
+	 */
+	@GetMapping("select/code")
+	public List<SelectOption> contCodeSelectList() {
+		List<KModelContent> contents = this.service.queryAllContent();
+
+		return contents.parallelStream().map(t -> new SelectOption(t.getContentName(), t.getContentCode())).collect(Collectors.toList());
 	}
 
 	/**

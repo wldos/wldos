@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 供求信息controller。
+ * 供求信息controller。信息不能线上交易，只能线下交易。
  *
  * @author 树悉猿
  * @date 2022/01/05

@@ -13,7 +13,8 @@ import java.util.List;
 import com.wldos.support.storage.dto.Thumbnail;
 
 /**
- * 帖子图片元数据结构。
+ * 帖子图片元数据结构。用于创建帖子内容图片的元数据，保存用户设置的图片格式，适配多终端的缩略图元信息。
+ * 是创建带格式的帖子对象的图片格式存储器和格式化筛。
  *
  * @author 树悉猿
  * @date 2021/7/5

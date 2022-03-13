@@ -16,7 +16,7 @@ package com.wldos.auth.vo;
  * @version 1.0
  */
 public class MobileModifyParams {
-
+	/** 登录用户id */
 	private Long id;
 
 	private String oldMobile;

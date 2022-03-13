@@ -13,7 +13,7 @@ import java.util.List;
 import com.wldos.sys.base.dto.ContentExt;
 
 /**
- * 元模型定义。
+ * 在CMS-Post元模型定义。
  *
  * @author 树悉猿
  * @date 2021/6/19

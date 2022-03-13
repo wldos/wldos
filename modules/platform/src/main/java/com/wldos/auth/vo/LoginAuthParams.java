@@ -18,19 +18,24 @@ import java.io.Serializable;
  * @version 1.0
  */
 public class LoginAuthParams implements Serializable {
-
+	/** 登录用户名 */
 	private String username;
 
 	private String password;
 
+	/** 验证码: 图形验证码+uuid */
 	private String verifyCode;
 
+	/** 手机号 */
 	private String mobile;
 
+	/** 手机验证码 */
 	private String captcha;
 
+	/** 自动登录 */
 	private String autoLogin;
 
+	/** 登录方式：账号密码、手机 */
 	private String type;
 
 	public String getUsername() {

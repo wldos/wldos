@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class ResultJson {
-
+	// DomainEntity: 单表或领域实体(共同点是：都有仓库EntityRepo实现，需要和数据库交互)，仅与前端交互的controller无须在乎泛型
 
 	private final ObjectMapper objectMapper;
 

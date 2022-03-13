@@ -76,6 +76,13 @@ public class UserController extends RepoController<UserService, WoUser> {
 		return this.resJson.ok("ok");
 	}
 	
+	/**
+	 * 用户信息配置,含头像设置
+	 * 考虑到用户头像在SaaS平台量较大，与文件服务合并统一处理支持独立部署，支持返回fileId或者相对Url，消费方可以存储id或者URL
+	 * 存储URL可以节省时间，存储空间略有冗余，建议在外网有seo需求的应用中使用，在内网附件更新频繁的业务系统，建议用ID。
+	 *
+	 * @param user 基本信息
+	 */
 	@PostMapping("conf")
 	public String userConfig(@RequestBody WoUser user) {
 		Long userId = this.getCurUserId();
@@ -113,12 +120,22 @@ public class UserController extends RepoController<UserService, WoUser> {
 		return this.resJson.ok("ok");
 	}
 	
+	/**
+	 * 取回请求域的seo信息
+	 *
+	 * @return 请求域的信息
+	 */
 	@GetMapping("curDomain")
 	public Domain curDomain() {
 
 		return this.service.findByDomain(this.getDomain());
 	}
 	
+	/**
+	 * 取回请求域的slogan
+	 *
+	 * @return 请求域的slogan信息
+	 */
 	@GetMapping("slogan")
 	public String curDomainSlogan() {
 		String slogan = this.service.querySloganByDomain(this.getDomain());

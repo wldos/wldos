@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 产品信息controller。
+ * 产品信息controller。所有的作品以产品的形式展现，以帖子的形式存储。产品可以线上交易和交付。
  *
  * @author 树悉猿
  * @date 2021/8/17

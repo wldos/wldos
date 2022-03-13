@@ -29,7 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 前端响应controller。
+ * 知识内容管理系统前端响应controller。
+ * 默认用户端不按多租隔离查询内容，只按分站（业务分类绑定分站，如果分类是区域，则是地区分站）查询。
  *
  * @author 树悉猿
  * @date 2021/6/12

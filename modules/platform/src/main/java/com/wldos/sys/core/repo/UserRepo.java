@@ -31,12 +31,24 @@ public interface UserRepo extends PagingAndSortingRepository<WoUser, Long>, User
 
 	boolean existsByEmail(String email);
 
+	/**
+	 * 按用户登录名查询用户
+	 *
+	 * @param username 登陆名
+	 * @return 用户信息
+	 */
 	@Query("SELECT u.* FROM wo_user u WHERE u.delete_flag='normal' AND u.status='normal' AND u.login_name=:username")
 	WoUser findByLoginName(String username);
 
 	@Query("select o.* from wo_org o where o.is_valid='1' and o.delete_flag='normal' and o.org_code=(select t.value from wo_options t where t.key=:optionName )")
 	WoOrg queryOrgByDefaultRole(String optionName);
 
+	/**
+	 * 批量查询一批用户信息
+	 *
+	 * @param userIds 用户ids
+	 * @return 批量用户信息
+	 */
 	@Query("SELECT u.id, u.username, u.nickname, u.remark, u.avatar FROM wo_user u WHERE u.delete_flag='normal' AND u.status='normal' AND u.id in (:userIds)")
 	List<UserInfo> queryUsersInfo(List<Long> userIds);
 }

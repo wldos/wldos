@@ -46,7 +46,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		return true;
+		return true; // 保证每一调都能命中token续签处理
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 			return body;
 		}
 
-		if (returnType.getGenericParameterType().equals(String.class)) {
+		if (returnType.getGenericParameterType().equals(String.class)) { // 返回纯字符串必须是json串，普通字符串不允许
 			return body;
 		}
 

@@ -31,7 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 用户管理相关controller。
+ * 用户管理相关controller。租户没有权限维护平台上构成平台的原始结构和资源（如：应用、资源、角色、用户），对平台租给租户的可见资源（如：可租用应用、已租用应用下的角色），租户只能在其组织内配置
+ * 或取消，租户还可以任意维护自建资源（如：租户内体系、租户内组织、自建业务流程、租户的小程序）。
  *
  * @author 树悉猿
  * @date 2021/5/2
