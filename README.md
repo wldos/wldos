@@ -77,8 +77,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
     把zone目录下的store.rar解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有  
     演示数据对应的图片，如果不设置相关图片显示404。
 3.  项目更新maven库。服务器端口号默认8080。
-4.  在ide控制台执行mvn clean install -pl com.wldos:wldos-web -am -DskipTests
-    安装项目；  
+4.  安装项目；  
     目前开放6个模块：  
     wldos-common：通用模块  
     wldos-framework：wldos开发框架（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
@@ -92,7 +91,8 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
     安装依赖jar到本地仓库：  
     mvn install:install-file -Dfile=./lib/wldos-framework-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
     mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml
-
+    打包安装web模块：
+    mvn clean install -pl com.wldos:wldos-web -am -DskipTests
     启动项目：  
     mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。
 
