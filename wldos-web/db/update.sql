@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
- * Licensed under the Apache License, Version 2.0 or a commercial license.
- * For Apache see License in the project root for license information.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- * 数据库更新脚本
+ *
  */
 -- 仅对v1.0.1优化有效，用后失效。2022-02-26
 ALTER TABLE `k_posts`
