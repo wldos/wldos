@@ -90,10 +90,10 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
     数据库正常运行后，以下命令启动项目：  
     安装依赖jar到本地仓库：  
     mvn install:install-file -Dfile=./lib/wldos-framework-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
-    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml  
-    打包安装web模块：  
-    mvn clean install -pl com.wldos:wldos-web -am -DskipTests  
-    启动项目：    
+    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml
+    打包安装web模块：
+    mvn clean install -pl com.wldos:wldos-web -am -DskipTests
+    启动项目：  
     mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。
 
     部署前端：

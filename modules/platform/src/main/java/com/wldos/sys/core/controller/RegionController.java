@@ -8,6 +8,7 @@
 
 package com.wldos.sys.core.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.wldos.base.controller.RepoController;
@@ -38,10 +39,17 @@ public class RegionController extends RepoController<RegionService, WoRegion> {
 		return this.service.queryProvince();
 	}
 
-	@GetMapping("city/{province}")
-	public List<City> queryCity(@PathVariable Long province) {
+	@GetMapping(value = {"city/{province}", "city/"})
+	public List<City> queryCity(@PathVariable(required = false) Long province) {
+		City city = new City(-1L, "全部", -1L, "");
+		if (null == province)
+			return new ArrayList<>();
 
-		return this.service.queryCityByProvId(province);
+		List<City> cities = new ArrayList<>();
+		cities.add(city);
+		cities.addAll(this.service.queryCityByProvId(province));
+
+		return cities;
 	}
 
 	@GetMapping("info/{cityId}")

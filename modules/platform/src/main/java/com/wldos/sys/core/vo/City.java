@@ -24,6 +24,16 @@ public class City {
 
 	private String provName;
 
+	public City() {
+	}
+
+	public City(Long id, String name, Long parentId, String provName) {
+		this.id = id;
+		this.name = name;
+		this.parentId = parentId;
+		this.provName = provName;
+	}
+
 	public Long getId() {
 		return id;
 	}

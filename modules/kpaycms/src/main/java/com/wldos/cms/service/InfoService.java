@@ -23,6 +23,7 @@ import com.wldos.cms.vo.InfoUnit;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.service.TermService;
 import lombok.extern.slf4j.Slf4j;
@@ -99,6 +100,19 @@ public class InfoService extends Base {
 			pageQuery.removeParam("termTypeId");
 		}
 		this.filterByParentTermTypeId(ids, pageQuery);
+
+		// 处理city
+		Object city = pageQuery.getCondition().get("city");
+		long allCity = -1L;
+		if (!ObjectUtils.isBlank(city) && allCity == Long.parseLong(city.toString())) { // 是全部
+			pageQuery.removeParam("city");
+		}
+		// 处理price
+		Object price = pageQuery.getCondition().get("price");
+		String allPrice = "0,0";
+		if (allPrice.equals(price)) { // 是全部
+			pageQuery.removeParam("price");
+		}
 
 		return this.postService.queryInfos(pageQuery);
 	}

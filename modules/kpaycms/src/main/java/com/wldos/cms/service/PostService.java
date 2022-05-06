@@ -195,6 +195,12 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 			sqlNoWhere += baseExistsSql;
 		}
 
+		if (condition.containsKey(KModelMetaKey.PUB_META_KEY_PROV)) {
+			String baseExistsSql = " and exists(select 1 from k_postmeta m where m.post_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_PROV + "' and m.meta_value=?)";
+			params.add(condition.get(KModelMetaKey.PUB_META_KEY_PROV));
+			sqlNoWhere += baseExistsSql;
+		}
+
 		if (condition.containsKey("price")) {
 			String baseExistsSql = " and exists(select 1 from k_postmeta m where m.post_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_ORN_PRICE + "'";
 			Object price = condition.get("price");
