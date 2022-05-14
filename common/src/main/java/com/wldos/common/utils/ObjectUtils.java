@@ -97,6 +97,12 @@ public final class ObjectUtils {
 		return o.toString();
 	}
 
+	public static Integer nvlToZero(Integer o) {
+		if (o == null)
+			return 0;
+		return o;
+	}
+
 	public static Long nvlToZero(Long o) {
 		if (o == null)
 			return 0L;

@@ -206,4 +206,12 @@ public interface PostRepo extends PagingAndSortingRepository<KPosts, Long> {
 	 */
 	@Query("select count(1) from k_posts p where p.post_name=:postName and p.id != :postId")
 	boolean existsByPostNameAndId(String postName, Long postId);
+
+	/**
+	 * 根据id批量查询帖子列表
+	 *
+	 * @param postIds 帖子列表
+	 * @return 帖子列表
+	 */
+	List<KPosts> findAllByIdIn(List<Long> postIds);
 }

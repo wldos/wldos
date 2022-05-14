@@ -646,4 +646,14 @@ public class PostService extends BaseService<PostRepo, KPosts, Long> {
 	public boolean existsByPostName(String postName, Long postId) {
 		return this.entityRepo.existsByPostNameAndId(postName, postId);
 	}
+
+	/**
+	 * 根据id批量查询所有帖子
+	 *
+	 * @param postIds 帖子列表
+	 * @return 帖子列表
+	 */
+	public List<KPosts> queryPostsByIds(List<Long> postIds) {
+		return this.entityRepo.findAllByIdIn(postIds);
+	}
 }

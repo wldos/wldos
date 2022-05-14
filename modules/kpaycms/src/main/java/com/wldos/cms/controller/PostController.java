@@ -69,6 +69,23 @@ public class PostController extends RepoController<PostService, KPosts> {
 	}
 
 	/**
+	 * 信息管理列表
+	 *
+	 * @return 信息列表
+	 */
+	@RequestMapping("info")
+	public PageableResult<AuditPost> adminInfo(@RequestParam Map<String, Object> params) {
+
+		//查询列表数据
+		PageQuery pageQuery = new PageQuery(params);
+		pageQuery.pushParam("postType", ContModelTypeEnum.INFO.toString());
+		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
+		this.applyTenantFilter(pageQuery);
+
+		return this.service.queryAdminPosts(this.getDomain(), pageQuery);
+	}
+
+	/**
 	 * 内容发布
 	 *
 	 * @param post 待发布审核内容

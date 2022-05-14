@@ -25,6 +25,11 @@ public class IpUtils {
 		if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
 			ip = request.getHeader("WL-Proxy-Client-IP");
 		}
+
+		if (ip != null && ip.contains(",")) {
+			return ip.trim().split(",")[0];
+		}
+
 		if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
