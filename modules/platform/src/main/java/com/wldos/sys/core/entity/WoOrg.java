@@ -34,6 +34,8 @@ public class WoOrg {
 
 	private String orgName;
 
+	private String orgLogo;
+
 	private String orgType;
 
 	private Long archId;
@@ -100,6 +102,13 @@ public class WoOrg {
 		this.orgName = orgName;
 	}
 
+	public String getOrgLogo() {
+		return orgLogo;
+	}
+
+	public void setOrgLogo(String orgLogo) {
+		this.orgLogo = orgLogo;
+	}
 
 	public String getOrgType() {
 		return orgType;

@@ -16,6 +16,12 @@ package com.wldos.auth.model;
  * @version 1.0
  */
 public final class AccountConfigKey {
+	/** 用户群组 */
+	public static final String USER_KEY_GROUP = "group";
+
+	/** 用户标签 */
+	public static final String USER_KEY_TAGS = "tags";
+
 	/** 密码强度 */
 	public static final String SECURITY_KEY_PASS_STATUS = "passStatus";
 

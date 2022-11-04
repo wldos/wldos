@@ -160,7 +160,7 @@ public class KCMSService extends Base {
 		if (this.postService.existsByPostName(posts.getPostName(), posts.getId()))
 			posts.setPostName("");
 
-		// 根据分类id获取内容类型，确定模板，统一所有带正文的内容模板为作品集-篇章结构，内容类型用于总览分类，不可以跨类型选择分类目录，同类型可以有多个分类
+		// 根据分类id获取行业门类，确定模板，统一所有带正文的内容模板为作品集-篇章结构，行业门类用于总览分类，不可以跨类型选择分类目录，同类型可以有多个分类
 		KModelContent content = this.termService.queryContentTypeByTermType(Long.parseLong(post.getTermTypeIds().get(0).getValue()));
 		posts.setPostType(postType);
 		posts.setContentType(content.getContentCode());
@@ -292,7 +292,7 @@ public class KCMSService extends Base {
 	public Product productInfo(Long pid) {
 		this.updatePubMeta(pid);
 
-		// 根据id找到内容类型、模板类型 用于前端展示
+		// 根据id找到行业门类、模板类型 用于前端展示
 		ContModelDto contBody = this.postService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
@@ -326,7 +326,7 @@ public class KCMSService extends Base {
 	/**
 	 * 统一创建seo和面包屑
 	 *
-	 * @param iMeta 内容类型接口
+	 * @param iMeta 行业门类接口
 	 * @param termTypeId 直属分类id，多者取首
 	 */
 	public void genSeoAndCrumbs(IMeta iMeta, Long termTypeId) {
@@ -419,7 +419,7 @@ public class KCMSService extends Base {
 		if (TempTypeEnum.CATEGORY.getValue().equals(value))
 			return TempTypeEnum.CATEGORY;
 		if (TempTypeEnum.INFO.getValue().equals(value))
-		return TempTypeEnum.INFO;
+			return TempTypeEnum.INFO;
 
 		return TempTypeEnum.UNKNOWN;
 	}
@@ -474,7 +474,7 @@ public class KCMSService extends Base {
 	}
 
 	public IMeta handleContent(IMeta iMeta, List<KPostmeta> metas, ContModelDto contBody, Long pid) {
-		// 根据自定义内容类型找到自定义扩展属性集
+		// 根据自定义行业门类找到自定义扩展属性集
 		List<ContentExt> contentExt = this.contentExtService.queryExtPropsByContentId(contBody.getContentId());
 		// 填充自定义属性
 		contentExt = this.getContentExt(contentExt, metas);
@@ -666,7 +666,7 @@ public class KCMSService extends Base {
 	 * 门户跨域根据分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
 	 * 门户有且仅有一个，并且跨域查询，没有数据隔离
 	 *
-	 * @param contentType 内容类型
+	 * @param contentType 行业门类
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
@@ -730,7 +730,7 @@ public class KCMSService extends Base {
 
 	/**
 	 * 门户跨域根据分类目录的别名查询分类目录下的内容列表，应包含子分类下的内容
-	 * 门户有且仅有一个，并且跨域、跨租户查询，没有数据隔离，应该根据内容类型查询，具体细分要按 类型/租户/域/分类 的维度钻取
+	 * 门户有且仅有一个，并且跨域、跨租户查询，没有数据隔离，应该根据行业门类查询，具体细分要按 类型/租户/域/分类 的维度钻取
 	 *
 	 * @param contentType 某个分类目录别名
 	 * @param pageQuery 分页查询参数
@@ -864,7 +864,7 @@ public class KCMSService extends Base {
 	 */
 	public Article queryArticle(Long pid) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
 		this.updatePubMeta(pid);
-		// 根据id找到内容类型、模板类型 用于前端展示
+		// 根据id找到行业门类、模板类型 用于前端展示
 		ContModelDto contBody = this.postService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
@@ -1012,7 +1012,7 @@ public class KCMSService extends Base {
 	 */
 	public PostMeta postInfo(Long pid) {
 
-		// 根据id找到内容类型、模板类型 用于前端展示
+		// 根据id找到行业门类、模板类型 用于前端展示
 		ContModelDto contBody = this.postService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）

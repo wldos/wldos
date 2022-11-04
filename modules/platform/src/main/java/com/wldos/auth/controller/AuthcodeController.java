@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.wldos.auth.service.AuthCodeService;
+import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.base.controller.NoRepoController;
 import com.wldos.common.res.Result;
 import com.wldos.auth.vo.CaptchaVO;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -46,11 +48,42 @@ public class AuthcodeController extends NoRepoController {
 		return resJson.format(map);
 	}
 
+	@GetMapping("code4mobile")
+	public Result authCodeMobile(@RequestParam Map<String, String> mobile) {
+		Map<String, String> map = this.authCodeService.genCodeMobile(mobile.get("mobile"));
+
+		return resJson.format(map);
+	}
+
+	@GetMapping("code4email")
+	public Result authCodeEmail(@RequestParam Map<String, String> email) {
+
+		Map<String, String> map = this.authCodeService.genCodeEmail(email.get("email"));
+
+		return resJson.format(map);
+	}
+
 	@PostMapping("check")
 	public Result checkCode(@RequestBody CaptchaVO captchaVO) {
 		Map<String, String> res = new HashMap<>();
 		String status = "status";
 		if (!this.authCodeService.checkCode(captchaVO)) {
+			res.put(status, "error");
+		}
+		else
+			res.put(status, "ok");
+
+		return resJson.format(res);
+	}
+
+	@PostMapping("checkEmail")
+	public Result checkEmail(@RequestBody PasswdResetParams email) {
+		Map<String, String> res = new HashMap<>();
+		String status = "status";
+		boolean isExists = this.authCodeService.checkEmail(email.getEmail());
+
+		if (!isExists) {
+			getLog().info("不存在的邮箱校验尝试：{}", email);
 			res.put(status, "error");
 		}
 		else

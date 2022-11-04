@@ -12,6 +12,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.wldos.auth.vo.ActiveParams;
+import com.wldos.auth.vo.BakEmailModifyParams;
+import com.wldos.auth.vo.MFAModifyParams;
+import com.wldos.auth.vo.PasswdResetParams;
+import com.wldos.auth.vo.SecQuestModifyParams;
+import com.wldos.base.Base;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.sys.base.dto.Tenant;
@@ -21,8 +27,12 @@ import com.wldos.auth.vo.MobileModifyParams;
 import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.support.auth.LoginUtils;
+import com.wldos.sys.base.enums.SysOptionEnum;
+import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.entity.WoUser;
 import com.wldos.sys.base.service.AuthService;
+import com.wldos.sys.core.enums.UserStatusEnum;
+import com.wldos.sys.core.service.MailService;
 import com.wldos.sys.core.service.UserService;
 import com.wldos.sys.core.vo.User;
 import com.wldos.support.auth.vo.JWT;
@@ -32,9 +42,11 @@ import com.wldos.support.auth.vo.UserInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 登录相关认证、授权服务。
@@ -45,8 +57,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @SuppressWarnings({ "all"})
-public class LoginAuthService {
+@Transactional(rollbackFor = Exception.class)
+public class LoginAuthService extends Base {
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
+
+	/** 是否开启邮箱注册激活开关，开启后注册用户需要从邮箱激活 */
+	@Value("${wldos.platform.user.register.emailaction:true}")
+	protected boolean isEmailAction;
 
 	private final JWTTool jwtTool;
 
@@ -55,17 +72,21 @@ public class LoginAuthService {
 	@Qualifier("commonOperation")
 	private LoginUtils loginUtils;
 
+
 	private final AuthService authService;
 
 	private final UserService userService;
 
 	private final AuthCodeService authCodeService;
 
-	public LoginAuthService(JWTTool jwtTool, AuthService authService, UserService userService, AuthCodeService authCodeService) {
+	private final MailService mailService;
+
+	public LoginAuthService(JWTTool jwtTool, AuthService authService, UserService userService, AuthCodeService authCodeService, MailService mailService) {
 		this.jwtTool = jwtTool;
 		this.authService = authService;
 		this.userService = userService;
 		this.authCodeService = authCodeService;
+		this.mailService = mailService;
 	}
 
 	/**
@@ -111,6 +132,18 @@ public class LoginAuthService {
 		Token token = new Token(accessToken, this.jwtTool.getRefreshTime());
 		//token.setRefreshToken(refreshToken); // 不再使用刷新token，使用访问token加超时机制就可以实现刷新机制
 		user.setToken(token);
+
+		// 邮箱激活状态检查
+		if (this.isEmailAction) {
+			WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername());
+			if (UserStatusEnum.notActive.getValue().equals(woUser.getStatus())) {
+				user.setStatus("notActive");
+				user.setNews("您的账号需要邮箱激活！");
+				user.setType(loginAuthParams.getType());
+
+				return user;
+			}
+		}
 
 		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, comId, userInfo.getId());
 		user.setCurrentAuthority(currentAuthority);
@@ -182,7 +215,7 @@ public class LoginAuthService {
 		String passwd = loginUtils.encode(passwdPlain);
 		register.setPasswd(passwd);
 
-		WoUser user = this.userService.createUser(domainId, register);
+		WoUser user = this.userService.createUser(domainId, register, this.isEmailAction);
 
 		// 更新密码强度
 		this.userService.updatePasswdStatus(passwdPlain, user.getId());
@@ -198,8 +231,114 @@ public class LoginAuthService {
 		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, Constants.TOP_COM_ID, user.getId());
 		login.setCurrentAuthority(currentAuthority);
 
+		// 发激活邮件到注册邮箱，受全局配置开关控制，邮箱注册激活开关，用id、loginName、createTime创建verify token
+		if (this.isEmailAction) {
+			String actUrl = this.reqProtocol+"://"+this.wldosDomain+"/user/active/verify="+user.getId();
+			String activeEmail = "<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/>"
+					+ "<title>账户激活</title></head><body>"
+					+ "您好，这是验证邮件，请点击下面的链接完成验证，</body></html>"
+					+ "<a href=\""+ actUrl +"\" target=\"_blank\">激活账号</a>"+ actUrl +"<br/>"
+					+ "如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。";
+			String subject = this.wldosDomain + "账号激活邮件";
+			this.mailService.sendMailHtml(register.getLoginName(), subject, activeEmail, user.getId(), user.getRegisterIp());
+		}
+
 		// 登录用户信息审计、token记录
 		this.jwtTool.recLog(domain, jwt, request);
+
+		return login;
+	}
+
+	/**
+	 * 邮件激活用户账号
+	 *
+	 * @param domain 域名
+	 * @param active 激活信息
+	 * @param request 请求
+	 * @return 激活结果
+	 */
+	public Login active(String domain, ActiveParams active, HttpServletRequest request) {
+		// 验证id是否合法：存在状态为待激活的记录
+		Long uId = Long.parseLong(active.getVerify());
+		boolean exists = this.userService.existsById(uId);
+
+		Login login = new Login();
+
+		// 更新状态，激活用户
+		if (exists) {
+			try {
+				WoUser user = new WoUser();
+				user.setId(uId);
+				user.setStatus(UserStatusEnum.normal.getValue());
+				this.userService.update(user);
+
+				WoOrg orgUnActive = this.userService.queryUserOrg(SysOptionEnum.UN_ACTIVE_GROUP.getKey());
+				WoOrg orgActive = this.userService.queryUserOrg(SysOptionEnum.DEFAULT_GROUP.getKey());
+				// 切换用户组织
+				this.userService.updateUserOrg(uId, orgUnActive.getId(), orgActive.getId());
+
+				login.setNews("激活成功");
+				login.setStatus("ok");
+
+				// 激活用户信息审计、token记录
+				this.getLog().info("用户激活{}，domain: {} userId: {}", login.getNews(), domain, active.getVerify());
+			} catch (Exception e) {
+				login.setNews("激活失败");
+				login.setStatus("error");
+				throw new RuntimeException(e);
+			}
+		} else {
+			login.setNews("无效操作");
+			login.setStatus("failure");
+			this.getLog().info("非法或冗余操作：用户激活{}，domain: {} userId: {}", login.getNews(), domain, active.getVerify());
+		}
+
+		return login;
+	}
+
+	/**
+	 * 重置密码
+	 *
+	 * @param passwdModifyParams 密码修改参数
+	 * @param hexKeyCode 16进制加密key
+	 * @return 修改信息
+	 */
+	public Login resetPasswd(PasswdResetParams resetParams) {
+		Login login = new Login();
+		// 验证是否合法重置操作：验证验证码是否正确（有效期内）
+		boolean isValid = this.authCodeService.checkCode(resetParams.getCaptcha(), resetParams.getUuid());
+
+		if (!isValid) {
+			login.setStatus("error");
+			login.setNews("验证码失效，请重试");
+			return login;
+		}
+		// 验证用户名和鉴权的邮箱是否绑定关系
+		boolean isExists = this.userService.existsByEmailAndLoginName(resetParams.getEmail(), resetParams.getLoginName());
+		if (!isExists) {
+			login.setStatus("error");
+			login.setNews("使用了与邮箱不匹配的用户名");
+			return login;
+		}
+		// 验证新密码与确认密码是否一致
+		String passwd = resetParams.getPassword();
+		String confirm = resetParams.getConfirm();
+		if (ObjectUtils.isBlank(passwd) || !passwd.equals(confirm)) {
+			login.setStatus("error");
+			login.setNews("新密码与确认密码不一致");
+			return login;
+		}
+		// 更新密码强度
+		WoUser user = this.userService.findByLoginName(resetParams.getLoginName());
+		this.userService.updatePasswdStatus(passwd, user.getId());
+		// 保存新密码
+		passwd = loginUtils.encode(passwd);
+		PasswdModifyParams modifyParams = new PasswdModifyParams();
+		modifyParams.setPassword(passwd);
+		modifyParams.setId(user.getId());
+		this.userService.updateUser(modifyParams);
+
+		login.setStatus("ok");
 
 		return login;
 	}
@@ -254,11 +393,41 @@ public class LoginAuthService {
 	/**
 	 * 修改密保手机
 	 *
-	 * @param mobileModifyParams 密码手机修改参数
+	 * @param params 密码手机修改参数
 	 * @return 修改结果
 	 */
-	public Login changeMobile(MobileModifyParams mobileModifyParams) {
-		return this.userService.changeMobile(mobileModifyParams);
+	public Login changeMobile(MobileModifyParams params) {
+		return this.userService.changeMobile(params);
+	}
+
+	/**
+	 * 修改密保手机
+	 *
+	 * @param params 密码手机修改参数
+	 * @return 修改结果
+	 */
+	public Login changeSecQuest(SecQuestModifyParams params) {
+		return this.userService.changeSecQuest(params);
+	}
+
+	/**
+	 * 修改备用邮箱
+	 *
+	 * @param params 备用邮箱修改参数
+	 * @return 修改结果
+	 */
+	public Login changeBakEmail(BakEmailModifyParams params) {
+		return this.userService.changeBakEmail(params);
+	}
+
+	/**
+	 * 修改MFA设备
+	 *
+	 * @param params MFA设备修改
+	 * @return 修改结果
+	 */
+	public Login changeMFA(MFAModifyParams params) {
+		return this.userService.changeMFA(params);
 	}
 
 	/**
@@ -310,7 +479,7 @@ public class LoginAuthService {
 		String passwd = loginUtils.encode(passwdPlain);
 		register.setPasswd(passwd);
 
-		WoUser user = this.userService.createUser(domainId, register);
+		WoUser user = this.userService.createUser(domainId, register, isEmailAction);
 
 		// 更新密码强度
 		this.userService.updatePasswdStatus(passwdPlain, user.getId());

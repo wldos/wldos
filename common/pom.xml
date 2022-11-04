@@ -13,12 +13,11 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.0</version>
+		<version>1.5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>wldos-common</artifactId>
-
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>

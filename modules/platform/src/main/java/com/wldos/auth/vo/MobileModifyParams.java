@@ -8,6 +8,8 @@
 
 package com.wldos.auth.vo;
 
+import com.wldos.auth.model.ModifyParams;
+
 /**
  * 密保手机修改参数。
  *
@@ -15,7 +17,7 @@ package com.wldos.auth.vo;
  * @date 2021/4/29
  * @version 1.0
  */
-public class MobileModifyParams {
+public class MobileModifyParams implements ModifyParams {
 	/** 登录用户id */
 	private Long id;
 
@@ -45,5 +47,15 @@ public class MobileModifyParams {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	@Override
+	public String getOld() {
+		return this.oldMobile;
+	}
+
+	@Override
+	public String getNew() {
+		return this.mobile;
 	}
 }

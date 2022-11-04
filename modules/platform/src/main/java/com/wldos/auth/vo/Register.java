@@ -37,6 +37,19 @@ public class Register {
 
 	private String prefix;
 
+	public Register() {}
+
+	public static Register of(Long uid, String loginName, String nickname, String registerIp) {
+		return new Register(uid, loginName, nickname, registerIp);
+	}
+
+	private Register(Long uid, String loginName, String nickname, String registerIp) {
+		this.id = uid;
+		this.loginName = loginName;
+		this.nickname = nickname;
+		this.registerIp = registerIp;
+	}
+
 	public long getId() {
 		return id;
 	}

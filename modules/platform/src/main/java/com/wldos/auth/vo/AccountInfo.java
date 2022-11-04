@@ -9,6 +9,8 @@
 package com.wldos.auth.vo;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 
 import com.wldos.auth.model.AccBind;
 import com.wldos.auth.model.AccMes;
@@ -27,7 +29,7 @@ public class AccountInfo {
 	private String username;
 
 	private String nickname;
-
+	/** 个人简介、个性签名 */
 	private String remark;
 
 	private String avatar;
@@ -40,7 +42,7 @@ public class AccountInfo {
 
 	private String sex;
 
-	private java.sql.Timestamp birthday;
+	private Timestamp birthday;
 
 	private String mobile;
 
@@ -61,9 +63,9 @@ public class AccountInfo {
 	private String city;
 
 	private String area;
-
+	/** 邀请码 */
 	private String inviteCode;
-
+	/** 推荐码 */
 	private String recommendCode;
 
 	/** 安全设置 */
@@ -74,6 +76,15 @@ public class AccountInfo {
 
 	/** 消息通知设置 */
 	private AccMes accMes;
+
+	/** 头衔 */
+	private String title;
+	/** 组织，主企业，根据用户设置获取，@todo 后期统一关联公司表 */
+	private String company;
+	/** 标签 */
+	private List<Map<String, String>> tags;
+	/** 群组，根据用户所属系统会员组获取，@todo 后期改成群组/团队/圈子 */
+	private List<Group> group;
 
 	public long getId() {
 		return id;
@@ -273,5 +284,37 @@ public class AccountInfo {
 
 	public void setAccMes(AccMes accMes) {
 		this.accMes = accMes;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public List<Map<String, String>> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Map<String, String>> tags) {
+		this.tags = tags;
+	}
+
+	public List<Group> getGroup() {
+		return group;
+	}
+
+	public void setGroup(List<Group> group) {
+		this.group = group;
 	}
 }

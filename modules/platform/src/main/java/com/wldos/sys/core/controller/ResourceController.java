@@ -68,7 +68,6 @@ public class ResourceController extends RepoController<ResourceService, WoResour
 		return this.service.execQueryForTree(new Resource(), new WoResource(), pageQuery, Constants.MENU_ROOT_ID);
 	}
 
-
 	/**
 	 * 所有资源树
 	 *

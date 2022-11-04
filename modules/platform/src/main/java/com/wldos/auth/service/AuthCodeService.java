@@ -12,12 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.wldos.auth.model.State;
 import com.wldos.base.Base;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.UUIDUtils;
 import com.wldos.common.utils.captcha.VerifyCode;
 import com.wldos.auth.vo.CaptchaVO;
 import com.wldos.common.enums.RedisKeyEnum;
+import com.wldos.sys.core.service.MailService;
+import com.wldos.sys.core.service.UserService;
 
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AuthCodeService extends Base {
+
+	private final MailService mailService;
+	private final UserService userService;
+
+	public AuthCodeService(MailService mailService, UserService userService) {
+		this.mailService = mailService;
+		this.userService = userService;
+	}
 
 	/**
 	 * 验证码校验
@@ -106,5 +117,64 @@ public class AuthCodeService extends Base {
 		map.put("uuid", uid);
 
 		return map;
+	}
+
+	/**
+	 * 生成验证码
+	 *
+	 * @return 验证码和uuid
+	 */
+	public Map<String, String> genCodeMobile(String mobile) {
+
+		String uid = UUIDUtils.generateShortUuid();
+		String text = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+		// 验证码有效期120秒
+		this.cache.set(String.format(RedisKeyEnum.CAPTCHA.toString(), uid), text, 2, TimeUnit.MINUTES);
+
+		// todo 发文本短信给待验证手机
+
+		Map<String, String> map = new HashMap<>();
+		map.put("uuid", uid);
+
+		return map;
+	}
+
+	/**
+	 * 生成验证码
+	 *
+	 * @return 验证码和uuid
+	 */
+	public Map<String, String> genCodeEmail(String to) {
+		Map<String, String> map = new HashMap<>();
+		String uid = UUIDUtils.generateShortUuid();
+
+		// 验证邮箱是否存在，如果不存在说明非法邮箱，不发送验证码
+		boolean isExists = this.userService.existsByEmail(to);
+		if (!isExists) {
+			map.put("uuid", uid);
+			return map;
+		}
+
+		String text = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+		// 验证码有效期120秒
+		this.cache.set(String.format(RedisKeyEnum.CAPTCHA.toString(), uid), text, 2, TimeUnit.MINUTES);
+
+		// 发文本短信给待验证邮件
+		String subject = this.wldosDomain + "邮件验证码";
+		this.mailService.sendEmailText(to, subject, text, 1L, "0.0.0.0");
+
+		map.put("uuid", uid);
+
+		return map;
+	}
+
+	/**
+	 * 检查是否存在此邮箱的用户
+	 *
+	 * @param email 邮箱
+	 * @return 是否
+	 */
+	public boolean checkEmail(String email) {
+		return this.userService.existsByEmail(email);
 	}
 }

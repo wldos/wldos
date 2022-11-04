@@ -28,9 +28,9 @@ public enum RedisKeyEnum {
 	WLDOS_DOMAIN("wldos:domain"),
 	/** 多域系统资源 */
 	WLDOS_DOMAIN_RES("wldos:dom:res"),
-	/** 业务模型内容类型，用来定义具体的业务对象大类 */
+	/** 业务模型行业门类，用来定义具体的业务对象大类 */
 	WLDOS_CONTENT("wldos:cont"),
-	/** 分类目录，某个内容类型的具体分类法 */
+	/** 分类目录，某个行业门类的具体分类法 */
 	WLDOS_TERM("wldos:term"),
 	/** 分类目录扁平树状结构 */
 	WLDOS_TERM_TREE("wldos:term:tree"),
@@ -41,7 +41,9 @@ public enum RedisKeyEnum {
 	/** 标签项 */
 	WLDOS_TAG_OPT("wldos:tag:option"),
 	/** 验证码 */
-	CAPTCHA("wldos:captcha:%s");
+	CAPTCHA("wldos:captcha:%s"),
+	/** 状态码 */
+	STATE("wldos:state:%s");
 
 	private final String cacheKey;
 

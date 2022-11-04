@@ -8,6 +8,7 @@
 
 package com.wldos.common.utils.http;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,6 +84,16 @@ public class HttpUtils {
 		return sendGet(url, param, StandardCharsets.UTF_8.name());
 	}
 
+	/**
+	 * 带参数的url
+	 *
+	 * @param urlWithParams 带get参数的url
+	 * @return 返回值
+	 */
+	public static String sendGet(String urlWithParams) {
+		return sendGetFullUrl(urlWithParams, StandardCharsets.UTF_8.name());
+	}
+
 	private static final String RECEIVE_TEMPLATE = "recv - {}";
 
 	private static final String KEEP_ALIVE = "Keep-Alive";
@@ -120,6 +131,62 @@ public class HttpUtils {
 		}
 		catch (Exception e) {
 			log.error(logTemplate(e.getCause().toString()), url, param, e);
+		}
+
+		return result.toString();
+	}
+
+	/**
+	 * 向指定 URL(带参数) 发送GET方法的下载请求
+	 *
+	 * @param url 发送请求的 URL (带参数)
+	 * @return 下载输入流
+	 */
+	public static InputStream doGetInputStream(String url) {
+		try {
+			URL realUrl = new URL(url);
+			URLConnection connection = realUrl.openConnection();
+			connection.setRequestProperty(HttpHeaders.ACCEPT, "*/*");
+			connection.setRequestProperty(HttpHeaders.CONNECTION, KEEP_ALIVE);
+			connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+			connection.connect();
+			// 缓存读，自动关闭流，无需异常处理时关闭。
+			return connection.getInputStream();
+		}
+		catch (Exception e) {
+			log.error(logTemplate(e.getCause().toString()), url, e);
+		}
+
+		return null;
+	}
+
+	/**
+	 * 向指定 URL(带参数) 发送GET方法的请求
+	 *
+	 * @param url 发送请求的 URL (带参数)
+	 * @param contentType 编码类型
+	 * @return 所代表远程资源的响应结果
+	 */
+	public static String sendGetFullUrl(String url, String contentType) {
+		StringBuilder result = new StringBuilder();
+		try {
+			log.info(RECEIVE_TEMPLATE, url);
+			URL realUrl = new URL(url);
+			URLConnection connection = realUrl.openConnection();
+			connection.setRequestProperty(HttpHeaders.ACCEPT, "*/*");
+			connection.setRequestProperty(HttpHeaders.CONNECTION, KEEP_ALIVE);
+			connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+			connection.connect();
+			// 缓存读，自动关闭流，无需异常处理时关闭。
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), contentType));
+			String line;
+			while ((line = in.readLine()) != null) {
+				result.append(line);
+			}
+			log.info(RECEIVE_TEMPLATE, result);
+		}
+		catch (Exception e) {
+			log.error(logTemplate(e.getCause().toString()), url, e);
 		}
 
 		return result.toString();

@@ -8,12 +8,23 @@
 
 package com.wldos.sys.core.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wldos.auth.model.ModifyParams;
+import com.wldos.auth.vo.BakEmailModifyParams;
+import com.wldos.auth.vo.Group;
+import com.wldos.auth.vo.MFAModifyParams;
+import com.wldos.auth.vo.SecQuestModifyParams;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.res.PageableResult;
 import com.wldos.base.entity.AuditFields;
@@ -23,6 +34,8 @@ import com.wldos.base.service.BaseService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
+import com.wldos.common.utils.http.HttpUtils;
+import com.wldos.support.storage.vo.FileInfo;
 import com.wldos.sys.base.dto.MenuAndRoute;
 import com.wldos.auth.vo.Login;
 import com.wldos.auth.vo.MobileModifyParams;
@@ -58,6 +71,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户相关service。
@@ -73,6 +87,8 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 	private final BeanCopier regUserCopier = BeanCopier.create(Register.class, WoUser.class, false);
 	@Value("${wldos.user.avatar.default}")
 	private String defaultAvatar;
+	@Value("${wldos.version}")
+	private String wldosVersion;
 
 	private final AuthService authService;
 
@@ -217,6 +233,13 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		List<WoUsermeta> usermeta = this.userMetaService.findAllByUserId(userId);
 		this.populateUserMeta(accInfo, usermeta);
 
+		// 获取系统用户组: id, orgName, logo(群组/团队logo)
+		List<Group> orgList = this.orgRepo.findAllByUserId(userId);
+		orgList = orgList.stream().map(org -> {
+			org.setOrgLogo(this.getAvatarUrl(org.getOrgLogo()));
+			return org;
+		}).collect(Collectors.toList());
+		accInfo.setGroup(orgList);
 		return accInfo;
 	}
 
@@ -245,6 +268,17 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		}
 
 		accInfo.setSec(ace);
+
+		String tags = metas.get(AccountConfigKey.USER_KEY_TAGS);
+		if (!ObjectUtils.isBlank(tags)) {
+			try {
+				List<Map<String, String>> tag = new ObjectMapper().readValue(tags, new TypeReference<List<Map<String, String>>>() {});
+				accInfo.setTags(tag);
+			}
+			catch (JsonProcessingException e) {
+				// nothing
+			}
+		}
 	}
 
 	/**
@@ -287,17 +321,35 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		return this.entityRepo.existsByLoginName(username);
 	}
 
+	/**
+	 * 是否存在正常用户：未删除
+	 *
+	 * @param email 邮箱
+	 * @return 注册用户
+	 */
 	public boolean existsByEmail(String email) {
-		return this.entityRepo.existsByEmail(email);
+		return this.entityRepo.existsByEmailAndDeleteFlag(email, DeleteFlagEnum.NORMAL.toString());
+	}
+
+	/**
+	 * 根据邮箱和用户名判断是否存在绑定关系的正常用户：未删除
+	 *
+	 * @param email 邮箱
+	 * @param loginName 用户名
+	 * @return 注册用户
+	 */
+	public boolean existsByEmailAndLoginName(String email, String loginName) {
+		return this.entityRepo.existsByEmailAndLoginNameAndDeleteFlag(email, loginName, DeleteFlagEnum.NORMAL.toString());
 	}
 
 	/**
 	 * 注册用户
 	 * @param domainId 来源域id
 	 * @param register 注册实体
+	 * @param isEmailAction 是否开启邮箱激活
 	 * @return 用户实例
 	 */
-	public WoUser createUser(Long domainId, Register register) {
+	public WoUser createUser(Long domainId, Register register, boolean isEmailAction) {
 		// 注册一个用户就是创建用户，然后挂到平台注册用户默认归属组(普通会员组)上，平台会员组属于系统基础设施已经默认设置好
 		WoUser woUser = new WoUser();
 		regUserCopier.copy(register, woUser, null);
@@ -313,7 +365,9 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		woOrgUser.setArchId(Constants.TOP_ARCH_ID);
 		woOrgUser.setComId(Constants.TOP_COM_ID);
 		woOrgUser.setIsValid(ValidStatusEnum.VALID.toString());
-		WoOrg org = this.entityRepo.queryOrgByDefaultRole(SysOptionEnum.DEFAULT_GROUP.toString());
+		// 如果开启了邮箱激活机制，则新注册用户的默认组是见习用户，没有普通会员权限
+		WoOrg org = this.entityRepo.queryOrgByDefaultRole(isEmailAction ? SysOptionEnum.UN_ACTIVE_GROUP.getKey()
+				: SysOptionEnum.DEFAULT_GROUP.getKey());
 		woOrgUser.setOrgId(org.getId());
 		// 初始化实体公共参数
 		EntityAssists.beforeInsert(woUser, userId, userId, userIp, true);
@@ -336,6 +390,29 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		woUser.setPasswd(passwdModifyParams.getPassword());
 
 		this.update(woUser);
+	}
+
+	/**
+	 * 根据组名查询用户组
+	 *
+	 * @return 用户组织
+	 */
+	public WoOrg queryUserOrg(String userGroup) {
+		return this.entityRepo.queryOrgByDefaultRole(userGroup);
+	}
+
+	/**
+	 * 更新用户所在组织
+	 *
+	 * @param userId 用户id
+	 * @param orgIdOld 原组织
+	 * @param orgIdNew 新组织
+	 */
+	public void updateUserOrg(Long userId, Long orgIdOld, Long orgIdNew) {
+		WoOrgUser orgUser = this.orgUserRepo.queryByUserIdAndOrgId(orgIdOld, userId, ValidStatusEnum.VALID.toString(),
+				DeleteFlagEnum.NORMAL.toString());
+		orgUser.setOrgId(orgIdNew);
+		this.commonOperate.dynamicUpdateByEntity(orgUser);
 	}
 
 	@Value("${token.access.header}")
@@ -390,6 +467,7 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		WoDomain woDomain = this.domainService.findByDomain(domain);
 		Domain seoInfo = new Domain();
 		this.domCopier.copy(woDomain, seoInfo, null);
+		seoInfo.setVersion(this.wldosVersion);
 		return seoInfo;
 	}
 
@@ -414,6 +492,16 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 	}
 
 	/**
+	 * 用户标签配置
+	 *
+	 * @param tags 标签json串
+	 * @param curUserId 当前用户id
+	 */
+	public void tagsConfig(String tags, Long curUserId) {
+		this.userMetaConfig(tags, AccountConfigKey.USER_KEY_TAGS, curUserId);
+	}
+
+	/**
 	 * 更新密码强度
 	 *
 	 * @param passwd 密码原文
@@ -421,61 +509,108 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 	 */
 	public void updatePasswdStatus(String passwd, Long uid) {
 		String status = PasswdStatusCheck.check(passwd);
-		WoUsermeta usermeta = this.userMetaService.findByUserIdAndMetaKey(uid, AccountConfigKey.SECURITY_KEY_PASS_STATUS);
-		if (usermeta == null) {
-			usermeta = new WoUsermeta();
-			usermeta.setId(this.nextId());
-			usermeta.setUserId(uid);
-			usermeta.setMetaKey(AccountConfigKey.SECURITY_KEY_PASS_STATUS);
-			usermeta.setMetaValue(status);
+		this.userMetaConfig(status, AccountConfigKey.SECURITY_KEY_PASS_STATUS, uid);
+	}
 
-			this.userMetaService.insertSelective(usermeta);
+	private void userMetaConfig(String metaValue, String metaKey, Long curUserId) {
+		WoUsermeta usermeta = this.userMetaService.findByUserIdAndMetaKey(curUserId, metaKey);
+		if (usermeta == null) {
+			this.userMetaAdd(metaValue, metaKey, curUserId);
 			return;
 		}
 
-		usermeta.setMetaValue(status);
-		this.userMetaService.update(usermeta);
+		this.userMetaModify(usermeta, metaValue);
 	}
 
 	/**
 	 * 修改用户密保手机
 	 *
-	 * @param mobileModifyParams 密保手机修改参数
+	 * @param params 密保手机修改参数
 	 * @return 修改结果
 	 */
-	public Login changeMobile(MobileModifyParams mobileModifyParams) {
-		Long uid = mobileModifyParams.getId();
-		// 验证原密保手机
-		WoUsermeta usermeta = this.userMetaService.findByUserIdAndMetaKey(uid, AccountConfigKey.SECURITY_KEY_MOBILE);
+	public Login changeMobile(MobileModifyParams params) {
+		Long uid = params.getId();
+
+		return this.handleModifyParams(params, uid, AccountConfigKey.SECURITY_KEY_MOBILE, "原密保手机错误");
+	}
+
+	/**
+	 * 修改用户密保问题
+	 *
+	 * @param params 密保问题修改参数
+	 * @return 修改结果
+	 */
+	public Login changeSecQuest(SecQuestModifyParams params) {
+		Long uid = params.getId();
+
+		return this.handleModifyParams(params, uid, AccountConfigKey.SECURITY_KEY_SEC_QUEST, "原密保问题错误");
+	}
+
+	/**
+	 * 修改用户备用邮箱
+	 *
+	 * @param params 备用邮箱修改参数
+	 * @return 修改结果
+	 */
+	public Login changeBakEmail(BakEmailModifyParams params) {
+		Long uid = params.getId();
+
+		return this.handleModifyParams(params, uid, AccountConfigKey.SECURITY_KEY_BAK_EMAIL, "原备用邮箱错误");
+	}
+
+	/**
+	 * 修改用户MFA设备
+	 *
+	 * @param params MFA设备修改
+	 * @return 修改结果
+	 */
+	public Login changeMFA(MFAModifyParams params) {
+		Long uid = params.getId();
+
+		return this.handleModifyParams(params, uid, AccountConfigKey.SECURITY_KEY_MFA, "原MFA校验失败");
+	}
+
+	private Login handleModifyParams(ModifyParams params, Long uid, String metaKey, String errorInfo) {
+		// 获取存档参数值
+		WoUsermeta usermeta = this.userMetaService.findByUserIdAndMetaKey(uid, metaKey);
 
 		Login login = new Login();
-		String mobile = mobileModifyParams.getMobile();
+		String secQuest = params.getNew();
 		if (usermeta == null) {
-			usermeta = new WoUsermeta();
-			usermeta.setId(this.nextId());
-			usermeta.setUserId(uid);
-			usermeta.setMetaKey(AccountConfigKey.SECURITY_KEY_MOBILE);
-			usermeta.setMetaValue(mobile);
-
-			this.userMetaService.insertSelective(usermeta);
+			this.userMetaAdd(secQuest, metaKey, uid);
 
 			login.setStatus("ok");
 			return login;
 		}
-
-		if (!mobileModifyParams.getOldMobile().equals(usermeta.getMetaValue())) {
+		// 验证原参数值
+		if (!params.getOld().equals(usermeta.getMetaValue())) {
 			login.setStatus("error");
-			login.setNews("原密保手机错误");
+			login.setNews(errorInfo);
 			return login;
 		}
 
-		// 保存新密保手机（后期加入手机验证）
-		usermeta.setMetaValue(mobile);
-		this.userMetaService.update(usermeta);
+		// 保存新参数值
+		this.userMetaModify(usermeta, secQuest);
 
 		login.setStatus("ok");
 
 		return login;
+	}
+
+	private void userMetaAdd(String metaValue, String metaKey, Long curUserId) {
+		WoUsermeta usermeta = new WoUsermeta();
+		usermeta.setId(this.nextId());
+		usermeta.setUserId(curUserId);
+		usermeta.setMetaKey(metaKey);
+		usermeta.setMetaValue(metaValue);
+
+		this.userMetaService.insertSelective(usermeta);
+	}
+
+	private void userMetaModify(WoUsermeta usermeta, String metaValue) {
+
+		usermeta.setMetaValue(metaValue);
+		this.userMetaService.update(usermeta);
 	}
 
 	/**
@@ -486,5 +621,51 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 	public WoOrg queryTenantAdminOrg() {
 		return this.orgRepo.findByOrgCodeAndIsValidAndDeleteFlag(Constants.TAdminOrgCode, ValidStatusEnum.VALID.toString(),
 				DeleteFlagEnum.NORMAL.toString());
+	}
+
+	/**
+	 * 更新用户头像及其信息
+	 *
+	 * @param request 请求
+	 * @param response 响应
+	 * @param file 头像文件
+	 * @param avatarSize 头像像素
+	 * @param userId 用户id
+	 * @param userIp 用户操作ip
+	 * @throws IOException io异常
+	 */
+	public void uploadAvatar(HttpServletRequest request, HttpServletResponse response, MultipartFile file, int[] avatarSize, Long userId,
+			String userIp) throws IOException {
+		// 调用文件存储服务, 头像尺寸一般规定144x144px
+		FileInfo fileInfo = this.store.storeFile(request, response, file, avatarSize);
+
+		WoUser user = new WoUser();
+		user.setId(userId);
+		user.setAvatar(fileInfo.getPath());
+		EntityAssists.beforeUpdated(user, userId, userIp);
+		this.update(user);
+	}
+
+	/**
+	 * 下载用户头像上传并更新其信息
+	 *
+	 * @param request 请求
+	 * @param response 响应
+	 * @param avatarUrl 头像下载url
+	 * @param avatarSize 头像像素
+	 * @param userId 用户id
+	 * @param userIp 用户操作ip
+	 * @throws IOException io异常
+	 */
+	public void uploadAvatar(HttpServletRequest request, HttpServletResponse response, String avatarUrl, int[] avatarSize, Long userId,
+			String userIp) throws IOException {
+		// 调用文件存储服务, 头像尺寸一般规定144x144px
+		FileInfo fileInfo = this.store.storeFile(request, response, avatarUrl, avatarSize);
+
+		WoUser user = new WoUser();
+		user.setId(userId);
+		user.setAvatar(fileInfo.getPath());
+		EntityAssists.beforeUpdated(user, userId, userIp);
+		this.update(user);
 	}
 }

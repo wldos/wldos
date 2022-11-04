@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>1.0</version>
+	<version>1.5</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>

@@ -17,10 +17,11 @@ package com.wldos.auth.enums;
  */
 public enum PasswdStatusEnum {
 
+	/** 强。 */
 	STRONG("strong"),
-
+	/** 中。 */
 	MEDIUM("medium"),
-
+	/** 弱。 */
 	POOR("weak");
 
 	private final String name;

@@ -31,7 +31,7 @@ import org.springframework.data.repository.query.Param;
  */
 public interface PostRepo extends PagingAndSortingRepository<KPosts, Long> {
 	/**
-	 * 根据帖子id查询帖子信息和内容类型
+	 * 根据帖子id查询帖子信息和行业门类
 	 *
 	 * @param pid 帖子id
 	 * @return 内容信息

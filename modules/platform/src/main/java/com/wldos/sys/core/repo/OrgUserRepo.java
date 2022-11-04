@@ -32,6 +32,9 @@ public interface OrgUserRepo extends PagingAndSortingRepository<WoOrgUser, Long>
 	@Query("delete from wo_org_user where user_com_id=:userComId and org_id=:orgId and user_id in (:ids)")
 	void removeTenantAdmin(List<Long> ids, Long userComId, Long orgId);
 
+	@Query("select c.* from wo_org_user c where c.is_valid =:isValid and c.delete_flag =:deleteFlag and c.org_id=:orgId and c.user_id=:userId")
+	WoOrgUser queryByUserIdAndOrgId(Long orgId, Long userId, String isValid, String deleteFlag);
+
 	@Query("select c.* from wo_org_user c where c.is_valid =:isValid and c.delete_flag =:deleteFlag and c.org_id=:orgId and c.arch_id=:archId and c.com_id=:comId and c.user_id in (:userIds)")
 	List<WoOrgUser> queryAllByUserIds(Long orgId, Long archId, Long comId, List<Long> userIds, String isValid, String deleteFlag);
 

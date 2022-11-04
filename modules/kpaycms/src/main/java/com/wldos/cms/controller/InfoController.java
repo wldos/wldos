@@ -80,7 +80,7 @@ public class InfoController extends NoRepoController {
 	/**
 	 * 查看某大类下的存档(支持供求信息、作品)
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("info/{contentType}")
@@ -98,7 +98,7 @@ public class InfoController extends NoRepoController {
 	/**
 	 * 查看某目录下的存档(支持供求信息、作品)
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的信息列表页
 	 */
@@ -117,7 +117,7 @@ public class InfoController extends NoRepoController {
 	/**
 	 * 查看标签索引的信息
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @param slugTag 标签别名
 	 * @return 按标签索引的信息列表页
 	 */

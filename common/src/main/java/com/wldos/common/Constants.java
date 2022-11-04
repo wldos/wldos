@@ -106,4 +106,7 @@ public final class Constants {
 
 	/** 枚举类型-角色-游客 */
 	public static final String ENUM_TYPE_ROLE_GUEST = "guest";
+
+	/** OAuth2.0社会化登录配置项前缀 */
+	public static final String OAUTH_SETTINGS_PREFIX = "oauth_login_";
 }

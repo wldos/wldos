@@ -11,8 +11,13 @@ package com.wldos.auth.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.auth.service.LoginAuthService;
+import com.wldos.auth.vo.ActiveParams;
+import com.wldos.auth.vo.BakEmailModifyParams;
+import com.wldos.auth.vo.MFAModifyParams;
 import com.wldos.auth.vo.PasswdModifyParams;
+import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.auth.vo.Register;
+import com.wldos.auth.vo.SecQuestModifyParams;
 import com.wldos.base.controller.NoRepoController;
 import com.wldos.auth.vo.Login;
 import com.wldos.auth.vo.LoginAuthParams;
@@ -58,6 +63,22 @@ public class LoginAuthController extends NoRepoController {
 		return user;
 	}
 
+	@PostMapping("login4mobile")
+	public Login loginAuthMobile(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams, @Value("${passwd.hexKey.code}") String hexKeyCode) {
+
+		getLog().info("{} login in ", loginAuthParams.getUsername());
+		// todo 改造为手机验证码登录验证逻辑
+		Login user = this.loginAuthService.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
+		if (user == null) {
+			getLog().info("{} 登录失败", loginAuthParams.getUsername());
+			user = new Login();
+			user.setStatus("error");
+			user.setNews("登陆失败，请重试！");
+			user.setType(loginAuthParams.getType());
+		}
+		return user;
+	}
+
 	@DeleteMapping("logout")
 	public User logout(@RequestHeader(value = "${token.access.header}") String token) {
 		return this.loginAuthService.logout(token, this.getDomainId());
@@ -70,6 +91,25 @@ public class LoginAuthController extends NoRepoController {
 		register.setLoginName(register.getEmail());
 		getLog().info("register= {} ", register.getLoginName());
 		return this.loginAuthService.register(this.getDomain(), this.getDomainId(), register, this.request);
+	}
+
+	@PostMapping("active")
+	public Login active(@RequestBody ActiveParams active) {
+		return this.loginAuthService.active(this.getDomain(), active, this.request);
+	}
+
+	@PostMapping("reset")
+	public Login resetPasswd(@RequestBody PasswdResetParams resetParams) {
+
+		getLog().info("用户登录名: {} 密码重置 ", resetParams.getLoginName());
+		Login user = this.loginAuthService.resetPasswd(resetParams);
+		if (user == null) {
+			getLog().info("{} 密码重置失败", resetParams.getLoginName());
+			user = new Login();
+			user.setStatus("error");
+			user.setNews("密码重置失败，请重试！");
+		}
+		return user;
 	}
 
 	@PostMapping("passwd")
@@ -96,6 +136,45 @@ public class LoginAuthController extends NoRepoController {
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密保手机修改失败，请重试！");
+		}
+		return user;
+	}
+
+	@PostMapping("secQuest")
+	public Login changeSecQuest(@RequestBody SecQuestModifyParams params) {
+		getLog().info("用户id: {} 密保问题修改 ", params.getId());
+		Login user = this.loginAuthService.changeSecQuest(params);
+		if (user == null) {
+			getLog().info("{} 密保问题修改失败", params.getId());
+			user = new Login();
+			user.setStatus("error");
+			user.setNews("密保问题修改失败，请重试！");
+		}
+		return user;
+	}
+
+	@PostMapping("bakEmail")
+	public Login changeBakEmail(@RequestBody BakEmailModifyParams params) {
+		getLog().info("用户id: {} 备用邮箱修改 ", params.getId());
+		Login user = this.loginAuthService.changeBakEmail(params);
+		if (user == null) {
+			getLog().info("{} 备用邮箱修改失败", params.getId());
+			user = new Login();
+			user.setStatus("error");
+			user.setNews("备用邮箱修改失败，请重试！");
+		}
+		return user;
+	}
+
+	@PostMapping("mfa")
+	public Login changeMFA(@RequestBody MFAModifyParams params) {
+		getLog().info("用户id: {} 密保设备修改 ", params.getId());
+		Login user = this.loginAuthService.changeMFA(params);
+		if (user == null) {
+			getLog().info("{} 密保设备修改失败", params.getId());
+			user = new Login();
+			user.setStatus("error");
+			user.setNews("密保设备修改失败，请重试！");
 		}
 		return user;
 	}

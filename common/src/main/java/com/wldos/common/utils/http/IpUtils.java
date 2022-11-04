@@ -33,6 +33,7 @@ public class IpUtils {
 		if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
+
 		return ip;
 	}
 
@@ -165,5 +166,4 @@ public class IpUtils {
 				return false;
 		}
 	}
-
 }

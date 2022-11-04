@@ -3,7 +3,7 @@
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <p align="center">
- <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.0" src="https://img.shields.io/badge/WLDOS-V1.0-deepskyblue.svg"></a>
+ <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.5" src="https://img.shields.io/badge/WLDOS-V1.5-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.5" src="https://img.shields.io/badge/SpringBoot-2.5-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -23,8 +23,6 @@
 
 3.真实：自主研发、自主运营，研发与运营同时进行的模式更务实，不做KPI，现实应用驱动，用什么，做什么。
 
-项目尚浅陋，会慢慢成熟，You can believe！
-
 #### 技术交流
 
 QQ 群：830355512   
@@ -43,7 +41,7 @@ WLDOS是类SaaS的云支撑平台，与SaaS的区别在于目标是托起云物�
 关于发音  
 为统一发音，简拼WLDOS采用汉语拼音：[wo'dao'si] 或 [wou da si]。
 
-演示地址：<a href="http://www.shuxiyuan.com/user/login?redirect=http%3A%2F%2Fshuxiyuan.com%2Fadmin%2Fres%2Fapp">点击前往</a>（演示环境版本略低于社区版）
+演示地址：<a href="http://www.shuxiyuan.com/user/login?redirect=http%3A%2F%2Fshuxiyuan.com%2Fadmin%2Fres%2Fapp">点击前往</a>（演示环境版本低于社区版）
 
 ###技术说明
 语言：Java8、ReactJs17。
@@ -54,7 +52,7 @@ ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。
 辅助：自带cache、自带JWT、自带文件服务。
 兼容性：后端jdk1.8，前端IE11+、Google Chrome、Edge等。
 
-应用架构：前后端分离，前端ReactJs，后端springMVC(2.0推出webflux架构版)，JWT认证，无状态，原生兼容springCloud，支持融入serviceMesh。
+应用架构：前后端分离，前端ReactJs，后端springMVC(2.0计划推出webflux架构版)，JWT认证，无状态，原生兼容springCloud，支持融入serviceMesh。
 
 **1.0核心功能：系统管理（应用、资源、权限、用户、组织、租户、多域、分类），内容管理，信息发布，内容创作、内容付费（在线付费、在线交付）。**
 
@@ -78,22 +76,24 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
     演示数据对应的图片，如果不设置相关图片显示404。
 3.  项目更新maven库。服务器端口号默认8080。
 4.  安装项目；  
-    目前开放6个模块：  
+    目前开放7个模块：  
     wldos-common：通用模块  
     wldos-framework：wldos开发框架（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
     wldos-platform-base：wldos支撑平台基础（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
-    wldos-platform: wldos支撑平台    
+    wldos-platform: wldos支撑平台
+    wldos-oauth2: wldos社会化登录模块（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）    
     wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
     wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
 
     安装数据库，数据库脚本在wldos-web/db下，默认mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。
     数据库正常运行后，以下命令启动项目：  
     安装依赖jar到本地仓库：  
-    mvn install:install-file -Dfile=./lib/wldos-framework-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
-    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.0-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.0 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml
-    打包安装web模块：
-    mvn clean install -pl com.wldos:wldos-web -am -DskipTests
-    启动项目：  
+    mvn install:install-file -Dfile=./lib/wldos-framework-1.5-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.5 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
+    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.5-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.5 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml
+    mvn install:install-file -Dfile=./lib/wldos-oauth2-1.5-release.jar -DgroupId=com.wldos -DartifactId=wldos-oauth2 -Dversion=1.5 -Dpackaging=jar -DpomFile=./lib/maven/wldos-oauth2/pom.xml
+    打包安装web模块：  
+    mvn clean install -pl com.wldos:wldos-web -am -DskipTests  
+    启动项目：    
     mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。
 
     部署前端：

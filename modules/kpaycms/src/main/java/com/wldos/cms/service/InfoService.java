@@ -140,7 +140,7 @@ public class InfoService extends Base {
 	public Info infoDetail(Long pid) {
 		this.kcmsService.updatePubMeta(pid);
 
-		// 根据id找到内容类型、模板类型 用于前端展示
+		// 根据id找到行业门类、模板类型 用于前端展示
 		ContModelDto contBody = this.postService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）

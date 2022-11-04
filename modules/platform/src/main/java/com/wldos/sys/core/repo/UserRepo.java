@@ -31,6 +31,13 @@ public interface UserRepo extends PagingAndSortingRepository<WoUser, Long>, User
 
 	boolean existsByEmail(String email);
 
+	@Query("select count(1) from wo_user u where u.email=:email and u.delete_flag=:deleteFlag")
+	boolean existsByEmailAndDeleteFlag(String email, String deleteFlag);
+
+	boolean existsByEmailAndDeleteFlagAndStatus(String email, String deleteFlag, String status);
+
+	boolean existsByEmailAndLoginNameAndDeleteFlag(String email, String loginName, String deleteFlag);
+
 	/**
 	 * 按用户登录名查询用户
 	 *

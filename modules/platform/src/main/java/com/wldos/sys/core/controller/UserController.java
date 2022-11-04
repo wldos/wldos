@@ -63,15 +63,8 @@ public class UserController extends RepoController<UserService, WoUser> {
 
 	@PostMapping("uploadAvatar")
 	public String uploadAvatar(@RequestParam("avatar") MultipartFile file) throws IOException {
-		// 调用文件存储服务, 头像尺寸规定144x144px
-		FileInfo fileInfo = this.store.storeFile(this.request, this.response, file, new int[]{144, 144});
-
-		WoUser user = new WoUser();
-		Long userId = this.getCurUserId();
-		user.setId(userId);
-		user.setAvatar(fileInfo.getPath());
-		EntityAssists.beforeUpdated(user, userId, this.getUserIp());
-		this.service.update(user);
+		// 头像尺寸一般规定144x144px
+		this.service.uploadAvatar(this.request, this.response, file, new int[]{144, 144}, this.getCurUserId(), this.getUserIp());
 
 		return this.resJson.ok("ok");
 	}
@@ -89,6 +82,13 @@ public class UserController extends RepoController<UserService, WoUser> {
 		EntityAssists.beforeUpdated(user, userId, this.getUserIp());
 		user.setId(userId);
 		this.service.update(user);
+
+		return this.resJson.ok("ok");
+	}
+
+	@PostMapping("conf/tags")
+	public String tagsConfig(@RequestBody String tags) {
+		this.service.tagsConfig(tags, this.getCurUserId());
 
 		return this.resJson.ok("ok");
 	}

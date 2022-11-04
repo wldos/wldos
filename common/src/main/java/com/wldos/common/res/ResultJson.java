@@ -127,18 +127,14 @@ public class ResultJson {
 	 * json转对象，接收前端传递的json
 	 *
 	 * @param json 待读json字符串
-	 * @param isString2Long 是否把前端给的字符串转成实体真实类型long
 	 * @return 已转换对象
 	 */
-	public <AnyEntity> AnyEntity readEntity(String json, boolean isString2Long) {
+	public <AnyEntity> AnyEntity readEntity(String json, TypeReference<AnyEntity> anyEntity) {
 		try {
-			if (isString2Long) {
-				return new ObjectMapper().readValue(json, new TypeReference<AnyEntity>(){});
-			}
-			return this.objectMapper.readValue(json, new TypeReference<AnyEntity>(){});
+			return this.objectMapper.readValue(json, anyEntity);
 		}
 		catch (JsonProcessingException e) {
-			log.error("json转对象异常，json="+json);
+			log.error("json转对象异常，json="+json, e);
 		}
 		return null;
 	}
@@ -158,7 +154,7 @@ public class ResultJson {
 			return new ObjectMapper().writeValueAsString(obj);
 		}
 		catch (JsonProcessingException e) {
-			log.error("转换json异常，转换对象obj="+obj);
+			log.error("转换json异常，转换对象obj="+obj, e);
 		}
 		return "";
 	}

@@ -13,7 +13,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.0</version>
+		<version>1.5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -38,6 +38,12 @@
 		<dependency>
 			<groupId>com.wldos</groupId>
 			<artifactId>wldos-kpaycms</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<!-- wldos OAuth2 -->
+		<dependency>
+			<groupId>com.wldos</groupId>
+			<artifactId>wldos-oauth2</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>

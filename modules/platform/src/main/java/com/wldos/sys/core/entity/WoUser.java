@@ -8,6 +8,8 @@
 
 package com.wldos.sys.core.entity;
 
+import java.sql.Timestamp;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
@@ -33,11 +35,15 @@ public class WoUser {
 
 	private String sex;
 
-	private java.sql.Timestamp birthday;
+	private Timestamp birthday;
 
 	private String mobile;
 
 	private String telephone;
+
+	private String title;
+
+	private String company;
 
 	private String address;
 
@@ -69,13 +75,13 @@ public class WoUser {
 
 	private Long createBy;
 
-	private java.sql.Timestamp createTime;
+	private Timestamp createTime;
 
 	private String createIp;
 
 	private Long updateBy;
 
-	private java.sql.Timestamp updateTime;
+	private Timestamp updateTime;
 
 	private String updateIp;
 
@@ -151,7 +157,6 @@ public class WoUser {
 		this.sex = sex;
 	}
 
-
 	public java.sql.Timestamp getBirthday() {
 		return birthday;
 	}
@@ -159,7 +164,6 @@ public class WoUser {
 	public void setBirthday(java.sql.Timestamp birthday) {
 		this.birthday = birthday;
 	}
-
 
 	public String getMobile() {
 		return mobile;
@@ -169,7 +173,6 @@ public class WoUser {
 		this.mobile = mobile;
 	}
 
-
 	public String getTelephone() {
 		return telephone;
 	}
@@ -178,6 +181,21 @@ public class WoUser {
 		this.telephone = telephone;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
 
 	public String getAddress() {
 		return address;
@@ -187,7 +205,6 @@ public class WoUser {
 		this.address = address;
 	}
 
-
 	public String getQq() {
 		return qq;
 	}
@@ -195,7 +212,6 @@ public class WoUser {
 	public void setQq(String qq) {
 		this.qq = qq;
 	}
-
 
 	public String getEmail() {
 		return email;
@@ -205,7 +221,6 @@ public class WoUser {
 		this.email = email;
 	}
 
-
 	public String getAvatar() {
 		return avatar;
 	}
@@ -213,7 +228,6 @@ public class WoUser {
 	public void setAvatar(String headImg) {
 		this.avatar = headImg;
 	}
-
 
 	public String getRemark() {
 		return remark;
@@ -223,7 +237,6 @@ public class WoUser {
 		this.remark = remark;
 	}
 
-
 	public Long getDisplayOrder() {
 		return displayOrder;
 	}
@@ -231,7 +244,6 @@ public class WoUser {
 	public void setDisplayOrder(Long displayOrder) {
 		this.displayOrder = displayOrder;
 	}
-
 
 	public String getIsReal() {
 		return isReal;
@@ -241,7 +253,6 @@ public class WoUser {
 		this.isReal = isReal;
 	}
 
-
 	public String getCountry() {
 		return country;
 	}
@@ -249,7 +260,6 @@ public class WoUser {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-
 
 	public String getProvince() {
 		return province;
@@ -259,7 +269,6 @@ public class WoUser {
 		this.province = province;
 	}
 
-
 	public String getCity() {
 		return city;
 	}
@@ -267,7 +276,6 @@ public class WoUser {
 	public void setCity(String city) {
 		this.city = city;
 	}
-
 
 	public String getArea() {
 		return area;
@@ -277,7 +285,6 @@ public class WoUser {
 		this.area = area;
 	}
 
-
 	public String getStatus() {
 		return status;
 	}
@@ -285,7 +292,6 @@ public class WoUser {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
 
 	public String getInviteCode() {
 		return inviteCode;
@@ -295,7 +301,6 @@ public class WoUser {
 		this.inviteCode = inviteCode;
 	}
 
-
 	public String getRecommendCode() {
 		return recommendCode;
 	}
@@ -303,7 +308,6 @@ public class WoUser {
 	public void setRecommendCode(String recommendCode) {
 		this.recommendCode = recommendCode;
 	}
-
 
 	public String getRegisterIp() {
 		return registerIp;
@@ -313,7 +317,6 @@ public class WoUser {
 		this.registerIp = registerIp;
 	}
 
-
 	public Long getCreateBy() {
 		return createBy;
 	}
@@ -321,7 +324,6 @@ public class WoUser {
 	public void setCreateBy(Long createBy) {
 		this.createBy = createBy;
 	}
-
 
 	public java.sql.Timestamp getCreateTime() {
 		return createTime;
@@ -331,7 +333,6 @@ public class WoUser {
 		this.createTime = createTime;
 	}
 
-
 	public String getCreateIp() {
 		return createIp;
 	}
@@ -339,7 +340,6 @@ public class WoUser {
 	public void setCreateIp(String createIp) {
 		this.createIp = createIp;
 	}
-
 
 	public Long getUpdateBy() {
 		return updateBy;
@@ -349,7 +349,6 @@ public class WoUser {
 		this.updateBy = updateBy;
 	}
 
-
 	public java.sql.Timestamp getUpdateTime() {
 		return updateTime;
 	}
@@ -357,7 +356,6 @@ public class WoUser {
 	public void setUpdateTime(java.sql.Timestamp updateTime) {
 		this.updateTime = updateTime;
 	}
-
 
 	public String getUpdateIp() {
 		return updateIp;
@@ -382,5 +380,4 @@ public class WoUser {
 	public void setVersions(Integer versions) {
 		this.versions = versions;
 	}
-
 }

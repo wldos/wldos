@@ -196,6 +196,6 @@ public class DomainController extends RepoController<DomainService, WoDomain> {
 	protected void postDeletes(List<Object> ids) {
 		ids.parallelStream().forEach(id ->
 				this.service.refreshDomain(this.service.findById((Long) id))
-				);
+		);
 	}
 }

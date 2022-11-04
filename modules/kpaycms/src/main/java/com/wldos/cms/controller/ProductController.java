@@ -53,7 +53,7 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看某大类下的付费内容信息存档
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("product/{contentType}")
@@ -71,7 +71,7 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看某目录下的付费内容信息存档
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
@@ -90,7 +90,7 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @param xxTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */

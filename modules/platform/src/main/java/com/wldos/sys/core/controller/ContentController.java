@@ -85,10 +85,24 @@ public class ContentController extends RepoController<ContentService, KModelCont
 	 * @return 内容模型值枚举
 	 */
 	@GetMapping("enum")
-	public Map<String, ValueEnum> categoryValueEnum() {
+	public Map<String, ValueEnum> contentValueEnum() {
 		List<KModelContent> contents = this.service.queryAllContent();
 
 		return contents.parallelStream().collect(
 				Collectors.toMap(KModelContent::getContentCode, t -> new ValueEnum(t.getContentName(), t.getContentCode())));
+	}
+
+	/**
+	 * 查询所有内容模型值枚举,以id作为key
+	 * {key: {text: '', value: ''}, ...}
+	 *
+	 * @return 内容模型值枚举
+	 */
+	@GetMapping("enumId")
+	public Map<Long, ValueEnum> contentValueIdEnum() {
+		List<KModelContent> contents = this.service.queryAllContent();
+
+		return contents.parallelStream().collect(
+				Collectors.toMap(KModelContent::getId, t -> new ValueEnum(t.getContentName(), t.getContentCode())));
 	}
 }

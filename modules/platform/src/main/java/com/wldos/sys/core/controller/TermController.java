@@ -11,6 +11,8 @@ package com.wldos.sys.core.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.wldos.base.entity.EntityAssists;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.sys.base.dto.Term;
 import com.wldos.sys.base.entity.KTerms;
 import com.wldos.sys.base.enums.TermTypeEnum;
@@ -57,7 +59,7 @@ public class TermController extends NoRepoController {
 		params.put("classType", TermTypeEnum.CATEGORY.toString());
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		return this.service.queryTermForTree(new KTerms(), pageQuery);
+		return this.service.queryTermForTree(new KTerms(), pageQuery, false);
 	}
 
 	/**
@@ -71,11 +73,11 @@ public class TermController extends NoRepoController {
 		params.put("classType", TermTypeEnum.TAG.toString());
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		return this.service.queryTermForTree(new KTerms(), pageQuery);
+		return this.service.queryTermForTree(new KTerms(), pageQuery, true);
 	}
 
 	/**
-	 * 获取分类树
+	 * 获取分类树，用于信息发布
 	 * (大类、小类两级矮树, [{title: '', key: '', slug: '', conType: ''}])
 	 *
 	 * @return 两级分类树列表
@@ -152,14 +154,15 @@ public class TermController extends NoRepoController {
 	@PostMapping("/admin/cms/category/add")
 	public String addCategory(@RequestBody Term term) {
 		term.setClassType(TermTypeEnum.CATEGORY.toString());
-		this.service.addTerm(term);
+		this.handleDisplayOrder(term);
+		String res = this.service.addTerm(term, this.getCurUserId(), this.getUserIp());
 		this.service.refreshTerm();
-		return this.resJson.ok("ok");
+		return this.resJson.ok(res);
 	}
 
 	@PostMapping("/admin/cms/category/update")
 	public String updateCategory(@RequestBody Term term) {
-		this.service.updateTerm(term);
+		this.service.updateTerm(term, this.getCurUserId(), this.getUserIp());
 		this.service.refreshTerm();
 		return this.resJson.ok("ok");
 	}
@@ -173,20 +176,47 @@ public class TermController extends NoRepoController {
 
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("/admin/cms/category/deletes")
-	public Boolean removeIds(@RequestBody Map jsonObject) {
-		Object ids = jsonObject.get("ids");
-		if (ids != null) {
-			service.deleteByIds(((List<Object>) ids).toArray());
+	public Boolean removeIds(@RequestBody List<Term> terms) {
+		if (!ObjectUtils.isBlank(terms)) {
+			this.service.deleteTerms(terms);
+
+			this.service.refreshTerm();
 		}
-		this.service.refreshTerm();
+
 		return Boolean.TRUE;
 	}
 
 	@PostMapping("/admin/cms/tag/add")
 	public String addTag(@RequestBody Term term) {
 		term.setClassType(TermTypeEnum.TAG.toString());
-		this.service.addTerm(term);
+		this.handleDisplayOrder(term);
+		String res = this.service.addTerm(term, this.getCurUserId(), this.getUserIp());
 		this.service.appendCacheTag(term); // 新增标签追加缓存
-		return this.resJson.ok("ok");
+		return this.resJson.ok(res);
+	}
+
+	/**
+	 * 批量给分类项设置信息发布状态
+	 *
+	 * @param termIds 分类项ids
+	 * @return 设置结果，设置为开的分类项可以在信息发布门户展示和发布该类信息
+	 */
+	@SuppressWarnings("unchecked")
+	@PostMapping("/admin/cms/term/infoFlags")
+	public Boolean infoFlag(@RequestBody List<Long> termIds) {
+		if (!ObjectUtils.isBlank(termIds)) {
+			this.service.infoFlagByIds(termIds);
+
+			this.service.refreshTerm();
+		}
+		return Boolean.TRUE;
+	}
+
+	private void handleDisplayOrder(Term term) {
+		Long parentId = term.getParentId();
+
+		Long order = this.service.queryMaxOrder(parentId);
+
+		term.setDisplayOrder(ObjectUtils.nvlToZero(order) + 1L);
 	}
 }

@@ -83,7 +83,7 @@ public class KCMSController extends NoRepoController {
 	/**
 	 * 查询当前域下某类型的业务对象
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("archives/{contentType}")
@@ -100,9 +100,9 @@ public class KCMSController extends NoRepoController {
 	}
 
 	/**
-	 * 查看目录下的内容存档，内容类型不同，展示模板不同，需要的信息不同（付费内容、图文）
+	 * 查看目录下的内容存档，行业门类不同，展示模板不同，需要的信息不同（付费内容、图文）
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
@@ -121,7 +121,7 @@ public class KCMSController extends NoRepoController {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 * @param contentType 内容类型，用于隔离业务领域
+	 * @param contentType 行业门类，用于隔离业务领域
 	 * @param slugTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */

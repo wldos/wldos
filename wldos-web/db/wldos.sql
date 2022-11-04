@@ -1,13 +1,5 @@
 /*
  * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
- * Licensed under the AGPL or a commercial license.
- * For AGPL see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
- *
- */
-
-/*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -35,13 +27,13 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `k_commentmeta`;
 CREATE TABLE `k_commentmeta` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `comment_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `meta_value` longtext COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `comment_id` (`comment_id`),
-  KEY `meta_key` (`meta_key`(191))
+                                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                                 `comment_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                                 `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                 `meta_value` longtext COLLATE utf8mb4_unicode_ci,
+                                 PRIMARY KEY (`id`),
+                                 KEY `comment_id` (`comment_id`),
+                                 KEY `meta_key` (`meta_key`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -54,32 +46,32 @@ CREATE TABLE `k_commentmeta` (
 DROP TABLE IF EXISTS `k_comments`;
 CREATE TABLE `k_comments` (
                               `id` bigint(20) unsigned NOT NULL,
-  `post_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `author` tinytext COLLATE utf8mb4_unicode_ci,
-  `author_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `author_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `author_ip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `content` text COLLATE utf8mb4_unicode_ci,
-  `karma` int(11) NOT NULL DEFAULT '0' ,
-  `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `comment_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-  `create_by` bigint(20) unsigned DEFAULT '0' ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `comment_post_ID` (`post_id`),
-  KEY `comment_approved_date_gmt` (`approved`),
-  KEY `comment_parent` (`parent_id`),
-  KEY `comment_author_email` (`author_email`(10)),
-  KEY `comment_delete_flag` (`delete_flag`) USING BTREE,
-  KEY `comment_create_by` (`create_by`)
+                              `post_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                              `author` tinytext COLLATE utf8mb4_unicode_ci,
+                              `author_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `author_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `author_ip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `content` text COLLATE utf8mb4_unicode_ci,
+                              `karma` int(11) NOT NULL DEFAULT '0' ,
+                              `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `comment_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+                              `create_by` bigint(20) unsigned DEFAULT '0' ,
+                              `create_time` datetime DEFAULT NULL ,
+                              `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `update_by` bigint(20) unsigned DEFAULT NULL ,
+                              `update_time` datetime DEFAULT NULL ,
+                              `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `versions` int(10) DEFAULT NULL ,
+                              PRIMARY KEY (`id`),
+                              KEY `comment_post_ID` (`post_id`),
+                              KEY `comment_approved_date_gmt` (`approved`),
+                              KEY `comment_parent` (`parent_id`),
+                              KEY `comment_author_email` (`author_email`(10)),
+                              KEY `comment_delete_flag` (`delete_flag`) USING BTREE,
+                              KEY `comment_create_by` (`create_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -123,21 +115,21 @@ INSERT INTO `k_comments` VALUES ('1549902403000254465', '33', '龙神', null, nu
 -- ----------------------------
 DROP TABLE IF EXISTS `k_links`;
 CREATE TABLE `k_links` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `link_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_target` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_visible` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_owner` bigint(20) unsigned NOT NULL DEFAULT '1',
-  `link_rating` int(11) NOT NULL DEFAULT '0',
-  `link_updated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `link_rel` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link_notes` mediumtext COLLATE utf8mb4_unicode_ci,
-  `link_rss` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `link_visible` (`link_visible`)
+                           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                           `link_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_target` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_visible` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_owner` bigint(20) unsigned NOT NULL DEFAULT '1',
+                           `link_rating` int(11) NOT NULL DEFAULT '0',
+                           `link_updated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+                           `link_rel` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `link_notes` mediumtext COLLATE utf8mb4_unicode_ci,
+                           `link_rss` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           PRIMARY KEY (`id`),
+                           KEY `link_visible` (`link_visible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -149,11 +141,11 @@ CREATE TABLE `k_links` (
 -- ----------------------------
 DROP TABLE IF EXISTS `k_model_content`;
 CREATE TABLE `k_model_content` (
-  `id` bigint(20) unsigned NOT NULL,
-  `content_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `content_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `k_m_content_code` (`content_code`)
+                                   `id` bigint(20) unsigned NOT NULL,
+                                   `content_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `content_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   PRIMARY KEY (`id`),
+                                   UNIQUE KEY `k_m_content_code` (`content_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -181,17 +173,17 @@ INSERT INTO `k_model_content` VALUES ('18', '商业谱', 'business');
 -- ----------------------------
 DROP TABLE IF EXISTS `k_model_content_ext`;
 CREATE TABLE `k_model_content_ext` (
-  `id` bigint(20) unsigned NOT NULL,
-  `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `meta_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
-  `content_id` bigint(20) unsigned DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_meta_key` (`content_id`,`meta_key`) USING BTREE,
-  KEY `k_model_content_id` (`content_id`),
-  KEY `k_model_data_type` (`data_type`)
+                                       `id` bigint(20) unsigned NOT NULL,
+                                       `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `meta_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                       `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+                                       `content_id` bigint(20) unsigned DEFAULT NULL ,
+                                       PRIMARY KEY (`id`),
+                                       UNIQUE KEY `uni_meta_key` (`content_id`,`meta_key`) USING BTREE,
+                                       KEY `k_model_content_id` (`content_id`),
+                                       KEY `k_model_data_type` (`data_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -211,13 +203,13 @@ INSERT INTO `k_model_content_ext` VALUES ('13', 'county', '区县', '', null, nu
 -- ----------------------------
 DROP TABLE IF EXISTS `k_postmeta`;
 CREATE TABLE `k_postmeta` (
-  `id` bigint(20) unsigned NOT NULL,
-  `post_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `meta_value` longtext COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `post_id` (`post_id`),
-  KEY `meta_key` (`meta_key`(191))
+                              `id` bigint(20) unsigned NOT NULL,
+                              `post_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                              `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `meta_value` longtext COLLATE utf8mb4_unicode_ci,
+                              PRIMARY KEY (`id`),
+                              KEY `post_id` (`post_id`),
+                              KEY `meta_key` (`meta_key`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -1074,44 +1066,44 @@ INSERT INTO `k_postmeta` VALUES ('1549902341083938822', '33', 'views', '13');
 -- ----------------------------
 DROP TABLE IF EXISTS `k_posts`;
 CREATE TABLE `k_posts` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `post_content` longtext COLLATE utf8mb4_unicode_ci,
-  `post_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `post_excerpt` text COLLATE utf8mb4_unicode_ci ,
-  `post_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `post_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `post_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `ping_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `to_ping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `pinged` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-  `post_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `content_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `domain_id` bigint(20) unsigned DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `post_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `comment_count` int(10) NOT NULL DEFAULT '0' ,
-  `star_count` int(10) DEFAULT '0' ,
-  `like_count` int(10) DEFAULT '0' ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) unsigned DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `post_name` (`post_name`(191)),
-  KEY `post_parent` (`parent_id`),
-  KEY `post_create_by` (`create_by`),
-  KEY `post_delete_flag` (`delete_flag`),
-  KEY `post_type_code` (`post_type`),
-  KEY `post_content_code` (`content_type`),
-  KEY `post_com_id` (`com_id`),
-  KEY `type_status_date` (`com_id`,`post_type`,`content_type`,`domain_id`,`post_status`,`create_time`,`id`) USING BTREE,
-  KEY `post_domain_id` (`domain_id`)
+                           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                           `post_content` longtext COLLATE utf8mb4_unicode_ci,
+                           `post_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `post_excerpt` text COLLATE utf8mb4_unicode_ci ,
+                           `post_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `post_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `post_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `ping_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `to_ping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `pinged` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+                           `post_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `content_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
+                           `com_id` bigint(20) unsigned DEFAULT NULL ,
+                           `post_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `comment_count` int(10) NOT NULL DEFAULT '0' ,
+                           `star_count` int(10) DEFAULT '0' ,
+                           `like_count` int(10) DEFAULT '0' ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
+                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
+                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) unsigned DEFAULT NULL ,
+                           PRIMARY KEY (`id`),
+                           KEY `post_name` (`post_name`(191)),
+                           KEY `post_parent` (`parent_id`),
+                           KEY `post_create_by` (`create_by`),
+                           KEY `post_delete_flag` (`delete_flag`),
+                           KEY `post_type_code` (`post_type`),
+                           KEY `post_content_code` (`content_type`),
+                           KEY `post_com_id` (`com_id`),
+                           KEY `type_status_date` (`com_id`,`post_type`,`content_type`,`domain_id`,`post_status`,`create_time`,`id`) USING BTREE,
+                           KEY `post_domain_id` (`domain_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1547701778556567557 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -1431,15 +1423,15 @@ INSERT INTO `k_posts` VALUES ('1547701778556567556', '<div class=\"para\" data-p
 -- ----------------------------
 DROP TABLE IF EXISTS `k_stars`;
 CREATE TABLE `k_stars` (
-  `id` bigint(20) unsigned NOT NULL,
-  `object_id` bigint(20) unsigned NOT NULL ,
-  `user_id` bigint(20) unsigned NOT NULL ,
-  `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
-  `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `star_obj_user` (`object_id`,`user_id`) USING BTREE,
-  KEY `star_obj_id` (`object_id`) USING BTREE,
-  KEY `star_user_id` (`user_id`) USING BTREE
+                           `id` bigint(20) unsigned NOT NULL,
+                           `object_id` bigint(20) unsigned NOT NULL ,
+                           `user_id` bigint(20) unsigned NOT NULL ,
+                           `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
+                           `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `star_obj_user` (`object_id`,`user_id`) USING BTREE,
+                           KEY `star_obj_id` (`object_id`) USING BTREE,
+                           KEY `star_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -1478,14 +1470,14 @@ INSERT INTO `k_stars` VALUES ('100677371184201735', '83322023720960005', '1', '1
 -- ----------------------------
 DROP TABLE IF EXISTS `k_term_object`;
 CREATE TABLE `k_term_object` (
-  `id` bigint(20) unsigned NOT NULL,
-  `object_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `term_type_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `term_order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `term_class_id` (`term_type_id`) USING BTREE,
-  KEY `term_object_id` (`object_id`),
-  KEY `term_object_type` (`object_id`,`term_type_id`)
+                                 `id` bigint(20) unsigned NOT NULL,
+                                 `object_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                                 `term_type_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                                 `term_order` int(11) NOT NULL DEFAULT '0',
+                                 PRIMARY KEY (`id`),
+                                 KEY `term_class_id` (`term_type_id`) USING BTREE,
+                                 KEY `term_object_id` (`object_id`),
+                                 KEY `term_object_type` (`object_id`,`term_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -1821,18 +1813,18 @@ INSERT INTO `k_term_object` VALUES ('1547701778581733379', '1547701778556567556'
 -- ----------------------------
 DROP TABLE IF EXISTS `k_term_type`;
 CREATE TABLE `k_term_type` (
-  `id` bigint(20) unsigned NOT NULL,
-  `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL ,
-  `content_id` bigint(20) DEFAULT NULL ,
-  `description` longtext COLLATE utf8mb4_unicode_ci,
-  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `count` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `term_id_class` (`term_id`,`class_type`,`content_id`) USING BTREE,
-  KEY `class_type` (`class_type`) USING BTREE,
-  KEY `term_type_content` (`content_id`),
-  KEY `term_parent_id` (`parent_id`)
+                               `id` bigint(20) unsigned NOT NULL,
+                               `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                               `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL ,
+                               `content_id` bigint(20) DEFAULT NULL ,
+                               `description` longtext COLLATE utf8mb4_unicode_ci,
+                               `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                               `count` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+                               PRIMARY KEY (`id`),
+                               UNIQUE KEY `term_id_class` (`term_id`,`class_type`,`content_id`) USING BTREE,
+                               KEY `class_type` (`class_type`) USING BTREE,
+                               KEY `term_type_content` (`content_id`),
+                               KEY `term_parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -1954,13 +1946,13 @@ INSERT INTO `k_term_type` VALUES ('1522031215049883657', '1522031215049883657', 
 -- ----------------------------
 DROP TABLE IF EXISTS `k_termmeta`;
 CREATE TABLE `k_termmeta` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `meta_value` longtext COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `term_id` (`term_id`),
-  KEY `meta_key` (`meta_key`(191))
+                              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                              `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                              `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `meta_value` longtext COLLATE utf8mb4_unicode_ci,
+                              PRIMARY KEY (`id`),
+                              KEY `term_id` (`term_id`),
+                              KEY `meta_key` (`meta_key`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -1972,13 +1964,13 @@ CREATE TABLE `k_termmeta` (
 -- ----------------------------
 DROP TABLE IF EXISTS `k_terms`;
 CREATE TABLE `k_terms` (
-  `id` bigint(20) unsigned NOT NULL,
-  `name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `term_group` bigint(10) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `slug` (`slug`(191)) USING BTREE,
-  KEY `name` (`name`(191))
+                           `id` bigint(20) unsigned NOT NULL,
+                           `name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `term_group` bigint(10) NOT NULL DEFAULT '0',
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `slug` (`slug`(191)) USING BTREE,
+                           KEY `name` (`name`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -2101,32 +2093,32 @@ INSERT INTO `k_terms` VALUES ('1522031215049883657', '网红打卡', 'whdk', '0'
 -- ----------------------------
 DROP TABLE IF EXISTS `np_book`;
 CREATE TABLE `np_book` (
-  `id` bigint(20) unsigned NOT NULL,
-  `title` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `sub_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `cover` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `first_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `last_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `start_year` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `description` varchar(800) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `writer` bigint(20) unsigned DEFAULT NULL ,
-  `contact` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `phone` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `privacy_level` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `prov` bigint(20) DEFAULT NULL ,
-  `city` bigint(20) DEFAULT NULL ,
-  `county` bigint(20) DEFAULT NULL ,
-  `price` decimal(10,2) DEFAULT NULL ,
-  `book_status` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`)
+                           `id` bigint(20) unsigned NOT NULL,
+                           `title` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `sub_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `cover` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `first_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `last_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `start_year` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `description` varchar(800) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `writer` bigint(20) unsigned DEFAULT NULL ,
+                           `contact` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `phone` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `privacy_level` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `prov` bigint(20) DEFAULT NULL ,
+                           `city` bigint(20) DEFAULT NULL ,
+                           `county` bigint(20) DEFAULT NULL ,
+                           `price` decimal(10,2) DEFAULT NULL ,
+                           `book_status` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
+                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
+                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
+                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -2139,21 +2131,21 @@ INSERT INTO `np_book` VALUES ('102340230400', '轩辕年谱', null, null, '轩�
 -- ----------------------------
 DROP TABLE IF EXISTS `np_chapter`;
 CREATE TABLE `np_chapter` (
-  `id` bigint(20) unsigned NOT NULL,
-  `book_id` bigint(20) unsigned DEFAULT NULL ,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
-  `display_order` int(10) unsigned DEFAULT NULL ,
-  `chapter_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`)
+                              `id` bigint(20) unsigned NOT NULL,
+                              `book_id` bigint(20) unsigned DEFAULT NULL ,
+                              `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+                              `display_order` int(10) unsigned DEFAULT NULL ,
+                              `chapter_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `create_by` bigint(20) unsigned DEFAULT NULL ,
+                              `create_time` datetime DEFAULT NULL ,
+                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `update_by` bigint(20) unsigned DEFAULT NULL ,
+                              `update_time` datetime DEFAULT NULL ,
+                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `versions` int(10) DEFAULT NULL ,
+                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -2165,20 +2157,20 @@ CREATE TABLE `np_chapter` (
 -- ----------------------------
 DROP TABLE IF EXISTS `np_hold`;
 CREATE TABLE `np_hold` (
-  `id` bigint(20) unsigned NOT NULL,
-  `book_id` bigint(20) unsigned DEFAULT NULL ,
-  `expire_time` datetime DEFAULT NULL ,
-  `user_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`)
+                           `id` bigint(20) unsigned NOT NULL,
+                           `book_id` bigint(20) unsigned DEFAULT NULL ,
+                           `expire_time` datetime DEFAULT NULL ,
+                           `user_id` bigint(20) unsigned DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
+                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
+                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
+                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -2190,22 +2182,22 @@ CREATE TABLE `np_hold` (
 -- ----------------------------
 DROP TABLE IF EXISTS `np_order`;
 CREATE TABLE `np_order` (
-  `id` bigint(20) NOT NULL,
-  `book_id` bigint(20) DEFAULT NULL ,
-  `amount` decimal(10,2) DEFAULT NULL ,
-  `user_id` bigint(20) DEFAULT NULL ,
-  `order_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `pay_status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`)
+                            `id` bigint(20) NOT NULL,
+                            `book_id` bigint(20) DEFAULT NULL ,
+                            `amount` decimal(10,2) DEFAULT NULL ,
+                            `user_id` bigint(20) DEFAULT NULL ,
+                            `order_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `pay_status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `create_by` bigint(20) unsigned DEFAULT NULL ,
+                            `create_time` datetime DEFAULT NULL ,
+                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                            `update_by` bigint(20) unsigned DEFAULT NULL ,
+                            `update_time` datetime DEFAULT NULL ,
+                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `versions` int(10) DEFAULT NULL ,
+                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -2217,21 +2209,21 @@ CREATE TABLE `np_order` (
 -- ----------------------------
 DROP TABLE IF EXISTS `np_reward`;
 CREATE TABLE `np_reward` (
-  `id` bigint(20) unsigned NOT NULL,
-  `book_id` bigint(20) DEFAULT NULL ,
-  `start_reward` int(5) unsigned DEFAULT NULL ,
-  `reward_audit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `reward_validity` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`)
+                             `id` bigint(20) unsigned NOT NULL,
+                             `book_id` bigint(20) DEFAULT NULL ,
+                             `start_reward` int(5) unsigned DEFAULT NULL ,
+                             `reward_audit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `reward_validity` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                             `create_time` datetime DEFAULT NULL ,
+                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                             `update_time` datetime DEFAULT NULL ,
+                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `versions` int(10) DEFAULT NULL ,
+                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -2243,20 +2235,20 @@ CREATE TABLE `np_reward` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_account_association`;
 CREATE TABLE `wo_account_association` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
-  `user_id` bigint(20) unsigned DEFAULT NULL ,
-  `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `idx_user_id` (`user_id`) USING BTREE
+                                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
+                                          `user_id` bigint(20) unsigned DEFAULT NULL ,
+                                          `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `create_time` datetime DEFAULT NULL ,
+                                          `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `update_time` datetime DEFAULT NULL ,
+                                          `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `versions` int(10) DEFAULT NULL ,
+                                          PRIMARY KEY (`id`),
+                                          KEY `idx_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
 
 -- ----------------------------
@@ -2268,27 +2260,27 @@ CREATE TABLE `wo_account_association` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_app`;
 CREATE TABLE `wo_app` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `app_code` (`app_code`),
-  KEY `app_type` (`app_type`),
-  KEY `app_com_id` (`com_id`),
-  KEY `app_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
+                          `id` bigint(20) unsigned NOT NULL ,
+                          `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `com_id` bigint(20) unsigned DEFAULT NULL ,
+                          `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                          `create_time` datetime DEFAULT NULL ,
+                          `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                          `update_time` datetime DEFAULT NULL ,
+                          `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `versions` int(10) DEFAULT NULL ,
+                          PRIMARY KEY (`id`),
+                          UNIQUE KEY `app_code` (`app_code`),
+                          KEY `app_type` (`app_type`),
+                          KEY `app_com_id` (`com_id`),
+                          KEY `app_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
 
 -- ----------------------------
@@ -2315,28 +2307,28 @@ INSERT INTO `wo_app` VALUES ('1533901932104171527', '文档', 'wldos-doc', 'doc'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_architecture`;
 CREATE TABLE `wo_architecture` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_com_arch` (`arch_code`,`com_id`),
-  KEY `arch_code` (`arch_code`),
-  KEY `arch_com_id` (`com_id`),
-  KEY `arch_parent_id` (`parent_id`),
-  KEY `arch_is_valid_del` (`is_valid`,`delete_flag`)
+                                   `id` bigint(20) unsigned NOT NULL ,
+                                   `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `com_id` bigint(20) unsigned DEFAULT NULL ,
+                                   `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                                   `display_order` int(10) DEFAULT NULL ,
+                                   `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                   `create_time` datetime DEFAULT NULL ,
+                                   `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                   `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                   `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                   `update_time` datetime DEFAULT NULL ,
+                                   `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `versions` int(10) DEFAULT NULL ,
+                                   PRIMARY KEY (`id`),
+                                   UNIQUE KEY `un_com_arch` (`arch_code`,`com_id`),
+                                   KEY `arch_code` (`arch_code`),
+                                   KEY `arch_com_id` (`com_id`),
+                                   KEY `arch_parent_id` (`parent_id`),
+                                   KEY `arch_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -2355,25 +2347,25 @@ INSERT INTO `wo_architecture` VALUES ('1529501287100104708', 'finance', '金融�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_auth_role`;
 CREATE TABLE `wo_auth_role` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `role_id` bigint(20) unsigned DEFAULT NULL ,
-  `resource_id` bigint(20) unsigned DEFAULT NULL ,
-  `app_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `auth_role_id` (`role_id`),
-  KEY `auth_res_id` (`resource_id`),
-  KEY `auth_app_id` (`app_id`),
-  KEY `auth_is_valid_del` (`is_valid`,`delete_flag`),
-  KEY `auth_role_res_app` (`role_id`,`resource_id`,`app_id`)
+                                `id` bigint(20) unsigned NOT NULL ,
+                                `role_id` bigint(20) unsigned DEFAULT NULL ,
+                                `resource_id` bigint(20) unsigned DEFAULT NULL ,
+                                `app_id` bigint(20) unsigned DEFAULT NULL ,
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                `create_time` datetime DEFAULT NULL ,
+                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                `update_time` datetime DEFAULT NULL ,
+                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                `versions` int(10) DEFAULT NULL ,
+                                PRIMARY KEY (`id`),
+                                KEY `auth_role_id` (`role_id`),
+                                KEY `auth_res_id` (`resource_id`),
+                                KEY `auth_app_id` (`app_id`),
+                                KEY `auth_is_valid_del` (`is_valid`,`delete_flag`),
+                                KEY `auth_role_res_app` (`role_id`,`resource_id`,`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -2554,24 +2546,24 @@ INSERT INTO `wo_auth_role` VALUES ('152162308026187776', '1525946478916976648', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_com_user`;
 CREATE TABLE `wo_com_user` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `user_id` bigint(20) unsigned DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `com_user_id` (`user_id`),
-  KEY `com_id` (`com_id`),
-  KEY `com_is_main` (`is_main`),
-  KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `user_id` bigint(20) unsigned DEFAULT NULL ,
+                               `com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_time` datetime DEFAULT NULL ,
+                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `update_time` datetime DEFAULT NULL ,
+                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `versions` int(10) DEFAULT NULL ,
+                               PRIMARY KEY (`id`),
+                               KEY `com_user_id` (`user_id`),
+                               KEY `com_id` (`com_id`),
+                               KEY `com_is_main` (`is_main`),
+                               KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -2589,25 +2581,25 @@ INSERT INTO `wo_com_user` VALUES ('92829651731922951', '92829405966680072', '150
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_company`;
 CREATE TABLE `wo_company` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_com_code` (`com_code`),
-  KEY `com_parent_id` (`parent_id`),
-  KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
+                              `id` bigint(20) unsigned NOT NULL ,
+                              `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                              `display_order` int(10) DEFAULT NULL ,
+                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `create_by` bigint(20) unsigned DEFAULT NULL ,
+                              `create_time` datetime DEFAULT NULL ,
+                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `update_by` bigint(20) unsigned DEFAULT NULL ,
+                              `update_time` datetime DEFAULT NULL ,
+                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `versions` int(10) DEFAULT NULL ,
+                              PRIMARY KEY (`id`),
+                              UNIQUE KEY `un_com_code` (`com_code`),
+                              KEY `com_parent_id` (`parent_id`),
+                              KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -2624,37 +2616,37 @@ INSERT INTO `wo_company` VALUES ('1508972831958548480', 'babala100', '给你未�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_domain`;
 CREATE TABLE `wo_domain` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `second_domain` varchar(255) DEFAULT NULL ,
-  `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `site_logo` varchar(50) DEFAULT NULL ,
-  `site_title` varchar(255) DEFAULT NULL ,
-  `site_keyword` varchar(500) DEFAULT NULL ,
-  `site_description` varchar(500) DEFAULT NULL ,
-  `slogan` varchar(60) DEFAULT NULL ,
-  `foot` text ,
-  `flink` text ,
-  `copy` text ,
-  `parent_id` bigint(20) DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `cname_domain` varchar(255) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_idx_site_domain` (`site_domain`),
-  UNIQUE KEY `uni_idx_sec_domain` (`second_domain`) USING BTREE,
-  KEY `domain_com_id` (`com_id`),
-  KEY `dom_is_valid_del` (`is_valid`,`delete_flag`)
+                             `id` bigint(20) unsigned NOT NULL ,
+                             `com_id` bigint(20) unsigned DEFAULT NULL ,
+                             `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `second_domain` varchar(255) DEFAULT NULL ,
+                             `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `site_logo` varchar(50) DEFAULT NULL ,
+                             `site_title` varchar(255) DEFAULT NULL ,
+                             `site_keyword` varchar(500) DEFAULT NULL ,
+                             `site_description` varchar(500) DEFAULT NULL ,
+                             `slogan` varchar(60) DEFAULT NULL ,
+                             `foot` text ,
+                             `flink` text ,
+                             `copy` text ,
+                             `parent_id` bigint(20) DEFAULT NULL ,
+                             `display_order` int(10) DEFAULT NULL ,
+                             `cname_domain` varchar(255) DEFAULT NULL ,
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                             `create_time` datetime DEFAULT NULL ,
+                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                             `update_time` datetime DEFAULT NULL ,
+                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `versions` int(10) DEFAULT NULL ,
+                             PRIMARY KEY (`id`),
+                             UNIQUE KEY `uni_idx_site_domain` (`site_domain`),
+                             UNIQUE KEY `uni_idx_sec_domain` (`second_domain`) USING BTREE,
+                             KEY `domain_com_id` (`com_id`),
+                             KEY `dom_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -2673,25 +2665,25 @@ INSERT INTO `wo_domain` VALUES ('1534253403467333638', '0', 'shuxiyuan.com', 'sh
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_domain_app`;
 CREATE TABLE `wo_domain_app` (
-  `id` bigint(21) unsigned NOT NULL,
-  `app_id` bigint(21) unsigned DEFAULT NULL ,
-  `domain_id` bigint(21) DEFAULT NULL ,
-  `com_id` bigint(21) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `dom_app_id` (`app_id`),
-  KEY `domain_id` (`domain_id`),
-  KEY `dom_com_id` (`com_id`),
-  KEY `dom_is_valid_del` (`is_valid`,`delete_flag`),
-  KEY `dom_app_com` (`app_id`,`domain_id`,`com_id`)
+                                 `id` bigint(21) unsigned NOT NULL,
+                                 `app_id` bigint(21) unsigned DEFAULT NULL ,
+                                 `domain_id` bigint(21) DEFAULT NULL ,
+                                 `com_id` bigint(21) unsigned DEFAULT NULL ,
+                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                 `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                 `create_time` datetime DEFAULT NULL ,
+                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                 `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                 `update_time` datetime DEFAULT NULL ,
+                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                 `versions` int(10) DEFAULT NULL ,
+                                 PRIMARY KEY (`id`),
+                                 KEY `dom_app_id` (`app_id`),
+                                 KEY `domain_id` (`domain_id`),
+                                 KEY `dom_com_id` (`com_id`),
+                                 KEY `dom_is_valid_del` (`is_valid`,`delete_flag`),
+                                 KEY `dom_app_com` (`app_id`,`domain_id`,`com_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -2763,28 +2755,28 @@ INSERT INTO `wo_domain_app` VALUES ('1546146354371936260', '1504619730199822347'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_domain_resource`;
 CREATE TABLE `wo_domain_resource` (
-  `id` bigint(20) NOT NULL,
-  `module_name` varchar(50) NOT NULL DEFAULT 'static' ,
-  `resource_id` bigint(20) unsigned NOT NULL ,
-  `app_id` bigint(20) unsigned DEFAULT NULL ,
-  `term_type_id` bigint(20) DEFAULT '0' ,
-  `domain_id` bigint(20) unsigned NOT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) unsigned DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `dom_res_route` (`domain_id`,`resource_id`) USING BTREE,
-  KEY `dom_res_valid` (`is_valid`,`delete_flag`),
-  KEY `dom_res_app` (`domain_id`,`app_id`,`resource_id`),
-  KEY `dom_res_module` (`module_name`),
-  KEY `dom_res_did` (`domain_id`)
+                                      `id` bigint(20) NOT NULL,
+                                      `module_name` varchar(50) NOT NULL DEFAULT 'static' ,
+                                      `resource_id` bigint(20) unsigned NOT NULL ,
+                                      `app_id` bigint(20) unsigned DEFAULT NULL ,
+                                      `term_type_id` bigint(20) DEFAULT '0' ,
+                                      `domain_id` bigint(20) unsigned NOT NULL ,
+                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                      `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                      `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                      `create_time` datetime DEFAULT NULL ,
+                                      `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                      `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                      `update_time` datetime DEFAULT NULL ,
+                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                      `versions` int(10) unsigned DEFAULT NULL ,
+                                      PRIMARY KEY (`id`),
+                                      UNIQUE KEY `dom_res_route` (`domain_id`,`resource_id`) USING BTREE,
+                                      KEY `dom_res_valid` (`is_valid`,`delete_flag`),
+                                      KEY `dom_res_app` (`domain_id`,`app_id`,`resource_id`),
+                                      KEY `dom_res_module` (`module_name`),
+                                      KEY `dom_res_did` (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -3054,22 +3046,22 @@ INSERT INTO `wo_domain_resource` VALUES ('1544340805720391680', 'static', '15443
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_file`;
 CREATE TABLE `wo_file` (
-  `id` bigint(20) unsigned NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `file_is_valid_del` (`is_valid`,`delete_flag`),
-  KEY `file_mime_type` (`mime_type`)
+                           `id` bigint(20) unsigned NOT NULL,
+                           `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
+                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
+                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
+                           PRIMARY KEY (`id`),
+                           KEY `file_is_valid_del` (`is_valid`,`delete_flag`),
+                           KEY `file_mime_type` (`mime_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -3453,15 +3445,15 @@ INSERT INTO `wo_file` VALUES ('1547701709300219911', 'bg_corner_tr.png', '/20210
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_options`;
 CREATE TABLE `wo_options` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `value` longtext COLLATE utf8mb4_unicode_ci,
-  `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `option_name` (`key`),
-  KEY `options_app_type` (`app_type`)
+                              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                              `key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `value` longtext COLLATE utf8mb4_unicode_ci,
+                              `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              PRIMARY KEY (`id`),
+                              UNIQUE KEY `option_name` (`key`),
+                              KEY `options_app_type` (`app_type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -3609,29 +3601,29 @@ INSERT INTO `wo_options` VALUES ('148', 'nav_menu_options', null, 'a:1:{s:8:\"au
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org`;
 CREATE TABLE `wo_org` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `arch_id` bigint(20) unsigned DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_com_arch_org` (`org_code`,`arch_id`,`com_id`),
-  KEY `org_type` (`org_type`),
-  KEY `org_arch_id` (`arch_id`),
-  KEY `org_com_id` (`com_id`),
-  KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
+                          `id` bigint(20) unsigned NOT NULL ,
+                          `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `arch_id` bigint(20) unsigned DEFAULT NULL ,
+                          `com_id` bigint(20) unsigned DEFAULT NULL ,
+                          `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                          `display_order` int(10) DEFAULT NULL ,
+                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                          `create_time` datetime DEFAULT NULL ,
+                          `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                          `update_time` datetime DEFAULT NULL ,
+                          `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `versions` int(10) DEFAULT NULL ,
+                          PRIMARY KEY (`id`),
+                          UNIQUE KEY `un_com_arch_org` (`org_code`,`arch_id`,`com_id`),
+                          KEY `org_type` (`org_type`),
+                          KEY `org_arch_id` (`arch_id`),
+                          KEY `org_com_id` (`com_id`),
+                          KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -3659,29 +3651,29 @@ INSERT INTO `wo_org` VALUES ('1526214941484957699', 'badmin', '二级管理员',
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org_user`;
 CREATE TABLE `wo_org_user` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `user_id` bigint(20) unsigned DEFAULT NULL ,
-  `user_com_id` bigint(20) unsigned DEFAULT NULL ,
-  `org_id` bigint(20) unsigned DEFAULT NULL ,
-  `arch_id` bigint(20) unsigned DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `org_user_id` (`user_id`),
-  KEY `org_id` (`org_id`),
-  KEY `org_user_arch` (`arch_id`),
-  KEY `org_user_com` (`com_id`),
-  KEY `org_user_is_valid_del` (`is_valid`,`delete_flag`),
-  KEY `org_user_arch_com` (`user_id`,`user_com_id`,`org_id`,`arch_id`,`com_id`) USING BTREE,
-  KEY `org_u_com_id` (`user_com_id`)
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `user_id` bigint(20) unsigned DEFAULT NULL ,
+                               `user_com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `org_id` bigint(20) unsigned DEFAULT NULL ,
+                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
+                               `com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `create_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `update_time` datetime DEFAULT NULL ,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' ,
+                               `versions` int(10) DEFAULT NULL ,
+                               PRIMARY KEY (`id`),
+                               KEY `org_user_id` (`user_id`),
+                               KEY `org_id` (`org_id`),
+                               KEY `org_user_arch` (`arch_id`),
+                               KEY `org_user_com` (`com_id`),
+                               KEY `org_user_is_valid_del` (`is_valid`,`delete_flag`),
+                               KEY `org_user_arch_com` (`user_id`,`user_com_id`,`org_id`,`arch_id`,`com_id`) USING BTREE,
+                               KEY `org_u_com_id` (`user_com_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -3728,26 +3720,26 @@ INSERT INTO `wo_org_user` VALUES ('1547698181106221065', '1547698179520774144', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_region`;
 CREATE TABLE `wo_region` (
-  `id` bigint(20) unsigned NOT NULL,
-  `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `region_code` (`region_code`),
-  KEY `region_level` (`level`),
-  KEY `region_parent_id` (`parent_id`),
-  KEY `region_is_valid_del` (`is_valid`,`delete_flag`)
+                             `id` bigint(20) unsigned NOT NULL,
+                             `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                             `display_order` int(10) DEFAULT NULL ,
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                             `create_time` datetime DEFAULT NULL ,
+                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                             `update_time` datetime DEFAULT NULL ,
+                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `versions` int(10) DEFAULT NULL ,
+                             PRIMARY KEY (`id`),
+                             UNIQUE KEY `region_code` (`region_code`),
+                             KEY `region_level` (`level`),
+                             KEY `region_parent_id` (`parent_id`),
+                             KEY `region_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -4137,33 +4129,33 @@ INSERT INTO `wo_region` VALUES ('820000', '820000', '澳门特别行政区', '1'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_resource`;
 CREATE TABLE `wo_resource` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `resource_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `app_id` bigint(20) unsigned DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_app_res_code` (`resource_code`,`app_id`) USING BTREE,
-  KEY `res_type` (`resource_type`) USING BTREE,
-  KEY `res_app_id` (`app_id`) USING BTREE,
-  KEY `res_parent_id` (`parent_id`) USING BTREE,
-  KEY `res_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `resource_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `app_id` bigint(20) unsigned DEFAULT NULL ,
+                               `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                               `display_order` int(10) DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `update_time` datetime DEFAULT NULL,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `versions` int(10) DEFAULT NULL ,
+                               PRIMARY KEY (`id`),
+                               UNIQUE KEY `un_app_res_code` (`resource_code`,`app_id`) USING BTREE,
+                               KEY `res_type` (`resource_type`) USING BTREE,
+                               KEY `res_app_id` (`app_id`) USING BTREE,
+                               KEY `res_parent_id` (`parent_id`) USING BTREE,
+                               KEY `res_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -4273,27 +4265,27 @@ INSERT INTO `wo_resource` VALUES ('1542939849472524294', 'a-jsfx', '技术分享
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role`;
 CREATE TABLE `wo_role` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `parent_id` bigint(20) unsigned DEFAULT NULL ,
-  `display_order` int(10) DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_role_code` (`role_code`),
-  KEY `role_type` (`role_type`),
-  KEY `role_parent_id` (`parent_id`),
-  KEY `role_is_valid_del` (`is_valid`,`delete_flag`)
+                           `id` bigint(20) unsigned NOT NULL ,
+                           `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                           `display_order` int(10) DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                           `create_time` datetime DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_time` datetime DEFAULT NULL ,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `uni_role_code` (`role_code`),
+                           KEY `role_type` (`role_type`),
+                           KEY `role_parent_id` (`parent_id`),
+                           KEY `role_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4318,25 +4310,25 @@ INSERT INTO `wo_role` VALUES ('1526213891793272839', 'badmin', '二级管理员'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role_org`;
 CREATE TABLE `wo_role_org` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `role_id` bigint(20) unsigned DEFAULT NULL ,
-  `org_id` bigint(20) unsigned DEFAULT NULL ,
-  `arch_id` bigint(20) unsigned DEFAULT NULL ,
-  `com_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `org_role_id` (`role_id`),
-  KEY `org_role_org_id` (`org_id`),
-  KEY `org_arch_com` (`org_id`,`arch_id`,`com_id`),
-  KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `role_id` bigint(20) unsigned DEFAULT NULL ,
+                               `org_id` bigint(20) unsigned DEFAULT NULL ,
+                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
+                               `com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `create_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `update_time` datetime DEFAULT NULL ,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `versions` int(10) DEFAULT NULL ,
+                               PRIMARY KEY (`id`),
+                               KEY `org_role_id` (`role_id`),
+                               KEY `org_role_org_id` (`org_id`),
+                               KEY `org_arch_com` (`org_id`,`arch_id`,`com_id`),
+                               KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4354,22 +4346,22 @@ INSERT INTO `wo_role_org` VALUES ('1525968743872249860', '1525946478916976648', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_association`;
 CREATE TABLE `wo_subject_association` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
-  `role_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `sub_type_id` (`subject_type_id`),
-  KEY `sub_role_id` (`role_id`),
-  KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
+                                          `id` bigint(20) unsigned NOT NULL ,
+                                          `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
+                                          `role_id` bigint(20) unsigned DEFAULT NULL ,
+                                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                          `create_time` datetime DEFAULT NULL ,
+                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                          `update_time` datetime DEFAULT NULL ,
+                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `versions` int(10) DEFAULT NULL ,
+                                          PRIMARY KEY (`id`),
+                                          KEY `sub_type_id` (`subject_type_id`),
+                                          KEY `sub_role_id` (`role_id`),
+                                          KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4381,25 +4373,25 @@ CREATE TABLE `wo_subject_association` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_authentication`;
 CREATE TABLE `wo_subject_authentication` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
-  `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `user_id` bigint(20) unsigned DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  KEY `sub_type_id` (`subject_type_id`),
-  KEY `sub_user_id` (`user_id`),
-  KEY `sub_is_valid_del` (`is_valid`,`delete_flag`),
-  KEY `sub_code` (`subject_code`)
+                                             `id` bigint(20) unsigned NOT NULL ,
+                                             `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
+                                             `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                             `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                             `user_id` bigint(20) unsigned DEFAULT NULL ,
+                                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                             `create_time` datetime DEFAULT NULL ,
+                                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                             `update_time` datetime DEFAULT NULL ,
+                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                             `versions` int(10) DEFAULT NULL ,
+                                             PRIMARY KEY (`id`),
+                                             KEY `sub_type_id` (`subject_type_id`),
+                                             KEY `sub_user_id` (`user_id`),
+                                             KEY `sub_is_valid_del` (`is_valid`,`delete_flag`),
+                                             KEY `sub_code` (`subject_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4411,22 +4403,22 @@ CREATE TABLE `wo_subject_authentication` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_define`;
 CREATE TABLE `wo_subject_define` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_subject_type_code` (`subject_type_code`) USING BTREE,
-  KEY `sub_def_is_valid_del` (`is_valid`,`delete_flag`)
+                                     `id` bigint(20) unsigned NOT NULL ,
+                                     `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                     `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                     `create_time` datetime DEFAULT NULL ,
+                                     `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                     `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                     `update_time` datetime DEFAULT NULL ,
+                                     `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `versions` int(10) DEFAULT NULL ,
+                                     PRIMARY KEY (`id`),
+                                     UNIQUE KEY `uni_subject_type_code` (`subject_type_code`) USING BTREE,
+                                     KEY `sub_def_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4438,22 +4430,22 @@ CREATE TABLE `wo_subject_define` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_model_define`;
 CREATE TABLE `wo_subject_model_define` (
-  `id` bigint(20) unsigned DEFAULT NULL ,
-  `subject_type_id` bigint(20) unsigned NOT NULL ,
-  `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`subject_type_id`),
-  KEY `sub_model_type_id` (`subject_type_id`),
-  KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
+                                           `id` bigint(20) unsigned DEFAULT NULL ,
+                                           `subject_type_id` bigint(20) unsigned NOT NULL ,
+                                           `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                           `create_time` datetime DEFAULT NULL ,
+                                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                           `update_time` datetime DEFAULT NULL ,
+                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `versions` int(10) DEFAULT NULL ,
+                                           PRIMARY KEY (`subject_type_id`),
+                                           KEY `sub_model_type_id` (`subject_type_id`),
+                                           KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4465,46 +4457,46 @@ CREATE TABLE `wo_subject_model_define` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_user`;
 CREATE TABLE `wo_user` (
-  `id` bigint(20) unsigned NOT NULL ,
-  `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
-  `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `domain_id` bigint(20) unsigned DEFAULT NULL ,
-  `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `birthday` datetime DEFAULT NULL ,
-  `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `display_order` bigint(20) DEFAULT NULL ,
-  `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `create_by` bigint(20) unsigned DEFAULT NULL ,
-  `create_time` datetime DEFAULT NULL ,
-  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `update_by` bigint(20) unsigned DEFAULT NULL ,
-  `update_time` datetime DEFAULT NULL ,
-  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `versions` int(10) DEFAULT NULL ,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_login` (`login_name`) USING BTREE,
-  KEY `user_status` (`status`),
-  KEY `user_sex` (`sex`),
-  KEY `user_del` (`delete_flag`),
-  KEY `user_prov_city_area_coun` (`province`,`city`,`area`,`country`)
+                           `id` bigint(20) unsigned NOT NULL ,
+                           `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
+                           `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
+                           `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `birthday` datetime DEFAULT NULL ,
+                           `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `display_order` bigint(20) DEFAULT NULL ,
+                           `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
+                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
+                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `uni_login` (`login_name`) USING BTREE,
+                           KEY `user_status` (`status`),
+                           KEY `user_sex` (`sex`),
+                           KEY `user_del` (`delete_flag`),
+                           KEY `user_prov_city_area_coun` (`province`,`city`,`area`,`country`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
@@ -4546,13 +4538,13 @@ INSERT INTO `wo_user` VALUES ('1547698179520774144', 'test7@163.com', 'test7', '
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_usermeta`;
 CREATE TABLE `wo_usermeta` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-  `meta_value` longtext COLLATE utf8mb4_unicode_ci ,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `meta_key` (`meta_key`(191))
+                               `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                               `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+                               `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `meta_value` longtext COLLATE utf8mb4_unicode_ci ,
+                               PRIMARY KEY (`id`),
+                               KEY `user_id` (`user_id`),
+                               KEY `meta_key` (`meta_key`(191))
 ) ENGINE=InnoDB AUTO_INCREMENT=119560318918246407 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
