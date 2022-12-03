@@ -69,6 +69,23 @@ public class DateUtils {
 		return date;
 	}
 
+	/**
+	 * 转换格式为"yyyy-MM-dd HH:mm:ss"的日期字符串为Date类型
+	 * @param dateString 日期字符串
+	 * @return 日期类型
+	 */
+	public static Date parse(String dateString) {
+		SimpleDateFormat sdf = new SimpleDateFormat(TIME_PATTER);
+		Date date;
+		try {
+			date = sdf.parse(dateString);
+		}
+		catch (ParseException ex) {
+			return null;
+		}
+		return date;
+	}
+
 	public static int getValidDaysByYM(String dateString){
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTER);
 		ParsePosition pos = new ParsePosition(0);

@@ -46,6 +46,12 @@
 			<artifactId>wldos-oauth2</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<!-- wldos license -->
+		<dependency>
+			<groupId>com.wldos</groupId>
+			<artifactId>wldos-license</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build><!-- 构建不带版本号的包 -->

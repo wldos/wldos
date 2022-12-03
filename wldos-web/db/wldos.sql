@@ -1,23 +1,16 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
- * Licensed under the Apache License, Version 2.0 or a commercial license.
- * For Apache see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
- *
- */
-/*
 Navicat MySQL Data Transfer
 
-Source Server         : 192.18.11.2
+Source Server         : 192.168.1.24
 Source Server Version : 50729
-Source Host           : 192.18.11.2:3306
+Source Host           : 192.168.1.24:3306
 Source Database       : wldos
 
 Target Server Type    : MYSQL
 Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2022-05-14 18:31:32
+Date: 2022-12-03 21:56:25
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -52,19 +45,19 @@ CREATE TABLE `k_comments` (
                               `author_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                               `author_ip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                               `content` text COLLATE utf8mb4_unicode_ci,
-                              `karma` int(11) NOT NULL DEFAULT '0' ,
-                              `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `karma` int(11) NOT NULL DEFAULT '0' COMMENT '评论业力',
+                              `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '评论审核状态：0待审批、1审批通过、spam垃圾评论、trash回收站',
+                              `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '客户端信息：浏览器、os等',
                               `comment_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-                              `create_by` bigint(20) unsigned DEFAULT '0' ,
-                              `create_time` datetime DEFAULT NULL ,
+                              `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '游客为0',
+                              `create_by` bigint(20) unsigned DEFAULT '0' COMMENT '创建人',
+                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                               `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL ,
-                              `update_time` datetime DEFAULT NULL ,
+                              `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                               `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `versions` int(10) DEFAULT NULL ,
+                              `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                              `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                               PRIMARY KEY (`id`),
                               KEY `comment_post_ID` (`post_id`),
                               KEY `comment_approved_date_gmt` (`approved`),
@@ -83,11 +76,9 @@ INSERT INTO `k_comments` VALUES ('81148068658593794', '1545223091294748672', '�
 INSERT INTO `k_comments` VALUES ('81171206641467395', '1544414732358434826', '龙神', null, null, null, '你好', '0', '1', null, null, '0', '1', '2021-10-27 18:23:14', '192.168.1.23', '1', '2021-10-27 18:23:14', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('81171244939657216', '1544414732358434826', '龙神', null, null, null, '你好', '0', '1', null, null, '81171206641467395', '1', '2021-10-27 18:23:23', '192.168.1.23', '1', '2021-10-27 18:23:23', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('83309870280523787', '1544401257229893635', '龙神', null, null, null, '讲得很好，这是很透彻的解析！', '0', '1', null, null, '0', '1', '2021-11-02 16:01:31', '192.168.1.23', '1', '2021-11-02 16:01:31', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_comments` VALUES ('1529477260222578689', '0', null, null, null, null, '<p>suan</p>', '0', null, null, null, '0', '1', '2021-07-22 13:16:35', '192.168.1.23', '1', '2021-07-22 13:16:35', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531030094781005833', '0', null, null, null, null, '<p>你好，感受呢</p>', '0', null, null, null, '0', '0', '2021-07-26 20:07:00', '192.168.1.23', '0', '2021-07-26 20:07:00', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531051319343366147', '0', null, null, null, null, '<p>士大夫</p>', '0', null, null, null, '0', '0', '2021-07-26 21:31:20', '192.168.1.23', '0', '2021-07-26 21:31:20', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_comments` VALUES ('1531053362602754058', '0', null, null, null, null, '<p>123</p>', '0', null, null, null, '0', '0', '2021-07-26 21:39:27', '192.168.1.23', '0', '2021-07-26 21:39:27', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_comments` VALUES ('1531054120156971019', '1525843814879248388', '龙神', null, null, null, '<p>1234</p>', '0', null, null, null, '0', '0', '2021-07-26 21:42:28', '192.168.1.23', '0', '2021-07-26 21:42:28', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_comments` VALUES ('1531054120156971019', '1525843814879248388', '龙神', null, null, null, '<p>1234</p>', '0', '1', null, null, '0', '0', '2021-07-26 21:42:28', '192.168.1.23', '0', '2021-07-26 21:42:28', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531060601556221955', '1525843814879248388', '龙神', null, null, null, '123', '0', '1', null, null, '0', '1', '2021-07-26 22:08:13', '192.168.1.23', '1', '2021-07-26 22:08:13', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531096812706512898', '1525843814879248388', '龙神', null, null, null, '2323', '0', '1', null, null, '0', '1', '2021-07-27 00:32:07', '192.168.1.23', '1', '2021-07-27 00:32:07', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531278924860538883', '1531257784574328835', '龙神', null, null, null, '你好', '0', '1', null, null, '0', '1', '2021-07-27 12:35:45', '192.168.1.23', '1', '2021-07-27 12:35:45', '192.168.1.23', 'normal', '1');
@@ -142,8 +133,8 @@ CREATE TABLE `k_links` (
 DROP TABLE IF EXISTS `k_model_content`;
 CREATE TABLE `k_model_content` (
                                    `id` bigint(20) unsigned NOT NULL,
-                                   `content_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `content_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `content_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '内容名称',
+                                   `content_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '内容编码：文章article、年谱annual、菜谱cook、乐谱music、软件soft、源码source、艺术作品works、视频video、音频audio、图片image',
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `k_m_content_code` (`content_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -174,12 +165,12 @@ INSERT INTO `k_model_content` VALUES ('18', '商业谱', 'business');
 DROP TABLE IF EXISTS `k_model_content_ext`;
 CREATE TABLE `k_model_content_ext` (
                                        `id` bigint(20) unsigned NOT NULL,
-                                       `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                       `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '元数据key',
+                                       `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '元数据名称',
                                        `meta_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                       `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
-                                       `content_id` bigint(20) unsigned DEFAULT NULL ,
+                                       `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '字段数据类型',
+                                       `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '如果是枚举值等，预置的值集，json格式',
+                                       `content_id` bigint(20) unsigned DEFAULT NULL COMMENT '定制的内容id，类型不同冗余的属性集不同，对应的模板不同',
                                        PRIMARY KEY (`id`),
                                        UNIQUE KEY `uni_meta_key` (`content_id`,`meta_key`) USING BTREE,
                                        KEY `k_model_content_id` (`content_id`),
@@ -229,7 +220,7 @@ INSERT INTO `k_postmeta` VALUES ('71090908490809358', '71090908285288456', 'main
 INSERT INTO `k_postmeta` VALUES ('71090908490809359', '71090908285288456', 'contact', 'a');
 INSERT INTO `k_postmeta` VALUES ('71090908490809360', '71090908285288456', 'ornPrice', '50');
 INSERT INTO `k_postmeta` VALUES ('71090908490809361', '71090908285288456', 'mainPic4', '/202109/29224627I0BIXIAG.png');
-INSERT INTO `k_postmeta` VALUES ('71095902837325835', '71095902778605572', 'views', '9');
+INSERT INTO `k_postmeta` VALUES ('71095902837325835', '71095902778605572', 'views', '10');
 INSERT INTO `k_postmeta` VALUES ('71098015298535427', '71098015290146827', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('71098018825945097', '71098018817556482', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('71098019899686921', '71098019769663489', 'views', '0');
@@ -247,7 +238,7 @@ INSERT INTO `k_postmeta` VALUES ('80366983217594378', '80366982974324744', 'main
 INSERT INTO `k_postmeta` VALUES ('80366983217594379', '80366982974324744', 'province', '140000');
 INSERT INTO `k_postmeta` VALUES ('80366983217594380', '80366982974324744', 'city', '140200');
 INSERT INTO `k_postmeta` VALUES ('80366983217594381', '80366982974324744', 'mainPic1', '/202110/25130659KG4VdUoA.jpg');
-INSERT INTO `k_postmeta` VALUES ('80367041732329472', '80366982974324744', 'views', '64');
+INSERT INTO `k_postmeta` VALUES ('80367041732329472', '80366982974324744', 'views', '65');
 INSERT INTO `k_postmeta` VALUES ('80444794729054215', '37', 'views', '4');
 INSERT INTO `k_postmeta` VALUES ('81101003261919232', '81101003052204043', 'ornPrice', '50');
 INSERT INTO `k_postmeta` VALUES ('81101003266113542', '81101003052204043', 'privacyLevel', 'public');
@@ -258,20 +249,20 @@ INSERT INTO `k_postmeta` VALUES ('81101003266113546', '81101003052204043', 'prov
 INSERT INTO `k_postmeta` VALUES ('81101003266113547', '81101003052204043', 'city', '370200');
 INSERT INTO `k_postmeta` VALUES ('81101003266113548', '81101003052204043', 'telephone', '15552852719');
 INSERT INTO `k_postmeta` VALUES ('81101003266113549', '81101003052204043', 'mainPic1', '/202110/27134409OwZqEzrc.jpg');
-INSERT INTO `k_postmeta` VALUES ('81101029346295811', '81101003052204043', 'views', '88');
+INSERT INTO `k_postmeta` VALUES ('81101029346295811', '81101003052204043', 'views', '97');
 INSERT INTO `k_postmeta` VALUES ('81129178398375940', '38', 'views', '9');
-INSERT INTO `k_postmeta` VALUES ('81145962375593986', '71090908285288456', 'views', '1');
-INSERT INTO `k_postmeta` VALUES ('81146063550595073', '41', 'views', '6');
+INSERT INTO `k_postmeta` VALUES ('81145962375593986', '71090908285288456', 'views', '2');
+INSERT INTO `k_postmeta` VALUES ('81146063550595073', '41', 'views', '8');
 INSERT INTO `k_postmeta` VALUES ('81146084782161920', '40', 'views', '6');
 INSERT INTO `k_postmeta` VALUES ('81146092826836996', '35', 'views', '4');
 INSERT INTO `k_postmeta` VALUES ('81163801224462347', '32', 'views', '6');
 INSERT INTO `k_postmeta` VALUES ('81163810867167236', '36', 'views', '2');
 INSERT INTO `k_postmeta` VALUES ('81758432651821061', '1521631894928277513', 'views', '0');
-INSERT INTO `k_postmeta` VALUES ('81759135378096139', '81759135164186628', 'views', '18');
+INSERT INTO `k_postmeta` VALUES ('81759135378096139', '81759135164186628', 'views', '20');
 INSERT INTO `k_postmeta` VALUES ('81759221889810437', '81759221873033221', 'attachMetadata', '{\"width\":1500,\"height\":1500,\"path\":\"/202110/29091946mtf7GN9G.png\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":150,\"path\":\"/202110/29091946mtf7GN9G-150x150.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":300,\"path\":\"/202110/29091946mtf7GN9G-300x300.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":1024,\"path\":\"/202110/29091946mtf7GN9G-1024x1024.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_postmeta` VALUES ('81759221889810438', '81759221873033221', 'attachPath', '/202110/29091946mtf7GN9G.png');
 INSERT INTO `k_postmeta` VALUES ('83281719466835974', '1522009400529305604', 'views', '0');
-INSERT INTO `k_postmeta` VALUES ('83293843341623296', '83293842246909960', 'views', '3');
+INSERT INTO `k_postmeta` VALUES ('83293843341623296', '83293842246909960', 'views', '5');
 INSERT INTO `k_postmeta` VALUES ('83294775290806275', '83294775278223366', 'attachMetadata', '{\"width\":1206,\"height\":737,\"path\":\"/202111/02150130L0dJbfGn.png\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":92,\"path\":\"/202111/02150130L0dJbfGn-150x150.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":183,\"path\":\"/202111/02150130L0dJbfGn-300x300.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":626,\"path\":\"/202111/02150130L0dJbfGn-1024x1024.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_postmeta` VALUES ('83294775295000586', '83294775278223366', 'attachPath', '/202111/02150130L0dJbfGn.png');
 INSERT INTO `k_postmeta` VALUES ('83320963325411339', '83320962197143557', 'subTitle', '跟随一线顶级架构师，讲述从0到1实现开发内容创作平台的最佳实践。');
@@ -286,7 +277,7 @@ INSERT INTO `k_postmeta` VALUES ('83320963325411347', '83320962197143557', 'main
 INSERT INTO `k_postmeta` VALUES ('83320963325411348', '83320962197143557', 'telephone', '15665730355');
 INSERT INTO `k_postmeta` VALUES ('83320963325411349', '83320962197143557', 'mainPic1', '/202111/02164358zkG983cb.jpg');
 INSERT INTO `k_postmeta` VALUES ('83320963325411350', '83320962197143557', 'contact', '王先生');
-INSERT INTO `k_postmeta` VALUES ('83322023729348619', '83322023720960005', 'views', '23');
+INSERT INTO `k_postmeta` VALUES ('83322023729348619', '83322023720960005', 'views', '24');
 INSERT INTO `k_postmeta` VALUES ('83323531061542913', '83323531053154305', 'attachMetadata', '{\"width\":1080,\"height\":1440,\"path\":\"/202111/02165547DRqRlzdc.jpg\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":113,\"height\":150,\"path\":\"/202111/02165547DRqRlzdc-150x150.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":225,\"height\":300,\"path\":\"/202111/02165547DRqRlzdc-300x300.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"large\",\"width\":768,\"height\":1024,\"path\":\"/202111/02165547DRqRlzdc-1024x1024.jpg\",\"mimeType\":\"image/jpeg\"}]}');
 INSERT INTO `k_postmeta` VALUES ('83323531065737222', '83323531053154305', 'attachPath', '/202111/02165547DRqRlzdc.jpg');
 INSERT INTO `k_postmeta` VALUES ('93807978881925126', '93807978626072585', 'ornPrice', '12');
@@ -299,7 +290,7 @@ INSERT INTO `k_postmeta` VALUES ('93807978890313741', '93807978626072585', 'tele
 INSERT INTO `k_postmeta` VALUES ('93807978890313742', '93807978626072585', 'city', '130200');
 INSERT INTO `k_postmeta` VALUES ('93807978890313743', '93807978626072585', 'mainPic1', '/202112/011517008FmvzqJO.png');
 INSERT INTO `k_postmeta` VALUES ('93807978890313744', '93807978626072585', 'subTitle', '1212');
-INSERT INTO `k_postmeta` VALUES ('93808020200013825', '93808020195819520', 'views', '3');
+INSERT INTO `k_postmeta` VALUES ('93808020200013825', '93808020195819520', 'views', '4');
 INSERT INTO `k_postmeta` VALUES ('94132269997539336', '1', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('94132465779261442', '25', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('94132527154511879', '29', 'views', '0');
@@ -327,8 +318,8 @@ INSERT INTO `k_postmeta` VALUES ('94454789313314831', '94454789267177482', 'tele
 INSERT INTO `k_postmeta` VALUES ('94454789313314832', '94454789267177482', 'ornPrice', '12');
 INSERT INTO `k_postmeta` VALUES ('94454789313314833', '94454789267177482', 'privacyLevel', 'reward');
 INSERT INTO `k_postmeta` VALUES ('94454789313314834', '94454789267177482', 'province', '150000');
-INSERT INTO `k_postmeta` VALUES ('94454852517281796', '94454852508893185', 'views', '2');
-INSERT INTO `k_postmeta` VALUES ('94455570494046218', '94454789267177482', 'views', '7');
+INSERT INTO `k_postmeta` VALUES ('94454852517281796', '94454852508893185', 'views', '3');
+INSERT INTO `k_postmeta` VALUES ('94455570494046218', '94454789267177482', 'views', '9');
 INSERT INTO `k_postmeta` VALUES ('94823522804350985', '94823522682716168', 'city', '140300');
 INSERT INTO `k_postmeta` VALUES ('94823522804350986', '94823522682716168', 'ornPrice', '12');
 INSERT INTO `k_postmeta` VALUES ('94823522804350987', '94823522682716168', 'cover', '/202112/041020043IGjKqKj.png');
@@ -358,7 +349,7 @@ INSERT INTO `k_postmeta` VALUES ('94847669467004935', '94847669290844168', 'cove
 INSERT INTO `k_postmeta` VALUES ('94847669467004936', '94847669290844168', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('94847732872298507', '94847669290844168', 'views', '26');
 INSERT INTO `k_postmeta` VALUES ('94971164393914369', '94847219032309763', 'views', '13');
-INSERT INTO `k_postmeta` VALUES ('94974166366339074', '94823522682716168', 'views', '4');
+INSERT INTO `k_postmeta` VALUES ('94974166366339074', '94823522682716168', 'views', '9');
 INSERT INTO `k_postmeta` VALUES ('94993989133582337', '94993989058084875', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('95010184142438401', '95010184129855499', 'views', '6');
 INSERT INTO `k_postmeta` VALUES ('95361649021206532', '95361647884550155', 'views', '0');
@@ -431,7 +422,7 @@ INSERT INTO `k_postmeta` VALUES ('98259930067943435', '98259928771903499', 'cont
 INSERT INTO `k_postmeta` VALUES ('98259930067943436', '98259928771903499', 'cover', '/202112/132146557sdVpsXG.png');
 INSERT INTO `k_postmeta` VALUES ('98259930067943437', '98259928771903499', 'province', '520000');
 INSERT INTO `k_postmeta` VALUES ('98259977446801408', '98259928771903499', 'views', '2');
-INSERT INTO `k_postmeta` VALUES ('98260088260313098', '98260087136239626', 'views', '23');
+INSERT INTO `k_postmeta` VALUES ('98260088260313098', '98260087136239626', 'views', '24');
 INSERT INTO `k_postmeta` VALUES ('98260974055374850', '98259928771903499', 'mainPic2', '/202112/13221121bdSTBXT3.png');
 INSERT INTO `k_postmeta` VALUES ('98260974059569155', '98259928771903499', 'mainPic3', '/202112/132211288imCXfr3.png');
 INSERT INTO `k_postmeta` VALUES ('98260974059569156', '98259928771903499', 'mainPic4', '/202112/13221136296PuOQ8.jpg');
@@ -441,7 +432,7 @@ INSERT INTO `k_postmeta` VALUES ('99979118486667266', '81101003052204043', 'main
 INSERT INTO `k_postmeta` VALUES ('99979118490861576', '81101003052204043', 'mainPic3', '/noPic.jpg');
 INSERT INTO `k_postmeta` VALUES ('99979118490861577', '81101003052204043', 'mainPic4', '/noPic.jpg');
 INSERT INTO `k_postmeta` VALUES ('100046688531169287', '100046688501809161', 'views', '0');
-INSERT INTO `k_postmeta` VALUES ('100077295990652928', '100077295961292809', 'views', '8');
+INSERT INTO `k_postmeta` VALUES ('100077295990652928', '100077295961292809', 'views', '10');
 INSERT INTO `k_postmeta` VALUES ('100419908979572737', '83322023720960005', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('100419908979572738', '83322023720960005', 'cover', '/noPic.jpg');
 INSERT INTO `k_postmeta` VALUES ('100678105812353027', '1544356320987758602', 'privacyLevel', 'public');
@@ -467,7 +458,7 @@ INSERT INTO `k_postmeta` VALUES ('100716409224085509', '100716409064701963', 'te
 INSERT INTO `k_postmeta` VALUES ('100716409224085510', '100716409064701963', 'mainPic1', '/202112/20163511EFXCjUf4.jpg');
 INSERT INTO `k_postmeta` VALUES ('100716409224085511', '100716409064701963', 'subTitle', '这是一个测试数据，输入50个字，继续输入。1');
 INSERT INTO `k_postmeta` VALUES ('100716409224085512', '100716409064701963', 'province', '360000');
-INSERT INTO `k_postmeta` VALUES ('100716481022181379', '100716409064701963', 'views', '0');
+INSERT INTO `k_postmeta` VALUES ('100716481022181379', '100716409064701963', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('100717380041883655', '100717380033495049', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('100717484140314635', '100716409064701963', 'mainPic2', '/noPic.jpg');
 INSERT INTO `k_postmeta` VALUES ('100717484144508928', '100716409064701963', 'mainPic3', '/noPic.jpg');
@@ -484,7 +475,7 @@ INSERT INTO `k_postmeta` VALUES ('100784898844573699', '100784898597109765', 'ci
 INSERT INTO `k_postmeta` VALUES ('100784898844573700', '100784898597109765', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('100784898844573701', '100784898597109765', 'province', '150000');
 INSERT INTO `k_postmeta` VALUES ('100784898844573702', '100784898597109765', 'cover', '/202112/20212036CqHqprtQ.jpg');
-INSERT INTO `k_postmeta` VALUES ('100785354358571018', '100785354299850760', 'views', '11');
+INSERT INTO `k_postmeta` VALUES ('100785354358571018', '100785354299850760', 'views', '13');
 INSERT INTO `k_postmeta` VALUES ('100792307562496011', '100792307554107401', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('100792492275449856', '100792492258672646', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('100795744157089800', '100795744148701191', 'views', '0');
@@ -553,7 +544,7 @@ INSERT INTO `k_postmeta` VALUES ('101013606289293313', '98260087136239626', 'pri
 INSERT INTO `k_postmeta` VALUES ('101013606293487621', '98260087136239626', 'cover', '/noPic.jpg');
 INSERT INTO `k_postmeta` VALUES ('101016014578958339', '100717380033495049', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('101016014583152647', '100717380033495049', 'cover', '/noPic.jpg');
-INSERT INTO `k_postmeta` VALUES ('102062618710818822', '100784898597109765', 'views', '11');
+INSERT INTO `k_postmeta` VALUES ('102062618710818822', '100784898597109765', 'views', '12');
 INSERT INTO `k_postmeta` VALUES ('102084367871557632', '102084367846391813', 'attachMetadata', '{\"width\":450,\"height\":166,\"path\":\"/202112/24112439wk5s5bFe.png\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":55,\"path\":\"/202112/24112439wk5s5bFe-150x150.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":111,\"path\":\"/202112/24112439wk5s5bFe-300x300.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":378,\"path\":\"/202112/24112439wk5s5bFe-1024x1024.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_postmeta` VALUES ('102084367875751943', '102084367846391813', 'attachPath', '/202112/24112439wk5s5bFe.png');
 INSERT INTO `k_postmeta` VALUES ('108315677002743813', '108315676512010250', 'city', '370100');
@@ -587,8 +578,8 @@ INSERT INTO `k_postmeta` VALUES ('108325789645848586', '108325789582934025', 'pr
 INSERT INTO `k_postmeta` VALUES ('108325789645848587', '108325789582934025', 'cover', '/202201/10164503sLfL87Ba.jpg');
 INSERT INTO `k_postmeta` VALUES ('108325789645848588', '108325789582934025', 'ornPrice', '12');
 INSERT INTO `k_postmeta` VALUES ('108325789645848589', '108325789582934025', 'mainPic1', '/202201/10164515E4EK1kZz.jpg');
-INSERT INTO `k_postmeta` VALUES ('108326074728497153', '108325789582934025', 'views', '23');
-INSERT INTO `k_postmeta` VALUES ('109053851878473734', '108321427372556297', 'views', '2');
+INSERT INTO `k_postmeta` VALUES ('108326074728497153', '108325789582934025', 'views', '48');
+INSERT INTO `k_postmeta` VALUES ('109053851878473734', '108321427372556297', 'views', '5');
 INSERT INTO `k_postmeta` VALUES ('111610378539679750', '1529498096614686730', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('112622016260653060', '112622016239681542', 'attachMetadata', '{\"width\":682,\"height\":562,\"path\":\"/202201/22131730EnjO34yN.png\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":124,\"path\":\"/202201/22131730EnjO34yN-150x150.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":247,\"path\":\"/202201/22131730EnjO34yN-300x300.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":844,\"path\":\"/202201/22131730EnjO34yN-1024x1024.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_postmeta` VALUES ('112622016264847363', '112622016239681542', 'attachPath', '/202201/22131730EnjO34yN.png');
@@ -605,7 +596,7 @@ INSERT INTO `k_postmeta` VALUES ('125294558976851978', '125294558309957640', 'su
 INSERT INTO `k_postmeta` VALUES ('125294558976851979', '125294558309957640', 'contact', '李先生');
 INSERT INTO `k_postmeta` VALUES ('125294558976851980', '125294558309957640', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('125294558976851981', '125294558309957640', 'telephone', '15665730355');
-INSERT INTO `k_postmeta` VALUES ('125295747109928966', '125294558309957640', 'views', '9');
+INSERT INTO `k_postmeta` VALUES ('125295747109928966', '125294558309957640', 'views', '10');
 INSERT INTO `k_postmeta` VALUES ('144962470750633985', '1529498078247829511', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('145300883710328834', '1521588846055833611', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('145317068392808458', '1529498100704133120', 'views', '0');
@@ -619,7 +610,7 @@ INSERT INTO `k_postmeta` VALUES ('150293642426892300', '150293641017606149', 'pr
 INSERT INTO `k_postmeta` VALUES ('150293642426892301', '150293641017606149', 'mainPic1', '/202205/06121102HFczsswR.jpg');
 INSERT INTO `k_postmeta` VALUES ('150293642426892302', '150293641017606149', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('150293642426892303', '150293641017606149', 'ornPrice', '12');
-INSERT INTO `k_postmeta` VALUES ('150295020922650625', '150293641017606149', 'views', '3');
+INSERT INTO `k_postmeta` VALUES ('150295020922650625', '150293641017606149', 'views', '6');
 INSERT INTO `k_postmeta` VALUES ('150295498393829380', '150295498133782530', 'contact', '张');
 INSERT INTO `k_postmeta` VALUES ('150295498393829381', '150295498133782530', 'subTitle', 'React基础-组件化开发的哲学React基础-组件化开发的哲学');
 INSERT INTO `k_postmeta` VALUES ('150295498393829382', '150295498133782530', 'cover', '/202205/06121801un7jisZj.jpg');
@@ -690,13 +681,23 @@ INSERT INTO `k_postmeta` VALUES ('150341156328882191', '150341155934617611', 'co
 INSERT INTO `k_postmeta` VALUES ('150341156328882192', '150341155934617611', 'subTitle', '互联网时代，企业如何借助业务中台迎战市场？互联网时代，企业如何借助业务中台迎战市场？');
 INSERT INTO `k_postmeta` VALUES ('150341156328882193', '150341155934617611', 'telephone', '15665730355');
 INSERT INTO `k_postmeta` VALUES ('150341156328882194', '150341155934617611', 'mainPic1', '/202205/06151951JTjIsxjL.png');
-INSERT INTO `k_postmeta` VALUES ('150341739441995782', '1521175523606839304', 'views', '2');
-INSERT INTO `k_postmeta` VALUES ('151375661776945159', '150341155934617611', 'views', '4');
-INSERT INTO `k_postmeta` VALUES ('151376227458531333', '150300613628575749', 'views', '0');
+INSERT INTO `k_postmeta` VALUES ('150341739441995782', '1521175523606839304', 'views', '3');
+INSERT INTO `k_postmeta` VALUES ('151375661776945159', '150341155934617611', 'views', '7');
+INSERT INTO `k_postmeta` VALUES ('151376227458531333', '150300613628575749', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('151380931693428741', '108315676512010250', 'views', '0');
-INSERT INTO `k_postmeta` VALUES ('151453718286090246', '150295498133782530', 'views', '0');
+INSERT INTO `k_postmeta` VALUES ('151453718286090246', '150295498133782530', 'views', '2');
 INSERT INTO `k_postmeta` VALUES ('151800310583181318', '1521175556540514304', 'views', '0');
-INSERT INTO `k_postmeta` VALUES ('151805331987152907', '150301922083651586', 'views', '0');
+INSERT INTO `k_postmeta` VALUES ('151805331987152907', '150301922083651586', 'views', '5');
+INSERT INTO `k_postmeta` VALUES ('157641603813130243', '157641603456614408', 'city', '110100');
+INSERT INTO `k_postmeta` VALUES ('157641603817324553', '157641603456614408', 'subTitle', '技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布');
+INSERT INTO `k_postmeta` VALUES ('157641603817324554', '157641603456614408', 'privacyLevel', 'public');
+INSERT INTO `k_postmeta` VALUES ('157641603817324555', '157641603456614408', 'province', '110000');
+INSERT INTO `k_postmeta` VALUES ('157641603817324556', '157641603456614408', 'telephone', '15665730355');
+INSERT INTO `k_postmeta` VALUES ('157641603817324557', '157641603456614408', 'mainPic1', '/202205/26184913EpyKZnxC.png');
+INSERT INTO `k_postmeta` VALUES ('157641603817324558', '157641603456614408', 'ornPrice', '56');
+INSERT INTO `k_postmeta` VALUES ('157641603817324559', '157641603456614408', 'contact', '徐老师');
+INSERT INTO `k_postmeta` VALUES ('157641603821518855', '157641603456614408', 'cover', '/202205/26184817Qcdk9yNO.png');
+INSERT INTO `k_postmeta` VALUES ('157641630618927112', '157641603456614408', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('1520933243109163018', '1520933242983333892', 'subTitle', '轩辕年谱之凤鸣岐山武王伐纣');
 INSERT INTO `k_postmeta` VALUES ('1520933243113357313', '1520933242983333892', 'province', '130000');
 INSERT INTO `k_postmeta` VALUES ('1520933243117551622', '1520933242983333892', 'city', '130200');
@@ -926,18 +927,18 @@ INSERT INTO `k_postmeta` VALUES ('1531257784788238345', '1531257784574328835', '
 INSERT INTO `k_postmeta` VALUES ('1531257784792432650', '1531257784574328835', 'cover', '/202107/27111044jywdPf5p.jpg');
 INSERT INTO `k_postmeta` VALUES ('1531257784796626946', '1531257784574328835', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('1540446858145087488', '1531257784574328835', 'views', '109');
-INSERT INTO `k_postmeta` VALUES ('1540449618785648650', '1527684704723714055', 'views', '58');
+INSERT INTO `k_postmeta` VALUES ('1540449618785648650', '1527684704723714055', 'views', '60');
 INSERT INTO `k_postmeta` VALUES ('1540702408741142530', '1525843814879248388', 'views', '115');
 INSERT INTO `k_postmeta` VALUES ('1540768445977247751', '1522688308178239492', 'views', '40');
 INSERT INTO `k_postmeta` VALUES ('1541023699574636551', '1522683503091302409', 'views', '9');
-INSERT INTO `k_postmeta` VALUES ('1541168156634693637', '1524911615640256512', 'views', '156');
+INSERT INTO `k_postmeta` VALUES ('1541168156634693637', '1524911615640256512', 'views', '157');
 INSERT INTO `k_postmeta` VALUES ('1541171492406607872', '1529498106118979585', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('1541171551953141761', '1529498103988273161', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('1541172778652844042', '1529498102742564872', 'views', '1');
-INSERT INTO `k_postmeta` VALUES ('1541172873909682179', '1529498102721593344', 'views', '1');
-INSERT INTO `k_postmeta` VALUES ('1541173026435547143', '1529498101626880001', 'views', '0');
+INSERT INTO `k_postmeta` VALUES ('1541172873909682179', '1529498102721593344', 'views', '3');
+INSERT INTO `k_postmeta` VALUES ('1541173026435547143', '1529498101626880001', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('1541174158012629000', '1525843966499143682', 'views', '2032');
-INSERT INTO `k_postmeta` VALUES ('1541179345750114310', '1527695423368249352', 'views', '8');
+INSERT INTO `k_postmeta` VALUES ('1541179345750114310', '1527695423368249352', 'views', '9');
 INSERT INTO `k_postmeta` VALUES ('1541179423722225665', '1527685691383398407', 'views', '10');
 INSERT INTO `k_postmeta` VALUES ('1541448785989386249', '1538942586760904711', 'views', '1949');
 INSERT INTO `k_postmeta` VALUES ('1541492409720553476', '1538942961920425988', 'views', '2');
@@ -954,16 +955,16 @@ INSERT INTO `k_postmeta` VALUES ('1541768862517346319', '1541768862404100102', '
 INSERT INTO `k_postmeta` VALUES ('1541768862517346320', '1541768862404100102', 'privacyLevel', 'public');
 INSERT INTO `k_postmeta` VALUES ('1541768862517346321', '1541768862404100102', 'contact', '树悉猿');
 INSERT INTO `k_postmeta` VALUES ('1541768862521540613', '1541768862404100102', 'ornPrice', '5000000');
-INSERT INTO `k_postmeta` VALUES ('1541803026671124483', '1541803026658541572', 'views', '48');
-INSERT INTO `k_postmeta` VALUES ('1541804009950199816', '1541768862404100102', 'views', '226');
+INSERT INTO `k_postmeta` VALUES ('1541803026671124483', '1541803026658541572', 'views', '55');
+INSERT INTO `k_postmeta` VALUES ('1541804009950199816', '1541768862404100102', 'views', '227');
 INSERT INTO `k_postmeta` VALUES ('1541836145470128135', '1522308366324121602', 'views', '25');
-INSERT INTO `k_postmeta` VALUES ('1541856026928267267', '1522309813845540866', 'views', '12');
+INSERT INTO `k_postmeta` VALUES ('1541856026928267267', '1522309813845540866', 'views', '13');
 INSERT INTO `k_postmeta` VALUES ('1541856240288317440', '1522298023115931652', 'views', '23');
 INSERT INTO `k_postmeta` VALUES ('1542187370828972037', '1524888103068286980', 'views', '4');
 INSERT INTO `k_postmeta` VALUES ('1542190914806136834', '1529498105087180804', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('1542543578026917897', '1521989344030277641', 'views', '8');
 INSERT INTO `k_postmeta` VALUES ('1542543610117537792', '1521834554293927942', 'views', '3');
-INSERT INTO `k_postmeta` VALUES ('1542543675003420672', '1522302798985347082', 'views', '0');
+INSERT INTO `k_postmeta` VALUES ('1542543675003420672', '1522302798985347082', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('1542544016226828289', '1522307826739494915', 'views', '7');
 INSERT INTO `k_postmeta` VALUES ('1542544053677768705', '1521140839510360067', 'views', '1');
 INSERT INTO `k_postmeta` VALUES ('1542546292643381255', '1522306517864988680', 'views', '31');
@@ -973,9 +974,9 @@ INSERT INTO `k_postmeta` VALUES ('1542552455405551621', '1522680911237922817', '
 INSERT INTO `k_postmeta` VALUES ('1542552589027688453', '1525836855404838913', 'views', '20');
 INSERT INTO `k_postmeta` VALUES ('1543284244914814985', '1522186897946492931', 'views', '15');
 INSERT INTO `k_postmeta` VALUES ('1543294847268077577', '1521455522322759681', 'views', '2');
-INSERT INTO `k_postmeta` VALUES ('1543712519252262915', '1521202151401635845', 'views', '12');
+INSERT INTO `k_postmeta` VALUES ('1543712519252262915', '1521202151401635845', 'views', '13');
 INSERT INTO `k_postmeta` VALUES ('1543714171401191431', '1522670207286034441', 'views', '7');
-INSERT INTO `k_postmeta` VALUES ('1544018400351272970', '1525836858034667529', 'views', '16');
+INSERT INTO `k_postmeta` VALUES ('1544018400351272970', '1525836858034667529', 'views', '17');
 INSERT INTO `k_postmeta` VALUES ('1544035910261850113', '1525836856323391496', 'views', '3');
 INSERT INTO `k_postmeta` VALUES ('1544035965391781891', '1525836854565978121', 'views', '5');
 INSERT INTO `k_postmeta` VALUES ('1544036002473623561', '1525836852162641930', 'views', '0');
@@ -997,16 +998,16 @@ INSERT INTO `k_postmeta` VALUES ('1544356231934296080', '1544356231896547328', '
 INSERT INTO `k_postmeta` VALUES ('1544356231934296081', '1544356231896547328', 'contact', '树悉猿');
 INSERT INTO `k_postmeta` VALUES ('1544356231934296082', '1544356231896547328', 'mainPic2', '/202109/01143943fehF4DiP.jpg');
 INSERT INTO `k_postmeta` VALUES ('1544356231934296083', '1544356231896547328', 'mainPic4', '/202109/01144014ZzWE8UDf.jpg');
-INSERT INTO `k_postmeta` VALUES ('1544356320996147203', '1544356320987758602', 'views', '38');
-INSERT INTO `k_postmeta` VALUES ('1544386503438417920', '1544386503421640713', 'views', '18');
+INSERT INTO `k_postmeta` VALUES ('1544356320996147203', '1544356320987758602', 'views', '40');
+INSERT INTO `k_postmeta` VALUES ('1544386503438417920', '1544386503421640713', 'views', '19');
 INSERT INTO `k_postmeta` VALUES ('1544401216180240395', '1544401216171851784', 'views', '16');
-INSERT INTO `k_postmeta` VALUES ('1544401257238282246', '1544401257229893635', 'views', '44');
-INSERT INTO `k_postmeta` VALUES ('1544401655005102081', '1544401654996713472', 'views', '32');
-INSERT INTO `k_postmeta` VALUES ('1544414732375212035', '1544414732358434826', 'views', '43');
+INSERT INTO `k_postmeta` VALUES ('1544401257238282246', '1544401257229893635', 'views', '45');
+INSERT INTO `k_postmeta` VALUES ('1544401655005102081', '1544401654996713472', 'views', '37');
+INSERT INTO `k_postmeta` VALUES ('1544414732375212035', '1544414732358434826', 'views', '46');
 INSERT INTO `k_postmeta` VALUES ('1544414748170960898', '1544414748162572291', 'views', '40');
 INSERT INTO `k_postmeta` VALUES ('1544422560057966598', '1544422560041189382', 'views', '63');
-INSERT INTO `k_postmeta` VALUES ('1544422567922286600', '1544422567918092296', 'views', '111');
-INSERT INTO `k_postmeta` VALUES ('1544454752880476165', '1544356231896547328', 'views', '205');
+INSERT INTO `k_postmeta` VALUES ('1544422567922286600', '1544422567918092296', 'views', '112');
+INSERT INTO `k_postmeta` VALUES ('1544454752880476165', '1544356231896547328', 'views', '215');
 INSERT INTO `k_postmeta` VALUES ('1545223091378634763', '1545223091294748672', 'mainPic1', '/202109/04000351Tfxqjosp.jpeg');
 INSERT INTO `k_postmeta` VALUES ('1545223091378634764', '1545223091294748672', 'ornPrice', '50');
 INSERT INTO `k_postmeta` VALUES ('1545223091378634765', '1545223091294748672', 'contact', '树悉猿');
@@ -1057,7 +1058,7 @@ INSERT INTO `k_postmeta` VALUES ('1547701724345188359', '1547701724307439620', '
 INSERT INTO `k_postmeta` VALUES ('1547701724345188360', '1547701724307439620', 'mainPic2', '/202109/10201342KQ7TUvLR.jpg');
 INSERT INTO `k_postmeta` VALUES ('1547701778569150471', '1547701778556567556', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('1547989241980174340', '1547701724307439620', 'views', '19');
-INSERT INTO `k_postmeta` VALUES ('1548354494500880388', '1522187456745226244', 'views', '70');
+INSERT INTO `k_postmeta` VALUES ('1548354494500880388', '1522187456745226244', 'views', '72');
 INSERT INTO `k_postmeta` VALUES ('1548449415811481602', '39', 'views', '15');
 INSERT INTO `k_postmeta` VALUES ('1549902341083938822', '33', 'views', '13');
 
@@ -1068,32 +1069,33 @@ DROP TABLE IF EXISTS `k_posts`;
 CREATE TABLE `k_posts` (
                            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                            `post_content` longtext COLLATE utf8mb4_unicode_ci,
-                           `post_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `post_excerpt` text COLLATE utf8mb4_unicode_ci ,
-                           `post_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `post_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `post_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `ping_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `to_ping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `pinged` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-                           `post_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `content_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
-                           `com_id` bigint(20) unsigned DEFAULT NULL ,
-                           `post_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `comment_count` int(10) NOT NULL DEFAULT '0' ,
-                           `star_count` int(10) DEFAULT '0' ,
-                           `like_count` int(10) DEFAULT '0' ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
+                           `post_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '标题',
+                           `post_excerpt` text COLLATE utf8mb4_unicode_ci COMMENT '摘要',
+                           `post_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '帖子状态：publish已发表、draft草稿、private私密、static静态化、object对象化、inherit继承帖子(附件图片类)',
+                           `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '评论状态，open允许评论、closed禁止评论、user_only注册用户可评',
+                           `post_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '设置后修改帖子需要输入密码',
+                           `post_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '别名，用于生成超链接',
+                           `ping_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'pingback状态：open打开、closed关闭',
+                           `to_ping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '要ping的url',
+                           `pinged` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '被pingback的历史url记录',
+                           `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '上级帖子id，0表示没有上级，附件的上级是帖子，篇章的上级是文集',
+                           `post_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '帖子展现类型：帖子post、页面page、帖子图片或附件attachment、作品集book、作品集的篇章：chapter',
+                           `content_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '内容类型：article文章、annual年谱、class教程，同K_model_content内容编码',
+                           `domain_id` bigint(20) unsigned DEFAULT NULL COMMENT '域id，内容从哪个域创建的',
+                           `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '公司id(租户id)',
+                           `post_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '帖子内容mime类型：图片image/xxx、音频audio/xxx、视频video/xxx、应用文件application/xxx、文本类text/xxx',
+                           `comment_count` int(10) NOT NULL DEFAULT '0' COMMENT '评论数',
+                           `star_count` int(10) DEFAULT '0' COMMENT '关注数、收藏数',
+                           `like_count` int(10) DEFAULT '0' COMMENT '点赞数、喜欢数',
+                           `views` int(10) unsigned DEFAULT NULL COMMENT '查看数：每满一定次数更新一次，并非实时更新，实时记录见postmeta',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                            `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                            `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) unsigned DEFAULT NULL ,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) unsigned DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`),
                            KEY `post_name` (`post_name`(191)),
                            KEY `post_parent` (`parent_id`),
@@ -1128,7 +1130,7 @@ INSERT INTO `k_posts` VALUES ('40', '\n欢迎使用WordPress。这是您的第�
 INSERT INTO `k_posts` VALUES ('41', '\n欢迎使用WordPress。这是您的第一篇文章。编辑或删除它，然后开始写作吧\n', '世界，您好！', '', 'publish', 'open', '', 'hello-world', 'open', '', '', '0', 'book', 'annual', '1533544727530094592', null, '', '1', '0', '0', null, '1', '2021-07-18 12:38:33', '1', '1', '2021-07-18 12:38:41', '1', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('42', '<p>sdfsdf 12士大夫士大夫士大</p>', '2021-06-24 14:4', null, null, null, null, null, null, null, null, '25', null, null, '1533544727530094592', null, null, '0', '0', '0', null, null, null, null, '1', '2021-06-25 15:30:33', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('71090908285288456', '士大夫十大士大夫a', '测试信息发布', null, 'publish', null, null, null, null, null, null, '0', 'book', 'article', '1533544727530094592', null, null, '0', '0', '0', null, '1', '2021-09-29 22:47:43', '192.168.1.23', '1', '2021-09-29 22:47:43', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_posts` VALUES ('71095902778605572', '<p>各种文字和图片排版你随意。</p>\n<p>我又来了。</p>\n<p>&nbsp;</p>', '测试一些分类是否正确', null, 'publish', null, null, null, null, null, null, '71090908285288456', 'chapter', 'article', '1533544727530094592', null, null, '0', '0', '1', null, '1', '2021-09-29 23:07:34', '192.168.1.23', '1', '2021-09-29 23:30:51', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_posts` VALUES ('71095902778605572', '<p>各种文字和图片排版你随意。</p>\n<p>我又来了。</p>\n<p>&nbsp;</p>', '测试一些分类是否正确', null, 'publish', null, null, null, null, null, null, '71090908285288456', 'chapter', 'article', '1533544727530094592', null, null, '0', '0', '1', '10', '1', '2021-09-29 23:07:34', '192.168.1.23', '1', '2021-09-29 23:30:51', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('71098015290146827', null, '2021-09-29 23:15:57', null, 'offline', null, null, null, null, null, null, '71090908285288456', 'chapter', 'article', '1533544727530094592', null, null, '0', '0', '0', null, '1', '2021-09-29 23:15:58', '192.168.1.23', '1', '2021-09-29 23:15:58', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('71098018817556482', null, '2021-09-29 23:15:58', null, 'offline', null, null, null, null, null, null, '71090908285288456', 'chapter', 'article', '1533544727530094592', null, null, '0', '0', '0', null, '1', '2021-09-29 23:15:59', '192.168.1.23', '1', '2021-09-29 23:15:59', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('71098019769663489', null, '2021-09-29 23:15:58', null, 'offline', null, null, null, null, null, null, '71090908285288456', 'chapter', 'article', '1533544727530094592', null, null, '0', '0', '0', null, '1', '2021-09-29 23:15:59', '192.168.1.23', '1', '2021-09-29 23:15:59', '192.168.1.23', 'normal', '1');
@@ -1217,7 +1219,7 @@ INSERT INTO `k_posts` VALUES ('108322899132858375', '<p><img src=\"http://192.16
 INSERT INTO `k_posts` VALUES ('108324277305655298', '<p>首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是&ldquo;业务孤岛&rdquo;，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设&ldquo;业务中台&rdquo;，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是&ldquo;业务中台&rdquo;了，这就是多域系统的作用。</p>\n<p>wldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。</p>\n<p>如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。</p>', '多域的作用是给云服务商提供', null, 'inherit', null, null, 'duoyudezuoyongshijiyunfuwushangtigong', null, null, null, '108315676512010250', 'chapter', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:39:50', '192.168.1.23', '1', '2022-01-10 16:41:03', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('108325789582934025', '首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是“业务孤岛”，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设“业务中台”，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是“业务中台”了，这就是多域系统的作用。\n\nwldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。\n\n如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。', '测试信息发布', null, 'publish', null, null, 'ceshixinxifabu', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '30', '0', '40', '1', '2022-01-10 16:45:51', '192.168.1.23', '1', '2022-01-10 16:45:51', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('112622016239681542', null, 'file', null, 'inherit', null, null, null, null, null, null, '108322899132858375', null, 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '1', '2022-01-22 13:17:31', '192.168.1.23', '1', '2022-01-22 13:17:31', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_posts` VALUES ('125294558309957640', '测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性。', '测试信息发布易用性', null, 'publish', null, null, 'ceshixinxifabuyiyongxing', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-02-26 12:33:41', '192.168.1.23', '1', '2022-02-26 12:33:41', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_posts` VALUES ('125294558309957640', '测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性测试信息发布易用性。', '测试信息发布易用性', null, 'publish', null, null, 'ceshixinxifabuyiyongxing', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', '10', '1', '2022-02-26 12:33:41', '192.168.1.23', '1', '2022-02-26 12:33:41', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('150293641017606149', '技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布', '技术推广测试信息发布', null, 'publish', null, null, 'jishutuiguangceshixinxifabu', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-06 12:11:06', '192.168.1.23', '1', '2022-05-06 12:11:06', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('150295498133782530', '我们认为，React 是用 JavaScript 构建快速响应的大型 Web 应用程序的首选方式。它在 Facebook 和 Instagram 上表现优秀。\n\nReact 最棒的部分之一是引导我们思考如何构建一个应用。在这篇文档中，我们将会通过 React 构建一个可搜索的产品数据表格来更深刻地领会 React 哲学。', 'React基础-组件化开发的哲学', null, 'publish', null, null, 'Reactjichu-zujianhuakaifadezhexue', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-06 12:18:29', '192.168.1.23', '1', '2022-05-06 12:18:29', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('150297118515052555', 'React 有十分强大的组合模式。我们推荐使用组合而非继承来实现组件间的代码重用。\n在这篇文档中，我们将考虑初学 React 的开发人员使用继承时经常会遇到的一些问题，并展示如何通过组合思想来解决这些问题。\n包含关系\n有些组件无法提前知晓它们子组件的具体内容。在 Sidebar（侧边栏）和 Dialog（对话框）等展现通用容器（box）的组件中特别容易遇到这种情况。', 'React基础-组合组件代替组件继承', null, 'publish', null, null, 'Reactjichu-zuhezujiandaitizujianjicheng', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-06 12:24:55', '192.168.1.23', '1', '2022-05-06 12:24:55', '192.168.1.23', 'normal', '1');
@@ -1226,6 +1228,7 @@ INSERT INTO `k_posts` VALUES ('150300613628575749', '由于在表单元素上设
 INSERT INTO `k_posts` VALUES ('150301236507885576', '如果列表项目的顺序可能会变化，我们不建议使用索引来用作 key 值，因为这样做会导致性能变差，还可能引起组件状态的问题。可以看看 Robin Pokorny 的深度解析使用索引作为 key 的负面影响这一篇文章。如果你选择不指定显式的 key 值，那么 React 将默认使用索引用作为列表项目的 key 值。\n要是你有兴趣了解更多的话，这里有一篇文章深入解析为什么 key 是必须的可以参考。', 'React基础-列表和key', null, 'publish', null, null, 'Reactjichu-liebiaohekey', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-06 12:41:17', '192.168.1.23', '1', '2022-05-06 12:41:17', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('150301922083651586', 'WLDOS是一款面向互联网的云应用软件支撑平台，致力于云管端，基于多域架构，支持多租、多应用的SaaS系统软件，本站基于WLDOS搭建，新功能持续开放中。\nWLDOS云应用支撑平台，基于springboot二次封装的轻量级快速开发框架，SaaS应用架构，后期支持脱离springboot独立运行。默认支持多域(站)系统，也可以单站模式运行，默认支持多租户运行模式，同时支持单租户模式运行。默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构，具体部署方式不作强定义，自行规划。', 'WLDOS云应用支撑平台简介', null, 'publish', null, null, 'WLDOSyunyingyongzhichengpingtaijianjie', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-06 12:44:01', '192.168.1.23', '1', '2022-05-06 12:44:01', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('150341155934617611', '中台是相较于前台、后台而产生的一个概念，业务中台以企业为服务对象，整合后台资源，转换为方便前台使用的功能，可以说，业务中台实现了后台资源到前台服务的转化，可以方便企业，快速挖掘、响应、引领用户需求。\n　　业务中台是构建构建全渠道一体化运营管理的平台，它将数字技术运用到企业各个领域，改变运用和管理方式，让企业可以更好地为客户创造价值。', '互联网时代，企业如何借助业务中台迎战市场？', null, 'publish', null, null, 'hulianwangshidai，qiyeruhejiezhuyewuzhongtaiyingzhanshichang？', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-06 15:19:55', '192.168.1.23', '1', '2022-05-06 15:19:55', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_posts` VALUES ('157641603456614408', '二十四节气，是历法中表示自然节律变化以及确立“十二月建”的特定节令。一岁四时，春夏秋冬各三个月，每月两个节气，每个节气均有其独特的含义。廿四节气准确的反映了自然节律变化，在人们日常生活中发挥了极为重要的作用。它不仅是指导农耕生产的时节体系，更是包含有丰富民俗事象的民俗系统。廿四节气蕴含着悠久的文化内涵和历史积淀，是中华民族悠久历史文化的重要组成部分。 [1-2]  [12] \n“二十四节气”是上古农耕文明的产物，它是上古先民顺应农时，通过观察天体运行，认知一岁中时令、气候、物候等变化规律所形成的知识体系。廿四节气最初是依据斗转星移制定，北斗七星循环旋转，斗柄顺时针旋转一圈为一周期，谓之一“岁”（摄提）。现行的“二十四节气”是依据太阳在回归黄道上的位置制定，即把太阳周年运动轨迹划分为24等份，每15°为1等份，每1等份为一个节气，始于立春，终于大寒。 [3-4] ', '技术推广测试信息发布', null, 'publish', null, null, 'jishutuiguangceshixinxifabu', null, null, null, '0', 'info', 'farm', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-05-26 18:49:17', '192.168.1.23', '1', '2022-05-26 18:49:17', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('1519009285308858375', '<p>你好n21</p>', '2021-06-23 16:00:351224你好1我们1223吃了没223', null, null, null, null, null, null, null, null, '25', null, null, '1533544727530094592', null, null, '0', '0', '0', null, '0', '2021-06-23 16:00:35', '127.0.0.1', '1', '2021-06-24 10:02:09', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('1519009335221075974', '<p>干点什么呢，有时候会不知道感受。</p><p>下面我们就看一下吧。</p><p>效果不错啊。</p><p>这是什么神能力。</p><p><br data-mce-bogus=\"1\"></p>', '2021-06-23 16:00:47', null, null, null, null, null, null, null, null, '25', null, null, '1533544727530094592', null, null, '0', '0', '0', null, '0', '2021-06-23 16:00:47', '127.0.0.1', '1', '2021-06-24 10:46:00', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('1519009343114756104', '<p>121334你好11</p>', '2021-06-23 16:00:4漂亮一下', null, 'in_review', null, null, null, null, null, null, '25', null, null, '1533544727530094592', null, null, '0', '0', '0', null, '0', '2021-06-23 16:00:49', '127.0.0.1', '1', '2021-06-25 16:13:54', '127.0.0.1', 'normal', '1');
@@ -1424,10 +1427,10 @@ INSERT INTO `k_posts` VALUES ('1547701778556567556', '<div class=\"para\" data-p
 DROP TABLE IF EXISTS `k_stars`;
 CREATE TABLE `k_stars` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `object_id` bigint(20) unsigned NOT NULL ,
-                           `user_id` bigint(20) unsigned NOT NULL ,
-                           `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
-                           `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
+                           `object_id` bigint(20) unsigned NOT NULL COMMENT '被点赞、关注对象id：帖子、产品或评论等等',
+                           `user_id` bigint(20) unsigned NOT NULL COMMENT '操作人',
+                           `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '是否关注、收藏：1真、0假',
+                           `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '是否点赞、喜欢：1真、0假',
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `star_obj_user` (`object_id`,`user_id`) USING BTREE,
                            KEY `star_obj_id` (`object_id`) USING BTREE,
@@ -1748,6 +1751,10 @@ INSERT INTO `k_term_object` VALUES ('150301922276589573', '150301922083651586', 
 INSERT INTO `k_term_object` VALUES ('150341156001726469', '150341155934617611', '1520552344769183746', '0');
 INSERT INTO `k_term_object` VALUES ('150341156328882185', '150341155934617611', '100650318774845450', '0');
 INSERT INTO `k_term_object` VALUES ('151800310658678788', '1521175556540514304', '1', '0');
+INSERT INTO `k_term_object` VALUES ('157641603666329600', '157641603456614408', '157640817825726464', '0');
+INSERT INTO `k_term_object` VALUES ('157641603796353025', '157641603456614408', '71290499521757194', '0');
+INSERT INTO `k_term_object` VALUES ('157641603796353026', '157641603456614408', '71289715400818698', '0');
+INSERT INTO `k_term_object` VALUES ('215965624690196484', '1521202243919593483', '1', '0');
 INSERT INTO `k_term_object` VALUES ('1520933243079802880', '32', '1520479861269512197', '0');
 INSERT INTO `k_term_object` VALUES ('1521140839728463882', '33', '1520479861269512197', '0');
 INSERT INTO `k_term_object` VALUES ('1521150609634017285', '34', '1520480022150430731', '0');
@@ -1815,11 +1822,11 @@ DROP TABLE IF EXISTS `k_term_type`;
 CREATE TABLE `k_term_type` (
                                `id` bigint(20) unsigned NOT NULL,
                                `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL ,
-                               `content_id` bigint(20) DEFAULT NULL ,
+                               `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类系统、类别，每个类别关联一组分类项，category目录、tag标签、route路由，与content_id组合表示某种内容格式的分类法',
+                               `content_id` bigint(20) DEFAULT NULL COMMENT '归属的行业门类',
                                `description` longtext COLLATE utf8mb4_unicode_ci,
                                `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `count` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+                               `count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '索引对象数',
                                PRIMARY KEY (`id`),
                                UNIQUE KEY `term_id_class` (`term_id`,`class_type`,`content_id`) USING BTREE,
                                KEY `class_type` (`class_type`) USING BTREE,
@@ -1830,13 +1837,13 @@ CREATE TABLE `k_term_type` (
 -- ----------------------------
 -- Records of k_term_type
 -- ----------------------------
-INSERT INTO `k_term_type` VALUES ('1', '1', 'category', '1', '', '0', '1118');
+INSERT INTO `k_term_type` VALUES ('1', '1', 'category', '1', '', '0', '1119');
 INSERT INTO `k_term_type` VALUES ('2', '2', 'nav_menu', '1', '', '0', '5');
 INSERT INTO `k_term_type` VALUES ('3', '3', 'nav_menu', '1', '', '0', '4');
 INSERT INTO `k_term_type` VALUES ('4', '4', 'category', '2', '年谱目录分类', '0', '0');
-INSERT INTO `k_term_type` VALUES ('71289715400818698', '71289715400818698', 'tag', '1', 'wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。', '0', '14');
+INSERT INTO `k_term_type` VALUES ('71289715400818698', '71289715400818698', 'tag', '1', 'wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。', '0', '15');
 INSERT INTO `k_term_type` VALUES ('71290335121817601', '71290335121817601', 'tag', '2', '人物年谱', '0', '18');
-INSERT INTO `k_term_type` VALUES ('71290499521757194', '71290499521757194', 'tag', '2', '历史年谱', '0', '18');
+INSERT INTO `k_term_type` VALUES ('71290499521757194', '71290499521757194', 'tag', '2', '历史年谱', '0', '19');
 INSERT INTO `k_term_type` VALUES ('71290587878965250', '71290587878965250', 'tag', '2', '学术年谱', '0', '22');
 INSERT INTO `k_term_type` VALUES ('71291679253643267', '71291679253643267', 'tag', '2', '行业年谱', '0', '17');
 INSERT INTO `k_term_type` VALUES ('71291808291405829', '71291808291405829', 'tag', '1', null, '0', '16');
@@ -1886,12 +1893,16 @@ INSERT INTO `k_term_type` VALUES ('110147056069951493', '110147056069951493', 'c
 INSERT INTO `k_term_type` VALUES ('110147209954770954', '110147209954770954', 'category', '7', null, '1522027695852666887', '0');
 INSERT INTO `k_term_type` VALUES ('111544060796911620', '111544060796911620', 'category', '2', null, '4', '0');
 INSERT INTO `k_term_type` VALUES ('125294558846828551', '125294558846828551', 'tag', '1', null, '0', '1');
+INSERT INTO `k_term_type` VALUES ('157594196077363202', '157594196077363202', 'category', null, null, '0', '0');
+INSERT INTO `k_term_type` VALUES ('157596477166370821', '157596477166370821', 'category', null, null, '0', '0');
+INSERT INTO `k_term_type` VALUES ('157613316802002952', '157613316802002952', 'category', '6', null, '1522025100346048522', '0');
+INSERT INTO `k_term_type` VALUES ('157613846664232962', '157613846664232962', 'category', '6', null, '1522025100346048522', '0');
+INSERT INTO `k_term_type` VALUES ('157640817825726464', '157640817825726464', 'category', '17', null, '1522028131523411968', '1');
 INSERT INTO `k_term_type` VALUES ('1520479861269512197', '1520479861269512197', 'category', '2', null, '4', '35');
 INSERT INTO `k_term_type` VALUES ('1520480022150430731', '1520480022150430731', 'category', '2', null, '4', '17');
 INSERT INTO `k_term_type` VALUES ('1520481497194872837', '1520481497194872837', 'category', '6', null, '0', '0');
 INSERT INTO `k_term_type` VALUES ('1520507717504647173', '1520507717504647173', 'category', '6', null, '1520481497194872837', '0');
 INSERT INTO `k_term_type` VALUES ('1520507854301872132', '1520507854301872132', 'category', '6', null, '1520481497194872837', '0');
-INSERT INTO `k_term_type` VALUES ('1520507949764231176', '1520507949764231176', 'category', '6', null, '1520481497194872837', '0');
 INSERT INTO `k_term_type` VALUES ('1520508106803167234', '1520508106803167234', 'category', '6', null, '1520481497194872837', '0');
 INSERT INTO `k_term_type` VALUES ('1520528863558025224', '1520528863558025224', 'category', '2', null, '4', '25');
 INSERT INTO `k_term_type` VALUES ('1520528949428011010', '1520528949428011010', 'category', '2', null, '4', '7');
@@ -1966,8 +1977,19 @@ DROP TABLE IF EXISTS `k_terms`;
 CREATE TABLE `k_terms` (
                            `id` bigint(20) unsigned NOT NULL,
                            `name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '别名，同一分类法下不允许重名',
                            `term_group` bigint(10) NOT NULL DEFAULT '0',
+                           `info_flag` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' COMMENT '是否推送信息发布门户',
+                           `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' COMMENT '是否有效：0无效、1有效',
+                           `display_order` int(10) DEFAULT NULL COMMENT '排序',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `slug` (`slug`(191)) USING BTREE,
                            KEY `name` (`name`(191))
@@ -1976,117 +1998,119 @@ CREATE TABLE `k_terms` (
 -- ----------------------------
 -- Records of k_terms
 -- ----------------------------
-INSERT INTO `k_terms` VALUES ('1', 'IT|互联网', 'blog', '0');
-INSERT INTO `k_terms` VALUES ('2', '主菜单', '%e4%b8%bb%e8%8f%9c%e5%8d%95', '0');
-INSERT INTO `k_terms` VALUES ('3', '次要菜单', '%e6%ac%a1%e8%a6%81%e8%8f%9c%e5%8d%95', '0');
-INSERT INTO `k_terms` VALUES ('4', '年谱', 'book', '0');
-INSERT INTO `k_terms` VALUES ('5', '未知', 'none', '0');
-INSERT INTO `k_terms` VALUES ('71289715400818698', 'wldos', 'wldos', '0');
-INSERT INTO `k_terms` VALUES ('71290335121817601', '人物', 'renwu', '0');
-INSERT INTO `k_terms` VALUES ('71290499521757194', '历史', 'lishi', '0');
-INSERT INTO `k_terms` VALUES ('71290587878965250', '学术', 'xueshu', '0');
-INSERT INTO `k_terms` VALUES ('71291679253643267', '行业', 'hangye', '0');
-INSERT INTO `k_terms` VALUES ('71291808291405829', '互联网', 'Internet', '0');
-INSERT INTO `k_terms` VALUES ('71291917238452229', '软件开发', 'dev', '0');
-INSERT INTO `k_terms` VALUES ('100650318774845450', 'kpaycms', 'kpaycms', '0');
-INSERT INTO `k_terms` VALUES ('100676032286867466', '内容付费', 'neirongfufei', '0');
-INSERT INTO `k_terms` VALUES ('100678105904627722', '中台', 'zhongtai', '0');
-INSERT INTO `k_terms` VALUES ('100678577793187847', '啥是中台', 'shashizhongtai', '0');
-INSERT INTO `k_terms` VALUES ('100678577801576448', '中台概念', 'zhongtaigainian', '0');
-INSERT INTO `k_terms` VALUES ('100678577805770752', '技术术语', 'jishushuyu', '0');
-INSERT INTO `k_terms` VALUES ('100679112361426951', '业务中台', 'yewuzhongtai', '0');
-INSERT INTO `k_terms` VALUES ('100679112365621253', '市场', 'shichang', '0');
-INSERT INTO `k_terms` VALUES ('100679240883290118', '中台解决方案', 'zhongtaijiejuefangan', '0');
-INSERT INTO `k_terms` VALUES ('100688161706524672', '云平台', 'yunpingtai', '0');
-INSERT INTO `k_terms` VALUES ('101013606473842689', '测试标签', 'ceshibiaoqian', '0');
-INSERT INTO `k_terms` VALUES ('101013606482231304', '标签出来了', 'biaoqianchulaile', '0');
-INSERT INTO `k_terms` VALUES ('101016014641872901', '测试年谱', 'ceshinianpu', '0');
-INSERT INTO `k_terms` VALUES ('101016014646067210', '人物年谱', 'renwunianpu', '0');
-INSERT INTO `k_terms` VALUES ('101016014650261508', '儿童年谱', 'ertongnianpu', '0');
-INSERT INTO `k_terms` VALUES ('103223403340283911', '乐谱制作', 'yuepu001', '0');
-INSERT INTO `k_terms` VALUES ('103341899445354499', '乐谱', 'yuepu002', '0');
-INSERT INTO `k_terms` VALUES ('103345302938501124', '乐谱制作', 'yuepu003', '0');
-INSERT INTO `k_terms` VALUES ('103385314031747082', '年谱打印', 'npdy', '0');
-INSERT INTO `k_terms` VALUES ('105020123837546496', ' 乐谱知识', 'ypzs', '0');
-INSERT INTO `k_terms` VALUES ('105020302393262081', '菜谱分享', 'cpfx', '0');
-INSERT INTO `k_terms` VALUES ('105020996282138628', '生活常识', 'shcs', '0');
-INSERT INTO `k_terms` VALUES ('110142922835017731', '编程技能', 'bcjn', '0');
-INSERT INTO `k_terms` VALUES ('110143305179381764', '办公设备', 'bgsb', '0');
-INSERT INTO `k_terms` VALUES ('110143513372049409', '家谱服务', 'jpfw', '0');
-INSERT INTO `k_terms` VALUES ('110143959885070345', '祖传秘方', 'zcmf', '0');
-INSERT INTO `k_terms` VALUES ('110144217339838464', '乐谱', 'yp', '0');
-INSERT INTO `k_terms` VALUES ('110144526262910980', '钢琴谱', 'gqp', '0');
-INSERT INTO `k_terms` VALUES ('110144808371798021', '吉他谱', 'jtp', '0');
-INSERT INTO `k_terms` VALUES ('110144897282654217', '提琴谱', 'tqp', '0');
-INSERT INTO `k_terms` VALUES ('110145003385962502', '萨克斯', 'sks', '0');
-INSERT INTO `k_terms` VALUES ('110145153420410884', '二胡曲谱', 'ehqp', '0');
-INSERT INTO `k_terms` VALUES ('110145338275971083', '笙箫谱', 'sxp', '0');
-INSERT INTO `k_terms` VALUES ('110145489002479622', '葫芦丝谱', 'hlsp', '0');
-INSERT INTO `k_terms` VALUES ('110145638785269764', '古筝曲谱', 'gzqp', '0');
-INSERT INTO `k_terms` VALUES ('110145859829284874', '戏曲谱', 'xqp', '0');
-INSERT INTO `k_terms` VALUES ('110145919925272586', '五线谱', 'wxp', '0');
-INSERT INTO `k_terms` VALUES ('110146157687783435', '笛子曲谱', 'dzqp', '0');
-INSERT INTO `k_terms` VALUES ('110146523150073862', '手风琴', 'sfq', '0');
-INSERT INTO `k_terms` VALUES ('110146590405738498', '胡琴谱', 'hqp', '0');
-INSERT INTO `k_terms` VALUES ('110146868672643073', '花鼓戏谱', 'hgxp', '0');
-INSERT INTO `k_terms` VALUES ('110147056069951493', '古筝古琴', 'gzgq', '0');
-INSERT INTO `k_terms` VALUES ('110147209954770954', '其他乐谱', 'qtyp', '0');
-INSERT INTO `k_terms` VALUES ('111544060796911620', '年谱文化', 'npwh', '0');
-INSERT INTO `k_terms` VALUES ('125294558846828551', '测试', 'ceshi', '0');
-INSERT INTO `k_terms` VALUES ('1520479861269512197', '人物年谱', 'rwnp', '0');
-INSERT INTO `k_terms` VALUES ('1520480022150430731', '历史年谱', 'lsnp', '0');
-INSERT INTO `k_terms` VALUES ('1520481497194872837', '菜谱', '满汉全席', '0');
-INSERT INTO `k_terms` VALUES ('1520507717504647173', '满汉全席', 'mhqx', '0');
-INSERT INTO `k_terms` VALUES ('1520507854301872132', '八大菜系', 'bdcx', '0');
-INSERT INTO `k_terms` VALUES ('1520507949764231176', '江浙闽菜', 'jzmc', '0');
-INSERT INTO `k_terms` VALUES ('1520508106803167234', '冀冀鲁豫', 'jjly', '0');
-INSERT INTO `k_terms` VALUES ('1520528863558025224', '行业年谱', 'hynp', '0');
-INSERT INTO `k_terms` VALUES ('1520528949428011010', '学术年谱', 'xsnp', '0');
-INSERT INTO `k_terms` VALUES ('1520551727518629888', '技术分享', 'jsfx', '0');
-INSERT INTO `k_terms` VALUES ('1520552212724105224', '技术推广', 'jstg', '0');
-INSERT INTO `k_terms` VALUES ('1520552344769183746', '技术转让', 'jszr', '0');
-INSERT INTO `k_terms` VALUES ('1520552467490324484', '原创文案', 'ycwa', '0');
-INSERT INTO `k_terms` VALUES ('1520552631105929220', '源码教程', 'ymjc', '0');
-INSERT INTO `k_terms` VALUES ('1520552839994851334', 'CMS源码', 'cmsym', '0');
-INSERT INTO `k_terms` VALUES ('1520553045905817607', '视频教程', 'spjc', '0');
-INSERT INTO `k_terms` VALUES ('1520553269307031556', '原创音频', 'ycyp', '0');
-INSERT INTO `k_terms` VALUES ('1520553543710982147', '平面设计', 'pmsj', '0');
-INSERT INTO `k_terms` VALUES ('1522017666332278790', '本地服务', 'bdfw', '0');
-INSERT INTO `k_terms` VALUES ('1522024940970885127', '年谱制作', 'npzz', '0');
-INSERT INTO `k_terms` VALUES ('1522025100346048522', '古书典籍', 'gsdj', '0');
-INSERT INTO `k_terms` VALUES ('1522025222337380358', '家藏珍本', 'jczb', '0');
-INSERT INTO `k_terms` VALUES ('1522025656049385473', '二手回收', 'eshs', '0');
-INSERT INTO `k_terms` VALUES ('1522025767231995910', '教育培训', 'jypx', '0');
-INSERT INTO `k_terms` VALUES ('1522026041568837640', '在线出租', 'zxcz', '0');
-INSERT INTO `k_terms` VALUES ('1522026269613146117', '武术器械', 'wsqx', '0');
-INSERT INTO `k_terms` VALUES ('1522026601579724811', '宗谱族谱', 'zpzp', '0');
-INSERT INTO `k_terms` VALUES ('1522026728344174603', '琴棋书画', 'qqsh', '0');
-INSERT INTO `k_terms` VALUES ('1522026804894416903', '兵器谱', 'bqp1', '0');
-INSERT INTO `k_terms` VALUES ('1522026919600242699', '脸谱戏谱', 'lpxp', '0');
-INSERT INTO `k_terms` VALUES ('1522027076064559113', '历史年表', 'lsnb', '0');
-INSERT INTO `k_terms` VALUES ('1522027230431723524', '药谱医谱', 'ypyp', '0');
-INSERT INTO `k_terms` VALUES ('1522027318260449291', '画谱', 'hp', '0');
-INSERT INTO `k_terms` VALUES ('1522027383041474561', '书法谱', 'sfp', '0');
-INSERT INTO `k_terms` VALUES ('1522027479413997569', '诗词歌赋', 'scgf', '0');
-INSERT INTO `k_terms` VALUES ('1522027568819781632', '舞谱', 'wp', '0');
-INSERT INTO `k_terms` VALUES ('1522027695852666887', '曲谱歌谱', 'qpgp', '0');
-INSERT INTO `k_terms` VALUES ('1522027830473048070', '食谱药膳', 'spys', '0');
-INSERT INTO `k_terms` VALUES ('1522027924211548168', '特产谱', 'tcp', '0');
-INSERT INTO `k_terms` VALUES ('1522028028079292427', '品牌谱', 'ppp', '0');
-INSERT INTO `k_terms` VALUES ('1522028131523411968', '农业节气', 'nyjq', '0');
-INSERT INTO `k_terms` VALUES ('1522028337551818753', '五谷杂粮', 'wgzl', '0');
-INSERT INTO `k_terms` VALUES ('1522028440077385734', '兵器谱', 'bqp', '0');
-INSERT INTO `k_terms` VALUES ('1522028770252996615', '网站源码', 'wzym', '0');
-INSERT INTO `k_terms` VALUES ('1522028888591089674', '科普学习', 'kpxx', '0');
-INSERT INTO `k_terms` VALUES ('1522029221132288003', '知识图谱', 'zstp', '0');
-INSERT INTO `k_terms` VALUES ('1522029609935880200', '软件开发', 'rjkf', '0');
-INSERT INTO `k_terms` VALUES ('1522029895844806666', '故事大全', 'gsdq', '0');
-INSERT INTO `k_terms` VALUES ('1522030055626817539', '动漫游艺', 'dmyy', '0');
-INSERT INTO `k_terms` VALUES ('1522030229187117064', '商业BP', 'sybp', '0');
-INSERT INTO `k_terms` VALUES ('1522030689604255755', '社区服务', 'sqfw', '0');
-INSERT INTO `k_terms` VALUES ('1522030830335737867', '练摊经验', 'ltjy', '0');
-INSERT INTO `k_terms` VALUES ('1522031020211879945', '热门爱好', 'rmah', '0');
-INSERT INTO `k_terms` VALUES ('1522031215049883657', '网红打卡', 'whdk', '0');
+INSERT INTO `k_terms` VALUES ('1', 'IT|互联网', 'blog', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('2', '主菜单', '%e4%b8%bb%e8%8f%9c%e5%8d%95', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('3', '次要菜单', '%e6%ac%a1%e8%a6%81%e8%8f%9c%e5%8d%95', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('4', '年谱', 'book', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('5', '未知', 'none', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71289715400818698', 'wldos', 'wldos', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71290335121817601', '人物', 'renwu', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71290499521757194', '历史', 'lishi', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71290587878965250', '学术', 'xueshu', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71291679253643267', '行业', 'hangye', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71291808291405829', '互联网', 'Internet', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('71291917238452229', '软件开发', 'dev', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100650318774845450', 'kpaycms', 'kpaycms', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100676032286867466', '内容付费', 'neirongfufei', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100678105904627722', '中台', 'zhongtai', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100678577793187847', '啥是中台', 'shashizhongtai', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100678577801576448', '中台概念', 'zhongtaigainian', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100678577805770752', '技术术语', 'jishushuyu', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100679112361426951', '业务中台', 'yewuzhongtai', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100679112365621253', '市场', 'shichang', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100679240883290118', '中台解决方案', 'zhongtaijiejuefangan', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('100688161706524672', '云平台', 'yunpingtai', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('101013606473842689', '测试标签', 'ceshibiaoqian', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('101013606482231304', '标签出来了', 'biaoqianchulaile', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('101016014641872901', '测试年谱', 'ceshinianpu', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('101016014646067210', '人物年谱', 'renwunianpu', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('101016014650261508', '儿童年谱', 'ertongnianpu', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('103223403340283911', '乐谱制作', 'yuepu001', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('103341899445354499', '乐谱', 'yuepu002', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('103345302938501124', '乐谱制作', 'yuepu003', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('103385314031747082', '年谱打印', 'npdy', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('105020123837546496', ' 乐谱知识', 'ypzs', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('105020302393262081', '菜谱分享', 'cpfx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('105020996282138628', '生活常识', 'shcs', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110142922835017731', '编程技能', 'bcjn', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110143305179381764', '办公设备', 'bgsb', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110143513372049409', '家谱服务', 'jpfw', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110143959885070345', '祖传秘方', 'zcmf', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110144217339838464', '乐谱', 'yp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110144526262910980', '钢琴谱', 'gqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110144808371798021', '吉他谱', 'jtp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110144897282654217', '提琴谱', 'tqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145003385962502', '萨克斯', 'sks', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145153420410884', '二胡曲谱', 'ehqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145338275971083', '笙箫谱', 'sxp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145489002479622', '葫芦丝谱', 'hlsp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145638785269764', '古筝曲谱', 'gzqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145859829284874', '戏曲谱', 'xqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110145919925272586', '五线谱', 'wxp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110146157687783435', '笛子曲谱', 'dzqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110146523150073862', '手风琴', 'sfq', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110146590405738498', '胡琴谱', 'hqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110146868672643073', '花鼓戏谱', 'hgxp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110147056069951493', '古筝古琴', 'gzgq', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('110147209954770954', '其他乐谱', 'qtyp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('111544060796911620', '年谱文化', 'npwh', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('125294558846828551', '测试', 'ceshi', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('157613316802002952', '测试书籍', 'cssj', '0', '1', '1', '1', '1', '2022-05-26 16:56:53', '192.168.1.23', '1', '2022-05-26 16:56:53', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_terms` VALUES ('157613846664232962', '历史书籍', 'lssj', '0', '1', '1', '2', '1', '2022-05-26 16:58:59', '192.168.1.23', '1', '2022-05-26 16:58:59', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_terms` VALUES ('157640817825726464', '测试节点', 'lssj1', '0', '1', '1', '1', '1', '2022-05-26 18:46:10', '192.168.1.23', '1', '2022-05-26 18:46:10', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520479861269512197', '人物年谱', 'rwnp', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520480022150430731', '历史年谱', 'lsnp', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520481497194872837', '菜谱', '满汉全席', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520507717504647173', '满汉全席', 'mhqx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520507854301872132', '八大菜系', 'bdcx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520508106803167234', '冀冀鲁豫', 'jjly', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520528863558025224', '行业年谱', 'hynp', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520528949428011010', '学术年谱', 'xsnp', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520551727518629888', '技术分享', 'jsfx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520552212724105224', '技术推广', 'jstg', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520552344769183746', '技术转让', 'jszr', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520552467490324484', '原创文案', 'ycwa', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520552631105929220', '源码教程', 'ymjc', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520552839994851334', 'CMS源码', 'cmsym', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520553045905817607', '视频教程', 'spjc', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520553269307031556', '原创音频', 'ycyp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1520553543710982147', '平面设计', 'pmsj', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522017666332278790', '本地服务', 'bdfw', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522024940970885127', '年谱制作', 'npzz', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522025100346048522', '古书典籍', 'gsdj', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522025222337380358', '家藏珍本', 'jczb', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522025656049385473', '二手回收', 'eshs', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522025767231995910', '教育培训', 'jypx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522026041568837640', '在线出租', 'zxcz', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522026269613146117', '武术器械', 'wsqx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522026601579724811', '宗谱族谱', 'zpzp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522026728344174603', '琴棋书画', 'qqsh', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522026804894416903', '兵器谱', 'bqp1', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522026919600242699', '脸谱戏谱', 'lpxp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027076064559113', '历史年表', 'lsnb', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027230431723524', '药谱医谱', 'ypyp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027318260449291', '画谱', 'hp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027383041474561', '书法谱', 'sfp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027479413997569', '诗词歌赋', 'scgf', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027568819781632', '舞谱', 'wp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027695852666887', '曲谱歌谱', 'qpgp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027830473048070', '食谱药膳', 'spys', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522027924211548168', '特产谱', 'tcp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522028028079292427', '品牌谱', 'ppp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522028131523411968', '农业节气', 'nyjq', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522028337551818753', '五谷杂粮', 'wgzl', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522028440077385734', '兵器谱', 'bqp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522028770252996615', '网站源码', 'wzym', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522028888591089674', '科普学习', 'kpxx', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522029221132288003', '知识图谱', 'zstp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522029609935880200', '软件开发', 'rjkf', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522029895844806666', '故事大全', 'gsdq', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522030055626817539', '动漫游艺', 'dmyy', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522030229187117064', '商业BP', 'sybp', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522030689604255755', '社区服务', 'sqfw', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522030830335737867', '练摊经验', 'ltjy', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522031020211879945', '热门爱好', 'rmah', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
+INSERT INTO `k_terms` VALUES ('1522031215049883657', '网红打卡', 'whdk', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
 
 -- ----------------------------
 -- Table structure for `np_book`
@@ -2094,30 +2118,30 @@ INSERT INTO `k_terms` VALUES ('1522031215049883657', '网红打卡', 'whdk', '0'
 DROP TABLE IF EXISTS `np_book`;
 CREATE TABLE `np_book` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `title` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `sub_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `cover` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `first_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `last_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `start_year` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `description` varchar(800) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `writer` bigint(20) unsigned DEFAULT NULL ,
-                           `contact` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `phone` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `privacy_level` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `prov` bigint(20) DEFAULT NULL ,
-                           `city` bigint(20) DEFAULT NULL ,
-                           `county` bigint(20) DEFAULT NULL ,
-                           `price` decimal(10,2) DEFAULT NULL ,
-                           `book_status` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
+                           `title` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '年谱名称',
+                           `sub_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '子描述、副标题',
+                           `cover` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '封面图在文件服务的真实相对路径',
+                           `first_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '谱主姓氏',
+                           `last_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '谱主名字',
+                           `start_year` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '起始年份',
+                           `description` varchar(800) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '简介',
+                           `writer` bigint(20) unsigned DEFAULT NULL COMMENT '编纂人',
+                           `contact` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '联系人称呼',
+                           `phone` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '联系人电话',
+                           `privacy_level` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '隐私级别：查看码可见token、打赏可见reward、公开public',
+                           `prov` bigint(20) DEFAULT NULL COMMENT '省分id',
+                           `city` bigint(20) DEFAULT NULL COMMENT '地市',
+                           `county` bigint(20) DEFAULT NULL COMMENT '区县',
+                           `price` decimal(10,2) DEFAULT NULL COMMENT '售价',
+                           `book_status` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '年谱状态：publish已发布、draft草稿',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                            `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                            `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -2132,19 +2156,19 @@ INSERT INTO `np_book` VALUES ('102340230400', '轩辕年谱', null, null, '轩�
 DROP TABLE IF EXISTS `np_chapter`;
 CREATE TABLE `np_chapter` (
                               `id` bigint(20) unsigned NOT NULL,
-                              `book_id` bigint(20) unsigned DEFAULT NULL ,
-                              `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
-                              `display_order` int(10) unsigned DEFAULT NULL ,
-                              `chapter_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `create_by` bigint(20) unsigned DEFAULT NULL ,
-                              `create_time` datetime DEFAULT NULL ,
+                              `book_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属年谱',
+                              `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '章节标题',
+                              `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '章节内容',
+                              `display_order` int(10) unsigned DEFAULT NULL COMMENT '章节排序',
+                              `chapter_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '章节状态：publish已发布、draft草稿',
+                              `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL ,
-                              `update_time` datetime DEFAULT NULL ,
+                              `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `versions` int(10) DEFAULT NULL ,
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                              `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2158,18 +2182,18 @@ CREATE TABLE `np_chapter` (
 DROP TABLE IF EXISTS `np_hold`;
 CREATE TABLE `np_hold` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `book_id` bigint(20) unsigned DEFAULT NULL ,
-                           `expire_time` datetime DEFAULT NULL ,
-                           `user_id` bigint(20) unsigned DEFAULT NULL ,
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
+                           `book_id` bigint(20) unsigned DEFAULT NULL COMMENT '年谱id',
+                           `expire_time` datetime DEFAULT NULL COMMENT '过期时间',
+                           `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '购买人',
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2183,20 +2207,20 @@ CREATE TABLE `np_hold` (
 DROP TABLE IF EXISTS `np_order`;
 CREATE TABLE `np_order` (
                             `id` bigint(20) NOT NULL,
-                            `book_id` bigint(20) DEFAULT NULL ,
-                            `amount` decimal(10,2) DEFAULT NULL ,
-                            `user_id` bigint(20) DEFAULT NULL ,
-                            `order_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                            `pay_status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                            `create_by` bigint(20) unsigned DEFAULT NULL ,
-                            `create_time` datetime DEFAULT NULL ,
+                            `book_id` bigint(20) DEFAULT NULL COMMENT '订单关联年谱id',
+                            `amount` decimal(10,2) DEFAULT NULL COMMENT '订单金额，单位：元',
+                            `user_id` bigint(20) DEFAULT NULL COMMENT '下单人',
+                            `order_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '下单类型：reward打赏、purchase购买',
+                            `pay_status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '支付状态：0未付款、1已付款',
+                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                            `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                            `update_by` bigint(20) unsigned DEFAULT NULL ,
-                            `update_time` datetime DEFAULT NULL ,
+                            `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                            `versions` int(10) DEFAULT NULL ,
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                            `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2210,19 +2234,19 @@ CREATE TABLE `np_order` (
 DROP TABLE IF EXISTS `np_reward`;
 CREATE TABLE `np_reward` (
                              `id` bigint(20) unsigned NOT NULL,
-                             `book_id` bigint(20) DEFAULT NULL ,
-                             `start_reward` int(5) unsigned DEFAULT NULL ,
-                             `reward_audit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `reward_validity` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `create_by` bigint(20) unsigned DEFAULT NULL ,
-                             `create_time` datetime DEFAULT NULL ,
+                             `book_id` bigint(20) DEFAULT NULL COMMENT '打赏标的物id，比如书',
+                             `start_reward` int(5) unsigned DEFAULT NULL COMMENT '起始打赏金额，金额元，正整数',
+                             `reward_audit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '打赏是否需要审核：0不需要、1需要',
+                             `reward_validity` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '打赏时效：包月month、包季quarter、包年year、永久forever',
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL ,
-                             `update_time` datetime DEFAULT NULL ,
+                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `versions` int(10) DEFAULT NULL ,
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2235,21 +2259,21 @@ CREATE TABLE `np_reward` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_account_association`;
 CREATE TABLE `wo_account_association` (
-                                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
-                                          `user_id` bigint(20) unsigned DEFAULT NULL ,
-                                          `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                          `create_time` datetime DEFAULT NULL ,
+                                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '账号关系表，主键不参与业务关联',
+                                          `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '关联后创建的账号id',
+                                          `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '第三方关联账号,手机号也属于第三方账号',
+                                          `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '三方域（比如QQ号的域：qq.com）,相同的域下与主账号的关联是一对一的，比如两个qq号不能绑定同一个账号',
+                                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                          `update_time` datetime DEFAULT NULL ,
+                                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `versions` int(10) DEFAULT NULL ,
+                                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                           PRIMARY KEY (`id`),
                                           KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账';
 
 -- ----------------------------
 -- Records of wo_account_association
@@ -2260,28 +2284,28 @@ CREATE TABLE `wo_account_association` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_app`;
 CREATE TABLE `wo_app` (
-                          `id` bigint(20) unsigned NOT NULL ,
-                          `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `com_id` bigint(20) unsigned DEFAULT NULL ,
-                          `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                          `create_time` datetime DEFAULT NULL ,
+                          `id` bigint(20) unsigned NOT NULL COMMENT '应用id',
+                          `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用名称',
+                          `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用秘钥',
+                          `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用编码：必须支持URL解析，最长5位，将作为请求路径基础path',
+                          `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'APP说明',
+                          `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用类型：platform平台应用不允许租户预订，app应用级程序可以被租户选择',
+                          `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '归属公司',
+                          `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                          `update_time` datetime DEFAULT NULL ,
+                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `versions` int(10) DEFAULT NULL ,
+                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `app_code` (`app_code`),
                           KEY `app_type` (`app_type`),
                           KEY `app_com_id` (`com_id`),
                           KEY `app_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='应用定义表';
 
 -- ----------------------------
 -- Records of wo_app
@@ -2307,29 +2331,29 @@ INSERT INTO `wo_app` VALUES ('1533901932104171527', '文档', 'wldos-doc', 'doc'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_architecture`;
 CREATE TABLE `wo_architecture` (
-                                   `id` bigint(20) unsigned NOT NULL ,
-                                   `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `com_id` bigint(20) unsigned DEFAULT NULL ,
-                                   `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                                   `display_order` int(10) DEFAULT NULL ,
-                                   `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                   `create_time` datetime DEFAULT NULL ,
+                                   `id` bigint(20) unsigned NOT NULL COMMENT '体系结构id',
+                                   `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '体系 结构编码',
+                                   `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '体系结构类型名称：组织架构、团队、群组、圈子',
+                                   `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '描述',
+                                   `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
+                                   `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级体系结构',
+                                   `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的展示顺序',
+                                   `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                                   `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                    `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                   `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                   `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                    `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                   `update_time` datetime DEFAULT NULL ,
-                                   `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `versions` int(10) DEFAULT NULL ,
+                                   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                   `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                   `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `un_com_arch` (`arch_code`,`com_id`),
                                    KEY `arch_code` (`arch_code`),
                                    KEY `arch_com_id` (`com_id`),
                                    KEY `arch_parent_id` (`parent_id`),
                                    KEY `arch_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='体系结构定义表（体系类型定义）：同一个公司，同一个体系结构内只能有一套组织机构，即一棵组织树，比如一套人事组织，一套工会，体系结构定义了某类组织的结构，如人事组织是由机构、部门、岗位和下面人员构成的，再比如群组一般由群主、管理员、组员构成。';
 
 -- ----------------------------
 -- Records of wo_architecture
@@ -2347,26 +2371,26 @@ INSERT INTO `wo_architecture` VALUES ('1529501287100104708', 'finance', '金融�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_auth_role`;
 CREATE TABLE `wo_auth_role` (
-                                `id` bigint(20) unsigned NOT NULL ,
-                                `role_id` bigint(20) unsigned DEFAULT NULL ,
-                                `resource_id` bigint(20) unsigned DEFAULT NULL ,
-                                `app_id` bigint(20) unsigned DEFAULT NULL ,
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                `create_time` datetime DEFAULT NULL ,
+                                `id` bigint(20) unsigned NOT NULL COMMENT '权限id',
+                                `role_id` bigint(20) unsigned DEFAULT NULL COMMENT '拥有者id：可以为角色、组织或用户',
+                                `resource_id` bigint(20) unsigned DEFAULT NULL COMMENT '涉及资源',
+                                `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属应用',
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                                `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                `update_time` datetime DEFAULT NULL ,
+                                `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                `versions` int(10) DEFAULT NULL ,
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                 PRIMARY KEY (`id`),
                                 KEY `auth_role_id` (`role_id`),
                                 KEY `auth_res_id` (`resource_id`),
                                 KEY `auth_app_id` (`app_id`),
                                 KEY `auth_is_valid_del` (`is_valid`,`delete_flag`),
                                 KEY `auth_role_res_app` (`role_id`,`resource_id`,`app_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限定义表：定义组织机构下、角色或用户与资源的关系。权限所有者可以是若干个指定的用户、可以是若干个指定的组织机构、还可以';
 
 -- ----------------------------
 -- Records of wo_auth_role
@@ -2383,56 +2407,6 @@ INSERT INTO `wo_auth_role` VALUES ('94177914540179467', '91933147798355971', '91
 INSERT INTO `wo_auth_role` VALUES ('94177914544373771', '91933147798355971', '91697876372733961', '1506005013902311434', '1', '1', '2021-12-02 15:47:15', '192.168.1.23', '1', '2021-12-02 15:47:15', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('94177914569539589', '91933147798355971', '91698614343745546', '1506005013902311434', '1', '1', '2021-12-02 15:47:15', '192.168.1.23', '1', '2021-12-02 15:47:15', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('94177914573733894', '91933147798355971', '91697684151975939', '1506005013902311434', '1', '1', '2021-12-02 15:47:15', '192.168.1.23', '1', '2021-12-02 15:47:15', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451548512265', '1', '1542170368806666244', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451552706563', '1', '1539042480926408715', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451552706564', '1', '103211568641785859', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451552706565', '1', '1538994469231837188', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451552706566', '1', '1533950643823886345', '1533901932104171527', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451552706567', '1', '100', '1506113043159498757', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451552706568', '1', '1533941630155538434', '1533901932104171527', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451556900869', '1', '1539043349348663305', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451850502151', '1', '1539043101486268425', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('103220451863085065', '1', '1542939849472524294', '1504618238889869317', '1', '1', '2021-12-27 14:39:03', '192.168.1.23', '1', '2021-12-27 14:39:03', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995491385353', '2', '1531059437984989189', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995491385354', '2', '1533941630155538434', '1533901932104171527', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995491385355', '2', '1538994469231837188', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995491385356', '2', '1506127499163779081', '1504617964850823176', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995491385357', '2', '1511494161530535947', '1511494438434291716', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995495579659', '2', '1539042480926408715', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995499773954', '2', '1542939849472524294', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995499773955', '2', '1522661730694119427', '1504617964850823176', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995550105607', '2', '1533950643823886345', '1533901932104171527', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995554299909', '2', '1511496878801993736', '1511494438434291716', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995554299910', '2', '1542170368806666244', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995554299911', '2', '100', '1506113043159498757', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995554299912', '2', '1539043101486268425', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995558494214', '2', '1522997390516862983', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995558494215', '2', '1539043349348663305', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995566882827', '2', '110507156089520135', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995571077127', '2', '1523270396090695683', '1504617964850823176', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995583660032', '2', '1511495802770079746', '1511494438434291716', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995587854344', '2', '1511736612090462209', '1511494438434291716', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110507995592048646', '2', '103211568641785859', '1504618238889869317', '1', '1', '2022-01-16 17:17:09', '192.168.1.23', '1', '2022-01-16 17:17:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042043965450', '1506681836080381960', '1523270396090695683', '1504617964850823176', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042048159755', '1506681836080381960', '1506127499163779081', '1504617964850823176', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042048159756', '1506681836080381960', '1511496878801993736', '1511494438434291716', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042048159757', '1506681836080381960', '1542939849472524294', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042048159758', '1506681836080381960', '1511494161530535947', '1511494438434291716', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042048159759', '1506681836080381960', '1511736612090462209', '1511494438434291716', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042052354054', '1506681836080381960', '1511495802770079746', '1511494438434291716', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042052354055', '1506681836080381960', '1522661730694119427', '1504617964850823176', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042069131270', '1506681836080381960', '110507156089520135', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042085908491', '1506681836080381960', '103211568641785859', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042215931904', '1506681836080381960', '1531059437984989189', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042220126209', '1506681836080381960', '1522997390516862983', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042220126210', '1506681836080381960', '100', '1506113043159498757', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042220126211', '1506681836080381960', '1539043101486268425', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042220126212', '1506681836080381960', '1538994469231837188', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042220126213', '1506681836080381960', '1539042480926408715', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042232709129', '1506681836080381960', '1539043349348663305', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042232709130', '1506681836080381960', '1542170368806666244', '1504618238889869317', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042232709131', '1506681836080381960', '1533941630155538434', '1533901932104171527', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('110508042245292041', '1506681836080381960', '1533950643823886345', '1533901932104171527', '1', '1', '2022-01-16 17:17:20', '192.168.1.23', '1', '2022-01-16 17:17:20', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('110508227151183880', '91960652726976520', '1531059437984989189', '1504618238889869317', '1', '1', '2022-01-16 17:18:04', '192.168.1.23', '1', '2022-01-16 17:18:04', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('110508227155378177', '91960652726976520', '100', '1506113043159498757', '1', '1', '2022-01-16 17:18:04', '192.168.1.23', '1', '2022-01-16 17:18:04', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('110508227155378178', '91960652726976520', '1506128956323708934', '1506005013902311434', '1', '1', '2022-01-16 17:18:04', '192.168.1.23', '1', '2022-01-16 17:18:04', '192.168.1.23', 'normal', '0');
@@ -2442,51 +2416,6 @@ INSERT INTO `wo_auth_role` VALUES ('110508227155378181', '91960652726976520', '9
 INSERT INTO `wo_auth_role` VALUES ('110508227155378182', '91960652726976520', '1506127499163779081', '1504617964850823176', '1', '1', '2022-01-16 17:18:04', '192.168.1.23', '1', '2022-01-16 17:18:04', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('110508227159572491', '91960652726976520', '1522661730694119427', '1504617964850823176', '1', '1', '2022-01-16 17:18:04', '192.168.1.23', '1', '2022-01-16 17:18:04', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('110508227176349698', '91960652726976520', '110507156089520135', '1504618238889869317', '1', '1', '2022-01-16 17:18:05', '192.168.1.23', '1', '2022-01-16 17:18:05', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264497700875', '1509213016482824194', '1511494161530535947', '1511494438434291716', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264501895179', '1509213016482824194', '127144910604910596', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264506089480', '1509213016482824194', '1533950643823886345', '1533901932104171527', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264506089481', '1509213016482824194', '93481427766263818', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264506089482', '1509213016482824194', '1542170368806666244', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264506089483', '1509213016482824194', '1509177915053096962', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264506089484', '1509213016482824194', '1511736612090462209', '1511494438434291716', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264506089485', '1509213016482824194', '1528063986125946885', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264556421126', '1509213016482824194', '110507156089520135', '1504617964850823176', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264569004036', '1509213016482824194', '1509179615117754368', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264577392644', '1509213016482824194', '1511496878801993736', '1511494438434291716', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264577392645', '1509213016482824194', '1532485035156488196', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264581586951', '1509213016482824194', '1520466841923403786', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264589975553', '1509213016482824194', '1533941630155538434', '1533901932104171527', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264594169862', '1509213016482824194', '1506127499163779081', '1504617964850823176', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264598364164', '1509213016482824194', '1539043349348663305', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264602558470', '1509213016482824194', '1506107866432061443', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264606752774', '1509213016482824194', '1509212249457868808', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264610947081', '1509213016482824194', '1506125438066016267', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264619335682', '1509213016482824194', '1522661730694119427', '1504617964850823176', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264619335683', '1509213016482824194', '1511495802770079746', '1511494438434291716', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264631918600', '1509213016482824194', '1520374289564090377', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264636112904', '1509213016482824194', '1506128956323708934', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264652890113', '1509213016482824194', '1509211664167911432', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264657084421', '1509213016482824194', '93474930835505163', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264661278724', '1509213016482824194', '72188271301148676', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264665473031', '1509213016482824194', '1506122443605590022', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264669667338', '1509213016482824194', '1509184818118311946', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264669667339', '1509213016482824194', '103211568641785859', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264673861637', '1509213016482824194', '1523270396090695683', '1504617964850823176', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264678055944', '1509213016482824194', '1531059437984989189', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264678055945', '1509213016482824194', '1518555863791091716', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264694833162', '1509213016482824194', '1539043101486268425', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264694833163', '1509213016482824194', '72187658739826691', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264699027467', '1509213016482824194', '93441238276685825', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264699027468', '1509213016482824194', '93529533534879755', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264707416073', '1509213016482824194', '1522997390516862983', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264707416074', '1509213016482824194', '152162057265528840', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264711610378', '1509213016482824194', '1506128052832878593', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264719998979', '1509213016482824194', '100', '1506113043159498757', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264724193288', '1509213016482824194', '1506101733801771011', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264728387588', '1509213016482824194', '151359177717628933', '1506005013902311434', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264728387589', '1509213016482824194', '1539042480926408715', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264736776202', '1509213016482824194', '1538994469231837188', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_auth_role` VALUES ('152162264745164811', '1509213016482824194', '1542939849472524294', '1504618238889869317', '1', '1', '2022-05-11 15:56:21', '192.168.1.23', '1', '2022-05-11 15:56:21', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('152162307745169408', '1525946478916976648', '91689150362337290', '1506005013902311434', '1', '1', '2022-05-11 15:56:31', '192.168.1.23', '1', '2022-05-11 15:56:31', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('152162307749363717', '1525946478916976648', '1539043101486268425', '1504618238889869317', '1', '1', '2022-05-11 15:56:31', '192.168.1.23', '1', '2022-05-11 15:56:31', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('152162307749363718', '1525946478916976648', '91659367716929536', '1506005013902311434', '1', '1', '2022-05-11 15:56:31', '192.168.1.23', '1', '2022-05-11 15:56:31', '192.168.1.23', 'normal', '0');
@@ -2540,31 +2469,130 @@ INSERT INTO `wo_auth_role` VALUES ('152162307996827650', '1525946478916976648', 
 INSERT INTO `wo_auth_role` VALUES ('152162308001021961', '1525946478916976648', '1542939849472524294', '1504618238889869317', '1', '1', '2022-05-11 15:56:31', '192.168.1.23', '1', '2022-05-11 15:56:31', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('152162308005216259', '1525946478916976648', '91681269747466245', '1506005013902311434', '1', '1', '2022-05-11 15:56:31', '192.168.1.23', '1', '2022-05-11 15:56:31', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_auth_role` VALUES ('152162308026187776', '1525946478916976648', '152162057265528840', '1506005013902311434', '1', '1', '2022-05-11 15:56:31', '192.168.1.23', '1', '2022-05-11 15:56:31', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574555684869', '1506681836080381960', '1531059437984989189', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574555684870', '1506681836080381960', '1542939849472524294', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574555684871', '1506681836080381960', '1511496878801993736', '1511494438434291716', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574555684872', '1506681836080381960', '1533941630155538434', '1533901932104171527', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574555684873', '1506681836080381960', '1511495802770079746', '1511494438434291716', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574555684874', '1506681836080381960', '1522661730694119427', '1504617964850823176', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574559879171', '1506681836080381960', '1539042480926408715', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574564073476', '1506681836080381960', '1511494161530535947', '1511494438434291716', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574589239298', '1506681836080381960', '1522997390516862983', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574610210817', '1506681836080381960', '1542170368806666244', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574610210818', '1506681836080381960', '1523270396090695683', '1504617964850823176', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574614405121', '1506681836080381960', '156908317952360451', '1504617964850823176', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574618599432', '1506681836080381960', '1511736612090462209', '1511494438434291716', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574622793731', '1506681836080381960', '1539043101486268425', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574626988039', '1506681836080381960', '1506127499163779081', '1504617964850823176', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574626988040', '1506681836080381960', '103211568641785859', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574631182343', '1506681836080381960', '1533950643823886345', '1533901932104171527', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574635376648', '1506681836080381960', '1538994469231837188', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574643765253', '1506681836080381960', '1539043349348663305', '1504618238889869317', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908574647959559', '1506681836080381960', '100', '1506113043159498757', '1', '1', '2022-05-24 18:16:29', '192.168.1.23', '1', '2022-05-24 18:16:29', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609066418180', '1', '1533941630155538434', '1533901932104171527', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612489', '1', '1539043101486268425', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612490', '1', '156908317952360451', '1504617964850823176', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612491', '1', '1539042480926408715', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612492', '1', '1542170368806666244', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612493', '1', '1538994469231837188', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612494', '1', '103211568641785859', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609070612495', '1', '1542939849472524294', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609087389699', '1', '1533950643823886345', '1533901932104171527', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609099972617', '1', '1539043349348663305', '1504618238889869317', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('156908609104166913', '1', '100', '1506113043159498757', '1', '1', '2022-05-24 18:16:38', '192.168.1.23', '1', '2022-05-24 18:16:38', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312068161538', '2', '1506127499163779081', '1504617964850823176', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355845', '2', '1542939849472524294', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355846', '2', '1539042480926408715', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355847', '2', '1533941630155538434', '1533901932104171527', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355848', '2', '1522661730694119427', '1504617964850823176', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355849', '2', '1511496878801993736', '1511494438434291716', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355850', '2', '1538994469231837188', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312072355851', '2', '1511494161530535947', '1511494438434291716', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312135270401', '2', '1531059437984989189', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312160436228', '2', '156908317952360451', '1504617964850823176', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312164630531', '2', '1523270396090695683', '1504617964850823176', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312173019144', '2', '100', '1506113043159498757', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312177213446', '2', '1533950643823886345', '1533901932104171527', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312185602050', '2', '1522997390516862983', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312185602051', '2', '110507156089520135', '1504617964850823176', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312193990667', '2', '1539043101486268425', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312198184965', '2', '1511495802770079746', '1511494438434291716', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312202379274', '2', '1511736612090462209', '1511494438434291716', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312206573577', '2', '1542170368806666244', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312210767880', '2', '1539043349348663305', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('198600312219156491', '2', '103211568641785859', '1504618238889869317', '1', '1', '2022-09-16 19:24:34', '192.168.1.23', '1', '2022-09-16 19:24:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335104', '1509213016482824194', '1532485035156488196', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335105', '1509213016482824194', '127144910604910596', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335106', '1509213016482824194', '203336650390683654', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335107', '1509213016482824194', '1539043349348663305', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335108', '1509213016482824194', '103211568641785859', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335109', '1509213016482824194', '72188271301148676', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335110', '1509213016482824194', '1533941630155538434', '1533901932104171527', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323436335111', '1509213016482824194', '1511496878801993736', '1511494438434291716', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323536998406', '1509213016482824194', '1506128956323708934', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323646050313', '1509213016482824194', '1528063986125946885', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323650244613', '1509213016482824194', '1520374289564090377', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323650244614', '1509213016482824194', '1518555863791091716', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323650244615', '1509213016482824194', '1506128052832878593', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323650244616', '1509213016482824194', '1511495802770079746', '1511494438434291716', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323654438917', '1509213016482824194', '93481427766263818', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323658633218', '1509213016482824194', '220685278113349639', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323658633219', '1509213016482824194', '1522661730694119427', '1504617964850823176', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323658633220', '1509213016482824194', '1509212249457868808', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323679604747', '1509213016482824194', '1520466841923403786', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323679604748', '1509213016482824194', '72187658739826691', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323679604749', '1509213016482824194', '1531059437984989189', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323679604750', '1509213016482824194', '1533950643823886345', '1533901932104171527', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323679604751', '1509213016482824194', '1511736612090462209', '1511494438434291716', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323692187659', '1509213016482824194', '1506127499163779081', '1504617964850823176', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323700576266', '1509213016482824194', '93474930835505163', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323700576267', '1509213016482824194', '1506125438066016267', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323704770562', '1509213016482824194', '151359177717628933', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323704770563', '1509213016482824194', '1511494161530535947', '1511494438434291716', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323708964865', '1509213016482824194', '93441238276685825', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323708964866', '1509213016482824194', '1509177915053096962', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323713159172', '1509213016482824194', '100', '1506113043159498757', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323738324994', '1509213016482824194', '1542939849472524294', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323742519306', '1509213016482824194', '152162057265528840', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323750907906', '1509213016482824194', '1539043101486268425', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323755102209', '1509213016482824194', '1523270396090695683', '1504617964850823176', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323759296512', '1509213016482824194', '1542170368806666244', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323763490819', '1509213016482824194', '1539042480926408715', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323763490820', '1509213016482824194', '1509211664167911432', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323767685130', '1509213016482824194', '1506101733801771011', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323767685131', '1509213016482824194', '93529533534879755', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323771879425', '1509213016482824194', '1538994469231837188', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323776073733', '1509213016482824194', '1506107866432061443', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323780268041', '1509213016482824194', '1509179615117754368', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323788656650', '1509213016482824194', '1522997390516862983', '1504618238889869317', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323788656651', '1509213016482824194', '1509184818118311946', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323788656652', '1509213016482824194', '156908317952360451', '1504617964850823176', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_auth_role` VALUES ('220687323792850954', '1509213016482824194', '1506122443605590022', '1506005013902311434', '1', '1', '2022-11-16 18:10:28', '192.168.1.23', '1', '2022-11-16 18:10:28', '192.168.1.23', 'normal', '0');
 
 -- ----------------------------
 -- Table structure for `wo_com_user`
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_com_user`;
 CREATE TABLE `wo_com_user` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `user_id` bigint(20) unsigned DEFAULT NULL ,
-                               `com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
-                               `create_time` datetime DEFAULT NULL ,
+                               `id` bigint(20) unsigned NOT NULL COMMENT '用户公司关系id',
+                               `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '用户id',
+                               `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
+                               `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否主企业：1是0否',
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
-                               `update_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `versions` int(10) DEFAULT NULL ,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                PRIMARY KEY (`id`),
                                KEY `com_user_id` (`user_id`),
                                KEY `com_id` (`com_id`),
                                KEY `com_is_main` (`is_main`),
                                KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='一个用户可以拥有或者归属多个公司，但同一时刻只能有一个主企业。在一个公司可以拥有多个角色，可以分属一个公司内多个体系结构下的组织。';
 
 -- ----------------------------
 -- Records of wo_com_user
@@ -2581,26 +2609,26 @@ INSERT INTO `wo_com_user` VALUES ('92829651731922951', '92829405966680072', '150
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_company`;
 CREATE TABLE `wo_company` (
-                              `id` bigint(20) unsigned NOT NULL ,
-                              `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                              `display_order` int(10) DEFAULT NULL ,
-                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `create_by` bigint(20) unsigned DEFAULT NULL ,
-                              `create_time` datetime DEFAULT NULL ,
+                              `id` bigint(20) unsigned NOT NULL COMMENT '公司id，顶级根节点为系统保留节点00000000，所有租户在其下设置',
+                              `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '公司编码',
+                              `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '公司名称',
+                              `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '公司描述',
+                              `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级公司',
+                              `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的排序',
+                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                              `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL ,
-                              `update_time` datetime DEFAULT NULL ,
+                              `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `versions` int(10) DEFAULT NULL ,
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                              `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                               PRIMARY KEY (`id`),
                               UNIQUE KEY `un_com_code` (`com_code`),
                               KEY `com_parent_id` (`parent_id`),
                               KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运营公司定义表：在云平台上使用容器化技术实现与多租户等效的行为表现，每个公司都有完整的应用管理和用户管理，其中顶层管理可';
 
 -- ----------------------------
 -- Records of wo_company
@@ -2616,49 +2644,50 @@ INSERT INTO `wo_company` VALUES ('1508972831958548480', 'babala100', '给你未�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_domain`;
 CREATE TABLE `wo_domain` (
-                             `id` bigint(20) unsigned NOT NULL ,
-                             `com_id` bigint(20) unsigned DEFAULT NULL ,
-                             `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `second_domain` varchar(255) DEFAULT NULL ,
-                             `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `site_logo` varchar(50) DEFAULT NULL ,
-                             `site_title` varchar(255) DEFAULT NULL ,
-                             `site_keyword` varchar(500) DEFAULT NULL ,
-                             `site_description` varchar(500) DEFAULT NULL ,
-                             `slogan` varchar(60) DEFAULT NULL ,
-                             `foot` text ,
-                             `flink` text ,
-                             `copy` text ,
-                             `parent_id` bigint(20) DEFAULT NULL ,
-                             `display_order` int(10) DEFAULT NULL ,
-                             `cname_domain` varchar(255) DEFAULT NULL ,
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `create_by` bigint(20) unsigned DEFAULT NULL ,
-                             `create_time` datetime DEFAULT NULL ,
+                             `id` bigint(20) unsigned NOT NULL COMMENT '站点id',
+                             `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '归属公司id',
+                             `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '站点域名: 如163.com',
+                             `second_domain` varchar(255) DEFAULT NULL COMMENT '专属二级域名，用于无一级域名时识别租户身份',
+                             `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '站点名称: 如网易',
+                             `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主页地址',
+                             `site_logo` varchar(50) DEFAULT NULL COMMENT '网站logo相对路径',
+                             `site_title` varchar(255) DEFAULT NULL COMMENT '网站标题，用于seo',
+                             `site_keyword` varchar(500) DEFAULT NULL COMMENT '网站关键词，用于seo',
+                             `site_description` varchar(500) DEFAULT NULL COMMENT '网站描述，用于seo',
+                             `slogan` varchar(100) DEFAULT NULL COMMENT '域名品牌口号，用于登陆窗口或其他比较醒目的地方',
+                             `foot` text COMMENT '底部信息，支持自定义html',
+                             `flink` text COMMENT '友情链接，支持html',
+                             `copy` text COMMENT '底部版权信息',
+                             `parent_id` bigint(20) DEFAULT NULL COMMENT '父级站点：顶级为0',
+                             `display_order` int(10) DEFAULT NULL COMMENT '在父级站点下的排序',
+                             `cname_domain` varchar(255) DEFAULT NULL COMMENT 'cname域名是通过cname解析到主域名的授权辅助域名，逗号间隔',
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL ,
-                             `update_time` datetime DEFAULT NULL ,
+                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `versions` int(10) DEFAULT NULL ,
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                              PRIMARY KEY (`id`),
                              UNIQUE KEY `uni_idx_site_domain` (`site_domain`),
                              UNIQUE KEY `uni_idx_sec_domain` (`second_domain`) USING BTREE,
                              KEY `domain_com_id` (`com_id`),
                              KEY `dom_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定义租户的站点或者域信息，域名、网址等信息，一个租户可以开通多个站点（一个顶级域或多个顶级域），可以配置不同站点上呈现的';
 
 -- ----------------------------
 -- Records of wo_domain
 -- ----------------------------
-INSERT INTO `wo_domain` VALUES ('1', '0', 'wldos.com', 'www', 'WLDOS', 'https://www.wldos.com', '/wldos.svg', 'WLDOS云应用支撑平台_云管端解决方案-让专业更有价值，聚焦、开放、管控你的应用生态', 'WLDOS|内容付费|多租户|多站|SaaS|微服务|serviceMesh|云管端', 'WLDOS是基于多域多租的云应用支撑平台，致力于云管端解决方案。', 'WLDOS 是基于多域多租的 云应用支撑平台', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"https://www.wldos.com/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>服务： 周一至周六 9:00~17:30</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"https://www.wldos.com/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>', '<p>\r\n<!-- a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=0\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 xxxxxxxxx号</a -->&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备2021041844号-5</a>\r\n<a href=\"https://www.wldos.com/privacy\" rel=\"nofollow\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\" rel=\"nofollow\">隐私协议</a> | Copyright © 2021-2022\r\n<a href=\"https://www.wldos.com/\" rel=\"nofollow\">元悉智能</a> 版权所有\r\n</p>', null, '2', '1', 'yuanxi.tech,metainsight.tech', '1', '2021-08-02 18:39:15', '192.168.1.23', '1', '2022-01-18 18:03:45', '39.71.167.187, 192.168.1.14', 'normal', '1');
-INSERT INTO `wo_domain` VALUES ('81840883323551746', '0', 'test.com', 'test', '外贸测试站', 'https://www.test.com', null, '外贸测试站', '外贸|测试', '仅用于测试', null, null, null, null, null, '7', '1', null, '1', '2021-10-29 14:44:17', '124.133.158.165', '1', '2021-10-29 14:46:22', '124.133.158.165', 'normal', '1');
-INSERT INTO `wo_domain` VALUES ('1532487189283913738', '0', 'xynp.com', 'xynp', '轩辕年谱', 'https://www.xynp.com', '/logo.svg', '轩辕年谱_纪实·传承·开创 - 谱你的谱', '人物年谱|历史年表|学术年谱|行业年谱', '针对年谱提供编写、查阅和交易平台。记录年代年表、个人历史、创业经历、考古研究，发布古文字画、文献等。', '轩辕年谱 是国内领先的 年谱 大数据平台', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.xynp.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.xynp.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.xynp.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.xynp.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.xynp.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.xynp.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.xynp.com/user/register\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.xynp.com/account/center\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.xynp.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.xynp.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.xynp.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.xynp.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.xynp.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.xynp.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.xynp.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.xynp.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.xynp.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"https://www.xynp.com/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>服务： 周一至周六 9:00~17:30</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.xynp.com/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"https://www.xynp.com/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"https://www.xynp.com/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.xynp.com/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.xynp.com/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.xynp.com/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.zhiletu.com\" target=\"_blank\" rel=\"noopener noreferrer\">智乐兔</a>\r\n<a href=\"http://www.flpw.com\" target=\"_blank\" rel=\"noopener noreferrer\">分类排位</a>', '<p>\r\n<!-- a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000312\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.xynp.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000312号</a-->&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备2021041844号-3</a>\r\n<a href=\"https://www.wldos.com/privacy\" rel=\"nofollow\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\" rel=\"nofollow\">隐私协议</a> | Copyright © 2021-2022\r\n<a href=\"https://www.wldos.com/\" rel=\"nofollow\">元悉智能</a> 版权所有\r\n</p>', null, '2', '1', null, '1', '2021-07-30 20:36:58', '192.168.1.23', '1', '2021-12-26 22:16:41', '112.231.115.52, 192.168.1.14', 'normal', '1');
-INSERT INTO `wo_domain` VALUES ('1533544727530094592', '0', 'localhost', 'localhost', '开发环境', 'http://localhost:8000', null, '开发环境', '开发环境', '开发环境', '轩辕年谱 是国内领先的 年谱 大数据平台', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"https://www.wldos.com/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"https://www.wldos.com/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '6', '1', null, '1', '2021-08-06 18:11:32', '1', '1', '2021-08-10 17:40:49', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_domain` VALUES ('1533985924929208330', '0', 'xiupu.cc', 'xiupu', '嗅谱网', 'https://www.xiupu.cc', null, '嗅谱网_找谱·写谱·出谱-嗅谱·秀谱·说谱', '搜谱|找谱|写谱|出谱', '一个和各种谱打交道的靠谱网站', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"https://www.wldos.com/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>服务： 周一至周六 9:00~17:30</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"https://www.wldos.com/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xynp.com\" target=\"_blank\" rel=\"noopener noreferrer\">轩辕年谱</a>', '<p>\r\n<!-- a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a -->&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备2021041844号-4</a>\r\n<a href=\"https://www.wldos.com/privacy\" rel=\"nofollow\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\" rel=\"nofollow\">隐私协议</a> | Copyright © 2021-2022\r\n<a href=\"https://www.wldos.com/\" rel=\"nofollow\">元悉智能</a> 版权所有\r\n</p>', null, '3', '1', '', '1', '2021-08-03 23:52:25', '192.168.1.23', '1', '2022-01-26 10:20:07', '112.231.114.59, 192.168.1.14', 'normal', '1');
-INSERT INTO `wo_domain` VALUES ('1534246475206934537', '0', 'crfs.cn', 'crfs', '潮人迷商城', 'https://www.crfs.cn', null, '潮人迷商城', '潮人、潮品、潮购', '潮人、潮品、潮购', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"https://www.wldos.com/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"https://www.wldos.com/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '4', '1', null, '1', '2021-08-04 17:07:45', '192.168.1.23', '1', '2021-08-04 17:07:45', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_domain` VALUES ('1534253403467333638', '0', 'shuxiyuan.com', 'shuxiyuan', '树悉猿', 'http://www.shuxiyuan.com', null, '树悉猿', '计算机技术|软件开发|开源', '这是一个计算机技术网站', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"https://www.wldos.com/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"https://www.wldos.com/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"https://www.wldos.com/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2020-2022\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '5', '1', null, '1', '2021-08-04 17:35:16', '192.168.1.23', '1', '2022-01-13 13:41:51', '39.71.167.187, 192.168.1.14', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('1', '0', 'wldos.com', 'www', 'WLDOS', 'http://www.wldos.com', '/logo-wldos.svg', 'WLDOS互联网开放运营系统', '业务中台|多租户|SaaS', 'WLDOS互联网开放运营系统是一个业务中台的最佳实践', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '2', null, '1', '1', '2021-08-02 18:39:15', '192.168.1.23', '1', '2021-09-12 21:08:29', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('93037725495246854', '1508132284859596808', 'tenant.com', 'tenant', '租户域演示', 'http://www.tenant.com', '/logo-wldos.svg', '租户域演示网站', '租户域演示', '租户域演示', null, null, null, null, null, '1', 't.com', '1', '92829405966680072', '2021-11-29 12:16:32', '192.168.1.23', '1', '2022-02-18 01:37:41', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('134430616675074056', '0', 'test.com', 'test', 'test', 'test.com', null, 'test', 'test', 'test', null, null, null, null, null, '7', 'test', '1', '1', '2022-03-23 17:37:07', '192.168.1.23', '1', '2022-03-23 17:37:07', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('134434749914202120', '0', 'tst.com', 'tst', 'tst', 'tst.com', '/202203/23175316LUhpaUfQ.svg', 'tst', 'tst', 'sts', null, null, null, null, null, '8', null, '1', '1', '2022-03-23 17:53:32', '192.168.1.23', '1', '2022-03-23 17:53:32', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('1532487189283913738', '0', 'xynp.com', 'xynp', '轩辕年谱', 'https://www.xynp.com', null, '轩辕年谱', '轩辕年谱', '轩辕年谱是一个年谱大数据平台', '轩辕年谱 是国内领先的 年谱 大数据平台', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '1', null, '1', '1', '2021-07-30 20:36:58', '192.168.1.23', '1', '2021-07-30 20:53:21', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('1533544727530094592', '0', 'localhost', 'localhost', 'WLDOS云应用支撑平台', 'http://localhost:8000', '/logo-wldos.svg', '开发环境', 'WLDOS|内容付费|多租户|多站|SaaS|微服务|serviceMesh|云管端', '基于WLDOS搭建各种网络应用', 'KPayCMS 是Java开发的 内容付费 管理系统', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-ABCD-EFG</strong></span>\r\n</p>\r\n<p>Q Q： 583ABC365 30DEFQ142</p>\r\n<p>邮箱： support#abcdefg.com</p>\r\n<p>服务： 周一至周六 9:00~17:30</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\n<a href=\"https://www.xiupu.cc\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37xxxx20xxxxx\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> X公网安备 3701xxx20xxxxx号</a>&nbsp;\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备2xx1xxxx号</a>\n<a href=\"https://www.wldos.com/privacy\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\">隐私协议</a> | Copyright © 2022\n<a href=\"https://www.wldos.com/\" rel=\"nofollow\">WLDOS</a> 版权所有\n</p>', null, '6', 'god.com', '1', '1', '2021-08-06 18:11:32', '1', '1', '2022-03-18 16:54:01', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('1533985924929208330', '0', 'xiupu.net', 'xiupu', '嗅谱网', 'https://www.xiupu.net', null, '嗅谱网_找谱·写谱·出谱-嗅谱·秀谱·说谱', '找谱·写谱·出谱-嗅谱·秀谱·说谱', '一个和各种谱打交道的靠谱网站', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '4', null, '0', '1', '2021-08-03 23:52:25', '192.168.1.23', '1', '2021-09-26 15:24:35', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_domain` VALUES ('1534253403467333638', '0', 'shuxiyuan.com', 'shuxiyuan', 'WLDOS云应用演示', 'https://www.shuxiyuan.com', '/202203/231716136lcmxsMe.svg', 'WLDOS演示站', '计算机技术|软件开发|开源', '基于WLDOS搭建各种网络应用', 'WLDOS 是基于多域多租的 云应用支撑平台', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8080/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>xxxx-xxxx-xxx</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： wldos.com@88.com</p>\r\n<p>地址： XX省XX市XX区XX路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8080/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8080/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8080/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8080/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8080/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:wldos.com@88.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8080/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<!-- a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=00000000000000\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> X公网安备 00000000000000号</a -->&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">XICP备00000000号</a>\r\n<a href=\"https://www.wldos.com/privacy\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.wldos.com/\" rel=\"nofollow\">WLDOS</a> 版权所有\r\n</p>', null, '5', null, '1', '1', '2021-08-04 17:35:16', '192.168.1.23', '1', '2022-03-23 17:16:18', '192.168.1.23', 'normal', '1');
 
 -- ----------------------------
 -- Table structure for `wo_domain_app`
@@ -2666,18 +2695,18 @@ INSERT INTO `wo_domain` VALUES ('1534253403467333638', '0', 'shuxiyuan.com', 'sh
 DROP TABLE IF EXISTS `wo_domain_app`;
 CREATE TABLE `wo_domain_app` (
                                  `id` bigint(21) unsigned NOT NULL,
-                                 `app_id` bigint(21) unsigned DEFAULT NULL ,
-                                 `domain_id` bigint(21) DEFAULT NULL ,
-                                 `com_id` bigint(21) unsigned DEFAULT NULL ,
-                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                 `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                 `create_time` datetime DEFAULT NULL ,
+                                 `app_id` bigint(21) unsigned DEFAULT NULL COMMENT '应用id',
+                                 `domain_id` bigint(21) DEFAULT NULL COMMENT '域id，一个公司可以拥有多个域',
+                                 `com_id` bigint(21) unsigned DEFAULT NULL COMMENT '公司id',
+                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                                 `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                 `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                 `update_time` datetime DEFAULT NULL ,
+                                 `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                 `versions` int(10) DEFAULT NULL ,
+                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                 `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                  PRIMARY KEY (`id`),
                                  KEY `dom_app_id` (`app_id`),
                                  KEY `domain_id` (`domain_id`),
@@ -2756,21 +2785,21 @@ INSERT INTO `wo_domain_app` VALUES ('1546146354371936260', '1504619730199822347'
 DROP TABLE IF EXISTS `wo_domain_resource`;
 CREATE TABLE `wo_domain_resource` (
                                       `id` bigint(20) NOT NULL,
-                                      `module_name` varchar(50) NOT NULL DEFAULT 'static' ,
-                                      `resource_id` bigint(20) unsigned NOT NULL ,
-                                      `app_id` bigint(20) unsigned DEFAULT NULL ,
-                                      `term_type_id` bigint(20) DEFAULT '0' ,
-                                      `domain_id` bigint(20) unsigned NOT NULL ,
-                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                      `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                      `module_name` varchar(50) NOT NULL DEFAULT 'static' COMMENT '组件名（模板名），作为多域环境下前端基于某路由定位组件的依据，静态模板路由默认为“static”仅作域下的资源项，比如首页，不同站点需要不同的模板展示不同的数据、业务和行为，用前端的定制解决多域业务的复杂性，从而降低后端系统的复杂性',
+                                      `resource_id` bigint(20) unsigned NOT NULL COMMENT '资源id',
+                                      `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '应用id',
+                                      `term_type_id` bigint(20) DEFAULT '0' COMMENT '该资源关联的分类法类型，一般是菜单类分类法类型，这种分类法父级是正常的业务分类，业务分类可能还包含子业务分类，关联后菜单的展示数据取决于关联的分类及其子分类，遵循分类法规则，有子不删',
+                                      `domain_id` bigint(20) unsigned NOT NULL COMMENT '域id，用于确定路由、资源、组件的属主关联关系',
+                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注说明',
+                                      `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                       `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                      `create_time` datetime DEFAULT NULL ,
-                                      `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                      `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                       `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                      `update_time` datetime DEFAULT NULL ,
-                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                      `versions` int(10) unsigned DEFAULT NULL ,
+                                      `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                      `versions` int(10) unsigned DEFAULT NULL COMMENT '乐观锁',
                                       PRIMARY KEY (`id`),
                                       UNIQUE KEY `dom_res_route` (`domain_id`,`resource_id`) USING BTREE,
                                       KEY `dom_res_valid` (`is_valid`,`delete_flag`),
@@ -2782,10 +2811,9 @@ CREATE TABLE `wo_domain_resource` (
 -- ----------------------------
 -- Records of wo_domain_resource
 -- ----------------------------
-INSERT INTO `wo_domain_resource` VALUES ('2', 'portal', '100', '1506113043159498757', '1', '1', '1', 'wldos平台首页门户组件映射', '1', '127.0.0.1', '2021-09-07 17:44:24', '1', '127.0.0.1', '2021-09-07 17:44:40', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('3', 'static', '1506101733801771011', '1506005013902311434', '0', '1', '1', '系统管理', '1', '127.0.0.1', '2021-09-09 22:31:29', '1', '127.0.0.1', '2021-09-09 22:31:38', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('5', 'default', '100', '1506113043159498757', '4', '1532487189283913738', '1', '轩辕年谱首页门户组件映射', '1', '127.0.0.1', '2021-09-24 01:29:33', '1', '127.0.0.1', '2021-09-24 01:29:41', 'normal', '0');
-INSERT INTO `wo_domain_resource` VALUES ('6', 'category', '100', '1506113043159498757', '0', '1533544727530094592', '1', '本地开发环境', '1', '123', '2021-09-24 01:37:34', '1', '111', '2021-09-24 01:37:42', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('6', 'category', '100', '1506113043159498757', '4', '1533544727530094592', '1', '本地开发环境', '1', '123', '2021-09-24 01:37:34', '1', '111', '2021-09-24 01:37:42', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('72187658739826689', 'static', '72187658739826691', '1504618238889869317', '0', '1533544727530094592', '1', '管理一个作品，文章、年谱、视频等', '1', '192.168.1.23', '2021-10-02 23:25:49', '1', '192.168.1.23', '2021-10-02 23:27:01', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('72188271301148674', 'static', '72188271301148676', '1504618238889869317', '0', '1533544727530094592', '1', '作品合集管理，对应一个产品信息', '1', '192.168.1.23', '2021-10-02 23:28:15', '1', '192.168.1.23', '2021-10-02 23:28:15', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('76422235884797960', 'static', '1542939849472524294', '1504618238889869317', '1520551727518629888', '1533544727530094592', '1', null, '1', '192.168.1.23', '2021-10-14 15:52:31', '1', '192.168.1.23', '2021-10-14 15:52:31', 'normal', '0');
@@ -2861,7 +2889,7 @@ INSERT INTO `wo_domain_resource` VALUES ('96000896023576587', 'static', '1506107
 INSERT INTO `wo_domain_resource` VALUES ('96000896023576588', 'static', '1539043349348663305', '1504618238889869317', '0', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('96000896023576589', 'static', '91689774567047170', '1506005013902311434', '0', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('96000896023576590', 'static', '91683874691268617', '1506005013902311434', '0', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
-INSERT INTO `wo_domain_resource` VALUES ('96000896040353798', 'default', '100', '1506113043159498757', '4', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('96000896040353798', 'archives', '100', '1506113043159498757', '4', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('96000896040353799', 'static', '91685468166078466', '1506005013902311434', '0', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('96000896040353800', 'archives', '1542170368806666244', '1504618238889869317', '1', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('96000896040353801', 'static', '1523270396090695683', '1504617964850823176', '0', '1534253403467333638', '1', null, '1', '192.168.1.23', '2021-12-07 16:31:07', '1', '192.168.1.23', '2021-12-07 16:31:07', 'normal', '0');
@@ -2942,6 +2970,9 @@ INSERT INTO `wo_domain_resource` VALUES ('110509205027995652', 'static', '110507
 INSERT INTO `wo_domain_resource` VALUES ('127146036830060547', 'static', '127144910604910596', '1506005013902311434', '0', '1533544727530094592', '1', null, '1', '192.168.1.23', '2022-03-03 15:10:47', '1', '192.168.1.23', '2022-03-03 15:10:47', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('151362799058731014', 'static', '151359177717628933', '1506005013902311434', '0', '1533544727530094592', '1', null, '1', '192.168.1.23', '2022-05-09 10:59:33', '1', '192.168.1.23', '2022-05-09 10:59:33', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('152162688139182081', 'static', '152162057265528840', '1506005013902311434', '0', '1533544727530094592', '1', null, '1', '192.168.1.23', '2022-05-11 15:58:02', '1', '192.168.1.23', '2022-05-11 15:58:02', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('156912433340530690', 'static', '156908317952360451', '1504617964850823176', '0', '1533544727530094592', '1', null, '1', '192.168.1.23', '2022-05-24 18:31:49', '1', '192.168.1.23', '2022-05-24 18:31:49', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('203337660995649541', 'static', '203336650390683654', '1506005013902311434', '0', '1533544727530094592', '1', null, '1', '192.168.1.23', '2022-09-29 21:09:06', '1', '192.168.1.23', '2022-09-29 21:09:06', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('220687628014108675', 'static', '220685278113349639', '1506005013902311434', '0', '1533544727530094592', '1', null, '1', '192.168.1.23', '2022-11-16 18:11:41', '1', '192.168.1.23', '2022-11-16 18:11:41', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1506101733801771009', 'static', '1506101733801771011', '1506005013902311434', '0', '1532487189283913738', '1', '系统管理', '0', '127.0.0.1', '2021-05-19 01:10:35', '1', '192.168.1.23', '2021-08-18 14:29:41', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1506101733801771010', 'static', '1506101733801771011', '1506005013902311434', '0', '1533544727530094592', '1', '系统管理', '0', '127.0.0.1', '2021-05-19 01:10:35', '1', '192.168.1.23', '2021-08-18 14:29:41', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1506107866432061441', 'static', '1506107866432061443', '1506005013902311434', '0', '1532487189283913738', '1', 'SaaS平台上的独立应用', '0', '127.0.0.1', '2021-05-19 01:34:57', '1', '192.168.1.23', '2021-07-18 15:41:22', 'normal', '0');
@@ -3021,6 +3052,7 @@ INSERT INTO `wo_domain_resource` VALUES ('1531059437984989189', 'static', '15310
 INSERT INTO `wo_domain_resource` VALUES ('1532485035156488194', 'static', '1532485035156488196', '1506005013902311434', '0', '1532487189283913738', '1', '新增站点，创建独立的域。', '1', '192.168.1.23', '2021-07-30 20:28:25', '1', '192.168.1.23', '2021-08-03 23:45:09', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1532485035156488195', 'static', '1532485035156488196', '1506005013902311434', '0', '1533544727530094592', '1', '新增站点，创建独立的域。', '1', '192.168.1.23', '2021-07-30 20:28:25', '1', '192.168.1.23', '2021-08-03 23:45:09', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1532485035156488196', 'static', '1532485035156488196', '1506005013902311434', '0', '1', '1', '新增站点，创建独立的域。', '1', '192.168.1.23', '2021-07-30 20:28:25', '1', '192.168.1.23', '2021-08-03 23:45:09', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('1533544727530094592', 'portal', '100', '1506113043159498757', '1', '1', '1', 'wldos平台首页门户组件映射', '1', '127.0.0.1', '2021-09-07 17:44:24', '1', '127.0.0.1', '2021-09-07 17:44:40', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1533941630155538432', 'static', '1533941630155538434', '1533901932104171527', '0', '1532487189283913738', '0', '项目介绍', '1', '192.168.1.23', '2021-08-03 20:56:24', '1', '192.168.1.23', '2021-08-03 21:21:45', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1533941630155538433', 'static', '1533941630155538434', '1533901932104171527', '0', '1533544727530094592', '1', '项目介绍', '1', '192.168.1.23', '2021-08-03 20:56:24', '1', '192.168.1.23', '2021-08-03 21:21:45', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1533941630155538434', 'static', '1533941630155538434', '1533901932104171527', '0', '1', '1', '项目介绍', '1', '192.168.1.23', '2021-08-03 20:56:24', '1', '192.168.1.23', '2021-08-03 21:21:45', 'normal', '0');
@@ -3047,18 +3079,18 @@ INSERT INTO `wo_domain_resource` VALUES ('1544340805720391680', 'static', '15443
 DROP TABLE IF EXISTS `wo_file`;
 CREATE TABLE `wo_file` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
+                           `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件名称',
+                           `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件物理存储路径名',
+                           `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件mime类型',
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`),
                            KEY `file_is_valid_del` (`is_valid`,`delete_flag`),
                            KEY `file_mime_type` (`mime_type`)
@@ -3224,6 +3256,15 @@ INSERT INTO `wo_file` VALUES ('150301838960934922', 'QQ图片20220121173519.png'
 INSERT INTO `wo_file` VALUES ('150301909127446538', 'QQ图片20220224181941.png', '/202205/061243579RoNwPJw.png', 'image/png', '1', '1', '2022-05-06 12:43:58', '192.168.1.23', '1', '2022-05-06 12:43:58', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_file` VALUES ('150341109163933701', 'QQ图片20220121173519.png', '/202205/06151943xAkB5Yo2.png', 'image/png', '1', '1', '2022-05-06 15:19:44', '192.168.1.23', '1', '2022-05-06 15:19:44', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_file` VALUES ('150341142261186565', 'QQ图片20220121173409.png', '/202205/06151951JTjIsxjL.png', 'image/png', '1', '1', '2022-05-06 15:19:52', '192.168.1.23', '1', '2022-05-06 15:19:52', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('157641352037449737', '111.png', '/202205/26184817Qcdk9yNO.png', 'image/png', '1', '1', '2022-05-26 18:48:17', '192.168.1.23', '1', '2022-05-26 18:48:17', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('157641587660865546', 'Untitled.png', '/202205/26184913EpyKZnxC.png', 'image/png', '1', '1', '2022-05-26 18:49:13', '192.168.1.23', '1', '2022-05-26 18:49:13', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('198599187726254080', '111.png', '/202209/16192006kkX6YHpz.png', 'image/png', '1', '198575893094514697', '2022-09-16 19:20:06', '192.168.1.23', '198575893094514697', '2022-09-16 19:20:06', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('206153834653466630', 'QQ图片20220121173409.png', '/202210/07153934bCadUF4i.png', 'image/png', '1', '1', '2022-10-07 15:39:34', '192.168.1.23', '1', '2022-10-07 15:39:34', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('206153909341437962', '111.png', '/202210/07153952jKaJFIvA.png', 'image/png', '1', '1', '2022-10-07 15:39:52', '192.168.1.23', '1', '2022-10-07 15:39:52', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('214120915558645761', '0.jpg', '/202210/29151754cbK7I3ty.jpg', 'image/jpg', '1', '0', '2022-10-29 15:17:54', '192.168.1.23', '0', '2022-10-29 15:17:54', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('214132161074872323', '0.jpg', '/202210/29160235bMkgWuTg.jpg', 'image/jpg', '1', '0', '2022-10-29 16:02:36', '192.168.1.23', '0', '2022-10-29 16:02:36', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('214145229104267265', 'ecb5597d8bf86edc278989c6f12366e373a6dcb8ff506c6c5ff5623d100ec140.jpg', '/2022/10/29165431nSPtJhlt.jpg', 'image/jpeg', '1', '214132159892078601', '2022-10-29 16:54:31', '192.168.1.23', '214132159892078601', '2022-10-29 16:54:31', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_file` VALUES ('214858325762424833', '0.jpg', '/2022/10/31160806yDuzotP7.jpg', 'image/jpg', '1', '0', '2022-10-31 16:08:07', '192.168.1.23', '0', '2022-10-31 16:08:07', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_file` VALUES ('1512167591858847747', '1.jpg', '/202106/04185408t8iGC8cV.jpg', null, '1', '1', '2021-06-04 18:54:09', '127.0.0.1', '1', '2021-06-04 18:54:09', '127.0.0.1', 'normal', '0');
 INSERT INTO `wo_file` VALUES ('1512190300764422149', '1.jpg', '/202106/04202422ZnYj8h4r.jpg', null, '1', '1', '2021-06-04 20:24:23', '127.0.0.1', '1', '2021-06-04 20:24:23', '127.0.0.1', 'normal', '0');
 INSERT INTO `wo_file` VALUES ('1512515152905945097', '20160203-0d4f897abc3842c0a1bd03bd34f682d3.jpg', '/202106/05175513QxWygOLb.jpg', null, '1', '1', '2021-06-05 17:55:14', '127.0.0.1', '1', '2021-06-05 17:55:14', '127.0.0.1', 'normal', '0');
@@ -3441,231 +3482,175 @@ INSERT INTO `wo_file` VALUES ('1547701666350546953', '1.jpg', '/202109/10201352B
 INSERT INTO `wo_file` VALUES ('1547701709300219911', 'bg_corner_tr.png', '/202109/102014020rrgsZvG.png', 'image/png', '1', '1547698179520774144', '2021-09-10 20:14:02', '192.168.1.23', '1547698179520774144', '2021-09-10 20:14:02', '192.168.1.23', 'normal', '0');
 
 -- ----------------------------
+-- Table structure for `wo_mail`
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_mail`;
+CREATE TABLE `wo_mail` (
+                           `id` bigint(20) NOT NULL,
+                           `from_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '发件邮箱',
+                           `to_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '收件邮箱',
+                           `content` text COLLATE utf8mb4_unicode_ci COMMENT '内容',
+                           `status` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '发送状态：0失败，1成功',
+                           `result` text COLLATE utf8mb4_unicode_ci COMMENT '返回结果信息',
+                           `create_by` bigint(20) unsigned DEFAULT '0' COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of wo_mail
+-- ----------------------------
+INSERT INTO `wo_mail` VALUES ('192743754746740744', 'wldos.com@88.com', 'yuanxi2@zhiletu.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"/user/active/id=192743746152611843\">激活账号</a>', '1', null, '192743746152611843', '2022-08-31 15:32:42', '192.168.1.23', '192743746152611843', '2022-08-31 15:32:43', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('192753339045953547', 'wldos.com@88.com', '306991142@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"/user/active/id=192753329898176517\">激活账号</a>', '1', null, '192753329898176517', '2022-08-31 16:10:47', '192.168.1.23', '192753329898176517', '2022-08-31 16:10:50', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('198204863532417028', 'wldos.com@88.com', '583716365@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"https://localhost/user/active/verify=198204851142443011\" target=\"_blank\">激活账号</a>https://localhost/user/active/verify=198204851142443011<br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '198204851142443011', '2022-09-15 17:13:12', '192.168.1.23', '198204851142443011', '2022-09-15 17:13:13', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('198575902070325253', 'wldos.com@88.com', '583716365@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"https://localhost/user/active/verify=198575893094514697\" target=\"_blank\">激活账号</a>https://localhost/user/active/verify=198575893094514697<br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '198575893094514697', '2022-09-16 17:47:34', '192.168.1.23', '198575893094514697', '2022-09-16 17:47:36', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('201496584638873602', 'wldos.com@88.com', '306991142@qq.com', '175118', '1', null, '1', '2022-09-24 19:13:19', '0.0.0.0', '1', '2022-09-24 19:13:21', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('201498246547947526', 'wldos.com@88.com', '306991142@qq.com', '990263', '1', null, '1', '2022-09-24 19:19:56', '0.0.0.0', '1', '2022-09-24 19:19:56', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('201499057000726536', 'wldos.com@88.com', '306991142@qq.com', '611075', '1', null, '1', '2022-09-24 19:23:09', '0.0.0.0', '1', '2022-09-24 19:23:09', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('201499812856250372', 'wldos.com@88.com', '306991142@qq.com', '908660', '1', null, '1', '2022-09-24 19:26:09', '0.0.0.0', '1', '2022-09-24 19:26:10', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('201500240285188098', 'wldos.com@88.com', '306991142@qq.com', '697574', '1', null, '1', '2022-09-24 19:27:51', '0.0.0.0', '1', '2022-09-24 19:27:52', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202192876419596291', 'wldos.com@88.com', '306991142@qq.com', '744354', '1', null, '1', '2022-09-26 17:20:08', '0.0.0.0', '1', '2022-09-26 17:20:09', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202193662423777291', 'wldos.com@88.com', '306991142@qq.com', '413146', '1', null, '1', '2022-09-26 17:23:16', '0.0.0.0', '1', '2022-09-26 17:23:16', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202194545240883208', 'wldos.com@88.com', '306991142@qq.com', '464642', '1', null, '1', '2022-09-26 17:26:46', '0.0.0.0', '1', '2022-09-26 17:26:47', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202194903371530251', 'wldos.com@88.com', '306991142@qq.com', '749578', '1', null, '1', '2022-09-26 17:28:12', '0.0.0.0', '1', '2022-09-26 17:28:12', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202199034555449353', 'wldos.com@88.com', '306991142@qq.com', '210083', '1', null, '1', '2022-09-26 17:44:37', '0.0.0.0', '1', '2022-09-26 17:44:38', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202201517105266694', 'wldos.com@88.com', '306991142@qq.com', '987710', '1', null, '1', '2022-09-26 17:54:28', '0.0.0.0', '1', '2022-09-26 17:54:29', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202204710828687360', 'wldos.com@88.com', '306991142@qq.com', '939156', '1', null, '1', '2022-09-26 18:07:10', '0.0.0.0', '1', '2022-09-26 18:07:12', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202205449097494533', 'wldos.com@88.com', '306991142@qq.com', '541129', '1', null, '1', '2022-09-26 18:10:06', '0.0.0.0', '1', '2022-09-26 18:10:06', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202209610958553091', 'wldos.com@88.com', '306991142@qq.com', '195776', '1', null, '1', '2022-09-26 18:26:38', '0.0.0.0', '1', '2022-09-26 18:26:39', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202240758027829249', 'wldos.com@88.com', '306991142@qq.com', '228319', '1', null, '1', '2022-09-26 20:30:24', '0.0.0.0', '1', '2022-09-26 20:30:25', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202241429774974985', 'wldos.com@88.com', '306991142@qq.com', '649294', '1', null, '1', '2022-09-26 20:33:04', '0.0.0.0', '1', '2022-09-26 20:33:05', '0.0.0.0', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('202264058024083462', 'wldos.com@88.com', '306991142@qq.com', '963991', '1', null, '1', '2022-09-26 22:02:59', '0.0.0.0', '1', '2022-09-26 22:03:01', '0.0.0.0', 'normal', '0');
+
+-- ----------------------------
+-- Table structure for `wo_oauth_login_user`
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_oauth_login_user`;
+CREATE TABLE `wo_oauth_login_user` (
+                                       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '账号关系表，主键不参与业务关联',
+                                       `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '关联后创建的账号id',
+                                       `oauth_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '社会化服务商类型：比如微信、qq、微博等的类型编码',
+                                       `open_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                       `union_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                       `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                       `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                       `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                       `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                       `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                       `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                       `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                       `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                       PRIMARY KEY (`id`),
+                                       KEY `idx_user_id` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=214858324877426693 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账';
+
+-- ----------------------------
+-- Records of wo_oauth_login_user
+-- ----------------------------
+INSERT INTO `wo_oauth_login_user` VALUES ('214132160290537481', '214132159892078601', 'wechat', 'oTKkX6BqkQWVx2YmBUUNQYZZuJh4', null, '214132159892078601', '2022-10-29 16:02:35', '192.168.1.23', '214132159892078601', '2022-10-29 16:02:35', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_oauth_login_user` VALUES ('214858324877426692', '214858324143423489', 'wechat', 'oTKkX6BmQvjm7dtnItBcCLHBAQdE', null, '214858324143423489', '2022-10-31 16:08:07', '192.168.1.23', '214858324143423489', '2022-10-31 16:08:07', '192.168.1.23', 'normal', '0');
+
+-- ----------------------------
 -- Table structure for `wo_options`
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_options`;
 CREATE TABLE `wo_options` (
                               `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                               `key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '配置key',
                               `value` longtext COLLATE utf8mb4_unicode_ci,
                               `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用编码',
                               PRIMARY KEY (`id`),
                               UNIQUE KEY `option_name` (`key`),
                               KEY `options_app_type` (`app_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of wo_options
 -- ----------------------------
-INSERT INTO `wo_options` VALUES ('1', 'siteurl', null, 'http://192.168.1.24', null, null);
-INSERT INTO `wo_options` VALUES ('2', 'home', null, 'http://192.168.1.24', null, null);
-INSERT INTO `wo_options` VALUES ('3', 'blogname', null, 'WLDOS-CMS', null, null);
-INSERT INTO `wo_options` VALUES ('4', 'blogdescription', null, 'java版cms', null, null);
-INSERT INTO `wo_options` VALUES ('5', 'users_can_register', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('6', 'admin_email', null, '306991142@qq.com', null, null);
-INSERT INTO `wo_options` VALUES ('7', 'start_of_week', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('8', 'use_balanceTags', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('9', 'use_smilies', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('10', 'require_name_email', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('11', 'comments_notify', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('12', 'posts_per_rss', null, '10', null, null);
-INSERT INTO `wo_options` VALUES ('13', 'rss_use_excerpt', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('14', 'mailserver_url', null, 'mail.example.com', null, null);
-INSERT INTO `wo_options` VALUES ('15', 'mailserver_login', null, 'login@example.com', null, null);
-INSERT INTO `wo_options` VALUES ('16', 'mailserver_pass', null, 'password', null, null);
-INSERT INTO `wo_options` VALUES ('17', 'mailserver_port', null, '110', null, null);
-INSERT INTO `wo_options` VALUES ('18', 'default_category', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('19', 'default_comment_status', null, 'open', null, null);
-INSERT INTO `wo_options` VALUES ('20', 'default_ping_status', null, 'open', null, null);
-INSERT INTO `wo_options` VALUES ('21', 'default_pingback_flag', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('22', 'posts_per_page', null, '10', null, null);
-INSERT INTO `wo_options` VALUES ('23', 'date_format', null, 'Y年n月j日', null, null);
-INSERT INTO `wo_options` VALUES ('24', 'time_format', null, 'ag:i', null, null);
-INSERT INTO `wo_options` VALUES ('25', 'links_updated_date_format', null, 'Y年n月j日ag:i', null, null);
-INSERT INTO `wo_options` VALUES ('26', 'comment_moderation', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('27', 'moderation_notify', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('28', 'permalink_structure', null, '/index.php/%year%/%monthnum%/%day%/%postname%/', null, null);
-INSERT INTO `wo_options` VALUES ('29', 'rewrite_rules', null, 'a:97:{s:11:\"^wp-json/?$\";s:22:\"index.php?rest_route=/\";s:14:\"^wp-json/(.*)?\";s:33:\"index.php?rest_route=/$matches[1]\";s:21:\"^index.php/wp-json/?$\";s:22:\"index.php?rest_route=/\";s:24:\"^index.php/wp-json/(.*)?\";s:33:\"index.php?rest_route=/$matches[1]\";s:17:\"^wp-sitemap\\.xml$\";s:23:\"index.php?sitemap=index\";s:17:\"^wp-sitemap\\.xsl$\";s:36:\"index.php?sitemap-stylesheet=sitemap\";s:23:\"^wp-sitemap-index\\.xsl$\";s:34:\"index.php?sitemap-stylesheet=index\";s:48:\"^wp-sitemap-([a-z]+?)-([a-z\\d_-]+?)-(\\d+?)\\.xml$\";s:75:\"index.php?sitemap=$matches[1]&sitemap-subtype=$matches[2]&paged=$matches[3]\";s:34:\"^wp-sitemap-([a-z]+?)-(\\d+?)\\.xml$\";s:47:\"index.php?sitemap=$matches[1]&paged=$matches[2]\";s:57:\"index.php/category/(.+?)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:52:\"index.php?category_name=$matches[1]&feed=$matches[2]\";s:52:\"index.php/category/(.+?)/(feed|rdf|rss|rss2|atom)/?$\";s:52:\"index.php?category_name=$matches[1]&feed=$matches[2]\";s:33:\"index.php/category/(.+?)/embed/?$\";s:46:\"index.php?category_name=$matches[1]&embed=true\";s:45:\"index.php/category/(.+?)/page/?([0-9]{1,})/?$\";s:53:\"index.php?category_name=$matches[1]&paged=$matches[2]\";s:27:\"index.php/category/(.+?)/?$\";s:35:\"index.php?category_name=$matches[1]\";s:54:\"index.php/tag/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:42:\"index.php?tag=$matches[1]&feed=$matches[2]\";s:49:\"index.php/tag/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:42:\"index.php?tag=$matches[1]&feed=$matches[2]\";s:30:\"index.php/tag/([^/]+)/embed/?$\";s:36:\"index.php?tag=$matches[1]&embed=true\";s:42:\"index.php/tag/([^/]+)/page/?([0-9]{1,})/?$\";s:43:\"index.php?tag=$matches[1]&paged=$matches[2]\";s:24:\"index.php/tag/([^/]+)/?$\";s:25:\"index.php?tag=$matches[1]\";s:55:\"index.php/type/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:50:\"index.php?post_format=$matches[1]&feed=$matches[2]\";s:50:\"index.php/type/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:50:\"index.php?post_format=$matches[1]&feed=$matches[2]\";s:31:\"index.php/type/([^/]+)/embed/?$\";s:44:\"index.php?post_format=$matches[1]&embed=true\";s:43:\"index.php/type/([^/]+)/page/?([0-9]{1,})/?$\";s:51:\"index.php?post_format=$matches[1]&paged=$matches[2]\";s:25:\"index.php/type/([^/]+)/?$\";s:33:\"index.php?post_format=$matches[1]\";s:12:\"robots\\.txt$\";s:18:\"index.php?robots=1\";s:13:\"favicon\\.ico$\";s:19:\"index.php?favicon=1\";s:48:\".*wp-(atom|rdf|rss|rss2|feed|commentsrss2)\\.php$\";s:18:\"index.php?feed=old\";s:20:\".*wp-app\\.php(/.*)?$\";s:19:\"index.php?error=403\";s:18:\".*wp-register.php$\";s:23:\"index.php?register=true\";s:42:\"index.php/feed/(feed|rdf|rss|rss2|atom)/?$\";s:27:\"index.php?&feed=$matches[1]\";s:37:\"index.php/(feed|rdf|rss|rss2|atom)/?$\";s:27:\"index.php?&feed=$matches[1]\";s:18:\"index.php/embed/?$\";s:21:\"index.php?&embed=true\";s:30:\"index.php/page/?([0-9]{1,})/?$\";s:28:\"index.php?&paged=$matches[1]\";s:37:\"index.php/comment-page-([0-9]{1,})/?$\";s:38:\"index.php?&page_id=5&cpage=$matches[1]\";s:51:\"index.php/comments/feed/(feed|rdf|rss|rss2|atom)/?$\";s:42:\"index.php?&feed=$matches[1]&withcomments=1\";s:46:\"index.php/comments/(feed|rdf|rss|rss2|atom)/?$\";s:42:\"index.php?&feed=$matches[1]&withcomments=1\";s:27:\"index.php/comments/embed/?$\";s:21:\"index.php?&embed=true\";s:54:\"index.php/search/(.+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:40:\"index.php?s=$matches[1]&feed=$matches[2]\";s:49:\"index.php/search/(.+)/(feed|rdf|rss|rss2|atom)/?$\";s:40:\"index.php?s=$matches[1]&feed=$matches[2]\";s:30:\"index.php/search/(.+)/embed/?$\";s:34:\"index.php?s=$matches[1]&embed=true\";s:42:\"index.php/search/(.+)/page/?([0-9]{1,})/?$\";s:41:\"index.php?s=$matches[1]&paged=$matches[2]\";s:24:\"index.php/search/(.+)/?$\";s:23:\"index.php?s=$matches[1]\";s:57:\"index.php/author/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:50:\"index.php?author_name=$matches[1]&feed=$matches[2]\";s:52:\"index.php/author/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:50:\"index.php?author_name=$matches[1]&feed=$matches[2]\";s:33:\"index.php/author/([^/]+)/embed/?$\";s:44:\"index.php?author_name=$matches[1]&embed=true\";s:45:\"index.php/author/([^/]+)/page/?([0-9]{1,})/?$\";s:51:\"index.php?author_name=$matches[1]&paged=$matches[2]\";s:27:\"index.php/author/([^/]+)/?$\";s:33:\"index.php?author_name=$matches[1]\";s:79:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/feed/(feed|rdf|rss|rss2|atom)/?$\";s:80:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&feed=$matches[4]\";s:74:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/(feed|rdf|rss|rss2|atom)/?$\";s:80:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&feed=$matches[4]\";s:55:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/embed/?$\";s:74:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&embed=true\";s:67:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/page/?([0-9]{1,})/?$\";s:81:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&paged=$matches[4]\";s:49:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/?$\";s:63:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]\";s:66:\"index.php/([0-9]{4})/([0-9]{1,2})/feed/(feed|rdf|rss|rss2|atom)/?$\";s:64:\"index.php?year=$matches[1]&monthnum=$matches[2]&feed=$matches[3]\";s:61:\"index.php/([0-9]{4})/([0-9]{1,2})/(feed|rdf|rss|rss2|atom)/?$\";s:64:\"index.php?year=$matches[1]&monthnum=$matches[2]&feed=$matches[3]\";s:42:\"index.php/([0-9]{4})/([0-9]{1,2})/embed/?$\";s:58:\"index.php?year=$matches[1]&monthnum=$matches[2]&embed=true\";s:54:\"index.php/([0-9]{4})/([0-9]{1,2})/page/?([0-9]{1,})/?$\";s:65:\"index.php?year=$matches[1]&monthnum=$matches[2]&paged=$matches[3]\";s:36:\"index.php/([0-9]{4})/([0-9]{1,2})/?$\";s:47:\"index.php?year=$matches[1]&monthnum=$matches[2]\";s:53:\"index.php/([0-9]{4})/feed/(feed|rdf|rss|rss2|atom)/?$\";s:43:\"index.php?year=$matches[1]&feed=$matches[2]\";s:48:\"index.php/([0-9]{4})/(feed|rdf|rss|rss2|atom)/?$\";s:43:\"index.php?year=$matches[1]&feed=$matches[2]\";s:29:\"index.php/([0-9]{4})/embed/?$\";s:37:\"index.php?year=$matches[1]&embed=true\";s:41:\"index.php/([0-9]{4})/page/?([0-9]{1,})/?$\";s:44:\"index.php?year=$matches[1]&paged=$matches[2]\";s:23:\"index.php/([0-9]{4})/?$\";s:26:\"index.php?year=$matches[1]\";s:68:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/attachment/([^/]+)/?$\";s:32:\"index.php?attachment=$matches[1]\";s:78:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/attachment/([^/]+)/trackback/?$\";s:37:\"index.php?attachment=$matches[1]&tb=1\";s:98:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/attachment/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:49:\"index.php?attachment=$matches[1]&feed=$matches[2]\";s:93:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/attachment/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:49:\"index.php?attachment=$matches[1]&feed=$matches[2]\";s:93:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/attachment/([^/]+)/comment-page-([0-9]{1,})/?$\";s:50:\"index.php?attachment=$matches[1]&cpage=$matches[2]\";s:74:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/attachment/([^/]+)/embed/?$\";s:43:\"index.php?attachment=$matches[1]&embed=true\";s:63:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)/embed/?$\";s:91:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&embed=true\";s:67:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)/trackback/?$\";s:85:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&tb=1\";s:87:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:97:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&feed=$matches[5]\";s:82:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:97:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&feed=$matches[5]\";s:75:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)/page/?([0-9]{1,})/?$\";s:98:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&paged=$matches[5]\";s:82:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)/comment-page-([0-9]{1,})/?$\";s:98:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&cpage=$matches[5]\";s:71:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([^/]+)(?:/([0-9]+))?/?$\";s:97:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&page=$matches[5]\";s:57:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/([^/]+)/?$\";s:32:\"index.php?attachment=$matches[1]\";s:67:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/([^/]+)/trackback/?$\";s:37:\"index.php?attachment=$matches[1]&tb=1\";s:87:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:49:\"index.php?attachment=$matches[1]&feed=$matches[2]\";s:82:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:49:\"index.php?attachment=$matches[1]&feed=$matches[2]\";s:82:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/([^/]+)/comment-page-([0-9]{1,})/?$\";s:50:\"index.php?attachment=$matches[1]&cpage=$matches[2]\";s:63:\"index.php/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/([^/]+)/embed/?$\";s:43:\"index.php?attachment=$matches[1]&embed=true\";s:74:\"index.php/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/comment-page-([0-9]{1,})/?$\";s:81:\"index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&cpage=$matches[4]\";s:61:\"index.php/([0-9]{4})/([0-9]{1,2})/comment-page-([0-9]{1,})/?$\";s:65:\"index.php?year=$matches[1]&monthnum=$matches[2]&cpage=$matches[3]\";s:48:\"index.php/([0-9]{4})/comment-page-([0-9]{1,})/?$\";s:44:\"index.php?year=$matches[1]&cpage=$matches[2]\";s:37:\"index.php/.?.+?/attachment/([^/]+)/?$\";s:32:\"index.php?attachment=$matches[1]\";s:47:\"index.php/.?.+?/attachment/([^/]+)/trackback/?$\";s:37:\"index.php?attachment=$matches[1]&tb=1\";s:67:\"index.php/.?.+?/attachment/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:49:\"index.php?attachment=$matches[1]&feed=$matches[2]\";s:62:\"index.php/.?.+?/attachment/([^/]+)/(feed|rdf|rss|rss2|atom)/?$\";s:49:\"index.php?attachment=$matches[1]&feed=$matches[2]\";s:62:\"index.php/.?.+?/attachment/([^/]+)/comment-page-([0-9]{1,})/?$\";s:50:\"index.php?attachment=$matches[1]&cpage=$matches[2]\";s:43:\"index.php/.?.+?/attachment/([^/]+)/embed/?$\";s:43:\"index.php?attachment=$matches[1]&embed=true\";s:26:\"index.php/(.?.+?)/embed/?$\";s:41:\"index.php?pagename=$matches[1]&embed=true\";s:30:\"index.php/(.?.+?)/trackback/?$\";s:35:\"index.php?pagename=$matches[1]&tb=1\";s:50:\"index.php/(.?.+?)/feed/(feed|rdf|rss|rss2|atom)/?$\";s:47:\"index.php?pagename=$matches[1]&feed=$matches[2]\";s:45:\"index.php/(.?.+?)/(feed|rdf|rss|rss2|atom)/?$\";s:47:\"index.php?pagename=$matches[1]&feed=$matches[2]\";s:38:\"index.php/(.?.+?)/page/?([0-9]{1,})/?$\";s:48:\"index.php?pagename=$matches[1]&paged=$matches[2]\";s:45:\"index.php/(.?.+?)/comment-page-([0-9]{1,})/?$\";s:48:\"index.php?pagename=$matches[1]&cpage=$matches[2]\";s:34:\"index.php/(.?.+?)(?:/([0-9]+))?/?$\";s:47:\"index.php?pagename=$matches[1]&page=$matches[2]\";}', null, null);
-INSERT INTO `wo_options` VALUES ('30', 'hack_file', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('31', 'blog_charset', null, 'UTF-8', null, null);
-INSERT INTO `wo_options` VALUES ('32', 'moderation_keys', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('33', 'active_plugins', null, 'a:0:{}', null, null);
-INSERT INTO `wo_options` VALUES ('34', 'category_base', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('35', 'ping_sites', null, 'http://rpc.pingomatic.com/', null, null);
-INSERT INTO `wo_options` VALUES ('36', 'comment_max_links', null, '2', null, null);
-INSERT INTO `wo_options` VALUES ('37', 'gmt_offset', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('38', 'default_email_category', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('39', 'recently_edited', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('40', 'template', null, 'twentytwentyone', null, null);
-INSERT INTO `wo_options` VALUES ('41', 'stylesheet', null, 'twentytwentyone', null, null);
-INSERT INTO `wo_options` VALUES ('42', 'comment_registration', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('43', 'html_type', null, 'text/html', null, null);
-INSERT INTO `wo_options` VALUES ('44', 'use_trackback', null, '0', null, null);
+INSERT INTO `wo_options` VALUES ('1', 'oauth_login_wechat', null, '{\"appId\":\"wx9eb6a939f6d50acf\",\"appSecret\":\"31ea77230ac9f1badfa4c6fe929972ff\",\"redirectUri\":\"http://www.wldos.com\",\"scope\":\"snsapi_login\",\"codeUri\":\"https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect\",\"accessTokenUri\":\"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code\",\"refreshTokenUri\":\"\",\"userInfoUri\":\"https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s\"}', null, null);
 INSERT INTO `wo_options` VALUES ('45', 'default_group', null, 'freeuser', null, null);
-INSERT INTO `wo_options` VALUES ('46', 'db_version', null, '49752', null, null);
-INSERT INTO `wo_options` VALUES ('47', 'uploads_use_yearmonth_folders', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('48', 'upload_path', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('49', 'blog_public', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('50', 'default_link_category', null, '2', null, null);
-INSERT INTO `wo_options` VALUES ('51', 'show_on_front', null, 'page', null, null);
-INSERT INTO `wo_options` VALUES ('52', 'tag_base', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('53', 'show_avatars', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('54', 'avatar_rating', null, 'G', null, null);
-INSERT INTO `wo_options` VALUES ('55', 'upload_url_path', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('56', 'thumbnail_size_w', null, '150', null, null);
-INSERT INTO `wo_options` VALUES ('57', 'thumbnail_size_h', null, '150', null, null);
-INSERT INTO `wo_options` VALUES ('58', 'thumbnail_crop', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('59', 'medium_size_w', null, '300', null, null);
-INSERT INTO `wo_options` VALUES ('60', 'medium_size_h', null, '300', null, null);
-INSERT INTO `wo_options` VALUES ('61', 'avatar_default', null, 'mystery', null, null);
-INSERT INTO `wo_options` VALUES ('62', 'large_size_w', null, '1024', null, null);
-INSERT INTO `wo_options` VALUES ('63', 'large_size_h', null, '1024', null, null);
-INSERT INTO `wo_options` VALUES ('64', 'image_default_link_type', null, 'none', null, null);
-INSERT INTO `wo_options` VALUES ('65', 'image_default_size', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('66', 'image_default_align', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('67', 'close_comments_for_old_posts', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('68', 'close_comments_days_old', null, '14', null, null);
-INSERT INTO `wo_options` VALUES ('69', 'thread_comments', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('70', 'thread_comments_depth', null, '5', null, null);
-INSERT INTO `wo_options` VALUES ('71', 'page_comments', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('72', 'comments_per_page', null, '50', null, null);
-INSERT INTO `wo_options` VALUES ('73', 'default_comments_page', null, 'newest', null, null);
-INSERT INTO `wo_options` VALUES ('74', 'comment_order', null, 'asc', null, null);
-INSERT INTO `wo_options` VALUES ('75', 'sticky_posts', null, 'a:0:{}', null, null);
-INSERT INTO `wo_options` VALUES ('76', 'widget_categories', null, 'a:2:{i:2;a:4:{s:5:\"title\";s:0:\"\";s:5:\"count\";i:0;s:12:\"hierarchical\";i:0;s:8:\"dropdown\";i:0;}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('77', 'widget_text', null, 'a:2:{i:1;a:0:{}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('78', 'widget_rss', null, 'a:2:{i:1;a:0:{}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('79', 'uninstall_plugins', null, 'a:0:{}', null, null);
-INSERT INTO `wo_options` VALUES ('80', 'timezone_string', null, 'Asia/Shanghai', null, null);
-INSERT INTO `wo_options` VALUES ('81', 'page_for_posts', null, '8', null, null);
-INSERT INTO `wo_options` VALUES ('82', 'page_on_front', null, '5', null, null);
-INSERT INTO `wo_options` VALUES ('83', 'default_post_format', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('84', 'link_manager_enabled', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('85', 'finished_splitting_shared_terms', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('86', 'site_icon', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('87', 'medium_large_size_w', null, '768', null, null);
-INSERT INTO `wo_options` VALUES ('88', 'medium_large_size_h', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('89', 'wp_page_for_privacy_policy', null, '3', null, null);
-INSERT INTO `wo_options` VALUES ('90', 'show_comments_cookies_opt_in', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('91', 'admin_email_lifespan', null, '1627903001', null, null);
-INSERT INTO `wo_options` VALUES ('92', 'disallowed_keys', null, '', null, null);
-INSERT INTO `wo_options` VALUES ('93', 'comment_previously_approved', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('94', 'auto_plugin_theme_update_emails', null, 'a:0:{}', null, null);
-INSERT INTO `wo_options` VALUES ('95', 'auto_update_core_dev', null, 'enabled', null, null);
-INSERT INTO `wo_options` VALUES ('96', 'auto_update_core_minor', null, 'enabled', null, null);
-INSERT INTO `wo_options` VALUES ('97', 'auto_update_core_major', null, 'enabled', null, null);
-INSERT INTO `wo_options` VALUES ('98', 'initial_db_version', null, '49752', null, null);
-INSERT INTO `wo_options` VALUES ('99', 'wo_user_roles', null, 'a:5:{s:13:\"administrator\";a:2:{s:4:\"name\";s:13:\"Administrator\";s:12:\"capabilities\";a:61:{s:13:\"switch_themes\";b:1;s:11:\"edit_themes\";b:1;s:16:\"activate_plugins\";b:1;s:12:\"edit_plugins\";b:1;s:10:\"edit_users\";b:1;s:10:\"edit_files\";b:1;s:14:\"manage_options\";b:1;s:17:\"moderate_comments\";b:1;s:17:\"manage_categories\";b:1;s:12:\"manage_links\";b:1;s:12:\"upload_files\";b:1;s:6:\"import\";b:1;s:15:\"unfiltered_html\";b:1;s:10:\"edit_posts\";b:1;s:17:\"edit_others_posts\";b:1;s:20:\"edit_published_posts\";b:1;s:13:\"publish_posts\";b:1;s:10:\"edit_pages\";b:1;s:4:\"read\";b:1;s:8:\"level_10\";b:1;s:7:\"level_9\";b:1;s:7:\"level_8\";b:1;s:7:\"level_7\";b:1;s:7:\"level_6\";b:1;s:7:\"level_5\";b:1;s:7:\"level_4\";b:1;s:7:\"level_3\";b:1;s:7:\"level_2\";b:1;s:7:\"level_1\";b:1;s:7:\"level_0\";b:1;s:17:\"edit_others_pages\";b:1;s:20:\"edit_published_pages\";b:1;s:13:\"publish_pages\";b:1;s:12:\"delete_pages\";b:1;s:19:\"delete_others_pages\";b:1;s:22:\"delete_published_pages\";b:1;s:12:\"delete_posts\";b:1;s:19:\"delete_others_posts\";b:1;s:22:\"delete_published_posts\";b:1;s:20:\"delete_private_posts\";b:1;s:18:\"edit_private_posts\";b:1;s:18:\"read_private_posts\";b:1;s:20:\"delete_private_pages\";b:1;s:18:\"edit_private_pages\";b:1;s:18:\"read_private_pages\";b:1;s:12:\"delete_users\";b:1;s:12:\"create_users\";b:1;s:17:\"unfiltered_upload\";b:1;s:14:\"edit_dashboard\";b:1;s:14:\"update_plugins\";b:1;s:14:\"delete_plugins\";b:1;s:15:\"install_plugins\";b:1;s:13:\"update_themes\";b:1;s:14:\"install_themes\";b:1;s:11:\"update_core\";b:1;s:10:\"list_users\";b:1;s:12:\"remove_users\";b:1;s:13:\"promote_users\";b:1;s:18:\"edit_theme_options\";b:1;s:13:\"delete_themes\";b:1;s:6:\"export\";b:1;}}s:6:\"editor\";a:2:{s:4:\"name\";s:6:\"Editor\";s:12:\"capabilities\";a:34:{s:17:\"moderate_comments\";b:1;s:17:\"manage_categories\";b:1;s:12:\"manage_links\";b:1;s:12:\"upload_files\";b:1;s:15:\"unfiltered_html\";b:1;s:10:\"edit_posts\";b:1;s:17:\"edit_others_posts\";b:1;s:20:\"edit_published_posts\";b:1;s:13:\"publish_posts\";b:1;s:10:\"edit_pages\";b:1;s:4:\"read\";b:1;s:7:\"level_7\";b:1;s:7:\"level_6\";b:1;s:7:\"level_5\";b:1;s:7:\"level_4\";b:1;s:7:\"level_3\";b:1;s:7:\"level_2\";b:1;s:7:\"level_1\";b:1;s:7:\"level_0\";b:1;s:17:\"edit_others_pages\";b:1;s:20:\"edit_published_pages\";b:1;s:13:\"publish_pages\";b:1;s:12:\"delete_pages\";b:1;s:19:\"delete_others_pages\";b:1;s:22:\"delete_published_pages\";b:1;s:12:\"delete_posts\";b:1;s:19:\"delete_others_posts\";b:1;s:22:\"delete_published_posts\";b:1;s:20:\"delete_private_posts\";b:1;s:18:\"edit_private_posts\";b:1;s:18:\"read_private_posts\";b:1;s:20:\"delete_private_pages\";b:1;s:18:\"edit_private_pages\";b:1;s:18:\"read_private_pages\";b:1;}}s:6:\"author\";a:2:{s:4:\"name\";s:6:\"Author\";s:12:\"capabilities\";a:10:{s:12:\"upload_files\";b:1;s:10:\"edit_posts\";b:1;s:20:\"edit_published_posts\";b:1;s:13:\"publish_posts\";b:1;s:4:\"read\";b:1;s:7:\"level_2\";b:1;s:7:\"level_1\";b:1;s:7:\"level_0\";b:1;s:12:\"delete_posts\";b:1;s:22:\"delete_published_posts\";b:1;}}s:11:\"contributor\";a:2:{s:4:\"name\";s:11:\"Contributor\";s:12:\"capabilities\";a:5:{s:10:\"edit_posts\";b:1;s:4:\"read\";b:1;s:7:\"level_1\";b:1;s:7:\"level_0\";b:1;s:12:\"delete_posts\";b:1;}}s:10:\"subscriber\";a:2:{s:4:\"name\";s:10:\"Subscriber\";s:12:\"capabilities\";a:2:{s:4:\"read\";b:1;s:7:\"level_0\";b:1;}}}', null, null);
-INSERT INTO `wo_options` VALUES ('100', 'fresh_site', null, '0', null, null);
-INSERT INTO `wo_options` VALUES ('101', 'WPLANG', null, 'zh_CN', null, null);
-INSERT INTO `wo_options` VALUES ('102', 'widget_search', null, 'a:2:{i:2;a:1:{s:5:\"title\";s:0:\"\";}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('103', 'widget_recent-posts', null, 'a:2:{i:2;a:2:{s:5:\"title\";s:0:\"\";s:6:\"number\";i:5;}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('104', 'widget_recent-comments', null, 'a:2:{i:2;a:2:{s:5:\"title\";s:0:\"\";s:6:\"number\";i:5;}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('105', 'widget_archives', null, 'a:2:{i:2;a:3:{s:5:\"title\";s:0:\"\";s:5:\"count\";i:0;s:8:\"dropdown\";i:0;}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('106', 'widget_meta', null, 'a:2:{i:2;a:1:{s:5:\"title\";s:0:\"\";}s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('107', 'sidebars_widgets', null, 'a:4:{s:19:\"wp_inactive_widgets\";a:0:{}s:9:\"sidebar-1\";a:3:{i:0;s:8:\"search-2\";i:1;s:14:\"recent-posts-2\";i:2;s:17:\"recent-comments-2\";}s:9:\"sidebar-2\";a:3:{i:0;s:10:\"archives-2\";i:1;s:12:\"categories-2\";i:2;s:6:\"meta-2\";}s:13:\"array_version\";i:3;}', null, null);
-INSERT INTO `wo_options` VALUES ('108', 'cron', null, 'a:7:{i:1612369002;a:1:{s:34:\"wp_privacy_delete_old_export_files\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:6:\"hourly\";s:4:\"args\";a:0:{}s:8:\"interval\";i:3600;}}}i:1612394202;a:2:{s:16:\"wp_version_check\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:10:\"twicedaily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:43200;}}s:17:\"wp_update_plugins\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:10:\"twicedaily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:43200;}}}i:1612394203;a:1:{s:16:\"wp_update_themes\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:10:\"twicedaily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:43200;}}}i:1612437402;a:2:{s:30:\"wp_site_health_scheduled_check\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:6:\"weekly\";s:4:\"args\";a:0:{}s:8:\"interval\";i:604800;}}s:32:\"recovery_mode_clean_expired_keys\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:5:\"daily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:86400;}}}i:1612437426;a:2:{s:19:\"wp_scheduled_delete\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:5:\"daily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:86400;}}s:25:\"delete_expired_transients\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:5:\"daily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:86400;}}}i:1612437429;a:1:{s:30:\"wp_scheduled_auto_draft_delete\";a:1:{s:32:\"40cd750bba9870f18aada2478b24840a\";a:3:{s:8:\"schedule\";s:5:\"daily\";s:4:\"args\";a:0:{}s:8:\"interval\";i:86400;}}}s:7:\"version\";i:2;}', null, null);
-INSERT INTO `wo_options` VALUES ('109', 'widget_pages', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('110', 'widget_calendar', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('111', 'widget_media_audio', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('112', 'widget_media_image', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('113', 'widget_media_gallery', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('114', 'widget_media_video', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('115', 'widget_tag_cloud', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('116', 'widget_nav_menu', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('117', 'widget_custom_html', null, 'a:1:{s:12:\"_multiwidget\";i:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('119', 'theme_mods_twentytwentyone', null, 'a:2:{s:18:\"custom_css_post_id\";i:-1;s:18:\"nav_menu_locations\";a:2:{s:7:\"primary\";i:2;s:6:\"footer\";i:3;}}', null, null);
-INSERT INTO `wo_options` VALUES ('120', 'recovery_keys', null, 'a:0:{}', null, null);
-INSERT INTO `wo_options` VALUES ('124', '_site_transient_timeout_theme_roots', null, '1612352806', null, null);
-INSERT INTO `wo_options` VALUES ('125', '_site_transient_theme_roots', null, 'a:3:{s:14:\"twentynineteen\";s:7:\"/themes\";s:12:\"twentytwenty\";s:7:\"/themes\";s:15:\"twentytwentyone\";s:7:\"/themes\";}', null, null);
-INSERT INTO `wo_options` VALUES ('129', '_site_transient_update_core', null, 'O:8:\"stdClass\":4:{s:7:\"updates\";a:1:{i:0;O:8:\"stdClass\":10:{s:8:\"response\";s:6:\"latest\";s:8:\"download\";s:63:\"https://downloads.wordpress.org/release/zh_CN/wordpress-5.6.zip\";s:6:\"locale\";s:5:\"zh_CN\";s:8:\"packages\";O:8:\"stdClass\":5:{s:4:\"full\";s:63:\"https://downloads.wordpress.org/release/zh_CN/wordpress-5.6.zip\";s:10:\"no_content\";s:0:\"\";s:11:\"new_bundled\";s:0:\"\";s:7:\"partial\";s:0:\"\";s:8:\"rollback\";s:0:\"\";}s:7:\"current\";s:3:\"5.6\";s:7:\"version\";s:3:\"5.6\";s:11:\"php_version\";s:6:\"5.6.20\";s:13:\"mysql_version\";s:3:\"5.0\";s:11:\"new_bundled\";s:3:\"5.6\";s:15:\"partial_version\";s:0:\"\";}}s:12:\"last_checked\";i:1612351016;s:15:\"version_checked\";s:3:\"5.6\";s:12:\"translations\";a:1:{i:0;a:7:{s:4:\"type\";s:4:\"core\";s:4:\"slug\";s:7:\"default\";s:8:\"language\";s:5:\"zh_CN\";s:7:\"version\";s:3:\"5.6\";s:7:\"updated\";s:19:\"2021-02-01 12:49:30\";s:7:\"package\";s:62:\"https://downloads.wordpress.org/translation/core/5.6/zh_CN.zip\";s:10:\"autoupdate\";b:1;}}}', null, null);
-INSERT INTO `wo_options` VALUES ('130', '_site_transient_update_themes', null, 'O:8:\"stdClass\":5:{s:12:\"last_checked\";i:1612351018;s:7:\"checked\";a:3:{s:14:\"twentynineteen\";s:3:\"1.8\";s:12:\"twentytwenty\";s:3:\"1.6\";s:15:\"twentytwentyone\";s:3:\"1.0\";}s:8:\"response\";a:2:{s:14:\"twentynineteen\";a:6:{s:5:\"theme\";s:14:\"twentynineteen\";s:11:\"new_version\";s:3:\"1.9\";s:3:\"url\";s:44:\"https://wordpress.org/themes/twentynineteen/\";s:7:\"package\";s:60:\"https://downloads.wordpress.org/theme/twentynineteen.1.9.zip\";s:8:\"requires\";s:5:\"4.9.6\";s:12:\"requires_php\";s:5:\"5.2.4\";}s:15:\"twentytwentyone\";a:6:{s:5:\"theme\";s:15:\"twentytwentyone\";s:11:\"new_version\";s:3:\"1.1\";s:3:\"url\";s:45:\"https://wordpress.org/themes/twentytwentyone/\";s:7:\"package\";s:61:\"https://downloads.wordpress.org/theme/twentytwentyone.1.1.zip\";s:8:\"requires\";s:3:\"5.3\";s:12:\"requires_php\";s:3:\"5.6\";}}s:9:\"no_update\";a:1:{s:12:\"twentytwenty\";a:6:{s:5:\"theme\";s:12:\"twentytwenty\";s:11:\"new_version\";s:3:\"1.6\";s:3:\"url\";s:42:\"https://wordpress.org/themes/twentytwenty/\";s:7:\"package\";s:58:\"https://downloads.wordpress.org/theme/twentytwenty.1.6.zip\";s:8:\"requires\";s:3:\"4.7\";s:12:\"requires_php\";s:5:\"5.2.4\";}}s:12:\"translations\";a:3:{i:0;a:7:{s:4:\"type\";s:5:\"theme\";s:4:\"slug\";s:14:\"twentynineteen\";s:8:\"language\";s:5:\"zh_CN\";s:7:\"version\";s:3:\"1.8\";s:7:\"updated\";s:19:\"2020-12-10 10:32:17\";s:7:\"package\";s:78:\"https://downloads.wordpress.org/translation/theme/twentynineteen/1.8/zh_CN.zip\";s:10:\"autoupdate\";b:1;}i:1;a:7:{s:4:\"type\";s:5:\"theme\";s:4:\"slug\";s:12:\"twentytwenty\";s:8:\"language\";s:5:\"zh_CN\";s:7:\"version\";s:3:\"1.6\";s:7:\"updated\";s:19:\"2020-12-26 05:41:43\";s:7:\"package\";s:76:\"https://downloads.wordpress.org/translation/theme/twentytwenty/1.6/zh_CN.zip\";s:10:\"autoupdate\";b:1;}i:2;a:7:{s:4:\"type\";s:5:\"theme\";s:4:\"slug\";s:15:\"twentytwentyone\";s:8:\"language\";s:5:\"zh_CN\";s:7:\"version\";s:3:\"1.0\";s:7:\"updated\";s:19:\"2020-12-23 03:52:33\";s:7:\"package\";s:79:\"https://downloads.wordpress.org/translation/theme/twentytwentyone/1.0/zh_CN.zip\";s:10:\"autoupdate\";b:1;}}}', null, null);
-INSERT INTO `wo_options` VALUES ('131', '_site_transient_update_plugins', null, 'O:8:\"stdClass\":5:{s:12:\"last_checked\";i:1612351022;s:7:\"checked\";a:2:{s:19:\"akismet/akismet.php\";s:5:\"4.1.7\";s:9:\"hello.php\";s:5:\"1.7.2\";}s:8:\"response\";a:0:{}s:12:\"translations\";a:1:{i:0;a:7:{s:4:\"type\";s:6:\"plugin\";s:4:\"slug\";s:11:\"hello-dolly\";s:8:\"language\";s:5:\"zh_CN\";s:7:\"version\";s:5:\"1.7.2\";s:7:\"updated\";s:19:\"2018-03-20 01:42:43\";s:7:\"package\";s:78:\"https://downloads.wordpress.org/translation/plugin/hello-dolly/1.7.2/zh_CN.zip\";s:10:\"autoupdate\";b:1;}}s:9:\"no_update\";a:1:{s:9:\"hello.php\";O:8:\"stdClass\":9:{s:2:\"id\";s:25:\"w.org/plugins/hello-dolly\";s:4:\"slug\";s:11:\"hello-dolly\";s:6:\"plugin\";s:9:\"hello.php\";s:11:\"new_version\";s:5:\"1.7.2\";s:3:\"url\";s:42:\"https://wordpress.org/plugins/hello-dolly/\";s:7:\"package\";s:60:\"https://downloads.wordpress.org/plugin/hello-dolly.1.7.2.zip\";s:5:\"icons\";a:2:{s:2:\"2x\";s:64:\"https://ps.w.org/hello-dolly/assets/icon-256x256.jpg?rev=2052855\";s:2:\"1x\";s:64:\"https://ps.w.org/hello-dolly/assets/icon-128x128.jpg?rev=2052855\";}s:7:\"banners\";a:1:{s:2:\"1x\";s:66:\"https://ps.w.org/hello-dolly/assets/banner-772x250.jpg?rev=2052855\";}s:11:\"banners_rtl\";a:0:{}}}}', null, null);
-INSERT INTO `wo_options` VALUES ('132', '_site_transient_timeout_browser_5cd022c67bba483be4643a4599b579f2', null, '1612955827', null, null);
-INSERT INTO `wo_options` VALUES ('133', '_site_transient_browser_5cd022c67bba483be4643a4599b579f2', null, 'a:10:{s:4:\"name\";s:6:\"Chrome\";s:7:\"version\";s:13:\"88.0.4324.104\";s:8:\"platform\";s:7:\"Windows\";s:10:\"update_url\";s:29:\"https://www.google.com/chrome\";s:7:\"img_src\";s:43:\"http://s.w.org/images/browsers/chrome.png?1\";s:11:\"img_src_ssl\";s:44:\"https://s.w.org/images/browsers/chrome.png?1\";s:15:\"current_version\";s:2:\"18\";s:7:\"upgrade\";b:0;s:8:\"insecure\";b:0;s:6:\"mobile\";b:0;}', null, null);
-INSERT INTO `wo_options` VALUES ('134', '_site_transient_timeout_php_check_3dbf48b9658abaee82651209c2ca7be3', null, '1612955829', null, null);
-INSERT INTO `wo_options` VALUES ('135', '_site_transient_php_check_3dbf48b9658abaee82651209c2ca7be3', null, 'a:5:{s:19:\"recommended_version\";s:3:\"7.4\";s:15:\"minimum_version\";s:6:\"5.6.20\";s:12:\"is_supported\";b:1;s:9:\"is_secure\";b:1;s:13:\"is_acceptable\";b:1;}', null, null);
-INSERT INTO `wo_options` VALUES ('137', 'can_compress_scripts', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('138', 'recently_activated', null, 'a:0:{}', null, null);
-INSERT INTO `wo_options` VALUES ('139', '_transient_timeout_dash_v2_5438fb5baf31c513fff2b9a1067656a6', null, '1612394251', null, null);
-INSERT INTO `wo_options` VALUES ('140', '_transient_dash_v2_5438fb5baf31c513fff2b9a1067656a6', null, '<div class=\"rss-widget\"><p><strong>RSS错误：</strong> WP HTTP Error: cURL error 28: Operation timed out after 10000 milliseconds with 15994 bytes received</p></div><div class=\"rss-widget\"><p><strong>RSS错误：</strong> WP HTTP Error: cURL error 28: Operation timed out after 10001 milliseconds with 32473 bytes received</p></div>', null, null);
-INSERT INTO `wo_options` VALUES ('143', 'finished_updating_comment_type', null, '1', null, null);
-INSERT INTO `wo_options` VALUES ('144', '_site_transient_timeout_community-events-2c8826d5d44014f3d257734977965683', null, '1612394596', null, null);
-INSERT INTO `wo_options` VALUES ('145', '_site_transient_community-events-2c8826d5d44014f3d257734977965683', null, 'a:4:{s:9:\"sandboxed\";b:0;s:5:\"error\";N;s:8:\"location\";a:1:{s:2:\"ip\";s:11:\"192.168.1.0\";}s:6:\"events\";a:1:{i:0;a:10:{s:4:\"type\";s:6:\"meetup\";s:5:\"title\";s:49:\"Discussion group: How To Find Help With WordPress\";s:3:\"url\";s:72:\"https://www.meetup.com/learn-wordpress-discussions/events/xdcjdsyccdbwb/\";s:6:\"meetup\";s:27:\"Learn WordPress Discussions\";s:10:\"meetup_url\";s:51:\"https://www.meetup.com/learn-wordpress-discussions/\";s:4:\"date\";s:19:\"2021-02-03 20:00:00\";s:8:\"end_date\";s:19:\"2021-02-03 21:00:00\";s:20:\"start_unix_timestamp\";i:1612411200;s:18:\"end_unix_timestamp\";i:1612414800;s:8:\"location\";a:4:{s:8:\"location\";s:6:\"Online\";s:7:\"country\";s:2:\"US\";s:8:\"latitude\";d:37.779998779297;s:9:\"longitude\";d:-122.41999816895;}}}}', null, null);
-INSERT INTO `wo_options` VALUES ('148', 'nav_menu_options', null, 'a:1:{s:8:\"auto_add\";a:0:{}}', null, null);
+INSERT INTO `wo_options` VALUES ('149', 'un_active_group', null, 'un_active', null, null);
 
 -- ----------------------------
 -- Table structure for `wo_org`
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org`;
 CREATE TABLE `wo_org` (
-                          `id` bigint(20) unsigned NOT NULL ,
-                          `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `arch_id` bigint(20) unsigned DEFAULT NULL ,
-                          `com_id` bigint(20) unsigned DEFAULT NULL ,
-                          `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                          `display_order` int(10) DEFAULT NULL ,
-                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                          `create_time` datetime DEFAULT NULL ,
+                          `id` bigint(20) unsigned NOT NULL COMMENT '组织机构id',
+                          `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织机构编码',
+                          `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织机构名称',
+                          `org_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织/群组/团队/圈子头像的实际存储相对路径',
+                          `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织类型：组织架构、团队、群组和圈子，不同于国标的组织机构类型，某种类型的组织具备什么构成，由体系结构对应的模型定义',
+                          `arch_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属体系结构id',
+                          `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
+                          `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级体系结构',
+                          `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的排序',
+                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                          `update_time` datetime DEFAULT NULL ,
+                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `versions` int(10) DEFAULT NULL ,
+                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `un_com_arch_org` (`org_code`,`arch_id`,`com_id`),
                           KEY `org_type` (`org_type`),
                           KEY `org_arch_id` (`arch_id`),
                           KEY `org_com_id` (`com_id`),
                           KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组织机构表：可以是组织架构、团队、群组和圈子等，后期需要分表。';
 
 -- ----------------------------
 -- Records of wo_org
 -- ----------------------------
-INSERT INTO `wo_org` VALUES ('1', 'admins', '管理员', 'platform', '0', '0', '0', '2', '1', '0', '2021-05-08 14:17:20', '0', '1', '2021-11-26 11:08:06', '192.168.1.23', 'normal', null);
-INSERT INTO `wo_org` VALUES ('2', 'user', '会员', 'platform', '0', '0', '0', '3', '1', '0', '2021-05-08 14:18:51', '0', '0', '2021-05-08 14:18:59', '0', 'normal', null);
-INSERT INTO `wo_org` VALUES ('200', 'freeuser', '普通会员', 'platform', '0', '0', '2', '1', '1', '0', '2021-05-08 14:32:48', '0', '0', '2021-05-08 14:32:56', '0', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('201', 'vip', '普通VIP', 'platform', '0', '0', '2', '2', '1', '0', '2021-05-08 14:34:35', '0', '0', '2021-05-08 14:34:43', '0', 'normal', null);
-INSERT INTO `wo_org` VALUES ('91933461561655297', 'admin', '超级管理员', 'platform', '0', '0', '1', '1', '1', '1', '2021-11-26 11:08:35', '192.168.1.23', '1', '2021-11-26 11:08:35', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('93032343456628744', 'dev', '研发部', 'org', '0', '1508132284859596808', '0', '1', '1', '92829405966680072', '2021-11-29 11:55:09', '192.168.1.23', '1', '2022-02-09 11:32:31', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508971189611708427', '1011012345120105', '网络斗士（中国）科技无限责任有限公司', 'org', '100', '1508132284859596808', '0', '4', '1', '0', '2021-05-26 23:12:47', '127.0.0.1', '1', '2021-07-30 20:51:12', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508973076528414721', '101101234512010501', '市场研发部', 'org', '100', '1508132284859596808', '1508971189611708427', '1', '1', '0', '2021-05-26 23:20:17', '127.0.0.1', '0', '2021-05-26 23:20:17', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508973453109805063', '1011012345120105011', '销售顾问群', 'group', '300', '1508132284859596808', '1508973076528414721', '1', '1', '0', '2021-05-26 23:21:47', '127.0.0.1', '0', '2021-05-26 23:21:47', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508974093827489796', '1011012345120106', '科技攻关部', 'org', '100', '1508132284859596808', '1508971189611708427', '2', '1', '0', '2021-05-26 23:24:19', '127.0.0.1', '0', '2021-05-26 23:24:19', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508974496115769349', '101101234512010501', 'WLDOS改造世界系统项目组', 'team', '200', '1508132284859596808', '1508974093827489796', '1', '1', '0', '2021-05-26 23:25:55', '127.0.0.1', '0', '2021-05-26 23:25:55', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508975215187247108', '1011012345120100', '顶级想象力', 'circle', '400', '1508972512004456457', '0', '10', '1', '0', '2021-05-26 23:28:47', '127.0.0.1', '0', '2021-05-26 23:29:19', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508976067088138249', '10110123451201001', '套圈', 'circle', '400', '1508972512004456457', '1508975215187247108', '1', '1', '0', '2021-05-26 23:32:10', '127.0.0.1', '0', '2021-05-26 23:32:10', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1508976740328456200', '101101234512010011', '圈长', 'role_org', '100', '1508972831958548480', '1508976067088138249', '1', '1', '0', '2021-05-26 23:34:50', '127.0.0.1', '0', '2021-05-26 23:34:50', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1525968690709446657', 'tadmin', '租户管理员', 'role_org', '0', '0', '0', '1', '1', '1', '2021-07-12 20:54:47', '192.168.1.23', '1', '2021-07-30 20:53:08', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_org` VALUES ('1526214941484957699', 'badmin', '二级管理员', 'platform', '0', '0', '1', '1', '1', '1', '2021-07-13 13:13:18', '192.168.1.23', '1', '2021-07-13 13:13:18', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1', 'admins', '管理员', null, 'platform', '0', '0', '0', '2', '1', '0', '2021-05-08 14:17:20', '0', '1', '2021-11-26 11:08:06', '192.168.1.23', 'normal', null);
+INSERT INTO `wo_org` VALUES ('2', 'user', '会员', null, 'platform', '0', '0', '0', '3', '1', '0', '2021-05-08 14:18:51', '0', '0', '2021-05-08 14:18:59', '0', 'normal', null);
+INSERT INTO `wo_org` VALUES ('200', 'freeuser', '普通会员', null, 'platform', '0', '0', '2', '1', '1', '0', '2021-05-08 14:32:48', '0', '0', '2021-05-08 14:32:56', '0', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('201', 'vip', '普通VIP', null, 'platform', '0', '0', '2', '2', '1', '0', '2021-05-08 14:34:35', '0', '0', '2021-05-08 14:34:43', '0', 'normal', null);
+INSERT INTO `wo_org` VALUES ('300', 'un_active', '待激活用户', null, 'platform', '0', '0', '0', '3', '1', '0', '2022-09-15 20:20:13', null, '0', '2022-09-15 20:20:26', null, 'normal', null);
+INSERT INTO `wo_org` VALUES ('91933461561655297', 'admin', '超级管理员', null, 'platform', '0', '0', '1', '1', '1', '1', '2021-11-26 11:08:35', '192.168.1.23', '1', '2021-11-26 11:08:35', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('93032343456628744', 'dev', '研发部', null, 'org', '0', '1508132284859596808', '0', '1', '1', '92829405966680072', '2021-11-29 11:55:09', '192.168.1.23', '1', '2022-02-09 11:32:31', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508971189611708427', '1011012345120105', '网络斗士（中国）科技无限责任有限公司', null, 'org', '100', '1508132284859596808', '0', '4', '1', '0', '2021-05-26 23:12:47', '127.0.0.1', '1', '2021-07-30 20:51:12', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508973076528414721', '101101234512010501', '市场研发部', null, 'org', '100', '1508132284859596808', '1508971189611708427', '1', '1', '0', '2021-05-26 23:20:17', '127.0.0.1', '0', '2021-05-26 23:20:17', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508973453109805063', '1011012345120105011', '销售顾问群', null, 'group', '300', '1508132284859596808', '1508973076528414721', '1', '1', '0', '2021-05-26 23:21:47', '127.0.0.1', '0', '2021-05-26 23:21:47', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508974093827489796', '1011012345120106', '科技攻关部', null, 'org', '100', '1508132284859596808', '1508971189611708427', '2', '1', '0', '2021-05-26 23:24:19', '127.0.0.1', '0', '2021-05-26 23:24:19', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508974496115769349', '101101234512010501', 'WLDOS改造世界系统项目组', null, 'team', '200', '1508132284859596808', '1508974093827489796', '1', '1', '0', '2021-05-26 23:25:55', '127.0.0.1', '0', '2021-05-26 23:25:55', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508975215187247108', '1011012345120100', '顶级想象力', null, 'circle', '400', '1508972512004456457', '0', '10', '1', '0', '2021-05-26 23:28:47', '127.0.0.1', '0', '2021-05-26 23:29:19', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508976067088138249', '10110123451201001', '套圈', null, 'circle', '400', '1508972512004456457', '1508975215187247108', '1', '1', '0', '2021-05-26 23:32:10', '127.0.0.1', '0', '2021-05-26 23:32:10', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1508976740328456200', '101101234512010011', '圈长', null, 'role_org', '100', '1508972831958548480', '1508976067088138249', '1', '1', '0', '2021-05-26 23:34:50', '127.0.0.1', '0', '2021-05-26 23:34:50', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1525968690709446657', 'tadmin', '租户管理员', null, 'role_org', '0', '0', '0', '1', '1', '1', '2021-07-12 20:54:47', '192.168.1.23', '1', '2021-07-30 20:53:08', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_org` VALUES ('1526214941484957699', 'badmin', '二级管理员', null, 'platform', '0', '0', '1', '1', '1', '1', '2021-07-13 13:13:18', '192.168.1.23', '1', '2021-07-13 13:13:18', '192.168.1.23', 'normal', '1');
 
 -- ----------------------------
 -- Table structure for `wo_org_user`
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org_user`;
 CREATE TABLE `wo_org_user` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `user_id` bigint(20) unsigned DEFAULT NULL ,
-                               `user_com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `org_id` bigint(20) unsigned DEFAULT NULL ,
-                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
-                               `com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `id` bigint(20) unsigned NOT NULL COMMENT '用户组织关系id',
+                               `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '用户id',
+                               `user_com_id` bigint(20) unsigned DEFAULT NULL COMMENT '用户实际归属公司，用于设置租户管理员等场景下绑定系统用户组，类似于借调',
+                               `org_id` bigint(20) unsigned DEFAULT NULL COMMENT '组织机构id',
+                               `arch_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属体系结构id',
+                               `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `create_time` datetime DEFAULT NULL ,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_time` datetime DEFAULT NULL ,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' ,
-                               `versions` int(10) DEFAULT NULL ,
+                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' COMMENT '删除状态字典值：normal正常，deleted删除',
+                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                PRIMARY KEY (`id`),
                                KEY `org_user_id` (`user_id`),
                                KEY `org_id` (`org_id`),
@@ -3674,7 +3659,7 @@ CREATE TABLE `wo_org_user` (
                                KEY `org_user_is_valid_del` (`is_valid`,`delete_flag`),
                                KEY `org_user_arch_com` (`user_id`,`user_com_id`,`org_id`,`arch_id`,`com_id`) USING BTREE,
                                KEY `org_u_com_id` (`user_com_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户组织关联表：用户与不同体系下的组织关系，类似岗位，但不全是岗位，比如群组内的人，组织不同，由于平台角色只授予组织，已经实现了岗位的功能，此表不再做岗位定义，仅做用户与组织的关联表。';
 
 -- ----------------------------
 -- Records of wo_org_user
@@ -3691,6 +3676,15 @@ INSERT INTO `wo_org_user` VALUES ('92829651706757129', '92829405966680072', '150
 INSERT INTO `wo_org_user` VALUES ('92832497399414789', '92832497370054659', null, '200', '0', '0', '1', '92832497370054659', '192.168.1.23', '2021-11-28 22:41:02', '92832497370054659', '192.168.1.23', '2021-11-28 22:41:02', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('119132584031207428', '119132574443028481', null, '200', '0', '0', '1', '119132574443028481', '192.168.1.23', '2022-02-09 12:28:11', '119132574443028481', '192.168.1.23', '2022-02-09 12:28:11', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('119560316967895046', '119560179352780806', null, '200', '0', '0', '1', '119560179352780806', '192.168.1.23', '2022-02-10 16:47:51', '119560179352780806', '192.168.1.23', '2022-02-10 16:47:51', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('189862995023282184', '189862984948563971', null, '200', '0', '0', '1', '189862984948563971', '192.168.1.23', '2022-08-23 16:45:35', '189862984948563971', '192.168.1.23', '2022-08-23 16:45:35', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('191677102189887493', '191677093767725063', null, '200', '0', '0', '1', '191677093767725063', '192.168.1.23', '2022-08-28 16:54:12', '191677093767725063', '192.168.1.23', '2022-08-28 16:54:12', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('192743753635250180', '192743746152611843', null, '200', '0', '0', '1', '192743746152611843', '192.168.1.23', '2022-08-31 15:32:42', '192743746152611843', '192.168.1.23', '2022-08-31 15:32:42', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('192753338718797834', '192753329898176517', null, '200', '0', '0', '1', '192753329898176517', '192.168.1.23', '2022-08-31 16:10:47', '192753329898176517', '192.168.1.23', '2022-08-31 16:10:47', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('198204860005007362', '198204851142443011', null, '200', '0', '0', '1', '198204851142443011', '192.168.1.23', '2022-09-15 17:13:11', '198204851142443011', '192.168.1.23', '2022-09-15 17:13:11', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('198575900266774535', '198575893094514697', null, '200', '0', '0', '1', '198575893094514697', '192.168.1.23', '2022-09-16 17:47:34', '198575893094514697', '192.168.1.23', '2022-09-16 17:47:34', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('214120914220662792', '0', null, '300', '0', '0', '1', '0', '192.168.1.23', '2022-10-29 15:17:54', '0', '192.168.1.23', '2022-10-29 15:17:54', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('214132159988547595', '214132159892078601', null, '200', '0', '0', '1', '214132159892078601', '192.168.1.23', '2022-10-29 16:02:35', '214132159892078601', '192.168.1.23', '2022-10-29 16:02:35', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('214858324277641220', '214858324143423489', null, '200', '0', '0', '1', '214858324143423489', '192.168.1.23', '2022-10-31 16:08:06', '214858324143423489', '192.168.1.23', '2022-10-31 16:08:06', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('1502723278259273735', '1502723278108278788', null, '200', '0', '0', '1', '1502723278108278788', '127.0.0.1', '2021-05-09 17:25:49', '1502723278108278788', '127.0.0.1', '2021-05-09 17:25:49', 'normal', '1');
 INSERT INTO `wo_org_user` VALUES ('1502726588278161413', '1502726588102000651', null, '200', '0', '0', '1', '1502726588102000651', '127.0.0.1', '2021-05-09 17:38:58', '1502726588102000651', '127.0.0.1', '2021-05-09 17:38:58', 'normal', '1');
 INSERT INTO `wo_org_user` VALUES ('1502739709487136769', '1502739709344530437', null, '200', '0', '0', '1', '1502739709344530437', '127.0.0.1', '2021-05-09 18:31:06', '1502739709344530437', '127.0.0.1', '2021-05-09 18:31:06', 'normal', '1');
@@ -3721,20 +3715,20 @@ INSERT INTO `wo_org_user` VALUES ('1547698181106221065', '1547698179520774144', 
 DROP TABLE IF EXISTS `wo_region`;
 CREATE TABLE `wo_region` (
                              `id` bigint(20) unsigned NOT NULL,
-                             `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                             `display_order` int(10) DEFAULT NULL ,
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `create_by` bigint(20) unsigned DEFAULT NULL ,
-                             `create_time` datetime DEFAULT NULL ,
+                             `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '国标区域编码',
+                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '地区名称',
+                             `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '地区级别：1 省级，2市级，3区县级',
+                             `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '父级地区',
+                             `display_order` int(10) DEFAULT NULL COMMENT '排序',
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL ,
-                             `update_time` datetime DEFAULT NULL ,
+                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `versions` int(10) DEFAULT NULL ,
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                              PRIMARY KEY (`id`),
                              UNIQUE KEY `region_code` (`region_code`),
                              KEY `region_level` (`level`),
@@ -4129,27 +4123,27 @@ INSERT INTO `wo_region` VALUES ('820000', '820000', '澳门特别行政区', '1'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_resource`;
 CREATE TABLE `wo_resource` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `resource_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `app_id` bigint(20) unsigned DEFAULT NULL ,
-                               `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                               `display_order` int(10) DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
-                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_time` datetime DEFAULT NULL ,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
-                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `id` bigint(20) unsigned NOT NULL COMMENT '资源id',
+                               `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源编码',
+                               `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源名称',
+                               `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源请求url',
+                               `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'icon声明，全局定义icon库，这里设置的是库中的icon英文名',
+                               `resource_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源类型：菜单、接口服务、数据服务、静态资源、其他',
+                               `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源操作方法：get、post、put、delete等',
+                               `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '打开方式：_self,_blank,_parent,_top',
+                               `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属应用',
+                               `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级资源',
+                               `display_order` int(10) DEFAULT NULL COMMENT '上级资源路径下的排序',
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                               `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注说明',
+                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建人ip',
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新人IP',
                                `update_time` datetime DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `versions` int(10) DEFAULT NULL ,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                PRIMARY KEY (`id`),
                                UNIQUE KEY `un_app_res_code` (`resource_code`,`app_id`) USING BTREE,
                                KEY `res_type` (`resource_type`) USING BTREE,
@@ -4209,12 +4203,11 @@ INSERT INTO `wo_resource` VALUES ('91697876372733961', 'cha-dels', '批量删除
 INSERT INTO `wo_resource` VALUES ('91698261745385474', 'book-off', '下线合集', '/admin/cms/post/offline', null, 'button', 'POST', '_self', '1506005013902311434', '72188271301148676', '2', '1', null, '1', '192.168.1.23', '2021-11-25 19:33:59', '1', '192.168.1.23', '2021-11-25 19:33:59', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('91698429899227137', 'book-del', '删除合集', '/admin/cms/post/delete', null, 'button', 'DELETE', '_self', '1506005013902311434', '72188271301148676', '3', '1', null, '1', '192.168.1.23', '2021-11-25 19:34:39', '1', '192.168.1.23', '2021-11-25 19:34:39', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('91698614343745546', 'book-dels', '批量删除合集', '/admin/cms/post/deletes', null, 'button', 'DELETE', '_self', '1506005013902311434', '72188271301148676', '4', '1', null, '1', '192.168.1.23', '2021-11-25 19:35:23', '1', '192.168.1.23', '2021-11-25 19:35:23', 'normal', '1');
-INSERT INTO `wo_resource` VALUES ('93441238276685825', 'resAdmin', '功能管理', '/admin/res', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '0', '2', '1', '应用、资源统一管理应用、资源统一管理应用、资源统一管理', '1', '192.168.1.23', '2021-11-30 14:59:57', '1', '192.168.1.23', '2021-12-27 18:21:12', 'normal', '1');
+INSERT INTO `wo_resource` VALUES ('93441238276685825', 'resAdmin', '功能管理', '/admin/res', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '0', '2', '1', '应用、资源统一管理应用、资源统一管理应用、资源统一管理', '1', '192.168.1.23', '2021-11-30 14:59:57', '1', '192.168.1.23', '2022-09-29 20:10:42', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('93474930835505163', 'auth', '权限管理', '/admin/auth', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '0', '3', '1', '角色权限管理', '1', '192.168.1.23', '2021-11-30 17:13:50', '1', '192.168.1.23', '2021-11-30 17:13:50', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('93481427766263818', 'organ', '组织管理', '/admin/organ', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '0', '4', '1', '租户、体系、组织与用户', '1', '192.168.1.23', '2021-11-30 17:39:39', '1', '192.168.1.23', '2021-11-30 17:39:39', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('93529533534879755', 'dom', '领域管理', '/admin/dom', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '0', '5', '1', '业务分类、领域划分', '1', '192.168.1.23', '2021-11-30 20:50:48', '1', '192.168.1.23', '2021-11-30 20:50:48', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('103211568641785859', 'a-npwh', '年谱文化', '/archives/article/category/npwh', 'list', 'menu', 'GET', '_self', '1504618238889869317', '1542170368806666244', '2', '1', null, '1', '192.168.1.23', '2021-12-27 14:03:46', '1', '192.168.1.23', '2021-12-27 14:03:46', 'normal', '1');
-INSERT INTO `wo_resource` VALUES ('110507156089520135', 'infoNew', '发布信息', '/info/flatTree', null, 'button', 'GET', '_self', '1504617964850823176', '1506128052832878593', '1', '1', '发布信息按钮', '1', '192.168.1.23', '2022-01-16 17:13:49', '1', '192.168.1.23', '2022-01-16 18:46:24', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('127144910604910596', 'front', '用户菜单', '/admin/res/front', 'smile', 'admin_menu', 'GET', '_self', '1506005013902311434', '93441238276685825', '4', '1', '用户菜单管理', '1', '192.168.1.23', '2022-03-03 15:06:19', '1', '192.168.1.23', '2022-03-03 15:09:10', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('129381329150853120', 'info_article_blog', 'IT|互联网', '/info/article/category/blog', 'smile', 'menu', 'GET', '_self', '1504618238889869317', '1542170368806666244', '21', '1', null, '1', '192.168.1.23', '2022-03-09 19:13:03', '1', '192.168.1.23', '2022-03-10 18:46:26', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('129997833584164864', 'test-001', '测试', '/test/test', 'smile', 'menu', 'GET', '_self', '79317353314828295', '0', '21', '1', null, '1', '192.168.1.23', '2022-03-11 12:02:49', '1', '192.168.1.23', '2022-03-11 13:23:47', 'normal', '1');
@@ -4224,6 +4217,9 @@ INSERT INTO `wo_resource` VALUES ('130023878857244679', 'test-004', 'test', '/te
 INSERT INTO `wo_resource` VALUES ('130065223076462601', 'archives_article_blog', '测试子节点', '/archives/article/category/blog', 'smile', 'menu', 'GET', '_self', '79317353314828295', '129997833584164864', '2', '1', null, '1', '192.168.1.23', '2022-03-11 16:30:36', '1', '192.168.1.23', '2022-03-11 16:30:36', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('151359177717628933', 'infoAdmin', '信息管理', '/admin/cms/post/info', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '1506128052832878593', '8', '1', null, '1', '192.168.1.23', '2022-05-09 10:45:10', '1', '192.168.1.23', '2022-05-09 10:45:10', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('152162057265528840', 'commentAdmin', '评论管理', '/admin/cms/comment', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '1506128052832878593', '9', '1', null, '1', '192.168.1.23', '2022-05-11 15:55:31', '1', '192.168.1.23', '2022-05-11 15:55:31', 'normal', '1');
+INSERT INTO `wo_resource` VALUES ('156908317952360451', 'info_article_blog', '信息技术', '/info/article/category/blog', 'smile', 'menu', 'GET', '_blank', '1504617964850823176', '0', '23', '1', '信息发布2级菜单', '1', '192.168.1.23', '2022-05-24 18:15:28', '1', '192.168.1.23', '2022-05-24 18:32:54', 'normal', '1');
+INSERT INTO `wo_resource` VALUES ('203336650390683654', 'sysReg', '版本信息', '/admin/sys/reg', 'smile', 'admin_menu', 'GET', '_self', '1506005013902311434', '1506101733801771011', '2', '1', '当前系统版本信息和license授权购买', '1', '192.168.1.23', '2022-09-29 21:05:05', '1', '192.168.1.23', '2022-09-29 21:05:05', 'normal', '1');
+INSERT INTO `wo_resource` VALUES ('220685278113349639', 'oauth', '社会化登录', '/admin/sys/oauth', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '1506101733801771011', '3', '1', '社会化登录配置', '1', '192.168.1.23', '2022-11-16 18:02:20', '1', '192.168.1.23', '2022-11-30 19:07:47', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('1506101733801771011', 'sys', '系统管理', '/admin/sys', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '0', '1', '1', '系统管理', '0', '127.0.0.1', '2021-05-19 01:10:35', '1', '192.168.1.23', '2021-08-18 14:29:41', 'normal', '0');
 INSERT INTO `wo_resource` VALUES ('1506107866432061443', 'app', '应用管理', '/admin/res/app', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '93441238276685825', '1', '1', 'SaaS平台上的独立应用', '0', '127.0.0.1', '2021-05-19 01:34:57', '1', '192.168.1.23', '2021-11-30 17:08:06', 'normal', '0');
 INSERT INTO `wo_resource` VALUES ('1506122443605590022', 'res', '资源管理', '/admin/res/res', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '93441238276685825', '3', '1', '菜单、操作、服务、静态资源', '0', '127.0.0.1', '2021-05-19 02:32:53', '1', '192.168.1.23', '2021-11-30 17:08:16', 'normal', '0');
@@ -4251,6 +4247,7 @@ INSERT INTO `wo_resource` VALUES ('1523270396090695683', 'cateSel', '选择分�
 INSERT INTO `wo_resource` VALUES ('1528063986125946885', 'config', '系统参数', '/admin/sys/options', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '1506101733801771011', '1', '1', '系统配置项', '1', '192.168.1.23', '2021-07-18 15:40:44', '1', '192.168.1.23', '2021-07-18 15:41:03', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('1531059437984989189', 'comment', '发表评论', '/cms/comment/commit', 'list', 'button', 'POST', '_self', '1504618238889869317', '1506128052832878593', '7', '1', '对文章或作品发表评论', '1', '192.168.1.23', '2021-07-26 22:03:36', '0', '192.168.1.23', '2021-07-26 22:04:52', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('1532485035156488196', 'domain', '多域管理', '/admin/dom/domain', 'list', 'admin_menu', 'GET', '_self', '1506005013902311434', '93529533534879755', '3', '1', '领域划分，多站点配置', '1', '192.168.1.23', '2021-07-30 20:28:25', '1', '192.168.1.23', '2021-11-30 20:57:36', 'normal', '1');
+INSERT INTO `wo_resource` VALUES ('1533544727530094592', 'infoNew', '发布信息', '/info/flatTree', null, 'button', 'GET', '_self', '1504617964850823176', '1506128052832878593', '1', '1', '发布信息按钮', '1', '192.168.1.23', '2022-01-16 17:13:49', '1', '192.168.1.23', '2022-01-16 18:46:24', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('1533941630155538434', 'bp', '项目简介', '/doc/bp/', 'list', 'menu', 'GET', '_blank', '1533901932104171527', '0', '9', '0', '项目介绍', '1', '192.168.1.23', '2021-08-03 20:56:24', '1', '192.168.1.23', '2021-12-07 17:11:15', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('1533950643823886345', 'api', 'API文档', '/doc/api/', 'list', 'menu', 'GET', '_blank', '1533901932104171527', '0', '10', '0', 'wldos中台javadoc', '1', '192.168.1.23', '2021-08-03 21:32:13', '1', '192.168.1.23', '2021-12-07 17:10:59', 'normal', '1');
 INSERT INTO `wo_resource` VALUES ('1538994469231837188', 'rwnp', '人物年谱', '/product/annual/category/rwnp', 'list', 'menu', 'GET', '_self', '1504618238889869317', '0', '2', '1', '人物年谱存档', '1', '192.168.1.23', '2021-08-17 19:34:35', '1', '192.168.1.23', '2021-08-28 16:13:01', 'normal', '1');
@@ -4265,28 +4262,28 @@ INSERT INTO `wo_resource` VALUES ('1542939849472524294', 'a-jsfx', '技术分享
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role`;
 CREATE TABLE `wo_role` (
-                           `id` bigint(20) unsigned NOT NULL ,
-                           `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                           `display_order` int(10) DEFAULT NULL ,
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `id` bigint(20) unsigned NOT NULL COMMENT '角色id',
+                           `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色编码',
+                           `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色名称',
+                           `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色描述',
+                           `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色类型：系统角色(管理员、游客、普通用户、商户、政府、中介)、业务角色(岗位、职务、功能)',
+                           `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级体系结构',
+                           `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的排序',
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `create_time` datetime DEFAULT NULL ,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_time` datetime DEFAULT NULL ,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `uni_role_code` (`role_code`),
                            KEY `role_type` (`role_type`),
                            KEY `role_parent_id` (`parent_id`),
                            KEY `role_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色定义表：组织机构节点下的对象。角色也是可以有上下级关系的，一个角色下可以再拆分出多个角色，在权限控制时下级角色是可以';
 
 -- ----------------------------
 -- Records of wo_role
@@ -4310,26 +4307,26 @@ INSERT INTO `wo_role` VALUES ('1526213891793272839', 'badmin', '二级管理员'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role_org`;
 CREATE TABLE `wo_role_org` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `role_id` bigint(20) unsigned DEFAULT NULL ,
-                               `org_id` bigint(20) unsigned DEFAULT NULL ,
-                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
-                               `com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `id` bigint(20) unsigned NOT NULL COMMENT '角色用户id',
+                               `role_id` bigint(20) unsigned DEFAULT NULL COMMENT '角色id',
+                               `org_id` bigint(20) unsigned DEFAULT NULL COMMENT '组织机构id',
+                               `arch_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属体系结构id',
+                               `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效，1有效，0无效，当需要暂时设置某个关系为无效时使用，当要置某个用户或角色无效时用主表的isvalid',
+                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `create_time` datetime DEFAULT NULL ,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_time` datetime DEFAULT NULL ,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `versions` int(10) DEFAULT NULL ,
+                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                PRIMARY KEY (`id`),
                                KEY `org_role_id` (`role_id`),
                                KEY `org_role_org_id` (`org_id`),
                                KEY `org_arch_com` (`org_id`,`arch_id`,`com_id`),
                                KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色用户关联表，组织的角色默认被组织内的人员继承，默认嵌套继承，需要有树搜索算法支持。';
 
 -- ----------------------------
 -- Records of wo_role_org
@@ -4346,23 +4343,23 @@ INSERT INTO `wo_role_org` VALUES ('1525968743872249860', '1525946478916976648', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_association`;
 CREATE TABLE `wo_subject_association` (
-                                          `id` bigint(20) unsigned NOT NULL ,
-                                          `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
-                                          `role_id` bigint(20) unsigned DEFAULT NULL ,
+                                          `id` bigint(20) unsigned NOT NULL COMMENT '角色主体关系id',
+                                          `subject_type_id` bigint(20) unsigned DEFAULT NULL COMMENT '主体类型id',
+                                          `role_id` bigint(20) unsigned DEFAULT NULL COMMENT '角色id，此角色应该为顶级公司顶级组织下的全局角色(系统保留角色)',
                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `create_time` datetime DEFAULT NULL ,
-                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `update_time` datetime DEFAULT NULL ,
-                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `versions` int(10) DEFAULT NULL ,
+                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                           PRIMARY KEY (`id`),
                                           KEY `sub_type_id` (`subject_type_id`),
                                           KEY `sub_role_id` (`role_id`),
                                           KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色主体类型关系表：个人（自然人）、企业、政府、默认注册用户即为自然人，不同的主体类型可以默认不同的角色，不同的角';
 
 -- ----------------------------
 -- Records of wo_subject_association
@@ -4373,26 +4370,26 @@ CREATE TABLE `wo_subject_association` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_authentication`;
 CREATE TABLE `wo_subject_authentication` (
-                                             `id` bigint(20) unsigned NOT NULL ,
-                                             `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
-                                             `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                             `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                             `user_id` bigint(20) unsigned DEFAULT NULL ,
+                                             `id` bigint(20) unsigned NOT NULL COMMENT '认证主体id',
+                                             `subject_type_id` bigint(20) unsigned DEFAULT NULL COMMENT '主体类型id',
+                                             `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体社会信用统一编码或身份证号',
+                                             `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体名称，可能是法人名称、自然人姓名，前者不能重复，后者可以重复',
+                                             `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '认证账号',
                                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `create_time` datetime DEFAULT NULL ,
-                                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `update_time` datetime DEFAULT NULL ,
-                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                             `versions` int(10) DEFAULT NULL ,
+                                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                              PRIMARY KEY (`id`),
                                              KEY `sub_type_id` (`subject_type_id`),
                                              KEY `sub_user_id` (`user_id`),
                                              KEY `sub_is_valid_del` (`is_valid`,`delete_flag`),
                                              KEY `sub_code` (`subject_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='主体身份认证表：认证主体类型，认证主体详情。\r\n';
 
 -- ----------------------------
 -- Records of wo_subject_authentication
@@ -4403,23 +4400,23 @@ CREATE TABLE `wo_subject_authentication` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_define`;
 CREATE TABLE `wo_subject_define` (
-                                     `id` bigint(20) unsigned NOT NULL ,
-                                     `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                     `id` bigint(20) unsigned NOT NULL COMMENT '主体类型id',
+                                     `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体类型编码，可以继承国标的组织机构类型，并根据实际业务衍生',
+                                     `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体类型名称',
+                                     `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体类型描述',
+                                     `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                                     `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                      `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `create_time` datetime DEFAULT NULL ,
-                                     `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                     `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                      `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `update_time` datetime DEFAULT NULL ,
-                                     `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `versions` int(10) DEFAULT NULL ,
+                                     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                     `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                     `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                      PRIMARY KEY (`id`),
                                      UNIQUE KEY `uni_subject_type_code` (`subject_type_code`) USING BTREE,
                                      KEY `sub_def_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证主体定义表：个人（自然人）、企业、政府、其他，定义用户认证身份，与角色的区别是主体身份是社会属性、社会公认的身份，不是具体业务设置的。\r\n';
 
 -- ----------------------------
 -- Records of wo_subject_define
@@ -4430,23 +4427,23 @@ CREATE TABLE `wo_subject_define` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_model_define`;
 CREATE TABLE `wo_subject_model_define` (
-                                           `id` bigint(20) unsigned DEFAULT NULL ,
-                                           `subject_type_id` bigint(20) unsigned NOT NULL ,
-                                           `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                           `id` bigint(20) unsigned DEFAULT NULL COMMENT '主体模板id',
+                                           `subject_type_id` bigint(20) unsigned NOT NULL COMMENT '主体类型id',
+                                           `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '模板名称',
+                                           `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '模板描述',
+                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
+                                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
                                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                           `create_time` datetime DEFAULT NULL ,
-                                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
                                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                           `update_time` datetime DEFAULT NULL ,
-                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `versions` int(10) DEFAULT NULL ,
+                                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                                            PRIMARY KEY (`subject_type_id`),
                                            KEY `sub_model_type_id` (`subject_type_id`),
                                            KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证主体模板定义表：个人（自然人）、企业、政府、中介，认证信息模板定义。\r\n';
 
 -- ----------------------------
 -- Records of wo_subject_model_define
@@ -4457,81 +4454,91 @@ CREATE TABLE `wo_subject_model_define` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_user`;
 CREATE TABLE `wo_user` (
-                           `id` bigint(20) unsigned NOT NULL ,
-                           `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
-                           `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
-                           `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `birthday` datetime DEFAULT NULL ,
-                           `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `display_order` bigint(20) DEFAULT NULL ,
-                           `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
+                           `id` bigint(20) unsigned NOT NULL COMMENT '用户id',
+                           `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '平台用户登录名，又叫账号，可以修改，全局唯一（比如抖音认证后可以全局唯一）',
+                           `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '账号显示名称，昵称',
+                           `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '登录密码，可以为空，设置后可以以账号密码登录',
+                           `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '账号状态：notActive待激活, locked已锁定、cancelled已注销、normal正常',
+                           `domain_id` bigint(20) unsigned DEFAULT NULL COMMENT '账号归属的二方域id（二方域指本平台上设置的域）用户注册时设定',
+                           `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '身份证号或法人身份证',
+                           `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户实名认证后的真实名称，可以是自然人、法人',
+                           `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '性别',
+                           `birthday` datetime DEFAULT NULL COMMENT '生日',
+                           `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '手机号',
+                           `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '固定电话',
+                           `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '注册会员' COMMENT '头衔',
+                           `company` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '网络用户' COMMENT '组织、单位名称',
+                           `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '通信地址',
+                           `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'QQ号',
+                           `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '电子邮箱',
+                           `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '头像在文件服务器存储的真实相对路径',
+                           `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注',
+                           `display_order` bigint(20) DEFAULT NULL COMMENT '排序',
+                           `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否实名认证：默认0，实名认证后：1',
+                           `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '国家',
+                           `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '省',
+                           `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '市',
+                           `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '区',
+                           `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '邀请码',
+                           `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '推荐码：推荐人的邀请码',
+                           `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '注册IP，首次注册IP',
+                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
-                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '信息更新操作者的IP',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `uni_login` (`login_name`) USING BTREE,
                            KEY `user_status` (`status`),
                            KEY `user_sex` (`sex`),
                            KEY `user_del` (`delete_flag`),
                            KEY `user_prov_city_area_coun` (`province`,`city`,`area`,`country`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='全局用户表：其账号由账号表定义，其第三方授权账号也在账号表定义。功能角度来说，账号是用来做登录认证的，而用户是用来做授权';
 
 -- ----------------------------
 -- Records of wo_user
 -- ----------------------------
-INSERT INTO `wo_user` VALUES ('1', 'admin', '龙神', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=', 'normal', '0', null, 'admin', 'man', null, null, '0531-268888888', '长清区崮云湖街道', null, '30699@qq.com', '/202108/04110119v2Y66WF9.jpg', 'WLDOS之父，独立研发了WLDOS云应用支撑平台。WLDOS之父，独立研发了WLDOS云应。', '0', '0', 'China', '370000', '370100', null, '0', null, '192.168.1.23', '0', '2021-05-08 12:15:05', '192.168.1.23', '1', '2021-12-27 16:59:24', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('100', 'wldos', '演示管理员', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '100', null, 'wldos', 'man', null, '15665730355', '0531-8868823', '朝阳区西祠胡同', null, 'wldos.com@88.com', '/202110/201945151nGiy6hd.png', 'wldos管家。', '1', '0', 'China', '370000', '370100', null, '100', null, '192.168.1.23', '0', '2021-05-08 12:15:09', '192.168.1.23', '1', '2021-11-28 22:30:27', '192.168.1.23', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('79070766156136451', 'wldos001@163.com', 'wldos新用户', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, '15665730355', '0531-15665730355', '天桥区', null, 'wldos001@163.com', '/202110/21231756DhqmsZdL.png', '新用户测试', null, null, 'China', '130000', '130300', null, null, null, '192.168.1.23', '79070766156136451', '2021-10-21 23:16:50', '192.168.1.23', '1', '2021-10-28 17:06:50', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('81514195872038918', 'newer@163.com', '小怪兽', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'newer@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '81514195872038918', '2021-10-28 17:06:09', '192.168.1.23', '81514195872038918', '2021-10-28 17:06:09', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('81836118845865995', 'test@zhiletu.com', 'test1', 'n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '81836118845865995', '2021-10-29 14:25:21', '192.168.1.23', '81836118845865995', '2021-10-29 14:25:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('92829405966680072', 'tenant', '租户管理员', '6dqG01HPmnZC2MUBlcP0ZiIJEaFcF3gJvRFhpR6MXyQ=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'tenant@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '92829405966680072', '2021-11-28 22:28:45', '192.168.1.23', '1', '2021-11-28 22:31:23', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('92832497370054659', 'newAdd@zhiletu.com', '新增租户员工1', 'YCP7zBhPiUK5Ji9VlQTX+q0umi8nONiCXZJbTiUz4Xg=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'newAdd@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '92832497370054659', '2021-11-28 22:41:02', '192.168.1.23', '92832497370054659', '2021-11-28 22:41:02', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('119132574443028481', 'test2@qq.com', 'laolai', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test2@qq.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '119132574443028481', '2022-02-09 12:28:11', '192.168.1.23', '119132574443028481', '2022-02-09 12:28:11', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('119560179352780806', 'test3@qq.com', 'laolai', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test3@qq.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '119560179352780806', '2022-02-10 16:47:51', '192.168.1.23', '119560179352780806', '2022-02-10 16:47:51', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1502723278108278788', 'support@zhiletu.com', null, 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', null, '0', null, null, null, null, null, null, null, null, 'support@zhiletu.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502723278108278788', '2021-05-09 17:25:49', '127.0.0.1', '1502723278108278788', '2021-05-09 17:25:49', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502726588102000651', '306991142@qq.com', null, 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', null, '0', null, null, null, null, null, null, null, null, '306991142@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502726588102000651', '2021-05-09 17:38:58', '127.0.0.1', '1502726588102000651', '2021-05-09 17:38:58', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502739709344530437', '583716365@qq.com', '小五义', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, null, null, '583716365@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502739709344530437', '2021-05-09 18:31:06', '127.0.0.1', '0', '2021-05-26 22:45:15', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502742261263941642', '2345@qq.com', '2345', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, null, null, '2345@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502742261263941642', '2021-05-09 18:41:15', '127.0.0.1', '1502742261263941642', '2021-05-09 18:41:15', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502770377176825865', '586@163.com', '586', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, null, null, '586@163.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502770377176825865', '2021-05-09 20:32:58', '127.0.0.1', '0', '2021-05-26 22:46:02', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502773236924596235', '567@163.com', '菲菲', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, null, null, '567@163.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502773236924596235', '2021-05-09 20:44:20', '127.0.0.1', '0', '2021-05-26 22:46:43', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502777260587532299', '1234@126.com', '没有五', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, null, null, '1234@126.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502777260587532299', '2021-05-09 21:00:19', '127.0.0.1', '0', '2021-05-26 22:47:02', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502777813036089350', '23@123.com', '驿站之心', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, null, null, '23@123.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502777813036089350', '2021-05-09 21:02:31', '127.0.0.1', '0', '2021-05-26 22:47:51', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502783343481765897', 'nihao1@123.com', '你好夏天', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, null, null, 'nihao1@123.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502783343481765897', '2021-05-09 21:24:29', '127.0.0.1', '1502783343481765897', '2021-05-09 21:24:29', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1502803624724185094', 'bbc@qq.com', 'nihao', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, null, null, 'bbc@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502803624724185094', '2021-05-09 22:45:05', '127.0.0.1', '1502803624724185094', '2021-05-09 22:45:05', '127.0.0.1', 'normal', '1');
-INSERT INTO `wo_user` VALUES ('1521171388547383299', 'jjunxiao@163.com', '223', '3zBoxWKPRqP11DsQnBBX8CfLPNhJ3yz1F5ep1YVFMDA=', 'normal', null, null, null, null, null, null, null, null, null, 'jjunxiao@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1521171388547383299', '2021-06-29 15:12:01', '192.168.1.23', '1521171388547383299', '2021-06-29 15:12:01', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547396545116815364', 'test@126.com', 'test', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', null, null, null, null, null, null, null, null, null, 'test@126.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547396545116815364', '2021-09-10 00:01:26', '192.168.1.23', '1547396545116815364', '2021-09-10 00:01:26', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547627860437155848', 'abc@163.com', 'abc', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', null, null, null, null, null, null, null, null, null, 'abc@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547627860437155848', '2021-09-10 15:20:36', '192.168.1.23', '1547627860437155848', '2021-09-10 15:20:36', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547650817649721344', 'abc1@163.com', 'test', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'abc1@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547650817649721344', '2021-09-10 16:51:49', '192.168.1.23', '1547650817649721344', '2021-09-10 16:51:49', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547663029483257866', 'abc2@163.com', 'abc', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'abc2@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547663029483257866', '2021-09-10 17:40:20', '192.168.1.23', '1547663029483257866', '2021-09-10 17:40:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547670975575408643', 'test3@163.com', 'test3', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, '15665730355', null, '长清区', null, 'test3@163.com', null, '个人', null, null, 'China', '120000', '120100', null, null, null, '192.168.1.23', '1547670975575408643', '2021-09-10 18:11:55', '192.168.1.23', '1547670975575408643', '2021-09-13 19:46:21', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547691630899413002', 'test31@163.com', 'test3', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test31@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547691630899413002', '2021-09-10 19:34:00', '192.168.1.23', '1547691630899413002', '2021-09-10 19:34:00', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547693779586826246', 'test4@163.com', 'test4', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test4@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547693779586826246', '2021-09-10 19:42:32', '192.168.1.23', '1547693779586826246', '2021-09-10 19:42:32', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547695225065619462', 'test5@163.com', 'test5', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test5@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547695225065619462', '2021-09-10 19:48:16', '192.168.1.23', '1547695225065619462', '2021-09-10 19:48:16', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547696496472408073', 'test6@163.com', 'test6', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, 'test6@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547696496472408073', '2021-09-10 19:53:20', '192.168.1.23', '1547696496472408073', '2021-09-10 19:53:20', '192.168.1.23', 'normal', '0');
-INSERT INTO `wo_user` VALUES ('1547698179520774144', 'test7@163.com', 'test7', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, '0533-19388888', '太原市', null, 'test7@163.com', '/202109/10201135YqsgC7J0.jpg', '个人简介', null, null, 'China', '140000', '140100', null, null, null, '192.168.1.23', '1547698179520774144', '2021-09-10 20:00:01', '192.168.1.23', '1547698179520774144', '2021-09-10 20:11:35', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1', 'admin', '龙神', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=', 'normal', '0', null, 'admin', 'man', null, '15665730355', '0531-268888888', '注册会员', '网络用户', '长清区崮云湖街道', null, '30699@qq.com', '/202203/18183200ow6yRB4v.png', 'WLDOS之父，独立研发了WLDOS云应用支撑平台。', '0', '0', 'China', '230000', '230100', null, '0', null, '192.168.1.23', '0', '2021-05-08 12:15:05', '192.168.1.23', '1', '2022-05-18 19:22:38', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('100', 'wldos', '演示管理员', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '100', null, 'wldos', 'man', null, '15665730355', '0531-8868823', '注册会员', '网络用户', '朝阳区西祠胡同', null, 'wldos.com@88.com', '/202110/201945151nGiy6hd.png', 'wldos管家。', '1', '0', 'China', '370000', '370100', null, '100', null, '192.168.1.23', '0', '2021-05-08 12:15:09', '192.168.1.23', '1', '2021-11-28 22:30:27', '192.168.1.23', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('79070766156136451', 'wldos001@163.com', 'wldos新用户', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, '15665730355', '0531-15665730355', '注册会员', '网络用户', '天桥区', null, 'wldos001@163.com', '/202110/21231756DhqmsZdL.png', '新用户测试', null, null, 'China', '130000', '130300', null, null, null, '192.168.1.23', '79070766156136451', '2021-10-21 23:16:50', '192.168.1.23', '1', '2021-10-28 17:06:50', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('81514195872038918', 'newer@163.com', '小怪兽', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'newer@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '81514195872038918', '2021-10-28 17:06:09', '192.168.1.23', '81514195872038918', '2021-10-28 17:06:09', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('81836118845865995', 'test@zhiletu.com', 'test1', 'n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '81836118845865995', '2021-10-29 14:25:21', '192.168.1.23', '81836118845865995', '2021-10-29 14:25:21', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('92829405966680072', 'tenant', '租户管理员', '6dqG01HPmnZC2MUBlcP0ZiIJEaFcF3gJvRFhpR6MXyQ=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'tenant@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '92829405966680072', '2021-11-28 22:28:45', '192.168.1.23', '1', '2021-11-28 22:31:23', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('92832497370054659', 'newAdd@zhiletu.com', '新增租户员工1', 'YCP7zBhPiUK5Ji9VlQTX+q0umi8nONiCXZJbTiUz4Xg=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'newAdd@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '92832497370054659', '2021-11-28 22:41:02', '192.168.1.23', '92832497370054659', '2021-11-28 22:41:02', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('119132574443028481', 'test2@qq.com', 'laolai', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test2@qq.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '119132574443028481', '2022-02-09 12:28:11', '192.168.1.23', '119132574443028481', '2022-02-09 12:28:11', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('119560179352780806', 'test3@qq.com', 'laolai', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test3@qq.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '119560179352780806', '2022-02-10 16:47:51', '192.168.1.23', '119560179352780806', '2022-02-10 16:47:51', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('189862984948563971', 'yuanxi@zhiletu.com', 'yuanxi', 'z3SigILGFO6PqhYuR2ups7XA+DGy7ppCKGzo0G+Kv9g=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, 'yuanxi@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '189862984948563971', '2022-08-23 16:45:35', '192.168.1.23', '189862984948563971', '2022-08-23 16:45:35', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('191677093767725063', 'yuanxi1@zhiletu.com', 'yuanxi', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, 'yuanxi1@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '191677093767725063', '2022-08-28 16:54:12', '192.168.1.23', '191677093767725063', '2022-08-28 16:54:12', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('192743746152611843', 'yuanxi2@zhiletu.com', 'yuanxi', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, 'yuanxi2@zhiletu.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '192743746152611843', '2022-08-31 15:32:42', '192.168.1.23', '192743746152611843', '2022-08-31 15:32:42', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('192753329898176517', '306991142@qq.com', 'wldostest', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '306991142@qq.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '192753329898176517', '2022-08-31 16:10:47', '192.168.1.23', '192753329898176517', '2022-08-31 16:10:47', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('198204851142443011', '5837163615@qq.com', 'wldos2022', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '583716365@qq.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '198204851142443011', '2022-09-15 17:13:11', '192.168.1.23', '198204851142443011', '2022-09-15 17:13:11', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('198575893094514697', '583716365@qq.com', 'yuanxi2023', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '583716365@qq.com', '/202209/16192006kkX6YHpz.png', null, null, null, null, null, null, null, null, null, '192.168.1.23', '198575893094514697', '2022-09-16 17:47:34', '192.168.1.23', '198575893094514697', '2022-09-16 19:20:06', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('214132159892078601', '行者', '行者', null, 'normal', '1', null, null, null, null, null, null, null, null, null, null, null, '/2022/10/29165431nSPtJhlt.jpg', null, null, null, null, null, null, null, null, null, '192.168.1.23', '214132159892078601', '2022-10-29 16:02:35', '192.168.1.23', '214132159892078601', '2022-10-29 16:54:32', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('214858324143423489', '元悉科技', '元悉科技', null, 'normal', '1', null, null, null, null, null, null, null, null, null, null, null, '/2022/10/31160806yDuzotP7.jpg', null, null, null, null, null, null, null, null, null, '192.168.1.23', '214858324143423489', '2022-10-31 16:08:06', '192.168.1.23', '214858324143423489', '2022-10-31 16:08:07', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1502723278108278788', 'support@zhiletu.com', null, 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', null, '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'support@zhiletu.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502723278108278788', '2021-05-09 17:25:49', '127.0.0.1', '1502723278108278788', '2021-05-09 17:25:49', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502726588102000651', '3069911421@qq.com', null, 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', null, '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '3069911421@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502726588102000651', '2021-05-09 17:38:58', '127.0.0.1', '1502726588102000651', '2021-05-09 17:38:58', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502739709344530437', '5837163651@qq.com', '小五义', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '583716365@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502739709344530437', '2021-05-09 18:31:06', '127.0.0.1', '0', '2021-05-26 22:45:15', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502742261263941642', '2345@qq.com', '2345', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '2345@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502742261263941642', '2021-05-09 18:41:15', '127.0.0.1', '1502742261263941642', '2021-05-09 18:41:15', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502770377176825865', '586@163.com', '586', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '586@163.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502770377176825865', '2021-05-09 20:32:58', '127.0.0.1', '0', '2021-05-26 22:46:02', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502773236924596235', '567@163.com', '菲菲', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '567@163.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502773236924596235', '2021-05-09 20:44:20', '127.0.0.1', '0', '2021-05-26 22:46:43', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502777260587532299', '1234@126.com', '没有五', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '1234@126.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502777260587532299', '2021-05-09 21:00:19', '127.0.0.1', '0', '2021-05-26 22:47:02', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502777813036089350', '23@123.com', '驿站之心', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '23@123.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502777813036089350', '2021-05-09 21:02:31', '127.0.0.1', '0', '2021-05-26 22:47:51', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502783343481765897', 'nihao1@123.com', '你好夏天', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'nihao1@123.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502783343481765897', '2021-05-09 21:24:29', '127.0.0.1', '1502783343481765897', '2021-05-09 21:24:29', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1502803624724185094', 'bbc@qq.com', 'nihao', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'bbc@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502803624724185094', '2021-05-09 22:45:05', '127.0.0.1', '1502803624724185094', '2021-05-09 22:45:05', '127.0.0.1', 'normal', '1');
+INSERT INTO `wo_user` VALUES ('1521171388547383299', 'jjunxiao@163.com', '223', '3zBoxWKPRqP11DsQnBBX8CfLPNhJ3yz1F5ep1YVFMDA=', 'normal', null, null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'jjunxiao@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1521171388547383299', '2021-06-29 15:12:01', '192.168.1.23', '1521171388547383299', '2021-06-29 15:12:01', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547396545116815364', 'test@126.com', 'test', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', null, null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test@126.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547396545116815364', '2021-09-10 00:01:26', '192.168.1.23', '1547396545116815364', '2021-09-10 00:01:26', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547627860437155848', 'abc@163.com', 'abc', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', null, null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'abc@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547627860437155848', '2021-09-10 15:20:36', '192.168.1.23', '1547627860437155848', '2021-09-10 15:20:36', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547650817649721344', 'abc1@163.com', 'test', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'abc1@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547650817649721344', '2021-09-10 16:51:49', '192.168.1.23', '1547650817649721344', '2021-09-10 16:51:49', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547663029483257866', 'abc2@163.com', 'abc', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'abc2@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547663029483257866', '2021-09-10 17:40:20', '192.168.1.23', '1547663029483257866', '2021-09-10 17:40:20', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547670975575408643', 'test3@163.com', 'test3', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, '15665730355', null, '注册会员', '网络用户', '长清区', null, 'test3@163.com', null, '个人', null, null, 'China', '120000', '120100', null, null, null, '192.168.1.23', '1547670975575408643', '2021-09-10 18:11:55', '192.168.1.23', '1547670975575408643', '2021-09-13 19:46:21', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547691630899413002', 'test31@163.com', 'test3', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test31@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547691630899413002', '2021-09-10 19:34:00', '192.168.1.23', '1547691630899413002', '2021-09-10 19:34:00', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547693779586826246', 'test4@163.com', 'test4', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test4@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547693779586826246', '2021-09-10 19:42:32', '192.168.1.23', '1547693779586826246', '2021-09-10 19:42:32', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547695225065619462', 'test5@163.com', 'test5', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test5@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547695225065619462', '2021-09-10 19:48:16', '192.168.1.23', '1547695225065619462', '2021-09-10 19:48:16', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547696496472408073', 'test6@163.com', 'test6', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test6@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547696496472408073', '2021-09-10 19:53:20', '192.168.1.23', '1547696496472408073', '2021-09-10 19:53:20', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('1547698179520774144', 'test7@163.com', 'test7', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, '0533-19388888', '注册会员', '网络用户', '太原市', null, 'test7@163.com', '/202109/10201135YqsgC7J0.jpg', '个人简介', null, null, 'China', '140000', '140100', null, null, null, '192.168.1.23', '1547698179520774144', '2021-09-10 20:00:01', '192.168.1.23', '1547698179520774144', '2021-09-10 20:11:35', '192.168.1.23', 'normal', '0');
 
 -- ----------------------------
 -- Table structure for `wo_usermeta`
@@ -4540,12 +4547,12 @@ DROP TABLE IF EXISTS `wo_usermeta`;
 CREATE TABLE `wo_usermeta` (
                                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                                `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `meta_value` longtext COLLATE utf8mb4_unicode_ci ,
+                               `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '元数据key',
+                               `meta_value` longtext COLLATE utf8mb4_unicode_ci COMMENT '元数据值',
                                PRIMARY KEY (`id`),
                                KEY `user_id` (`user_id`),
                                KEY `meta_key` (`meta_key`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=119560318918246407 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=214155705741656076 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of wo_usermeta
@@ -4583,3 +4590,12 @@ INSERT INTO `wo_usermeta` VALUES ('92829407447269378', '92829405966680072', 'pas
 INSERT INTO `wo_usermeta` VALUES ('92832498531876868', '92832497370054659', 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES ('119132585889284101', '119132574443028481', 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES ('119560318918246406', '119560179352780806', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('154369105084465158', '1', 'tags', '[{\"key\":\"tag-0\",\"label\":\"wldos之父\"},{\"key\":\"tag-1\",\"label\":\"研发高手的梦想\"},{\"key\":\"tag-2\",\"label\":\"java\"},{\"key\":\"tag-3\",\"label\":\"111\"},{\"key\":\"tag-4\",\"label\":\"测试\"}]');
+INSERT INTO `wo_usermeta` VALUES ('186608232714387457', '1', 'bakEmail', 'support@zhiletu.com');
+INSERT INTO `wo_usermeta` VALUES ('189862995564347401', '189862984948563971', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('191677105738268676', '191677093767725063', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('192743754088235011', '192743746152611843', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('192753338811072518', '192753329898176517', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('198204861032611850', '198204851142443011', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('198575901655089156', '198575893094514697', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('214155705741656075', '214132159892078601', 'tags', '[{\"key\":\"tag-0\",\"label\":\"第一登录人\"}]');

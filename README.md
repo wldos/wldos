@@ -9,17 +9,19 @@
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
 </p>    
 
-### WLDOS源起
+### WLDOS愿景
 
-元宇宙的概念炒得火热，现在发现其中很多理念与曾经的创想不谋而合，身为码农该做点什么——后生晚学奋起直追，犹未为晚。WLDOS（World Operating System）算是为了这样的目标而作的涂鸦，如此拙劣而平凡的“小板凳”，尚需在实际应用中不断打磨和沉淀。在研发过程中，一步步探求我们最引以为傲的“乌托邦”，然后实现它、驱动它，直到托起更美好的世界！
+元宇宙融合虚拟与现实的理念与作者所想不谋而合，WLDOS（World Operating System）为了这种系统目标而孵化，是可以平台化的云物互联支撑系统，面向社区开源、线上服务和业态孵化而生。
 
-为让此项目更快浮出水面帮助需要的人，请<a href="https://gitee.com/wldos/wldos" style="color: red">star</a>我们，多谢!
+解决痛点：想利用网络化拓展业务，对如何拓展业务有困惑，需要一个可落地的软件搭建平台。
+
+如果您觉得有前景，请<a href="https://gitee.com/wldos/wldos" style="color: red">star</a>我们!
 
 ### 项目特点
 
-1.干净：框架底层仅引用了springboot等开源包，开发框架会持续优化，在此基础上实现了支撑平台，避免了引入spring全家桶所造成的噪声，按需自研、从零开始有利于开发团队、项目的积累和成长。
+1.干净：框架底层仅引用了springboot为主的开源包，形成了可持续优化的开发框架wldos-framework，在此基础上实现了wldos支撑平台，没有引入spring全家桶所造成的噪声，按需自研、从零开始有利于开发团队、项目的积累和成长。
 
-2.完整：包含底层到业务应用的完整产品线，是云物互联背景下的小有规模的最佳实践，不迷信业内各种高大上的轮子，崇尚自主研发，为解决实际问题而自研有利于自然成长，虽"土"，但够自由。
+2.完整：包含底层到业务应用的完整产品线，是云物互联场景下的最佳实践，不迷信业内各种高大上的轮子，崇尚自主研发，为解决实际问题而自研，"土"而自由。
 
 3.真实：自主研发、自主运营，研发与运营同时进行的模式更务实，不做KPI，现实应用驱动，用什么，做什么。
 
@@ -32,14 +34,14 @@ QQ 群：830355512
 
 ### 项目介绍
 
-WLDOS云应用支撑平台，简称WLDOS平台，本仓库是wldos平台后端工程。基础型新项目，适合新手跟随学习。  
-WLDOS是world operate system的缩写，表示驱动世界的操作系统，理念是简化世界复杂度，用一套系统协助支撑所有业务。  
-WLDOS是类SaaS的云支撑平台，与SaaS的区别在于目标是托起云物互联，基于token认证的前后端分离应用架构，支持多租户、多站点、多应用，是云平台和物联网的融合实现。
+WLDOS云应用支撑平台，简称WLDOS平台。本仓库是wldos平台后端工程。基础型新项目适合新手学习。  
+WLDOS是world operate system的缩写，表示驱动世界的操作系统，理念是简化世界复杂度，用一套落地的系统方法可持续地支撑尽可能多的业务。  
+WLDOS是类SaaS的云支撑平台，与SaaS的区别在于目标是托起云物互联，基于token认证的前后端分离应用架构，以多租户、多站点、多应用等实现虚拟域，是云平台和物联网的融合实现。
 
-**适合个人建站、企业建站、搭建业务中台的基础、研发平台，适合技术在起步阶段或想在云物互联领域开发项目的团队。**
+**适合个人建站、企业建站、搭建业务中台的基础研发平台，适合技术在起步阶段或想在云物互联领域开发项目的团队。**
 
 关于发音  
-为统一发音，简拼WLDOS采用汉语拼音：[wo'dao'si] 或 [wou da si]。
+WLDOS采用汉语拼音：[wou da si]。
 
 演示地址：<a href="http://www.shuxiyuan.com/user/login?redirect=http%3A%2F%2Fshuxiyuan.com%2Fadmin%2Fres%2Fapp">点击前往</a>（演示环境版本低于社区版）
 
@@ -78,19 +80,15 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
 4.  安装项目；  
     目前开放7个模块：  
     wldos-common：通用模块  
-    wldos-framework：wldos开发框架（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
-    wldos-platform-base：wldos支撑平台基础（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）  
-    wldos-platform: wldos支撑平台
-    wldos-oauth2: wldos社会化登录模块（为了wldos的稳定和安全，采用本地lib/jar分发，请使用安装本地jar的方法安装到maven本地仓库，jar坐标见内部pom文件）    
+    wldos-framework：wldos开发框架 
+    wldos-platform-base: wldos支撑平台基础
+    wldos-platform: wldos支撑平台    
+    wldos-oauth2: wldos社会化登录模块    
     wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
     wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
 
     安装数据库，数据库脚本在wldos-web/db下，默认mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。
     数据库正常运行后，以下命令启动项目：  
-    安装依赖jar到本地仓库：  
-    mvn install:install-file -Dfile=./lib/wldos-framework-1.5-release.jar -DgroupId=com.wldos -DartifactId=wldos-framework -Dversion=1.5 -Dpackaging=jar -DpomFile=./lib/maven/wldos-framework/pom.xml  
-    mvn install:install-file -Dfile=./lib/wldos-platform-base-1.5-release.jar -DgroupId=com.wldos -DartifactId=wldos-platform-base -Dversion=1.5 -Dpackaging=jar -DpomFile=./lib/maven/wldos-platform-base/pom.xml
-    mvn install:install-file -Dfile=./lib/wldos-oauth2-1.5-release.jar -DgroupId=com.wldos -DartifactId=wldos-oauth2 -Dversion=1.5 -Dpackaging=jar -DpomFile=./lib/maven/wldos-oauth2/pom.xml
     打包安装web模块：  
     mvn clean install -pl com.wldos:wldos-web -am -DskipTests  
     启动项目：    
@@ -107,16 +105,12 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三
 2. 点击左侧管理菜单，使用系统管理功能。
 3. 登陆使用JWT认证。
 
-### 效果预览
-
-说明：模块包含支撑平台 和 内容管理系统，后者依赖于前者，请根据需求取舍。
-
 ### 开源协议与商用许可
 
-为了WLDOS平台的独特性和可持续，已申请软件著作权证书，已开放源代码采用Apache2.0协议可商用，部分涉及软件安全的底层暂不开放（不影响二次开发）。
-本社区版默认可以免费使用，如需专业版请购商业授权。
+WLDOS平台已申请软件著作权证书，开放出的源代码以及软件可以商用(无需魔改^0^)，与商业版代码完全一致。   
+商业合作qq：306991142。
 
-商用或合作请去：https://www.wldos.com
+官网：https://www.wldos.com
 
 *附：*
 #### 项目结构
@@ -145,9 +139,6 @@ wldos根目录
 │  │  └─test------------------------------------单元测试包
 │  └─target-------------------------------------编译打包输出目录
 ├─lib-------------------------------------------本地依赖jar
-│  └─maven--------------------------------------本地jar的pom文件目录
-│      ├─wldos-framework------------------------wldos框架pom文件目录
-│      └─wldos-platform-base--------------------wldos平台基础包pom文件目录
 ├─modules---------------------------------------功能模块目录
 │  ├─kpaycms------------------------------------wldos内容付费管理系统
 │  │  ├─src-------------------------------------内容付费系统源码包

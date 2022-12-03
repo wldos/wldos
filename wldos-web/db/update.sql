@@ -5,8 +5,7 @@
  * For commercial licenses see term.md or https://www.wldos.com
  *
  */
--- 仅针对wldos v1.0.1升级v1.5有用
--- 新增字段或更新2022-4月~10月
+-- 新增字段或更新2022-4月~10月，如果系统运行数据库不报错请忽略本脚本！！！
 ALTER TABLE `k_term_type`
     MODIFY COLUMN `content_id`  bigint(20) NULL DEFAULT NULL COMMENT '归属的行业门类' AFTER `class_type`;
 
@@ -55,4 +54,23 @@ CREATE TABLE `wo_oauth_login_user` (
                                        PRIMARY KEY (`id`),
                                        KEY `idx_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账';
+
+CREATE TABLE `wo_mail` (
+                           `id` bigint(20) NOT NULL,
+                           `from_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '发件邮箱',
+                           `to_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '收件邮箱',
+                           `content` text COLLATE utf8mb4_unicode_ci COMMENT '内容',
+                           `status` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '发送状态：0失败，1成功',
+                           `result` text COLLATE utf8mb4_unicode_ci COMMENT '返回结果信息',
+                           `create_by` bigint(20) unsigned DEFAULT '0' COMMENT '创建人',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 

@@ -1,0 +1,101 @@
+/*
+ * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see term.md or https://www.wldos.com
+ *
+ */
+
+package com.wldos.sys.base.vo;
+
+
+import java.io.Serializable;
+
+import com.wldos.common.vo.TreeNode;
+
+/**
+ * 符合父子结构的菜单。遵循ProLayout菜单数据模板。
+ *
+ * @author 树悉猿
+ * @date 2021/4/30
+ * @version 1.0
+ */
+public class Menu extends TreeNode<Menu> implements Serializable {
+	/** 菜单URI */
+	private String path;
+
+	/** 菜单icon */
+	private String icon;
+
+	/** 菜单显示名称 */
+	private String name;
+
+	/** 菜单打开方式 */
+	private String target;
+
+	/* 在菜单中隐藏子节点
+	hideChildrenInMenu?: boolean;*/
+	/* 在菜单中隐藏自己和子节点
+	hideInMenu?: boolean;*/
+	/* 在面包屑中隐藏
+	hideInBreadcrumb?: boolean;*/
+	/* 自定义菜单的国际化 key
+	locale?: string | false;*/
+	/* 用于标定选中的值，默认是 path
+	key?: string;*/
+	/* disable 菜单选项
+	disabled?: boolean;*/
+	/*
+	 * @deprecated 当此节点被选中的时候也会选中 parentKeys 的节点
+	 * 自定义父节点
+	parentKeys?: string[]; */
+	/* 隐藏自己，并且将子节点提升到与自己平级
+	flatMenu?: boolean;*/
+
+	public Menu() {
+		super();
+	}
+
+	public Menu(String path, String icon, String name) {
+		this();
+		this.path = path;
+		this.icon = icon;
+		this.name = name;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
+	public String toString() {
+		return "{name: " + this.name + ", path: " + this.path + ", icon: " + this.icon + ", target: " + this.target + "}";
+	}
+}

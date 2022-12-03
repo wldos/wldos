@@ -1,0 +1,143 @@
+/*
+ * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see term.md or https://www.wldos.com
+ *
+ */
+
+package com.wldos.sys.base.repo;
+
+import java.util.List;
+
+import com.wldos.sys.base.dto.Term;
+import com.wldos.sys.base.entity.KTerms;
+import com.wldos.sys.base.entity.KTermType;
+
+import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
+
+/**
+ * 分类项repository操作类
+ *
+ * @author 树悉猿
+ * @date 2021/4/17
+ * @version 1.0
+ */
+public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
+	/**
+	 * 查询某种内容的指定分类类型的分类项集合
+	 *
+	 * @param classType 分类类型：分类目录、标签等
+	 * @param contId 行业门类id
+	 * @return 分类项列表
+	 */
+	@Query("select a.*, o.id term_type_id, o.class_type, o.content_id, (select c.content_code from k_model_content c where c.id=o.content_id) content_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and o.content_id=:contId and a.is_valid='1' and a.delete_flag='normal'")
+	List<Term> findByContType(@Param("classType") String classType, @Param("contId") Long contId);
+
+	/**
+	 * 查询某类下的分类项
+	 *
+	 * @param classType 分类类型：分类目录、标签等
+	 * @return 分类项列表
+	 */
+	@Query("select a.*, o.id term_type_id, o.class_type, o.content_id, (select c.content_code from k_model_content c where c.id=o.content_id) content_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and a.is_valid='1' and a.delete_flag='normal'")
+	List<Term> findAllByClassType(@Param("classType") String classType);
+
+	/**
+	 * 根据对象id、分类类型查询对象归属的某一类型的分类项列表
+	 *
+	 * @param objectId 对象id
+	 * @param classType 分类类型：分类目录、标签等
+	 * @return 分类项列表
+	 */
+	@Query("select a.*, o.id term_type_id, o.class_type, o.content_id, (select c.content_code from k_model_content c where c.id=o.content_id) content_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id  where o.class_type=:classType and EXISTS(select 1 from k_term_object b where o.id=b.term_type_id and b.object_id=:objectId and a.is_valid='1' and a.delete_flag='normal')")
+	List<Term> findAllByObjectAndClassType(@Param("objectId") Long objectId, @Param("classType") String classType);
+
+	/**
+	 * 根据分类别名查询分类类型
+	 *
+	 * @param slugCategory 分类项别名
+	 * @return 分类类型实体
+	 */
+	@Query("select p.* from k_term_type p join k_terms t on p.term_id=t.id where t.slug=:slugCategory")
+	KTermType queryTermTypeBySlug(@Param("slugCategory") String slugCategory);
+
+	/**
+	 * 根据分类类型id查询分类类型
+	 *
+	 * @param termTypeId 分类类型id
+	 * @return 分类类型实体
+	 */
+	@Query("select p.* from k_term_type p where p.id=:termTypeId")
+	KTermType queryTermTypeById(@Param("termTypeId") Long termTypeId);
+
+	/**
+	 * 批量根据分类项名称、分类类型查询该名称的分类项列表
+	 *
+	 * @param name 标签字面值
+	 * @param classType 分类类型：分类目录、标签等
+	 * @return 分类项列表
+	 */
+	@Query("select a.*, o.id term_type_id, o.class_type, o.content_id, (select c.content_code from k_model_content c where c.id=o.content_id) content_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where a.is_valid='1' and a.delete_flag='normal' and o.class_type=:classType and a.name in (:name)")
+	List<Term> findAllByNameAndClassType(@Param("name") List<String> name, @Param("classType") String classType);
+
+	/**
+	 * 通过分类类型id查询分类项
+	 *
+	 * @param termTypeId 分类id
+	 * @return 分类项信息
+	 */
+	@Query("select t.*, p.id term_type_id, p.class_type, p.content_id, (select c.content_code from k_model_content c where c.id=p.content_id) content_type, p.description, p.parent_id, p.count from k_term_type p join k_terms t on p.term_id=t.id where p.id=:termTypeId")
+	Term queryTermByTermTypeId(@Param("termTypeId") Long termTypeId);
+
+	/**
+	 * 通过分类项别名查询分类项
+	 *
+	 * @param slugTerm 分类项别名
+	 * @return 分类项信息
+	 */
+	@Query("select t.*, p.id term_type_id, p.class_type, p.content_id, (select c.content_code from k_model_content c where c.id=p.content_id) content_type, p.description, p.parent_id, p.count from k_term_type p join k_terms t on p.term_id=t.id where t.slug=:slugTerm")
+	Term queryTermBySlugTerm(@Param("slugTerm") String slugTerm);
+
+	/**
+	 * 根据分类项别名查询是否已存在
+	 *
+	 * @param slug 分类或标签的别名
+	 * @return 是否
+	 */
+	@Query("select count(1) from k_terms t where t.slug=:slug")
+	boolean existsTermBySlug(@Param("slug") String slug);
+
+	/**
+	 * 根据分类项类型id判断其下是否存在子分类
+	 *
+	 * @param termTypeId 分类项类型id
+	 * @return 是否
+	 */
+	@Query("select count(1) from k_terms t join k_term_type k on t.id=k.term_id where k.parent_id=:id")
+	boolean existsTermByTermTypeId(@Param("id") Long termTypeId);
+
+	/**
+	 * 通过分类类型id查询分类信息
+	 *
+	 * @param termTypeIds 分类类型id
+	 * @return 分类信息
+	 */
+	@Query("select t.*, p.id term_type_id, p.class_type, p.content_id, (select c.content_code from k_model_content c where c.id=p.content_id) content_type, p.description, p.parent_id, p.count from k_term_type p join k_terms t on p.term_id=t.id where p.id in(:termTypeIds)")
+	List<Term> queryAllTermsByTermTypeIds(@Param("termTypeIds") List<Long> termTypeIds);
+
+	@Query("select max(r.display_order) max_order from k_terms r join k_term_type t on r.id=t.term_id where r.delete_flag='normal' and r.is_valid='1' and t.parent_id=:pId")
+	Long queryMaxOrder(@Param("pId") Long parentId);
+
+	/**
+	 * 信息发布状态取反
+	 *
+	 * @param termIds 待取反的分类项ids
+	 */
+	@Modifying
+	@Query("update k_terms set info_flag=ABS(info_flag-1) where id in (:tIds)")
+	void infoFlagByIds(@Param("tIds") List<Long> termIds);
+}

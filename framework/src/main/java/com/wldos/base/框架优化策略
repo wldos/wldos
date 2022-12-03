@@ -1,0 +1,72 @@
+框架优化是为了实用和可持续，从分层、分块方面优化。
+
+为了平台的战略发展，框架的base基础包闭源，提供api文档不影响二开。
+
+优化策略
+1.首先优化Entity、Repository，按spring-data-jdbc建议，同时结合wldos框架自身特点优化数据持久层；
+	1.1.针对没有全参数构造的，提供一个全参数构造函数，注意作为VO时和VO一样必须有无参构造，否则json反序列化报错；
+    1.2.针对存在多个构造方法，保留全参数构造，其余改为静态方法并调用全参构造；
+    1.3.针对repo中返回vo/Dto的方法，使用闭合投影接口代替 vo 、dto从repo中查询数据；
+    1.4.杜绝域service调域service，最大程度解耦，调用repo，repo对应的是数据库表和聚合根，不会耦合；
+    1.5.在repo仓中出现的批量读取开启只读事务，防止并发脏读，写方法隐藏只读模式，service默认开启事务，
+    @Transactional(readOnly = true) // 接口层面开启只读事务，防止死锁，写方法直接用@Transactional注解覆盖只读属性。
+2.在1的基础上优化service层，基于数据操作发生的service互调改为调用Repository层实现(缓存移到repo-jdbc实现)，
+service之间有先后依赖关系的分层，有互调现象的把互调部分独立一个service组件作为基础服务；
+3.对web层优化，尽量按场景创建controller，尽量不引用其他模块service；
+4.通用优化：类行数不超过300行，特殊业务类不超1000行，以业务模块为颗粒度，优化类名、字段名、数据库表、字段等，长度尽可能短；
+5.异常类统一继承框架基类，放在使用该异常的类的同路径下，前端、后端协同约定异常处理消息模板，用Lombok注解精简前端vo，用多少传输多少，最大限度提高传输效率。
+
+针对data-jdbc的官方优化建议：
+1.尽量用final对象（从db读出，在用户侧不会随业务操作被更新的成员变量，是final的，会被用户更新的是可变变量，必须有setter才能接收更新）
+不可变对象很容易创建，因为具体化对象只需调用其构造函数。此外，这还避免了域对象被允许客户端代码操纵对象状态的setter方法弄乱。
+如果您需要这些，最好将它们设置为包保护，以便它们只能由有限数量的共址类型调用。仅构造函数的物化比属性填充快30%。
+
+2.提供一个全参数构造函数 ----针对没有全参数构造
+即使您不能或不想将实体建模为不可变值（意思是不实现或不公开setter），提供一个将实体的所有属性（包括可变属性）作为参数的构造函数仍然有价值，因为这允许对象映射跳过属性填充以获得最佳性能。java9+有限制。
+
+3.使用工厂方法而不是重载构造函数来避免@PersistenceConstructor，----针对存在多个构造方法，保留全参数构造，其余改为静态方法并调用全参构造
+意思是定义一个调用构造函数的静态方法完成个性化的实例化场景
+spring-data-jdbc内部机制，当出现多个构造函数时，会调用加了@PersistenceConstructor注解的那个作为实例实体bean的依据，这增加了代码复杂度，干脆只实现一个全参数构造。
+对于优化性能所需的全参数构造函数，我们通常希望公开更多应用程序用例特定的构造函数，这些构造函数省略了自动生成的标识符等内容。使用静态工厂方法公开这些全参数构造函数的变体是一种既定模式。
+使用Lombok避免样板代码
+由于持久性操作通常需要一个包含所有参数的构造函数，因此它们的声明变成了样板参数到字段赋值的冗长重复，使用Lombok的@AllArgsConstructor可以最好地避免这种重复。
+
+4.使用闭合投影接口 代替 vo 、dto从repo中查询数据，----针对repo中使用vo/Dto方法
+投影接口可以取代DTO作为service层和repository层数据传输载体，可以理解为实体表的视图对象
+将查询结果限制为仅名称属性的最简单方法是声明一个接口，该接口公开要读取的属性的getter方法
+投影支持嵌套
+interface PersonSummary {
+
+  String getFirstname();
+  String getLastname();
+  AddressSummary getAddress();
+
+  interface AddressSummary {
+    String getCity();
+  }
+}
+动态投影，支持泛型类型
+interface PersonRepository extends Repository<Person, UUID> {
+
+  <T> Collection<T> findByLastname(String lastname, Class<T> type);
+}
+void someMethod(PersonRepository people) {
+
+  Collection<Person> aggregates =
+    people.findByLastname("Matthews", Person.class);
+
+  Collection<NamesOnly> aggregates =
+    people.findByLastname("Matthews", NamesOnly.class);
+}
+
+5.在repo仓中开启事务，默认开启只读模式，写方法隐藏只读模式，service调用时，如果不是多个repo无需再开启事务
+@Transactional(readOnly = true)
+interface UserRepository extends CrudRepository<User, Long> {
+
+  List<User> findByLastname(String lastname);
+
+  @Modifying
+  @Transactional // 会覆盖接口上声明的只读开关，开启写事务
+  @Query("delete from User u where u.active = false")
+  void deleteInactiveUsers();
+}

@@ -126,4 +126,8 @@ public class LicAdminController extends NoRepoController {
 		// 返回成功信息
 		return this.resJson.ok(!ObjectUtils.isBlank(lc) ? "ok" : "error");
 	}
+
+	// todo 1.通过授权注册页面申请许可证（默认社区版），提交其server硬件信息（系统抓取）和商业授权信息（产品、组织、版本等信息）；
+
+	// todo 4.在注册申请页面查看申请状态为成功，安装许可证，下载许可证到本地server替换社区版license，许可证升级完成。
 }
