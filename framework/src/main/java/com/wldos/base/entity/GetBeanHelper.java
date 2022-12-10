@@ -59,5 +59,4 @@ public class GetBeanHelper implements ApplicationContextAware {
 		}
 		return applicationContext.getBean(beanName);
 	}
-
 }

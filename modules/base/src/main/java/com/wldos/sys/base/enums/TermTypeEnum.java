@@ -16,9 +16,7 @@ package com.wldos.sys.base.enums;
  * @version 1.0
  */
 public enum TermTypeEnum {
-	/** 分类目录 */
 	CATEGORY("category"),
-	/** 标签 */
 	TAG("tag");
 
 	private final String name;

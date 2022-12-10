@@ -36,16 +36,12 @@ public class AesEncryptUtils {
 
 	/** 密钥算法类型*/
 	public static final String KEY_ALGORITHM = "AES";
-
 	/** 密钥的默认位长度 */
 	public static final int DEFAULT_KEY_SIZE = 128;
-
 	/** 加解密算法/工作模式/填充方式 */
 	private static final String ECB_PKCS_5_PADDING = "AES/ECB/PKCS5Padding";
-
 	/** 加解密算法/工作模式/填充方式 */
 	private static final String ECB_PKCS_7_PADDING = "AES/ECB/PKCS7Padding";
-
 	public static final String ECB_NO_PADDING = "AES/ECB/NoPadding";
 
 	public static String base64Encode(byte[] bytes) {
@@ -72,7 +68,6 @@ public class AesEncryptUtils {
 	public static String aesDecrypt(String encryptStr, String hexAesKey) throws DecoderException {
 		return aesDecryptByBytes(base64Decode(encryptStr), hexAesKey);
 	}
-
 
 	/**
 	 * 生成 Hex 格式默认长度的随机密钥
@@ -197,12 +192,10 @@ public class AesEncryptUtils {
 			Cipher cipher = Cipher.getInstance(cipherAlgorithm);
 			// 初始化，设置为解密模式
 			cipher.init(Cipher.DECRYPT_MODE, k);
-
 			// 发现使用 NoPadding 时，使用 ZeroPadding 填充
 			if (ECB_NO_PADDING.equals(cipherAlgorithm)) {
 				return removeZeroPadding(cipher.doFinal(data), cipher.getBlockSize());
 			}
-
 			// 执行操作
 			return cipher.doFinal(data);
 		}

@@ -28,7 +28,7 @@ public class LoginInfo {
 	private String loginIP;
 
 	private String netLocation;
-	/** 浏览器 */
+
 	private String userAgent;
 
 	private String os;

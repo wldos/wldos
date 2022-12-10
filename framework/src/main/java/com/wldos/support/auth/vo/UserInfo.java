@@ -21,8 +21,8 @@ public class UserInfo {
 	private String nickname;
 	private String remark;
 	private String avatar;
-	private Long tenantId; // 主企业id
-	private Long domainId; // 当前请求的域id
+	private Long tenantId;
+	private Long domainId;
 
 	public UserInfo() {}
 

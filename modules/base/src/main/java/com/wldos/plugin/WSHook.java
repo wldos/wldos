@@ -15,28 +15,20 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 /**
- * hook是程序扩展的设计，在指定的地方声明hook调用，在指定的地方定义某个hook的函数，在运行时发起定制hook函数的调用以实现定制化的能力扩展。
- * hook包括两种：无返回值的action操作、有返回值的filter过滤器操作。
- *
  * @author 树悉猿
  * @date 2021/6/15
  * @version 1.0
  */
 @Component
 public class WSHook {
-	/** Hook回调 */
 	public Vector callbacks = new Vector();
 
-	/** Hook按优先级排序的键 */
 	public Vector iterations = new Vector();
 
-	/** Hook迭代的当前优先级 */
 	public Vector curPriority = new Vector();
 
-	/** 本hook递归调用的层数 */
 	private int nestingLevel = 0;
 
-	/** 是否在执行action钩子 */
 	private boolean isExecAction = false;
 
 	public <T> void addFilter(String hookName, Consumer<T> callback, int priority, int numArgs) {

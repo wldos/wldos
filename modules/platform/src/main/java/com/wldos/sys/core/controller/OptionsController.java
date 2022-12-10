@@ -36,8 +36,6 @@ public class OptionsController extends NoRepoController {
 
 	/**
 	 * 刷新配置接口
-	 * 使用@ConfigurationProperties注解的配置类会刷新实例，使用@Value注入的参数值，需要配合@RefreshScope注解才能刷新对应的值。
-	 *
 	 */
 	@GetMapping("refresh")
 	public String refresh() {

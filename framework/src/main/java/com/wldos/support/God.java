@@ -9,8 +9,6 @@
 package com.wldos.support;
 
 /**
- * 最顶层联结多个classLoader的接口。
- *
  * @author 树悉猿
  * @date 2022/2/8
  * @version 1.0

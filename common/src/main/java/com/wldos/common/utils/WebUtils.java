@@ -43,5 +43,4 @@ public class WebUtils {
 		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
 		return (ServletRequestAttributes) attributes;
 	}
-
 }

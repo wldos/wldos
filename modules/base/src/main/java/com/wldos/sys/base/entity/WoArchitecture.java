@@ -13,11 +13,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
-/**
- * 体系结构是由一系列组织机构通过层次关系组成的一个树形结构。一个公司下可根据业务需求存在多个体系机构，如人事组织结构、办公组织
- * 结构、财务组织结构、项目组织结构等。体系结构可以存在上下级关系，这种关系仅限于展现形式，体系结构与体系结构之间没有权限继承，
- * 也就是说在授权管理中同一公司下的体系结构之间全部是扁平关系。
- */
 @Table
 public class WoArchitecture {
 	@Id

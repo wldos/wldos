@@ -22,18 +22,13 @@ import com.wldos.support.issue.utils.ByteCodeSign;
 import org.springframework.core.io.ClassPathResource;
 
 /**
- * wldos底层安全模式加载。
- *
  * @author 树悉猿
  * @date 2022/2/5
  * @version 1.0
  */
 public final class WLDOSUtilities extends ClassLoader {
-	// 覆写springboot或者其他框架classLoader
 	private static final ClassLoader parent = Thread.currentThread().getContextClassLoader();
-
 	private static WLDOSUtilities wldosUtilities;
-
 	public static ClassLoader getInstance() {
 		if (wldosUtilities == null)
 			wldosUtilities = new WLDOSUtilities(parent);
@@ -60,7 +55,6 @@ public final class WLDOSUtilities extends ClassLoader {
 			newClass = findLoadedClass(className);
 			if (newClass != null)
 				return newClass;
-
 			ClassPathResource loader = new ClassPathResource("/com/wldos/support/issue/WLDOSUtilities.class");
 			loaderIn = loader.getInputStream();
 			out = new ByteArrayOutputStream();
@@ -74,7 +68,6 @@ public final class WLDOSUtilities extends ClassLoader {
 			out.close();
 			loaderIn.close();
 			String loaderSign = ByteCodeSign.md5(loaderByte);
-
 			if (isVerifier) {
 				ClassPathResource resource = new ClassPathResource(File.separator + "issue.property");
 				byteCodeIn = resource.getInputStream();

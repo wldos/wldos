@@ -87,13 +87,12 @@ public class LicAdminController extends NoRepoController {
 	}
 
 	/**
-	 * 更新license，只有在license未过期前才可以更新，过期后只能手动替换再重启系统
+	 * 更新license
 	 *
 	 * @param file license文件
 	 */
 	@PostMapping("upload")
 	public String updateLicense(@RequestParam("file") MultipartFile file) {
-		// 取出默认license文件
 		ClassPathResource resource = new ClassPathResource("/wldos.lic");
 		File licFile;
 		LicenseContent lc;
@@ -101,18 +100,16 @@ public class LicAdminController extends NoRepoController {
 		try {
 			File lic = resource.getFile();
 			String resPath = lic.getAbsolutePath();
-			// 上传license文件到临时目录
+
 			this.store.storeFile(file, resPath + "/temp/wldos.lic");
 			licFile = new File(resPath + "/temp/wldos.lic");
 
-			// 校验是否合法文件(预安装)，校验通过保存到(ClassPath)，校验失败驳回
 			lc = this.commonOperate.preInstall(this.verifyEnv, licFile);
 
 			if (ObjectUtils.isBlank(lc)) {
 				return this.resJson.ok("error");
 			}
 
-			// 保存、覆盖/wldos.lic，本过程不可逆
 			this.store.storeFile(file, resPath+"/wldos.lic");
 		}
 		catch (IOException e) {
@@ -120,10 +117,8 @@ public class LicAdminController extends NoRepoController {
 			return this.resJson.ok("error");
 		}
 
-		// 重新安装license、解析到系统会话中
 		lc = this.commonOperate.updateLicense(this.verifyEnv);
 
-		// 返回成功信息
 		return this.resJson.ok(!ObjectUtils.isBlank(lc) ? "ok" : "error");
 	}
 

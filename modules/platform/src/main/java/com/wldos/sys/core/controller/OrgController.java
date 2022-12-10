@@ -176,7 +176,6 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 	 */
 	@GetMapping("type")
 	public List<Map<String, Object>> fetchEnumAppType() {
-		// 只有平台侧可以操作、查看系统用户组
 		return (this.isPlatformAdmin(this.getTenantId()) ?
 					Arrays.stream(OrgTypeEnum.values())
 					: Arrays.stream(OrgTypeEnum.values()).filter(v -> !v.getValue().equals(Constants.ENUM_TYPE_ORG_PLAT))).map(item -> {

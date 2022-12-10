@@ -30,24 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * OAuth2.0相关控制器。
- * 第一步，跳转到OAuth服务提供商在线服务获取授权码(authorization_code)，作为一个凭据执行后续操作。
- * https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
- * 执行上面的请求后，会返回code，并追加到重定向uri后面，同时保留请求时附带的state随机码密文：
- * e.g. https://www.wldos.com/user/login?code=041Uk8Ga13Vr4E0iI1Ha1BKdX53Uk8Gy&state=133255
- *
- * 第二步，重定向uri是客户端的服务端提供的异步监听服务，它在后端用返回的code作为进一步请求OAuth服务提供商的访问token的凭据，同时验证附带的state参数是否和第一步的备份一致，不一致
- * 认为是非法请求（csrf攻击）拒绝访问，一致则继续执行如下的请求，OAuth服务提供商返回访问token给客户端的后端服务作为进一步获取用户信息的token。
- * https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
- *
- * 第三步，调用token是否过期api判断是否需要刷新，若过期执行如下的刷新请求
- * https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN
- *
- * 授权作用域（scope）	接口		接口说明
- * snsapi_base	/sns/auth	检查access_token有效性
- * snsapi_base	/sns/oauth2/access_token	通过 code 换取access_token、refresh_token和已授权scope
- * snsapi_base	/sns/oauth2/refresh_token	刷新或续期access_token使用
- * snsapi_userinfo	/sns/userinfo	获取用户个人信息
- *
  * @author 树悉猿
  * @date 2022/10/13
  * @version 1.0

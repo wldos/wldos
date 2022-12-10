@@ -30,5 +30,4 @@ public class Long2JsonSerializer extends JsonSerializer<Long> {
 			jsonGenerator.writeNumber(value);
 		}
 	}
-
 }

@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * 系统配置初始化service。该类不要继承脚手架里的{@code BaseService}，因为项目启动时需要借助此类加载数据库中的系统环境配置项。
+ * 系统配置初始化service。
  *
  * @author 树悉猿
  * @date 2021/7/13

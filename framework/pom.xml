@@ -21,10 +21,7 @@
 	<packaging>jar</packaging>
 	<name>WLDOS开发框架</name>
 	<description>
-		WLDOS®平台，基于springboot实现的轻量级快速开发框架，SaaS应用架构。默认支持多租户运行模式，同时支持以单租户模式运行。
-		默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构。WLDOS®寓意：世界的，未来的，开放的系统。
-		读音：汉['wo'dao'si]。
-		致力于为云服务应用提供通用的落地方案和最佳实践。为搭建站群、云平台和业务中台提供基础框架。是企业走向数智深蓝的必经之路。
+		WLDOS®开发框架，基于springboot实现的轻量级快速开发框架。WLDOS®寓意：世界的，未来的，开放的系统。读音：汉['wou'da'si]。
 	</description>
 
 	<dependencies>

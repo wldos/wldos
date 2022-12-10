@@ -18,18 +18,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @date 2022/10/21
  * @version 1.0
  */
-@JsonIgnoreProperties(ignoreUnknown = true) // 防止多余未知字段导致的转换异常
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccessTokenEntity {
-	/*
-		{
-		  "access_token": "ACCESS_TOKEN",
-		  "expires_in": 7200,
-		  "refresh_token": "REFRESH_TOKEN",
-		  "openid": "OPENID",
-		  "scope": "SCOPE",
-		  "unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
-		}
-	 */
+
 	@JsonProperty("access_token")
 	private String accessToken;
 	@JsonProperty("expires_in")

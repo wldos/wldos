@@ -8,21 +8,15 @@
 
 package com.wldos.sys.base.enums;
 
-import java.util.Arrays;
-
 /**
- * OAuth服务商类型枚举值。
- *
  * @author 树悉猿
  * @date 2022/10/14
  * @version 1.0
  */
 public enum OAuthTypeEnum {
-	/** 微信 */
+
 	WeChat("微信", "wechat"),
-	/** qq */
 	QQ("QQ", "qq"),
-	/** 微博 */
 	WeiBo("微博", "weibo");
 
 	private final String label;

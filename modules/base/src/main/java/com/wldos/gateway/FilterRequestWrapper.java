@@ -18,22 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * 过滤器专用请求包装类。增加请求头添加能力。
- *
  * @author 树悉猿
  * @date 2021/9/2
  * @version 1.0
  */
 public class FilterRequestWrapper extends HttpServletRequestWrapper {
 
-	/**
-	 * Constructs a request object wrapping the given request.
-	 *
-	 * @param request The request to wrap
-	 *
-	 * @throws IllegalArgumentException
-	 *             if the request is null
-	 */
 	public FilterRequestWrapper(HttpServletRequest request) {
 		super(request);
 	}
@@ -42,21 +32,10 @@ public class FilterRequestWrapper extends HttpServletRequestWrapper {
 
 	private String uriPrefix;
 
-	/**
-	 * 设置前缀后，继承的get方法自动从uri中去掉前缀，方便后端api的前缀设置，controller无需关心
-	 *
-	 * @param uriPrefix 路由uri前缀
-	 */
 	public void setUriPrefix(String uriPrefix) {
 		this.uriPrefix = uriPrefix;
 	}
 
-	/**
-	 * 新增header
-	 *
-	 * @param name 名称
-	 * @param value 值
-	 */
 	public void add(String name, String value) {
 		this.headers.put(name, value);
 	}

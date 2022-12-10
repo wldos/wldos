@@ -20,7 +20,6 @@ public class WoDomainApp {
 
 	private Long appId;
 
-	/** 域的属主，默认是平台自身，后期考虑应用打包出租时租户可开通自己的域，并在其域内批量租用平台上的应用，成为第二运营方 */
 	private Long comId;
 
 	private Long domainId;

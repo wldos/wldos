@@ -26,11 +26,7 @@ public final class AtomicUtils {
 	}
 
 	/**
-	 * 分页场景下的原子计数操作，保证每次计数都从正确的记录数开始
-	 *
-	 * @param currentPage
-	 * @param pageSize
-	 * @return
+	 * 分页场景下的原子计数操作，保证每次计数都从正确记录数开始
 	 */
 	public static AtomicInteger count(int currentPage, int pageSize) {
 
@@ -41,9 +37,6 @@ public final class AtomicUtils {
 
 	/**
 	 * 分页场景下的原子计数操作，保证每次计数都从正确的记录数开始
-	 *
-	 * @param pageQuery
-	 * @return
 	 */
 	public static AtomicInteger count(PageQuery pageQuery) {
 		int currentPage = pageQuery.getCurrent();

@@ -19,24 +19,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * license信息。
- *
  * @author 树悉猿
  * @date 2022/10/06
  * @version 1.0
  */
 public class Lic {
-	/** 许可主域名 */
+
 	private String domain;
-	/** 组织单位名 */
 	private String orgName;
-	/** 产品名称 */
 	private String prodName;
-	/** 产品版本 */
 	private String edition;
-	/** 产品版本号 */
 	private String version;
-	/** 到期时间 */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date expiryTime;
 

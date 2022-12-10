@@ -15,8 +15,6 @@ import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostP
 import org.springframework.stereotype.Component;
 
 /**
- * 启动系统准备。
- *
  * @author 树悉猿
  * @date 2022/2/7
  * @version 1.0

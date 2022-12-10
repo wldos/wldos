@@ -37,16 +37,12 @@ public class PageQuery {
 
 	// 当前页码
 	private int current = 1;
-
 	// 每页条数
 	private int pageSize = 10;
-
 	// 常规查询条件
 	private Map<String, Object> condition;
-
 	// 排序规则
 	private Sort sorter;
-
 	// 表头筛选值集
 	private Map<String, List<Object>> filter;
 
@@ -210,7 +206,7 @@ public class PageQuery {
 
 	/**
 	 * 追加参数
-	 *  @param key 参数key
+	 * @param key 参数key
 	 * @param value 参数值
 	 * @return PageQuery实例引用
 	 */

@@ -22,7 +22,6 @@ public class KTerms {
 
 	private String name;
 
-	/** 分类项别名，同一分类法下不允许重名，分类目录category和标签tag是可以重名的 */
 	private String slug;
 
 	private Long termGroup;

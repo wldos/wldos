@@ -43,9 +43,6 @@ public class WoCompany {
 
 	private String deleteFlag;
 
-	/**
-	 * 乐观锁
-	 */
 	@Version
 	private Integer versions;
 

@@ -21,8 +21,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * 框架基础包装类，用于增强底层实现类，配合CommonJdbcOperate和FreeJdbcTemplate接口可以扩展公共操作，从而在无须改动底层实现类的前提下增强框架能力。
- *
  * @author 树悉猿
  * @date 2021/6/14
  * @version 1.0

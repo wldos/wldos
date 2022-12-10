@@ -13,10 +13,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
-/**
- * 账号关联意味着被绑定的第三方账号可以以登录名的方式直接用来登录，密码和注册时密码相同。这与OAuth2.0社会化登录不同，社会化登录
- * 仅用于提供一种可信凭据，然后重新创建注册用户，是全新的用户。
- */
 @Table
 public class WoAccountAssociation {
 	@Id

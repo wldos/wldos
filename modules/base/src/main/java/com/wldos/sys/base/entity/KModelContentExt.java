@@ -13,9 +13,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
- * 内容扩展属性，即可选属性，表示基于内容模型定义的个性定制字段，用于新建内容时的可选属性和内容信息展示时的动态属性。
- * 基于此模型实现扩展字段的增删改查，即动态表单。
- *
  * @author 树悉猿
  * @date 2021/6/13
  * @version 1.0

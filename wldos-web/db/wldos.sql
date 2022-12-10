@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2022-12-03 21:56:25
+Date: 2022-12-11 02:32:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -45,19 +45,19 @@ CREATE TABLE `k_comments` (
                               `author_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                               `author_ip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                               `content` text COLLATE utf8mb4_unicode_ci,
-                              `karma` int(11) NOT NULL DEFAULT '0' COMMENT '评论业力',
-                              `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '评论审核状态：0待审批、1审批通过、spam垃圾评论、trash回收站',
-                              `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '客户端信息：浏览器、os等',
+                              `karma` int(11) NOT NULL DEFAULT '0' ,
+                              `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                               `comment_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '游客为0',
-                              `create_by` bigint(20) unsigned DEFAULT '0' COMMENT '创建人',
-                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                              `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+                              `create_by` bigint(20) unsigned DEFAULT '0' ,
+                              `create_time` datetime DEFAULT NULL ,
                               `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                              `update_by` bigint(20) unsigned DEFAULT NULL ,
+                              `update_time` datetime DEFAULT NULL ,
                               `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                              `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                              `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `versions` int(10) DEFAULT NULL ,
                               PRIMARY KEY (`id`),
                               KEY `comment_post_ID` (`post_id`),
                               KEY `comment_approved_date_gmt` (`approved`),
@@ -133,8 +133,8 @@ CREATE TABLE `k_links` (
 DROP TABLE IF EXISTS `k_model_content`;
 CREATE TABLE `k_model_content` (
                                    `id` bigint(20) unsigned NOT NULL,
-                                   `content_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '内容名称',
-                                   `content_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '内容编码：文章article、年谱annual、菜谱cook、乐谱music、软件soft、源码source、艺术作品works、视频video、音频audio、图片image',
+                                   `content_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `content_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `k_m_content_code` (`content_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -165,12 +165,12 @@ INSERT INTO `k_model_content` VALUES ('18', '商业谱', 'business');
 DROP TABLE IF EXISTS `k_model_content_ext`;
 CREATE TABLE `k_model_content_ext` (
                                        `id` bigint(20) unsigned NOT NULL,
-                                       `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '元数据key',
-                                       `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '元数据名称',
+                                       `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                                        `meta_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '字段数据类型',
-                                       `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '如果是枚举值等，预置的值集，json格式',
-                                       `content_id` bigint(20) unsigned DEFAULT NULL COMMENT '定制的内容id，类型不同冗余的属性集不同，对应的模板不同',
+                                       `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+                                       `content_id` bigint(20) unsigned DEFAULT NULL ,
                                        PRIMARY KEY (`id`),
                                        UNIQUE KEY `uni_meta_key` (`content_id`,`meta_key`) USING BTREE,
                                        KEY `k_model_content_id` (`content_id`),
@@ -422,7 +422,7 @@ INSERT INTO `k_postmeta` VALUES ('98259930067943435', '98259928771903499', 'cont
 INSERT INTO `k_postmeta` VALUES ('98259930067943436', '98259928771903499', 'cover', '/202112/132146557sdVpsXG.png');
 INSERT INTO `k_postmeta` VALUES ('98259930067943437', '98259928771903499', 'province', '520000');
 INSERT INTO `k_postmeta` VALUES ('98259977446801408', '98259928771903499', 'views', '2');
-INSERT INTO `k_postmeta` VALUES ('98260088260313098', '98260087136239626', 'views', '24');
+INSERT INTO `k_postmeta` VALUES ('98260088260313098', '98260087136239626', 'views', '25');
 INSERT INTO `k_postmeta` VALUES ('98260974055374850', '98259928771903499', 'mainPic2', '/202112/13221121bdSTBXT3.png');
 INSERT INTO `k_postmeta` VALUES ('98260974059569155', '98259928771903499', 'mainPic3', '/202112/132211288imCXfr3.png');
 INSERT INTO `k_postmeta` VALUES ('98260974059569156', '98259928771903499', 'mainPic4', '/202112/13221136296PuOQ8.jpg');
@@ -687,7 +687,7 @@ INSERT INTO `k_postmeta` VALUES ('151376227458531333', '150300613628575749', 'vi
 INSERT INTO `k_postmeta` VALUES ('151380931693428741', '108315676512010250', 'views', '0');
 INSERT INTO `k_postmeta` VALUES ('151453718286090246', '150295498133782530', 'views', '2');
 INSERT INTO `k_postmeta` VALUES ('151800310583181318', '1521175556540514304', 'views', '0');
-INSERT INTO `k_postmeta` VALUES ('151805331987152907', '150301922083651586', 'views', '5');
+INSERT INTO `k_postmeta` VALUES ('151805331987152907', '150301922083651586', 'views', '6');
 INSERT INTO `k_postmeta` VALUES ('157641603813130243', '157641603456614408', 'city', '110100');
 INSERT INTO `k_postmeta` VALUES ('157641603817324553', '157641603456614408', 'subTitle', '技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布技术推广测试信息发布');
 INSERT INTO `k_postmeta` VALUES ('157641603817324554', '157641603456614408', 'privacyLevel', 'public');
@@ -697,7 +697,10 @@ INSERT INTO `k_postmeta` VALUES ('157641603817324557', '157641603456614408', 'ma
 INSERT INTO `k_postmeta` VALUES ('157641603817324558', '157641603456614408', 'ornPrice', '56');
 INSERT INTO `k_postmeta` VALUES ('157641603817324559', '157641603456614408', 'contact', '徐老师');
 INSERT INTO `k_postmeta` VALUES ('157641603821518855', '157641603456614408', 'cover', '/202205/26184817Qcdk9yNO.png');
-INSERT INTO `k_postmeta` VALUES ('157641630618927112', '157641603456614408', 'views', '1');
+INSERT INTO `k_postmeta` VALUES ('157641630618927112', '157641603456614408', 'views', '2');
+INSERT INTO `k_postmeta` VALUES ('229352156213985285', '108321427372556297', 'mainPic2', '/noPic.jpg');
+INSERT INTO `k_postmeta` VALUES ('229352156213985286', '108321427372556297', 'mainPic4', '/noPic.jpg');
+INSERT INTO `k_postmeta` VALUES ('229352156213985287', '108321427372556297', 'mainPic3', '/noPic.jpg');
 INSERT INTO `k_postmeta` VALUES ('1520933243109163018', '1520933242983333892', 'subTitle', '轩辕年谱之凤鸣岐山武王伐纣');
 INSERT INTO `k_postmeta` VALUES ('1520933243113357313', '1520933242983333892', 'province', '130000');
 INSERT INTO `k_postmeta` VALUES ('1520933243117551622', '1520933242983333892', 'city', '130200');
@@ -1006,8 +1009,8 @@ INSERT INTO `k_postmeta` VALUES ('1544401655005102081', '1544401654996713472', '
 INSERT INTO `k_postmeta` VALUES ('1544414732375212035', '1544414732358434826', 'views', '46');
 INSERT INTO `k_postmeta` VALUES ('1544414748170960898', '1544414748162572291', 'views', '40');
 INSERT INTO `k_postmeta` VALUES ('1544422560057966598', '1544422560041189382', 'views', '63');
-INSERT INTO `k_postmeta` VALUES ('1544422567922286600', '1544422567918092296', 'views', '112');
-INSERT INTO `k_postmeta` VALUES ('1544454752880476165', '1544356231896547328', 'views', '215');
+INSERT INTO `k_postmeta` VALUES ('1544422567922286600', '1544422567918092296', 'views', '113');
+INSERT INTO `k_postmeta` VALUES ('1544454752880476165', '1544356231896547328', 'views', '217');
 INSERT INTO `k_postmeta` VALUES ('1545223091378634763', '1545223091294748672', 'mainPic1', '/202109/04000351Tfxqjosp.jpeg');
 INSERT INTO `k_postmeta` VALUES ('1545223091378634764', '1545223091294748672', 'ornPrice', '50');
 INSERT INTO `k_postmeta` VALUES ('1545223091378634765', '1545223091294748672', 'contact', '树悉猿');
@@ -1069,33 +1072,33 @@ DROP TABLE IF EXISTS `k_posts`;
 CREATE TABLE `k_posts` (
                            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                            `post_content` longtext COLLATE utf8mb4_unicode_ci,
-                           `post_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '标题',
-                           `post_excerpt` text COLLATE utf8mb4_unicode_ci COMMENT '摘要',
-                           `post_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '帖子状态：publish已发表、draft草稿、private私密、static静态化、object对象化、inherit继承帖子(附件图片类)',
-                           `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '评论状态，open允许评论、closed禁止评论、user_only注册用户可评',
-                           `post_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '设置后修改帖子需要输入密码',
-                           `post_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '别名，用于生成超链接',
-                           `ping_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'pingback状态：open打开、closed关闭',
-                           `to_ping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '要ping的url',
-                           `pinged` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '被pingback的历史url记录',
-                           `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '上级帖子id，0表示没有上级，附件的上级是帖子，篇章的上级是文集',
-                           `post_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '帖子展现类型：帖子post、页面page、帖子图片或附件attachment、作品集book、作品集的篇章：chapter',
-                           `content_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '内容类型：article文章、annual年谱、class教程，同K_model_content内容编码',
-                           `domain_id` bigint(20) unsigned DEFAULT NULL COMMENT '域id，内容从哪个域创建的',
-                           `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '公司id(租户id)',
-                           `post_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '帖子内容mime类型：图片image/xxx、音频audio/xxx、视频video/xxx、应用文件application/xxx、文本类text/xxx',
-                           `comment_count` int(10) NOT NULL DEFAULT '0' COMMENT '评论数',
-                           `star_count` int(10) DEFAULT '0' COMMENT '关注数、收藏数',
-                           `like_count` int(10) DEFAULT '0' COMMENT '点赞数、喜欢数',
-                           `views` int(10) unsigned DEFAULT NULL COMMENT '查看数：每满一定次数更新一次，并非实时更新，实时记录见postmeta',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `post_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `post_excerpt` text COLLATE utf8mb4_unicode_ci ,
+                           `post_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `post_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `post_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `ping_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `to_ping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `pinged` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+                           `post_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `content_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
+                           `com_id` bigint(20) unsigned DEFAULT NULL ,
+                           `post_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `comment_count` int(10) NOT NULL DEFAULT '0' ,
+                           `star_count` int(10) DEFAULT '0' ,
+                           `like_count` int(10) DEFAULT '0' ,
+                           `views` int(10) unsigned DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
                            `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) unsigned DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) unsigned DEFAULT NULL ,
                            PRIMARY KEY (`id`),
                            KEY `post_name` (`post_name`(191)),
                            KEY `post_parent` (`parent_id`),
@@ -1214,8 +1217,8 @@ INSERT INTO `k_posts` VALUES ('100837501867573253', '刚开始我是在脑海里
 INSERT INTO `k_posts` VALUES ('100849044428603392', '<p>这是跨域隔离的一篇文章。</p>', '测试跨域隔离', null, 'inherit', null, null, '', null, null, null, '100837501867573253', 'chapter', 'annual', '93037725495246854', '0', null, '0', '0', '0', null, '1', '2021-12-21 01:35:56', '192.168.1.23', '1', '2021-12-21 01:37:02', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('102084367846391813', null, 'file', null, 'inherit', null, null, null, null, null, null, '95361647884550155', null, 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '100', '2021-12-24 11:24:40', '192.168.1.23', '100', '2021-12-24 11:24:40', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('108315676512010250', '首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是“业务孤岛”，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设“业务中台”，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是“业务中台”了，这就是多域系统的作用。\n\nwldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。\n\n如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。', '测试作品新增', null, 'publish', null, null, 'ceshizuopinxinzeng', null, null, null, '0', 'book', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:05:40', '192.168.1.23', '1', '2022-01-10 16:05:40', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_posts` VALUES ('108321427372556297', '首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是“业务孤岛”，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设“业务中台”，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是“业务中台”了，这就是多域系统的作用。\n\nwldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。\n\n如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。', '测试作品新增', null, 'publish', null, null, 'ceshizuopinxinzeng', null, null, null, '0', 'book', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:28:31', '192.168.1.23', '1', '2022-01-10 16:28:31', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_posts` VALUES ('108322899132858375', '<p><img src=\"http://192.168.1.23:8088/store/202201/22131730EnjO34yN.png\" /></p>', '2022-01-10 16:34:21', null, 'inherit', null, null, '2022-01-10 16:34:21', null, null, null, '108321427372556297', 'chapter', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:34:22', '192.168.1.23', '1', '2022-01-22 13:17:53', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_posts` VALUES ('108321427372556297', '首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是“业务孤岛”，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设“业务中台”，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是“业务中台”了，这就是多域系统的作用。\n\nwldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。\n\n如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。', '测试作品新增', null, 'publish', null, null, '', null, null, null, '0', 'book', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:28:31', '192.168.1.23', '1', '2022-12-10 16:01:25', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_posts` VALUES ('108322899132858375', '<p><img src=\"http://192.168.1.23:8088/store/202201/22131730EnjO34yN.png\" /></p>', '测试tag是否正常显式的用例', null, 'publish', null, null, 'ceshitagshifouzhengchangxianshideyongli', null, null, null, '108321427372556297', 'chapter', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:34:22', '192.168.1.23', '1', '2022-12-10 16:10:26', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('108324277305655298', '<p>首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是&ldquo;业务孤岛&rdquo;，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设&ldquo;业务中台&rdquo;，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是&ldquo;业务中台&rdquo;了，这就是多域系统的作用。</p>\n<p>wldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。</p>\n<p>如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。</p>', '多域的作用是给云服务商提供', null, 'inherit', null, null, 'duoyudezuoyongshijiyunfuwushangtigong', null, null, null, '108315676512010250', 'chapter', 'article', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2022-01-10 16:39:50', '192.168.1.23', '1', '2022-01-10 16:41:03', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('108325789582934025', '首先要明白多域的作用是给云服务商提供的，企业在多种领域存在业务，不同领域的业务上云在线运营的时候肯定不能混在一起，传统解决方案是不同业务部门搭建各自的业务系统，形成了众多业务烟囱系统，这就是“业务孤岛”，非常不利于企业的业务资源共享，比如客户、供应商资源。为了共享企业资源实现共赢，不少企业开始考虑建设“业务中台”，现实是整合已经形成业务孤岛的烟囱系统非一朝一夕之功，有一种系统可以提供分领域的运营方式，企业各方可以在这种系统上共建互惠，各自业务相对独立又互通有无，时间久了，自然就是“业务中台”了，这就是多域系统的作用。\n\nwldos平台支持多域，而且是独立域名的多域隔离，由于涉及到域名解析和静态资源服务器的转发规则支持，如果想以云服务的形式给大量用户(或租户)应用这套功能，需要服务器搭建专门的网络服务支持。\n\n如果只是想用一个网站实例部署多个域名，可用apache或nginx配置多份虚拟主机规则，然后在系统后台-领域管理-多域管理下配置上需要的每个独立域名即可，这样，就拥有了一套Java系统支撑的多域站群。', '测试信息发布', null, 'publish', null, null, 'ceshixinxifabu', null, null, null, '0', 'info', 'article', '1533544727530094592', '0', null, '0', '30', '0', '40', '1', '2022-01-10 16:45:51', '192.168.1.23', '1', '2022-01-10 16:45:51', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_posts` VALUES ('112622016239681542', null, 'file', null, 'inherit', null, null, null, null, null, null, '108322899132858375', null, 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '1', '2022-01-22 13:17:31', '192.168.1.23', '1', '2022-01-22 13:17:31', '192.168.1.23', 'normal', '1');
@@ -1427,10 +1430,10 @@ INSERT INTO `k_posts` VALUES ('1547701778556567556', '<div class=\"para\" data-p
 DROP TABLE IF EXISTS `k_stars`;
 CREATE TABLE `k_stars` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `object_id` bigint(20) unsigned NOT NULL COMMENT '被点赞、关注对象id：帖子、产品或评论等等',
-                           `user_id` bigint(20) unsigned NOT NULL COMMENT '操作人',
-                           `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '是否关注、收藏：1真、0假',
-                           `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '是否点赞、喜欢：1真、0假',
+                           `object_id` bigint(20) unsigned NOT NULL ,
+                           `user_id` bigint(20) unsigned NOT NULL ,
+                           `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
+                           `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `star_obj_user` (`object_id`,`user_id`) USING BTREE,
                            KEY `star_obj_id` (`object_id`) USING BTREE,
@@ -1755,6 +1758,8 @@ INSERT INTO `k_term_object` VALUES ('157641603666329600', '157641603456614408', 
 INSERT INTO `k_term_object` VALUES ('157641603796353025', '157641603456614408', '71290499521757194', '0');
 INSERT INTO `k_term_object` VALUES ('157641603796353026', '157641603456614408', '71289715400818698', '0');
 INSERT INTO `k_term_object` VALUES ('215965624690196484', '1521202243919593483', '1', '0');
+INSERT INTO `k_term_object` VALUES ('229352156809576456', '108321427372556297', '229352156687941642', '0');
+INSERT INTO `k_term_object` VALUES ('229352398267269129', '108322899132858375', '229352398221131781', '0');
 INSERT INTO `k_term_object` VALUES ('1520933243079802880', '32', '1520479861269512197', '0');
 INSERT INTO `k_term_object` VALUES ('1521140839728463882', '33', '1520479861269512197', '0');
 INSERT INTO `k_term_object` VALUES ('1521150609634017285', '34', '1520480022150430731', '0');
@@ -1822,11 +1827,11 @@ DROP TABLE IF EXISTS `k_term_type`;
 CREATE TABLE `k_term_type` (
                                `id` bigint(20) unsigned NOT NULL,
                                `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类系统、类别，每个类别关联一组分类项，category目录、tag标签、route路由，与content_id组合表示某种内容格式的分类法',
-                               `content_id` bigint(20) DEFAULT NULL COMMENT '归属的行业门类',
+                               `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL ,
+                               `content_id` bigint(20) DEFAULT NULL ,
                                `description` longtext COLLATE utf8mb4_unicode_ci,
                                `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '索引对象数',
+                               `count` bigint(20) unsigned NOT NULL DEFAULT '0' ,
                                PRIMARY KEY (`id`),
                                UNIQUE KEY `term_id_class` (`term_id`,`class_type`,`content_id`) USING BTREE,
                                KEY `class_type` (`class_type`) USING BTREE,
@@ -1841,12 +1846,12 @@ INSERT INTO `k_term_type` VALUES ('1', '1', 'category', '1', '', '0', '1119');
 INSERT INTO `k_term_type` VALUES ('2', '2', 'nav_menu', '1', '', '0', '5');
 INSERT INTO `k_term_type` VALUES ('3', '3', 'nav_menu', '1', '', '0', '4');
 INSERT INTO `k_term_type` VALUES ('4', '4', 'category', '2', '年谱目录分类', '0', '0');
-INSERT INTO `k_term_type` VALUES ('71289715400818698', '71289715400818698', 'tag', '1', 'wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。', '0', '15');
+INSERT INTO `k_term_type` VALUES ('71289715400818698', '71289715400818698', 'tag', '1', 'wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。wldos多应用支撑平台。', '0', '17');
 INSERT INTO `k_term_type` VALUES ('71290335121817601', '71290335121817601', 'tag', '2', '人物年谱', '0', '18');
 INSERT INTO `k_term_type` VALUES ('71290499521757194', '71290499521757194', 'tag', '2', '历史年谱', '0', '19');
 INSERT INTO `k_term_type` VALUES ('71290587878965250', '71290587878965250', 'tag', '2', '学术年谱', '0', '22');
 INSERT INTO `k_term_type` VALUES ('71291679253643267', '71291679253643267', 'tag', '2', '行业年谱', '0', '17');
-INSERT INTO `k_term_type` VALUES ('71291808291405829', '71291808291405829', 'tag', '1', null, '0', '16');
+INSERT INTO `k_term_type` VALUES ('71291808291405829', '71291808291405829', 'tag', '1', null, '0', '18');
 INSERT INTO `k_term_type` VALUES ('71291917238452229', '71291917238452229', 'tag', '1', null, '0', '18');
 INSERT INTO `k_term_type` VALUES ('100650318774845450', '100650318774845450', 'tag', '1', null, '0', '3');
 INSERT INTO `k_term_type` VALUES ('100676032286867466', '100676032286867466', 'tag', '1', null, '0', '1');
@@ -1898,6 +1903,8 @@ INSERT INTO `k_term_type` VALUES ('157596477166370821', '157596477166370821', 'c
 INSERT INTO `k_term_type` VALUES ('157613316802002952', '157613316802002952', 'category', '6', null, '1522025100346048522', '0');
 INSERT INTO `k_term_type` VALUES ('157613846664232962', '157613846664232962', 'category', '6', null, '1522025100346048522', '0');
 INSERT INTO `k_term_type` VALUES ('157640817825726464', '157640817825726464', 'category', '17', null, '1522028131523411968', '1');
+INSERT INTO `k_term_type` VALUES ('229352156687941642', '229352156687941642', 'tag', '1', null, '0', '1');
+INSERT INTO `k_term_type` VALUES ('229352398221131781', '229352398221131781', 'tag', '1', null, '0', '1');
 INSERT INTO `k_term_type` VALUES ('1520479861269512197', '1520479861269512197', 'category', '2', null, '4', '35');
 INSERT INTO `k_term_type` VALUES ('1520480022150430731', '1520480022150430731', 'category', '2', null, '4', '17');
 INSERT INTO `k_term_type` VALUES ('1520481497194872837', '1520481497194872837', 'category', '6', null, '0', '0');
@@ -1977,19 +1984,19 @@ DROP TABLE IF EXISTS `k_terms`;
 CREATE TABLE `k_terms` (
                            `id` bigint(20) unsigned NOT NULL,
                            `name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '别名，同一分类法下不允许重名',
+                           `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                            `term_group` bigint(10) NOT NULL DEFAULT '0',
-                           `info_flag` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' COMMENT '是否推送信息发布门户',
-                           `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' COMMENT '是否有效：0无效、1有效',
-                           `display_order` int(10) DEFAULT NULL COMMENT '排序',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `info_flag` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' ,
+                           `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' ,
+                           `display_order` int(10) DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
                            `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `slug` (`slug`(191)) USING BTREE,
                            KEY `name` (`name`(191))
@@ -2058,6 +2065,8 @@ INSERT INTO `k_terms` VALUES ('125294558846828551', '测试', 'ceshi', '0', '0',
 INSERT INTO `k_terms` VALUES ('157613316802002952', '测试书籍', 'cssj', '0', '1', '1', '1', '1', '2022-05-26 16:56:53', '192.168.1.23', '1', '2022-05-26 16:56:53', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_terms` VALUES ('157613846664232962', '历史书籍', 'lssj', '0', '1', '1', '2', '1', '2022-05-26 16:58:59', '192.168.1.23', '1', '2022-05-26 16:58:59', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_terms` VALUES ('157640817825726464', '测试节点', 'lssj1', '0', '1', '1', '1', '1', '2022-05-26 18:46:10', '192.168.1.23', '1', '2022-05-26 18:46:10', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_terms` VALUES ('229352156687941642', '测试tag', 'ceshitag', '0', '1', '1', null, null, null, null, null, null, null, null, null);
+INSERT INTO `k_terms` VALUES ('229352398221131781', 'tag', 'tag', '0', '1', '1', null, null, null, null, null, null, null, null, null);
 INSERT INTO `k_terms` VALUES ('1520479861269512197', '人物年谱', 'rwnp', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
 INSERT INTO `k_terms` VALUES ('1520480022150430731', '历史年谱', 'lsnp', '0', '0', '1', null, null, null, null, null, null, null, 'normal', '1');
 INSERT INTO `k_terms` VALUES ('1520481497194872837', '菜谱', '满汉全席', '0', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
@@ -2118,30 +2127,30 @@ INSERT INTO `k_terms` VALUES ('1522031215049883657', '网红打卡', 'whdk', '0'
 DROP TABLE IF EXISTS `np_book`;
 CREATE TABLE `np_book` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `title` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '年谱名称',
-                           `sub_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '子描述、副标题',
-                           `cover` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '封面图在文件服务的真实相对路径',
-                           `first_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '谱主姓氏',
-                           `last_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '谱主名字',
-                           `start_year` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '起始年份',
-                           `description` varchar(800) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '简介',
-                           `writer` bigint(20) unsigned DEFAULT NULL COMMENT '编纂人',
-                           `contact` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '联系人称呼',
-                           `phone` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '联系人电话',
-                           `privacy_level` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '隐私级别：查看码可见token、打赏可见reward、公开public',
-                           `prov` bigint(20) DEFAULT NULL COMMENT '省分id',
-                           `city` bigint(20) DEFAULT NULL COMMENT '地市',
-                           `county` bigint(20) DEFAULT NULL COMMENT '区县',
-                           `price` decimal(10,2) DEFAULT NULL COMMENT '售价',
-                           `book_status` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '年谱状态：publish已发布、draft草稿',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `title` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `sub_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `cover` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `first_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `last_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `start_year` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `description` varchar(800) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `writer` bigint(20) unsigned DEFAULT NULL ,
+                           `contact` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `phone` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `privacy_level` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `prov` bigint(20) DEFAULT NULL ,
+                           `city` bigint(20) DEFAULT NULL ,
+                           `county` bigint(20) DEFAULT NULL ,
+                           `price` decimal(10,2) DEFAULT NULL ,
+                           `book_status` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
                            `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -2156,19 +2165,19 @@ INSERT INTO `np_book` VALUES ('102340230400', '轩辕年谱', null, null, '轩�
 DROP TABLE IF EXISTS `np_chapter`;
 CREATE TABLE `np_chapter` (
                               `id` bigint(20) unsigned NOT NULL,
-                              `book_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属年谱',
-                              `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '章节标题',
-                              `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '章节内容',
-                              `display_order` int(10) unsigned DEFAULT NULL COMMENT '章节排序',
-                              `chapter_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '章节状态：publish已发布、draft草稿',
-                              `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                              `book_id` bigint(20) unsigned DEFAULT NULL ,
+                              `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+                              `display_order` int(10) unsigned DEFAULT NULL ,
+                              `chapter_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `create_by` bigint(20) unsigned DEFAULT NULL ,
+                              `create_time` datetime DEFAULT NULL ,
                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                              `update_by` bigint(20) unsigned DEFAULT NULL ,
+                              `update_time` datetime DEFAULT NULL ,
                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                              `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `versions` int(10) DEFAULT NULL ,
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2182,18 +2191,18 @@ CREATE TABLE `np_chapter` (
 DROP TABLE IF EXISTS `np_hold`;
 CREATE TABLE `np_hold` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `book_id` bigint(20) unsigned DEFAULT NULL COMMENT '年谱id',
-                           `expire_time` datetime DEFAULT NULL COMMENT '过期时间',
-                           `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '购买人',
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `book_id` bigint(20) unsigned DEFAULT NULL ,
+                           `expire_time` datetime DEFAULT NULL ,
+                           `user_id` bigint(20) unsigned DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2207,20 +2216,20 @@ CREATE TABLE `np_hold` (
 DROP TABLE IF EXISTS `np_order`;
 CREATE TABLE `np_order` (
                             `id` bigint(20) NOT NULL,
-                            `book_id` bigint(20) DEFAULT NULL COMMENT '订单关联年谱id',
-                            `amount` decimal(10,2) DEFAULT NULL COMMENT '订单金额，单位：元',
-                            `user_id` bigint(20) DEFAULT NULL COMMENT '下单人',
-                            `order_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '下单类型：reward打赏、purchase购买',
-                            `pay_status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '支付状态：0未付款、1已付款',
-                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                            `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `book_id` bigint(20) DEFAULT NULL ,
+                            `amount` decimal(10,2) DEFAULT NULL ,
+                            `user_id` bigint(20) DEFAULT NULL ,
+                            `order_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `pay_status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `create_by` bigint(20) unsigned DEFAULT NULL ,
+                            `create_time` datetime DEFAULT NULL ,
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                            `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `update_by` bigint(20) unsigned DEFAULT NULL ,
+                            `update_time` datetime DEFAULT NULL ,
                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                            `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                            `versions` int(10) DEFAULT NULL ,
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2234,19 +2243,19 @@ CREATE TABLE `np_order` (
 DROP TABLE IF EXISTS `np_reward`;
 CREATE TABLE `np_reward` (
                              `id` bigint(20) unsigned NOT NULL,
-                             `book_id` bigint(20) DEFAULT NULL COMMENT '打赏标的物id，比如书',
-                             `start_reward` int(5) unsigned DEFAULT NULL COMMENT '起始打赏金额，金额元，正整数',
-                             `reward_audit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '打赏是否需要审核：0不需要、1需要',
-                             `reward_validity` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '打赏时效：包月month、包季quarter、包年year、永久forever',
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                             `book_id` bigint(20) DEFAULT NULL ,
+                             `start_reward` int(5) unsigned DEFAULT NULL ,
+                             `reward_audit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `reward_validity` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                             `create_time` datetime DEFAULT NULL ,
                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                             `update_time` datetime DEFAULT NULL ,
                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `versions` int(10) DEFAULT NULL ,
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -2259,21 +2268,21 @@ CREATE TABLE `np_reward` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_account_association`;
 CREATE TABLE `wo_account_association` (
-                                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '账号关系表，主键不参与业务关联',
-                                          `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '关联后创建的账号id',
-                                          `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '第三方关联账号,手机号也属于第三方账号',
-                                          `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '三方域（比如QQ号的域：qq.com）,相同的域下与主账号的关联是一对一的，比如两个qq号不能绑定同一个账号',
-                                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
+                                          `user_id` bigint(20) unsigned DEFAULT NULL ,
+                                          `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `create_time` datetime DEFAULT NULL ,
                                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                          `update_time` datetime DEFAULT NULL ,
                                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `versions` int(10) DEFAULT NULL ,
                                           PRIMARY KEY (`id`),
                                           KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
 
 -- ----------------------------
 -- Records of wo_account_association
@@ -2284,28 +2293,28 @@ CREATE TABLE `wo_account_association` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_app`;
 CREATE TABLE `wo_app` (
-                          `id` bigint(20) unsigned NOT NULL COMMENT '应用id',
-                          `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用名称',
-                          `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用秘钥',
-                          `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用编码：必须支持URL解析，最长5位，将作为请求路径基础path',
-                          `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'APP说明',
-                          `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用类型：platform平台应用不允许租户预订，app应用级程序可以被租户选择',
-                          `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '归属公司',
-                          `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                          `id` bigint(20) unsigned NOT NULL ,
+                          `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `com_id` bigint(20) unsigned DEFAULT NULL ,
+                          `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                          `create_time` datetime DEFAULT NULL ,
                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                          `update_time` datetime DEFAULT NULL ,
                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `versions` int(10) DEFAULT NULL ,
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `app_code` (`app_code`),
                           KEY `app_type` (`app_type`),
                           KEY `app_com_id` (`com_id`),
                           KEY `app_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='应用定义表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
 
 -- ----------------------------
 -- Records of wo_app
@@ -2331,29 +2340,29 @@ INSERT INTO `wo_app` VALUES ('1533901932104171527', '文档', 'wldos-doc', 'doc'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_architecture`;
 CREATE TABLE `wo_architecture` (
-                                   `id` bigint(20) unsigned NOT NULL COMMENT '体系结构id',
-                                   `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '体系 结构编码',
-                                   `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '体系结构类型名称：组织架构、团队、群组、圈子',
-                                   `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '描述',
-                                   `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
-                                   `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级体系结构',
-                                   `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的展示顺序',
-                                   `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                   `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                                   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                   `id` bigint(20) unsigned NOT NULL ,
+                                   `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `com_id` bigint(20) unsigned DEFAULT NULL ,
+                                   `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                                   `display_order` int(10) DEFAULT NULL ,
+                                   `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                   `create_time` datetime DEFAULT NULL ,
                                    `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                   `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                   `update_by` bigint(20) unsigned DEFAULT NULL ,
                                    `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                   `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                   `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                   `update_time` datetime DEFAULT NULL ,
+                                   `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                   `versions` int(10) DEFAULT NULL ,
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `un_com_arch` (`arch_code`,`com_id`),
                                    KEY `arch_code` (`arch_code`),
                                    KEY `arch_com_id` (`com_id`),
                                    KEY `arch_parent_id` (`parent_id`),
                                    KEY `arch_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='体系结构定义表（体系类型定义）：同一个公司，同一个体系结构内只能有一套组织机构，即一棵组织树，比如一套人事组织，一套工会，体系结构定义了某类组织的结构，如人事组织是由机构、部门、岗位和下面人员构成的，再比如群组一般由群主、管理员、组员构成。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_architecture
@@ -2371,26 +2380,26 @@ INSERT INTO `wo_architecture` VALUES ('1529501287100104708', 'finance', '金融�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_auth_role`;
 CREATE TABLE `wo_auth_role` (
-                                `id` bigint(20) unsigned NOT NULL COMMENT '权限id',
-                                `role_id` bigint(20) unsigned DEFAULT NULL COMMENT '拥有者id：可以为角色、组织或用户',
-                                `resource_id` bigint(20) unsigned DEFAULT NULL COMMENT '涉及资源',
-                                `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属应用',
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                                `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                `id` bigint(20) unsigned NOT NULL ,
+                                `role_id` bigint(20) unsigned DEFAULT NULL ,
+                                `resource_id` bigint(20) unsigned DEFAULT NULL ,
+                                `app_id` bigint(20) unsigned DEFAULT NULL ,
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                `create_time` datetime DEFAULT NULL ,
                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                                `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                `update_time` datetime DEFAULT NULL ,
                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                `versions` int(10) DEFAULT NULL ,
                                 PRIMARY KEY (`id`),
                                 KEY `auth_role_id` (`role_id`),
                                 KEY `auth_res_id` (`resource_id`),
                                 KEY `auth_app_id` (`app_id`),
                                 KEY `auth_is_valid_del` (`is_valid`,`delete_flag`),
                                 KEY `auth_role_res_app` (`role_id`,`resource_id`,`app_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限定义表：定义组织机构下、角色或用户与资源的关系。权限所有者可以是若干个指定的用户、可以是若干个指定的组织机构、还可以';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_auth_role
@@ -2574,25 +2583,25 @@ INSERT INTO `wo_auth_role` VALUES ('220687323792850954', '1509213016482824194', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_com_user`;
 CREATE TABLE `wo_com_user` (
-                               `id` bigint(20) unsigned NOT NULL COMMENT '用户公司关系id',
-                               `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '用户id',
-                               `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
-                               `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否主企业：1是0否',
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `user_id` bigint(20) unsigned DEFAULT NULL ,
+                               `com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_time` datetime DEFAULT NULL ,
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `update_time` datetime DEFAULT NULL ,
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `versions` int(10) DEFAULT NULL ,
                                PRIMARY KEY (`id`),
                                KEY `com_user_id` (`user_id`),
                                KEY `com_id` (`com_id`),
                                KEY `com_is_main` (`is_main`),
                                KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='一个用户可以拥有或者归属多个公司，但同一时刻只能有一个主企业。在一个公司可以拥有多个角色，可以分属一个公司内多个体系结构下的组织。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_com_user
@@ -2609,26 +2618,26 @@ INSERT INTO `wo_com_user` VALUES ('92829651731922951', '92829405966680072', '150
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_company`;
 CREATE TABLE `wo_company` (
-                              `id` bigint(20) unsigned NOT NULL COMMENT '公司id，顶级根节点为系统保留节点00000000，所有租户在其下设置',
-                              `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '公司编码',
-                              `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '公司名称',
-                              `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '公司描述',
-                              `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级公司',
-                              `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的排序',
-                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                              `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                              `id` bigint(20) unsigned NOT NULL ,
+                              `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                              `display_order` int(10) DEFAULT NULL ,
+                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `create_by` bigint(20) unsigned DEFAULT NULL ,
+                              `create_time` datetime DEFAULT NULL ,
                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                              `update_by` bigint(20) unsigned DEFAULT NULL ,
+                              `update_time` datetime DEFAULT NULL ,
                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                              `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                              `versions` int(10) DEFAULT NULL ,
                               PRIMARY KEY (`id`),
                               UNIQUE KEY `un_com_code` (`com_code`),
                               KEY `com_parent_id` (`parent_id`),
                               KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运营公司定义表：在云平台上使用容器化技术实现与多租户等效的行为表现，每个公司都有完整的应用管理和用户管理，其中顶层管理可';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_company
@@ -2644,38 +2653,38 @@ INSERT INTO `wo_company` VALUES ('1508972831958548480', 'babala100', '给你未�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_domain`;
 CREATE TABLE `wo_domain` (
-                             `id` bigint(20) unsigned NOT NULL COMMENT '站点id',
-                             `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '归属公司id',
-                             `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '站点域名: 如163.com',
-                             `second_domain` varchar(255) DEFAULT NULL COMMENT '专属二级域名，用于无一级域名时识别租户身份',
-                             `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '站点名称: 如网易',
-                             `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主页地址',
-                             `site_logo` varchar(50) DEFAULT NULL COMMENT '网站logo相对路径',
-                             `site_title` varchar(255) DEFAULT NULL COMMENT '网站标题，用于seo',
-                             `site_keyword` varchar(500) DEFAULT NULL COMMENT '网站关键词，用于seo',
-                             `site_description` varchar(500) DEFAULT NULL COMMENT '网站描述，用于seo',
-                             `slogan` varchar(100) DEFAULT NULL COMMENT '域名品牌口号，用于登陆窗口或其他比较醒目的地方',
-                             `foot` text COMMENT '底部信息，支持自定义html',
-                             `flink` text COMMENT '友情链接，支持html',
-                             `copy` text COMMENT '底部版权信息',
-                             `parent_id` bigint(20) DEFAULT NULL COMMENT '父级站点：顶级为0',
-                             `display_order` int(10) DEFAULT NULL COMMENT '在父级站点下的排序',
-                             `cname_domain` varchar(255) DEFAULT NULL COMMENT 'cname域名是通过cname解析到主域名的授权辅助域名，逗号间隔',
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                             `id` bigint(20) unsigned NOT NULL ,
+                             `com_id` bigint(20) unsigned DEFAULT NULL ,
+                             `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `second_domain` varchar(255) DEFAULT NULL ,
+                             `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `site_logo` varchar(50) DEFAULT NULL ,
+                             `site_title` varchar(255) DEFAULT NULL ,
+                             `site_keyword` varchar(500) DEFAULT NULL ,
+                             `site_description` varchar(500) DEFAULT NULL ,
+                             `slogan` varchar(100) DEFAULT NULL ,
+                             `foot` text ,
+                             `flink` text ,
+                             `copy` text ,
+                             `parent_id` bigint(20) DEFAULT NULL ,
+                             `display_order` int(10) DEFAULT NULL ,
+                             `cname_domain` varchar(255) DEFAULT NULL ,
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                             `create_time` datetime DEFAULT NULL ,
                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                             `update_time` datetime DEFAULT NULL ,
                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `versions` int(10) DEFAULT NULL ,
                              PRIMARY KEY (`id`),
                              UNIQUE KEY `uni_idx_site_domain` (`site_domain`),
                              UNIQUE KEY `uni_idx_sec_domain` (`second_domain`) USING BTREE,
                              KEY `domain_com_id` (`com_id`),
                              KEY `dom_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定义租户的站点或者域信息，域名、网址等信息，一个租户可以开通多个站点（一个顶级域或多个顶级域），可以配置不同站点上呈现的';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_domain
@@ -2695,18 +2704,18 @@ INSERT INTO `wo_domain` VALUES ('1534253403467333638', '0', 'shuxiyuan.com', 'sh
 DROP TABLE IF EXISTS `wo_domain_app`;
 CREATE TABLE `wo_domain_app` (
                                  `id` bigint(21) unsigned NOT NULL,
-                                 `app_id` bigint(21) unsigned DEFAULT NULL COMMENT '应用id',
-                                 `domain_id` bigint(21) DEFAULT NULL COMMENT '域id，一个公司可以拥有多个域',
-                                 `com_id` bigint(21) unsigned DEFAULT NULL COMMENT '公司id',
-                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                 `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                                 `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                 `app_id` bigint(21) unsigned DEFAULT NULL ,
+                                 `domain_id` bigint(21) DEFAULT NULL ,
+                                 `com_id` bigint(21) unsigned DEFAULT NULL ,
+                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                 `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                 `create_time` datetime DEFAULT NULL ,
                                  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                 `update_time` datetime DEFAULT NULL ,
                                  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                 `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                 `versions` int(10) DEFAULT NULL ,
                                  PRIMARY KEY (`id`),
                                  KEY `dom_app_id` (`app_id`),
                                  KEY `domain_id` (`domain_id`),
@@ -2785,21 +2794,21 @@ INSERT INTO `wo_domain_app` VALUES ('1546146354371936260', '1504619730199822347'
 DROP TABLE IF EXISTS `wo_domain_resource`;
 CREATE TABLE `wo_domain_resource` (
                                       `id` bigint(20) NOT NULL,
-                                      `module_name` varchar(50) NOT NULL DEFAULT 'static' COMMENT '组件名（模板名），作为多域环境下前端基于某路由定位组件的依据，静态模板路由默认为“static”仅作域下的资源项，比如首页，不同站点需要不同的模板展示不同的数据、业务和行为，用前端的定制解决多域业务的复杂性，从而降低后端系统的复杂性',
-                                      `resource_id` bigint(20) unsigned NOT NULL COMMENT '资源id',
-                                      `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '应用id',
-                                      `term_type_id` bigint(20) DEFAULT '0' COMMENT '该资源关联的分类法类型，一般是菜单类分类法类型，这种分类法父级是正常的业务分类，业务分类可能还包含子业务分类，关联后菜单的展示数据取决于关联的分类及其子分类，遵循分类法规则，有子不删',
-                                      `domain_id` bigint(20) unsigned NOT NULL COMMENT '域id，用于确定路由、资源、组件的属主关联关系',
-                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注说明',
-                                      `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                      `module_name` varchar(50) NOT NULL DEFAULT 'static' ,
+                                      `resource_id` bigint(20) unsigned NOT NULL ,
+                                      `app_id` bigint(20) unsigned DEFAULT NULL ,
+                                      `term_type_id` bigint(20) DEFAULT '0' ,
+                                      `domain_id` bigint(20) unsigned NOT NULL ,
+                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                      `create_by` bigint(20) unsigned DEFAULT NULL ,
                                       `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                      `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                      `create_time` datetime DEFAULT NULL ,
+                                      `update_by` bigint(20) unsigned DEFAULT NULL ,
                                       `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                      `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                      `versions` int(10) unsigned DEFAULT NULL COMMENT '乐观锁',
+                                      `update_time` datetime DEFAULT NULL ,
+                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                      `versions` int(10) unsigned DEFAULT NULL ,
                                       PRIMARY KEY (`id`),
                                       UNIQUE KEY `dom_res_route` (`domain_id`,`resource_id`) USING BTREE,
                                       KEY `dom_res_valid` (`is_valid`,`delete_flag`),
@@ -3079,18 +3088,18 @@ INSERT INTO `wo_domain_resource` VALUES ('1544340805720391680', 'static', '15443
 DROP TABLE IF EXISTS `wo_file`;
 CREATE TABLE `wo_file` (
                            `id` bigint(20) unsigned NOT NULL,
-                           `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件名称',
-                           `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件物理存储路径名',
-                           `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件mime类型',
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`),
                            KEY `file_is_valid_del` (`is_valid`,`delete_flag`),
                            KEY `file_mime_type` (`mime_type`)
@@ -3487,19 +3496,19 @@ INSERT INTO `wo_file` VALUES ('1547701709300219911', 'bg_corner_tr.png', '/20210
 DROP TABLE IF EXISTS `wo_mail`;
 CREATE TABLE `wo_mail` (
                            `id` bigint(20) NOT NULL,
-                           `from_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '发件邮箱',
-                           `to_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '收件邮箱',
-                           `content` text COLLATE utf8mb4_unicode_ci COMMENT '内容',
-                           `status` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '发送状态：0失败，1成功',
-                           `result` text COLLATE utf8mb4_unicode_ci COMMENT '返回结果信息',
-                           `create_by` bigint(20) unsigned DEFAULT '0' COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `from_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `to_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `content` text COLLATE utf8mb4_unicode_ci ,
+                           `status` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `result` text COLLATE utf8mb4_unicode_ci ,
+                           `create_by` bigint(20) unsigned DEFAULT '0' ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
                            `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -3533,22 +3542,22 @@ INSERT INTO `wo_mail` VALUES ('202264058024083462', 'wldos.com@88.com', '3069911
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_oauth_login_user`;
 CREATE TABLE `wo_oauth_login_user` (
-                                       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '账号关系表，主键不参与业务关联',
-                                       `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '关联后创建的账号id',
-                                       `oauth_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '社会化服务商类型：比如微信、qq、微博等的类型编码',
+                                       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
+                                       `user_id` bigint(20) unsigned DEFAULT NULL ,
+                                       `oauth_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                                        `open_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                                        `union_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                                       `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                       `create_by` bigint(20) unsigned DEFAULT NULL ,
+                                       `create_time` datetime DEFAULT NULL ,
                                        `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                                       `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                       `update_by` bigint(20) unsigned DEFAULT NULL ,
+                                       `update_time` datetime DEFAULT NULL ,
                                        `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                       `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                       `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                       `versions` int(10) DEFAULT NULL ,
                                        PRIMARY KEY (`id`),
                                        KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=214858324877426693 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账';
+) ENGINE=InnoDB AUTO_INCREMENT=214858324877426693 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
 
 -- ----------------------------
 -- Records of wo_oauth_login_user
@@ -3563,10 +3572,10 @@ DROP TABLE IF EXISTS `wo_options`;
 CREATE TABLE `wo_options` (
                               `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                               `key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '配置key',
+                              `name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                               `value` longtext COLLATE utf8mb4_unicode_ci,
                               `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '应用编码',
+                              `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                               PRIMARY KEY (`id`),
                               UNIQUE KEY `option_name` (`key`),
                               KEY `options_app_type` (`app_type`)
@@ -3584,31 +3593,31 @@ INSERT INTO `wo_options` VALUES ('149', 'un_active_group', null, 'un_active', nu
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org`;
 CREATE TABLE `wo_org` (
-                          `id` bigint(20) unsigned NOT NULL COMMENT '组织机构id',
-                          `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织机构编码',
-                          `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织机构名称',
-                          `org_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织/群组/团队/圈子头像的实际存储相对路径',
-                          `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '组织类型：组织架构、团队、群组和圈子，不同于国标的组织机构类型，某种类型的组织具备什么构成，由体系结构对应的模型定义',
-                          `arch_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属体系结构id',
-                          `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
-                          `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级体系结构',
-                          `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的排序',
-                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                          `id` bigint(20) unsigned NOT NULL ,
+                          `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `org_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `arch_id` bigint(20) unsigned DEFAULT NULL ,
+                          `com_id` bigint(20) unsigned DEFAULT NULL ,
+                          `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                          `display_order` int(10) DEFAULT NULL ,
+                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `create_by` bigint(20) unsigned DEFAULT NULL ,
+                          `create_time` datetime DEFAULT NULL ,
                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                          `update_by` bigint(20) unsigned DEFAULT NULL ,
+                          `update_time` datetime DEFAULT NULL ,
                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                          `versions` int(10) DEFAULT NULL ,
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `un_com_arch_org` (`org_code`,`arch_id`,`com_id`),
                           KEY `org_type` (`org_type`),
                           KEY `org_arch_id` (`arch_id`),
                           KEY `org_com_id` (`com_id`),
                           KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组织机构表：可以是组织架构、团队、群组和圈子等，后期需要分表。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_org
@@ -3636,21 +3645,21 @@ INSERT INTO `wo_org` VALUES ('1526214941484957699', 'badmin', '二级管理员',
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org_user`;
 CREATE TABLE `wo_org_user` (
-                               `id` bigint(20) unsigned NOT NULL COMMENT '用户组织关系id',
-                               `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '用户id',
-                               `user_com_id` bigint(20) unsigned DEFAULT NULL COMMENT '用户实际归属公司，用于设置租户管理员等场景下绑定系统用户组，类似于借调',
-                               `org_id` bigint(20) unsigned DEFAULT NULL COMMENT '组织机构id',
-                               `arch_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属体系结构id',
-                               `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `user_id` bigint(20) unsigned DEFAULT NULL ,
+                               `user_com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `org_id` bigint(20) unsigned DEFAULT NULL ,
+                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
+                               `com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                               `create_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' COMMENT '删除状态字典值：normal正常，deleted删除',
-                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                               `update_time` datetime DEFAULT NULL ,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' ,
+                               `versions` int(10) DEFAULT NULL ,
                                PRIMARY KEY (`id`),
                                KEY `org_user_id` (`user_id`),
                                KEY `org_id` (`org_id`),
@@ -3659,7 +3668,7 @@ CREATE TABLE `wo_org_user` (
                                KEY `org_user_is_valid_del` (`is_valid`,`delete_flag`),
                                KEY `org_user_arch_com` (`user_id`,`user_com_id`,`org_id`,`arch_id`,`com_id`) USING BTREE,
                                KEY `org_u_com_id` (`user_com_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户组织关联表：用户与不同体系下的组织关系，类似岗位，但不全是岗位，比如群组内的人，组织不同，由于平台角色只授予组织，已经实现了岗位的功能，此表不再做岗位定义，仅做用户与组织的关联表。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_org_user
@@ -3715,20 +3724,20 @@ INSERT INTO `wo_org_user` VALUES ('1547698181106221065', '1547698179520774144', 
 DROP TABLE IF EXISTS `wo_region`;
 CREATE TABLE `wo_region` (
                              `id` bigint(20) unsigned NOT NULL,
-                             `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '国标区域编码',
-                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '地区名称',
-                             `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '地区级别：1 省级，2市级，3区县级',
-                             `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '父级地区',
-                             `display_order` int(10) DEFAULT NULL COMMENT '排序',
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                             `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                             `display_order` int(10) DEFAULT NULL ,
+                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `create_by` bigint(20) unsigned DEFAULT NULL ,
+                             `create_time` datetime DEFAULT NULL ,
                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                             `update_by` bigint(20) unsigned DEFAULT NULL ,
+                             `update_time` datetime DEFAULT NULL ,
                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                             `versions` int(10) DEFAULT NULL ,
                              PRIMARY KEY (`id`),
                              UNIQUE KEY `region_code` (`region_code`),
                              KEY `region_level` (`level`),
@@ -4123,27 +4132,27 @@ INSERT INTO `wo_region` VALUES ('820000', '820000', '澳门特别行政区', '1'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_resource`;
 CREATE TABLE `wo_resource` (
-                               `id` bigint(20) unsigned NOT NULL COMMENT '资源id',
-                               `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源编码',
-                               `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源名称',
-                               `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源请求url',
-                               `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'icon声明，全局定义icon库，这里设置的是库中的icon英文名',
-                               `resource_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源类型：菜单、接口服务、数据服务、静态资源、其他',
-                               `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资源操作方法：get、post、put、delete等',
-                               `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '打开方式：_self,_blank,_parent,_top',
-                               `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属应用',
-                               `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级资源',
-                               `display_order` int(10) DEFAULT NULL COMMENT '上级资源路径下的排序',
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                               `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注说明',
-                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建人ip',
-                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新人IP',
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `resource_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `app_id` bigint(20) unsigned DEFAULT NULL ,
+                               `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                               `display_order` int(10) DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
+                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
+                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
                                `update_time` datetime DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `versions` int(10) DEFAULT NULL ,
                                PRIMARY KEY (`id`),
                                UNIQUE KEY `un_app_res_code` (`resource_code`,`app_id`) USING BTREE,
                                KEY `res_type` (`resource_type`) USING BTREE,
@@ -4262,28 +4271,28 @@ INSERT INTO `wo_resource` VALUES ('1542939849472524294', 'a-jsfx', '技术分享
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role`;
 CREATE TABLE `wo_role` (
-                           `id` bigint(20) unsigned NOT NULL COMMENT '角色id',
-                           `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色编码',
-                           `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色名称',
-                           `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色描述',
-                           `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '角色类型：系统角色(管理员、游客、普通用户、商户、政府、中介)、业务角色(岗位、职务、功能)',
-                           `parent_id` bigint(20) unsigned DEFAULT NULL COMMENT '上级体系结构',
-                           `display_order` int(10) DEFAULT NULL COMMENT '在上级公司下的排序',
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                           `id` bigint(20) unsigned NOT NULL ,
+                           `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `parent_id` bigint(20) unsigned DEFAULT NULL ,
+                           `display_order` int(10) DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                           `create_time` datetime DEFAULT NULL ,
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `update_time` datetime DEFAULT NULL ,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `uni_role_code` (`role_code`),
                            KEY `role_type` (`role_type`),
                            KEY `role_parent_id` (`parent_id`),
                            KEY `role_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色定义表：组织机构节点下的对象。角色也是可以有上下级关系的，一个角色下可以再拆分出多个角色，在权限控制时下级角色是可以';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_role
@@ -4307,26 +4316,26 @@ INSERT INTO `wo_role` VALUES ('1526213891793272839', 'badmin', '二级管理员'
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role_org`;
 CREATE TABLE `wo_role_org` (
-                               `id` bigint(20) unsigned NOT NULL COMMENT '角色用户id',
-                               `role_id` bigint(20) unsigned DEFAULT NULL COMMENT '角色id',
-                               `org_id` bigint(20) unsigned DEFAULT NULL COMMENT '组织机构id',
-                               `arch_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属体系结构id',
-                               `com_id` bigint(20) unsigned DEFAULT NULL COMMENT '所属公司id',
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效，1有效，0无效，当需要暂时设置某个关系为无效时使用，当要置某个用户或角色无效时用主表的isvalid',
-                               `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                               `id` bigint(20) unsigned NOT NULL ,
+                               `role_id` bigint(20) unsigned DEFAULT NULL ,
+                               `org_id` bigint(20) unsigned DEFAULT NULL ,
+                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
+                               `com_id` bigint(20) unsigned DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `create_by` bigint(20) unsigned DEFAULT NULL ,
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                               `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                               `create_time` datetime DEFAULT NULL ,
+                               `update_by` bigint(20) unsigned DEFAULT NULL ,
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                               `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                               `update_time` datetime DEFAULT NULL ,
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `versions` int(10) DEFAULT NULL ,
                                PRIMARY KEY (`id`),
                                KEY `org_role_id` (`role_id`),
                                KEY `org_role_org_id` (`org_id`),
                                KEY `org_arch_com` (`org_id`,`arch_id`,`com_id`),
                                KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色用户关联表，组织的角色默认被组织内的人员继承，默认嵌套继承，需要有树搜索算法支持。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_role_org
@@ -4343,23 +4352,23 @@ INSERT INTO `wo_role_org` VALUES ('1525968743872249860', '1525946478916976648', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_association`;
 CREATE TABLE `wo_subject_association` (
-                                          `id` bigint(20) unsigned NOT NULL COMMENT '角色主体关系id',
-                                          `subject_type_id` bigint(20) unsigned DEFAULT NULL COMMENT '主体类型id',
-                                          `role_id` bigint(20) unsigned DEFAULT NULL COMMENT '角色id，此角色应该为顶级公司顶级组织下的全局角色(系统保留角色)',
+                                          `id` bigint(20) unsigned NOT NULL ,
+                                          `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
+                                          `role_id` bigint(20) unsigned DEFAULT NULL ,
                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
                                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                          `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                          `create_time` datetime DEFAULT NULL ,
+                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
                                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                          `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                          `update_time` datetime DEFAULT NULL ,
+                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                          `versions` int(10) DEFAULT NULL ,
                                           PRIMARY KEY (`id`),
                                           KEY `sub_type_id` (`subject_type_id`),
                                           KEY `sub_role_id` (`role_id`),
                                           KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色主体类型关系表：个人（自然人）、企业、政府、默认注册用户即为自然人，不同的主体类型可以默认不同的角色，不同的角';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_subject_association
@@ -4370,26 +4379,26 @@ CREATE TABLE `wo_subject_association` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_authentication`;
 CREATE TABLE `wo_subject_authentication` (
-                                             `id` bigint(20) unsigned NOT NULL COMMENT '认证主体id',
-                                             `subject_type_id` bigint(20) unsigned DEFAULT NULL COMMENT '主体类型id',
-                                             `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体社会信用统一编码或身份证号',
-                                             `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体名称，可能是法人名称、自然人姓名，前者不能重复，后者可以重复',
-                                             `user_id` bigint(20) unsigned DEFAULT NULL COMMENT '认证账号',
+                                             `id` bigint(20) unsigned NOT NULL ,
+                                             `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
+                                             `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                             `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                             `user_id` bigint(20) unsigned DEFAULT NULL ,
                                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                             `create_by` bigint(20) unsigned DEFAULT NULL ,
                                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                             `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                             `create_time` datetime DEFAULT NULL ,
+                                             `update_by` bigint(20) unsigned DEFAULT NULL ,
                                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                             `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                             `update_time` datetime DEFAULT NULL ,
+                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                             `versions` int(10) DEFAULT NULL ,
                                              PRIMARY KEY (`id`),
                                              KEY `sub_type_id` (`subject_type_id`),
                                              KEY `sub_user_id` (`user_id`),
                                              KEY `sub_is_valid_del` (`is_valid`,`delete_flag`),
                                              KEY `sub_code` (`subject_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='主体身份认证表：认证主体类型，认证主体详情。\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_subject_authentication
@@ -4400,23 +4409,23 @@ CREATE TABLE `wo_subject_authentication` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_define`;
 CREATE TABLE `wo_subject_define` (
-                                     `id` bigint(20) unsigned NOT NULL COMMENT '主体类型id',
-                                     `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体类型编码，可以继承国标的组织机构类型，并根据实际业务衍生',
-                                     `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体类型名称',
-                                     `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '主体类型描述',
-                                     `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                                     `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                     `id` bigint(20) unsigned NOT NULL ,
+                                     `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `create_by` bigint(20) unsigned DEFAULT NULL ,
                                      `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                     `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                     `create_time` datetime DEFAULT NULL ,
+                                     `update_by` bigint(20) unsigned DEFAULT NULL ,
                                      `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                     `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                     `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                     `update_time` datetime DEFAULT NULL ,
+                                     `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                     `versions` int(10) DEFAULT NULL ,
                                      PRIMARY KEY (`id`),
                                      UNIQUE KEY `uni_subject_type_code` (`subject_type_code`) USING BTREE,
                                      KEY `sub_def_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证主体定义表：个人（自然人）、企业、政府、其他，定义用户认证身份，与角色的区别是主体身份是社会属性、社会公认的身份，不是具体业务设置的。\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_subject_define
@@ -4427,23 +4436,23 @@ CREATE TABLE `wo_subject_define` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_model_define`;
 CREATE TABLE `wo_subject_model_define` (
-                                           `id` bigint(20) unsigned DEFAULT NULL COMMENT '主体模板id',
-                                           `subject_type_id` bigint(20) unsigned NOT NULL COMMENT '主体类型id',
-                                           `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '模板名称',
-                                           `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '模板描述',
-                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+                                           `id` bigint(20) unsigned DEFAULT NULL ,
+                                           `subject_type_id` bigint(20) unsigned NOT NULL ,
+                                           `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `create_by` bigint(20) unsigned DEFAULT NULL ,
                                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+                                           `create_time` datetime DEFAULT NULL ,
+                                           `update_by` bigint(20) unsigned DEFAULT NULL ,
                                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                                           `update_time` datetime DEFAULT NULL ,
+                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                                           `versions` int(10) DEFAULT NULL ,
                                            PRIMARY KEY (`subject_type_id`),
                                            KEY `sub_model_type_id` (`subject_type_id`),
                                            KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证主体模板定义表：个人（自然人）、企业、政府、中介，认证信息模板定义。\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_subject_model_define
@@ -4454,49 +4463,49 @@ CREATE TABLE `wo_subject_model_define` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_user`;
 CREATE TABLE `wo_user` (
-                           `id` bigint(20) unsigned NOT NULL COMMENT '用户id',
-                           `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '平台用户登录名，又叫账号，可以修改，全局唯一（比如抖音认证后可以全局唯一）',
-                           `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '账号显示名称，昵称',
-                           `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '登录密码，可以为空，设置后可以以账号密码登录',
-                           `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '账号状态：notActive待激活, locked已锁定、cancelled已注销、normal正常',
-                           `domain_id` bigint(20) unsigned DEFAULT NULL COMMENT '账号归属的二方域id（二方域指本平台上设置的域）用户注册时设定',
-                           `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '身份证号或法人身份证',
-                           `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户实名认证后的真实名称，可以是自然人、法人',
-                           `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '性别',
-                           `birthday` datetime DEFAULT NULL COMMENT '生日',
-                           `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '手机号',
-                           `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '固定电话',
-                           `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '注册会员' COMMENT '头衔',
-                           `company` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '网络用户' COMMENT '组织、单位名称',
-                           `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '通信地址',
-                           `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'QQ号',
-                           `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '电子邮箱',
-                           `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '头像在文件服务器存储的真实相对路径',
-                           `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注',
-                           `display_order` bigint(20) DEFAULT NULL COMMENT '排序',
-                           `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否实名认证：默认0，实名认证后：1',
-                           `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '国家',
-                           `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '省',
-                           `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '市',
-                           `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '区',
-                           `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '邀请码',
-                           `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '推荐码：推荐人的邀请码',
-                           `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '注册IP，首次注册IP',
-                           `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `id` bigint(20) unsigned NOT NULL ,
+                           `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
+                           `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
+                           `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `birthday` datetime DEFAULT NULL ,
+                           `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '注册会员' ,
+                           `company` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '网络用户' ,
+                           `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `display_order` bigint(20) DEFAULT NULL ,
+                           `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `create_by` bigint(20) unsigned DEFAULT NULL ,
+                           `create_time` datetime DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '信息更新操作者的IP',
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) DEFAULT NULL COMMENT '乐观锁',
+                           `update_by` bigint(20) unsigned DEFAULT NULL ,
+                           `update_time` datetime DEFAULT NULL ,
+                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                           `versions` int(10) DEFAULT NULL ,
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `uni_login` (`login_name`) USING BTREE,
                            KEY `user_status` (`status`),
                            KEY `user_sex` (`sex`),
                            KEY `user_del` (`delete_flag`),
                            KEY `user_prov_city_area_coun` (`province`,`city`,`area`,`country`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='全局用户表：其账号由账号表定义，其第三方授权账号也在账号表定义。功能角度来说，账号是用来做登录认证的，而用户是用来做授权';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_user
@@ -4547,8 +4556,8 @@ DROP TABLE IF EXISTS `wo_usermeta`;
 CREATE TABLE `wo_usermeta` (
                                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                                `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '元数据key',
-                               `meta_value` longtext COLLATE utf8mb4_unicode_ci COMMENT '元数据值',
+                               `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
+                               `meta_value` longtext COLLATE utf8mb4_unicode_ci ,
                                PRIMARY KEY (`id`),
                                KEY `user_id` (`user_id`),
                                KEY `meta_key` (`meta_key`(191))

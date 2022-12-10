@@ -10,8 +10,6 @@ package com.wldos.sys.core.enums;
 
 /**
  * 用户状态枚举。
- * 当开启邮箱激活时，未激活的用户账号处于未激活状态，登录时自动跳转到激活页面。
- * 激活后，更新状态为正常。
  *
  * @author 树悉猿
  * @date 2022/9/5
@@ -19,17 +17,12 @@ package com.wldos.sys.core.enums;
  */
 public enum UserStatusEnum {
 
-	/** 未激活的,见习用户。*/
 	notActive("未激活的", "notActive"),
-	/** 已锁定 */
 	locked("已锁定", "locked"),
-	/** 已注销 */
 	cancelled("cancelled", "cancelled"),
-	/** 正常 */
 	normal("正常", "normal");
 
 	private final String label;
-
 	private final String value;
 
 	UserStatusEnum(String label, String value) {

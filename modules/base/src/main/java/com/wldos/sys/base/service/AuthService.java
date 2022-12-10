@@ -83,12 +83,12 @@ public class AuthService {
 	 */
 	public AuthVerify verifyReqAuth(Long domainId, String appCode, Long userId, Long comId, String reqUri, String reqMethod) {
 		AuthVerify authVerify = new AuthVerify();
-		if (this.termService.isAdmin(userId)) { // 超级管理员虽然不受权限认证的约束，但是仍然受角色授权的限制，管理员角色以及相应域没有授权资源时，仍然不可见，这是因为资源是通过用户的角色+域资源拿到的
+		if (this.termService.isAdmin(userId)) {
 			authVerify.setAuth(true);
 			return authVerify;
 		}
 		List<AuthInfo> allMenuAuthInfo = this.queryAllAuth(appCode);
-		List<AuthInfo> matchAuthInfos = // 匹配请求URI的相关权限
+		List<AuthInfo> matchAuthInfos =
 				allMenuAuthInfo.parallelStream().filter(authInfo -> {
 					String uri = authInfo.getResourcePath();
 					if (uri.contains("{")) { // Redis cache json
@@ -104,7 +104,7 @@ public class AuthService {
 			authVerify.setAuth(true);
 			return authVerify;
 		}
-		// 当前用户的资源权限
+
 		List<AuthInfo> authInfos = this.isGuest(userId) ? this.resourceRepo.queryAuthInfoForGuest(domainId, appCode)
 				: this.resourceRepo.queryAuthInfo(domainId, comId, appCode, userId);
 
@@ -113,13 +113,13 @@ public class AuthService {
 		for (AuthInfo auth : authInfos) {
 
 			boolean isMatch = matchAuthInfos.stream().anyMatch(authInfo -> authInfo.getResourceCode().equals(auth.getResourceCode()));
-			if (isMatch) { // 用户的权限中存在该请求权限
+			if (isMatch) {
 				matchReq = auth;
 				break;
 			}
 		}
 
-		if (matchReq == null) { // 没有该权限
+		if (matchReq == null) {
 			authVerify.setAuth(false);
 		}
 		else {
@@ -143,7 +143,6 @@ public class AuthService {
 		try {
 			ObjectMapper om = new ObjectMapper();
 			if (ObjectUtils.isBlank(value)) {
-				// 所有资源（菜单、按钮、服务和静态资源），各资源没必要分表，五十步与百步的关系
 				List<AuthInfo> authInfos = this.resourceRepo.queryAuthInfo(appCode);
 
 				value = om.writeValueAsString(authInfos);
@@ -191,7 +190,6 @@ public class AuthService {
 
 		List<Menu> menus = this.getMenuByUserId(resources);
 
-		// 根据域名查询用户可访问路由动态模板组件名，方便前端正确渲染当前域名下的路由模板
 		List<DomainResource> domRes = this.domainResourceRepo.queryDomainDynamicRoutes(domainId);
 		List<Long> termTypeIds = domRes.parallelStream().map(DomainResource::getTermTypeId).collect(Collectors.toList());
 		if (ObjectUtils.isBlank(termTypeIds)) {
@@ -204,7 +202,7 @@ public class AuthService {
 		Map<String, Route> modules = domRes.parallelStream().collect(Collectors.toMap(DomainResource::getResourcePath,
 				d -> {
 					try {
-						if (d.getTermTypeId() == Constants.TOP_TERM_ID) // 根分类为虚节点，不区分类型和分类
+						if (d.getTermTypeId() == Constants.TOP_TERM_ID)
 							return new Route(d.getModuleName(), null, null);
 						Term term = termMap.get(d.getTermTypeId());
 						KModelContent content = this.contentService.findByContentId(term.getContentId());
@@ -271,16 +269,14 @@ public class AuthService {
 		List<String> authorities = new ArrayList<>();
 
 		for (WoResource r : resources) {
-			authorities.add(r.getResourceCode()); // 取出操作权限编码（资源编码）
+			authorities.add(r.getResourceCode());
 		}
 
 		if (isGuest) {
-			// 游客的特性在于所有未登录用户都是游客，这是一个角色，游客如果可以访问的资源，用户一定可以，
-			// 实现的方式：游客角色绑定平台根节点上，平台下挂管理员与会员两组，会员下挂免费会员和付费会员，以此类推，组织分层则权限继承、平级组织专权不共享。
-			authorities.add(UserRoleEnum.GUEST.toString()); // 未登录用户默认guest角色权限。
+			authorities.add(UserRoleEnum.GUEST.toString());
 		}
 		else
-			authorities.add(UserRoleEnum.USER.toString()); // 登录用户默认user角色权限。
+			authorities.add(UserRoleEnum.USER.toString());
 
 		return authorities;
 	}

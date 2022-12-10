@@ -49,10 +49,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * 微服务网关、请求鉴权，反向代理，服务发现和限流等操作客户端，支持ServiceMesh架构。
- * 本网关支持作认证中心部署，但建议只用于微服务处理外部请求的代理，另外用独立的网关服务做分布式系统的认证中心。
- * 如果你打算尝试ServiceMesh架构，可以使用本网关实现服务代理。
- * 如果你打算区分服务，可以定义两个以上filter分别拦截不同的URLPatterns。
+ * 边缘网关。
  *
  * @author 树悉猿
  * @date 2021-04-18
@@ -126,7 +123,6 @@ public class EdgeGateWayFilter implements Filter {
 			reqUri = request.getRequestURI();
 			userIP = IpUtils.getClientIp(request);
 
-			// 1.拆前缀
 			boolean isPrefix = false;
 			if (reqUri.startsWith(this.proxyPrefix)) {
 				isPrefix = true;
@@ -134,14 +130,11 @@ public class EdgeGateWayFilter implements Filter {
 				reqUri = reqUri.substring(this.proxyPrefix.length());
 			}
 
-			// 2.放过免签请求
-			// 2.1静态资源直接放行
 			if (reqUri.startsWith(this.staticUri)) {
 				chain.doFilter(request, res);
 				return;
 			}
 
-			// 先验证域，域必须合法，这里用header的用意在于支持移动端的多域场景（特别说物联网），另外这也是一种白名单管理方式
 			String domain = DomainUtils.getDomain(request, this.domainHeader);
 			WoDomain reqDomain = this.domainService.queryDomainByName(domain);
 			if (reqDomain == null) {// @todo 当没有设置域名 或者 没有开启多域名时，应存在默认域名
@@ -149,20 +142,17 @@ public class EdgeGateWayFilter implements Filter {
 				throw new IllegalDomainException("使用了非法域名，禁止访问！");
 			}
 
-			// token认证验签开始
 			String token = request.getHeader(this.tokenHeader);
 			Long domainId = reqDomain.getId();
 			jwt = jwtTool.popJwt(token, userIP, reqUri, reqDomain.getSiteDomain(), domainId);
 
-			// 2.2免签请求处理请求
 			if (this.isMatchUri(reqUri, this.excludeUris)) {
-				// api请求需要设置请求参数
 				FilterRequestWrapper headers = this.handleRequest(request, jwt, domainId);
 				chain.doFilter(headers, res);
 				return;
 			}
 
-			if (ObjectUtils.isBlank(token)) { // 非免签路由，token不能为空（对当前请求路由，如果设置了游客权限或者没有设置任何权限，则游客有权限，请求必须携带游客token，如果游客无权限，必须是有效token）
+			if (ObjectUtils.isBlank(token)) {
 				throw new TokenInvalidException("token is blank");
 			}
 
@@ -170,13 +160,12 @@ public class EdgeGateWayFilter implements Filter {
 				throw new TokenInvalidException("user token is expired");
 			}
 
-			// 3.token验证路径验证是否登陆
 			if (this.isMatchUri(reqUri, this.verifyTokenUris)) {
-				if (this.authService.isGuest(jwt.getUserId())) // 游客必须登陆
+				if (this.authService.isGuest(jwt.getUserId()))
 					throw new TokenInvalidException("user token is invalid");
 			}
 
-			if (!isPrefix) { // 1、2、3都过，还不带前缀，一律视为非法请求
+			if (!isPrefix) {
 				throw new BaseException("非法请求(invalid request)!");
 			}
 
@@ -184,12 +173,12 @@ public class EdgeGateWayFilter implements Filter {
 			if (appCode == null) {
 				throw new BaseException("root path forbidden!");
 			}
-			// 认证通过说明已登录，鉴权开始 （授权在登录模块）
+
 			AuthVerify authVerify = this.authService.verifyReqAuth(reqDomain.getId(), appCode, jwt.getUserId(), jwt.getTenantId(), reqUri, request.getMethod());
-			// 仲裁鉴权结果，存在放行，否则终止并警告
+
 			if (authVerify.isAuth()) {
 				AuthInfo auth = authVerify.getAuthInfo();
-				if (this.isMatchUri(reqUri, this.recLogUris) && auth != null) { // 定制日志审计模块：资源存在记录日志，后期记入数据库，与免签路由配合只记录重要功能，游客可访问路由放行，前端行为使用前端技术
+				if (this.isMatchUri(reqUri, this.recLogUris) && auth != null) {
 					log.info("{}, {}, {}, {}, {}, {}", IpUtils.getClientIp(request), jwt.getUserId(), auth.getResourceName(), auth.getResourcePath()
 							, request.getQueryString(), request.getParameterMap().keySet());
 				}
@@ -200,10 +189,8 @@ public class EdgeGateWayFilter implements Filter {
 				}
 				throw new TokenForbiddenException("Forbidden,no auth!");
 			}
-			// api请求需要设置请求参数
-			FilterRequestWrapper headers = this.handleRequest(request, jwt, domainId);
 
-			// 鉴权通过，放行！
+			FilterRequestWrapper headers = this.handleRequest(request, jwt, domainId);
 			chain.doFilter(headers, res);
 		} catch (Exception e) {
 			String userId = jwt == null ? "" : jwt.getUserId().toString();
@@ -232,12 +219,6 @@ public class EdgeGateWayFilter implements Filter {
 		return headers;
 	}
 
-	/**
-	 * 验证当前uri的前缀是否匹配目标路由前缀
-	 *
-	 * @param reqUri 请求uri
-	 * @return 是否
-	 */
 	private boolean isMatchUri(String reqUri, List<String> target) {
 		for (String s : target) {
 			if (reqUri.startsWith(s))
@@ -247,7 +228,8 @@ public class EdgeGateWayFilter implements Filter {
 	}
 
 	/**
-	 * 应用编码最长5位，作为应用在平台上的请求路径前缀。@todo 应该为appId，从缓存获取appId，或者其他的方式优化权限验证的性能，权限逻辑：资源 ~ 应用 ~ 域，资源 ~ 权限 ~ 角色 ~ 组织 ~ 租户|用户
+	 * 应用编码最长5位，作为应用在平台上的请求路径前缀。
+	 * @todo 应该为appId，从缓存获取appId，或者其他的方式优化权限验证的性能，权限逻辑：资源 ~ 应用 ~ 域，资源 ~ 权限 ~ 角色 ~ 组织 ~ 租户|用户
 	 *
 	 * @param reqUri 请求资源URI
 	 * @return 应用编码
@@ -266,7 +248,7 @@ public class EdgeGateWayFilter implements Filter {
 		}
 		return null;
 	}
-	// 异常处理，与前端交互
+
 	private void throwException(HttpServletResponse response, BaseException ex, String userIP, String reqUri, String userId) {
 
 		try {

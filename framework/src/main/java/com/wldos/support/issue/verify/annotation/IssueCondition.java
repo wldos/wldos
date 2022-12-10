@@ -18,8 +18,6 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * license屏蔽模块条件，被license注解的模块，注解的参数值命中license的系统的版本号才初始化模块，否则屏蔽模块。
- *
  * @author 树悉猿
  * @date 2022/1/28
  * @version 1.0

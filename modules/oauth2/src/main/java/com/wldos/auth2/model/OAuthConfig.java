@@ -17,23 +17,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @date 2022/10/19
  * @version 1.0
  */
-@JsonIgnoreProperties(ignoreUnknown = true) // 防止多余未知字段导致的转换异常
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthConfig {
-	/** appId，当前应用在OAuth服务提供商注册的应用id */
 	private String appId;
-	/** app私钥，注意不要pop到客户端，仅服务端使用 */
 	private String appSecret;
-	/** 生成重定向链接的，用于获取授权码后重定向到当前应用的后端处理服务，wldos-oauth2托管api，只需要配置如http://www.wldos.com即可 */
 	private String redirectUri;
-	/** 应用授权作用域，拥有多个作用域用逗号分隔，如微信开放平台网页应用仅填写snsapi_login */
 	private String scope;
-	/** 首次获取授权码的uri模板(开发者配置选项) */
 	private String codeUri;
-	/** access token uri模板(开发者配置选项) */
 	private String accessTokenUri;
-	/** refresh token uri模板(开发者配置选项) */
 	private String refreshTokenUri;
-	/** 请求用户信息uri模板 */
 	private String userInfoUri;
 
 	public String getAppId() {

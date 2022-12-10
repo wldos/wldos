@@ -123,21 +123,18 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 	 * @return 资源列表
 	 */
 	public PageableResult<DomRes> queryResByDomainId(Long domainId, PageQuery pageQuery) {
-		// 先获取域上预订的应用范围
 		List<Object> appIds = this.domainAppService.queryAppListByDomainId(domainId);
-		if (ObjectUtils.isBlank(appIds)) // 没有添加应用，不能添加资源
+		if (ObjectUtils.isBlank(appIds))
 			return new PageableResult<>();
 		pageQuery.pushFilter("appId", appIds);
 
 		PageableResult<DomRes> domRes = this.execQueryForTree(new DomRes(), new WoResource(), pageQuery, Constants.MENU_ROOT_ID);
 
-		// 查询已经预订成功的资源列表
 		List<WoDomainResource> resources = this.domainResourceRepo.queryDomainRes(domainId);
 		List<Long> bookedIds = resources.parallelStream().map(WoDomainResource::getResourceId).collect(Collectors.toList());
 
 		List<DomRes> allRes = domRes.getData().getRows();
 
-		// 已经预订的资源打标
 		allRes = allRes.parallelStream().map(r -> {
 			r.setSelected(bookedIds.contains(r.getId()));
 			return r;
@@ -157,17 +154,16 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 	 */
 	public void addSimpleMenu(ResSimple resSimple, Long curUserId, String userIp) {
 
-		// 根据模板创建资源
-		String tempType= resSimple.getTempType(); // 模板编码
-		String contType = resSimple.getContType(); // 内容编码
-		Long termTypeId = resSimple.getTermTypeId(); // 分类id
+		String tempType= resSimple.getTempType();
+		String contType = resSimple.getContType();
+		Long termTypeId = resSimple.getTermTypeId();
 
-		String resName = resSimple.getResName(); // 资源名称，可以为空，为空时取分类目录名称，分类目录为空时取行业门类名称
+		String resName = resSimple.getResName();
 		String resPath;
 		long displayOrder;
 		String resCode;
 		String icon = resSimple.getIcon();
-		String resType = ResourceEnum.MENU.getValue(); // 资源类型默认为菜单，根据模板拼装
+		String resType = ResourceEnum.MENU.getValue();
 		String reqMethod = resSimple.getReqMethod();
 		String target = resSimple.getTarget();
 		Long appId = resSimple.getAppId();
@@ -216,14 +212,13 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 				resTypes.add(ResourceEnum.ADMIN_MENU.getValue());
 				List<WoResource> allRes = this.entityRepo.queryByResTypes(resTypes);
 
-				// 全站菜单树
 				List<TreeSelectOption> menus = allRes.parallelStream().map(res -> {
 					Long resId = res.getId();
 					return new TreeSelectOption(resId, res.getParentId(), res.getResourceName(), resId.toString(), resId.toString());
 				}).collect(Collectors.toList());
 
 				String topMenuId = String.valueOf(Constants.MENU_ROOT_ID);
-				// 新增根分类
+
 				TreeSelectOption topMenu = new TreeSelectOption(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根资源", topMenuId, topMenuId);
 
 				menus.add(0, topMenu);

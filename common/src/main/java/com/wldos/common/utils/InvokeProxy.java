@@ -32,11 +32,6 @@ public class InvokeProxy {
 	 * @param methodName method name
 	 * @param args args
 	 * @param parameterTypes parameter type
-	 * @throws ClassNotFoundException not found
-	 * @throws SecurityException security
-	 * @throws NoSuchMethodException no such methed
-	 * @throws InstantiationException instantiation
-	 * @throws IllegalAccessException illegal
 	 */
 	public InvokeProxy(String classFullName, String methodName, Object[] args, Class<?>[] parameterTypes)
 			throws ClassNotFoundException, SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -48,7 +43,6 @@ public class InvokeProxy {
 		this.execute = clazz.newInstance(); // 此方法对应构造器，调用目标时必须实现对应的构造方法，无参数时对应无参构造，代理目标必须实现无参构造。
 		// clazz.getClass()返回的是静态区的class对象仅能访问其静态元素(如static方法)，而非静态资源只能实例化以后在实例区通过实例对象引用拿到。
 		this.args = args;
-
 	}
 
 	/**
@@ -70,12 +64,6 @@ public class InvokeProxy {
 
 	/**
 	 * 实现动态代理
-	 *
-	 * @param target
-	 * @param methodName
-	 * @param args
-	 * @param parameterTypes
-	 * @param <T>
 	 */
 	public <T> InvokeProxy(T target, String methodName, Object[] args, Class<?>[] parameterTypes) {
 		// Proxy.newProxyInstance();

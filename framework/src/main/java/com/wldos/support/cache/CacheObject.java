@@ -27,8 +27,6 @@ public class CacheObject implements Delayed {
 	private final long expireTime;
 
 	/**
-	 * 缓存对象初始化
-	 *
 	 * @param key 缓存key
 	 * @param reference 缓存实体引用
 	 * @param expireTime 超期时限

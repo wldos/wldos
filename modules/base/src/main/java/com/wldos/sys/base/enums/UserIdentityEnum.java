@@ -9,24 +9,17 @@
 package com.wldos.sys.base.enums;
 
 /**
- * 平台保留用户身份相关枚举值。身份是社会属性，客观存在、社会公认。
+ * 平台保留用户身份相关枚举值。
  *
  * @author 树悉猿
  * @date 2021/4/27
  * @version 1.0
  */
 public enum UserIdentityEnum {
-
-	/** 政府单位 */
 	ORG("org"),
-	/** 企业 */
 	COM("com"),
-	/** 社会团体 */
 	SOCIAL("social"),
-	/** 中介 */
 	MIDDLE("middle"),
-	// 职业类身份：老师、音乐人、作家、财经专家……
-	/** 公务员 */
 	SERVANT("servant");
 
 	private final String identityName;

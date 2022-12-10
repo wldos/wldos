@@ -31,25 +31,17 @@ import org.apache.commons.codec.binary.Base64;
 public class VerifyCode {
 	/** 验证码图片长 */
 	private int width = 120;
-
 	/** 验证码图片宽 */
 	private int height = 40;
-
 	/** 验证码图片色位1~8 */
 	private int colorBit = 4;
-
 	/** 验证码图片 */
 	private BufferedImage image;
-
 	/** 文本内容 */
 	private String text;
-
 	private static final Random r = new Random();
-
-	//private String[] fontNames = {"宋体", "华文楷体", "黑体", "微软雅黑", "楷体_GB2312"};
 	//字体数组
 	private static final String[] fontNames = { "Georgia" };
-
 	//验证码数组
 	private static final String codes = "23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
 
@@ -74,11 +66,6 @@ public class VerifyCode {
 
 	/**
 	 * 生成验证码
-	 *
-	 * @param width
-	 * @param height
-	 * @param colorBit
-	 * @return
 	 */
 	public static VerifyCode genCaptcha(int width, int height, int colorBit) {
 		return new VerifyCode(width, height, colorBit);
@@ -103,20 +90,16 @@ public class VerifyCode {
 
 	/**
 	 * 获取随机的颜色
-	 *
-	 * @return
 	 */
 	private Color randomColor() {
-		int r = this.r.nextInt(225);
-		int g = this.r.nextInt(225);
-		int b = this.r.nextInt(225);
+		int r = VerifyCode.r.nextInt(225);
+		int g = VerifyCode.r.nextInt(225);
+		int b = VerifyCode.r.nextInt(225);
 		return new Color(r, g, b);
 	}
 
 	/**
 	 * 获取随机字体
-	 *
-	 * @return
 	 */
 	private Font randomFont() {
 		int index = r.nextInt(fontNames.length);

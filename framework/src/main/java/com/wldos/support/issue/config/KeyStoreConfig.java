@@ -16,16 +16,12 @@ import de.schlichtherle.license.AbstractKeyStoreParam;
 import org.springframework.core.io.ClassPathResource;
 
 /**
- * 用户密钥配置。
- *
  * @author 树悉猿
  * @date 2022/1/24
  * @version 1.0
  */
 public class KeyStoreConfig extends AbstractKeyStoreParam {
-	/**
-	 * 公钥/私钥在磁盘上的存储路径
-	 */
+
 	private final String storePath;
 
 	private final String alias;
@@ -42,7 +38,6 @@ public class KeyStoreConfig extends AbstractKeyStoreParam {
 		this.keyPwd = keyPwd;
 	}
 
-
 	@Override
 	public String getAlias() {
 		return alias;
@@ -58,11 +53,6 @@ public class KeyStoreConfig extends AbstractKeyStoreParam {
 		return keyPwd;
 	}
 
-	/**
-	 * 从密钥存储地读入私钥、公钥
-	 *
-	 * @return java.io.InputStream
-	 */
 	@Override
 	public InputStream getStream() throws IOException {
 		ClassPathResource resource = new ClassPathResource(storePath);

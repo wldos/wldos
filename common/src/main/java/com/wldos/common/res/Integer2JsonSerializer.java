@@ -30,5 +30,4 @@ public class Integer2JsonSerializer extends JsonSerializer<Integer> {
 			jsonGenerator.writeNumber(value);
 		}
 	}
-
 }

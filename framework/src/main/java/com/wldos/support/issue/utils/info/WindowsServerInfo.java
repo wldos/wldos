@@ -14,8 +14,6 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
- * windows系统下的服务器信息。
- *
  * @author 树悉猿
  * @date 2022/1/24
  * @version 1.0
@@ -24,7 +22,7 @@ public final class WindowsServerInfo extends ServerInfo {
 	@Override
 	public List<String> getIpAddress() throws Exception {
 		List<String> result = null;
-		//获取所有网络接口
+
 		List<InetAddress> inetAddresses = getLocalAllInetAddress();
 
 		if (inetAddresses != null && inetAddresses.size() > 0) {
@@ -51,10 +49,8 @@ public final class WindowsServerInfo extends ServerInfo {
 
 	@Override
 	public String getCPUSerial() throws Exception {
-		//序列号
-		String serialNumber = "";
 
-		//使用WMIC获取CPU序列号
+		String serialNumber = "";
 		Process process = Runtime.getRuntime().exec("wmic cpu get processorid");
 		process.getOutputStream().close();
 		Scanner scanner = new Scanner(process.getInputStream());
@@ -73,10 +69,8 @@ public final class WindowsServerInfo extends ServerInfo {
 
 	@Override
 	public String getMainBoardSerial() throws Exception {
-		//序列号
-		String serialNumber = "";
 
-		//使用WMIC获取主板序列号
+		String serialNumber = "";
 		Process process = Runtime.getRuntime().exec("wmic baseboard get serialnumber");
 		process.getOutputStream().close();
 		Scanner scanner = new Scanner(process.getInputStream());

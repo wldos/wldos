@@ -23,6 +23,6 @@ import org.springframework.data.repository.query.Param;
  * @version 1.0
  */
 public interface AppComRepo extends PagingAndSortingRepository<WoDomainApp, Long> {
-	// 添加@param是为了防止混淆后找不到参数
+
 	List<WoDomainApp> findAllByDeleteFlagEqualsAndIsValidEquals(@Param("deleteFlag") String deleteFlag, @Param("isValid") String isValid);
 }

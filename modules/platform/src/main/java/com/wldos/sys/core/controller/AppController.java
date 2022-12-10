@@ -28,9 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 应用相关controller。支持插件、链接和rpc等，进一步封装统一的应用管理，配件市场更丰富的生态。
- * 租户没有权限维护平台上构成平台的原始结构和资源（如：应用、资源、角色、用户），对平台租给租户的可见资源，租户只能在其组织内配置
- * 或取消，租户还可以任意维护自建资源（如：租户内体系、租户内组织、租户的小程序）。@todo 租户的小程序是应用管理的衍生，相当于开放平台，暂不支持。
+ * 应用相关controller。
+ * @todo 租户的小程序是应用管理的衍生，相当于开放平台，暂不支持。
  *
  * @author 树悉猿
  * @date 2021/5/2
@@ -78,7 +77,7 @@ public class AppController extends RepoController<AppService, WoApp> {
 	public PageableResult<WoApp> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		if (this.isMultiTenancy && !this.service.isAdmin(this.getCurUserId())) { // 租户只能查看、选择app类应用和私有应用，@todo 暂不支持发布私有应用(小程序)，还没有想好如何设计API开放平台
+		if (this.isMultiTenancy && !this.service.isAdmin(this.getCurUserId())) { // @todo 暂不支持发布私有应用(小程序)，还没有想好如何设计API开放平台
 			pageQuery.pushFilter(Constants.COMMON_KEY_APP_TYPE, AppTypeEnum.APP.toString(), AppTypeEnum.PRIVATE.toString());
 		}
 

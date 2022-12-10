@@ -110,10 +110,7 @@ public class FileTypeUtils {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
+	public static void main1(String[] args) throws Exception {
 		FileInputStream is = new FileInputStream("F:\\相册\\微信图片\\03.jpg");
 		byte[] b = new byte[3];
 		is.read(b, 0, b.length);
@@ -125,5 +122,3 @@ public class FileTypeUtils {
 
 	}
 }
-
-

@@ -36,7 +36,7 @@ import org.springframework.lang.NonNull;
 public interface FreeJdbcTemplate extends God {
 
 	/**
-	 *针对领域模型实现的jdbc操作模板。与之相对的是经典jdbc模板jdbcTemplate。
+	 *	针对领域模型实现的jdbc操作模板。与之相对的是经典jdbc模板jdbcTemplate。
 	 * 支持实体级的CRUD。
 	 */
 	JdbcAggregateTemplate getJdbcAggTemplate();

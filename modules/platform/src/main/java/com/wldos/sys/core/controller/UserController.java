@@ -71,8 +71,6 @@ public class UserController extends RepoController<UserService, WoUser> {
 	
 	/**
 	 * 用户信息配置,含头像设置
-	 * 考虑到用户头像在SaaS平台量较大，与文件服务合并统一处理支持独立部署，支持返回fileId或者相对Url，消费方可以存储id或者URL
-	 * 存储URL可以节省时间，存储空间略有冗余，建议在外网有seo需求的应用中使用，在内网附件更新频繁的业务系统，建议用ID。
 	 *
 	 * @param user 基本信息
 	 */

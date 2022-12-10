@@ -23,8 +23,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * aop。
- *
  * @author 树悉猿
  * @date 2022/1/24
  * @version 1.0
@@ -42,11 +40,11 @@ public class IssueAuth {
 		}
 		this.verifier.install(verifyEnv, beanHelper.getBeanFactory());
 	}
-	// 类型切点
+
 	@Pointcut("@within(com.wldos.support.issue.verify.annotation.Issue)")
 	public void isLicenseTypePointcut() {
 	}
-	// 方法切点
+
 	@Pointcut("@annotation(com.wldos.support.issue.verify.annotation.Issue)")
 	public void isLicenseMethodPointcut() {
 	}
@@ -65,10 +63,9 @@ public class IssueAuth {
 		Method method = signature.getMethod();
 		Issue issue = method.getAnnotation(Issue.class);
 
-		if (issue == null) { // 方法上没有，去类上找
+		if (issue == null) {
 			issue = AnnotationUtils.findAnnotation(method.getDeclaringClass(), Issue.class);
 		}
-
 		return issue;
 	}
 }

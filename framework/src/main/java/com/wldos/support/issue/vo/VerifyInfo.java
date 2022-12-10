@@ -14,45 +14,30 @@ import java.util.List;
 import com.wldos.support.issue.verify.VerifyEnv;
 
 /**
- * license绑定和验证的硬件信息。请不要修改VerifyInfo的结构，否则license安装时反序列化失败，导致license安装失败，系统无法启动!!!
- *
  * @author 树悉猿
  * @date 2022/1/24
  * @version 1.0
  */
 public class VerifyInfo implements Serializable {
 
-	/**
-	 * 允许的IP地址, 支持集群
-	 */
 	private List<String> ipAddress;
 
-	/**
-	 * 允许的MAC地址, 支持集群
-	 */
 	private List<String> macAddress;
 
-	/**
-	 * 允许的CPU序列号
-	 */
 	private String cpuSerial;
 
-	/**
-	 * 允许的主板序列号
-	 */
 	private String mainBoardSerial;
 
-	/** 被授权的主域名 */
 	private String domain;
-	/** 组织单位名 */
+
 	private String orgName;
-	/** 产品名称 */
+
 	private String prodName;
-	/** 产品版本 */
+
 	private String edition;
-	/** 发行者 */
+
 	private String issuer = "wldos.com";
-	/** 内部版本号 */
+
 	private String version;
 
 	public VerifyInfo() {
@@ -88,60 +73,20 @@ public class VerifyInfo implements Serializable {
 		this.version = version;
 	}
 
-	/**
-	 * 附加软件信息（外网部署用）
-	 *
-	 * @param verifyEnv 验证环境
-	 * @return 验证信息
-	 */
 	public static VerifyInfo of(VerifyEnv verifyEnv) {
 		return new VerifyInfo(verifyEnv.getDomain(), verifyEnv.getOrgName(), verifyEnv.getProdName(),
 				verifyEnv.getEdition(), verifyEnv.getVersion());
 	}
 
-	/**
-	 * 附加软件信息（外网部署用）
-	 *
-	 * @param domain 被授权域名
-	 * @param orgName 被授权组织名称
-	 * @param prodName 授权产品名称
-	 * @param edition 软件版本，见#IssueVersionEnum
-	 * @param version 内部版本号
-	 * @return 验证信息
-	 */
 	public static VerifyInfo of(String domain, String orgName, String prodName, String edition, String version) {
 		return new VerifyInfo(domain, orgName, prodName, edition, version);
 	}
 
-	/**
-	 * 硬件信息和软件信息（内网部署用）
-	 *
-	 * @param ipAddress ip地址
-	 * @param macAddress mac地址
-	 * @param cpuSerial cpu串号
-	 * @param mainBoardSerial 主板序列号
-	 * @param domain 被授权域名
-	 * @param orgName 被授权组织名称
-	 * @param prodName 授权产品名称
-	 * @param edition 授权产品版本
-	 * @param version 内部版本号
-	 * @return 验证信息
-	 */
 	public static VerifyInfo of(List<String> ipAddress, List<String> macAddress, String cpuSerial, String mainBoardSerial,
 			String domain, String orgName, String prodName, String edition, String version) {
 		return new VerifyInfo(ipAddress, macAddress, cpuSerial, mainBoardSerial, domain, orgName, prodName, edition, version);
 	}
 
-	/**
-	 * 硬件信息和软件信息（内网部署用）
-	 *
-	 * @param ipAddress ip地址
-	 * @param macAddress mac地址
-	 * @param cpuSerial cpu串号
-	 * @param mainBoardSerial 主板序列号
-	 * @param verifyEnv 服务器验证环境信息，用于标明被授权方商业信息
-	 * @return 验证信息
-	 */
 	public static VerifyInfo of(List<String> ipAddress, List<String> macAddress, String cpuSerial, String mainBoardSerial, VerifyEnv verifyEnv) {
 		return new VerifyInfo(ipAddress, macAddress, cpuSerial, mainBoardSerial, verifyEnv.getDomain(),
 				verifyEnv.getOrgName(), verifyEnv.getProdName(), verifyEnv.getEdition(), verifyEnv.getVersion());

@@ -9,7 +9,7 @@
 package com.wldos.support.auth.vo;
 
 /**
- * 认证通过后返回的token。。
+ * 认证通过后返回的token。
  *
  * @author 树悉猿
  * @date 2021/4/30

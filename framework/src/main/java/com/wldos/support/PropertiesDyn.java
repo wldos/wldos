@@ -13,8 +13,6 @@ import java.util.Map;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
- * 动态配置系统参数。
- *
  * @author 树悉猿
  * @date 2022/1/28
  * @version 1.0

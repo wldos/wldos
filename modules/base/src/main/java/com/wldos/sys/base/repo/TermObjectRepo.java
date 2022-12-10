@@ -18,8 +18,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
- * 分类、对象关联关系repository操作类。为了方便操作，作品集有分类，内部的篇章默认继承作品集的分类并存储关联关系。
- * 分类关系：content ~ category ~ term ~ post（book|chapter）,其中book是作品集，chapter代表篇章，查询相关文章时不出content行业门类范围，超出没有业务意义。
+ * 分类、对象关联关系repository操作类。
  *
  * @author 树悉猿
  * @date 2021/4/17

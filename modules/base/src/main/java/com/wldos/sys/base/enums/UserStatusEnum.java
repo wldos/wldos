@@ -17,11 +17,8 @@ package com.wldos.sys.base.enums;
  */
 public enum UserStatusEnum {
 
-	/** 有效。 */
 	NORMAL("normal"),
-	/** 无效 */
 	CANCELLED("cancelled"),
-	/** 已锁定 */
 	LOCKED("locked");
 
 	private final String enumName;

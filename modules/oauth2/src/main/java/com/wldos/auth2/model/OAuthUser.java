@@ -19,21 +19,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @date 2022/10/21
  * @version 1.0
  */
-@JsonIgnoreProperties(ignoreUnknown = true) // 防止多余未知字段导致的转换异常
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthUser {
-	/*
-		{
-		  "openid": "OPENID",
-		  "nickname": "NICKNAME",
-		  "sex": 1,
-		  "province": "PROVINCE",
-		  "city": "CITY",
-		  "country": "COUNTRY",
-		  "headimgurl": "https://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0",
-		  "privilege": ["PRIVILEGE1", "PRIVILEGE2"],
-		  "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL"
-		}
-	 */
+
 	@JsonProperty("openid")
 	private String openId;
 	private String nickname;
@@ -46,7 +34,7 @@ public class OAuthUser {
 	private String[] privilege;
 	private String unionId;
 	@JsonIgnore
-	private String oauthType; // 内部数据传递参数
+	private String oauthType;
 
 	public String getOpenId() {
 		return openId;
