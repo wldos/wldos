@@ -9,6 +9,7 @@
 package com.wldos.support.storage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -120,6 +121,15 @@ public interface IStore {
 	 * @throws IOException io异常
 	 */
 	void storeFile(MultipartFile file, String filePathName) throws IOException;
+
+	/**
+	 * 另存为输入流中内容到指定完整目录文件
+	 *
+	 * @param src 复制的源输入流
+	 * @param dstPath 另存为的目标目录
+	 * @throws IOException io异常
+	 */
+	void saveAs(InputStream src, String dstPath) throws IOException;
 
 	/** 文件服务前缀url变量名：https://xxxx.com/xxx */
 	String KEY_OSS_URL = "ossUrl";

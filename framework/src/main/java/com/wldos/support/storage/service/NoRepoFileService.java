@@ -186,6 +186,17 @@ public class NoRepoFileService {
 	}
 
 	/**
+	 * 另存为输入流中内容到指定完整目录文件
+	 *
+	 * @param src 复制的源输入流
+	 * @param filePathName 要保存的完整文件路径名：物理存储路径+文件名
+	 * @throws IOException io异常
+	 */
+	public void storeFile(InputStream src, String filePathName) throws IOException {
+		StoreUtils.saveAsFile(src, filePathName);
+	}
+
+	/**
 	 * 根据文件ID获取文件信息
 	 * @ todo 后期实现对象访问权限控制（私密文件验证个人信息、文件URL加密）
 	 *

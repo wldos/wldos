@@ -109,4 +109,6 @@ public final class Constants {
 
 	/** OAuth2.0社会化登录配置项前缀 */
 	public static final String OAUTH_SETTINGS_PREFIX = "oauth_login_";
+
+	public static final String DIRECTORY_TEMP_NAME = "temp";
 }

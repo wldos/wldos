@@ -8,7 +8,6 @@
 
 package com.wldos.base.service;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +16,6 @@ import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.vo.TreeNode;
-import com.wldos.support.issue.verify.VerifyEnv;
-import de.schlichtherle.license.LicenseContent;
 
 /**
  * 公共jdbc操作和业务辅助。
@@ -216,8 +213,4 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param isLogic 是否逻辑删，原则上使用逻辑删
 	 */
 	<E> void deleteByMultiIds(E entity, Object[] ids, Object pid, boolean isLogic);
-
-	LicenseContent updateLicense(VerifyEnv verifyEnv);
-
-	LicenseContent preInstall(VerifyEnv verifyEnv, File file);
 }

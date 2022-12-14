@@ -43,7 +43,6 @@ public class VerifyInfo implements Serializable {
 	public VerifyInfo() {
 	}
 
-
 	private VerifyInfo(List<String> ipAddress, List<String> macAddress, String cpuSerial, String mainBoardSerial,
 			String domain, String orgName, String prodName, String edition, String version) {
 		this.ipAddress = ipAddress;
@@ -56,7 +55,6 @@ public class VerifyInfo implements Serializable {
 		this.edition = edition;
 		this.version = version;
 	}
-
 
 	private VerifyInfo(String domain, String orgName, String prodName, String edition) {
 		this.domain = domain;

@@ -207,6 +207,11 @@ public class FileStore implements IStore {
 		this.fileService.storeFile(file, filePathName);
 	}
 
+	@Override
+	public void saveAs(InputStream src, String dstPath) throws IOException {
+		this.fileService.storeFile(src, dstPath);
+	}
+
 	/**
 	 * 远程文件存储，暂未实现
 	 *

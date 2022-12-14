@@ -9,6 +9,11 @@
 package com.wldos.support.storage.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -187,5 +192,30 @@ public class StoreUtils {
 			return forceSingleExtension(fileName);
 		}
 		return fileName;
+	}
+
+	/**
+	 * 另存为输入流中内容到指定完整目录文件
+	 *
+	 * @param src 复制的源输入流
+	 * @param filePathName 要保存的完整文件路径名：物理存储路径+文件名
+	 * @throws IOException io异常
+	 */
+	public static void saveAsFile(InputStream src, String filePathName) throws IOException {
+		if (src == null)
+			return;
+		File dstFile = new File(filePathName);
+		StoreUtils.checkDirAndCreate(dstFile.getParentFile());
+		try (OutputStream out = new FileOutputStream(dstFile)) {
+			byte[] cache = new byte[1024];
+			int len;
+			while ((len = src.read(cache)) != -1) {
+				out.write(cache, 0, len);
+			}
+			out.flush();
+		}
+		catch (Exception e) {
+			throw new RemoteException("文件复制异常：", e);
+		}
 	}
 }
