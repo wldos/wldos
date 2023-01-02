@@ -54,7 +54,7 @@ public class PropertiesReader implements PropertiesDyn {
 	private void initialDBPropsSrc() {
 		MutablePropertySources propertySources = env.getPropertySources();
 		try {
-			Map<String, String> propertyMap = this.service.getAllByAppType().stream().collect(Collectors.toMap(WoOptions::getKey, WoOptions::getValue, (k1, k2) -> k1));
+			Map<String, String> propertyMap = this.service.getAllByAppType().stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
 			Properties properties = new Properties();
 			properties.putAll(propertyMap);
@@ -101,7 +101,7 @@ public class PropertiesReader implements PropertiesDyn {
 	public void reLoadDBPropsSrc() {
 		MutablePropertySources propertySources = env.getPropertySources();
 		try {
-			Map<String, String> propertyMap = this.service.getAllByAppType().stream().collect(Collectors.toMap(WoOptions::getKey, WoOptions::getValue, (k1, k2) -> k1));
+			Map<String, String> propertyMap = this.service.getAllByAppType().stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
 			Properties properties = new Properties();
 			properties.putAll(propertyMap);

@@ -29,6 +29,6 @@ public class DemoPlugin implements PluginBootStrap  {
 
 	@Override
 	public void boot(ConfigurableApplicationContext context) {
-		System.out.println("world");
+		System.out.println("wldos");
 	}
 }

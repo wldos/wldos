@@ -242,7 +242,7 @@ public class OAuthService extends Base {
 			return;
 		}
 
-		options.setValue(value);
+		options.setOptionValue(value);
 		this.optionsService.update(options);
 	}
 
@@ -259,6 +259,6 @@ public class OAuthService extends Base {
 			return new OAuthConfig();
 		}
 
-		return this.resJson.readEntity(options.getValue(), new TypeReference<OAuthConfig>() {});
+		return this.resJson.readEntity(options.getOptionValue(), new TypeReference<OAuthConfig>() {});
 	}
 }

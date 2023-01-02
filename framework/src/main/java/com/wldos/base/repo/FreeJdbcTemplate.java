@@ -272,11 +272,12 @@ public interface FreeJdbcTemplate extends God {
 	 */
 	List<LevelNode> queryTreeByChildId(String table, Object cId);
 
+	/** 在线用户数 */
 	int queryOnlineUserNum();
-
+	/** 系统用户数 */
 	int queryUserSum();
-
+	/** 虚拟域数 */
 	int queryDomainSum();
-
+	/** 租户数 */
 	int queryComSum();
 }

@@ -79,10 +79,11 @@ public class OAuthController extends NoRepoController {
 	 * @param authType 社会化登录类型
 	 */
 	@PostMapping("config/{authType}")
-	public void configOAuth(@RequestBody OAuthConfig config, @PathVariable String authType) {
-		if (OAuthTypeEnum.match(authType))
+	public String configOAuth(@RequestBody OAuthConfig config, @PathVariable String authType) {
+		if (OAuthTypeEnum.match(authType)) {
 			this.oAuthService.configOAuth(authType, config);
-		else
+			return this.resJson.ok("ok");
+		} else
 			throw new RuntimeException("提交了未知类型，系统已拒绝");
 	}
 

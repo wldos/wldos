@@ -23,11 +23,11 @@ public class WoOptions {
 	@Id
 	private Long id;
 
-	private String name;
+	private String optionName;
 
-	private String key;
+	private String optionKey;
 
-	private String value;
+	private String optionValue;
 
 	private String description;
 
@@ -37,10 +37,10 @@ public class WoOptions {
 
 	}
 
-	private WoOptions(Long id, String key, String value) {
+	private WoOptions(Long id, String optionKey, String optionValue) {
 		this.id = id;
-		this.key = key;
-		this.value = value;
+		this.optionKey = optionKey;
+		this.optionValue = optionValue;
 	}
 
 	public static WoOptions of(Long id, String key, String value) {
@@ -55,28 +55,28 @@ public class WoOptions {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getOptionName() {
+		return optionName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setOptionName(String optionName) {
+		this.optionName = optionName;
 	}
 
-	public String getKey() {
-		return key;
+	public String getOptionKey() {
+		return optionKey;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setOptionKey(String optionKey) {
+		this.optionKey = optionKey;
 	}
 
-	public String getValue() {
-		return value;
+	public String getOptionValue() {
+		return optionValue;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setOptionValue(String optionValue) {
+		this.optionValue = optionValue;
 	}
 
 	public String getDescription() {

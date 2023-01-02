@@ -36,10 +36,10 @@ public class OptionsService  extends BaseService<OptionsRepo, WoOptions, Long> {
 	 * @return 配置属性
 	 */
 	public String findSettingsByKey(String key) {
-		List<WoOptions> optionsList = this.entityRepo.findAllByKey(key);
+		List<WoOptions> optionsList = this.entityRepo.findAllByOptionKey(key);
 		if (ObjectUtils.isBlank(optionsList))
 			return "";
-		return optionsList.get(0).getValue();
+		return optionsList.get(0).getOptionValue();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class OptionsService  extends BaseService<OptionsRepo, WoOptions, Long> {
 	 * @return 选项
 	 */
 	public WoOptions findByKey(String key) {
-		List<WoOptions> options = this.entityRepo.findAllByKey(key);
+		List<WoOptions> options = this.entityRepo.findAllByOptionKey(key);
 		return ObjectUtils.isBlank(options) ? null : options.get(0);
 	}
 }

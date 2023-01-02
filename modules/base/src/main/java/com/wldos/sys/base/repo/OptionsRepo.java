@@ -27,5 +27,5 @@ public interface OptionsRepo extends PagingAndSortingRepository<WoOptions, Long>
 
 	List<WoOptions> findAllByAppTypeIn(@Param("appType") List<String> appType);
 
-	List<WoOptions> findAllByKey(@Param("key") String key);
+	List<WoOptions> findAllByOptionKey(@Param("optionKey") String optionKey);
 }
