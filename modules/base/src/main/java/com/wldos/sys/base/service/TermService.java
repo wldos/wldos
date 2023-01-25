@@ -37,11 +37,11 @@ import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
-import com.wldos.sys.base.entity.KModelContent;
+import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.entity.KTerms;
-import com.wldos.sys.base.repo.ContentRepo;
+import com.wldos.sys.base.repo.IndustryRepo;
 import com.wldos.common.utils.NameConvert;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.SelectOption;
@@ -76,15 +76,15 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 
 	private final TermTypeRepo termTypeRepo;
 
-	private final ContentRepo contentRepo;
+	private final IndustryRepo industryRepo;
 
 	private final TermObjectRepo termObjectRepo;
 
 	private final TermObjectService termObjectService;
 
-	public TermService(TermTypeRepo termTypeRepo, ContentRepo contentRepo, TermObjectRepo termObjectRepo, TermObjectService termObjectService) {
+	public TermService(TermTypeRepo termTypeRepo, IndustryRepo industryRepo, TermObjectRepo termObjectRepo, TermObjectService termObjectService) {
 		this.termTypeRepo = termTypeRepo;
-		this.contentRepo = contentRepo;
+		this.industryRepo = industryRepo;
 		this.termObjectRepo = termObjectRepo;
 		this.termObjectService = termObjectService;
 	}
@@ -105,7 +105,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 		Map<String, Object> condition = pageQuery.getCondition();
 
 		List<Object> params = new ArrayList<>(); // @todo 此处应考虑term metadata扩展
-		StringBuilder sql = new StringBuilder(50).append("select a.*, o.id term_type_id, o.class_type, o.content_id, o.description,")
+		StringBuilder sql = new StringBuilder(50).append("select a.*, o.id term_type_id, o.class_type, o.industry_id, o.description,")
 				.append(" o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where 1=1 ");
 		if (!condition.isEmpty()) {
 			StringBuilder finalSql1 = new StringBuilder();
@@ -267,7 +267,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 				// 全站分类树，为了规避不需要在门户展现的分类过滤
 				List<Category> viewNodes = allTerms.parallelStream().filter(v -> BoolEnum.YES.toString().equals(v.getInfoFlag()))
 						.map(res ->
-						new Category(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getContentType())).collect(Collectors.toList());
+						new Category(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getIndustryType())).collect(Collectors.toList());
 
 				viewNodes = TreeUtils.buildFlatTree(viewNodes, Constants.TOP_TERM_ID);
 				// 没有孩子的无效，过滤掉
@@ -310,12 +310,12 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 				// 全站分类树
 				List<TreeSelectOption> infoCats = allTerms.parallelStream().map(term -> {
 					Long termTypeId = term.getTermTypeId();
-					return new TreeSelectOption(termTypeId, term.getParentId(), term.getName(), termTypeId.toString(), termTypeId.toString());
+					return TreeSelectOption.of(termTypeId, term.getParentId(), term.getName(), termTypeId.toString(), termTypeId.toString());
 				}).collect(Collectors.toList());
 
 				String topTermId = String.valueOf(Constants.TOP_TERM_ID);
 				// 新增根分类
-				TreeSelectOption infoCate = new TreeSelectOption(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根分类", topTermId, topTermId);
+				TreeSelectOption infoCate = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根分类", topTermId, topTermId);
 
 				infoCats.add(0, infoCate);
 
@@ -357,7 +357,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			return new ArrayList<>();
 
 		return terms.parallelStream().map(res ->
-				new Category(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getContentType())).collect(Collectors.toList());
+				new Category(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getIndustryType())).collect(Collectors.toList());
 	}
 
 	/**
@@ -379,7 +379,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			return new ArrayList<>();
 
 		return terms.parallelStream().map(res ->
-				new Category(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getContentType())).collect(Collectors.toList());
+				new Category(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getIndustryType())).collect(Collectors.toList());
 	}
 
 	/**
@@ -530,23 +530,23 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	/**
 	 * 查询某行业门类下的所有分类
 	 *
-	 * @param contType 行业门类
+	 * @param industryType 行业门类
 	 * @return 分类项集合
 	 */
-	public List<Term> findCategoryByContCode(String contType) {
-		KModelContent modelContent = this.contentRepo.findByContType(contType);
-		return this.entityRepo.findByContType(TermTypeEnum.CATEGORY.toString(), modelContent.getId());
+	public List<Term> findCategoryByIndustryType(String industryType) {
+		KModelIndustry modelIndustry = this.industryRepo.findByIndustryType(industryType);
+		return this.entityRepo.findByContType(TermTypeEnum.CATEGORY.toString(), modelIndustry.getId());
 	}
 
 	/**
 	 * 查询某行业门类下的所有标签
 	 *
-	 * @param contCode 行业门类编码
+	 * @param industryType 行业门类编码
 	 * @return 分类项集合
 	 */
-	public List<Term> findTagByContCode(String contCode) {
-		KModelContent modelContent = this.contentRepo.findByContType(contCode);
-		return this.entityRepo.findByContType(TermTypeEnum.TAG.toString(), modelContent.getId());
+	public List<Term> findTagByIndustryType(String industryType) {
+		KModelIndustry modelIndustry = this.industryRepo.findByIndustryType(industryType);
+		return this.entityRepo.findByContType(TermTypeEnum.TAG.toString(), modelIndustry.getId());
 	}
 
 	/**
@@ -632,7 +632,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 		List<KTermObject> termObjects = this.termObjectRepo.findAllByTermTypeId(term.getTermTypeId());
 		if (!ObjectUtils.isBlank(termObjects)) {
 			List<Long> ids = termObjects.parallelStream().map(KTermObject::getId).collect(Collectors.toList());
-			this.deleteByEntityAndIds(termObjects.get(0), false, ids);
+			this.deleteByEntityAndIds(termObjects.get(0), false, ids.toArray());
 		}
 
 		// 删除term
@@ -654,7 +654,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	}
 
 	/**
-	 * 关联帖子、分类
+	 * 关联发布内容、分类
 	 *
 	 * @param termObject 分类关系
 	 */
@@ -671,18 +671,18 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 * @param termTypeId 分类类型id
 	 * @return 内容模型
 	 */
-	public KModelContent queryContentTypeByTermType(Long termTypeId) {
-		return this.termTypeRepo.queryContentTypeByTermType(termTypeId);
+	public KModelIndustry queryIndustryTypeByTermType(Long termTypeId) {
+		return this.termTypeRepo.queryIndustryTypeByTermType(termTypeId);
 	}
 
 	/**
 	 * 根据行业门类编码获取对应的行业门类
 	 *
-	 * @param typeCode 行业门类编码
+	 * @param industryType 行业门类编码
 	 * @return 内容模型
 	 */
-	public KModelContent queryModelContentByTypeCode(String typeCode) {
-		return this.contentRepo.findByContType(typeCode);
+	public KModelIndustry queryModelIndustryByTypeCode(String industryType) {
+		return this.industryRepo.findByIndustryType(industryType);
 	}
 
 	/**
@@ -727,7 +727,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 * 保存分类关系，并增加计数
 	 *
 	 * @param termTypeId 分类id
-	 * @param pId 帖子id
+	 * @param pId 发布内容id
 	 */
 	public void saveTermObject(Long termTypeId, Long pId) {
 		// 关联帖子分类并计数
@@ -959,40 +959,40 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 * @param termTypeIds 分类目录id
 	 * @return 是否
 	 */
-	public boolean isSameContentType(List<Long> termTypeIds) {
+	public boolean isSameIndustryType(List<Long> termTypeIds) {
 		if (ObjectUtils.isBlank(termTypeIds) || termTypeIds.size() == 1)
 			return true;
 		List<KTermType> termTypes = (List<KTermType>) this.termTypeRepo.findAllById(termTypeIds);
 
 		if (ObjectUtils.isBlank(termTypes) || termTypes.size() < termTypeIds.size()) // 非法数据，返回false,用于防止真假数据试探
 			return false;
-		Long cId0 = termTypes.get(0).getContentId();
-		return termTypes.stream().allMatch(t -> t.getContentId().equals(cId0));
+		Long cId0 = termTypes.get(0).getIndustryId();
+		return termTypes.stream().allMatch(t -> t.getIndustryId().equals(cId0));
 	}
 
 	/**
-	 * 判断多个分类目录是否类型同源，用于更新作品分类
+	 * 判断多个分类目录是否同行业，用于更新作品分类
 	 *
 	 * @param termTypeIds 分类目录id
-	 * @param contentId 待更新作品所归属的类型id
+	 * @param industryId 待更新作品所归属的行业门类id
 	 * @return 是否
 	 */
-	public boolean isSameContentType(List<Long> termTypeIds, Long contentId) {
+	public boolean isSameIndustryType(List<Long> termTypeIds, Long industryId) {
 		if (ObjectUtils.isBlank(termTypeIds))
 			return true;
 		List<KTermType> termTypes = (List<KTermType>) this.termTypeRepo.findAllById(termTypeIds);
 
-		return termTypes.stream().allMatch(t -> t.getContentId().equals(contentId));
+		return termTypes.stream().allMatch(t -> t.getIndustryId().equals(industryId));
 	}
 
 	/**
 	 * 批量处理前端自定义标签的保存，已存在的直接返回，不存在的创建新标签返回
 	 *
 	 * @param tagNames 用户设置的标签
-	 * @param contentId 待设置标签的作品或内容
+	 * @param industryId 待设置标签的归属行业id
 	 * @return 设置标签的id
 	 */
-	public List<Long> handleTag(List<String> tagNames, Long contentId) {
+	public List<Long> handleTag(List<String> tagNames, Long industryId) {
 		if (ObjectUtils.isBlank(tagNames))
 			return new ArrayList<>();
 		// 批量查询标签项
@@ -1008,7 +1008,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			tagIds = terms.stream().map(Term::getTermTypeId).collect(Collectors.toList());
 
 
-			List<Long> newTags = this.addNewTags(noTagNames, contentId);
+			List<Long> newTags = this.addNewTags(noTagNames, industryId);
 
 			tagIds.addAll(newTags);
 
@@ -1016,13 +1016,13 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 		}
 
 		// 全部新增
-		return this.addNewTags(tagNames, contentId);
+		return this.addNewTags(tagNames, industryId);
 	}
 
 	@Value("${wldos.cms.tag.tagLength}")
 	private int tagLength;
 
-	private List<Long> addNewTags(List<String> tagNames, Long contentId) {
+	private List<Long> addNewTags(List<String> tagNames, Long industryId) {
 		List<Term> newTerms = tagNames.stream().map(n -> {
 			// 标签超长，抛弃
 			if (ObjectUtils.isOutBounds(n, this.tagLength))
@@ -1037,7 +1037,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			t.setTermTypeId(id);
 			t.setClassType(TermTypeEnum.TAG.toString());
 			t.setParentId(Constants.TOP_TERM_ID);
-			t.setContentId(contentId);
+			t.setIndustryId(industryId);
 			t.setName(n);
 			t.setSlug(slug);
 

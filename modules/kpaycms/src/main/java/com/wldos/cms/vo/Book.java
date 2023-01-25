@@ -20,9 +20,9 @@ import java.util.List;
 public class Book {
 	private Long id;
 
-	private String postTitle;
+	private String pubTitle;
 
-	private String contentType;
+	private String industryType;
 
 	private List<Chapter> chapter;
 
@@ -34,20 +34,20 @@ public class Book {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public List<Chapter> getChapter() {

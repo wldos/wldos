@@ -10,10 +10,10 @@ package com.wldos.cms.model;
 
 import java.util.List;
 
-import com.wldos.sys.base.dto.ContentExt;
+import com.wldos.sys.base.dto.PubTypeExt;
 
 /**
- * 在CMS-Post元模型定义。
+ * 在CMS-Pub元模型定义。
  *
  * @author 树悉猿
  * @date 2021/6/19
@@ -27,7 +27,7 @@ public class CMeta {
 	/** 查看数 */
 	protected String views;
 
-	protected List<ContentExt> contentExt;
+	protected List<PubTypeExt> pubTypeExt;
 
 	public String getCover() {
 		return cover;
@@ -45,11 +45,11 @@ public class CMeta {
 		this.views = views;
 	}
 
-	public List<ContentExt> getContentExt() {
-		return contentExt;
+	public List<PubTypeExt> getPubTypeExt() {
+		return pubTypeExt;
 	}
 
-	public void setContentExt(List<ContentExt> contentExt) {
-		this.contentExt = contentExt;
+	public void setPubTypeExt(List<PubTypeExt> pubTypeExt) {
+		this.pubTypeExt = pubTypeExt;
 	}
 }

@@ -53,7 +53,6 @@ public class ResourceController extends RepoController<ResourceService, WoResour
 	public PageableResult<Resource> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-
 		return this.service.execQueryForTree(new Resource(), new WoResource(), pageQuery, Constants.MENU_ROOT_ID);
 	}
 
@@ -66,15 +65,8 @@ public class ResourceController extends RepoController<ResourceService, WoResour
 	public List<AuthRes> allResTree() {
 		List<WoResource> resources = this.service.findAll();
 
-		List<AuthRes> authResList = resources.parallelStream().map(res -> {
-			AuthRes authRes = new AuthRes();
-			authRes.setId(res.getId());
-			authRes.setParentId(res.getParentId());
-			authRes.setTitle(res.getResourceName());
-			authRes.setKey(res.getId().toString());
-
-			return authRes;
-		}).collect(Collectors.toList());
+		List<AuthRes> authResList = resources.parallelStream().map(res ->
+				AuthRes.of(res.getResourceName(), res.getId().toString(), res.getId(), res.getParentId())).collect(Collectors.toList());
 
 		return TreeUtils.build(authResList, Constants.MENU_ROOT_ID);
 	}

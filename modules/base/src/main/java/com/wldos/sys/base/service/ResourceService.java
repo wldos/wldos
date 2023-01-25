@@ -26,12 +26,12 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
 import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.KModelContent;
+import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.entity.WoDomainResource;
 import com.wldos.sys.base.entity.WoResource;
 import com.wldos.sys.base.enums.ResourceEnum;
-import com.wldos.sys.base.repo.ContentRepo;
+import com.wldos.sys.base.repo.IndustryRepo;
 import com.wldos.sys.base.repo.ResourceRepo;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.sys.base.repo.TermRepo;
@@ -55,14 +55,14 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 	private final DomainService domainService;
 	private final DomainAppService domainAppService;
 	private final DomainResourceRepo domainResourceRepo;
-	private final ContentRepo contentRepo;
+	private final IndustryRepo industryRepo;
 	private final TermRepo termRepo;
 
-	public ResourceService(DomainService domainService, DomainAppService domainAppService, DomainResourceRepo domainResourceRepo, ContentRepo contentRepo, TermRepo termRepo) {
+	public ResourceService(DomainService domainService, DomainAppService domainAppService, DomainResourceRepo domainResourceRepo, IndustryRepo industryRepo, TermRepo termRepo) {
 		this.domainService = domainService;
 		this.domainAppService = domainAppService;
 		this.domainResourceRepo = domainResourceRepo;
-		this.contentRepo = contentRepo;
+		this.industryRepo = industryRepo;
 		this.termRepo = termRepo;
 	}
 
@@ -155,7 +155,7 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 	public void addSimpleMenu(ResSimple resSimple, Long curUserId, String userIp) {
 
 		String tempType= resSimple.getTempType();
-		String contType = resSimple.getContType();
+		String indType = resSimple.getIndustryType();
 		Long termTypeId = resSimple.getTermTypeId();
 
 		String resName = resSimple.getResName();
@@ -171,19 +171,19 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 		String remark = resSimple.getRemark();
 
 		if (termTypeId == null) {
-			resPath = "/" + tempType + "/" + contType;
+			resPath = "/" + tempType + "/" + indType;
 			if (ObjectUtils.isBlank(resName)) {
-				KModelContent content = this.contentRepo.findByContType(contType);
-				resName = content.getContentName();
+				KModelIndustry industry = this.industryRepo.findByIndustryType(indType);
+				resName = industry.getIndustryName();
 			}
-			resCode = tempType + "_" + contType;
+			resCode = tempType + "_" + indType;
 		} else {
 			Term term = this.termRepo.queryTermByTermTypeId(termTypeId);
-			resPath = "/" + tempType + "/" + contType + "/category/" + term.getSlug();
+			resPath = "/" + tempType + "/" + indType + "/category/" + term.getSlug();
 			if (ObjectUtils.isBlank(resName)) {
 				resName = term.getName();
 			}
-			resCode = tempType + "_" + contType + "_" + term.getSlug();
+			resCode = tempType + "_" + indType + "_" + term.getSlug();
 		}
 
 		Long order = this.entityRepo.queryMaxOrder(parentId);
@@ -214,12 +214,12 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 
 				List<TreeSelectOption> menus = allRes.parallelStream().map(res -> {
 					Long resId = res.getId();
-					return new TreeSelectOption(resId, res.getParentId(), res.getResourceName(), resId.toString(), resId.toString());
+					return TreeSelectOption.of(resId, res.getParentId(), res.getResourceName(), resId.toString(), resId.toString());
 				}).collect(Collectors.toList());
 
 				String topMenuId = String.valueOf(Constants.MENU_ROOT_ID);
 
-				TreeSelectOption topMenu = new TreeSelectOption(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根资源", topMenuId, topMenuId);
+				TreeSelectOption topMenu = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根资源", topMenuId, topMenuId);
 
 				menus.add(0, topMenu);
 

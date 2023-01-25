@@ -23,15 +23,15 @@ public class Route {
 	private String category;
 
 	/** 绑定的行业门类 */
-	private String content;
+	private String industry;
 
 	public Route() {
 	}
 
-	public Route(String module, String category, String content) {
+	public Route(String module, String category, String industry) {
 		this.module = module;
 		this.category = category;
-		this.content = content;
+		this.industry = industry;
 	}
 
 	public String getModule() {
@@ -50,11 +50,11 @@ public class Route {
 		this.category = category;
 	}
 
-	public String getContent() {
-		return content;
+	public String getIndustry() {
+		return industry;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setIndustry(String industry) {
+		this.industry = industry;
 	}
 }

@@ -9,15 +9,15 @@
 package com.wldos.cms.vo;
 
 /**
- * 内容领域和分类类型。
+ * 行业门类和分类类型。
  *
  * @author 树悉猿
  * @date 2021/8/31
  * @version 1.0
  */
 public class TypeDomainTerm {
-	/** 内容领域类型，业务领域标识 */
-	private String contentType;
+	/** 行业门类，业务领域标识 */
+	private String industryType;
 
 	/** 分类项别名，分类项可能是分类法任一 */
 	private String slugTerm;
@@ -25,12 +25,12 @@ public class TypeDomainTerm {
 	/** 模板类型：product、archives */
 	private String tempType;
 
-	public String getContentType() {
-		return contentType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public String getSlugTerm() {

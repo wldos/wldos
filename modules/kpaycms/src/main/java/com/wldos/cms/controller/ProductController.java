@@ -11,7 +11,7 @@ package com.wldos.cms.controller;
 import java.util.Map;
 
 import com.wldos.base.controller.NoRepoController;
-import com.wldos.cms.enums.PostStatusEnum;
+import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Product;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 产品信息controller。所有的作品以产品的形式展现，以帖子的形式存储。产品可以线上交易和交付。
+ * 产品信息controller。所有的作品以产品的形式展现，以发布内容的形式存储。产品可以线上交易和交付。
  *
  * @author 树悉猿
  * @date 2021/8/17
@@ -42,7 +42,7 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 付费内容详情信息
 	 *
-	 * @param pid 产品帖子id
+	 * @param pid 产品发布内容id
 	 * @return 详情信息
 	 */
 	@GetMapping("product-{pid:\\d+}.html")
@@ -53,15 +53,15 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看某大类下的付费内容信息存档
 	 *
-	 * @param contentType 行业门类，用于隔离业务领域
+	 * @param industryType 行业门类，用于隔离业务领域
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@GetMapping("product/{contentType}")
-	public PageableResult<BookUnit> productArchives(@PathVariable String contentType, @RequestParam Map<String, Object> params) {
+	@GetMapping("product/{industryType}")
+	public PageableResult<BookUnit> productArchives(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("contentType", contentType);
-		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("industryType", industryType);
+		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
@@ -71,16 +71,16 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看某目录下的付费内容信息存档
 	 *
-	 * @param contentType 行业门类，用于隔离业务领域
+	 * @param industryType 行业门类，用于隔离业务领域
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@GetMapping("product/{contentType}/category/{slugCategory}")
-	public PageableResult<BookUnit> productCategory(@PathVariable String contentType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
+	@GetMapping("product/{industryType}/category/{slugCategory}")
+	public PageableResult<BookUnit> productCategory(@PathVariable String industryType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("contentType", contentType);
-		pageQuery.pushParam("postStatus", PostStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("industryType", industryType);
+		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
@@ -90,12 +90,12 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 * @param contentType 行业门类，用于隔离业务领域
+	 * @param industryType 行业门类，用于隔离业务领域
 	 * @param xxTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */
-	@GetMapping("product/{contentType}/tag/{xxTag}")
-	public String productTag(@PathVariable String contentType, @PathVariable String xxTag) {
+	@GetMapping("product/{industryType}/tag/{xxTag}")
+	public String productTag(@PathVariable String industryType, @PathVariable String xxTag) {
 
 		return this.resJson.ok("");
 	}

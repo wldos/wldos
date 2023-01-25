@@ -32,11 +32,11 @@ public interface StarRepo extends PagingAndSortingRepository<KStars, Long> {
 	KStars queryStarByObjectIdAndUserId(Long objId, Long userId);
 
 	@Modifying
-	@Query("update k_stars set stars=ABS(stars-1) where object_id=:objId and userId=:userId")
+	@Query("update k_stars set stars=ABS(stars-1) where object_id=:objId and user_id=:userId")
 	void updateStar(Long objId, Long userId);
 
 	@Modifying
-	@Query("update k_stars set likes=ABS(likes-1) where object_id=:objId and userId=:userId")
+	@Query("update k_stars set likes=ABS(likes-1) where object_id=:objId and user_id=:userId")
 	void updateLike(Long objId, Long userId);
 
 	@Modifying

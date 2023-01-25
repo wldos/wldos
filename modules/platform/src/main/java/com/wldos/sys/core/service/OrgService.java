@@ -93,14 +93,9 @@ public class OrgService extends BaseService<OrgRepo, WoOrg, Long> {
 	public OrgRoleTree queryAllRoleTreeByOrgId(long orgId, long userId) {
 		List<WoRole> roles = this.isAdmin(userId) ? this.roleService.findAll() : this.roleService.findAllTenant();
 		List<OrgRole> orgRoles = this.queryAuthRole(orgId);
-		List<AuthRes> authResList = roles.parallelStream().map(role -> {
-			AuthRes authRes = new AuthRes();
-			authRes.setId(role.getId());
-			authRes.setParentId(role.getParentId());
-			authRes.setTitle(role.getRoleName());
-			authRes.setKey(role.getId().toString());
-			return authRes;
-		}).collect(Collectors.toList());
+		List<AuthRes> authResList = roles.parallelStream().map(role ->
+					AuthRes.of(role.getRoleName(), role.getId().toString(), role.getId(), role.getParentId())
+			).collect(Collectors.toList());
 
 		authResList = TreeUtils.build(authResList, Constants.TOP_ROLE_ID);
 

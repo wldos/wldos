@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 
 import com.wldos.base.Base;
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.cms.entity.KPosts;
-import com.wldos.cms.enums.PostStatusEnum;
-import com.wldos.sys.base.enums.ContModelTypeEnum;
+import com.wldos.cms.entity.KPubs;
+import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.vo.Chapter;
-import com.wldos.cms.vo.Post;
+import com.wldos.cms.vo.Pub;
 import com.wldos.common.utils.DateUtils;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.sys.base.dto.ContentExt;
+import com.wldos.sys.base.dto.PubTypeExt;
 import com.wldos.sys.base.dto.Term;
 import com.wldos.sys.base.enums.TermTypeEnum;
 import com.wldos.sys.base.service.TermService;
@@ -46,14 +46,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class SpaceService extends Base {
 
-	private final PostService postService;
+	private final PubService pubService;
 
 	private final TermService termService;
 
 	private final KCMSService kcmsService;
 
-	public SpaceService(PostService postService, TermService termService, KCMSService kcmsService) {
-		this.postService = postService;
+	public SpaceService(PubService pubService, TermService termService, KCMSService kcmsService) {
+		this.pubService = pubService;
 		this.termService = termService;
 		this.kcmsService = kcmsService;
 	}
@@ -65,10 +65,10 @@ public class SpaceService extends Base {
 	 * @return chapter info
 	 */
 	public Chapter queryChapter(Long chapterId) {
-		KPosts post = this.postService.findById(chapterId);
+		KPubs pub = this.pubService.findById(chapterId);
 
-		return new Chapter(post.getId(), ObjectUtils.string(post.getPostTitle()), ObjectUtils.string(post.getPostContent())/* 过滤null值，防止前端不刷新*/,
-				post.getParentId(), post.getPostStatus(), post.getContentType());
+		return new Chapter(pub.getId(), ObjectUtils.string(pub.getPubTitle()), ObjectUtils.string(pub.getPubContent())/* 过滤null值，防止前端不刷新*/,
+				pub.getParentId(), pub.getPubStatus(), pub.getIndustryType());
 	}
 
 	/**
@@ -79,12 +79,12 @@ public class SpaceService extends Base {
 	 * @param userIp current user ip
 	 * @return chapter info
 	 */
-	public Chapter createChapter(Post chapter, Long curUserId, String userIp) {
-		chapter.setPostTitle(DateUtils.format(new Date(), DateUtils.TIME_PATTER));
+	public Chapter createChapter(Pub chapter, Long curUserId, String userIp) {
+		chapter.setPubTitle(DateUtils.format(new Date(), DateUtils.TIME_PATTER));
 
 		// 行业门类contentType从前端传送
-		chapter.setPostStatus(PostStatusEnum.INHERIT.toString());
-		chapter.setPostType(ContModelTypeEnum.CHAPTER.toString());
+		chapter.setPubStatus(PubStatusEnum.INHERIT.toString());
+		chapter.setPubType(PubTypeEnum.CHAPTER.toString());
 		Long id = this.insertChapter(chapter, curUserId, userIp);
 
 		// 取出父作品分类
@@ -109,43 +109,43 @@ public class SpaceService extends Base {
 	 * @param curUserId 操作用户id
 	 * @param userIp 用户ip
 	 */
-	public void saveChapter(Post chapter, Long curUserId, String userIp) {
+	public void saveChapter(Pub chapter, Long curUserId, String userIp) {
 		this.kcmsService.update(chapter, curUserId, userIp);
 	}
 
-	private final BeanCopier postCopier = BeanCopier.create(Post.class, KPosts.class, false);
+	private final BeanCopier pubCopier = BeanCopier.create(Pub.class, KPubs.class, false);
 
 	/**
 	 * 保存带扩展属性的子内容：章节、附件、图片等
 	 *
-	 * @param post 帖子
+	 * @param pub 发布内容
 	 * @param userId 用户id
 	 * @param userIp 用户ip
 	 */
-	public Long insertChapter(Post post, Long userId, String userIp) {
+	public Long insertChapter(Pub pub, Long userId, String userIp) {
 
-		// 为便于结构化处理，对于图片等附件的处理，要在上传文件和编辑文件时将设置数据存储到post metadata中，在帖子渲染时再读出
+		// 为便于结构化处理，对于图片等附件的处理，要在上传文件和编辑文件时将设置数据存储到pub metadata中，在发布内容渲染时再读出
 
-		KPosts posts = new KPosts();
-		this.postCopier.copy(post, posts, null);
+		KPubs pubs = new KPubs();
+		this.pubCopier.copy(pub, pubs, null);
 
 		Long id = this.nextId();
-		EntityAssists.beforeInsert(posts, id, userId, userIp, false);
+		EntityAssists.beforeInsert(pubs, id, userId, userIp, false);
 
-		// @todo 考虑嵌入过滤器hook：posts = applyFilter("savePost", posts);
+		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
-		this.postService.insertSelective(posts);
+		this.pubService.insertSelective(pubs);
 
-		List<ContentExt> contentExt = post.getContentExt();
+		List<PubTypeExt> pubTypeExt = pub.getPubTypeExt();
 
-		if (ObjectUtils.isBlank(contentExt)) {
-			contentExt = new ArrayList<>();
-			this.kcmsService.appendPubMeta(contentExt); // 添加后台静默处理的元数据，比如查看数
+		if (ObjectUtils.isBlank(pubTypeExt)) {
+			pubTypeExt = new ArrayList<>();
+			this.kcmsService.appendPubMeta(pubTypeExt); // 添加后台静默处理的元数据，比如查看数
 		}
 
-		// @todo 考虑嵌入过滤器hook：contentExt = applyFilter("saveContentExt", contentExt);
+		// @todo 考虑嵌入过滤器hook：pubTypeExt = applyFilter("savePubTypeExt", pubTypeExt);
 		// 保存扩展属性
-		this.kcmsService.createPostMeta(contentExt, id);
+		this.kcmsService.createPubMeta(pubTypeExt, id);
 
 		return id;
 	}

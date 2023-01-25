@@ -34,7 +34,7 @@ public class TermTree extends TreeNode<TermTree> {
 
 	private String classType;
 
-	private Long contentId;
+	private Long industryId;
 
 	private String description;
 
@@ -108,12 +108,12 @@ public class TermTree extends TreeNode<TermTree> {
 		this.classType = classType;
 	}
 
-	public Long getContentId() {
-		return contentId;
+	public Long getIndustryId() {
+		return industryId;
 	}
 
-	public void setContentId(Long contentId) {
-		this.contentId = contentId;
+	public void setIndustryId(Long industryId) {
+		this.industryId = industryId;
 	}
 
 	public String getDescription() {

@@ -30,12 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class StarService extends BaseService<StarRepo, KStars, Long> {
 
-	private final PostService postService;
+	private final PubService pubService;
 
 	private final AuthService authService;
 
-	public StarService(PostService postService, AuthService authService) {
-		this.postService = postService;
+	public StarService(PubService pubService, AuthService authService) {
+		this.pubService = pubService;
 		this.authService = authService;
 	}
 
@@ -62,9 +62,9 @@ public class StarService extends BaseService<StarRepo, KStars, Long> {
 			this.entityRepo.updateStar(stars.getId());
 		}
 
-		// 更新帖子点赞数据
+		// 更新发布内容点赞数据
 		int add = !this.authService.isGuest(userId) && ValidStatusEnum.VALID.toString().equals(stars.getStars()) ? -1 : 1;
-		this.postService.updateStarCount(objId, add);
+		this.pubService.updateStarCount(objId, add);
 
 		return add;
 	}
@@ -88,9 +88,9 @@ public class StarService extends BaseService<StarRepo, KStars, Long> {
 			this.entityRepo.updateLike(stars.getId());
 		}
 
-		// 更新帖子关注数据
+		// 更新发布内容关注数据
 		int add = !this.authService.isGuest(userId) && ValidStatusEnum.VALID.toString().equals(stars.getLikes()) ? -1 : 1;
-		this.postService.updateLikeCount(objId, add);
+		this.pubService.updateLikeCount(objId, add);
 
 		return add;
 	}

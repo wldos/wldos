@@ -18,26 +18,26 @@ package com.wldos.cms.vo;
 public class Chapter {
 	private Long id;
 
-	private String postTitle;
+	private String pubTitle;
 
-	private String postContent;
+	private String pubContent;
 
 	private Long parentId;
 
-	private String postStatus;
+	private String pubStatus;
 
-	private String contentType;
+	private String industryType;
 
 	public Chapter() {
 	}
 
-	public Chapter(Long id, String postTitle, String postContent, Long parentId, String postStatus, String contentType) {
+	public Chapter(Long id, String pubTitle, String pubContent, Long parentId, String pubStatus, String industryType) {
 		this.id = id;
-		this.postTitle = postTitle;
-		this.postContent = postContent;
+		this.pubTitle = pubTitle;
+		this.pubContent = pubContent;
 		this.parentId = parentId;
-		this.postStatus = postStatus;
-		this.contentType = contentType;
+		this.pubStatus = pubStatus;
+		this.industryType = industryType;
 	}
 
 	public Long getId() {
@@ -48,20 +48,20 @@ public class Chapter {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
-	public String getPostContent() {
-		return postContent;
+	public String getPubContent() {
+		return pubContent;
 	}
 
-	public void setPostContent(String postContent) {
-		this.postContent = postContent;
+	public void setPubContent(String pubContent) {
+		this.pubContent = pubContent;
 	}
 
 	public Long getParentId() {
@@ -72,19 +72,19 @@ public class Chapter {
 		this.parentId = parentId;
 	}
 
-	public String getPostStatus() {
-		return postStatus;
+	public String getPubStatus() {
+		return pubStatus;
 	}
 
-	public void setPostStatus(String postStatus) {
-		this.postStatus = postStatus;
+	public void setPubStatus(String pubStatus) {
+		this.pubStatus = pubStatus;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 }

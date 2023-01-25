@@ -21,9 +21,9 @@ import java.util.List;
 public class BookUnit {
 	private Long id;
 
-	private String postTitle;
+	private String pubTitle;
 
-	private String contentType;
+	private String industryType;
 
 	private String subTitle; // 扩展属性：副标题
 
@@ -33,7 +33,7 @@ public class BookUnit {
 
 	private Long createBy;
 
-	private List<PostMember> members;
+	private List<PubMember> members;
 
 	public Long getId() {
 		return id;
@@ -43,20 +43,20 @@ public class BookUnit {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public String getSubTitle() {
@@ -91,11 +91,11 @@ public class BookUnit {
 		this.createBy = createBy;
 	}
 
-	public List<PostMember> getMembers() {
+	public List<PubMember> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<PostMember> members) {
+	public void setMembers(List<PubMember> members) {
 		this.members = members;
 	}
 }

@@ -9,6 +9,7 @@
 package com.wldos.common.utils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class TreeUtils {
 	 * 两层循环实现建树
 	 *
 	 * @param treeNodes 传入的树节点列表
+	 * @param root 树的根节点id
 	 * @return 树状结构列表
 	 */
 	public static <T extends TreeNode<T>> List<T> build(List<T> treeNodes, long root) {
@@ -44,13 +46,18 @@ public class TreeUtils {
 
 			for (T it : treeNodes) {
 				if (it.getParentId().equals(treeNode.getId())) {
-					if (treeNode.getChildren() == null) {
-						treeNode.setChildren(new ArrayList<>());
-					}
 					treeNode.add(it);
 				}
 			}
+			if (!ObjectUtils.isBlank(treeNode.getChildren())) {
+				treeNode.getChildren().sort(Comparator.nullsLast(
+						Comparator.comparing(
+								TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+			}
 		}
+		trees.sort(Comparator.nullsLast(
+				Comparator.comparing(
+						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
 		return trees;
 	}
 
@@ -58,6 +65,7 @@ public class TreeUtils {
 	 * 使用递归方法建树
 	 *
 	 * @param treeNodes 树节点类别
+	 * @param root 树根节点id
 	 * @return 树状列表
 	 */
 	public static <T extends TreeNode<T>> List<T> buildByRecursive(List<T> treeNodes, long root) {
@@ -67,23 +75,29 @@ public class TreeUtils {
 				trees.add(findChildren(treeNode, treeNodes));
 			}
 		}
+		trees.sort(Comparator.nullsLast(
+				Comparator.comparing(
+						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
 		return trees;
 	}
 
 	/**
 	 * 递归查找子节点
 	 *
+	 * @param treeNode 当前树节点
 	 * @param treeNodes 树节点类别
 	 * @return 树状列表
 	 */
 	public static <T extends TreeNode<T>> T findChildren(T treeNode, List<T> treeNodes) {
 		for (T it : treeNodes) {
 			if (treeNode.getId().equals(it.getParentId())) {
-				if (treeNode.getChildren() == null) {
-					treeNode.setChildren(new ArrayList<>());
-				}
 				treeNode.add(findChildren(it, treeNodes));
 			}
+		}
+		if (!ObjectUtils.isBlank(treeNode.getChildren())) {
+			treeNode.getChildren().sort(Comparator.nullsLast(
+					Comparator.comparing(
+							TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
 		}
 		return treeNode;
 	}

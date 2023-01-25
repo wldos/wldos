@@ -85,7 +85,7 @@ public final class KModelMetaKey {
 
 	public static final String EXT_META_KEY_EXT_ENUM_VALUE = "enumValue";
 
-	public static final String EXT_META_KEY_EXT_CONT_ID = "contentId";
+	public static final String EXT_META_KEY_EXT_PUB_TYPE = "pubType";
 
 	// 内容通配符前缀
 	public static final String CONT_FILTER_SIGN_PREFIX = "wos-";
@@ -93,7 +93,7 @@ public final class KModelMetaKey {
 	// 侧边栏配置域
 	public static final String SIDECAR_CONF_LIST_NUM = "pageSize";
 
-	public static final String SIDECAR_CONF_TYPE = "postType";
+	public static final String SIDECAR_CONF_TYPE = "pubType";
 
 	public static final String SIDECAR_CONF_SORTER = "sorter";
 

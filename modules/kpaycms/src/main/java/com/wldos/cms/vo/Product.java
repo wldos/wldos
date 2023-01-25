@@ -17,22 +17,22 @@ import com.wldos.sys.base.dto.Term;
 
 public class Product extends KModelMeta implements IMeta {
 
-	// 内容post id
+	// 内容pub id
 	private Long id;
 
-	private String postTitle;
+	private String pubTitle;
 
-	private String postContent;
+	private String pubContent;
 
-	private String postName;
+	private String pubName;
 
 	private Long parentId;
 
-	private String postType;
+	private String pubType;
 
-	private String contentType;
+	private String industryType;
 
-	private String postMimeType;
+	private String pubMimeType;
 
 	private Long commentCount;
 
@@ -44,13 +44,13 @@ public class Product extends KModelMeta implements IMeta {
 
 	private Timestamp updateTime;
 
-	private Long contentId;
+	private Long industryId;
 
 	private Long domainId;
 
 	private Long comId;
 
-	private List<Long> termTypeIds; // 一个帖子可以属于多个分类
+	private List<Long> termTypeIds; // 一个发布内容可以属于多个分类
 
 	/** 标签列表 */
 	private List<Term> tags;
@@ -68,28 +68,28 @@ public class Product extends KModelMeta implements IMeta {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
-	public String getPostContent() {
-		return postContent;
+	public String getPubContent() {
+		return pubContent;
 	}
 
-	public void setPostContent(String postContent) {
-		this.postContent = postContent;
+	public void setPubContent(String pubContent) {
+		this.pubContent = pubContent;
 	}
 
-	public String getPostName() {
-		return postName;
+	public String getPubName() {
+		return pubName;
 	}
 
-	public void setPostName(String postName) {
-		this.postName = postName;
+	public void setPubName(String pubName) {
+		this.pubName = pubName;
 	}
 
 	public Long getParentId() {
@@ -100,28 +100,20 @@ public class Product extends KModelMeta implements IMeta {
 		this.parentId = parentId;
 	}
 
-	public String getPostType() {
-		return postType;
+	public String getPubType() {
+		return pubType;
 	}
 
-	public void setPostType(String postType) {
-		this.postType = postType;
+	public void setPubType(String pubType) {
+		this.pubType = pubType;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getPubMimeType() {
+		return pubMimeType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	public String getPostMimeType() {
-		return postMimeType;
-	}
-
-	public void setPostMimeType(String postMimeType) {
-		this.postMimeType = postMimeType;
+	public void setPubMimeType(String pubMimeType) {
+		this.pubMimeType = pubMimeType;
 	}
 
 	public Long getCommentCount() {
@@ -164,12 +156,21 @@ public class Product extends KModelMeta implements IMeta {
 		this.updateTime = updateTime;
 	}
 
-	public Long getContentId() {
-		return contentId;
+	@Override
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentId(Long contentId) {
-		this.contentId = contentId;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
+	}
+
+	public Long getIndustryId() {
+		return industryId;
+	}
+
+	public void setIndustryId(Long industryId) {
+		this.industryId = industryId;
 	}
 
 	public Long getDomainId() {

@@ -11,7 +11,7 @@ package com.wldos.cms.controller;
 import com.wldos.base.controller.RepoController;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.service.StarService;
-import com.wldos.cms.vo.Post;
+import com.wldos.cms.vo.Pub;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,12 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class StarController extends RepoController<StarService, KStars> {
 
 	@PostMapping("star")
-	public int starObject(@RequestBody Post post) {
-		return this.service.starObject(post.getId(), this.getCurUserId());
+	public int starObject(@RequestBody Pub pub) {
+		return this.service.starObject(pub.getId(), this.getCurUserId());
 	}
 
 	@PostMapping("like")
-	public int likeObject(@RequestBody Post post) {
-		return this.service.likeObject(post.getId(), this.getCurUserId());
+	public int likeObject(@RequestBody Pub pub) {
+		return this.service.likeObject(pub.getId(), this.getCurUserId());
 	}
 }

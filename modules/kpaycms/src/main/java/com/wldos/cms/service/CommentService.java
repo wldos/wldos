@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.service.BaseService;
 import com.wldos.cms.entity.KComments;
-import com.wldos.cms.entity.KPosts;
+import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ApproveStatusEnum;
 import com.wldos.cms.repo.CommentRepo;
 import com.wldos.cms.vo.AuditComment;
@@ -50,25 +50,25 @@ public class CommentService extends BaseService<CommentRepo, KComments, Long> {
 
 	private final UserService userService;
 
-	private final PostService postService;
+	private final PubService pubService;
 
-	public CommentService(UserService userService, PostService postService) {
+	public CommentService(UserService userService, PubService pubService) {
 		this.userService = userService;
-		this.postService = postService;
+		this.pubService = pubService;
 	}
 
 	private final BeanCopier kCopier = BeanCopier.create(KComments.class, Comment.class, false);
 
 	/**
-	 * 查询帖子评论
+	 * 查询发布内容评论
 	 *
-	 * @param postId 帖子id
+	 * @param pubId 发布内容id
 	 * @param delFlag 删除标识
 	 * @param appStatus 审核状态
 	 * @return 评论列表
 	 */
-	public List<Comment> queryPostComments(Long postId, String delFlag, String appStatus) {
-		List<KComments> comments = this.entityRepo.queryCommentsByPostId(postId, delFlag, appStatus);
+	public List<Comment> queryPubComments(Long pubId, String delFlag, String appStatus) {
+		List<KComments> comments = this.entityRepo.queryCommentsByPubId(pubId, delFlag, appStatus);
 
 		if (ObjectUtils.isBlank(comments))
 			return new ArrayList<>();
@@ -107,9 +107,9 @@ public class CommentService extends BaseService<CommentRepo, KComments, Long> {
 		entity.setApproved("true".equals(this.auditFlag) /* 开启评论审核 */
 				? ApproveStatusEnum.APPROVING.getValue() : ApproveStatusEnum.APPROVED.getValue());
 		this.insertSelective(entity);
-		// 更新帖子评论数
-		Long postId = entity.getPostId();
-		this.postService.updateCommentCount(postId, 1);
+		// 更新发布内容评论数
+		Long pId = entity.getPubId();
+		this.pubService.updateCommentCount(pId, 1);
 
 		return id;
 	}
@@ -122,11 +122,11 @@ public class CommentService extends BaseService<CommentRepo, KComments, Long> {
 	public void deleteComment(KComments entity) {
 		KComments comment = this.findById(entity.getId());
 		this.delete(entity);
-		Long postId = comment.getPostId();
-		if (postId == null) {
+		Long pId = comment.getPubId();
+		if (pId == null) {
 			return;
 		}
-		this.postService.updateCommentCount(postId, -1);
+		this.pubService.updateCommentCount(pId, -1);
 	}
 
 	/**
@@ -192,30 +192,30 @@ public class CommentService extends BaseService<CommentRepo, KComments, Long> {
 		if (comments == null || comments.isEmpty())
 			return commentPage;
 
-		List<Long> postIds = comments.parallelStream().map(AuditComment::getPostId).collect(Collectors.toList());
+		List<Long> pubIds = comments.parallelStream().map(AuditComment::getPubId).collect(Collectors.toList());
 		List<Long> userIds = comments.parallelStream().map(AuditComment::getCreateBy).collect(Collectors.toList());
 
 		List<UserInfo> userInfos = this.userService.queryUsersInfo(userIds);
 		// 归集用户头像
 		Map<Long, String> userAvatars = userInfos.parallelStream().collect(Collectors.toMap(UserInfo::getId, UserInfo::getAvatar, (k1, k2) -> k1));
 
-		List<KPosts> posts = this.postService.queryPostsByIds(postIds);
+		List<KPubs> pubs = this.pubService.queryPubsByIds(pubIds);
 		// 归集内容
-		Map<Long, KPosts> postMap = posts.parallelStream().collect(Collectors.toMap(KPosts::getId, p -> p, (k1, k2) -> k1));
+		Map<Long, KPubs> pubMap = pubs.parallelStream().collect(Collectors.toMap(KPubs::getId, p -> p, (k1, k2) -> k1));
 
 		comments = comments.stream().map(comment -> {
-			Long pId = comment.getPostId();
+			Long pId = comment.getPubId();
 			Long uId = comment.getCreateBy();
 
 			// 设置头像
 			comment.setAvatar(userAvatars.get(uId));
 
 			// 设置内容名称 和 评论数
-			KPosts post = postMap.get(pId);
-			if (post == null)
+			KPubs pub = pubMap.get(pId);
+			if (pub == null)
 				return comment;
-			comment.setPostTitle(ObjectUtils.string(post.getPostTitle()));
-			comment.setCommentCount(ObjectUtils.nvlToZero(post.getCommentCount()));
+			comment.setPubTitle(ObjectUtils.string(pub.getPubTitle()));
+			comment.setCommentCount(ObjectUtils.nvlToZero(pub.getCommentCount()));
 			return comment;
 		}).collect(Collectors.toList());
 

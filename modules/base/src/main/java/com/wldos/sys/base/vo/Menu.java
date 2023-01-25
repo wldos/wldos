@@ -33,6 +33,8 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 	/** 菜单打开方式 */
 	private String target;
 
+	private Long displayOrder;
+
 	/* 在菜单中隐藏子节点
 	hideChildrenInMenu?: boolean;*/
 	/* 在菜单中隐藏自己和子节点
@@ -56,11 +58,18 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 		super();
 	}
 
-	public Menu(String path, String icon, String name) {
-		this();
+	private Menu(String path, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
 		this.path = path;
 		this.icon = icon;
 		this.name = name;
+		this.target = target;
+		this.id = id;
+		this.parentId = parentId;
+		this.displayOrder = displayOrder;
+	}
+
+	public static Menu of(String path, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
+		return new Menu(path, icon, name, target, id, parentId, displayOrder);
 	}
 
 	public String getPath() {
@@ -93,6 +102,14 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 
 	public void setTarget(String target) {
 		this.target = target;
+	}
+
+	public Long getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(Long displayOrder) {
+		this.displayOrder = displayOrder;
 	}
 
 	public String toString() {

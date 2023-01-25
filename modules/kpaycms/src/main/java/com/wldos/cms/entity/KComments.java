@@ -19,7 +19,7 @@ public class KComments {
 	@Id
 	private Long id;
 
-	private Long postId;
+	private Long pubId;
 
 	private String author;
 
@@ -66,12 +66,12 @@ public class KComments {
 		this.id = id;
 	}
 
-	public Long getPostId() {
-		return postId;
+	public Long getPubId() {
+		return pubId;
 	}
 
-	public void setPostId(Long postId) {
-		this.postId = postId;
+	public void setPubId(Long pubId) {
+		this.pubId = pubId;
 	}
 
 	public String getAuthor() {

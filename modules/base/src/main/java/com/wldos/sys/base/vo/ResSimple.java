@@ -21,7 +21,7 @@ public class ResSimple {
 
 	private String tempType;
 
-	private String contType;
+	private String industryType;
 
 	private Long termTypeId;
 
@@ -53,12 +53,12 @@ public class ResSimple {
 		this.tempType = tempType;
 	}
 
-	public String getContType() {
-		return contType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContType(String contType) {
-		this.contType = contType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public Long getTermTypeId() {

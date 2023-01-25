@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.base.Base;
 import com.wldos.cms.dto.ContModelDto;
-import com.wldos.cms.entity.KPostmeta;
+import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.model.KModelMetaKey;
 import com.wldos.cms.model.MainPicture;
 import com.wldos.cms.vo.Info;
@@ -47,23 +47,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class InfoService extends Base {
 	private final BeanCopier contCopier = BeanCopier.create(ContModelDto.class, Info.class, false);
 
-	private final PostService postService;
+	private final PubService pubService;
 
 	private final TermService termService;
 
-	private final PostmetaService postmetaService;
+	private final PubmetaService pubmetaService;
 
 	private final KCMSService kcmsService;
 
-	public InfoService(PostService postService, TermService termService, PostmetaService postmetaService, KCMSService kcmsService) {
-		this.postService = postService;
+	public InfoService(PubService pubService, TermService termService, PubmetaService pubmetaService, KCMSService kcmsService) {
+		this.pubService = pubService;
 		this.termService = termService;
-		this.postmetaService = postmetaService;
+		this.pubmetaService = pubmetaService;
 		this.kcmsService = kcmsService;
 	}
 
 	/**
-	 * 根据实体字段自由查询供求信息列表，实体表：KPosts、KTermObject
+	 * 根据实体字段自由查询供求信息列表，实体表：KPubs、KTermObject
 	 *
 	 * @param pageQuery 分页查询参数
 	 * @return 信息列表页
@@ -80,7 +80,7 @@ public class InfoService extends Base {
 			this.filterByParentTermTypeId(ids, pageQuery);
 		}
 
-		return this.postService.queryInfos(pageQuery);
+		return this.pubService.queryInfos(pageQuery);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class InfoService extends Base {
 			pageQuery.removeParam("price");
 		}
 
-		return this.postService.queryInfos(pageQuery);
+		return this.pubService.queryInfos(pageQuery);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class InfoService extends Base {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugTag);
 		pageQuery.pushParam("termTypeId", termType.getId());
 
-		return this.postService.queryInfos(pageQuery);
+		return this.pubService.queryInfos(pageQuery);
 	}
 
 	/**
@@ -141,10 +141,10 @@ public class InfoService extends Base {
 		this.kcmsService.updatePubMeta(pid);
 
 		// 根据id找到行业门类、模板类型 用于前端展示
-		ContModelDto contBody = this.postService.queryContModel(pid);
+		ContModelDto contBody = this.pubService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPostmeta> metas = this.postmetaService.queryPostMetaByPostId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
 
 		// 合并主体信息
 		Info product = new Info();
@@ -164,7 +164,7 @@ public class InfoService extends Base {
 		product.setMainPic(pictures);
 
 		// 析取独立公共扩展属性
-		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
+		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 		this.kcmsService.populateMeta(product, pubMeta);
 

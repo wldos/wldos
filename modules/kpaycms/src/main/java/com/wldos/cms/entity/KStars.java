@@ -24,7 +24,7 @@ public class KStars {
 	@Id
 	private Long id;
 
-	/** 帖子、产品、作品、评论等 */
+	/** 发布的各种内容：帖子、产品、作品、评论等 */
 	private Long objectId;
 
 	private Long userId;

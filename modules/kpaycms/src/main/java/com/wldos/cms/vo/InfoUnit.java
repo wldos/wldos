@@ -24,15 +24,15 @@ import com.wldos.sys.base.dto.Term;
  * @date 2022/01/05
  * @version 1.0
  */
-@JsonIgnoreProperties({ "postContent", "domainId" })
+@JsonIgnoreProperties({ "pubContent", "domainId" })
 public class InfoUnit {
 	private Long id;
 
-	private String postTitle;
+	private String pubTitle;
 
-	private String postExcerpt;
+	private String pubExcerpt;
 
-	private String postContent; // 辅助生成摘要
+	private String pubContent; // 辅助生成摘要
 
 	private BigDecimal ornPrice = BigDecimal.valueOf(0);
 
@@ -46,9 +46,9 @@ public class InfoUnit {
 
 	private Long createBy;
 
-	private String postType;
+	private String pubType;
 
-	private String contentType;
+	private String industryType;
 
 	private Long domainId; // 用于查询分类、标签信息
 
@@ -61,7 +61,7 @@ public class InfoUnit {
 	@JsonSerialize(using = Integer2JsonSerializer.class)
 	private Integer likeCount;
 
-	private PostMember member;
+	private PubMember member;
 
 	/** 标签列表 */
 	private List<Term> tags;
@@ -74,28 +74,20 @@ public class InfoUnit {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
-	public String getPostExcerpt() {
-		return postExcerpt;
+	public String getPubExcerpt() {
+		return pubExcerpt;
 	}
 
-	public void setPostExcerpt(String postExcerpt) {
-		this.postExcerpt = postExcerpt;
-	}
-
-	public String getPostContent() {
-		return postContent;
-	}
-
-	public void setPostContent(String postContent) {
-		this.postContent = postContent;
+	public void setPubExcerpt(String pubExcerpt) {
+		this.pubExcerpt = pubExcerpt;
 	}
 
 	public BigDecimal getOrnPrice() {
@@ -170,20 +162,28 @@ public class InfoUnit {
 		this.createBy = createBy;
 	}
 
-	public String getPostType() {
-		return postType;
+	public String getPubContent() {
+		return pubContent;
 	}
 
-	public void setPostType(String postType) {
-		this.postType = postType;
+	public void setPubContent(String pubContent) {
+		this.pubContent = pubContent;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getPubType() {
+		return pubType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setPubType(String pubType) {
+		this.pubType = pubType;
+	}
+
+	public String getIndustryType() {
+		return industryType;
+	}
+
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {
@@ -194,11 +194,11 @@ public class InfoUnit {
 		this.domainId = domainId;
 	}
 
-	public PostMember getMember() {
+	public PubMember getMember() {
 		return member;
 	}
 
-	public void setMember(PostMember member) {
+	public void setMember(PubMember member) {
 		this.member = member;
 	}
 

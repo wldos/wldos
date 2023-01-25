@@ -23,11 +23,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.base.Base;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.cms.dto.ContModelDto;
-import com.wldos.cms.dto.PostPicture;
-import com.wldos.cms.entity.KPostmeta;
-import com.wldos.cms.entity.KPosts;
-import com.wldos.cms.enums.PostStatusEnum;
-import com.wldos.sys.base.enums.ContModelTypeEnum;
+import com.wldos.cms.dto.PubPicture;
+import com.wldos.cms.entity.KPubmeta;
+import com.wldos.cms.entity.KPubs;
+import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
 import com.wldos.cms.model.IMeta;
 import com.wldos.cms.model.KModelMetaKey;
@@ -38,11 +38,11 @@ import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Breadcrumb;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Geographic;
-import com.wldos.cms.vo.MiniPost;
-import com.wldos.cms.vo.Post;
-import com.wldos.cms.vo.PostMember;
-import com.wldos.cms.vo.PostMeta;
-import com.wldos.cms.vo.PostUnit;
+import com.wldos.cms.vo.MiniPub;
+import com.wldos.cms.vo.Pub;
+import com.wldos.cms.vo.PubMember;
+import com.wldos.cms.vo.PubMeta;
+import com.wldos.cms.vo.PubUnit;
 import com.wldos.cms.vo.Product;
 import com.wldos.cms.vo.SeoCrumbs;
 import com.wldos.cms.vo.TypeDomainTerm;
@@ -54,14 +54,14 @@ import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.sys.base.dto.ContentExt;
+import com.wldos.sys.base.dto.PubTypeExt;
 import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.KModelContent;
+import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.enums.TempTypeEnum;
 import com.wldos.sys.base.enums.TermTypeEnum;
-import com.wldos.sys.base.service.ContentExtService;
-import com.wldos.sys.base.service.ContentService;
+import com.wldos.sys.base.service.PubTypeExtService;
+import com.wldos.sys.base.service.IndustryService;
 import com.wldos.sys.core.service.RegionService;
 import com.wldos.sys.base.service.TermService;
 import com.wldos.sys.core.vo.City;
@@ -93,9 +93,9 @@ public class KCMSService extends Base {
 
 	private final BeanCopier artCopier = BeanCopier.create(ContModelDto.class, Article.class, false);
 
-	private final BeanCopier contExtCopier = BeanCopier.create(ContentExt.class, ContentExt.class, false);
+	private final BeanCopier contExtCopier = BeanCopier.create(PubTypeExt.class, PubTypeExt.class, false);
 
-	private final BeanCopier postMetaCopier = BeanCopier.create(ContModelDto.class, PostMeta.class, false);
+	private final BeanCopier pubMetaCopier = BeanCopier.create(ContModelDto.class, PubMeta.class, false);
 
 	@Value("${wldos.file.pic.srcset}")
 	private String thumbnail;
@@ -103,24 +103,24 @@ public class KCMSService extends Base {
 	@Value("${wldos.sidecar.config}")
 	private String sideCar;
 
-	private final ContentService contentService;
+	private final IndustryService industryService;
 
-	private final PostService postService;
+	private final PubService pubService;
 
-	private final PostmetaService postmetaService;
+	private final PubmetaService pubmetaService;
 
-	private final ContentExtService contentExtService;
+	private final PubTypeExtService pubTypeExtService;
 
 	private final TermService termService;
 
 	private final RegionService regionService;
 
-	public KCMSService(ContentService contentService, PostService postService, PostmetaService postmetaService, ContentExtService contentExtService,
-			TermService termService, RegionService regionService) {
-		this.contentService = contentService;
-		this.postService = postService;
-		this.postmetaService = postmetaService;
-		this.contentExtService = contentExtService;
+	public KCMSService(IndustryService industryService, PubService pubService, PubmetaService pubmetaService,
+			PubTypeExtService pubTypeExtService, TermService termService, RegionService regionService) {
+		this.industryService = industryService;
+		this.pubService = pubService;
+		this.pubmetaService = pubmetaService;
+		this.pubTypeExtService = pubTypeExtService;
 		this.termService = termService;
 		this.regionService = regionService;
 	}
@@ -132,66 +132,66 @@ public class KCMSService extends Base {
 	 * @return 分页数据
 	 */
 	public PageableResult<BookUnit> queryContentList(PageQuery pageQuery) {
-		return this.postService.queryPostWithExtList(pageQuery);
+		return this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	// @todo 图片、附件类预处理和设置元数据存储
 
-	private final BeanCopier postCopier = BeanCopier.create(Post.class, KPosts.class, false);
+	private final BeanCopier pubCopier = BeanCopier.create(Pub.class, KPubs.class, false);
 
 	/**
 	 * 保存带扩展属性的内容
 	 *
-	 * @param post 帖子
-	 * @param postType 帖子类型
+	 * @param pub 发布内容
+	 * @param pubType 发布类型
 	 * @param userId 用户id
 	 * @param userIp 用户ip
 	 */
-	public Long insertSelective(Post post, String postType, Long userId, String userIp) {
+	public Long insertSelective(Pub pub, String pubType, Long userId, String userIp) {
 
-		if (ObjectUtils.isBlank(post.getPostName())) // 创建标题别名
-			post.setPostName(ChineseUtils.hanZi2Pinyin(post.getPostTitle(), true));
+		if (ObjectUtils.isBlank(pub.getPubName())) // 创建标题别名
+			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));
 
-		// 为便于结构化处理，对于图片等附件的处理，要在上传文件和编辑文件时将设置数据存储到post metadata中，在帖子渲染时再读出
+		// 为便于结构化处理，对于图片等附件的处理，要在上传文件和编辑文件时将设置数据存储到pub metadata中，在发布内容渲染时再读出
 
-		KPosts posts = new KPosts();
-		this.postCopier.copy(post, posts, null);
+		KPubs pubs = new KPubs();
+		this.pubCopier.copy(pub, pubs, null);
 		// 存在别名，放弃设置别名
-		if (this.postService.existsByPostName(posts.getPostName(), posts.getId()))
-			posts.setPostName("");
+		if (this.pubService.existsByPubName(pubs.getPubName(), pubs.getId()))
+			pubs.setPubName("");
 
-		// 根据分类id获取行业门类，确定模板，统一所有带正文的内容模板为作品集-篇章结构，行业门类用于总览分类，不可以跨类型选择分类目录，同类型可以有多个分类
-		KModelContent content = this.termService.queryContentTypeByTermType(Long.parseLong(post.getTermTypeIds().get(0).getValue()));
-		posts.setPostType(postType);
-		posts.setContentType(content.getContentCode());
-		posts.setPostStatus(PostStatusEnum.PUBLISH.toString()); // @todo 后期加上审核功能
+		// 根据分类id获取行业门类，确定模板，统一所有带正文的内容模板为作品集-篇章结构，行业门类用于总览分类，不可以跨行业类型选择分类目录，同类型可以有多个分类
+		KModelIndustry industry = this.termService.queryIndustryTypeByTermType(Long.parseLong(pub.getTermTypeIds().get(0).getValue()));
+		pubs.setPubType(pubType);
+		pubs.setIndustryType(industry.getIndustryCode());
+		pubs.setPubStatus(PubStatusEnum.PUBLISH.toString()); // @todo 后期加上审核功能
 		Long id = this.nextId();
-		EntityAssists.beforeInsert(posts, id, userId, userIp, false);
+		EntityAssists.beforeInsert(pubs, id, userId, userIp, false);
 
-		// @todo 考虑嵌入过滤器hook：posts = applyFilter("savePost", posts);
+		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
-		this.postService.insertSelective(posts);
+		this.pubService.insertSelective(pubs);
 
-		// 批量关联帖子分类并计数
-		List<Long> termTypeIds = post.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
+		// 批量关联发布内容分类并计数
+		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
 		this.termService.saveTermObject(termTypeIds, id);
 
-		List<String> tagIds = post.getTagIds();
+		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
-			List<Long> newTagIds = this.termService.handleTag(tagIds, content.getId());
+			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId());
 			this.termService.saveTermObject(newTagIds, id);
 		}
 
-		List<ContentExt> contentExt = post.getContentExt();
+		List<PubTypeExt> pubTypeExt = pub.getPubTypeExt();
 
-		if (ObjectUtils.isBlank(contentExt)) {
-			contentExt = new ArrayList<>();
-			this.appendPubMeta(contentExt); // 添加后台静默处理的元数据，比如查看数
+		if (ObjectUtils.isBlank(pubTypeExt)) {
+			pubTypeExt = new ArrayList<>();
+			this.appendPubMeta(pubTypeExt); // 添加后台静默处理的元数据，比如查看数
 		}
 
-		// @todo 考虑嵌入过滤器hook：contentExt = applyFilter("saveContentExt", contentExt);
+		// @todo 考虑嵌入过滤器hook：pubTypeExt = applyFilter("savePubTypeExt", pubTypeExt);
 		// 保存扩展属性
-		this.createPostMeta(contentExt, id);
+		this.createPubMeta(pubTypeExt, id);
 
 		return id;
 	}
@@ -199,86 +199,86 @@ public class KCMSService extends Base {
 	/**
 	 * 更新
 	 *
-	 * @param post post vo
+	 * @param pub pub vo
 	 * @param userId user id
 	 * @param userIp user ip
 	 */
-	public void update(Post post, Long userId, String userIp) {
-		if (ObjectUtils.isBlank(post.getPostName())) // 创建标题别名
-			post.setPostName(ChineseUtils.hanZi2Pinyin(post.getPostTitle(), true));
+	public void update(Pub pub, Long userId, String userIp) {
+		if (ObjectUtils.isBlank(pub.getPubName())) // 创建标题别名
+			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));
 
-		List<ContentExt> contentExt = post.getContentExt();
+		List<PubTypeExt> industryExt = pub.getPubTypeExt();
 
-		if (!ObjectUtils.isBlank(contentExt) && !contentExt.isEmpty()) {
-			// @todo 考虑嵌入过滤器hook：contentExt = applyFilter("updateContentExt", contentExt); 图片等扩展属性需要特殊处理
-			List<KPostmeta> postMetas = this.postmetaService.queryPostMetaByPostId(post.getId());
-			// 需要根据postId+metaKey取出可能存在的postMeta.id，如果不存在，以新属性创建
-			Map<String, Long> keyMap = postMetas.parallelStream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getId));
+		if (!ObjectUtils.isBlank(industryExt) && !industryExt.isEmpty()) {
+			// @todo 考虑嵌入过滤器hook：industryExt = applyFilter("updatePubTypeExt", industryExt); 图片等扩展属性需要特殊处理
+			List<KPubmeta> pubMetas = this.pubmetaService.queryPubMetaByPubId(pub.getId());
+			// 需要根据pubId+metaKey取出可能存在的pubMeta.id，如果不存在，以新属性创建
+			Map<String, Long> keyMap = pubMetas.parallelStream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getId));
 			// 保存扩展属性
-			postMetas = contentExt.parallelStream().map(ext -> {
-				KPostmeta postMeta = new KPostmeta();
+			pubMetas = industryExt.parallelStream().map(ext -> {
+				KPubmeta pubMeta = new KPubmeta();
 				String key = ext.getMetaKey();
 				String value = ext.getMetaValue();
 				if (ObjectUtils.isBlank(value))
 					return null;
-				postMeta.setId(keyMap.get(key));
-				postMeta.setPostId(post.getId());
-				postMeta.setMetaKey(key);
-				postMeta.setMetaValue(value);
-				return postMeta;
+				pubMeta.setId(keyMap.get(key));
+				pubMeta.setPubId(pub.getId());
+				pubMeta.setMetaKey(key);
+				pubMeta.setMetaValue(value);
+				return pubMeta;
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 
-			List<KPostmeta> postMetasU = postMetas.parallelStream().filter(p -> p.getId() != null).collect(Collectors.toList());
-			List<KPostmeta> postMetasN = postMetas.parallelStream().filter(p -> p.getId() == null).collect(Collectors.toList());
-			if (!postMetasN.isEmpty())
-				postMetasN.forEach(pm -> pm.setId(this.nextId()));
-			this.postmetaService.insertSelectiveAll(postMetasN);
-			if (!postMetasU.isEmpty())
-				this.postmetaService.updateAll(postMetasU);
+			List<KPubmeta> pubMetasU = pubMetas.parallelStream().filter(p -> p.getId() != null).collect(Collectors.toList());
+			List<KPubmeta> pubMetasN = pubMetas.parallelStream().filter(p -> p.getId() == null).collect(Collectors.toList());
+			if (!pubMetasN.isEmpty())
+				pubMetasN.forEach(pm -> pm.setId(this.nextId()));
+			this.pubmetaService.insertSelectiveAll(pubMetasN);
+			if (!pubMetasU.isEmpty())
+				this.pubmetaService.updateAll(pubMetasU);
 		}
 
 		// 处理分类和标签
-		List<SelectOption> tIds = post.getTermTypeIds();
+		List<SelectOption> tIds = pub.getTermTypeIds();
 		if (tIds != null) {
 			List<Long> termTypeIds = tIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-			this.termService.updateTermObject(termTypeIds, post.getId(), TermTypeEnum.CATEGORY.toString());
+			this.termService.updateTermObject(termTypeIds, pub.getId(), TermTypeEnum.CATEGORY.toString());
 		}
 
-		List<String> tagIds = post.getTagIds();
+		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
-			KPosts dbPost = this.postService.findById(post.getId());
-			KModelContent content = this.termService.queryModelContentByTypeCode(dbPost.getContentType());
-			List<Long> newTagIds = this.termService.handleTag(tagIds, content.getId());
-			this.termService.updateTermObject(newTagIds, post.getId(), TermTypeEnum.TAG.toString());
+			KPubs dbPub = this.pubService.findById(pub.getId());
+			KModelIndustry industry = this.termService.queryModelIndustryByTypeCode(dbPub.getIndustryType());
+			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId());
+			this.termService.updateTermObject(newTagIds, pub.getId(), TermTypeEnum.TAG.toString());
 		}
 
-		KPosts posts = new KPosts();
-		this.postCopier.copy(post, posts, null);
-		EntityAssists.beforeUpdated(posts, userId, userIp);
+		KPubs pubs = new KPubs();
+		this.pubCopier.copy(pub, pubs, null);
+		EntityAssists.beforeUpdated(pubs, userId, userIp);
 
-		// @todo 考虑嵌入过滤器hook：posts = applyFilter("updatePost", posts);
+		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("updatePub", pubs);
 
 		// 存在别名，放弃设置别名
-		if (this.postService.existsByPostName(posts.getPostName(), posts.getId()))
-			posts.setPostName("");
+		if (this.pubService.existsByPubName(pubs.getPubName(), pubs.getId()))
+			pubs.setPubName("");
 
-		this.postService.update(posts);
+		this.pubService.update(pubs);
 	}
 
 	/**
 	 * 删除内容
 	 *
-	 * @param post 帖子
+	 * @param pub 发布内容
 	 * @return 反馈
 	 */
-	public String delete(Post post) {
-		// @todo 考虑嵌入操作hook: execHook("deletePost", post);
+	public String delete(Pub pub) {
+		// @todo 考虑嵌入操作hook: execHook("deletePub", pub);
 		// 删除检查：如果是作品，检查是否存在内容，如果是内容，直接删除。
-		List<Chapter> chapters = this.postService.queryPostsByParentId(post.getId(), DeleteFlagEnum.NORMAL.toString());
+		List<Chapter> chapters = this.pubService.queryPubsByParentId(pub.getId(), DeleteFlagEnum.NORMAL.toString());
 		if (chapters != null && chapters.size() > 0)
 			return "存在内容，请先删除内容";
 		// 逻辑删
-		this.postService.deleteById(post.getId());
+		this.pubService.deleteById(pub.getId());
 		return "ok";
 		// 若是物理删，需要级联删除meta扩展属性
 	}
@@ -293,10 +293,10 @@ public class KCMSService extends Base {
 		this.updatePubMeta(pid);
 
 		// 根据id找到行业门类、模板类型 用于前端展示
-		ContModelDto contBody = this.postService.queryContModel(pid);
+		ContModelDto contBody = this.pubService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPostmeta> metas = this.postmetaService.queryPostMetaByPostId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
 
 		// 合并主体信息
 		Product product = new Product();
@@ -316,7 +316,7 @@ public class KCMSService extends Base {
 		product.setMainPic(pictures);
 
 		// 析取独立公共扩展属性
-		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
+		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 		this.populateMeta(product, pubMeta);
 
@@ -331,8 +331,8 @@ public class KCMSService extends Base {
 	 */
 	public void genSeoAndCrumbs(IMeta iMeta, Long termTypeId) {
 		SeoCrumbs seoCrumbs = new SeoCrumbs();
-		seoCrumbs.setTitle(iMeta.getPostTitle());
-		seoCrumbs.setDescription(this.postService.genPostExcerpt(iMeta.getPostContent(), 140));
+		seoCrumbs.setTitle(iMeta.getPubTitle());
+		seoCrumbs.setDescription(this.pubService.genPubExcerpt(iMeta.getPubContent(), 140));
 		StringBuilder keywords = new StringBuilder();
 		List<Term> tags = iMeta.getTags();
 		if (!ObjectUtils.isBlank(tags)) { // 根据标签生成关键词
@@ -341,7 +341,7 @@ public class KCMSService extends Base {
 			seoCrumbs.setKeywords(keywords.toString());
 		}
 		else
-			seoCrumbs.setKeywords(iMeta.getPostTitle());
+			seoCrumbs.setKeywords(iMeta.getPubTitle());
 		// 开始创建面包屑: 直属分类及所有父级分类
 		List<LevelNode> nodes = this.termService.queryTermTreeByChildId(termTypeId);
 		List<Long> termTypeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
@@ -350,8 +350,8 @@ public class KCMSService extends Base {
 				terms.parallelStream().map(term -> {
 					Breadcrumb bc = new Breadcrumb();
 					String termPath = this.getPathByTermType(term.getClassType());
-					bc.setPath(iMeta instanceof Product ? "/product/" + iMeta.getContentType() + termPath + term.getSlug()
-							: "/archives/" + iMeta.getContentType() + termPath + term.getSlug());
+					bc.setPath(iMeta instanceof Product ? "/product/" + iMeta.getIndustryType() + termPath + term.getSlug()
+							: "/archives/" + iMeta.getIndustryType() + termPath + term.getSlug());
 					bc.setBreadcrumbName(term.getName());
 					return bc;
 				}).collect(Collectors.toList());
@@ -368,20 +368,20 @@ public class KCMSService extends Base {
 	 */
 	public SeoCrumbs genSeoCrumbs(TypeDomainTerm params) {
 		SeoCrumbs seoCrumbs = new SeoCrumbs();
-		String contentType = params.getContentType();
+		String industryType = params.getIndustryType();
 		String slugTerm = params.getSlugTerm();
 		String tempType = params.getTempType(); // 模板类型决定返回的面包屑链接到的模板前缀
 
 		if (ObjectUtils.isBlank(slugTerm)) {
-			KModelContent content = this.contentService.findByContentCode(contentType);
-			String name = content == null ? "所有领域" : content.getContentName();
+			KModelIndustry industry = this.industryService.findByIndustryCode(industryType);
+			String name = industry == null ? "所有领域" : industry.getIndustryName();
 			seoCrumbs.setTitle(name);
 			seoCrumbs.setDescription("内容领域：" + name);
 			seoCrumbs.setKeywords(name);
 			// 内容领域
 			List<Breadcrumb> crumb = new ArrayList<>();
 			Breadcrumb bcb = new Breadcrumb();
-			bcb.setPath("/" + tempType + "/" + contentType);
+			bcb.setPath("/" + tempType + "/" + industryType);
 			bcb.setBreadcrumbName(name);
 			seoCrumbs.setCrumbs(crumb);
 			return seoCrumbs;
@@ -403,7 +403,7 @@ public class KCMSService extends Base {
 		List<Breadcrumb> crumb =
 				terms.parallelStream().map(t -> {
 					Breadcrumb bc = new Breadcrumb();
-					bc.setPath("/" + tempType + "/" + contentType + this.getPathByTermType(t.getClassType()) + t.getSlug());
+					bc.setPath("/" + tempType + "/" + industryType + this.getPathByTermType(t.getClassType()) + t.getSlug());
 					bc.setBreadcrumbName(t.getName());
 					return bc;
 				}).collect(Collectors.toList());
@@ -473,29 +473,29 @@ public class KCMSService extends Base {
 			product.setViews(views);
 	}
 
-	public IMeta handleContent(IMeta iMeta, List<KPostmeta> metas, ContModelDto contBody, Long pid) {
+	public IMeta handleContent(IMeta iMeta, List<KPubmeta> metas, ContModelDto contBody, Long pid) {
 		// 根据自定义行业门类找到自定义扩展属性集
-		List<ContentExt> contentExt = this.contentExtService.queryExtPropsByContentId(contBody.getContentId());
+		List<PubTypeExt> pubTypeExt = this.pubTypeExtService.queryExtPropsByPubType(contBody.getPubType());
 		// 填充自定义属性
-		contentExt = this.getContentExt(contentExt, metas);
+		pubTypeExt = this.getPubTypeExt(pubTypeExt, metas);
 
-		iMeta.setContentExt(contentExt);
+		iMeta.setPubTypeExt(pubTypeExt);
 
-		// 找到附件类，以此作为依据析取附件类元数据，这要求每一个 1.附件也要在帖子表存储，对附件的处理采用宽进严出，
+		// 找到附件类，以此作为依据析取附件类元数据，这要求每一个 1.附件也要在发布内容表存储，对附件的处理采用宽进严出，
 		//  即使删帖，也不级联删除附件，附件的删除统一在用户文件库[媒体库]维护(反向级联：即不能删除被引用的文件)，
-		// 帖子中图片编辑或删除时，都不级联更新附件(考虑复用和性能)，后期可能再优化
-		List<ContModelDto> contAttach = this.postService.queryContAttach(pid);
+		// 发布内容中图片编辑或删除时，都不级联更新附件(考虑复用和性能)，后期可能再优化
+		List<ContModelDto> contAttach = this.pubService.queryContAttach(pid);
 
 		if (ObjectUtils.isBlank(contAttach))
 			return iMeta;
 
 		List<Long> pIds = contAttach.parallelStream().map(ContModelDto::getId).collect(Collectors.toList());
 		// 查询内容主体附件的扩展属性值
-		List<KPostmeta> metasAttach = this.postmetaService.queryPostMetaByPostIds(pIds);
+		List<KPubmeta> metasAttach = this.pubmetaService.queryPubMetaByPubIds(pIds);
 
 		// 处理附件、图片类
-		Map<Long, List<KPostmeta>> attMetaGroup = metasAttach.stream()
-				.collect(Collectors.groupingBy(KPostmeta::getPostId)); // 按附件id归集自身元数据
+		Map<Long, List<KPubmeta>> attMetaGroup = metasAttach.stream()
+				.collect(Collectors.groupingBy(KPubmeta::getPubId)); // 按附件id归集自身元数据
 
 		if (ObjectUtils.isBlank(attMetaGroup))
 			return iMeta;
@@ -504,21 +504,21 @@ public class KCMSService extends Base {
 
 		// 附件没必要输出客户端，仅作内容再处理：应用附件、图片的元数据作为展示格式，这要求内容的保存要根据附件path对内容相应附件html
 		// 元素的样式作标记(暂时以附件url)，并在此处替换，以实现附件的复用和灵活更新
-		String content = iMeta.getPostContent();
+		String content = iMeta.getPubContent();
 		if (ObjectUtils.isBlank(content))
 			return iMeta;
 
 		content = filterContent(attachments, content);
 
-		iMeta.setPostContent(content);
+		iMeta.setPubContent(content);
 
 		return iMeta;
 	}
 
-	public MainPicture exact(List<KPostmeta> metas, String pic) {
+	public MainPicture exact(List<KPubmeta> metas, String pic) {
 		MainPicture mp = new MainPicture();
 		mp.setKey(pic);
-		for (KPostmeta meta : metas) {
+		for (KPubmeta meta : metas) {
 			if (meta.getMetaKey().equals(pic)) {
 				mp.setUrl(this.store.getFileUrl(meta.getMetaValue(), null));
 				break;
@@ -536,7 +536,7 @@ public class KCMSService extends Base {
 		for (Attachment a : attachments) {
 			String attMeta = a.getAttachMetadata();
 			try {
-				PostPicture picture = new ObjectMapper().readValue(attMeta, new TypeReference<PostPicture>() {});
+				PubPicture picture = new ObjectMapper().readValue(attMeta, new TypeReference<PubPicture>() {});
 
 				// srcset配合居中、自适应css实现跨终端展示最优尺寸缩略图
 				String template = "srcset=\"%s %sw, %s %sw, %s %sw, %s %sw\" sizes=\"(max-width: %spx) 100vw, %spx\"";
@@ -567,21 +567,21 @@ public class KCMSService extends Base {
 		return content;
 	}
 
-	void createPostMeta(List<ContentExt> contentExt, Long id) {
-		List<KPostmeta> postMetas = contentExt.parallelStream().map(ext -> {
-			KPostmeta postMeta = new KPostmeta();
+	void createPubMeta(List<PubTypeExt> pubTypeExt, Long id) {
+		List<KPubmeta> pubMetas = pubTypeExt.parallelStream().map(ext -> {
+			KPubmeta pubMeta = new KPubmeta();
 			String key = ext.getMetaKey();
 			String value = ext.getMetaValue();
 			if (ObjectUtils.isBlank(value))
 				return null;
-			postMeta.setId(this.nextId());
-			postMeta.setPostId(id);
-			postMeta.setMetaKey(key);
-			postMeta.setMetaValue(value);
-			return postMeta;
+			pubMeta.setId(this.nextId());
+			pubMeta.setPubId(id);
+			pubMeta.setMetaKey(key);
+			pubMeta.setMetaValue(value);
+			return pubMeta;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
-		this.postmetaService.insertSelectiveAll(postMetas);
+		this.pubmetaService.insertSelectiveAll(pubMetas);
 	}
 
 	/**
@@ -591,42 +591,42 @@ public class KCMSService extends Base {
 	 * @return a works info
 	 */
 	public Book queryBook(Long bookId) {
-		KPosts post = this.postService.findById(bookId);
-		List<Chapter> chapters = this.postService.queryPostsByParentId(bookId, DeleteFlagEnum.NORMAL.toString());
+		KPubs pub = this.pubService.findById(bookId);
+		List<Chapter> chapters = this.pubService.queryPubsByParentId(bookId, DeleteFlagEnum.NORMAL.toString());
 
 		Book book = new Book();
-		book.setId(post.getId());
-		book.setPostTitle(post.getPostTitle());
-		book.setContentType(post.getContentType());
+		book.setId(pub.getId());
+		book.setPubTitle(pub.getPubTitle());
+		book.setIndustryType(pub.getIndustryType());
 		book.setChapter(chapters);
 
 		return book;
 	}
 
 	/**
-	 * 保存帖子图片等附件的元信息
+	 * 保存发布内容图片等附件的元信息
 	 *
 	 * @param attach 附件
-	 * @param post 附件帖子
+	 * @param pub 附件发布内容
 	 */
-	public void savePostAttach(Attachment attach, KPosts post) {
+	public void savePubAttach(Attachment attach, KPubs pub) {
 
 		// 创建附件元数据
 		Map<String, Object> objectMap = ObjectUtils.toMap(attach);
-		List<KPostmeta> postMetas =
+		List<KPubmeta> pubMetas =
 				objectMap.entrySet().parallelStream().map(entry -> {
-					KPostmeta postMeta = new KPostmeta();
-					postMeta.setId(this.nextId());
-					postMeta.setPostId(post.getId());
-					postMeta.setMetaKey(entry.getKey());
-					postMeta.setMetaValue(entry.getValue().toString());
+					KPubmeta pubMeta = new KPubmeta();
+					pubMeta.setId(this.nextId());
+					pubMeta.setPubId(pub.getId());
+					pubMeta.setMetaKey(entry.getKey());
+					pubMeta.setMetaValue(entry.getValue().toString());
 
-					return postMeta;
+					return pubMeta;
 				}).collect(Collectors.toList());
 
-		this.postService.insertSelective(post);
+		this.pubService.insertSelective(pub);
 
-		this.postmetaService.insertSelectiveAll(postMetas);
+		this.pubmetaService.insertSelectiveAll(pubMetas);
 	}
 
 	/**
@@ -653,7 +653,7 @@ public class KCMSService extends Base {
 		if (ObjectUtils.isBlank(config) || ObjectUtils.isBlank(params = config.get(pageName))) { // 取默认值
 			params = new HashMap<>();
 			params.put(KModelMetaKey.SIDECAR_CONF_LIST_NUM, 10);
-			params.put(KModelMetaKey.SIDECAR_CONF_TYPE, ContModelTypeEnum.BOOK.toString());
+			params.put(KModelMetaKey.SIDECAR_CONF_TYPE, PubTypeEnum.BOOK.toString());
 			params.put(KModelMetaKey.SIDECAR_CONF_SORTER, "{\"id\":\"descend\"}");
 		}
 
@@ -666,19 +666,19 @@ public class KCMSService extends Base {
 	 * 门户跨域根据分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
 	 * 门户有且仅有一个，并且跨域查询，没有数据隔离
 	 *
-	 * @param contentType 行业门类
+	 * @param industryType 行业门类
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<BookUnit> queryProductPortalByContent(String contentType, PageQuery pageQuery) {
-		if (!ObjectUtils.isBlank(contentType)) {
-			List<Term> terms = this.termService.findTagByContCode(contentType);
+	public PageableResult<BookUnit> queryProductPortalByIndustry(String industryType, PageQuery pageQuery) {
+		if (!ObjectUtils.isBlank(industryType)) {
+			List<Term> terms = this.termService.findTagByIndustryType(industryType);
 			List<Object> termTypeIds = terms.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
 			// 查询分类及其子分类
 			this.filterByParentTermTypeId(termTypeIds, pageQuery);
 		}
 
-		return this.postService.queryPostWithExtList(pageQuery);
+		return this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	/**
@@ -697,18 +697,18 @@ public class KCMSService extends Base {
 			this.filterByParentTermTypeId(ids, pageQuery);
 		}
 
-		return this.postService.queryPostWithExtList(pageQuery);
+		return this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	/**
-	 * 根据实体字段自由查询作品列表，实体表：KPosts、KTermObject
+	 * 根据实体字段自由查询作品列表，实体表：KPubs、KTermObject
 	 *
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
 	public PageableResult<BookUnit> queryProductDomain(PageQuery pageQuery) {
 
-		return this.postService.queryPostWithExtList(pageQuery);
+		return this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	/**
@@ -725,26 +725,26 @@ public class KCMSService extends Base {
 
 		this.filterByParentTermTypeId(ids, pageQuery);
 
-		return this.postService.queryPostWithExtList(pageQuery);
+		return this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	/**
-	 * 门户跨域根据分类目录的别名查询分类目录下的内容列表，应包含子分类下的内容
+	 * 门户跨域根据行业门类的别名查询行业下的内容列表，应包含子分类下的内容
 	 * 门户有且仅有一个，并且跨域、跨租户查询，没有数据隔离，应该根据行业门类查询，具体细分要按 类型/租户/域/分类 的维度钻取
 	 *
-	 * @param contentType 某个分类目录别名
+	 * @param industryType 行业门类
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PostUnit> queryArchivesPortal(String contentType, PageQuery pageQuery) {
-		if (!ObjectUtils.isBlank(contentType)) {
-			List<Term> terms = this.termService.findCategoryByContCode(contentType);
+	public PageableResult<PubUnit> queryArchivesPortal(String industryType, PageQuery pageQuery) {
+		if (!ObjectUtils.isBlank(industryType)) {
+			List<Term> terms = this.termService.findCategoryByIndustryType(industryType);
 			List<Object> termTypeIds = terms.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
 			// 查询分类及其子分类
 			this.filterByParentTermTypeId(termTypeIds, pageQuery);
 		}
 
-		return this.postService.queryArchives(pageQuery);
+		return this.pubService.queryArchives(pageQuery);
 	}
 
 	/**
@@ -755,7 +755,7 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PostUnit> queryArchivesCategoryPortal(String slugCategory, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryArchivesCategoryPortal(String slugCategory, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(slugCategory)) {
 			KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 			List<Object> ids = this.queryOwnIds(termType.getId());
@@ -763,18 +763,18 @@ public class KCMSService extends Base {
 			this.filterByParentTermTypeId(ids, pageQuery);
 		}
 
-		return this.postService.queryArchives(pageQuery);
+		return this.pubService.queryArchives(pageQuery);
 	}
 
 	/**
 	 * 自由组装条件查询内容列表
 	 *
-	 * @param pageQuery 分页查询参数，支持KPosts、KTermObjects所有字段
+	 * @param pageQuery 分页查询参数，支持KPubs、KTermObjects所有字段
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PostUnit> queryArchivesDomain(PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryArchivesDomain(PageQuery pageQuery) {
 
-		return this.postService.queryArchives(pageQuery);
+		return this.pubService.queryArchives(pageQuery);
 	}
 
 	/**
@@ -783,7 +783,7 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PostUnit> queryArchivesCategory(String slugCategory, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryArchivesCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
@@ -792,7 +792,7 @@ public class KCMSService extends Base {
 
 		this.filterByParentTermTypeId(ids, pageQuery);
 
-		return this.postService.queryArchives(pageQuery);
+		return this.pubService.queryArchives(pageQuery);
 	}
 
 	/**
@@ -801,11 +801,11 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PostUnit> queryArchivesTag(String slugTag, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryArchivesTag(String slugTag, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugTag);
 		pageQuery.pushParam("termTypeId", termType.getId());
 
-		return this.postService.queryArchives(pageQuery);
+		return this.pubService.queryArchives(pageQuery);
 	}
 
 	/**
@@ -838,10 +838,10 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PostUnit> queryArchivesUserDomain(Long domainId, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryArchivesUserDomain(Long domainId, PageQuery pageQuery) {
 		pageQuery.pushParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
 
-		return this.postService.queryArchivesUser(pageQuery);
+		return this.pubService.queryArchivesUser(pageQuery);
 	}
 
 	/**
@@ -851,31 +851,31 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品章节存档列表
 	 */
-	public PageableResult<PostUnit> queryBookChapter(Long bookId, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryBookChapter(Long bookId, PageQuery pageQuery) {
 		pageQuery.pushParam("parentId", bookId);
-		return this.postService.queryArchives(pageQuery);
+		return this.pubService.queryArchives(pageQuery);
 	}
 
 	/**
 	 * 查询篇章信息
 	 *
-	 * @param pid 帖子id
+	 * @param pid 发布内容id
 	 * @return 篇章实体
 	 */
 	public Article queryArticle(Long pid) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
 		this.updatePubMeta(pid);
 		// 根据id找到行业门类、模板类型 用于前端展示
-		ContModelDto contBody = this.postService.queryContModel(pid);
+		ContModelDto contBody = this.pubService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPostmeta> metas = this.postmetaService.queryPostMetaByPostId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
 
 		// 合并主体信息
 		Article article = new Article();
 		this.artCopier.copy(contBody, article, null);
 
 		// 查询作者
-		PostMember member = this.postService.queryMemberByPostId(pid);
+		PubMember member = this.pubService.queryMemberByPubId(pid);
 		article.setMember(member);
 
 		// 处理分类和标签
@@ -889,7 +889,7 @@ public class KCMSService extends Base {
 		this.setPrevNextAndRelated(pid, article);
 
 		// 析取独立公共扩展属性
-		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
+		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 		this.populateMeta(article, pubMeta);
 
@@ -897,20 +897,20 @@ public class KCMSService extends Base {
 	}
 
 	private void setPrevNextAndRelated(Long pid, Article article) {
-		String postType = article.getPostType();
+		String pubType = article.getPubType();
 		List<Long> termTypeIds = article.getTermTypeIds();
-		MiniPost prev;
-		MiniPost next;
-		if (ContModelTypeEnum.POST.toString().equals(postType)) {
+		MiniPub prev;
+		MiniPub next;
+		if (PubTypeEnum.POST.toString().equals(pubType)) {
 			if (ObjectUtils.isBlank(termTypeIds))
 				return;
-			prev = this.postService.queryPrevPost(pid, termTypeIds.get(0));
-			next = this.postService.queryNextPost(pid, termTypeIds.get(0));
+			prev = this.pubService.queryPrevPub(pid, termTypeIds.get(0));
+			next = this.pubService.queryNextPub(pid, termTypeIds.get(0));
 		}
 		else {
 			Long parentId = article.getParentId();
-			prev = this.postService.queryPrevChapter(pid, parentId);
-			next = this.postService.queryNextChapter(pid, parentId);
+			prev = this.pubService.queryPrevChapter(pid, parentId);
+			next = this.pubService.queryNextChapter(pid, parentId);
 		}
 
 		article.setPrev(prev);
@@ -918,38 +918,38 @@ public class KCMSService extends Base {
 
 		if (ObjectUtils.isBlank(termTypeIds))
 			return;
-		String contentType = article.getContentType();
+		String industryType = article.getIndustryType();
 		List<Term> tags = article.getTags();
 		List<Long> tagTermTypeIds = ObjectUtils.isBlank(tags) ? termTypeIds : tags.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
-		List<MiniPost> relPosts = this.postService.queryRelatedPosts(postType, contentType, tagTermTypeIds, 8);
-		if (ObjectUtils.isBlank(relPosts)) {
-			relPosts = this.postService.queryRelatedPosts(postType, contentType, termTypeIds, 8);
+		List<MiniPub> relPubs = this.pubService.queryRelatedPubs(pubType, industryType, tagTermTypeIds, 8);
+		if (ObjectUtils.isBlank(relPubs)) {
+			relPubs = this.pubService.queryRelatedPubs(pubType, industryType, termTypeIds, 8);
 		}
-		article.setRelPosts(relPosts);
+		article.setRelPubs(relPubs);
 	}
 
-	public List<ContentExt> getContentExt(List<ContentExt> contentExt, List<KPostmeta> metas) {
-		return contentExt.parallelStream().map(cont -> { // 填充自定义属性
-			ContentExt ctx = null;
-			for (KPostmeta meta : metas) {
+	public List<PubTypeExt> getPubTypeExt(List<PubTypeExt> pubTypeExt, List<KPubmeta> metas) {
+		return pubTypeExt.parallelStream().map(cont -> { // 填充自定义属性
+			PubTypeExt ptx = null;
+			for (KPubmeta meta : metas) {
 				if (meta.getMetaKey().equals(cont.getMetaKey())) {
-					ctx = new ContentExt();
-					this.contExtCopier.copy(cont, ctx, null);
-					ctx.setMetaValue(meta.getMetaValue());
-					ctx.setPostId(meta.getPostId());
-					ctx.setMetaId(meta.getId());
+					ptx = new PubTypeExt();
+					this.contExtCopier.copy(cont, ptx, null);
+					ptx.setMetaValue(meta.getMetaValue());
+					ptx.setPubId(meta.getPubId());
+					ptx.setMetaId(meta.getId());
 					break;
 				}
 			}
-			return ctx;
+			return ptx;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
-	public List<Attachment> getAttachments(Map<Long, List<KPostmeta>> attMetaGroup) {
+	public List<Attachment> getAttachments(Map<Long, List<KPubmeta>> attMetaGroup) {
 		return attMetaGroup.values().stream().map(curMetas -> {
 			// 元数据自身枚举不可能为空，故省略空处理
 			Map<String, String> attMeta = curMetas.stream()
-					.collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
+					.collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 			Attachment attach = new Attachment();
 			attach.setAttachPath(attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_PATH));
@@ -972,34 +972,34 @@ public class KCMSService extends Base {
 	/**
 	 * 追加公共静默元数据
 	 *
-	 * @param contentExtList 扩展属性列表
+	 * @param pubTypeExtList 扩展属性列表
 	 */
-	void appendPubMeta(List<ContentExt> contentExtList) {
-		ContentExt contentExt = new ContentExt();
-		contentExt.setMetaKey(KModelMetaKey.PUB_META_KEY_VIEWS);
-		contentExt.setMetaValue("0");
+	void appendPubMeta(List<PubTypeExt> pubTypeExtList) {
+		PubTypeExt industryExt = new PubTypeExt();
+		industryExt.setMetaKey(KModelMetaKey.PUB_META_KEY_VIEWS);
+		industryExt.setMetaValue("0");
 
-		contentExtList.add(contentExt);
+		pubTypeExtList.add(industryExt);
 	}
 
 	/**
 	 * 更新公共静默元数据
 	 *
-	 * @param pid 帖子id
+	 * @param pid 发布内容id
 	 */
 	public void updatePubMeta(Long pid) { // @todo 需要开启缓存、消息缓冲机制
-		if (!this.postmetaService.isExistsViews(pid)) {
-			List<ContentExt> contentExtList = new ArrayList<>();
-			this.appendPubMeta(contentExtList);
-			this.createPostMeta(contentExtList, pid);
+		if (!this.pubmetaService.isExistsViews(pid)) {
+			List<PubTypeExt> pubTypeExtList = new ArrayList<>();
+			this.appendPubMeta(pubTypeExtList);
+			this.createPubMeta(pubTypeExtList, pid);
 		}
 		else {
-			this.postmetaService.increasePostViews(1, pid);
-			KPostmeta views = this.postmetaService.queryByPostIdAndMetaKey(pid, KModelMetaKey.PUB_META_KEY_VIEWS);
+			this.pubmetaService.increasePubViews(1, pid);
+			KPubmeta views = this.pubmetaService.queryByPubIdAndMetaKey(pid, KModelMetaKey.PUB_META_KEY_VIEWS);
 			int viewNum = Integer.parseInt(views.getMetaValue());
 			if (viewNum % 10 == 0) {
-				// 每增加一定数量，更新一次帖子热度，默认增加10，后期加入缓冲机制和调节机制
-				this.postService.updateViews(pid, viewNum);
+				// 每增加一定数量，更新一次发布内容热度，默认增加10，后期加入缓冲机制和调节机制
+				this.pubService.updateViews(pid, viewNum);
 			}
 		}
 	}
@@ -1010,29 +1010,29 @@ public class KCMSService extends Base {
 	 * @param pid 内容id
 	 * @return 内容信息
 	 */
-	public PostMeta postInfo(Long pid) {
+	public PubMeta pubInfo(Long pid) {
 
 		// 根据id找到行业门类、模板类型 用于前端展示
-		ContModelDto contBody = this.postService.queryContModel(pid);
+		ContModelDto contBody = this.pubService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPostmeta> metas = this.postmetaService.queryPostMetaByPostId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
 
 		// 合并主体信息
-		PostMeta post = new PostMeta();
-		this.postMetaCopier.copy(contBody, post, null);
+		PubMeta pub = new PubMeta();
+		this.pubMetaCopier.copy(contBody, pub, null);
 		// 取出分类和标签
-		this.termAndTagFromPost(post, pid);
+		this.termAndTagFromPub(pub, pid);
 
 		// 扩展属性 : 考虑静态模型 和 动态模型 的处理方式
-		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPostmeta::getMetaKey, KPostmeta::getMetaValue, (k1, k2) -> k1));
+		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 		// 处理地域信息
 		String city = pubMeta.get(KModelMetaKey.PUB_META_KEY_CITY);
 		if (!ObjectUtils.isBlank(city)) {
 			City region = this.regionService.queryRegionInfoByCode(city);
 			Geographic geo = new Geographic(region);
-			post.setGeographic(geo);
+			pub.setGeographic(geo);
 		}
 
 		// 图片(主图和封面)处理url
@@ -1046,29 +1046,29 @@ public class KCMSService extends Base {
 		// 设置ossUrl，用于前端拼装文件类完整url
 		pubMeta.put(IStore.KEY_OSS_URL, this.store.genOssUrl(FileAccessPolicyEnum.PUBLIC));
 
-		post.setContentExt(pubMeta);
+		pub.setPubTypeExt(pubMeta);
 
-		return post;
+		return pub;
 	}
 
-	private void termAndTagFromPost(PostMeta post, Long pid) {
+	private void termAndTagFromPub(PubMeta pub, Long pid) {
 		List<Term> termsType = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.CATEGORY.toString());
 		// 分类目录
 		List<SelectOption> termTypeIds = termsType.parallelStream().map(t -> new SelectOption(t.getName(), t.getTermTypeId().toString())).collect(Collectors.toList());
-		post.setTermTypeIds(termTypeIds);
+		pub.setTermTypeIds(termTypeIds);
 		// 标签
 		List<Term> terms = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.TAG.toString());
 		List<String> tagIds = terms.parallelStream().map(Term::getName).collect(Collectors.toList());
 
-		post.setTagIds(tagIds);
+		pub.setTagIds(tagIds);
 	}
 
-	public boolean isSameContentType(List<Long> termTypeIds) {
-		return this.termService.isSameContentType(termTypeIds);
+	public boolean isSameIndustryType(List<Long> termTypeIds) {
+		return this.termService.isSameIndustryType(termTypeIds);
 	}
 
-	public boolean isSameContentType(List<Long> termTypeIds, Long postId) {
-		ContModelDto post = this.postService.queryContModel(postId);
-		return this.termService.isSameContentType(termTypeIds, post.getContentId());
+	public boolean isSameIndustryType(List<Long> termTypeIds, Long pubId) {
+		ContModelDto pub = this.pubService.queryContModel(pubId);
+		return this.termService.isSameIndustryType(termTypeIds, pub.getIndustryId());
 	}
 }

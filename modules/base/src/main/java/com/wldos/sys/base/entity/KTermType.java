@@ -21,7 +21,7 @@ public class KTermType {
 
 	private String classType;
 
-	private Long contentId;
+	private Long industryId;
 
 	private String description;
 
@@ -53,12 +53,12 @@ public class KTermType {
 		this.classType = classType;
 	}
 
-	public Long getContentId() {
-		return contentId;
+	public Long getIndustryId() {
+		return industryId;
 	}
 
-	public void setContentId(Long contentId) {
-		this.contentId = contentId;
+	public void setIndustryId(Long industryId) {
+		this.industryId = industryId;
 	}
 
 	public String getDescription() {

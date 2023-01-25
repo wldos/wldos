@@ -37,10 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController extends RepoController<CommentService, KComments> {
 
 
-	@GetMapping("/{postId:\\d+}")
-	public List<Comment> queryPostComments(@PathVariable Long postId) {
+	@GetMapping("/{pubId:\\d+}")
+	public List<Comment> queryPubComments(@PathVariable Long pubId) {
 
-		return this.service.queryPostComments(postId, DeleteFlagEnum.NORMAL.toString(), ApproveStatusEnum.APPROVED.getValue());
+		return this.service.queryPubComments(pubId, DeleteFlagEnum.NORMAL.toString(), ApproveStatusEnum.APPROVED.getValue());
 	}
 
 	@PostMapping("commit")

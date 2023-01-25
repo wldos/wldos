@@ -10,8 +10,6 @@ package com.wldos.sys.base.dto;
 
 import java.util.List;
 
-import com.wldos.sys.base.dto.Term;
-
 /**
  * 对象分类关系。
  *

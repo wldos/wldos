@@ -20,19 +20,19 @@ import java.sql.Timestamp;
 public class ContModelDto {
 	private Long id;
 
-	private String postTitle;
+	private String PubTitle;
 
-	private String postExcerpt;
+	private String PubExcerpt;
 
-	private String postContent;
+	private String PubContent;
 
-	private String postStatus;
+	private String PubStatus;
 
 	private String commentStatus;
 
-	private String postPassword;
+	private String pubPassword;
 
-	private String postName;
+	private String pubName;
 
 	private String pingStatus;
 
@@ -42,9 +42,9 @@ public class ContModelDto {
 
 	private Long parentId;
 
-	private String postType;
+	private String pubType;
 
-	private String postMimeType;
+	private String pubMimeType;
 
 	private Long commentCount;
 
@@ -66,9 +66,9 @@ public class ContModelDto {
 
 	private String deleteFlag;
 
-	private Long contentId;
+	private Long industryId;
 
-	private String contentType;
+	private String industryType;
 
 	private Long domainId;
 
@@ -82,36 +82,36 @@ public class ContModelDto {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return PubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String PubTitle) {
+		this.PubTitle = PubTitle;
 	}
 
-	public String getPostExcerpt() {
-		return postExcerpt;
+	public String getPubExcerpt() {
+		return PubExcerpt;
 	}
 
-	public void setPostExcerpt(String postExcerpt) {
-		this.postExcerpt = postExcerpt;
+	public void setPubExcerpt(String PubExcerpt) {
+		this.PubExcerpt = PubExcerpt;
 	}
 
-	public String getPostContent() {
-		return postContent;
+	public String getPubContent() {
+		return PubContent;
 	}
 
-	public void setPostContent(String postContent) {
-		this.postContent = postContent;
+	public void setPubContent(String pubContent) {
+		PubContent = pubContent;
 	}
 
-	public String getPostStatus() {
-		return postStatus;
+	public String getPubStatus() {
+		return PubStatus;
 	}
 
-	public void setPostStatus(String postStatus) {
-		this.postStatus = postStatus;
+	public void setPubStatus(String PubStatus) {
+		this.PubStatus = PubStatus;
 	}
 
 	public String getCommentStatus() {
@@ -122,20 +122,20 @@ public class ContModelDto {
 		this.commentStatus = commentStatus;
 	}
 
-	public String getPostPassword() {
-		return postPassword;
+	public String getPubPassword() {
+		return pubPassword;
 	}
 
-	public void setPostPassword(String postPassword) {
-		this.postPassword = postPassword;
+	public void setPubPassword(String pubPassword) {
+		this.pubPassword = pubPassword;
 	}
 
-	public String getPostName() {
-		return postName;
+	public String getPubName() {
+		return pubName;
 	}
 
-	public void setPostName(String postName) {
-		this.postName = postName;
+	public void setPubName(String pubName) {
+		this.pubName = pubName;
 	}
 
 	public String getPingStatus() {
@@ -170,20 +170,20 @@ public class ContModelDto {
 		this.parentId = parentId;
 	}
 
-	public String getPostType() {
-		return postType;
+	public String getPubType() {
+		return pubType;
 	}
 
-	public void setPostType(String postType) {
-		this.postType = postType;
+	public void setPubType(String pubType) {
+		this.pubType = pubType;
 	}
 
-	public String getPostMimeType() {
-		return postMimeType;
+	public String getPubMimeType() {
+		return pubMimeType;
 	}
 
-	public void setPostMimeType(String postMimeType) {
-		this.postMimeType = postMimeType;
+	public void setPubMimeType(String pubMimeType) {
+		this.pubMimeType = pubMimeType;
 	}
 
 	public Long getCommentCount() {
@@ -266,20 +266,20 @@ public class ContModelDto {
 		this.deleteFlag = deleteFlag;
 	}
 
-	public Long getContentId() {
-		return contentId;
+	public Long getIndustryId() {
+		return industryId;
 	}
 
-	public void setContentId(Long contentId) {
-		this.contentId = contentId;
+	public void setIndustryId(Long industryId) {
+		this.industryId = industryId;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {

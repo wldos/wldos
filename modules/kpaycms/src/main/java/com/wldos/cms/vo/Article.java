@@ -25,20 +25,20 @@ import com.wldos.sys.base.dto.Term;
  */
 public class Article extends CMeta implements IMeta {
 
-	// 内容post id
+	// 内容pub id
 	private Long id;
 
-	private String postTitle;
+	private String pubTitle;
 
-	private String postContent;
+	private String pubContent;
 
-	private String postName;
+	private String pubName;
 
-	private String postType;
+	private String pubType;
 
 	private Long parentId;
 
-	private PostMember member;
+	private PubMember member;
 
 	private Long commentCount;
 
@@ -48,13 +48,13 @@ public class Article extends CMeta implements IMeta {
 
 	private Timestamp updateTime;
 
-	private Long contentId;
+	private Long industryId;
 
 	private Long domainId;
 
 	private Long comId;
 
-	private String contentType;
+	private String industryType;
 
 	private List<Comment> comments;
 
@@ -64,13 +64,13 @@ public class Article extends CMeta implements IMeta {
 	private List<Long> termTypeIds; // 一个帖子可以属于多个分类
 
 	/** 上一篇 */
-	private MiniPost prev;
+	private MiniPub prev;
 
 	/** 下一篇 */
-	private MiniPost next;
+	private MiniPub next;
 
 	/** 相关文章 */
-	private List<MiniPost> relPosts;
+	private List<MiniPub> relPubs;
 
 	/** seo和面包屑数据 */
 	private SeoCrumbs seoCrumbs;
@@ -83,36 +83,36 @@ public class Article extends CMeta implements IMeta {
 		this.id = id;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
-	public String getPostContent() {
-		return postContent;
+	public String getPubContent() {
+		return pubContent;
 	}
 
-	public void setPostContent(String postContent) {
-		this.postContent = postContent;
+	public void setPubContent(String pubContent) {
+		this.pubContent = pubContent;
 	}
 
-	public String getPostName() {
-		return postName;
+	public String getPubName() {
+		return pubName;
 	}
 
-	public void setPostName(String postName) {
-		this.postName = postName;
+	public void setPubName(String pubName) {
+		this.pubName = pubName;
 	}
 
-	public String getPostType() {
-		return postType;
+	public String getPubType() {
+		return pubType;
 	}
 
-	public void setPostType(String postType) {
-		this.postType = postType;
+	public void setPubType(String pubType) {
+		this.pubType = pubType;
 	}
 
 	public Long getParentId() {
@@ -123,11 +123,11 @@ public class Article extends CMeta implements IMeta {
 		this.parentId = parentId;
 	}
 
-	public PostMember getMember() {
+	public PubMember getMember() {
 		return member;
 	}
 
-	public void setMember(PostMember member) {
+	public void setMember(PubMember member) {
 		this.member = member;
 	}
 
@@ -163,20 +163,21 @@ public class Article extends CMeta implements IMeta {
 		this.updateTime = updateTime;
 	}
 
-	public Long getContentId() {
-		return contentId;
+	public Long getIndustryId() {
+		return industryId;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public void setIndustryId(Long industryId) {
+		this.industryId = industryId;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	@Override
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentId(Long contentId) {
-		this.contentId = contentId;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {
@@ -259,28 +260,28 @@ public class Article extends CMeta implements IMeta {
 		this.termTypeIds = termTypeIds;
 	}
 
-	public MiniPost getPrev() {
+	public MiniPub getPrev() {
 		return prev;
 	}
 
-	public void setPrev(MiniPost prev) {
+	public void setPrev(MiniPub prev) {
 		this.prev = prev;
 	}
 
-	public MiniPost getNext() {
+	public MiniPub getNext() {
 		return next;
 	}
 
-	public void setNext(MiniPost next) {
+	public void setNext(MiniPub next) {
 		this.next = next;
 	}
 
-	public List<MiniPost> getRelPosts() {
-		return relPosts;
+	public List<MiniPub> getRelPubs() {
+		return relPubs;
 	}
 
-	public void setRelPosts(List<MiniPost> relPosts) {
-		this.relPosts = relPosts;
+	public void setRelPubs(List<MiniPub> relPubs) {
+		this.relPubs = relPubs;
 	}
 
 	public SeoCrumbs getSeoCrumbs() {

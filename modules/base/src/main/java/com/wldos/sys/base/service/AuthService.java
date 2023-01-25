@@ -25,7 +25,7 @@ import com.wldos.common.utils.TreeUtils;
 import com.wldos.support.cache.ICache;
 import com.wldos.sys.base.dto.MenuAndRoute;
 import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.KModelContent;
+import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.WoResource;
 import com.wldos.sys.base.enums.ResourceEnum;
 import com.wldos.sys.base.enums.UserRoleEnum;
@@ -57,17 +57,17 @@ public class AuthService {
 
 	private final TermService termService;
 
-	private final ContentService contentService;
+	private final IndustryService industryService;
 
 	private final ICache cache;
 
 	@Autowired
-	public AuthService(ICache cache, ResourceRepo resourceRepo, DomainResourceRepo domainResourceRepo, TermService termService, ContentService contentService) {
+	public AuthService(ICache cache, ResourceRepo resourceRepo, DomainResourceRepo domainResourceRepo, TermService termService, IndustryService industryService) {
 		this.cache = cache;
 		this.resourceRepo = resourceRepo;
 		this.domainResourceRepo = domainResourceRepo;
 		this.termService = termService;
-		this.contentService = contentService;
+		this.industryService = industryService;
 	}
 
 	/**
@@ -205,15 +205,15 @@ public class AuthService {
 						if (d.getTermTypeId() == Constants.TOP_TERM_ID)
 							return new Route(d.getModuleName(), null, null);
 						Term term = termMap.get(d.getTermTypeId());
-						KModelContent content = this.contentService.findByContentId(term.getContentId());
-						return new Route(d.getModuleName(), term.getSlug(), content.getContentCode());
+						KModelIndustry industry = this.industryService.findByIndustryId(term.getIndustryId());
+						return new Route(d.getModuleName(), term.getSlug(), industry.getIndustryCode());
 					}
 					catch (RuntimeException e) {
 						throw new ResTermNoFoundException("资源对应的分类项不存在, 资源id：" + d.getId());
 					}
 				}));
 
-		return new MenuAndRoute(TreeUtils.build(menus, Constants.MENU_ROOT_ID), modules);
+		return new MenuAndRoute(menus, modules);
 	}
 
 	/**
@@ -231,17 +231,9 @@ public class AuthService {
 	}
 
 	private List<Menu> getMenuByUserId(List<WoResource> resources) {
-		List<Menu> menus = resources.parallelStream().map(res -> {
-			// 取出菜单
-			Menu node = new Menu();
-			node.setPath(res.getResourcePath());
-			node.setIcon(res.getIcon());
-			node.setName(res.getResourceName());
-			node.setTarget(res.getTarget());
-			node.setId(res.getId());
-			node.setParentId(res.getParentId());
-			return node;
-		}).collect(Collectors.toList());
+		List<Menu> menus = resources.parallelStream().map(res ->
+				Menu.of(res.getResourcePath(), res.getIcon(), res.getResourceName(), res.getTarget(), res.getId(), res.getParentId(), res.getDisplayOrder()))
+				.collect(Collectors.toList());
 
 		return TreeUtils.build(menus, Constants.MENU_ROOT_ID);
 	}

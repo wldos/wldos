@@ -96,11 +96,8 @@ public class RoleService extends BaseService<RoleRepo, WoRole, Long> {
 		List<RoleRes> roleRes = this.queryAuthRes(roleId);
 
 		List<AuthRes> authResList = resources.parallelStream().map(res -> {
-			AuthRes authRes = new AuthRes();
-			authRes.setId(res.getId());
-			authRes.setParentId(res.getParentId());
-			authRes.setTitle(res.getResourceName());
-			authRes.setKey(res.getId().toString());
+			AuthRes authRes =
+			AuthRes.of(res.getResourceName(), res.getId().toString(), res.getId(), res.getParentId());
 			roleRes.parallelStream().forEach(role -> {
 				if (authRes.getId().equals(role.getId())) {
 					authRes.setDisabled(role.isInherit()); // @todo 暂不实行颜色标记，先保证继承资源不可编辑

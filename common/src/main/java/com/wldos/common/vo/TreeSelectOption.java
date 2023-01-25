@@ -26,11 +26,15 @@ public class TreeSelectOption extends TreeNode<TreeSelectOption> {
 	public TreeSelectOption() {
 	}
 
-	public TreeSelectOption(Long id, Long parentId, String title, String value, String key) {
+	private TreeSelectOption(Long id, Long parentId, String title, String value, String key) {
 		super(id, parentId);
 		this.title = title;
 		this.value = value;
 		this.key = key;
+	}
+
+	public static TreeSelectOption of (Long id, Long parentId, String title, String value, String key) {
+		return new TreeSelectOption(id, parentId, title, value, key);
 	}
 
 	public String getTitle() {

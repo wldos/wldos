@@ -11,6 +11,8 @@ package com.wldos.common.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wldos.common.utils.ObjectUtils;
+
 /**
  * 树结构节点。
  *
@@ -22,6 +24,8 @@ public class TreeNode<T> {
 	protected Long id;
 
 	protected Long parentId;
+	// 排序时必须设置displayOrder
+	protected Long displayOrder;
 
 	protected List<T> children = null;
 
@@ -57,6 +61,14 @@ public class TreeNode<T> {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
+	}
+
+	public Long getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(Long displayOrder) {
+		this.displayOrder = displayOrder;
 	}
 
 	public List<T> getChildren() {

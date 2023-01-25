@@ -17,18 +17,18 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.controller.NoRepoController;
-import com.wldos.cms.dto.PostPicture;
-import com.wldos.cms.entity.KPosts;
+import com.wldos.cms.dto.PubPicture;
+import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
-import com.wldos.cms.enums.PostStatusEnum;
-import com.wldos.sys.base.enums.ContModelTypeEnum;
+import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
 import com.wldos.cms.service.SpaceService;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Book;
 import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Chapter;
-import com.wldos.cms.vo.Post;
+import com.wldos.cms.vo.Pub;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
@@ -119,12 +119,12 @@ public class SpaceController extends NoRepoController {
 	 */
 	@PostMapping("space/book/add")
 	public String addContent(@RequestBody String json) throws JsonProcessingException {
-		Post post = InfoUtil.extractPostInfo(json);
-		if (ObjectUtils.isOutBoundsClearHtml(post.getPostContent(), this.maxLength))
+		Pub post = InfoUtil.extractPubInfo(json);
+		if (ObjectUtils.isOutBoundsClearHtml(post.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
 		List<Long> termTypeIds = post.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isSameContentType(termTypeIds))
+		if (!this.kcmsService.isSameIndustryType(termTypeIds))
 			return this.resJson.ok("error", "不能超出创建时所选大类");
 		// 检查标签
 		if (post.getTagIds() != null && post.getTagIds().size() > this.maxTagNum) {
@@ -134,7 +134,7 @@ public class SpaceController extends NoRepoController {
 		post.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		post.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(post, ContModelTypeEnum.BOOK.toString(), this.getCurUserId(), this.getUserIp());
+		Long id = this.kcmsService.insertSelective(post, PubTypeEnum.BOOK.toString(), this.getCurUserId(), this.getUserIp());
 		return this.resJson.ok("id", id);
 	}
 
@@ -146,7 +146,7 @@ public class SpaceController extends NoRepoController {
 	 */
 	@PostMapping("space/book/newChapter")
 	public Chapter createChapter(@RequestBody String json) throws JsonProcessingException {
-		Post chapter = InfoUtil.extractPostInfo(json);
+		Pub chapter = InfoUtil.extractPubInfo(json);
 		if (chapter.getParentId() == null)
 			return null;
 		chapter.setComId(this.getTenantId()); // 带上租户id，实现租户隔离, 关闭租户模式时该字段忽略
@@ -163,10 +163,10 @@ public class SpaceController extends NoRepoController {
 	 */
 	@PostMapping("space/book/saveChapter")
 	public String saveChapter(@RequestBody String json) throws JsonProcessingException {
-		Post chapter = InfoUtil.extractPostInfo(json);
+		Pub chapter = InfoUtil.extractPubInfo(json);
 		if (chapter.getId() == null)
 			return this.resJson.ok("error", "保存数据为空忽略");
-		if (ObjectUtils.isOutBoundsClearHtml(chapter.getPostContent(), this.maxLength))
+		if (ObjectUtils.isOutBoundsClearHtml(chapter.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
 		this.spaceService.saveChapter(chapter, this.getCurUserId(), this.getUserIp());
 
@@ -198,7 +198,7 @@ public class SpaceController extends NoRepoController {
 			String path = picture.getPath();
 			String url = this.store.getFileUrl(path, null);
 
-			PostPicture postPicture = new PostPicture();
+			PubPicture postPicture = new PubPicture();
 			postPicture.setPath(path);
 			postPicture.setHeight(picture.getHeight());
 			postPicture.setWidth(picture.getWidth());
@@ -206,23 +206,23 @@ public class SpaceController extends NoRepoController {
 			thumbnailList = thumbnailList.subList(1, thumbnailList.size() - 1);
 			postPicture.setSrcset(thumbnailList);
 
-			// 创建附件帖子
-			KPosts post = new KPosts();
-			EntityAssists.beforeInsert(post, this.nextId(), this.getCurUserId(), this.getUserIp(), false);
-			post.setContentType(ContModelTypeEnum.ATTACHMENT.toString());
-			post.setParentId(id);
-			post.setPostMimeType(type);
-			post.setPostStatus(PostStatusEnum.INHERIT.toString());
-			post.setPostTitle(file.getName());
-			post.setComId(this.getTenantId()); // 租户隔离
-			post.setDomainId(this.getDomainId()); // 域隔离
+			// 创建附件发布内容
+			KPubs attachment = new KPubs();
+			EntityAssists.beforeInsert(attachment, this.nextId(), this.getCurUserId(), this.getUserIp(), false);
+			attachment.setPubType(PubTypeEnum.ATTACHMENT.toString());
+			attachment.setParentId(id);
+			attachment.setPubMimeType(type);
+			attachment.setPubStatus(PubStatusEnum.INHERIT.toString());
+			attachment.setPubTitle(file.getName());
+			attachment.setComId(this.getTenantId()); // 租户隔离
+			attachment.setDomainId(this.getDomainId()); // 域隔离
 
 			Attachment attach = new Attachment();
 			// attach.setAttachFileAlt(""); // @todo 前端需要传递alt参数
 			attach.setAttachMetadata(this.resJson.toJson(postPicture, false)); // @todo 图片元数据, 缩略图元数据
 			attach.setAttachPath(path);
-			// 保存图片信息到帖子元信息,先不考虑图片元数据的处理，渲染格式默认存储在帖子内容中，图片元数据等在媒体库中维护，有跨平台渲染优化需求时，做系统级图片渲染优化处理（创建多尺寸图片或者运行时css缩放）。
-			this.kcmsService.savePostAttach(attach, post);
+			// 保存图片信息到发布内容元信息,先不考虑图片元数据的处理，渲染格式默认存储在发布内容内容中，图片元数据等在媒体库中维护，有跨平台渲染优化需求时，做系统级图片渲染优化处理（创建多尺寸图片或者运行时css缩放）。
+			this.kcmsService.savePubAttach(attach, attachment);
 
 			res.put("path", path);
 			res.put("url", url);

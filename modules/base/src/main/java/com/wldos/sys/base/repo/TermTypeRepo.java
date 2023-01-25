@@ -10,7 +10,8 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
-import com.wldos.sys.base.entity.KModelContent;
+import com.wldos.sys.base.entity.KModelIndustry;
+import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.KTermType;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -38,6 +39,6 @@ public interface TermTypeRepo extends PagingAndSortingRepository<KTermType, Long
 	@Query("update k_term_type set count = ABS(count - 1) where id in ( :termTypeIds )")
 	void countSubtract(@Param("termTypeIds") List<Long> termTypeIds);
 
-	@Query("select c.* from k_model_content c where c.id=(select t.content_id from k_term_type t where t.id=:termTypeId)")
-	KModelContent queryContentTypeByTermType(@Param("termTypeId") Long termTypeId);
+	@Query("select c.* from k_model_industry c where c.id=(select t.industry_id from k_term_type t where t.id=:termTypeId)")
+	KModelIndustry queryIndustryTypeByTermType(@Param("termTypeId") Long termTypeId);
 }

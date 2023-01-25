@@ -176,9 +176,9 @@ public class FileStore implements IStore {
 			BufferedImage image = ImageIO.read(new File(src));
 			ImageUtils.imgThumb(src, src, image.getWidth(), image.getHeight()); // 重新压缩全尺寸
 
-			Thumbnail postPicture = Thumbnail.of(image.getWidth(), image.getHeight(), fileInfo.getPath());
+			Thumbnail pubPicture = Thumbnail.of(image.getWidth(), image.getHeight(), fileInfo.getPath());
 
-			thumbnails.add(postPicture);
+			thumbnails.add(pubPicture);
 
 			String[] fInfo = relativePath.split("\\.");
 			String noExtNamePath = fInfo[0];

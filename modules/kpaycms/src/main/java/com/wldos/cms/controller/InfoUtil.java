@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.cms.vo.Post;
+import com.wldos.cms.vo.Pub;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.sys.base.dto.ContentExt;
+import com.wldos.sys.base.dto.PubTypeExt;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -33,20 +33,20 @@ import org.springframework.util.ReflectionUtils;
  */
 class InfoUtil {
 
-	static Post extractPostInfo(String json) throws JsonProcessingException {
-		Post post = new Post();
+	static Pub extractPubInfo(String json) throws JsonProcessingException {
+		Pub pub = new Pub();
 
-		Class<Post> postClass = Post.class;
+		Class<Pub> pubClass = Pub.class;
 
 		Map<String, Object> params = new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>() {});
 
-		Map<String, Object> entity = new HashMap<>(); // post实体参数
+		Map<String, Object> entity = new HashMap<>(); // pub实体参数
 		Map<String, Object> remain = new HashMap<>(); // 辅助参数
 
 		params.forEach((key, value) -> {
 			if (value == null)
 				return;
-			Field f = ReflectionUtils.findField(postClass, key);
+			Field f = ReflectionUtils.findField(pubClass, key);
 			if (f == null) {
 				remain.put(key, value);
 				return;
@@ -55,20 +55,20 @@ class InfoUtil {
 		});
 		ObjectMapper om = new ObjectMapper();
 		if (!entity.isEmpty())
-			post = om.readValue(om.writeValueAsString(entity), new TypeReference<Post>() {});
+			pub = om.readValue(om.writeValueAsString(entity), new TypeReference<Pub>() {});
 
-		List<ContentExt> contentExtList = remain.entrySet().parallelStream().map(entry -> {
+		List<PubTypeExt> pubTypeExs = remain.entrySet().parallelStream().map(entry -> {
 			if (ObjectUtils.isBlank(entry.getValue()))
 				return null;
 
-			ContentExt contentExt = new ContentExt();
-			contentExt.setMetaKey(entry.getKey());
-			contentExt.setMetaValue(entry.getValue().toString());
-			return contentExt;
+			PubTypeExt pubTypeExt = new PubTypeExt();
+			pubTypeExt.setMetaKey(entry.getKey());
+			pubTypeExt.setMetaValue(entry.getValue().toString());
+			return pubTypeExt;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
-		post.setContentExt(contentExtList);
+		pub.setPubTypeExt(pubTypeExs);
 
-		return post;
+		return pub;
 	}
 }

@@ -32,9 +32,9 @@ public class Term {
 
 	private String classType;
 
-	private Long contentId;
+	private Long industryId;
 
-	private String contentType;
+	private String industryType;
 
 	private String description;
 
@@ -114,20 +114,20 @@ public class Term {
 		this.classType = classType;
 	}
 
-	public Long getContentId() {
-		return contentId;
+	public Long getIndustryId() {
+		return industryId;
 	}
 
-	public void setContentId(Long contentId) {
-		this.contentId = contentId;
+	public void setIndustryId(Long industryId) {
+		this.industryId = industryId;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getIndustryType() {
+		return industryType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setIndustryType(String industryType) {
+		this.industryType = industryType;
 	}
 
 	public String getDescription() {

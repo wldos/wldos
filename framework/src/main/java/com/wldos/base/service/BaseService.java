@@ -137,7 +137,7 @@ public class BaseService<R extends PagingAndSortingRepository<E, PK>, E, PK> ext
 	}
 
 	/**
-	 * 删除
+	 * 物理删除
 	 *
 	 * @param entity 实体bean
 	 */
@@ -146,7 +146,23 @@ public class BaseService<R extends PagingAndSortingRepository<E, PK>, E, PK> ext
 	}
 
 	/**
-	 * 根据Id删除,杜绝物理删
+	 * 批量物理删除
+	 *
+	 * @param ids 主键
+	 */
+	public void deletePhysicalByIds(Object... ids) {
+
+		for (Object o : ids) {
+			E entity = this.findById((PK) o);
+			if (entity != null) {
+				this.commonOperate.deleteByIds(entity, ids, false);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 根据Id删除,仅支持逻辑删
 	 *
 	 * @param id 主键id
 	 */
@@ -156,7 +172,7 @@ public class BaseService<R extends PagingAndSortingRepository<E, PK>, E, PK> ext
 	}
 
 	/**
-	 * 批量删除,杜绝物理删
+	 * 批量删除,仅支持逻辑删
 	 *
 	 * @param ids 主键
 	 */

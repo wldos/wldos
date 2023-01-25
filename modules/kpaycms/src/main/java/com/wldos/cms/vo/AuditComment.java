@@ -30,11 +30,11 @@ public class AuditComment extends TreeNode<AuditComment> {
 
 	private String updateIp;
 
-	private Long postId;
+	private Long pubId;
 
 	private Long createBy;
 
-	private String postTitle;
+	private String pubTitle;
 
 	private Integer commentCount;
 
@@ -96,12 +96,12 @@ public class AuditComment extends TreeNode<AuditComment> {
 		this.updateIp = updateIp;
 	}
 
-	public Long getPostId() {
-		return postId;
+	public Long getPubId() {
+		return pubId;
 	}
 
-	public void setPostId(Long postId) {
-		this.postId = postId;
+	public void setPubId(Long pubId) {
+		this.pubId = pubId;
 	}
 
 	public Long getCreateBy() {
@@ -112,12 +112,12 @@ public class AuditComment extends TreeNode<AuditComment> {
 		this.createBy = createBy;
 	}
 
-	public String getPostTitle() {
-		return postTitle;
+	public String getPubTitle() {
+		return pubTitle;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
 	public Integer getCommentCount() {

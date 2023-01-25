@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.wldos.cms.vo.SeoCrumbs;
-import com.wldos.sys.base.dto.ContentExt;
+import com.wldos.sys.base.dto.PubTypeExt;
 import com.wldos.sys.base.dto.Term;
 
 /**
@@ -23,15 +23,15 @@ import com.wldos.sys.base.dto.Term;
  * @version 1.0
  */
 public interface IMeta {
-	void setContentExt(List<ContentExt> contentExt);
+	void setPubTypeExt(List<PubTypeExt> pubTypeExt);
 
-	void setPostContent(String content);
+	void setPubContent(String content);
 
-	String getPostContent();
+	String getPubContent();
 
-	String getContentType();
+	String getIndustryType();
 
-	String getPostTitle();
+	String getPubTitle();
 
 	List<Term> getTags();
 

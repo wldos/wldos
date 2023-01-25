@@ -119,13 +119,17 @@ public abstract class RepoController<S extends BaseService, E> extends BaseContr
 	protected void postDelete(E entity) {
 	}
 
+	/**
+	 * 批量物理删
+	 * @param jsonObject 批量参数 Map<String, Object> key="ids"
+	 */
 	@DeleteMapping("deletes")
 	public String removeIds(@RequestBody Map<String, Object> jsonObject) {
 		Object ids = jsonObject.get("ids");
 		if (ids != null) {
 			List<Object> objects = (List<Object>) ids;
 			this.preDeletes(objects);
-			service.deleteByIds(objects.toArray());
+			service.deletePhysicalByIds(objects.toArray());
 
 			this.postDeletes(objects);
 		}

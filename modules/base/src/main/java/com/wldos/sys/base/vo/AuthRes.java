@@ -24,6 +24,19 @@ public class AuthRes extends TreeNode<AuthRes> {
 
 	private boolean disabled;
 
+	public AuthRes() {}
+
+	private AuthRes(String title, String key, Long id, Long parentId) {
+		this.title = title;
+		this.key = key;
+		this.id = id;
+		this.parentId = parentId;
+	}
+
+	public static AuthRes of(String title, String key, Long id, Long parentId) {
+		return new AuthRes(title, key, id, parentId);
+	}
+
 	public String getTitle() {
 		return title;
 	}

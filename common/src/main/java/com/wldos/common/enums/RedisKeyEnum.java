@@ -29,7 +29,7 @@ public enum RedisKeyEnum {
 	/** 多域系统资源 */
 	WLDOS_DOMAIN_RES("wldos:dom:res"),
 	/** 业务模型行业门类，用来定义具体的业务对象大类 */
-	WLDOS_CONTENT("wldos:cont"),
+	WLDOS_INDUSTRY("wldos:industry"),
 	/** 分类目录，某个行业门类的具体分类法 */
 	WLDOS_TERM("wldos:term"),
 	/** 分类目录扁平树状结构 */
