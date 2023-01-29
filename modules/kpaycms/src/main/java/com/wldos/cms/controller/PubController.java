@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 内容模型controller。
+ * 内容管理controller。
  *
  * @author 树悉猿
  * @date 2021/6/12
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PubController extends RepoController<PubService, KPubs> {
 	/**
-	 * 内容管理列表，作品内的章节片段，视为一个发布内容
+	 * 作品元素列表，作品内的章节、剧集或附件等
 	 *
 	 * @return 内容列表
 	 */
@@ -44,7 +44,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("pubType", PubTypeEnum.CHAPTER.toString());
+		pageQuery.pushFilter("pubType", PubTypeEnum.listSubType());
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 
@@ -52,7 +52,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 	}
 
 	/**
-	 * 作品管理列表，为什么不叫文集，因为还可以是视频、谱籍等其他格式或体裁，比如一段动漫，甚至是一个操作宏的存档
+	 * 作品管理列表
 	 *
 	 * @return 作品列表
 	 */
@@ -61,7 +61,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("pubType", PubTypeEnum.BOOK.toString());
+		pageQuery.pushParam("parentId", 0L);
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 
@@ -78,7 +78,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("pubType", PubTypeEnum.INFO.toString());
+		pageQuery.pushParam("pubType", PubTypeEnum.INFO.getName());
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 

@@ -1,7 +1,7 @@
 <p align="center">
  <img alt="WLDOS" src="https://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px; ">
 </p>
-<h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
+<h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">WLDOS云物互联驱动 - 内容付费系统</h3>
 <p align="center">
  <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.5" src="https://img.shields.io/badge/WLDOS-V1.5-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.5" src="https://img.shields.io/badge/SpringBoot-2.5-bluegreen.svg"></a>
@@ -14,6 +14,8 @@
 元宇宙融合虚拟与现实的理念与作者所想不谋而合，WLDOS（World Operating System）为了这种系统目标而孵化，是可以平台化和边缘化的云物互联支撑系统，面向社区开源、线上服务和业态孵化而生。
 
 解决痛点：想利用网络化拓展业务，对如何拓展业务有困惑，需要一个可落地的软件搭建平台，同时不需要昂贵的容器化基础设施。
+
+两条腿走路：WLDOS云应用支撑平台 + 内容付费业务场景实现
 
 如果您觉得有前景，请<a href="https://gitee.com/wldos/wldos" style="color: red">star</a>我们!
 

@@ -21,12 +21,12 @@ import com.wldos.cms.dto.PubPicture;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
 import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.cms.vo.PubUnit;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
 import com.wldos.cms.service.SpaceService;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Book;
-import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Pub;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -77,14 +77,14 @@ public class SpaceController extends NoRepoController {
 	 * @return 作品列表
 	 */
 	@GetMapping("space/book")
-	public PageableResult<BookUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
+	public PageableResult<PubUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", this.getCurUserId());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryContentList(pageQuery);
+		return this.kcmsService.queryWorksList(pageQuery);
 	}
 
 	/**
@@ -110,6 +110,9 @@ public class SpaceController extends NoRepoController {
 		return this.spaceService.queryChapter(chapterId);
 	}
 
+	@Value("${wldos.cms.tag.tagLength}")
+	private int tagLength;
+
 	/**
 	 * 新建作品
 	 *
@@ -119,22 +122,29 @@ public class SpaceController extends NoRepoController {
 	 */
 	@PostMapping("space/book/add")
 	public String addContent(@RequestBody String json) throws JsonProcessingException {
-		Pub post = InfoUtil.extractPubInfo(json);
-		if (ObjectUtils.isOutBoundsClearHtml(post.getPubContent(), this.maxLength))
+		Pub pub = InfoUtil.extractPubInfo(json);
+		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
-		List<Long> termTypeIds = post.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
+		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
 		if (!this.kcmsService.isSameIndustryType(termTypeIds))
 			return this.resJson.ok("error", "不能超出创建时所选大类");
 		// 检查标签
-		if (post.getTagIds() != null && post.getTagIds().size() > this.maxTagNum) {
-			return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+		List<String> tags = pub.getTagIds();
+		if (tags != null ) {
+			if (pub.getTagIds().size() > this.maxTagNum) {
+				return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+			}
+			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))){
+
+				return this.resJson.ok("error", "标签超长");
+			}
 		}
 
-		post.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
-		post.setDomainId(this.getDomainId());
+		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
+		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(post, PubTypeEnum.BOOK.toString(), this.getCurUserId(), this.getUserIp());
+		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.BOOK.getName(), this.getCurUserId(), this.getUserIp());
 		return this.resJson.ok("id", id);
 	}
 
@@ -209,7 +219,7 @@ public class SpaceController extends NoRepoController {
 			// 创建附件发布内容
 			KPubs attachment = new KPubs();
 			EntityAssists.beforeInsert(attachment, this.nextId(), this.getCurUserId(), this.getUserIp(), false);
-			attachment.setPubType(PubTypeEnum.ATTACHMENT.toString());
+			attachment.setPubType(PubTypeEnum.ATTACHMENT.getName());
 			attachment.setParentId(id);
 			attachment.setPubMimeType(type);
 			attachment.setPubStatus(PubStatusEnum.INHERIT.toString());

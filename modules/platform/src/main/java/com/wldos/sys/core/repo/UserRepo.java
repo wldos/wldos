@@ -47,7 +47,7 @@ public interface UserRepo extends PagingAndSortingRepository<WoUser, Long>, User
 	@Query("SELECT u.* FROM wo_user u WHERE u.delete_flag='normal' AND u.status='normal' AND u.login_name=:username")
 	WoUser findByLoginName(String username);
 
-	@Query("select o.* from wo_org o where o.is_valid='1' and o.delete_flag='normal' and o.org_code=(select t.value from wo_options t where t.key=:optionName )")
+	@Query("select o.* from wo_org o where o.is_valid='1' and o.delete_flag='normal' and o.org_code=(select t.option_value from wo_options t where t.option_key=:optionName )")
 	WoOrg queryOrgByDefaultRole(String optionName);
 
 	/**

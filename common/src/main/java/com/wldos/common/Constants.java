@@ -101,6 +101,9 @@ public final class Constants {
 	/** 平台租户管理员用户组 */
 	public static final String TAdminOrgCode = "tadmin";
 
+	/** 可信者用户组 */
+	public static final String CanTrustOrgCode = "can_trust";
+
 	/** 租户(公司)实体bean名称 */
 	public static final String CLASS_NAME_COMPANY = "WoCompany";
 

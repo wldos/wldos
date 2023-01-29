@@ -199,13 +199,23 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	void changePubStatus(Long id, String pubStatus);
 
 	/**
-	 * 根据内容别名判断是否已存在
+	 * 根据内容别名判断是否已被其他记录占用
 	 *
 	 * @param pubName 内容别名
 	 * @return 是否
 	 */
 	@Query("select count(1) from k_pubs p where p.pub_name=:pubName and p.id != :pubId")
-	boolean existsByPubNameAndId(String pubName, Long pubId);
+	boolean existsDifPubByNameAndId(String pubName, Long pubId);
+
+	/**
+	 * 判断当前发布是否已存在相同别名
+	 *
+	 * @param pubName 发布别名
+	 * @param pubId 发布id
+	 * @return 是否
+	 */
+	@Query("select count(1) from k_pubs p where p.pub_name=:pubName and p.id = :pubId")
+	boolean existsPubNameByNameAndId(String pubName, Long pubId);
 
 	/**
 	 * 根据id批量查询帖子列表
@@ -214,4 +224,10 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @return 帖子列表
 	 */
 	List<KPubs> findAllByIdIn(List<Long> pubIds);
+
+	@Query("select count(1) from k_pubs p where p.pub_name is null and p.id = :pubId")
+	boolean pubNameIsNull(Long pubId);
+
+	@Query("select p.id from k_pubs p where p.pub_name = :pubName")
+	Long queryIdByPubName(@Param("pubName") String pubName);
 }

@@ -550,16 +550,18 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	}
 
 	/**
-	 * 新增一个分类或标签
+	 * 后台管理员新增一个分类或标签
 	 *
 	 * @param term 分类项
 	 * @param userId 操作人id
 	 * @param userIp 操作人ip
 	 */
 	public String addTerm(Term term, Long userId, String userIp) {
-		boolean exists = this.entityRepo.existsTermBySlug(term.getSlug());
-		if (exists)
-			return "别名已存在";
+
+		if (this.entityRepo.existsSameTermByName(term.getName())
+				|| this.entityRepo.existsDifTermBySlugAndName(term.getSlug(), term.getName()))
+			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
+
 		// 新增term
 		KTerms kTerm = new KTerms();
 		this.termCopier.copy(term, kTerm, null);
@@ -581,7 +583,10 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 * @param userId 操作人id
 	 * @param userIp 操作人ip
 	 */
-	public void updateTerm(Term term, Long userId, String userIp) {
+	public String updateTerm(Term term, Long userId, String userIp) {
+		if (this.entityRepo.existsSameTermByNameAndId(term.getName(), term.getId())
+				|| this.entityRepo.existsDifTermBySlugAndName(term.getSlug(), term.getName()))
+			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
 		KTerms kTerms = new KTerms();
 		this.termCopier.copy(term, kTerms, null);
 		EntityAssists.beforeUpdated(kTerms, userId, userIp);
@@ -591,6 +596,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 		this.termTypeCopier.copy(term, termType, null);
 		termType.setId(term.getTermTypeId());
 		this.updateOtherEntity(termType);
+		return "ok";
 	}
 
 	/**
@@ -598,12 +604,13 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 *
 	 * @param terms 分类项集合, 已设置id
 	 */
-	private void batchAddTerm(List<Term> terms) {
+	private void batchAddTerm(List<Term> terms, Long userId, String userIp) {
 		List<KTerms> kTerms = new ArrayList<>();
 		List<KTermType> kTermTypes = new ArrayList<>();
 		for (Term term : terms) {
 			KTerms kTerm = new KTerms();
 			this.termCopier.copy(term, kTerm, null);
+			EntityAssists.beforeInsert(kTerm, kTerm.getId(), userId, userIp, false);
 			kTerms.add(kTerm);
 
 			KTermType termType = new KTermType();
@@ -795,15 +802,8 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 			return;
 
 		// 再增加新增分类，批量封装
-		List<KTermObject> tObjects = addIds.parallelStream().map(tId -> {
-			KTermObject termObject = new KTermObject();
-			termObject.setId(this.nextId());
-			termObject.setTermTypeId(tId);
-			termObject.setObjectId(pId);
-			termObject.setTermOrder(0L);
-
-			return termObject;
-		}).collect(Collectors.toList());
+		List<KTermObject> tObjects = addIds.parallelStream().map(tId ->
+				KTermObject.of(this.nextId(), tId, pId, 0L)).collect(Collectors.toList());
 
 		// 数据保存
 		this.termObjectService.insertSelectiveAll(tObjects);
@@ -992,23 +992,24 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 * @param industryId 待设置标签的归属行业id
 	 * @return 设置标签的id
 	 */
-	public List<Long> handleTag(List<String> tagNames, Long industryId) {
+	public List<Long> handleTag(List<String> tagNames, Long industryId, Long userId, String userIp) {
 		if (ObjectUtils.isBlank(tagNames))
 			return new ArrayList<>();
 		// 批量查询标签项
 		List<Term> terms = this.entityRepo.findAllByNameAndClassType(tagNames, TermTypeEnum.TAG.toString());
+		List<String> existsTermNames = terms.stream().map(Term::getName).collect(Collectors.toList());
 		List<Long> tagIds;
-		if (terms != null) {
+		if (terms.size() > 0) {
 			// 查找不存在的标签
-			List<String> noTagNames = tagNames.stream().filter(name -> terms.stream().noneMatch(t -> t.getName().equals(name))).collect(Collectors.toList());
+			List<String> noTagNames = tagNames.stream().filter(name -> !existsTermNames.contains(name)).collect(Collectors.toList());
 
-			if (ObjectUtils.isBlank(noTagNames))
+			if (ObjectUtils.isBlank(noTagNames)) // 全部存在，无需保存，直接复用
 				return terms.stream().map(Term::getTermTypeId).collect(Collectors.toList());
-			// 已经存在的标签，直接复用
+			// 部分存在的标签，直接复用
 			tagIds = terms.stream().map(Term::getTermTypeId).collect(Collectors.toList());
 
-
-			List<Long> newTags = this.addNewTags(noTagNames, industryId);
+			// 不存在的标签先保存，再合并返回
+			List<Long> newTags = this.addNewTags(noTagNames, industryId, userId, userIp);
 
 			tagIds.addAll(newTags);
 
@@ -1016,38 +1017,43 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 		}
 
 		// 全部新增
-		return this.addNewTags(tagNames, industryId);
+		return this.addNewTags(tagNames, industryId, userId, userIp);
 	}
 
 	@Value("${wldos.cms.tag.tagLength}")
 	private int tagLength;
 
-	private List<Long> addNewTags(List<String> tagNames, Long industryId) {
+	public String existsAndDifSlugByTermSlug(String slug, String name) {
+		// 同名标签且别名相同，保持原样
+		if (this.entityRepo.existsSameTermBySlugAndName(slug, name))
+			return slug;
+		// 不同标签，别名冲突，必须处理
+		if (this.entityRepo.existsDifTermBySlugAndName(slug, name))
+			// 存在，自动加1再判断
+			return existsAndDifSlugByTermSlug(slug + "1", name);
+		// 不重复的别名
+		return slug;
+	}
+
+	// 到这里来的都是库里不存在的标签，但是自动生成的拼音别名可能是重复的
+	private List<Long> addNewTags(List<String> tagNames, Long industryId, Long userId, String userIp) {
 		List<Term> newTerms = tagNames.stream().map(n -> {
 			// 标签超长，抛弃
-			if (ObjectUtils.isOutBounds(n, this.tagLength))
+			if (ObjectUtils.isOutBounds(n, this.tagLength)) {
+				getLog().info("设置了超长标签，系统自动忽略：{}", n);
 				return null;
-			String slug = ChineseUtils.hanZi2Pinyin(n, true);
-			if (this.entityRepo.existsTermBySlug(slug))
-				return null; // @todo 由于性能和缓存一致性冲突，通过查询判断别名重复的直接抛弃
+			}
+			// 别名存在的标签，别名自动加1消除冲突
+			String slug = this.existsAndDifSlugByTermSlug(ChineseUtils.hanZi2Pinyin(n, true), n);
 
-			Term t = new Term();
 			Long id = this.nextId();
-			t.setId(id);
-			t.setTermTypeId(id);
-			t.setClassType(TermTypeEnum.TAG.toString());
-			t.setParentId(Constants.TOP_TERM_ID);
-			t.setIndustryId(industryId);
-			t.setName(n);
-			t.setSlug(slug);
-
-			return t;
+			return Term.of(id, id, TermTypeEnum.TAG.toString(), Constants.TOP_TERM_ID, industryId, n, slug);
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
 		if (newTerms.isEmpty())
 			return new ArrayList<>();
 
-		this.batchAddTerm(newTerms);
+		this.batchAddTerm(newTerms, userId, userIp);
 
 		this.appendCacheTag(newTerms); // 新增标签追加缓存
 

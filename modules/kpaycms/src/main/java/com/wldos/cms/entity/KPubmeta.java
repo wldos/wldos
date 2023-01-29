@@ -22,6 +22,19 @@ public class KPubmeta {
 
 	private String metaValue;
 
+	public KPubmeta() {}
+
+	public static KPubmeta of(Long id, Long pubId, String metaKey, String metaValue) {
+		return new KPubmeta(id, pubId, metaKey, metaValue);
+	}
+
+	private KPubmeta(Long id, Long pubId, String metaKey, String metaValue) {
+		this.id = id;
+		this.pubId = pubId;
+		this.metaKey = metaKey;
+		this.metaValue = metaValue;
+	}
+
 	public Long getId() {
 		return id;
 	}

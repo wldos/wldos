@@ -26,7 +26,6 @@ import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.KModelMetaKey;
 import com.wldos.cms.repo.PubRepo;
 import com.wldos.cms.vo.AuditPub;
-import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.MiniPub;
 import com.wldos.cms.vo.PubMember;
@@ -100,7 +99,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 * @return 内容列表
 	 */
 	public List<ContModelDto> queryContAttach(Long pid) {
-		return this.entityRepo.queryContSubModel(pid, PubTypeEnum.ATTACHMENT.toString());
+		return this.entityRepo.queryContSubModel(pid, PubTypeEnum.ATTACHMENT.getName());
 	}
 
 	/**
@@ -109,15 +108,15 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 * @param pageQuery 分页参数
 	 * @return 一页数据
 	 */
-	public PageableResult<BookUnit> queryPubWithExtList(PageQuery pageQuery) {
-		PageableResult<BookUnit> pubUnitPage = this.execQueryForPage(BookUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+	public PageableResult<PubUnit> queryPubWithExtList(PageQuery pageQuery) {
+		PageableResult<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
 
-		List<BookUnit> pubUnits = pubUnitPage.getData().getRows();
+		List<PubUnit> pubUnits = pubUnitPage.getData().getRows();
 
 		if (pubUnits == null || pubUnits.isEmpty())
 			return pubUnitPage;
 
-		List<Long> ids = pubUnits.parallelStream().map(BookUnit::getId).collect(Collectors.toList());
+		List<Long> ids = pubUnits.parallelStream().map(PubUnit::getId).collect(Collectors.toList());
 
 		List<KPubmeta> pubMetas = this.queryPubExt(ids);
 
@@ -468,10 +467,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 */
 	public Map<Long, List<PubMember>> queryUserInfoByBookIds(List<Long> ids) {
 		List<PubMember> pubMembers = this.entityRepo.queryMembersByPubIds(ids);
-		pubMembers = pubMembers.parallelStream().map(pm -> {
-			pm.setAvatar(this.userService.getAvatarUrl(pm.getAvatar()));
-			return pm;
-		}).collect(Collectors.toList());
+		pubMembers = pubMembers.parallelStream().peek(pm -> pm.setAvatar(this.userService.getAvatarUrl(pm.getAvatar()))).collect(Collectors.toList());
 		return pubMembers.stream().collect(Collectors.groupingBy(PubMember::getPubId));
 	}
 
@@ -483,10 +479,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 */
 	public Map<Long, PubMember> queryUserInfoByPubIds(List<Long> ids) {
 		List<PubMember> pubMembers = this.entityRepo.queryMembersByPubIds(ids);
-		pubMembers = pubMembers.parallelStream().map(pm -> {
-			pm.setAvatar(this.userService.getAvatarUrl(pm.getAvatar()));
-			return pm;
-		}).collect(Collectors.toList());
+		pubMembers = pubMembers.parallelStream().peek(pm -> pm.setAvatar(this.userService.getAvatarUrl(pm.getAvatar()))).collect(Collectors.toList());
 		return pubMembers.stream().collect(Collectors.toMap(PubMember::getPubId, pm -> pm, (p1, p2) -> p1));
 	}
 
@@ -510,7 +503,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 * @return 章节实体
 	 */
 	public List<Chapter> queryPubsByParentId(Long bookId, String deleteFlag) {
-		return this.entityRepo.queryPubsByParentId(bookId, PubTypeEnum.CHAPTER.toString(), deleteFlag);
+		return this.entityRepo.queryPubsByParentId(bookId, PubTypeEnum.CHAPTER.getName(), deleteFlag);
 	}
 
 	/**
@@ -608,12 +601,12 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	}
 
 	/**
-	 * 发布发布内容
+	 * 发布元素，元素只有继承作品发布状态，没有独立的发布状态
 	 *
 	 * @param pub 发布内容
 	 */
 	public void publishPub(AuditPub pub) {
-		this.entityRepo.changePubStatus(pub.getId(), PubStatusEnum.PUBLISH.toString());
+		this.entityRepo.changePubStatus(pub.getId(), PubStatusEnum.INHERIT.toString());
 	}
 
 	/**
@@ -643,8 +636,24 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 		this.entityRepo.changePubStatus(pub.getId(), PubStatusEnum.DRAFT.toString());
 	}
 
-	public boolean existsByPubName(String pubName, Long pubId) {
-		return this.entityRepo.existsByPubNameAndId(pubName, pubId);
+	/**
+	 * 别名已存在，则自动追加1，直到找到不重复的别名返回
+	 *
+	 * @param pubName 用户输入别名
+	 * @param pubId 发布内容id
+	 * @return 不重复的别名
+	 */
+	public String existsAutoDiffPubName(String pubName, Long pubId) {
+		if (this.entityRepo.existsPubNameByNameAndId(pubName, pubId))
+			return pubName;
+		if (this.entityRepo.existsDifPubByNameAndId(pubName, pubId))
+			// 存在，自动加1再判断
+			return existsAutoDiffPubName(pubName+"1", pubId);
+		return pubName;
+	}
+
+	public boolean pubNameIsNull(Long pubId) {
+		return this.entityRepo.pubNameIsNull(pubId);
 	}
 
 	/**
@@ -655,5 +664,9 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 */
 	public List<KPubs> queryPubsByIds(List<Long> pubIds) {
 		return this.entityRepo.findAllByIdIn(pubIds);
+	}
+
+	public Long queryIdByPubName(String pubName) {
+		return this.entityRepo.queryIdByPubName(pubName);
 	}
 }

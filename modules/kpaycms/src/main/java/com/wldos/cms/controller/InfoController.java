@@ -78,7 +78,7 @@ public class InfoController extends NoRepoController {
 	}
 
 	/**
-	 * 查看某大类下的存档(支持供求信息、作品)
+	 * 查看某大类下的存档
 	 *
 	 * @param industryType 行业门类，用于隔离业务领域
 	 * @return 按分类目录索引的存档列表页
@@ -96,7 +96,7 @@ public class InfoController extends NoRepoController {
 	}
 
 	/**
-	 * 查看某目录下的存档(支持供求信息、作品)
+	 * 查看某目录下的存档
 	 *
 	 * @param industryType 行业门类，用于隔离业务领域
 	 * @param slugCategory 分类目录别名
@@ -170,6 +170,9 @@ public class InfoController extends NoRepoController {
 		return this.infoService.queryInfoDomain(pageQuery);
 	}
 
+	@Value("${wldos.cms.tag.tagLength}")
+	private int tagLength;
+
 	/**
 	 * 按分类发布信息
 	 *
@@ -187,14 +190,21 @@ public class InfoController extends NoRepoController {
 		if (!this.kcmsService.isSameIndustryType(termTypeIds))
 			return this.resJson.ok("error", "不能超出创建时所选大类");
 		// 检查标签
-		if (pub.getTagIds() != null && pub.getTagIds().size() > this.maxTagNum) {
-			return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+		List<String> tags = pub.getTagIds();
+		if (tags != null ) {
+			if (pub.getTagIds().size() > this.maxTagNum) {
+				return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+			}
+			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))){
+
+				return this.resJson.ok("error", "标签超长");
+			}
 		}
 
 		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.INFO.toString(), this.getCurUserId(), this.getUserIp());
+		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.INFO.getName(), this.getCurUserId(), this.getUserIp());
 		return this.resJson.ok("id", id);
 	}
 
@@ -225,8 +235,15 @@ public class InfoController extends NoRepoController {
 		if (!this.kcmsService.isSameIndustryType(termTypeIds, pub.getId()))
 			return this.resJson.ok("error", "不能超出创建时所选大类");
 		// 检查标签
-		if (pub.getTagIds() != null && pub.getTagIds().size() > this.maxTagNum) {
-			return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+		List<String> tags = pub.getTagIds();
+		if (tags != null ) {
+			if (pub.getTagIds().size() > this.maxTagNum) {
+				return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+			}
+			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))){
+
+				return this.resJson.ok("error", "标签超长");
+			}
 		}
 
 		this.kcmsService.update(pub, this.getCurUserId(), this.getUserIp());

@@ -15,6 +15,7 @@ import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Product;
+import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
@@ -57,7 +58,7 @@ public class ProductController extends NoRepoController {
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("product/{industryType}")
-	public PageableResult<BookUnit> productArchives(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
+	public PageableResult<PubUnit> productArchives(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("industryType", industryType);
@@ -76,7 +77,7 @@ public class ProductController extends NoRepoController {
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("product/{industryType}/category/{slugCategory}")
-	public PageableResult<BookUnit> productCategory(@PathVariable String industryType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
+	public PageableResult<PubUnit> productCategory(@PathVariable String industryType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("industryType", industryType);

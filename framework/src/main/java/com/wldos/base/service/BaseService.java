@@ -442,21 +442,30 @@ public class BaseService<R extends PagingAndSortingRepository<E, PK>, E, PK> ext
 	 * @return 是否管理员
 	 */
 	public boolean isAdmin(Long userId) {
-		String key = RedisKeyEnum.WLDOS_ADMIN.toString();
+		return this.isRightUser(userId, RedisKeyEnum.WLDOS_ADMIN.toString());
+	}
+
+	/**
+	 * 实时查询当前用户是否可信者
+	 *
+	 * @param userId 用户id
+	 * @return 是否可信者
+	 */
+	public boolean isCanTrust(Long userId) {
+		return this.isRightUser(userId, RedisKeyEnum.WLDOS_TRUST.toString());
+	}
+
+	private boolean isRightUser(Long userId, String key) {
 		String value = ObjectUtils.string(this.cache.get(key));
 		List<Long> adminIds;
 		try {
 			ObjectMapper om = new ObjectMapper();
 			if (ObjectUtils.isBlank(value)) {
-				String sql = "select u.user_id from wo_org_user u where exists (select 1 from wo_org g where g.id=u.org_id "
-						+ "and g.arch_id=u.arch_id and g.com_id=u.com_id and g.delete_flag='normal' and g.is_valid='1' and g.com_id=? and g.org_code=?)";
 
-				Object[] params = { Constants.TOP_COM_ID, Constants.AdminOrgCode };
-				List<Map<String, Object>> res = this.commonOperate.getJdbcTemplate().queryForList(sql, params);
+				adminIds = RedisKeyEnum.WLDOS_ADMIN.toString().equals(key) ? this.commonOperate.listSuperAdmin() : this.commonOperate.listTrustMan();
 
-				adminIds = res.parallelStream().map(r -> Long.parseLong(ObjectUtils.string(r.get("user_id")))).collect(Collectors.toList());
-
-				assert !adminIds.isEmpty();
+				if (ObjectUtils.isBlank(adminIds))
+					return false;
 
 				value = om.writeValueAsString(adminIds);
 

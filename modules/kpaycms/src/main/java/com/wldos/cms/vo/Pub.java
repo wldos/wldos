@@ -20,7 +20,7 @@ import com.wldos.sys.base.dto.PubTypeExt;
  * metadata的使用由系统默认组件和插件分别驱动，通过统一封装的方法各取所取。
  * 整个过程包括输入扩展、存储扩展、输出扩展。
  * 输入扩展：动态表单(1.hook绑定编辑块，2.统一封装meta编辑块)。
- * 存储扩展：先post，再metadata，存储数据可hook过滤器。
+ * 存储扩展：先pub，再metadata，存储数据可hook过滤器。
  * 输出扩展：确定展现视图，适当的视图嵌入动态展现块。
  *
  */

@@ -28,9 +28,7 @@ import com.wldos.auth2.model.OAuthConfig;
 import com.wldos.auth2.model.OAuthUser;
 import com.wldos.auth2.vo.OAuthLoginParams;
 import com.wldos.base.Base;
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.Constants;
-import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultJson;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.HttpUtils;
@@ -49,7 +47,6 @@ import com.wldos.sys.core.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

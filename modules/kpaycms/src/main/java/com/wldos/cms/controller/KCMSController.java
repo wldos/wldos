@@ -8,10 +8,12 @@
 
 package com.wldos.cms.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.controller.NoRepoController;
+import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Article;
@@ -22,6 +24,9 @@ import com.wldos.cms.vo.TypeDomainTerm;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.Result;
+import com.wldos.common.utils.ObjectUtils;
+import com.wldos.common.vo.SelectOption;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,20 +52,19 @@ public class KCMSController extends NoRepoController {
 
 	/**
 	 * 首页跨行业查询
-	 * @todo 应该根据参数类型 判断返回的vo类型，分别支持产品、信息、存档的跨行查询
 	 *
 	 * @param params 请求参数
 	 * @return 分页数据
 	 */
 	@GetMapping("/")
-	public PageableResult<BookUnit> listQuery(@RequestParam Map<String, Object> params) {
+	public PageableResult<PubUnit> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryContentList(pageQuery);
+		return this.kcmsService.queryWorksList(pageQuery);
 	}
 
 	/**
@@ -70,7 +74,7 @@ public class KCMSController extends NoRepoController {
 	 * @return 侧边栏数据
 	 */
 	@GetMapping("cms/listSideCar/{pageName}")
-	public PageableResult<BookUnit> listSideCar(@PathVariable String pageName) throws JsonProcessingException {
+	public PageableResult<PubUnit> listSideCar(@PathVariable String pageName) throws JsonProcessingException {
 		// 根据页面名称获取配置的侧边栏参数
 		Map<String, Object> params = this.kcmsService.readParamsSideCar(pageName);
 		PageQuery pageQuery = new PageQuery(params);
@@ -78,7 +82,26 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryContentList(pageQuery);
+		return this.kcmsService.queryWorksList(pageQuery);
+	}
+
+	/**
+	 * 查询当前域下指定发布类型的所有业务对象(支持作品(单结构：图文、视频、音频、图片，复合结构：文集、系列音视频、谱籍)和信息)
+	 *
+	 * @param pubType 发布类型
+	 * @return 按分类目录索引的存档列表页
+	 */
+	@GetMapping("archives-all/{pubType}")
+	public PageableResult<PubUnit> archivesPubType(@PathVariable String pubType, @RequestParam Map<String, Object> params) {
+
+		//查询列表数据
+		PageQuery pageQuery = new PageQuery(params);
+		pageQuery.pushParam("pubType", pubType);
+		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		this.applyDomainFilter(pageQuery);
+
+		return this.kcmsService.queryWorksList(pageQuery);
 	}
 
 	/**
@@ -88,7 +111,7 @@ public class KCMSController extends NoRepoController {
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("archives/{industryType}")
-	public PageableResult<PubUnit> archives(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
+	public PageableResult<PubUnit> archivesIndustry(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -187,7 +210,7 @@ public class KCMSController extends NoRepoController {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("industryType", industryType);
-		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
+		pageQuery.pushParam("pubStatus", PubStatusEnum.INHERIT.toString()); // 对于子类型来说继承就是发布
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
@@ -213,9 +236,9 @@ public class KCMSController extends NoRepoController {
 	 * @return 别名对应的内容
 	 */
 	@GetMapping("/archive/{contAlias}")
-	public String archivesId(@PathVariable String contAlias) {
+	public Article archivesId(@PathVariable String contAlias) {
 
-		return this.resJson.ok("");
+		return this.kcmsService.queryArticle(contAlias);
 	}
 
 	/**
@@ -328,5 +351,15 @@ public class KCMSController extends NoRepoController {
 		tdt.setTempType(params.get("tempType"));
 
 		return this.kcmsService.genSeoCrumbs(tdt);
+	}
+
+	/**
+	 * 发布状态枚举
+	 *
+	 * @return 枚举列表
+	 */
+	@GetMapping("enum/select/pubStatus")
+	public Result fetchEnumPubStatus() {
+		return this.resJson.format(PubStatusEnum.values());
 	}
 }

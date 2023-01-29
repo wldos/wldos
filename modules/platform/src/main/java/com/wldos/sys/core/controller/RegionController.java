@@ -41,15 +41,11 @@ public class RegionController extends RepoController<RegionService, WoRegion> {
 
 	@GetMapping(value = {"city/{province}", "city/"})
 	public List<City> queryCity(@PathVariable(required = false) Long province) {
-		City city = new City(-1L, "全部", -1L, "");
+
 		if (null == province)
 			return new ArrayList<>();
 
-		List<City> cities = new ArrayList<>();
-		cities.add(city);
-		cities.addAll(this.service.queryCityByProvId(province));
-
-		return cities;
+		return new ArrayList<>(this.service.queryCityByProvId(province));
 	}
 
 	@GetMapping("info/{cityId}")

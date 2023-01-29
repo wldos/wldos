@@ -75,8 +75,8 @@ public class PubMeta {
 	private List<String> tagIds;
 
 	private Geographic geographic;
-
-	private Map<String, String> pubTypeExt; // todo 后期可以改成<String, PubTypeExt>，以描述每个扩展属性的元信息，比如数据类型、取值来源，以展示动态表单或者展示动态内容
+	// todo 后期可以改成<String, PubTypeExt>，以描述每个扩展属性的元信息，比如数据类型、取值来源，以展示动态表单或者展示动态内容
+	private Map<String, String> pubTypeExt;
 
 	public Long getId() {
 		return id;
@@ -303,10 +303,10 @@ public class PubMeta {
 	}
 
 	public Map<String, String> getPubTypeExt() {
-		return pubTypeExt;
+		return this.pubTypeExt;
 	}
 
 	public void setPubTypeExt(Map<String, String> pubTypeExt) {
-		pubTypeExt = pubTypeExt;
+		this.pubTypeExt = pubTypeExt;
 	}
 }

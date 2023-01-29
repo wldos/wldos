@@ -213,4 +213,14 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param isLogic 是否逻辑删，原则上使用逻辑删
 	 */
 	<E> void deleteByMultiIds(E entity, Object[] ids, Object pid, boolean isLogic);
+
+	/**
+	 * 获取超级管理员
+	 */
+	List<Long> listSuperAdmin();
+
+	/**
+	 * 获取可信用户
+	 */
+	List<Long> listTrustMan();
 }

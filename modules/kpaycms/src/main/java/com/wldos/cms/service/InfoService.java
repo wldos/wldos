@@ -138,6 +138,7 @@ public class InfoService extends Base {
 	 * @return 供求信息
 	 */
 	public Info infoDetail(Long pid) {
+		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
 		this.kcmsService.updatePubMeta(pid);
 
 		// 根据id找到行业门类、模板类型 用于前端展示

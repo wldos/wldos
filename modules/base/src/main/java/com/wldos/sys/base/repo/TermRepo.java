@@ -34,7 +34,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param contId 行业门类id
 	 * @return 分类项列表
 	 */
-	@Query("select a.*, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and o.industry_id=:contId and a.is_valid='1' and a.delete_flag='normal'")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and o.industry_id=:contId and a.is_valid='1' and a.delete_flag='normal'")
 	List<Term> findByContType(@Param("classType") String classType, @Param("contId") Long contId);
 
 	/**
@@ -43,7 +43,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param classType 分类类型：分类目录、标签等
 	 * @return 分类项列表
 	 */
-	@Query("select a.*, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and a.is_valid='1' and a.delete_flag='normal'")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and a.is_valid='1' and a.delete_flag='normal'")
 	List<Term> findAllByClassType(@Param("classType") String classType);
 
 	/**
@@ -53,7 +53,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param classType 分类类型：分类目录、标签等
 	 * @return 分类项列表
 	 */
-	@Query("select a.*, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id  where o.class_type=:classType and EXISTS(select 1 from k_term_object b where o.id=b.term_type_id and b.object_id=:objectId and a.is_valid='1' and a.delete_flag='normal')")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id  where o.class_type=:classType and EXISTS(select 1 from k_term_object b where o.id=b.term_type_id and b.object_id=:objectId and a.is_valid='1' and a.delete_flag='normal')")
 	List<Term> findAllByObjectAndClassType(@Param("objectId") Long objectId, @Param("classType") String classType);
 
 	/**
@@ -81,7 +81,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param classType 分类类型：分类目录、标签等
 	 * @return 分类项列表
 	 */
-	@Query("select a.*, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where a.is_valid='1' and a.delete_flag='normal' and o.class_type=:classType and a.name in (:name)")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, o.id term_type_id, o.class_type, o.industry_id, (select c.industry_code from k_model_industry c where c.id=o.industry_id) industry_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where a.is_valid='1' and a.delete_flag='normal' and o.class_type=:classType and a.name in (:name)")
 	List<Term> findAllByNameAndClassType(@Param("name") List<String> name, @Param("classType") String classType);
 
 	/**
@@ -90,7 +90,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param termTypeId 分类id
 	 * @return 分类项信息
 	 */
-	@Query("select t.*, p.id term_type_id, p.class_type, p.industry_id, (select c.industry_code from k_model_industry c where c.id=p.industry_id) industry_type, p.description, p.parent_id, p.count from k_term_type p join k_terms t on p.term_id=t.id where p.id=:termTypeId")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, p.id term_type_id, p.class_type, p.industry_id, (select c.industry_code from k_model_industry c where c.id=p.industry_id) industry_type, p.description, p.parent_id, p.count from k_term_type p join k_terms a on p.term_id=a.id where p.id=:termTypeId")
 	Term queryTermByTermTypeId(@Param("termTypeId") Long termTypeId);
 
 	/**
@@ -99,17 +99,38 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param slugTerm 分类项别名
 	 * @return 分类项信息
 	 */
-	@Query("select t.*, p.id term_type_id, p.class_type, p.industry_id, (select c.industry_code from k_model_industry c where c.id=p.industry_id) industry_type, p.description, p.parent_id, p.count from k_term_type p join k_terms t on p.term_id=t.id where t.slug=:slugTerm")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, p.id term_type_id, p.class_type, p.industry_id, (select c.industry_code from k_model_industry c where c.id=p.industry_id) industry_type, p.description, p.parent_id, p.count from k_term_type p join k_terms a on p.term_id=a.id where a.slug=:slugTerm")
 	Term queryTermBySlugTerm(@Param("slugTerm") String slugTerm);
 
+	@Query("select count(1) from k_terms t where t.name=:name")
+	boolean existsSameTermByName(@Param("name") String name);
+
 	/**
-	 * 根据分类项别名查询是否已存在
+	 * 是否存在同名的其他分类项，用于更新时判断是否重名
+	 *
+	 * @param name 分类项名称
+	 * @param id 分类项id
+	 * @return 是否存在重名
+	 */
+	@Query("select count(1) from k_terms t where t.name=:name and t.id!=:id")
+	boolean existsSameTermByNameAndId(String name, Long id);
+
+	/**
+	 * 根据分类项别名查询同名分类项是否已存在，若存在说明原样保存，不区分分类法，仅用于更新场景
 	 *
 	 * @param slug 分类或标签的别名
-	 * @return 是否
 	 */
-	@Query("select count(1) from k_terms t where t.slug=:slug")
-	boolean existsTermBySlug(@Param("slug") String slug);
+	@Query("select count(1) from k_terms t where t.slug=:slug and t.name=:name")
+	boolean existsSameTermBySlugAndName(@Param("slug") String slug, @Param("name") String name);
+
+	/**
+	 * 用于更新分类项或新增分类项时判断是否与其他分类项重名，不区分分类法，仅用于更新场景
+	 *
+	 * @param slug 分类或标签的别名
+	 * @param name 分类/标签名
+	 */
+	@Query("select count(1) from k_terms t where t.slug=:slug and t.name!=:name")
+	boolean existsDifTermBySlugAndName(@Param("slug") String slug, @Param("name") String name);
 
 	/**
 	 * 根据分类项类型id判断其下是否存在子分类
@@ -126,7 +147,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @param termTypeIds 分类类型id
 	 * @return 分类信息
 	 */
-	@Query("select t.*, p.id term_type_id, p.class_type, p.industry_id, (select c.industry_code from k_model_industry c where c.id=p.industry_id) industry_type, p.description, p.parent_id, p.count from k_term_type p join k_terms t on p.term_id=t.id where p.id in(:termTypeIds)")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, p.id term_type_id, p.class_type, p.industry_id, (select c.industry_code from k_model_industry c where c.id=p.industry_id) industry_type, p.description, p.parent_id, p.count from k_term_type p join k_terms a on p.term_id=a.id where p.id in(:termTypeIds)")
 	List<Term> queryAllTermsByTermTypeIds(@Param("termTypeIds") List<Long> termTypeIds);
 
 	@Query("select max(r.display_order) max_order from k_terms r join k_term_type t on r.id=t.term_id where r.delete_flag='normal' and r.is_valid='1' and t.parent_id=:pId")

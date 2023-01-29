@@ -6,28 +6,24 @@
  *
  */
 
-package com.wldos.sys.base.enums;
+package com.wldos.cms.enums;
 
 /**
+ * 作品列表样式枚举值。
+ *
  * @author 树悉猿
- * @date 2021/6/13
+ * @date 2023/1/27
  * @version 1.0
  */
-public enum ContModelTypeEnum {
-	POST("post"),
-	PAGE("page"),
-	BOOK("book"),
-	CHAPTER("chapter"),
-	PRODUCT("prod"),
-	SERVICE("service"),
-	TASK("task"),
-	INFO("info"),
-	ATTACHMENT("attachment"),
-	NAV_ITEM_MENU("navItemMenu");
+public enum ListStyleEnum {
+	/** 卡片式：以特色图为背景的瀑布流或一组卡片 */
+	card("card"),
+	/** 存档式：图文列表 */
+	archive("archive");
 
 	private final String name;
 
-	ContModelTypeEnum(String name) {
+	ListStyleEnum(String name) {
 		this.name = name;
 	}
 

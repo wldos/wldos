@@ -23,6 +23,19 @@ public class KTermObject {
 
 	private Long termOrder;
 
+	public KTermObject() {}
+
+	public static KTermObject of(long id, Long termTypeId, Long objectId, Long termOrder) {
+		return new KTermObject(id, termTypeId, objectId, termOrder);
+	}
+
+	private KTermObject(long id, Long termTypeId, Long objectId, Long termOrder) {
+		this.id = id;
+		this.termTypeId = termTypeId;
+		this.objectId = objectId;
+		this.termOrder = termOrder;
+	}
+
 	public Long getId() {
 		return id;
 	}

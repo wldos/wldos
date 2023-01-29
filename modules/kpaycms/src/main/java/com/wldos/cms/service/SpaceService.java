@@ -82,9 +82,9 @@ public class SpaceService extends Base {
 	public Chapter createChapter(Pub chapter, Long curUserId, String userIp) {
 		chapter.setPubTitle(DateUtils.format(new Date(), DateUtils.TIME_PATTER));
 
-		// 行业门类contentType从前端传送
-		chapter.setPubStatus(PubStatusEnum.INHERIT.toString());
-		chapter.setPubType(PubTypeEnum.CHAPTER.toString());
+		// 刚新建的内容为草稿状态，申请发布时改为待审核，属于可信者用户组的会员跳过审核直接发布
+		chapter.setPubStatus(this.pubService.isCanTrust(curUserId) ? PubStatusEnum.INHERIT.toString() : PubStatusEnum.AUTO_DRAFT.toString());
+		chapter.setPubType(PubTypeEnum.BOOK.getSubType());
 		Long id = this.insertChapter(chapter, curUserId, userIp);
 
 		// 取出父作品分类

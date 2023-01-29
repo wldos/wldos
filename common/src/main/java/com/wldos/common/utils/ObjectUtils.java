@@ -14,8 +14,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.wldos.common.enums.BaseEnum;
+import com.wldos.common.vo.SelectOption;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -62,6 +66,15 @@ public final class ObjectUtils {
 	 */
 	public static <E extends Enum<E>> Map<String, E> toEnumMap(final Class<E> enumClass) {
 		return EnumUtils.getEnumMap(enumClass);
+	}
+
+	/**
+	 * 枚举转LV下拉列表，也可以用json格式化注解实现
+	 *
+	 * @param enumClass 枚举类
+	 */
+	public static <E extends BaseEnum> List<SelectOption> enumToSelectOption(final Class<E> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).map(item -> new SelectOption(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 
 	public static boolean isBlank(Object obj) {

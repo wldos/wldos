@@ -26,6 +26,7 @@ import com.wldos.cms.dto.ContModelDto;
 import com.wldos.cms.dto.PubPicture;
 import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.entity.KPubs;
+import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
@@ -34,7 +35,6 @@ import com.wldos.cms.model.KModelMetaKey;
 import com.wldos.cms.model.MainPicture;
 import com.wldos.cms.vo.Article;
 import com.wldos.cms.vo.Book;
-import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Breadcrumb;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Geographic;
@@ -125,14 +125,20 @@ public class KCMSService extends Base {
 		this.regionService = regionService;
 	}
 
+
 	/**
-	 * 作品列表页
+	 * 作品列表页(存档模:，参数详细; 卡片模式，参数简约)
+	 * 不传listStyle默认是卡片模式
 	 *
 	 * @param pageQuery 页面参数
 	 * @return 分页数据
 	 */
-	public PageableResult<BookUnit> queryContentList(PageQuery pageQuery) {
-		return this.pubService.queryPubWithExtList(pageQuery);
+	public PageableResult<PubUnit> queryWorksList(PageQuery pageQuery) {
+		// 列表样式：卡片式、存档式，卡片式要求的参数简约
+		Object listStyle = pageQuery.getCondition().get("listStyle");
+
+		return ListStyleEnum.archive.toString().equals(listStyle) ? this.pubService.queryArchives(pageQuery)
+				: this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	// @todo 图片、附件类预处理和设置元数据存储
@@ -149,22 +155,23 @@ public class KCMSService extends Base {
 	 */
 	public Long insertSelective(Pub pub, String pubType, Long userId, String userIp) {
 
-		if (ObjectUtils.isBlank(pub.getPubName())) // 创建标题别名
+		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(pub.getId())) // 创建标题别名
 			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));
 
 		// 为便于结构化处理，对于图片等附件的处理，要在上传文件和编辑文件时将设置数据存储到pub metadata中，在发布内容渲染时再读出
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
-		// 存在别名，放弃设置别名
-		if (this.pubService.existsByPubName(pubs.getPubName(), pubs.getId()))
-			pubs.setPubName("");
+		// 存在别名，自动加1设置不重复别名
+		if (!ObjectUtils.isBlank(pubs.getPubName()))
+			pubs.setPubName(this.pubService.existsAutoDiffPubName(pubs.getPubName(), pubs.getId()));
 
 		// 根据分类id获取行业门类，确定模板，统一所有带正文的内容模板为作品集-篇章结构，行业门类用于总览分类，不可以跨行业类型选择分类目录，同类型可以有多个分类
 		KModelIndustry industry = this.termService.queryIndustryTypeByTermType(Long.parseLong(pub.getTermTypeIds().get(0).getValue()));
 		pubs.setPubType(pubType);
 		pubs.setIndustryType(industry.getIndustryCode());
-		pubs.setPubStatus(PubStatusEnum.PUBLISH.toString()); // @todo 后期加上审核功能
+		// 属于可信者用户组的会员跳过审核直接发布
+		pubs.setPubStatus(this.pubService.isCanTrust(userId) ? PubStatusEnum.PUBLISH.toString() : PubStatusEnum.IN_REVIEW.toString());
 		Long id = this.nextId();
 		EntityAssists.beforeInsert(pubs, id, userId, userIp, false);
 
@@ -178,7 +185,7 @@ public class KCMSService extends Base {
 
 		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
-			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId());
+			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId(), userId, userIp);
 			this.termService.saveTermObject(newTagIds, id);
 		}
 
@@ -197,35 +204,31 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 更新
+	 * 更新发布内容
 	 *
 	 * @param pub pub vo
 	 * @param userId user id
 	 * @param userIp user ip
 	 */
 	public void update(Pub pub, Long userId, String userIp) {
-		if (ObjectUtils.isBlank(pub.getPubName())) // 创建标题别名
-			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));
+		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(pub.getId()))
+			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));  // 创建标题别名
 
-		List<PubTypeExt> industryExt = pub.getPubTypeExt();
+		List<PubTypeExt> pubTypeExt = pub.getPubTypeExt();
 
-		if (!ObjectUtils.isBlank(industryExt) && !industryExt.isEmpty()) {
-			// @todo 考虑嵌入过滤器hook：industryExt = applyFilter("updatePubTypeExt", industryExt); 图片等扩展属性需要特殊处理
+		if (!ObjectUtils.isBlank(pubTypeExt)) {
+			// @todo 考虑嵌入过滤器hook：pubTypeExt = applyFilter("updatePubTypeExt", pubTypeExt); 图片等扩展属性需要特殊处理
 			List<KPubmeta> pubMetas = this.pubmetaService.queryPubMetaByPubId(pub.getId());
 			// 需要根据pubId+metaKey取出可能存在的pubMeta.id，如果不存在，以新属性创建
 			Map<String, Long> keyMap = pubMetas.parallelStream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getId));
 			// 保存扩展属性
-			pubMetas = industryExt.parallelStream().map(ext -> {
-				KPubmeta pubMeta = new KPubmeta();
+			pubMetas = pubTypeExt.parallelStream().map(ext -> {
+
 				String key = ext.getMetaKey();
 				String value = ext.getMetaValue();
 				if (ObjectUtils.isBlank(value))
 					return null;
-				pubMeta.setId(keyMap.get(key));
-				pubMeta.setPubId(pub.getId());
-				pubMeta.setMetaKey(key);
-				pubMeta.setMetaValue(value);
-				return pubMeta;
+				return KPubmeta.of(keyMap.get(key), pub.getId(), key, value);
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 
 			List<KPubmeta> pubMetasU = pubMetas.parallelStream().filter(p -> p.getId() != null).collect(Collectors.toList());
@@ -248,7 +251,7 @@ public class KCMSService extends Base {
 		if (tagIds != null) {
 			KPubs dbPub = this.pubService.findById(pub.getId());
 			KModelIndustry industry = this.termService.queryModelIndustryByTypeCode(dbPub.getIndustryType());
-			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId());
+			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId(), userId, userIp);
 			this.termService.updateTermObject(newTagIds, pub.getId(), TermTypeEnum.TAG.toString());
 		}
 
@@ -258,9 +261,9 @@ public class KCMSService extends Base {
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("updatePub", pubs);
 
-		// 存在别名，放弃设置别名
-		if (this.pubService.existsByPubName(pubs.getPubName(), pubs.getId()))
-			pubs.setPubName("");
+		// 设置不重复的别名
+		if (!ObjectUtils.isBlank(pubs.getPubName()))
+			pubs.setPubName(this.pubService.existsAutoDiffPubName(pubs.getPubName(), pubs.getId()));
 
 		this.pubService.update(pubs);
 	}
@@ -290,6 +293,7 @@ public class KCMSService extends Base {
 	 * @return 产品信息
 	 */
 	public Product productInfo(Long pid) {
+		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
 		this.updatePubMeta(pid);
 
 		// 根据id找到行业门类、模板类型 用于前端展示
@@ -462,8 +466,10 @@ public class KCMSService extends Base {
 		String city = pubMeta.get(KModelMetaKey.PUB_META_KEY_CITY);
 		if (!ObjectUtils.isBlank(city)) {
 			City region = this.regionService.queryRegionInfoByCode(city);
-			product.setCity(region.getName());
-			product.setProv(region.getProvName());
+			if (region != null) {
+				product.setCity(region.getName());
+				product.setProv(region.getProvName());
+			}
 		}
 		String county = pubMeta.get(KModelMetaKey.PUB_META_KEY_COUNTY);
 		if (!ObjectUtils.isBlank(county))
@@ -653,7 +659,7 @@ public class KCMSService extends Base {
 		if (ObjectUtils.isBlank(config) || ObjectUtils.isBlank(params = config.get(pageName))) { // 取默认值
 			params = new HashMap<>();
 			params.put(KModelMetaKey.SIDECAR_CONF_LIST_NUM, 10);
-			params.put(KModelMetaKey.SIDECAR_CONF_TYPE, PubTypeEnum.BOOK.toString());
+			params.put(KModelMetaKey.SIDECAR_CONF_TYPE, PubTypeEnum.BOOK.getName());
 			params.put(KModelMetaKey.SIDECAR_CONF_SORTER, "{\"id\":\"descend\"}");
 		}
 
@@ -664,13 +670,13 @@ public class KCMSService extends Base {
 
 	/**
 	 * 门户跨域根据分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
-	 * 门户有且仅有一个，并且跨域查询，没有数据隔离
+	 * 门户有且仅有一个，并且跨域查询，没有数据隔离，仅用于管理端数据分析不面向终端用户！！！
 	 *
 	 * @param industryType 行业门类
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<BookUnit> queryProductPortalByIndustry(String industryType, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryProductPortalByIndustry(String industryType, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(industryType)) {
 			List<Term> terms = this.termService.findTagByIndustryType(industryType);
 			List<Object> termTypeIds = terms.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
@@ -683,13 +689,13 @@ public class KCMSService extends Base {
 
 	/**
 	 * 门户跨域根据分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
-	 * 门户有且仅有一个，并且跨域查询，没有数据隔离
+	 * 门户有且仅有一个，并且跨域查询，没有数据隔离，仅用于管理端数据分析不面向终端用户！！！
 	 *
 	 * @param slugCategory 某个分类目录别名
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<BookUnit> queryProductPortalByCategory(String slugCategory, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryProductPortalByCategory(String slugCategory, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(slugCategory)) {
 			KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 			List<Object> ids = this.queryOwnIds(termType.getId());
@@ -706,7 +712,7 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<BookUnit> queryProductDomain(PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryProductDomain(PageQuery pageQuery) {
 
 		return this.pubService.queryPubWithExtList(pageQuery);
 	}
@@ -718,7 +724,7 @@ public class KCMSService extends Base {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<BookUnit> queryProductCategory(String slugCategory, PageQuery pageQuery) {
+	public PageableResult<PubUnit> queryProductCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 
 		List<Object> ids = this.queryOwnIds(termType.getId());
@@ -857,12 +863,24 @@ public class KCMSService extends Base {
 	}
 
 	/**
+	 * 查询发布内容
+	 *
+	 * @param pubName 发布内容别名
+	 * @return 篇章实体
+	 */
+	public Article queryArticle(String pubName) {
+		return this.queryArticle(this.pubService.queryIdByPubName(pubName));
+	}
+
+	/**
 	 * 查询篇章信息
 	 *
 	 * @param pid 发布内容id
 	 * @return 篇章实体
 	 */
 	public Article queryArticle(Long pid) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
+		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
+
 		this.updatePubMeta(pid);
 		// 根据id找到行业门类、模板类型 用于前端展示
 		ContModelDto contBody = this.pubService.queryContModel(pid);
@@ -901,7 +919,7 @@ public class KCMSService extends Base {
 		List<Long> termTypeIds = article.getTermTypeIds();
 		MiniPub prev;
 		MiniPub next;
-		if (PubTypeEnum.POST.toString().equals(pubType)) {
+		if (PubTypeEnum.POST.getName().equals(pubType)) {
 			if (ObjectUtils.isBlank(termTypeIds))
 				return;
 			prev = this.pubService.queryPrevPub(pid, termTypeIds.get(0));
@@ -1031,8 +1049,10 @@ public class KCMSService extends Base {
 		String city = pubMeta.get(KModelMetaKey.PUB_META_KEY_CITY);
 		if (!ObjectUtils.isBlank(city)) {
 			City region = this.regionService.queryRegionInfoByCode(city);
-			Geographic geo = new Geographic(region);
-			pub.setGeographic(geo);
+			if (region != null) {
+				Geographic geo = Geographic.of(region);
+				pub.setGeographic(geo);
+			}
 		}
 
 		// 图片(主图和封面)处理url

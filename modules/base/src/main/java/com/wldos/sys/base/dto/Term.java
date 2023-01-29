@@ -45,9 +45,18 @@ public class Term {
 	public Term() {
 	}
 
-	public Term(Long id, String name) {
+	private Term(Long id, Long termTypeId, String classType, long parentId, Long industryId, String name, String slug) {
 		this.id = id;
+		this.termTypeId = termTypeId;
+		this.classType = classType;
+		this.parentId = parentId;
+		this.industryId = industryId;
 		this.name = name;
+		this.slug = slug;
+	}
+
+	public static Term of(Long id, Long termTypeId, String classType, long parentId, Long industryId, String name, String slug) {
+		return new Term(id, termTypeId, classType, parentId, industryId, name, slug);
 	}
 
 	public Long getId() {

@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wldos.common.Constants;
+import com.wldos.support.web.EdgeHandler;
+import com.wldos.support.web.FilterRequestWrapper;
 import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultJson;
 import com.wldos.common.utils.http.IpUtils;
@@ -43,6 +45,7 @@ import com.wldos.sys.base.vo.AuthVerify;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -70,6 +73,8 @@ public class EdgeGateWayFilter implements Filter {
 
 	private String tokenHeader;
 
+	private EdgeHandler edgeHandler;
+
 	/** jwt全家桶工具 */
 	protected JWTTool jwtTool;
 	/** 要放行的uri前缀 */
@@ -80,6 +85,9 @@ public class EdgeGateWayFilter implements Filter {
 	private String staticUri;
 	/** 记录操作日志uri前缀 */
 	private List<String> recLogUris;
+
+	public EdgeGateWayFilter() {
+	}
 
 	@Override
 	public void init(FilterConfig filterConfig) {
@@ -104,6 +112,7 @@ public class EdgeGateWayFilter implements Filter {
 		this.recLogUris = Arrays.asList(logUri.split(","));
 		this.domainService = ac.getBean(DomainService.class);
 		this.authService = ac.getBean(AuthService.class);
+		this.edgeHandler = ac.getBean(EdgeHandler.class);
 		this.jwtTool = ac.getBean(JWTTool.class);
 		this.resJson = ac.getBean(ResultJson.class);
 		log.info("网关启动成功");
@@ -117,7 +126,7 @@ public class EdgeGateWayFilter implements Filter {
 		HttpServletResponse response = null;
 		try {
 			response = (HttpServletResponse) res;
-			response.setHeader(HttpHeaders.SERVER, "wldos");
+			this.edgeHandler.handleResponse(response);
 			HttpServletRequest request = (HttpServletRequest) req;
 
 			reqUri = request.getRequestURI();
@@ -147,7 +156,7 @@ public class EdgeGateWayFilter implements Filter {
 			jwt = jwtTool.popJwt(token, userIP, reqUri, reqDomain.getSiteDomain(), domainId);
 
 			if (this.isMatchUri(reqUri, this.excludeUris)) {
-				FilterRequestWrapper headers = this.handleRequest(request, jwt, domainId);
+				FilterRequestWrapper headers = this.edgeHandler.handleRequest(request, jwt, domainId, this.proxyPrefix);
 				chain.doFilter(headers, res);
 				return;
 			}
@@ -190,7 +199,7 @@ public class EdgeGateWayFilter implements Filter {
 				throw new TokenForbiddenException("Forbidden,no auth!");
 			}
 
-			FilterRequestWrapper headers = this.handleRequest(request, jwt, domainId);
+			FilterRequestWrapper headers = this.edgeHandler.handleRequest(request, jwt, domainId, this.proxyPrefix);
 			chain.doFilter(headers, res);
 		} catch (Exception e) {
 			String userId = jwt == null ? "" : jwt.getUserId().toString();
@@ -204,19 +213,6 @@ public class EdgeGateWayFilter implements Filter {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private FilterRequestWrapper handleRequest(HttpServletRequest request, JWT jwt, Long domainId) {
-		FilterRequestWrapper headers = new FilterRequestWrapper(request);
-		headers.setUriPrefix(this.proxyPrefix);
-
-		headers.add(Constants.CONTEXT_KEY_USER_ID, ObjectUtils.string(jwt.getUserId()));
-		headers.add(Constants.CONTEXT_KEY_USER_TENANT, ObjectUtils.string(jwt.getTenantId()));
-		headers.add(Constants.CONTEXT_KEY_USER_DOMAIN, ObjectUtils.string(domainId));
-		Date d = jwt.getExpireDate();
-		headers.add(Constants.CONTEXT_KEY_TOKEN_EXPIRE_TIME, d == null ? "0" : String.valueOf(jwt.getExpireDate().getTime()));
-
-		return headers;
 	}
 
 	private boolean isMatchUri(String reqUri, List<String> target) {

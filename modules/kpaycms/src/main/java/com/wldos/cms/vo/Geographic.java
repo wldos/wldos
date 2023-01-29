@@ -23,18 +23,22 @@ public class Geographic {
 	public Geographic() {
 	}
 
-	public Geographic(Province province, City city) {
+	public static Geographic of(Province province, City city) {
+		return new Geographic(province, city);
+	}
+
+	public static Geographic of(com.wldos.sys.core.vo.City region) {
+		return new Geographic(region);
+	}
+
+	private Geographic(Province province, City city) {
 		this.province = province;
 		this.city = city;
 	}
 
-	public Geographic(com.wldos.sys.core.vo.City region) {
-		this.province = new Province();
-		this.province.setKey(region.getParentId().toString());
-		this.province.setLabel(region.getProvName());
-		this.city = new City();
-		this.city.setKey(region.getId().toString());
-		this.city.setLabel(region.getName());
+	private Geographic(com.wldos.sys.core.vo.City region) {
+		this.province = Province.of(region.getParentId().toString(), region.getProvName());
+		this.city = City.of(region.getId().toString(), region.getName());
 	}
 
 	public Province getProvince() {
@@ -59,6 +63,17 @@ class Province {
 
 	String key = "0";
 
+	public Province() {}
+
+	public static Province of(String key, String label) {
+		return new Province(key, label);
+	}
+
+	private Province(String key, String label) {
+		this.key = key;
+		this.label = label;
+	}
+
 	public String getLabel() {
 		return label;
 	}
@@ -80,6 +95,17 @@ class City {
 	String label;
 
 	String key = "0";
+
+	public City() {}
+
+	public static City of(String key, String label) {
+		return new City(key, label);
+	}
+
+	private City(String key, String label) {
+		this.key = key;
+		this.label = label;
+	}
 
 	public String getLabel() {
 		return label;

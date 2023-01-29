@@ -162,9 +162,9 @@ public class TermController extends NoRepoController {
 
 	@PostMapping("/admin/cms/category/update")
 	public String updateCategory(@RequestBody Term term) {
-		this.service.updateTerm(term, this.getCurUserId(), this.getUserIp());
+		String res = this.service.updateTerm(term, this.getCurUserId(), this.getUserIp());
 		this.service.refreshTerm();
-		return this.resJson.ok("ok");
+		return this.resJson.ok(res);
 	}
 
 	@DeleteMapping("/admin/cms/category/delete")

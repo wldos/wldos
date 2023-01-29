@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.wldos.base.controller.NoRepoController;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.enums.TempTypeEnum;
 import com.wldos.sys.base.enums.ResourceEnum;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 枚举常用操作controller。
+ * 常用枚举controller。
  *
  * @author 树悉猿
  * @date 2022/3/7
@@ -49,7 +50,6 @@ public class EnumController extends NoRepoController {
 	 */
 	@GetMapping("select/resource")
 	public List<SelectOption> fetchEnumResType() {
-
 		return Arrays.stream(ResourceEnum.values()).map(item -> new SelectOption(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 }

@@ -6,10 +6,18 @@
  *
  */
 
-package com.wldos.plugin;
+package com.wldos.common.enums;
 
-import org.springframework.context.ConfigurableApplicationContext;
+/**
+ * KV类型枚举。
+ *
+ * @author 树悉猿
+ * @date 2023/1/28
+ * @version 1.0
+ */
+public interface BaseEnum {
 
-public interface PluginBootStrap {
-    void boot(ConfigurableApplicationContext context);
+	String getLabel();
+
+	String getValue();
 }
