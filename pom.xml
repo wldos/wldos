@@ -45,11 +45,9 @@
 	<modules>
 		<module>common</module>
 		<module>framework</module>
-		<module>agent</module>
 		<module>modules/base</module><!-- modules下的子模块需要加<relativePath>配置parent pom路径 -->
 		<module>modules/platform</module>
 		<module>modules/kpaycms</module>
-		<module>modules/license</module>
 		<module>modules/oauth2</module>
 		<module>wldos-web</module>
 	</modules>
