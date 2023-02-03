@@ -3,7 +3,7 @@
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">WLDOS云物互联驱动 - 内容付费系统</h3>
 <p align="center">
- <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.5" src="https://img.shields.io/badge/WLDOS-V1.5-deepskyblue.svg"></a>
+ <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.9" src="https://img.shields.io/badge/WLDOS-V1.9-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.5" src="https://img.shields.io/badge/SpringBoot-2.5-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
