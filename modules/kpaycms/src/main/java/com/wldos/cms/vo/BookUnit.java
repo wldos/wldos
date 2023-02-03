@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -22,8 +22,6 @@ public class BookUnit {
 	private Long id;
 
 	private String pubTitle;
-
-	private String industryType;
 
 	private String subTitle; // 扩展属性：副标题
 
@@ -49,14 +47,6 @@ public class BookUnit {
 
 	public void setPubTitle(String pubTitle) {
 		this.pubTitle = pubTitle;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public String getSubTitle() {

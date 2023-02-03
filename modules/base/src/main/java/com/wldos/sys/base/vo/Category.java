@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -32,12 +32,15 @@ public class Category extends TreeNode<Category> {
 	public Category() {
 	}
 
-	public Category(Long id, Long parentId, String title, String key, String slug, String conType) {
+	public static Category of(Long id, Long parentId, String title, String key, String slug) {
+		return new Category(id, parentId, title, key, slug);
+	}
+
+	private Category(Long id, Long parentId, String title, String key, String slug) {
 		super(id, parentId);
 		this.title = title;
 		this.key = key;
 		this.slug = slug;
-		this.conType = conType;
 	}
 
 	public String getTitle() {

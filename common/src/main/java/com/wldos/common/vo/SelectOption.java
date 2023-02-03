@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -22,7 +22,11 @@ public class SelectOption {
 	public SelectOption() {
 	}
 
-	public SelectOption(String label, String value) {
+	public static SelectOption of(String label, String value){
+		return new SelectOption(label, value);
+	}
+
+	private SelectOption(String label, String value) {
 		this.label = label;
 		this.value = value;
 	}

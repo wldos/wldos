@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -26,6 +26,18 @@ public class Attachment {
 	protected String attachFileAlt;
 
 	private String url; // 用户访问附件的web url
+
+	public Attachment() {}
+
+	public static Attachment of(String attachPath, String attachMetadata, String attachFileAlt) {
+		return new Attachment(attachPath, attachMetadata, attachFileAlt);
+	}
+
+	private Attachment(String attachPath, String attachMetadata, String attachFileAlt) {
+		this.attachPath = attachPath;
+		this.attachMetadata = attachMetadata;
+		this.attachFileAlt = attachFileAlt;
+	}
 
 	public String getAttachPath() {
 		return attachPath;

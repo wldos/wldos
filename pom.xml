@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+  ~ Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
   ~ Licensed under the AGPL or a commercial license.
   ~ For AGPL see License in the project root for license information.
   ~ For commercial licenses see term.md or https://www.wldos.com
@@ -19,13 +19,11 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>1.5</version>
+	<version>1.9</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
-		WLDOS®平台，云物互联解决方案。默认支持多租户运行模式，同时支持关闭以单租户模式运行。
-		默认单实例运行，在分布式部署方面支持融入serviceMesh架构或者传统中心化分布式架构。WLDOS®寓意：世界的，未来的，开放的系统。
-		读音：[wou da si]。
+		WLDOS®解决方案家族父POM，抽取统一的配置信息和依赖版本控制，方便子POM直接引用，简化子POM的配置。
 	</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -33,7 +31,7 @@
 	<url>https://www.wldos.com</url>
 	<licenses>
 		<license>
-			<name>GNU AFFERO GENERAL PUBLIC LICENSE, Version 3</name>
+			<name>AGPL, Version 3</name>
 			<url>https://www.gnu.org/licenses/agpl-3.0.html</url>
 		</license>
 	</licenses>
@@ -47,9 +45,11 @@
 	<modules>
 		<module>common</module>
 		<module>framework</module>
-		<module>modules/base</module>
+		<module>agent</module>
+		<module>modules/base</module><!-- modules下的子模块需要加<relativePath>配置parent pom路径 -->
 		<module>modules/platform</module>
 		<module>modules/kpaycms</module>
+		<module>modules/license</module>
 		<module>modules/oauth2</module>
 		<module>wldos-web</module>
 	</modules>
@@ -83,18 +83,12 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-
 		</dependency>
-		<!-- dependency> // 免费版仅支持7000用户在线和2个第三方登录认证，使用apache2.0许可的jjwt
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.13.0</version>
-		</dependency -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<dependency>
+		<dependency><!-- // java-jwt免费版仅支持7000用户在线和2个第三方登录认证，使用apache2.0许可的jjwt -->
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
@@ -204,7 +198,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<!-- plugin>
+			<!-- plugin> // 使用maven打包，如果要使用springboot放开这里关闭maven插件
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>

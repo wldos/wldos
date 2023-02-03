@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -36,6 +36,18 @@ public class PubTypeExt {
 	private String enumValue;
 
 	private String pubType;
+
+	public PubTypeExt() {
+	}
+
+	public static PubTypeExt of(String metaKey, String metaValue) {
+		return new PubTypeExt(metaKey, metaValue);
+	}
+
+	private PubTypeExt(String metaKey, String metaValue) {
+		this.metaKey = metaKey;
+		this.metaValue = metaValue;
+	}
 
 	public Long getId() {
 		return id;

@@ -11,7 +11,8 @@
 
 ### WLDOS愿景
 
-元宇宙融合虚拟与现实的理念与作者所想不谋而合，WLDOS（World Operating System）为了这种系统目标而孵化，是可以平台化和边缘化的云物互联支撑系统，面向社区开源、线上服务和业态孵化而生。
+元宇宙融合虚拟与现实的理念与作者所想不谋而合，WLDOS（音：汉['wou'da'si]，World Operating System）为了这种目标孵化，是可以平台化和边缘化的云物互联支撑系统，面向社区开源、线上服务和业态孵化而生。<br/>  
+WLDOS®寓意：面向世界的系统，面向未来的系统，我的系统。<br/>
 
 解决痛点：想利用网络化拓展业务，对如何拓展业务有困惑，需要一个可落地的软件搭建平台，同时不需要昂贵的容器化基础设施。
 
@@ -36,29 +37,25 @@ QQ 群：830355512
 
 ![公众号：wldos](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)
 
-### 项目介绍
+演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（官网即演示环境）
 
-WLDOS云应用支撑平台，简称WLDOS平台。本仓库是wldos平台后端工程。基础型新项目适合新手学习。  
-WLDOS是world operate system的缩写，表示驱动世界的操作系统，不拘泥于某个业务领域，立足于对云端、管端和终端的融合支撑，理念是简化世界复杂度，用一套落地的系统方法可持续地支撑尽可能多的业务。  
-WLDOS是类SaaS的云、管、端支撑平台，与SaaS的区别在于可云、可端，基于token认证的前后端分离应用架构，以多租户、多站点、多应用等实现虚拟域，是云、管、端的融合实现。
+### 功能说明
 
-**适合个人建站、企业建站、中小企业搭建业务中台的基础研发平台，适合技术在起步阶段或想在云物互联领域开发项目的团队。**
-
-关于发音  
-WLDOS采用汉语拼音：[wou da si]。
-
-演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（演示环境版本低于社区版）
+WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三大板块构成，其中框架和支撑平台是通用支撑，内容付费是基于通用支撑展开的最佳实践。<br/>  
+输出两个项目：WLDOS云应用支撑平台（管理端）和WLDOS内容付费系统（业务端）。应用功能结构如下：
+![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
+![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
 
 ###技术说明
 语言：Java8、ReactJs17。
-框架：springboot2.4.6（支持升级到最新）。  
+框架：springboot2.4.6（支持升级到2.5）。  
 ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。  
 前端：ReactJs17，AntD ProV4.5。  
 中间件：tomcat9（支持换成其他）。  
 辅助：自带cache、自带JWT、自带文件服务。
 兼容性：后端jdk1.8，前端IE11+、Google Chrome、Edge等。
 
-应用架构：前后端分离，前端ReactJs，后端springMVC(2.0计划推出webflux架构版)，JWT认证，无状态，原生兼容springCloud，支持融入serviceMesh。
+应用架构：前后端分离，前端ReactJs，后端springMVC(2.0计划推出webflux架构版)，JWT认证，无状态。
 
 **1.0核心功能：系统管理（应用、资源、权限、用户、组织、租户、多域、分类），内容管理，信息发布，内容创作、内容付费（在线付费、在线交付）。**
 
@@ -66,48 +63,36 @@ ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。
 
 **3.0规划功能：软件工厂、云物互联支撑能力、智能建模与机器人系统。**
 
-### 功能模块
-
-WLDOS是个软件家族，目前由开发框架、支撑平台和内容管理三大版块构成，组成两个项目模块：WLDOS云应用支撑平台和WLDOS内容管理系统，如下：
-![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
-![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
+### 模块介绍
+  
+wldos-common：通用模块  
+wldos-framework：wldos开发框架
+wldos-platform-base: wldos支撑平台基础
+wldos-platform: wldos支撑平台    
+wldos-oauth2: wldos社会化登录模块    
+wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
+wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
 
 ### 安装教程
 
-先部署后端：
-1.  后端工程下载到本地，用idea打开项目。
-2.  安装mysql数据库脚本，生成数据库。数据库脚本请进下方的qq群自行下载。   
-    设置文件存储位置，默认E:\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  
-    把zone目录下的store.rar(图片压缩包较大，去qq群830355512文件里下载)解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有  
-    演示数据对应的图片，如果不设置相关图片显示404。
-3.  项目更新maven库。服务器端口号默认8080。
-4.  安装项目；  
-    目前开放7个模块：  
-    wldos-common：通用模块  
-    wldos-framework：wldos开发框架 
-    wldos-platform-base: wldos支撑平台基础
-    wldos-platform: wldos支撑平台    
-    wldos-oauth2: wldos社会化登录模块    
-    wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
-    wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
+####启动后端：
+1. 后端工程下载到本地，用idea打开项目。<br/>
+2. 安装mysql数据库脚本，生成数据库。 <br/> 
+数据库脚本在wldos-web/db下，mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/> 
+    
+3. 设置文件存储位置。  <br/>
+    默认E:\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  
+    把zone目录下的store.rar(图片压缩包较大，去qq群830355512文件里下载)解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有演示数据对应的图片，如果不设置相关图片显示404。<br/><br/>
+4. 项目更新maven库。服务器端口号默认8080。<br/><br/>
+5. 安装项目；  <br/> 
+   mvn clean install -pl com.wldos:wldos-web -am -DskipTests  <br/><br/>
+   启动项目：    
+   mvn -pl com.wldos:wldos-web spring-boot:run。<br/><br/>
 
-    安装数据库，数据库脚本在wldos-web/db下，默认mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。
-    数据库正常运行后，以下命令启动项目：  
-    打包安装web模块：  
-    mvn clean install -pl com.wldos:wldos-web -am -DskipTests  
-    启动项目：    
-    mvn -pl com.wldos:wldos-web spring-boot:run 启动cms和支撑平台。
-
-    部署前端：
-1.  下载本地后，打开前端项目，执行tyarn安装依赖js库。
-2.  执行npm start启动前端项目，npm build执行打包编译。前端访问路径：http://localhost:8000
-3.  超级管理员admin，密码同名称。
-
-### 使用说明
-
-1. 浏览器访问localhost:8000,用户名、密码都是admin,注意浏览器要使用谷歌浏览器、IE11可能有卡顿。
-2. 点击左侧管理菜单，使用系统管理功能。
-3. 登陆使用JWT认证。
+####启动前端： <br/>
+  1.下载前端项目到本地后，打开项目，执行tyarn安装依赖js库。<br/> 
+  2.执行npm start启动前端项目。前端访问路径：http://localhost:8000  <br/>
+  3.登录。超级管理员admin，密码同名称。
 
 ### 开源协议与商用许可
 

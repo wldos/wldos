@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -22,16 +22,12 @@ public class Route {
 	/** 绑定的分类别名 */
 	private String category;
 
-	/** 绑定的行业门类 */
-	private String industry;
-
 	public Route() {
 	}
 
-	public Route(String module, String category, String industry) {
+	public Route(String module, String category) {
 		this.module = module;
 		this.category = category;
-		this.industry = industry;
 	}
 
 	public String getModule() {
@@ -48,13 +44,5 @@ public class Route {
 
 	public void setCategory(String category) {
 		this.category = category;
-	}
-
-	public String getIndustry() {
-		return industry;
-	}
-
-	public void setIndustry(String industry) {
-		this.industry = industry;
 	}
 }

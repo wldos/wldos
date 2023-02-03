@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -8,25 +8,26 @@
 
 package com.wldos.cms.controller;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.controller.NoRepoController;
-import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Article;
-import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.cms.vo.SeoCrumbs;
-import com.wldos.cms.vo.TypeDomainTerm;
+import com.wldos.cms.vo.RouteParams;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
-import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
+import com.wldos.sys.base.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -107,15 +108,15 @@ public class KCMSController extends NoRepoController {
 	/**
 	 * 查询当前域下某类型的业务对象
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
+	 
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@GetMapping("archives/{industryType}")
-	public PageableResult<PubUnit> archivesIndustry(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
+	@GetMapping("archives")
+	public PageableResult<PubUnit> archivesIndustry(@RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -124,17 +125,17 @@ public class KCMSController extends NoRepoController {
 	}
 
 	/**
-	 * 查看目录下的内容存档，行业门类不同，展示模板不同，需要的信息不同（付费内容、图文）
+	 * 查看目录下的内容存档
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
+	 
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@GetMapping("archives/{industryType}/category/{slugCategory}")
-	public PageableResult<PubUnit> archivesCategory(@PathVariable String industryType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
+	@GetMapping("archives/category/{slugCategory}")
+	public PageableResult<PubUnit> archivesCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -145,15 +146,15 @@ public class KCMSController extends NoRepoController {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
+	 
 	 * @param slugTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */
-	@GetMapping("archives/{industryType}/tag/{slugTag}")
-	public PageableResult<PubUnit> archivesTag(@PathVariable String industryType, @PathVariable String slugTag, @RequestParam Map<String, Object> params) {
+	@GetMapping("archives/tag/{slugTag}")
+	public PageableResult<PubUnit> archivesTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -185,36 +186,17 @@ public class KCMSController extends NoRepoController {
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
 	 */
-	@GetMapping("archives/{industryType}/author/{userId:[0-9]+}.html")
-	public PageableResult<PubUnit> archivesAuthorByContType(@PathVariable String industryType, @PathVariable String userId, @RequestParam Map<String, Object> params) {
+	@GetMapping("archives/author/{userId:[0-9]+}.html")
+	public PageableResult<PubUnit> archivesAuthorByContType(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("createBy", userId);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
 		return this.kcmsService.queryArchivesDomain(pageQuery);
-	}
-
-	/**
-	 * 查根据作品id查询作品下的章节内容，供阅读。@todo 需要结合作品购买状态输出内容，展现侧需要考虑实现pdf或svg阅读
-	 *
-	 * @param industryType 内容领域
-	 * @param bookId 作品id
-	 * @return 按作品id索引的存档列表页
-	 */
-	@GetMapping("book/{industryType}/{bookId:[0-9]+}.html")
-	public PageableResult<PubUnit> queryBookChapter(@PathVariable String industryType, @PathVariable Long bookId, @RequestParam Map<String, Object> params) {
-		//查询列表数据
-		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
-		pageQuery.pushParam("pubStatus", PubStatusEnum.INHERIT.toString()); // 对于子类型来说继承就是发布
-		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
-
-		return this.kcmsService.queryBookChapter(bookId, pageQuery);
 	}
 
 	/**
@@ -225,7 +207,6 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("archives-{id:[0-9]+}.html")
 	public Article archivesId(@PathVariable Long id) {
-
 		return this.kcmsService.queryArticle(id);
 	}
 
@@ -233,12 +214,10 @@ public class KCMSController extends NoRepoController {
 	 * 指定别名查看内容，检查付费设置
 	 *
 	 * @param contAlias 内容别名
-	 * @return 别名对应的内容
 	 */
-	@GetMapping("/archive/{contAlias}")
-	public Article archivesId(@PathVariable String contAlias) {
-
-		return this.kcmsService.queryArticle(contAlias);
+	@GetMapping("/archive-{contAlias}")
+	public Long archivesId(@PathVariable String contAlias) throws IOException {
+		return this.kcmsService.queryIdByPubName(contAlias);
 	}
 
 	/**
@@ -303,16 +282,33 @@ public class KCMSController extends NoRepoController {
 		return this.resJson.ok("");
 	}
 
+	/**
+	 * 查根据作品id查询作品下的章节内容，供阅读。@todo 需要结合作品购买状态输出内容，展现侧需要考虑实现pdf或svg阅读
+	 *
+	 * @param bookId 作品id
+	 * @return 按作品id索引的存档列表页
+	 */
+	@GetMapping("book-{bookId:[0-9]+}.html")
+	public PageableResult<PubUnit> queryBookChapter(@PathVariable Long bookId, @RequestParam Map<String, Object> params) {
+		//查询列表数据
+		PageQuery pageQuery = new PageQuery(params);
+
+		pageQuery.pushParam("pubStatus", PubStatusEnum.INHERIT.toString()); // 对于子类型来说继承就是发布
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		this.applyDomainFilter(pageQuery);
+
+		return this.kcmsService.queryBookChapter(bookId, pageQuery);
+	}
 
 	/**
-	 * 文集阅读
+	 * 文集阅读,指定id查看内容，检查付费设置
 	 *
-	 * @param cid 内容id
+	 * @param id 元素内容id
 	 * @return 作品片段
 	 */
-	@GetMapping("cms/read/{cid}")
-	public String collectRead(@PathVariable Long cid) {
-		return this.resJson.ok("");
+	@GetMapping("element-{id:[0-9]+}")
+	public Article elementRead(@PathVariable Long id) {
+		return this.kcmsService.readElement(id);
 	}
 
 	/**
@@ -338,19 +334,16 @@ public class KCMSController extends NoRepoController {
 	}
 
 	/**
-	 * 根据内容领域和分类法(分类目录、标签等)获取tdk和面包屑数据
+	 * 根据模板类型和分类法(分类目录、标签等)获取tdk和面包屑数据
 	 *
 	 * @param params 领域分类参数
 	 * @return tdk和面包屑数据
 	 */
 	@GetMapping("cms/seoCrumbs")
 	public SeoCrumbs genSeoCrumbs(@RequestParam Map<String, String> params) {
-		TypeDomainTerm tdt = new TypeDomainTerm();
-		tdt.setIndustryType(params.get("industryType"));
-		tdt.setSlugTerm(params.get("slugTerm"));
-		tdt.setTempType(params.get("tempType"));
+		RouteParams routeParams = RouteParams.of(params.get("tempType"), params.get("slugTerm"));
 
-		return this.kcmsService.genSeoCrumbs(tdt);
+		return this.kcmsService.genSeoCrumbs(routeParams);
 	}
 
 	/**
@@ -361,5 +354,13 @@ public class KCMSController extends NoRepoController {
 	@GetMapping("enum/select/pubStatus")
 	public Result fetchEnumPubStatus() {
 		return this.resJson.format(PubStatusEnum.values());
+	}
+
+	/**
+	 * 发布类型枚举
+	 */
+	@GetMapping("enum/select/pubType")
+	public List<SelectOption> fetchEnumPubType() {
+		return Arrays.stream(PubTypeEnum.values()).filter(PubTypeEnum::isMainType).map(item -> SelectOption.of(item.getLabel(), item.getName())).collect(Collectors.toList());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -13,9 +13,11 @@ import java.util.List;
 import com.wldos.cms.dto.ContModelDto;
 import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.entity.KPubs;
+import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.MiniPub;
 import com.wldos.cms.vo.PubMember;
+import com.wldos.sys.base.enums.PubTypeEnum;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -36,7 +38,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param pid 发布内容id
 	 * @return 内容信息
 	 */
-	@Query("select p.*, c.id industry_id from k_pubs p left join k_model_industry c on p.industry_type=c.industry_code where p.delete_flag='normal' and p.id=:pid")
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.id=:pid")
 	ContModelDto queryContModel(Long pid);
 
 	/**
@@ -46,7 +48,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param pubType 发布内容类型
 	 * @return 子类附件信息
 	 */
-	@Query("select p.*, c.id industry_id from k_pubs p left join k_model_industry c on p.industry_type=c.industry_code where p.delete_flag='normal' and p.parent_id=:pid and p.pub_type=:pubType")
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.parent_id=:pid and p.pub_type=:pubType")
 	List<ContModelDto> queryContSubModel(Long pid, String pubType);
 
 	/**
@@ -85,7 +87,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @return 章节列表
 	 */
 	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag=:deleteFlag and s.parent_id=:bookId and s.pub_type=:pubType")
-	List<Chapter> queryPubsByParentId(Long bookId, String pubType, String deleteFlag);
+	List<Chapter> queryChapterByParentId(Long bookId, String pubType, String deleteFlag);
 
 	/**
 	 * 帖子评论数加1
@@ -143,16 +145,6 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	MiniPub queryPrev(Long pid, Long termTypeId);
 
 	/**
-	 * 查询指定作品集内上一章
-	 *
-	 * @param pid 章节id
-	 * @param parentId 作品集id
-	 * @return 上一章
-	 */
-	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='publish' and t.parent_id=:parentId and t.id < :pid order by id desc limit 1)")
-	MiniPub queryPrevChapter(Long pid, Long parentId);
-
-	/**
 	 * 查询下一篇
 	 *
 	 * @param pid 帖子id
@@ -172,27 +164,35 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	MiniPub queryNext(Long pid, Long termTypeId);
 
 	/**
+	 * 查询指定作品集内上一章
+	 *
+	 * @param pid 章节id
+	 * @param parentId 作品集id
+	 * @return 上一章
+	 */
+	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='inherit' and t.parent_id=:parentId and t.id < :pid order by id desc limit 1)")
+	MiniPub queryPrevChapter(Long pid, Long parentId);
+
+	/**
 	 * 查询指定作品集内下一章
 	 *
 	 * @param pid 帖子id
 	 * @param parentId 作品集id
 	 * @return 下一章
 	 */
-	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='publish' and t.parent_id = :parentId and t.id > :pid order by id asc limit 1)")
+	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='inherit' and t.parent_id = :parentId and t.id > :pid order by id asc limit 1)")
 	MiniPub queryNextChapter(Long pid, Long parentId);
 
 	/**
 	 * 在指定标签或分类范围内查询相关发布
-	 * 章节和作品集一样需要设置分类
 	 *
-	 * @param pubType 发布的内容展现类型：作品集、章节、附件、页面等，表现形式不同
-	 * @param industryType 行业门类：各大类属于不同领域（业务模型相同）
+	 * @param pubType 内容发布类型
 	 * @param termTypeIds 标签、分类等
 	 * @param num 查询数量
 	 * @return 相关帖子
 	 */
-	@Query("select t.id, t.pub_title from k_pubs t where t.delete_flag='normal' and t.pub_type=:pubType and t.industry_type=:industryType and t.pub_status='publish' and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id in (:termTypeIds)) order by id desc limit 1,:num")
-	List<MiniPub> queryRelatedPubs(String pubType, String industryType, List<Long> termTypeIds, int num);
+	@Query("select t.id, t.pub_title from k_pubs t where t.delete_flag='normal' and t.pub_type=:pubType and t.pub_status in ('publish', 'inherit') and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id in (:termTypeIds)) order by id desc limit 1,:num")
+	List<MiniPub> queryRelatedPubs(String pubType, List<Long> termTypeIds, int num);
 
 	@Modifying
 	@Query("update k_pubs set pub_status=:pubStatus where id=:id")
@@ -230,4 +230,6 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 
 	@Query("select p.id from k_pubs p where p.pub_name = :pubName")
 	Long queryIdByPubName(@Param("pubName") String pubName);
+
+	boolean existsByIdAndPubStatusAndDeleteFlag(Long id, String pubStatus, String deleteFlag);
 }

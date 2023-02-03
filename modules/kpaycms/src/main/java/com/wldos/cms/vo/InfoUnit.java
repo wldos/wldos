@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -47,8 +47,6 @@ public class InfoUnit {
 	private Long createBy;
 
 	private String pubType;
-
-	private String industryType;
 
 	private Long domainId; // 用于查询分类、标签信息
 
@@ -176,14 +174,6 @@ public class InfoUnit {
 
 	public void setPubType(String pubType) {
 		this.pubType = pubType;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {

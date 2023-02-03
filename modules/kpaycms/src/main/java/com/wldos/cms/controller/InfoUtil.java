@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -35,10 +35,10 @@ class InfoUtil {
 
 	static Pub extractPubInfo(String json) throws JsonProcessingException {
 		Pub pub = new Pub();
-
 		Class<Pub> pubClass = Pub.class;
+		ObjectMapper om = new ObjectMapper();
 
-		Map<String, Object> params = new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>() {});
+		Map<String, Object> params = om.readValue(json, new TypeReference<Map<String, Object>>() {});
 
 		Map<String, Object> entity = new HashMap<>(); // pub实体参数
 		Map<String, Object> remain = new HashMap<>(); // 辅助参数
@@ -53,19 +53,13 @@ class InfoUtil {
 			}
 			entity.put(key, value);
 		});
-		ObjectMapper om = new ObjectMapper();
+
 		if (!entity.isEmpty())
 			pub = om.readValue(om.writeValueAsString(entity), new TypeReference<Pub>() {});
 
-		List<PubTypeExt> pubTypeExs = remain.entrySet().parallelStream().map(entry -> {
-			if (ObjectUtils.isBlank(entry.getValue()))
-				return null;
-
-			PubTypeExt pubTypeExt = new PubTypeExt();
-			pubTypeExt.setMetaKey(entry.getKey());
-			pubTypeExt.setMetaValue(entry.getValue().toString());
-			return pubTypeExt;
-		}).filter(Objects::nonNull).collect(Collectors.toList());
+		List<PubTypeExt> pubTypeExs = remain.entrySet().parallelStream()
+				.filter(entry -> ObjectUtils.isBlank(entry.getValue()))
+				.map(entry -> PubTypeExt.of(entry.getKey(), entry.getValue().toString())).collect(Collectors.toList());
 
 		pub.setPubTypeExt(pubTypeExs);
 

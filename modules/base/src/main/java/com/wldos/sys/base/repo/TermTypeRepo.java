@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -10,8 +10,6 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
-import com.wldos.sys.base.entity.KModelIndustry;
-import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.KTermType;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -38,7 +36,4 @@ public interface TermTypeRepo extends PagingAndSortingRepository<KTermType, Long
 	@Modifying
 	@Query("update k_term_type set count = ABS(count - 1) where id in ( :termTypeIds )")
 	void countSubtract(@Param("termTypeIds") List<Long> termTypeIds);
-
-	@Query("select c.* from k_model_industry c where c.id=(select t.industry_id from k_term_type t where t.id=:termTypeId)")
-	KModelIndustry queryIndustryTypeByTermType(@Param("termTypeId") Long termTypeId);
 }

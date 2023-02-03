@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -13,9 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.wldos.base.controller.NoRepoController;
-import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.sys.base.enums.TempTypeEnum;
+import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.sys.base.enums.ResourceEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +39,7 @@ public class EnumController extends NoRepoController {
 	@GetMapping("select/template")
 	public List<SelectOption> fetchEnumTempType() {
 
-		return Arrays.stream(TempTypeEnum.values()).map(item -> new SelectOption(item.getLabel(), item.getValue())).collect(Collectors.toList());
+		return Arrays.stream(TemplateTypeEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 
 	/**
@@ -50,6 +49,6 @@ public class EnumController extends NoRepoController {
 	 */
 	@GetMapping("select/resource")
 	public List<SelectOption> fetchEnumResType() {
-		return Arrays.stream(ResourceEnum.values()).map(item -> new SelectOption(item.getLabel(), item.getValue())).collect(Collectors.toList());
+		return Arrays.stream(ResourceEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 }

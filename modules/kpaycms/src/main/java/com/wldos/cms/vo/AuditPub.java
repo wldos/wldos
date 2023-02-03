@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -49,8 +49,6 @@ public class AuditPub {
 
 	/** 标签列表 */
 	private List<Term> tags;
-
-	private String industryType;
 
 	private String pubStatus;
 
@@ -140,14 +138,6 @@ public class AuditPub {
 
 	public void setTags(List<Term> tags) {
 		this.tags = tags;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public String getPubStatus() {

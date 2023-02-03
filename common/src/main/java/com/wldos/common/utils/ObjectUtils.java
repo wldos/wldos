@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -74,7 +74,7 @@ public final class ObjectUtils {
 	 * @param enumClass 枚举类
 	 */
 	public static <E extends BaseEnum> List<SelectOption> enumToSelectOption(final Class<E> enumClass) {
-		return Arrays.stream(enumClass.getEnumConstants()).map(item -> new SelectOption(item.getLabel(), item.getValue())).collect(Collectors.toList());
+		return Arrays.stream(enumClass.getEnumConstants()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 
 	public static boolean isBlank(Object obj) {

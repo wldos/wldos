@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+  ~ Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
   ~ Licensed under the AGPL or a commercial license.
   ~ For AGPL see License in the project root for license information.
   ~ For commercial licenses see term.md or https://www.wldos.com
@@ -10,20 +10,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.5</version>
+		<version>1.9</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>wldos-kpaycms</artifactId>
 	<packaging>jar</packaging>
 	<name>KPayCMS内容付费系统</name>
 	<description>
-		KPayCMS系统，基于WLDOS云应用支撑平台实现的内容付费系统，致力于为内容创作者提供线上创作、内容变现
-		的平台和工具。进一步推动创客时代的发展，重新定义人与人的连接方式。
+		KPayCMS®内容付费系统，基于WLDOS实现的内容付费系统，致力于为内容创作者提供线上创作、内容变现的工具和平台。
 	</description>
 	<dependencies>
 		<dependency>
@@ -32,10 +30,8 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
-
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
-
 </project>

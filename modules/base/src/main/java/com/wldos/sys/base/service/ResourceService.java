@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -9,6 +9,7 @@
 package com.wldos.sys.base.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -26,12 +27,11 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
 import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.entity.WoDomainResource;
 import com.wldos.sys.base.entity.WoResource;
 import com.wldos.sys.base.enums.ResourceEnum;
-import com.wldos.sys.base.repo.IndustryRepo;
+import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.sys.base.repo.ResourceRepo;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.sys.base.repo.TermRepo;
@@ -55,14 +55,12 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 	private final DomainService domainService;
 	private final DomainAppService domainAppService;
 	private final DomainResourceRepo domainResourceRepo;
-	private final IndustryRepo industryRepo;
 	private final TermRepo termRepo;
 
-	public ResourceService(DomainService domainService, DomainAppService domainAppService, DomainResourceRepo domainResourceRepo, IndustryRepo industryRepo, TermRepo termRepo) {
+	public ResourceService(DomainService domainService, DomainAppService domainAppService, DomainResourceRepo domainResourceRepo, TermRepo termRepo) {
 		this.domainService = domainService;
 		this.domainAppService = domainAppService;
 		this.domainResourceRepo = domainResourceRepo;
-		this.industryRepo = industryRepo;
 		this.termRepo = termRepo;
 	}
 
@@ -135,10 +133,7 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 
 		List<DomRes> allRes = domRes.getData().getRows();
 
-		allRes = allRes.parallelStream().map(r -> {
-			r.setSelected(bookedIds.contains(r.getId()));
-			return r;
-		}).collect(Collectors.toList());
+		allRes = allRes.parallelStream().peek(r -> r.setSelected(bookedIds.contains(r.getId()))).collect(Collectors.toList());
 
 		domRes.setDataRows(allRes);
 
@@ -155,7 +150,6 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 	public void addSimpleMenu(ResSimple resSimple, Long curUserId, String userIp) {
 
 		String tempType= resSimple.getTempType();
-		String indType = resSimple.getIndustryType();
 		Long termTypeId = resSimple.getTermTypeId();
 
 		String resName = resSimple.getResName();
@@ -171,19 +165,18 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 		String remark = resSimple.getRemark();
 
 		if (termTypeId == null) {
-			resPath = "/" + tempType + "/" + indType;
+			resPath = "/" + tempType;
 			if (ObjectUtils.isBlank(resName)) {
-				KModelIndustry industry = this.industryRepo.findByIndustryType(indType);
-				resName = industry.getIndustryName();
+				resName = TemplateTypeEnum.getTemplateTypeEnumByValue(tempType).getLabel();
 			}
-			resCode = tempType + "_" + indType;
+			resCode = tempType;
 		} else {
 			Term term = this.termRepo.queryTermByTermTypeId(termTypeId);
-			resPath = "/" + tempType + "/" + indType + "/category/" + term.getSlug();
+			resPath = "/" + tempType + "/category/" + term.getSlug();
 			if (ObjectUtils.isBlank(resName)) {
 				resName = term.getName();
 			}
-			resCode = tempType + "_" + indType + "_" + term.getSlug();
+			resCode = tempType + "_" + term.getSlug();
 		}
 
 		Long order = this.entityRepo.queryMaxOrder(parentId);

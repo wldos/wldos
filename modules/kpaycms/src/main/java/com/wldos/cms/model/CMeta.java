@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -13,7 +13,7 @@ import java.util.List;
 import com.wldos.sys.base.dto.PubTypeExt;
 
 /**
- * 在CMS-Pub元模型定义。
+ * Pub元模型定义。
  *
  * @author 树悉猿
  * @date 2021/6/19

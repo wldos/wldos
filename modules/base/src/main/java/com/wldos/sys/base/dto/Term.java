@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -32,10 +32,6 @@ public class Term {
 
 	private String classType;
 
-	private Long industryId;
-
-	private String industryType;
-
 	private String description;
 
 	private Long parentId;
@@ -45,18 +41,17 @@ public class Term {
 	public Term() {
 	}
 
-	private Term(Long id, Long termTypeId, String classType, long parentId, Long industryId, String name, String slug) {
+	private Term(Long id, Long termTypeId, String classType, long parentId, String name, String slug) {
 		this.id = id;
 		this.termTypeId = termTypeId;
 		this.classType = classType;
 		this.parentId = parentId;
-		this.industryId = industryId;
 		this.name = name;
 		this.slug = slug;
 	}
 
-	public static Term of(Long id, Long termTypeId, String classType, long parentId, Long industryId, String name, String slug) {
-		return new Term(id, termTypeId, classType, parentId, industryId, name, slug);
+	public static Term of(Long id, Long termTypeId, String classType, long parentId, String name, String slug) {
+		return new Term(id, termTypeId, classType, parentId, name, slug);
 	}
 
 	public Long getId() {
@@ -68,7 +63,7 @@ public class Term {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -121,22 +116,6 @@ public class Term {
 
 	public void setClassType(String classType) {
 		this.classType = classType;
-	}
-
-	public Long getIndustryId() {
-		return industryId;
-	}
-
-	public void setIndustryId(Long industryId) {
-		this.industryId = industryId;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public String getDescription() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -34,12 +34,6 @@ public class ContModelDto {
 
 	private String pubName;
 
-	private String pingStatus;
-
-	private String toPing;
-
-	private String pinged;
-
 	private Long parentId;
 
 	private String pubType;
@@ -65,10 +59,6 @@ public class ContModelDto {
 	private String updateIp;
 
 	private String deleteFlag;
-
-	private Long industryId;
-
-	private String industryType;
 
 	private Long domainId;
 
@@ -136,30 +126,6 @@ public class ContModelDto {
 
 	public void setPubName(String pubName) {
 		this.pubName = pubName;
-	}
-
-	public String getPingStatus() {
-		return pingStatus;
-	}
-
-	public void setPingStatus(String pingStatus) {
-		this.pingStatus = pingStatus;
-	}
-
-	public String getToPing() {
-		return toPing;
-	}
-
-	public void setToPing(String toPing) {
-		this.toPing = toPing;
-	}
-
-	public String getPinged() {
-		return pinged;
-	}
-
-	public void setPinged(String pinged) {
-		this.pinged = pinged;
 	}
 
 	public Long getParentId() {
@@ -264,22 +230,6 @@ public class ContModelDto {
 
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
-	}
-
-	public Long getIndustryId() {
-		return industryId;
-	}
-
-	public void setIndustryId(Long industryId) {
-		this.industryId = industryId;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -28,13 +28,75 @@ import com.wldos.common.vo.TreeNode;
 public class TreeUtils {
 
 	/**
-	 * 两层循环实现建树
+	 * 给定根节点和源数据强制生成树(特殊情况下存在的孤点或断层按顺序排列在一级节点上)
+	 * 虽然正常的业务数据应该是完整有根树，但是仍然存在非有根树情况
+	 *
+	 * @param treeNodes 源数据
+	 * @param root 顶级根节点id
+	 */
+	public static <T extends TreeNode<T>> List<T> build(final List<T> treeNodes, final long root) {
+
+		List<T> record = new ArrayList<>(); // 记录上树节点，防止孤点丢失
+
+		List<T> trees = treeNodes.stream().filter(node -> node.getParentId() == root).peek(
+				node -> {
+					record.add(node); // 一级节点上树
+					node.setChildren(getChildren(node, treeNodes, record));
+					// 子节点排序
+					if (node.getChildren().isEmpty()) {
+						node.setChildren(null); // 空集合，会导致前端出现叶子节点的+号
+
+					} else
+						node.getChildren().sort(Comparator.nullsLast(
+								Comparator.comparing(
+										TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+
+				}).collect(Collectors.toList());;
+
+		// 求差集
+		if (record.size() < treeNodes.size()) {
+			List<T> lonely = treeNodes.stream().filter(node -> !record.contains(node)).collect(Collectors.toList());
+			trees.addAll(lonely);
+		}
+
+		trees.sort(Comparator.nullsLast(
+				Comparator.comparing(
+						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+
+		return trees;
+	}
+
+	/**
+	 * 递归查询treeNode的子节点
+	 *
+	 * @param treeNode 要找子节点的节点
+	 * @param treeNodes 源数据
+	 * @param record 记录上树节点
+	 */
+	public static <T extends TreeNode<T>> List<T> getChildren(final TreeNode<T> treeNode, final List<T> treeNodes, final List<T> record) {
+		return treeNodes.stream().filter(node -> node.getParentId().equals(treeNode.getId()))
+				.peek(node -> {
+					record.add(node); // 子节点上树
+					node.setChildren(getChildren(node, treeNodes, record));
+					// 子节点排序
+					if (node.getChildren().isEmpty()) {
+						node.setChildren(null); // 空集合，会导致前端出现叶子节点的+号
+
+					} else
+						node.getChildren().sort(Comparator.nullsLast(
+								Comparator.comparing(
+										TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+				}).collect(Collectors.toList());
+	}
+
+	/**
+	 * 两层循环实现建树(存在丢失孤点现象)
 	 *
 	 * @param treeNodes 传入的树节点列表
 	 * @param root 树的根节点id
 	 * @return 树状结构列表
 	 */
-	public static <T extends TreeNode<T>> List<T> build(List<T> treeNodes, long root) {
+	public static <T extends TreeNode<T>> List<T> buildFor(List<T> treeNodes, long root) {
 
 		List<T> trees = new ArrayList<>();
 
@@ -55,6 +117,7 @@ public class TreeUtils {
 								TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
 			}
 		}
+
 		trees.sort(Comparator.nullsLast(
 				Comparator.comparing(
 						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
@@ -62,7 +125,7 @@ public class TreeUtils {
 	}
 
 	/**
-	 * 使用递归方法建树
+	 * 使用递归方法建树(存在丢失孤点现象)
 	 *
 	 * @param treeNodes 树节点类别
 	 * @param root 树根节点id

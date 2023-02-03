@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -17,6 +17,7 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
+import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.entity.WoCompany;
 import com.wldos.sys.core.service.CompanyService;
 import com.wldos.sys.base.vo.Company;
@@ -51,6 +52,14 @@ public class CompanyController extends RepoController<CompanyService, WoCompany>
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		return this.service.execQueryForTree(new Company(), new WoCompany(), pageQuery, Constants.TOP_COM_ID);
+	}
+
+	/**
+	 * 支持多租户查询的公司下拉选项列表
+	 */
+	@GetMapping("select")
+	public List<SelectOption> queryComSelectOption() {
+		return this.all().stream().map(com -> SelectOption.of(com.getComName(), com.getId().toString())).collect(Collectors.toList());
 	}
 
 	/**
@@ -99,4 +108,5 @@ public class CompanyController extends RepoController<CompanyService, WoCompany>
 
 		return res;
 	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -19,7 +19,7 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
- * pub原义为酒吧，本平台指一个内容发布，引申为publish(发布、出版、发表)、public(大众的、公共的、平民的)，指代一切精神的、物质的分享。
+ * pub原义为酒吧，本平台指一个内容发布，引申为publish(发布、出版、发表)、public(大众的、公共的、平民的)，指代一切可线上化或关联的分享。
  * 它可以是图文、视频、音频或者其他不限格式的存档，其体裁形式不限，展现方式不限，在系统支持的基础上不作任何限制。
  */
 @Table
@@ -42,17 +42,9 @@ public class KPubs {
 
 	private String pubName;
 
-	private String pingStatus;
-
-	private String toPing;
-
-	private String pinged;
-
 	private Long parentId;
 
 	private String pubType;
-
-	private String industryType;
 
 	private Long domainId;
 
@@ -153,30 +145,6 @@ public class KPubs {
 		this.pubName = pubName;
 	}
 
-	public String getPingStatus() {
-		return pingStatus;
-	}
-
-	public void setPingStatus(String pingStatus) {
-		this.pingStatus = pingStatus;
-	}
-
-	public String getToPing() {
-		return toPing;
-	}
-
-	public void setToPing(String toPing) {
-		this.toPing = toPing;
-	}
-
-	public String getPinged() {
-		return pinged;
-	}
-
-	public void setPinged(String pinged) {
-		this.pinged = pinged;
-	}
-
 	public Long getParentId() {
 		return parentId;
 	}
@@ -191,14 +159,6 @@ public class KPubs {
 
 	public void setPubType(String pubType) {
 		this.pubType = pubType;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {

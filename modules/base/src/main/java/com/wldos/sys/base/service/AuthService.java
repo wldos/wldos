@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -25,7 +25,6 @@ import com.wldos.common.utils.TreeUtils;
 import com.wldos.support.cache.ICache;
 import com.wldos.sys.base.dto.MenuAndRoute;
 import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.WoResource;
 import com.wldos.sys.base.enums.ResourceEnum;
 import com.wldos.sys.base.enums.UserRoleEnum;
@@ -57,17 +56,14 @@ public class AuthService {
 
 	private final TermService termService;
 
-	private final IndustryService industryService;
-
 	private final ICache cache;
 
 	@Autowired
-	public AuthService(ICache cache, ResourceRepo resourceRepo, DomainResourceRepo domainResourceRepo, TermService termService, IndustryService industryService) {
+	public AuthService(ICache cache, ResourceRepo resourceRepo, DomainResourceRepo domainResourceRepo, TermService termService) {
 		this.cache = cache;
 		this.resourceRepo = resourceRepo;
 		this.domainResourceRepo = domainResourceRepo;
 		this.termService = termService;
-		this.industryService = industryService;
 	}
 
 	/**
@@ -203,10 +199,9 @@ public class AuthService {
 				d -> {
 					try {
 						if (d.getTermTypeId() == Constants.TOP_TERM_ID)
-							return new Route(d.getModuleName(), null, null);
+							return new Route(d.getModuleName(), null);
 						Term term = termMap.get(d.getTermTypeId());
-						KModelIndustry industry = this.industryService.findByIndustryId(term.getIndustryId());
-						return new Route(d.getModuleName(), term.getSlug(), industry.getIndustryCode());
+						return new Route(d.getModuleName(), term.getSlug());
 					}
 					catch (RuntimeException e) {
 						throw new ResTermNoFoundException("资源对应的分类项不存在, 资源id：" + d.getId());

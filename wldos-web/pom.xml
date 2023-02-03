@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+  ~ Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
   ~ Licensed under the AGPL or a commercial license.
   ~ For AGPL see License in the project root for license information.
   ~ For commercial licenses see term.md or https://www.wldos.com
@@ -10,22 +10,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.5</version>
+		<version>1.9</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>
-
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<projectName>wldos</projectName>
 	</properties>
-
 	<dependencies>
 		<!-- wldos支撑平台
 		<dependency>
@@ -33,7 +30,6 @@
 			<artifactId>wldos-platform</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency> -->
-
 		<!-- wldos内容付费系统 -->
 		<dependency>
 			<groupId>com.wldos</groupId>
@@ -46,18 +42,10 @@
 			<artifactId>wldos-oauth2</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- wldos license -->
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-license</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
 	</dependencies>
-
 	<build><!-- 构建不带版本号的包 -->
 		<finalName>${projectName}</finalName>
 	</build>
-
 	<repositories>
 		<repository>
 			<id>aliyun-repos</id>

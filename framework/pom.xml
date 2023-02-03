@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+  ~ Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
   ~ Licensed under the AGPL or a commercial license.
   ~ For AGPL see License in the project root for license information.
   ~ For commercial licenses see term.md or https://www.wldos.com
@@ -10,20 +10,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.5</version>
+		<version>1.9</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>wldos-framework</artifactId>
 	<packaging>jar</packaging>
 	<name>WLDOS开发框架</name>
 	<description>
-		WLDOS®开发框架，基于springboot实现的轻量级快速开发框架。WLDOS®寓意：世界的，未来的，开放的系统。读音：汉['wou'da'si]。
+		WLDOS®开发框架，基于springboot实现的轻量级快速开发框架。
 	</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>de.schlichtherle.truelicense</groupId>
@@ -41,5 +39,4 @@
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
-
 </project>

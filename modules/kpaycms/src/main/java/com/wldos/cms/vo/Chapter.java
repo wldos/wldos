@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -8,8 +8,11 @@
 
 package com.wldos.cms.vo;
 
+import com.wldos.cms.entity.KPubs;
+import com.wldos.common.utils.ObjectUtils;
+
 /**
- * 作品的章节。
+ * 作品的章节元素，可以派生出剧集。
  *
  * @author 树悉猿
  * @date 2021/6/22
@@ -26,18 +29,24 @@ public class Chapter {
 
 	private String pubStatus;
 
-	private String industryType;
-
 	public Chapter() {
 	}
 
-	public Chapter(Long id, String pubTitle, String pubContent, Long parentId, String pubStatus, String industryType) {
+	public static Chapter of (KPubs single) {
+		return of(single.getId(), ObjectUtils.string(single.getPubTitle()), ObjectUtils.string(single.getPubContent())/* 过滤null值，防止前端不刷新*/,
+				single.getParentId(), single.getPubStatus());
+	}
+
+	public static Chapter of(Long id, String pubTitle, String pubContent, Long parentId, String pubStatus) {
+		return new Chapter(id, pubTitle, pubContent, parentId, pubStatus);
+	}
+
+	private Chapter(Long id, String pubTitle, String pubContent, Long parentId, String pubStatus) {
 		this.id = id;
 		this.pubTitle = pubTitle;
 		this.pubContent = pubContent;
 		this.parentId = parentId;
 		this.pubStatus = pubStatus;
-		this.industryType = industryType;
 	}
 
 	public Long getId() {
@@ -78,13 +87,5 @@ public class Chapter {
 
 	public void setPubStatus(String pubStatus) {
 		this.pubStatus = pubStatus;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 }

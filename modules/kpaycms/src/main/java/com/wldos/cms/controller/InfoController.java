@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.controller.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.enums.PrivacyLevelEnum;
 import com.wldos.cms.service.InfoService;
@@ -78,16 +79,14 @@ public class InfoController extends NoRepoController {
 	}
 
 	/**
-	 * 查看某大类下的存档
+	 * 查看当前域下所有信息
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
-	 * @return 按分类目录索引的存档列表页
+	 * @return 按分类目录索引的信息存档列表页
 	 */
-	@GetMapping("info/{industryType}")
-	public PageableResult<InfoUnit> infoArchives(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
+	@GetMapping("info")
+	public PageableResult<InfoUnit> infoArchives(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -98,15 +97,14 @@ public class InfoController extends NoRepoController {
 	/**
 	 * 查看某目录下的存档
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的信息列表页
 	 */
-	@GetMapping("info/{industryType}/category/{slugCategory}")
-	public PageableResult<InfoUnit> infoCategory(@PathVariable String industryType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
+	@GetMapping("info/category/{slugCategory}")
+	public PageableResult<InfoUnit> infoCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -117,15 +115,14 @@ public class InfoController extends NoRepoController {
 	/**
 	 * 查看标签索引的信息
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
 	 * @param slugTag 标签别名
 	 * @return 按标签索引的信息列表页
 	 */
-	@GetMapping("info/{industryType}/tag/{slugTag}")
-	public PageableResult<InfoUnit> infoTag(@PathVariable String industryType, @PathVariable String slugTag, @RequestParam Map<String, Object> params) {
+	@GetMapping("info/tag/{slugTag}")
+	public PageableResult<InfoUnit> infoTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -157,11 +154,11 @@ public class InfoController extends NoRepoController {
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
 	 */
-	@GetMapping("info/{industryType}/author/{userId:[0-9]+}.html")
-	public PageableResult<InfoUnit> infoConTypeAuthor(@PathVariable String industryType, @PathVariable String userId, @RequestParam Map<String, Object> params) {
+	@GetMapping("info/author/{userId:[0-9]+}.html")
+	public PageableResult<InfoUnit> infoConTypeAuthor(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("createBy", userId);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
@@ -187,8 +184,8 @@ public class InfoController extends NoRepoController {
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
 		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isSameIndustryType(termTypeIds))
-			return this.resJson.ok("error", "不能超出创建时所选大类");
+		if (!this.kcmsService.isValidTerm(termTypeIds))
+			return this.resJson.ok("error", "使用了不可识别的分类数据");
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null ) {
@@ -232,8 +229,8 @@ public class InfoController extends NoRepoController {
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
 		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isSameIndustryType(termTypeIds, pub.getId()))
-			return this.resJson.ok("error", "不能超出创建时所选大类");
+		if (!this.kcmsService.isValidTerm(termTypeIds))
+			return this.resJson.ok("error", "使用了非法分类数据");
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null ) {
@@ -244,6 +241,10 @@ public class InfoController extends NoRepoController {
 
 				return this.resJson.ok("error", "标签超长");
 			}
+		}
+		// 类型转换检查，暂定单体、复合类型不能互转
+		if (!this.kcmsService.isSamePubTypeStruct(pub.getId(), pub.getPubType())) {
+			return this.resJson.ok("error", "选择了不支持的转换类型");
 		}
 
 		this.kcmsService.update(pub, this.getCurUserId(), this.getUserIp());
@@ -289,12 +290,7 @@ public class InfoController extends NoRepoController {
 	 * @return 查看方式枚举值
 	 */
 	@GetMapping("info/enum/privacy")
-	public List<Map<String, Object>> fetchEnumPrivacy() {
-		return Arrays.stream(PrivacyLevelEnum.values()).map(item -> {
-			Map<String, Object> em = new HashMap<>();
-			em.put("label", item.getLabel());
-			em.put("value", item.getValue());
-			return em;
-		}).collect(Collectors.toList());
+	public List<SelectOption> fetchEnumPrivacy() {
+		return Arrays.stream(PrivacyLevelEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 }

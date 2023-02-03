@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -33,8 +33,6 @@ public class TermTree extends TreeNode<TermTree> {
 	private Long termTypeId;
 
 	private String classType;
-
-	private Long industryId;
 
 	private String description;
 
@@ -106,14 +104,6 @@ public class TermTree extends TreeNode<TermTree> {
 
 	public void setClassType(String classType) {
 		this.classType = classType;
-	}
-
-	public Long getIndustryId() {
-		return industryId;
-	}
-
-	public void setIndustryId(Long industryId) {
-		this.industryId = industryId;
 	}
 
 	public String getDescription() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -28,13 +28,13 @@ public class Tenant {
 
 	private Long createBy;
 
-	private java.sql.Timestamp createTime;
+	private Timestamp createTime;
 
 	private String createIp;
 
 	private Long updateBy;
 
-	private java.sql.Timestamp updateTime;
+	private Timestamp updateTime;
 
 	private String updateIp;
 
@@ -174,5 +174,4 @@ public class Tenant {
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
 	}
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -23,6 +23,7 @@ public enum ResourceEnum {
 	DATA_SERV("数据", "dataServ"),
 	STATIC("静态", "_static"),
 	ADMIN_MENU("管理菜单", "admin_menu"),
+	ADMIN_BUTTON("管理操作", "admin_button"),
 	OTHER("其他", "other");
 
 	private final String label;

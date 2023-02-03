@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -30,8 +30,6 @@ public class Product extends KModelMeta implements IMeta {
 
 	private String pubType;
 
-	private String industryType;
-
 	private String pubMimeType;
 
 	private Long commentCount;
@@ -43,8 +41,6 @@ public class Product extends KModelMeta implements IMeta {
 	private Long updateBy;
 
 	private Timestamp updateTime;
-
-	private Long industryId;
 
 	private Long domainId;
 
@@ -154,23 +150,6 @@ public class Product extends KModelMeta implements IMeta {
 
 	public void setUpdateTime(Timestamp updateTime) {
 		this.updateTime = updateTime;
-	}
-
-	@Override
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
-	}
-
-	public Long getIndustryId() {
-		return industryId;
-	}
-
-	public void setIndustryId(Long industryId) {
-		this.industryId = industryId;
 	}
 
 	public Long getDomainId() {

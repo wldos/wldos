@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -59,7 +59,7 @@ public class SpaceService extends Base {
 	}
 
 	/**
-	 * 查询作品的某个章节
+	 * 创作时查询作品的某个章节，无需关心状态
 	 *
 	 * @param chapterId the chapter id
 	 * @return chapter info
@@ -67,8 +67,10 @@ public class SpaceService extends Base {
 	public Chapter queryChapter(Long chapterId) {
 		KPubs pub = this.pubService.findById(chapterId);
 
-		return new Chapter(pub.getId(), ObjectUtils.string(pub.getPubTitle()), ObjectUtils.string(pub.getPubContent())/* 过滤null值，防止前端不刷新*/,
-				pub.getParentId(), pub.getPubStatus(), pub.getIndustryType());
+		if (pub == null)
+			return null;
+
+		return Chapter.of(pub);
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class SpaceService extends Base {
 
 		// 刚新建的内容为草稿状态，申请发布时改为待审核，属于可信者用户组的会员跳过审核直接发布
 		chapter.setPubStatus(this.pubService.isCanTrust(curUserId) ? PubStatusEnum.INHERIT.toString() : PubStatusEnum.AUTO_DRAFT.toString());
-		chapter.setPubType(PubTypeEnum.BOOK.getSubType());
+		chapter.setPubType(PubTypeEnum.CHAPTER.getName());
 		Long id = this.insertChapter(chapter, curUserId, userIp);
 
 		// 取出父作品分类

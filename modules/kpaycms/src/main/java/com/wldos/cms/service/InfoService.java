@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -139,10 +139,17 @@ public class InfoService extends Base {
 	 */
 	public Info infoDetail(Long pid) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
-		this.kcmsService.updatePubMeta(pid);
 
-		// 根据id找到行业门类、模板类型 用于前端展示
+		
 		ContModelDto contBody = this.pubService.queryContModel(pid);
+		if (contBody == null)
+			return null;
+
+		if (this.kcmsService.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+			return null;
+		}
+
+		this.kcmsService.updatePubMeta(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
 		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);

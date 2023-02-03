@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * @date 2021-04-17
  * @version V1.0
  */
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings({ "unused"})
 @Slf4j
 @Component
 public class ResultJson {

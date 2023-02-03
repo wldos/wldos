@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -25,6 +25,20 @@ public class SeoCrumbs {
 	private String keywords;
 
 	private List<Breadcrumb> crumbs;
+
+	public SeoCrumbs() {
+	}
+
+	public static SeoCrumbs of(String title, String description, String keywords, List<Breadcrumb> crumbs) {
+		return new SeoCrumbs(title, description, keywords, crumbs);
+	}
+
+	private SeoCrumbs(String title, String description, String keywords, List<Breadcrumb> crumbs) {
+		this.title = title;
+		this.description = description;
+		this.keywords = keywords;
+		this.crumbs = crumbs;
+	}
 
 	public String getTitle() {
 		return title;

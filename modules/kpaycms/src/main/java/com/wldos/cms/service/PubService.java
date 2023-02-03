@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -345,7 +345,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	}
 
 	/**
-	 * 通过分站绑定的业务类型查询分站内容
+	 * 通过分站查询分站内容
 	 *
 	 * @param domain 分站域名
 	 * @param pageQuery 查询参数
@@ -379,7 +379,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 		List<KPubmeta> pubMetas = this.pubmetaService.queryAllByPubIdInAndMetaKey(ids, KModelMetaKey.PUB_META_KEY_VIEWS);
 		Map<Long, String> viewsMap = pubMetas.parallelStream().collect(Collectors.toMap(KPubmeta::getPubId, KPubmeta::getMetaValue));
 
-		pubUnits = pubUnits.stream().map(pub -> {
+		pubUnits = pubUnits.stream().peek(pub -> {
 			Long id = pub.getId();
 			pub.setMember(pubMembers.get(id));
 
@@ -388,7 +388,6 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 			pub.setTerms(termTypeList.get(id));
 
 			pub.setViews(viewsMap.get(id));
-			return pub;
 		}).collect(Collectors.toList());
 
 		pubUnitPage.setDataRows(pubUnits);
@@ -496,14 +495,32 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	}
 
 	/**
+	 * 根据id批量查询所有发布内容
+	 *
+	 * @param pubIds 发布内容列表
+	 * @return 发布内容列表
+	 */
+	public List<KPubs> queryPubsByIds(List<Long> pubIds) {
+		return this.entityRepo.findAllByIdIn(pubIds);
+	}
+
+	public List<Chapter> queryChapterBySinglePubId(Long singleId) {
+		KPubs single = this.findById(singleId);
+		Chapter singleChapter = Chapter.of(single);
+		List<Chapter> list = new ArrayList<>();
+		list.add(singleChapter);
+		return list;
+	}
+
+	/**
 	 * 查询章节
 	 *
 	 * @param bookId 作品id
 	 * @param deleteFlag 是否删除：见DeleteFlagEnum
 	 * @return 章节实体
 	 */
-	public List<Chapter> queryPubsByParentId(Long bookId, String deleteFlag) {
-		return this.entityRepo.queryPubsByParentId(bookId, PubTypeEnum.CHAPTER.getName(), deleteFlag);
+	public List<Chapter> queryChapterByParentId(Long bookId, String deleteFlag) {
+		return this.entityRepo.queryChapterByParentId(bookId, PubTypeEnum.CHAPTER.getName(), deleteFlag);
 	}
 
 	/**
@@ -572,16 +589,14 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 
 	/**
 	 * 在指定标签或分类范围内查询相关发布内容
-	 * 章节和作品集一样需要设置分类
 	 *
-	 * @param pubType 发布内容展现类型：作品集、章节、附件、页面等，表现形式不同
-	 * @param contentType 业务大类：文章、年谱、菜谱等业务划分，各大类属于不同领域（业务不同）
-	 * @param termTypeIds 若干标签、分类等
+	 * @param pubType 内容发布类型
+	 * @param termTypeIds 标签集、分类集等
 	 * @param num 查询数量
 	 * @return 相关发布内容
 	 */
-	public List<MiniPub> queryRelatedPubs(String pubType, String contentType, List<Long> termTypeIds, int num) {
-		return this.entityRepo.queryRelatedPubs(pubType, contentType, termTypeIds, num);
+	public List<MiniPub> queryRelatedPubs(String pubType, List<Long> termTypeIds, int num) {
+		return this.entityRepo.queryRelatedPubs(pubType, termTypeIds, num);
 	}
 
 	/**
@@ -656,17 +671,11 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 		return this.entityRepo.pubNameIsNull(pubId);
 	}
 
-	/**
-	 * 根据id批量查询所有发布内容
-	 *
-	 * @param pubIds 发布内容列表
-	 * @return 发布内容列表
-	 */
-	public List<KPubs> queryPubsByIds(List<Long> pubIds) {
-		return this.entityRepo.findAllByIdIn(pubIds);
-	}
-
 	public Long queryIdByPubName(String pubName) {
 		return this.entityRepo.queryIdByPubName(pubName);
+	}
+
+	public boolean existsByIdAndPubStatusAndDeleteFlag(Long id, String pubStatus, String deleteFlag) {
+		return this.entityRepo.existsByIdAndPubStatusAndDeleteFlag(id, pubStatus, deleteFlag);
 	}
 }

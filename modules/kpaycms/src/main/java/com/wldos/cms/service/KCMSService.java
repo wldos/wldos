@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -28,6 +28,8 @@ import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.cms.vo.Info;
+import com.wldos.cms.vo.RouteParams;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
 import com.wldos.cms.model.IMeta;
@@ -45,7 +47,6 @@ import com.wldos.cms.vo.PubMeta;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.cms.vo.Product;
 import com.wldos.cms.vo.SeoCrumbs;
-import com.wldos.cms.vo.TypeDomainTerm;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -56,12 +57,10 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.dto.PubTypeExt;
 import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.KModelIndustry;
 import com.wldos.sys.base.entity.KTermType;
-import com.wldos.sys.base.enums.TempTypeEnum;
+import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.sys.base.enums.TermTypeEnum;
 import com.wldos.sys.base.service.PubTypeExtService;
-import com.wldos.sys.base.service.IndustryService;
 import com.wldos.sys.core.service.RegionService;
 import com.wldos.sys.base.service.TermService;
 import com.wldos.sys.core.vo.City;
@@ -103,8 +102,6 @@ public class KCMSService extends Base {
 	@Value("${wldos.sidecar.config}")
 	private String sideCar;
 
-	private final IndustryService industryService;
-
 	private final PubService pubService;
 
 	private final PubmetaService pubmetaService;
@@ -115,16 +112,14 @@ public class KCMSService extends Base {
 
 	private final RegionService regionService;
 
-	public KCMSService(IndustryService industryService, PubService pubService, PubmetaService pubmetaService,
+	public KCMSService(PubService pubService, PubmetaService pubmetaService,
 			PubTypeExtService pubTypeExtService, TermService termService, RegionService regionService) {
-		this.industryService = industryService;
 		this.pubService = pubService;
 		this.pubmetaService = pubmetaService;
 		this.pubTypeExtService = pubTypeExtService;
 		this.termService = termService;
 		this.regionService = regionService;
 	}
-
 
 	/**
 	 * 作品列表页(存档模:，参数详细; 卡片模式，参数简约)
@@ -166,10 +161,7 @@ public class KCMSService extends Base {
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
 			pubs.setPubName(this.pubService.existsAutoDiffPubName(pubs.getPubName(), pubs.getId()));
 
-		// 根据分类id获取行业门类，确定模板，统一所有带正文的内容模板为作品集-篇章结构，行业门类用于总览分类，不可以跨行业类型选择分类目录，同类型可以有多个分类
-		KModelIndustry industry = this.termService.queryIndustryTypeByTermType(Long.parseLong(pub.getTermTypeIds().get(0).getValue()));
 		pubs.setPubType(pubType);
-		pubs.setIndustryType(industry.getIndustryCode());
 		// 属于可信者用户组的会员跳过审核直接发布
 		pubs.setPubStatus(this.pubService.isCanTrust(userId) ? PubStatusEnum.PUBLISH.toString() : PubStatusEnum.IN_REVIEW.toString());
 		Long id = this.nextId();
@@ -185,7 +177,7 @@ public class KCMSService extends Base {
 
 		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
-			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId(), userId, userIp);
+			List<Long> newTagIds = this.termService.handleTag(tagIds, userId, userIp);
 			this.termService.saveTermObject(newTagIds, id);
 		}
 
@@ -250,8 +242,7 @@ public class KCMSService extends Base {
 		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
 			KPubs dbPub = this.pubService.findById(pub.getId());
-			KModelIndustry industry = this.termService.queryModelIndustryByTypeCode(dbPub.getIndustryType());
-			List<Long> newTagIds = this.termService.handleTag(tagIds, industry.getId(), userId, userIp);
+			List<Long> newTagIds = this.termService.handleTag(tagIds, userId, userIp);
 			this.termService.updateTermObject(newTagIds, pub.getId(), TermTypeEnum.TAG.toString());
 		}
 
@@ -276,14 +267,14 @@ public class KCMSService extends Base {
 	 */
 	public String delete(Pub pub) {
 		// @todo 考虑嵌入操作hook: execHook("deletePub", pub);
-		// 删除检查：如果是作品，检查是否存在内容，如果是内容，直接删除。
-		List<Chapter> chapters = this.pubService.queryPubsByParentId(pub.getId(), DeleteFlagEnum.NORMAL.toString());
+		// 删除检查：检查存在内容，是复合类型作品不能删，否则是内容或单体类型作品，直接删除。
+		List<Chapter> chapters = this.pubService.queryChapterByParentId(pub.getId(), DeleteFlagEnum.NORMAL.toString());
 		if (chapters != null && chapters.size() > 0)
 			return "存在内容，请先删除内容";
 		// 逻辑删
 		this.pubService.deleteById(pub.getId());
 		return "ok";
-		// 若是物理删，需要级联删除meta扩展属性
+		// 若是物理删，需要级联删除meta扩展属性，甚至附件
 	}
 
 	/**
@@ -294,10 +285,16 @@ public class KCMSService extends Base {
 	 */
 	public Product productInfo(Long pid) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
-		this.updatePubMeta(pid);
-
-		// 根据id找到行业门类、模板类型 用于前端展示
+		
 		ContModelDto contBody = this.pubService.queryContModel(pid);
+		if (contBody == null)
+			return null;
+
+		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+			return null;
+		}
+
+		this.updatePubMeta(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
 		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
@@ -330,7 +327,7 @@ public class KCMSService extends Base {
 	/**
 	 * 统一创建seo和面包屑
 	 *
-	 * @param iMeta 行业门类接口
+	 * @param iMeta 发布类型接口
 	 * @param termTypeId 直属分类id，多者取首
 	 */
 	public void genSeoAndCrumbs(IMeta iMeta, Long termTypeId) {
@@ -354,8 +351,7 @@ public class KCMSService extends Base {
 				terms.parallelStream().map(term -> {
 					Breadcrumb bc = new Breadcrumb();
 					String termPath = this.getPathByTermType(term.getClassType());
-					bc.setPath(iMeta instanceof Product ? "/product/" + iMeta.getIndustryType() + termPath + term.getSlug()
-							: "/archives/" + iMeta.getIndustryType() + termPath + term.getSlug());
+					bc.setPath((iMeta instanceof Product ? "/product" : iMeta instanceof Info ? "/info" : "/archives") + termPath + term.getSlug());
 					bc.setBreadcrumbName(term.getName());
 					return bc;
 				}).collect(Collectors.toList());
@@ -365,39 +361,25 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 根据内容领域和分类法(分类目录、标签等)获取tdk和面包屑数据
+	 * 根据路由参数获取tdk和面包屑数据
 	 *
-	 * @param params 领域分类参数
+	 * @param params 路由参数
 	 * @return tdk和面包屑数据
 	 */
-	public SeoCrumbs genSeoCrumbs(TypeDomainTerm params) {
-		SeoCrumbs seoCrumbs = new SeoCrumbs();
-		String industryType = params.getIndustryType();
+	public SeoCrumbs genSeoCrumbs(RouteParams params) {
 		String slugTerm = params.getSlugTerm();
 		String tempType = params.getTempType(); // 模板类型决定返回的面包屑链接到的模板前缀
 
 		if (ObjectUtils.isBlank(slugTerm)) {
-			KModelIndustry industry = this.industryService.findByIndustryCode(industryType);
-			String name = industry == null ? "所有领域" : industry.getIndustryName();
-			seoCrumbs.setTitle(name);
-			seoCrumbs.setDescription("内容领域：" + name);
-			seoCrumbs.setKeywords(name);
-			// 内容领域
-			List<Breadcrumb> crumb = new ArrayList<>();
-			Breadcrumb bcb = new Breadcrumb();
-			bcb.setPath("/" + tempType + "/" + industryType);
-			bcb.setBreadcrumbName(name);
-			seoCrumbs.setCrumbs(crumb);
-			return seoCrumbs;
+			String name = tempType == null ? "所有领域" : TemplateTypeEnum.getTemplateTypeEnumByValue(tempType).getLabel();
+			List<Breadcrumb> breadcrumbs = new ArrayList<>();
+			breadcrumbs.add(Breadcrumb.of("/" + tempType, name));
+			return SeoCrumbs.of(name, "内容领域：" + name, name, breadcrumbs);
 		}
 
 		// 获取当前分类项类型
 		Term term = this.termService.queryTermBySlugTerm(slugTerm);
-
 		String name = term.getName();
-		seoCrumbs.setTitle(name);
-		seoCrumbs.setDescription(this.getTemplateTypeByValue(tempType).getLabel() + "分类：" + name);
-		seoCrumbs.setKeywords(name);
 
 		// 开始创建面包屑: 直属分类及所有父级分类
 		List<LevelNode> nodes = this.termService.queryTermTreeByChildId(term.getTermTypeId());
@@ -405,27 +387,23 @@ public class KCMSService extends Base {
 
 		List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
 		List<Breadcrumb> crumb =
-				terms.parallelStream().map(t -> {
-					Breadcrumb bc = new Breadcrumb();
-					bc.setPath("/" + tempType + "/" + industryType + this.getPathByTermType(t.getClassType()) + t.getSlug());
-					bc.setBreadcrumbName(t.getName());
-					return bc;
-				}).collect(Collectors.toList());
-		seoCrumbs.setCrumbs(crumb);
-		return seoCrumbs;
+				terms.parallelStream().map(t ->
+						Breadcrumb.of("/" + tempType + this.getPathByTermType(t.getClassType()) + t.getSlug(), t.getName())).collect(Collectors.toList());
+		return SeoCrumbs.of(name, this.getTemplateTypeByValue(tempType).getLabel() + "分类：" + name, name, crumb);
 	}
-	// 仅考虑动态模板
-	private TempTypeEnum getTemplateTypeByValue(String value) {
-		if (TempTypeEnum.PRODUCT.getValue().equals(value))
-			return TempTypeEnum.PRODUCT;
-		if (TempTypeEnum.ARCHIVES.getValue().equals(value))
-			return TempTypeEnum.ARCHIVES;
-		if (TempTypeEnum.CATEGORY.getValue().equals(value))
-			return TempTypeEnum.CATEGORY;
-		if (TempTypeEnum.INFO.getValue().equals(value))
-			return TempTypeEnum.INFO;
 
-		return TempTypeEnum.UNKNOWN;
+	// 仅考虑动态模板
+	private TemplateTypeEnum getTemplateTypeByValue(String value) {
+		if (TemplateTypeEnum.PRODUCT.getValue().equals(value))
+			return TemplateTypeEnum.PRODUCT;
+		if (TemplateTypeEnum.ARCHIVES.getValue().equals(value))
+			return TemplateTypeEnum.ARCHIVES;
+		if (TemplateTypeEnum.CATEGORY.getValue().equals(value))
+			return TemplateTypeEnum.CATEGORY;
+		if (TemplateTypeEnum.INFO.getValue().equals(value))
+			return TemplateTypeEnum.INFO;
+
+		return TemplateTypeEnum.UNKNOWN;
 	}
 
 	// 目前支持目录和标签，根据分类项的类型决定面包屑的url类型
@@ -591,22 +569,20 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 查询作品
+	 * 创建作品时查询作品，无需考虑状态
 	 *
 	 * @param bookId works id
 	 * @return a works info
 	 */
 	public Book queryBook(Long bookId) {
 		KPubs pub = this.pubService.findById(bookId);
-		List<Chapter> chapters = this.pubService.queryPubsByParentId(bookId, DeleteFlagEnum.NORMAL.toString());
+		if (pub == null)
+			return null;
 
-		Book book = new Book();
-		book.setId(pub.getId());
-		book.setPubTitle(pub.getPubTitle());
-		book.setIndustryType(pub.getIndustryType());
-		book.setChapter(chapters);
-
-		return book;
+		// 单体结构直接查询自身填充Chapter
+		List<Chapter> chapters = PubTypeEnum.isSingle(pub.getPubType()) ? this.pubService.queryChapterBySinglePubId(bookId)
+				: this.pubService.queryChapterByParentId(bookId, DeleteFlagEnum.NORMAL.toString());
+		return Book.of(pub.getId(), pub.getPubTitle(), pub.getPubType(), pub.getPubStatus(), chapters);
 	}
 
 	/**
@@ -669,27 +645,22 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 门户跨域根据分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
+	 * 门户跨域查询所有作品列表，针对产品模板。
 	 * 门户有且仅有一个，并且跨域查询，没有数据隔离，仅用于管理端数据分析不面向终端用户！！！
+	 * 用户侧应该按 /租户/域/分类（/表示包含关系，第一个/表示平台） 的颗粒度钻取。
 	 *
-	 * @param industryType 行业门类
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<PubUnit> queryProductPortalByIndustry(String industryType, PageQuery pageQuery) {
-		if (!ObjectUtils.isBlank(industryType)) {
-			List<Term> terms = this.termService.findTagByIndustryType(industryType);
-			List<Object> termTypeIds = terms.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
-			// 查询分类及其子分类
-			this.filterByParentTermTypeId(termTypeIds, pageQuery);
-		}
+	public PageableResult<PubUnit> queryProductPortal(PageQuery pageQuery) {
 
 		return this.pubService.queryPubWithExtList(pageQuery);
 	}
 
 	/**
-	 * 门户跨域根据分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
-	 * 门户有且仅有一个，并且跨域查询，没有数据隔离，仅用于管理端数据分析不面向终端用户！！！
+	 * 门户跨域根据分类别名查询作品列表（含子分类下的内容），针对产品模板。
+	 * 门户有且仅有一个，并且跨域查询，没有数据隔离，仅用于管理端数据分析不面向终端用户！
+	 * 用户侧应该按 /租户/域/分类（/表示包含关系，第一个/表示平台） 的颗粒度钻取。
 	 *
 	 * @param slugCategory 某个分类目录别名
 	 * @param pageQuery 分页查询参数
@@ -707,7 +678,7 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 根据实体字段自由查询作品列表，实体表：KPubs、KTermObject
+	 * 根据实体字段自由查询作品列表，实体表：KPubs、KTermObject，针对产品模板。
 	 *
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
@@ -718,7 +689,7 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 根据指定分类目录的别名查询分类目录下的作品列表，应包含子分类下的内容
+	 * 根据指定分类目录的别名查询分类目录下的作品列表(含子分类下的内容)，针对产品模板。
 	 *
 	 * @param slugCategory 某个分类目录别名
 	 * @param pageQuery 分页查询参数
@@ -735,20 +706,13 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 门户跨域根据行业门类的别名查询行业下的内容列表，应包含子分类下的内容
-	 * 门户有且仅有一个，并且跨域、跨租户查询，没有数据隔离，应该根据行业门类查询，具体细分要按 类型/租户/域/分类 的维度钻取
+	 * 门户跨域查询内容列表，针对存档模板。
+	 * 门户有且仅有一个，并且跨域、跨租户查询，没有数据隔离，用户侧应该按 /租户/域（/表示包含关系，第一个/表示平台） 的颗粒度钻取。
 	 *
-	 * @param industryType 行业门类
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesPortal(String industryType, PageQuery pageQuery) {
-		if (!ObjectUtils.isBlank(industryType)) {
-			List<Term> terms = this.termService.findCategoryByIndustryType(industryType);
-			List<Object> termTypeIds = terms.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
-			// 查询分类及其子分类
-			this.filterByParentTermTypeId(termTypeIds, pageQuery);
-		}
+	public PageableResult<PubUnit> queryArchivesPortal(PageQuery pageQuery) {
 
 		return this.pubService.queryArchives(pageQuery);
 	}
@@ -863,13 +827,13 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 查询发布内容
+	 * 根据别名查询pubId
 	 *
 	 * @param pubName 发布内容别名
-	 * @return 篇章实体
+	 * @return 发布id
 	 */
-	public Article queryArticle(String pubName) {
-		return this.queryArticle(this.pubService.queryIdByPubName(pubName));
+	public Long queryIdByPubName(String pubName) {
+		return this.pubService.queryIdByPubName(pubName);
 	}
 
 	/**
@@ -879,11 +843,18 @@ public class KCMSService extends Base {
 	 * @return 篇章实体
 	 */
 	public Article queryArticle(Long pid) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
-		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
+		//@todo 已删除或发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
+
+		ContModelDto contBody = this.pubService.queryContModel(pid);
+
+		if (contBody == null)
+			return null;
+
+		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+			return null;
+		}
 
 		this.updatePubMeta(pid);
-		// 根据id找到行业门类、模板类型 用于前端展示
-		ContModelDto contBody = this.pubService.queryContModel(pid);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
 		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
@@ -914,6 +885,27 @@ public class KCMSService extends Base {
 		return (Article) this.handleContent(article, metas, contBody, pid);
 	}
 
+	/**
+	 * 检查发布状态是否ok
+	 * 约定：已删除或发布状态不是已发布（子类型不是继承或者父类不是已发布），一律属于异常，需要返回404
+	 *
+	 * @param pubStatus 发布状态
+	 * @param parentId 发布parentId
+	 * @return 是否
+	 */
+	public boolean pubStatusIsNotOk(String pubStatus, String deleteFlag, Long parentId) {
+		if (parentId.equals(Constants.TOP_PUB_ID)) { // 主类型判断两个状态
+			return !PubStatusEnum.PUBLISH.getValue().equals(pubStatus) || !DeleteFlagEnum.NORMAL.toString().equals(deleteFlag);
+		}
+
+		// 子类型，先判断父作品状态
+		if (this.pubService.existsByIdAndPubStatusAndDeleteFlag(parentId, PubStatusEnum.PUBLISH.getValue(), DeleteFlagEnum.NORMAL.toString())) {
+			return !PubStatusEnum.INHERIT.getValue().equals(pubStatus) || !DeleteFlagEnum.NORMAL.toString().equals(deleteFlag);
+		}
+
+		return true;
+	}
+
 	private void setPrevNextAndRelated(Long pid, Article article) {
 		String pubType = article.getPubType();
 		List<Long> termTypeIds = article.getTermTypeIds();
@@ -936,14 +928,62 @@ public class KCMSService extends Base {
 
 		if (ObjectUtils.isBlank(termTypeIds))
 			return;
-		String industryType = article.getIndustryType();
 		List<Term> tags = article.getTags();
 		List<Long> tagTermTypeIds = ObjectUtils.isBlank(tags) ? termTypeIds : tags.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
-		List<MiniPub> relPubs = this.pubService.queryRelatedPubs(pubType, industryType, tagTermTypeIds, 8);
+		List<MiniPub> relPubs = this.pubService.queryRelatedPubs(pubType, tagTermTypeIds, 8);
 		if (ObjectUtils.isBlank(relPubs)) {
-			relPubs = this.pubService.queryRelatedPubs(pubType, industryType, termTypeIds, 8);
+			relPubs = this.pubService.queryRelatedPubs(pubType, termTypeIds, 8);
 		}
 		article.setRelPubs(relPubs);
+	}
+
+	/**
+	 * 读取作品元素内容
+	 *
+	 * @param pid 元素发布内容id
+	 * @return 元素
+	 */
+	public Article readElement(Long pid) {
+		//@todo 检查付费设置，需要付费的灰色不可继续读取
+
+		ContModelDto contBody = this.pubService.queryContModel(pid);
+
+		if (contBody == null)
+			return null;
+
+		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+			return null;
+		}
+
+		this.updatePubMeta(pid);
+
+		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
+
+		// 合并主体信息
+		Article article = new Article();
+		this.artCopier.copy(contBody, article, null);
+
+		// 查询作者
+		PubMember member = this.pubService.queryMemberByPubId(pid);
+		article.setMember(member);
+
+		// 处理分类和标签
+		this.termAndTagHandle(article, pid);
+
+		// 生成seo和面包屑数据
+		List<Long> tIds = article.getTermTypeIds();
+		this.genSeoAndCrumbs(article, tIds.get(0)); // 多者取首
+
+		// 查询上下篇、相关篇章
+		this.setPrevNextAndRelated(pid, article);
+
+		// 析取独立公共扩展属性
+		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
+
+		this.populateMeta(article, pubMeta);
+
+		return (Article) this.handleContent(article, metas, contBody, pid);
 	}
 
 	public List<PubTypeExt> getPubTypeExt(List<PubTypeExt> pubTypeExt, List<KPubmeta> metas) {
@@ -969,12 +1009,9 @@ public class KCMSService extends Base {
 			Map<String, String> attMeta = curMetas.stream()
 					.collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
-			Attachment attach = new Attachment();
-			attach.setAttachPath(attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_PATH));
-			attach.setAttachMetadata(attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_METADATA));
-			attach.setAttachFileAlt(attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_FILE_ALT));
-
-			return attach;
+			return Attachment.of(attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_PATH),
+								attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_METADATA),
+								attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_FILE_ALT));
 		}).filter(a -> !ObjectUtils.isBlank(a.getAttachMetadata())).collect(Collectors.toList());
 	}
 
@@ -993,11 +1030,8 @@ public class KCMSService extends Base {
 	 * @param pubTypeExtList 扩展属性列表
 	 */
 	void appendPubMeta(List<PubTypeExt> pubTypeExtList) {
-		PubTypeExt industryExt = new PubTypeExt();
-		industryExt.setMetaKey(KModelMetaKey.PUB_META_KEY_VIEWS);
-		industryExt.setMetaValue("0");
 
-		pubTypeExtList.add(industryExt);
+		pubTypeExtList.add(PubTypeExt.of(KModelMetaKey.PUB_META_KEY_VIEWS, "0"));
 	}
 
 	/**
@@ -1030,8 +1064,16 @@ public class KCMSService extends Base {
 	 */
 	public PubMeta pubInfo(Long pid) {
 
-		// 根据id找到行业门类、模板类型 用于前端展示
+		
 		ContModelDto contBody = this.pubService.queryContModel(pid);
+
+		if (contBody == null)
+			return null;
+
+		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+
+			return null;
+		}
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
 		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
@@ -1074,7 +1116,7 @@ public class KCMSService extends Base {
 	private void termAndTagFromPub(PubMeta pub, Long pid) {
 		List<Term> termsType = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.CATEGORY.toString());
 		// 分类目录
-		List<SelectOption> termTypeIds = termsType.parallelStream().map(t -> new SelectOption(t.getName(), t.getTermTypeId().toString())).collect(Collectors.toList());
+		List<SelectOption> termTypeIds = termsType.parallelStream().map(t -> SelectOption.of(t.getName(), t.getTermTypeId().toString())).collect(Collectors.toList());
 		pub.setTermTypeIds(termTypeIds);
 		// 标签
 		List<Term> terms = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.TAG.toString());
@@ -1083,12 +1125,14 @@ public class KCMSService extends Base {
 		pub.setTagIds(tagIds);
 	}
 
-	public boolean isSameIndustryType(List<Long> termTypeIds) {
-		return this.termService.isSameIndustryType(termTypeIds);
+	public boolean isValidTerm(List<Long> termTypeIds) {
+		return this.termService.isValidTerm(termTypeIds);
 	}
 
-	public boolean isSameIndustryType(List<Long> termTypeIds, Long pubId) {
-		ContModelDto pub = this.pubService.queryContModel(pubId);
-		return this.termService.isSameIndustryType(termTypeIds, pub.getIndustryId());
+	public boolean isSamePubTypeStruct(Long id, String pubType) {
+		KPubs pub = this.pubService.findById(id);
+		if (PubTypeEnum.isSingle(pub.getPubType()))
+			return PubTypeEnum.isSingle(pubType);
+		return PubTypeEnum.isComplex(pubType);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -42,17 +42,9 @@ public class Pub {
 
 	private String pubName;
 
-	private String pingStatus;
-
-	private String toPing;
-
-	private String pinged;
-
 	private Long parentId;
 
 	private String pubType;
-
-	private String industryType;
 
 	private Long domainId;
 
@@ -146,30 +138,6 @@ public class Pub {
 		this.pubName = pubName;
 	}
 
-	public String getPingStatus() {
-		return pingStatus;
-	}
-
-	public void setPingStatus(String pingStatus) {
-		this.pingStatus = pingStatus;
-	}
-
-	public String getToPing() {
-		return toPing;
-	}
-
-	public void setToPing(String toPing) {
-		this.toPing = toPing;
-	}
-
-	public String getPinged() {
-		return pinged;
-	}
-
-	public void setPinged(String pinged) {
-		this.pinged = pinged;
-	}
-
 	public Long getParentId() {
 		return parentId;
 	}
@@ -184,14 +152,6 @@ public class Pub {
 
 	public void setPubType(String pubType) {
 		this.pubType = pubType;
-	}
-
-	public String getIndustryType() {
-		return industryType;
-	}
-
-	public void setIndustryType(String industryType) {
-		this.industryType = industryType;
 	}
 
 	public Long getDomainId() {

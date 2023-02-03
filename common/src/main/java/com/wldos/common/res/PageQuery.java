@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -135,10 +135,8 @@ public class PageQuery {
 	 * @param key 参数key
 	 * @param value 参数过滤值集合
 	 */
-	public void pushFilter(String key, List<Object> value) {
-		if (this.filter == null)
-			this.filter = new HashMap<>();
-		this.filter.put(key, value);
+	public <T> void pushFilter(String key, List<T> value) {
+		this.pushFilter(key, value.toArray());
 	}
 
 	/**

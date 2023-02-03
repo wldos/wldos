@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -17,16 +17,16 @@ package com.wldos.common;
  */
 public final class Constants {
 	/** 生成树根虚节点 */
-	public static final long TOP_VIR_ID = 11l;
+	public static final long TOP_VIR_ID = 11L;
 
 	/** 顶级组织ID，即平台组织ID */
-	public static final long TOP_ORG_ID = 0l;
+	public static final long TOP_ORG_ID = 0L;
 
 	/** 顶级体系ID，即平台体系结构ID */
-	public static final long TOP_ARCH_ID = 0l;
+	public static final long TOP_ARCH_ID = 0L;
 
 	/** 顶级公司ID，即平台主体ID */
-	public static final long TOP_COM_ID = 0l;
+	public static final long TOP_COM_ID = 0L;
 
 	/** 顶级公司编码，即平台主体编码 */
 	public static final String TOP_COM_CODE = "platform";
@@ -35,24 +35,27 @@ public final class Constants {
 	public static final String TOP_COM_NAME = "平台";
 
 	/** 游客ID约定为0 */
-	public static final Long GUEST_ID = 0l;
+	public static final Long GUEST_ID = 0L;
 
 	/** 菜单根节点ID即资源根节点 */
-	public static final long MENU_ROOT_ID = 0l;
+	public static final long MENU_ROOT_ID = 0L;
 
-	public static final long TOP_ROLE_ID = 0l;
+	public static final long TOP_ROLE_ID = 0L;
 
 	/** 顶级行政区划ID，即中国 */
-	public static final long TOP_REGION_ID = 0l;
+	public static final long TOP_REGION_ID = 0L;
 
 	/** 顶级分类ID，即无 */
-	public static final long TOP_TERM_ID = 0l;
+	public static final long TOP_TERM_ID = 0L;
 
 	/** 顶级评论ID */
-	public static final long TOP_COMMENT_ID = 0l;
+	public static final long TOP_COMMENT_ID = 0L;
+
+	/** 顶级发布ID */
+	public static final long TOP_PUB_ID = 0L;
 
 	/** 系统用户ID,用于初始化系统基础数据或者创建新用户时充当操作人 */
-	public static final long SYSTEM_USER_ID = 0l;
+	public static final long SYSTEM_USER_ID = 0L;
 	/** 枚举值：平台专用应用类型 */
 	public static final String ENUM_TYPE_APP_PLAT = "platform";
 	/** 枚举值：平台专用系统用户组类型 */

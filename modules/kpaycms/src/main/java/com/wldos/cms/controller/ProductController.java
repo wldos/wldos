@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -54,14 +54,13 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看某大类下的付费内容信息存档
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@GetMapping("product/{industryType}")
-	public PageableResult<PubUnit> productArchives(@PathVariable String industryType, @RequestParam Map<String, Object> params) {
+	@GetMapping("product")
+	public PageableResult<PubUnit> productArchives(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -72,15 +71,15 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看某目录下的付费内容信息存档
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
+	 
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@GetMapping("product/{industryType}/category/{slugCategory}")
-	public PageableResult<PubUnit> productCategory(@PathVariable String industryType, @PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
+	@GetMapping("product/category/{slugCategory}")
+	public PageableResult<PubUnit> productCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("industryType", industryType);
+		
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -91,12 +90,12 @@ public class ProductController extends NoRepoController {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 * @param industryType 行业门类，用于隔离业务领域
+	 
 	 * @param xxTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */
-	@GetMapping("product/{industryType}/tag/{xxTag}")
-	public String productTag(@PathVariable String industryType, @PathVariable String xxTag) {
+	@GetMapping("product/tag/{xxTag}")
+	public String productTag(@PathVariable String xxTag) {
 
 		return this.resJson.ok("");
 	}

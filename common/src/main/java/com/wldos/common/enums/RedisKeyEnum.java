@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -30,8 +30,8 @@ public enum RedisKeyEnum {
 	WLDOS_DOMAIN("wldos:domain"),
 	/** 多域系统资源 */
 	WLDOS_DOMAIN_RES("wldos:dom:res"),
-	/** 业务模型行业门类，用来定义具体的业务对象大类 */
-	WLDOS_INDUSTRY("wldos:industry"),
+	/** 内容发布类型 */
+	WLDOS_PUB_TYPE("wldos:pub:type"),
 	/** 分类目录，某个行业门类的具体分类法 */
 	WLDOS_TERM("wldos:term"),
 	/** 分类目录扁平树状结构 */

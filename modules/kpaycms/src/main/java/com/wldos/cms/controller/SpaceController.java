@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2022 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
  * Licensed under the AGPL or a commercial license.
  * For AGPL see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
@@ -22,6 +22,7 @@ import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.vo.PubUnit;
+import com.wldos.common.Constants;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
 import com.wldos.cms.service.SpaceService;
@@ -82,6 +83,7 @@ public class SpaceController extends NoRepoController {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", this.getCurUserId());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		pageQuery.pushFilter("parentId", Constants.TOP_PUB_ID); // 父id为0的都是主类型
 		this.applyDomainFilter(pageQuery);
 
 		return this.kcmsService.queryWorksList(pageQuery);
@@ -127,8 +129,8 @@ public class SpaceController extends NoRepoController {
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
 		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isSameIndustryType(termTypeIds))
-			return this.resJson.ok("error", "不能超出创建时所选大类");
+		if (!this.kcmsService.isValidTerm(termTypeIds))
+			return this.resJson.ok("error", "使用了不可识别的分类数据");
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null ) {
@@ -144,7 +146,7 @@ public class SpaceController extends NoRepoController {
 		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.BOOK.getName(), this.getCurUserId(), this.getUserIp());
+		Long id = this.kcmsService.insertSelective(pub, pub.getPubType(), this.getCurUserId(), this.getUserIp());
 		return this.resJson.ok("id", id);
 	}
 
