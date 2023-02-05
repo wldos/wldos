@@ -53,7 +53,7 @@ public class StarService extends BaseService<StarRepo, KStars, Long> {
 		KStars stars = this.entityRepo.queryStarByObjectIdAndUserId(objId, userId);
 		if (stars == null) {
 			// 生成点赞记录
-			stars = new KStars(this.nextId(), objId, userId, ValidStatusEnum.VALID.toString(), null);
+			stars = KStars.of(this.nextId(), objId, userId, ValidStatusEnum.VALID.toString(), null);
 			this.insertSelective(stars);
 			return 1;
 		}
@@ -79,7 +79,7 @@ public class StarService extends BaseService<StarRepo, KStars, Long> {
 		KStars stars = this.entityRepo.queryStarByObjectIdAndUserId(objId, userId);
 		if (stars == null) {
 			// 生成关注记录
-			stars = new KStars(this.nextId(), objId, userId, null, ValidStatusEnum.VALID.toString());
+			stars = KStars.of(this.nextId(), objId, userId, null, ValidStatusEnum.VALID.toString());
 			this.insertSelective(stars);
 			return 1;
 		}

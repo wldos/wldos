@@ -36,7 +36,10 @@ public class KStars {
 	public KStars() {
 	}
 
-	public KStars(Long id, Long objectId, Long userId, String stars, String likes) {
+	public static KStars of(Long id, Long objectId, Long userId, String stars, String likes) {
+		return new KStars(id, objectId, userId, stars, likes);
+	}
+	private KStars(Long id, Long objectId, Long userId, String stars, String likes) {
 		this.id = id;
 		this.objectId = objectId;
 		this.userId = userId;

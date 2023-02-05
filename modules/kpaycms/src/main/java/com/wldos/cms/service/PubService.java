@@ -618,10 +618,11 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	/**
 	 * 发布元素，元素只有继承作品发布状态，没有独立的发布状态
 	 *
-	 * @param pub 发布内容
+	 * @param pId 发布内容id
+	 * @param pubType 发布类型
 	 */
-	public void publishPub(AuditPub pub) {
-		this.entityRepo.changePubStatus(pub.getId(), PubStatusEnum.INHERIT.toString());
+	public void publishPub(Long pId, String pubType) {
+		this.entityRepo.changePubStatus(pId, PubTypeEnum.isSub(pubType) ? PubStatusEnum.INHERIT.toString() : PubStatusEnum.PUBLISH.toString());
 	}
 
 	/**

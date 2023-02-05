@@ -84,8 +84,8 @@ public class SpaceService extends Base {
 	public Chapter createChapter(Pub chapter, Long curUserId, String userIp) {
 		chapter.setPubTitle(DateUtils.format(new Date(), DateUtils.TIME_PATTER));
 
-		// 刚新建的内容为草稿状态，申请发布时改为待审核，属于可信者用户组的会员跳过审核直接发布
-		chapter.setPubStatus(this.pubService.isCanTrust(curUserId) ? PubStatusEnum.INHERIT.toString() : PubStatusEnum.AUTO_DRAFT.toString());
+		// 元素直接发布，为继承状态，作品不发布元素不会被读取
+		chapter.setPubStatus(PubStatusEnum.INHERIT.toString());
 		chapter.setPubType(PubTypeEnum.CHAPTER.getName());
 		Long id = this.insertChapter(chapter, curUserId, userIp);
 

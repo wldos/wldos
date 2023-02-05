@@ -135,17 +135,17 @@ public class InfoService extends Base {
 	 * 查询供求信息详情
 	 *
 	 * @param pid 信息id
+	 * @param isPreview 是否预览
 	 * @return 供求信息
 	 */
-	public Info infoDetail(Long pid) {
+	public Info infoDetail(Long pid, boolean isPreview) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
-
 		
 		ContModelDto contBody = this.pubService.queryContModel(pid);
 		if (contBody == null)
 			return null;
 
-		if (this.kcmsService.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+		if (!isPreview && this.kcmsService.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
 			return null;
 		}
 

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.controller.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.common.Constants;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.enums.PrivacyLevelEnum;
@@ -75,7 +76,19 @@ public class InfoController extends NoRepoController {
 	 */
 	@GetMapping("info-{pid:\\d+}.html")
 	public Info info(@PathVariable Long pid) {
-		return this.infoService.infoDetail(pid);
+		return this.infoService.infoDetail(pid, false);
+	}
+
+	/**
+	 * 查看信息（预览模式）
+	 *
+	 * @param id 信息id
+	 * @param preview 预览参数
+	 * @return 当前信息
+	 */
+	@GetMapping("info-{id:[0-9]+}/preview")
+	public Info previewInfo(@PathVariable Long id) {
+		return this.infoService.infoDetail(id, true);
 	}
 
 	/**
@@ -131,7 +144,7 @@ public class InfoController extends NoRepoController {
 	}
 
 	/**
-	 * 查看作者的信息(支持供求信息、作品)
+	 * 查看作者的信息或个人中心的作品列表(支持供求信息、作品)
 	 *
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
@@ -141,6 +154,7 @@ public class InfoController extends NoRepoController {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", userId);
+		pageQuery.pushParam("parentId", Constants.TOP_PUB_ID); // 查询作者的主类型发布：信息或其他作品
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);

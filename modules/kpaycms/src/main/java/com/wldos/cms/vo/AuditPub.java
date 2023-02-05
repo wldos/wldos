@@ -27,6 +27,8 @@ public class AuditPub {
 
 	private String pubTitle;
 
+	private String pubType;
+
 	private Timestamp updateTime;
 
 	private Long createBy;
@@ -66,6 +68,14 @@ public class AuditPub {
 
 	public void setPubTitle(String pubTitle) {
 		this.pubTitle = pubTitle;
+	}
+
+	public String getPubType() {
+		return pubType;
+	}
+
+	public void setPubType(String pubType) {
+		this.pubType = pubType;
 	}
 
 	public Timestamp getUpdateTime() {

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.wldos.base.controller.RepoController;
 import com.wldos.cms.entity.KPubs;
+import com.wldos.common.Constants;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.AuditPub;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin/cms/pub")
 @RestController
 public class PubController extends RepoController<PubService, KPubs> {
+
 	/**
 	 * 作品元素列表，作品内的章节、剧集或附件等
 	 *
@@ -61,7 +63,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("parentId", 0L);
+		pageQuery.pushParam("parentId", Constants.TOP_PUB_ID);
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 
@@ -93,7 +95,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 	 */
 	@PostMapping("publish")
 	public Boolean publishPost(@RequestBody AuditPub pub) {
-		this.service.publishPub(pub);
+		this.service.publishPub(pub.getId(), pub.getPubType());
 		return Boolean.TRUE;
 	}
 

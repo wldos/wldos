@@ -281,16 +281,16 @@ public class KCMSService extends Base {
 	 * 查询详情页信息
 	 *
 	 * @param pid 产品id
+	 * @param isPreview 是否预览
 	 * @return 产品信息
 	 */
-	public Product productInfo(Long pid) {
+	public Product productInfo(Long pid, boolean isPreview) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
-		
 		ContModelDto contBody = this.pubService.queryContModel(pid);
 		if (contBody == null)
 			return null;
 
-		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+		if (!isPreview && this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
 			return null;
 		}
 
@@ -536,14 +536,14 @@ public class KCMSService extends Base {
 				String contentFix = content.substring(index);
 				String width = contentFix.substring(contentFix.indexOf("width="),
 						contentFix.indexOf("height=")).trim().replace("width=\"", "").replace("\"", "");
+				width = ObjectUtils.isBlank(width) ? String.valueOf(picture.getWidth()) : width;
 
 				String srcset = String.format(template, url, picture.getWidth(), url300, thumbnails.get(0).getWidth(),
-						url768, thumbnails.get(2).getWidth(), url1024, thumbnails.get(1).getWidth(),
-						ObjectUtils.isBlank(width) ? picture.getWidth() : width);
+						url768, thumbnails.get(2).getWidth(), url1024, thumbnails.get(1).getWidth(), width, width);
 
 				content = contentPre + contentFix.replaceFirst("/>", srcset + "/>");
 			}
-			catch (JsonProcessingException e) {
+			catch (Exception e) { // 非核心业务任何异常就地捕获，不影响内容的输出
 				e.printStackTrace();
 			}
 		}
@@ -596,15 +596,8 @@ public class KCMSService extends Base {
 		// 创建附件元数据
 		Map<String, Object> objectMap = ObjectUtils.toMap(attach);
 		List<KPubmeta> pubMetas =
-				objectMap.entrySet().parallelStream().map(entry -> {
-					KPubmeta pubMeta = new KPubmeta();
-					pubMeta.setId(this.nextId());
-					pubMeta.setPubId(pub.getId());
-					pubMeta.setMetaKey(entry.getKey());
-					pubMeta.setMetaValue(entry.getValue().toString());
-
-					return pubMeta;
-				}).collect(Collectors.toList());
+				objectMap.entrySet().parallelStream().map(entry ->
+						KPubmeta.of(this.nextId(), pub.getId(), entry.getKey(), entry.getValue().toString())).collect(Collectors.toList());
 
 		this.pubService.insertSelective(pub);
 
@@ -840,9 +833,10 @@ public class KCMSService extends Base {
 	 * 查询篇章信息
 	 *
 	 * @param pid 发布内容id
+	 * @param isPreview 是否预览
 	 * @return 篇章实体
 	 */
-	public Article queryArticle(Long pid) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
+	public Article queryArticle(Long pid, boolean isPreview) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
 		//@todo 已删除或发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
 
 		ContModelDto contBody = this.pubService.queryContModel(pid);
@@ -850,7 +844,7 @@ public class KCMSService extends Base {
 		if (contBody == null)
 			return null;
 
-		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+		if (!isPreview && this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
 			return null;
 		}
 
@@ -941,9 +935,10 @@ public class KCMSService extends Base {
 	 * 读取作品元素内容
 	 *
 	 * @param pid 元素发布内容id
+	 * @param isPreview 是否预览
 	 * @return 元素
 	 */
-	public Article readElement(Long pid) {
+	public Article readElement(Long pid, boolean isPreview) {
 		//@todo 检查付费设置，需要付费的灰色不可继续读取
 
 		ContModelDto contBody = this.pubService.queryContModel(pid);
@@ -951,7 +946,7 @@ public class KCMSService extends Base {
 		if (contBody == null)
 			return null;
 
-		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
+		if (!isPreview && this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
 			return null;
 		}
 

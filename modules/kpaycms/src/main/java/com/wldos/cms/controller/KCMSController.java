@@ -163,7 +163,7 @@ public class KCMSController extends NoRepoController {
 	}
 
 	/**
-	 * 查看作者的作品存档(单篇的文章、作品等)，与之对应的是查看作者的作品集见<code>ProductController</code>.
+	 * 查看作者的作品存档(主类型作品)
 	 *
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
@@ -181,25 +181,6 @@ public class KCMSController extends NoRepoController {
 	}
 
 	/**
-	 * 查看作者的作品存档(单篇的文章、作品等)，与之对应的是查看作者的作品集见<code>ProductController</code>.
-	 *
-	 * @param userId 作者用户id
-	 * @return 作者的内容存档页
-	 */
-	@GetMapping("archives/author/{userId:[0-9]+}.html")
-	public PageableResult<PubUnit> archivesAuthorByContType(@PathVariable String userId, @RequestParam Map<String, Object> params) {
-		//查询列表数据
-		PageQuery pageQuery = new PageQuery(params);
-		
-		pageQuery.pushParam("createBy", userId);
-		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
-		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
-
-		return this.kcmsService.queryArchivesDomain(pageQuery);
-	}
-
-	/**
 	 * 指定id查看内容，检查付费设置
 	 *
 	 * @param id 内容id
@@ -207,7 +188,18 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("archives-{id:[0-9]+}.html")
 	public Article archivesId(@PathVariable Long id) {
-		return this.kcmsService.queryArticle(id);
+		return this.kcmsService.queryArticle(id, false);
+	}
+
+	/**
+	 * 预览内容
+	 *
+	 * @param id 内容id
+	 * @return 当前内容
+	 */
+	@GetMapping("archives-{id:[0-9]+}/preview")
+	public Article previewArchive(@PathVariable Long id) {
+		return this.kcmsService.queryArticle(id, true);
 	}
 
 	/**
@@ -301,14 +293,24 @@ public class KCMSController extends NoRepoController {
 	}
 
 	/**
-	 * 文集阅读,指定id查看内容，检查付费设置
+	 * 读取作品的元素,指定id查看内容，检查付费设置
 	 *
 	 * @param id 元素内容id
 	 * @return 作品片段
 	 */
 	@GetMapping("element-{id:[0-9]+}")
 	public Article elementRead(@PathVariable Long id) {
-		return this.kcmsService.readElement(id);
+		return this.kcmsService.readElement(id, false);
+	}
+
+	/**
+	 * 预览元素
+	 *
+	 * @param id 内容id
+	 */
+	@GetMapping("element-{id:[0-9]+}/preview")
+	public Article previewElement(@PathVariable Long id) {
+		return this.kcmsService.readElement(id, true);
 	}
 
 	/**

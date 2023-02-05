@@ -176,6 +176,26 @@ public enum PubTypeEnum {
 	}
 
 	/**
+	 * 判断某发布类型是否子类型
+	 *
+	 * @param pubType 发布类型
+	 * @return 是否
+	 */
+	public static boolean isSub(String pubType) {
+		return PubTypeEnum.valueOfName(pubType).subType == null;
+	}
+
+	/**
+	 * 判断某发布类型是否主类型
+	 *
+	 * @param pubType 发布类型
+	 * @return 是否
+	 */
+	public static boolean isMainType(String pubType) {
+		return PubTypeEnum.valueOfName(pubType).subType != null;
+	}
+
+	/**
 	 * 通过小写name获取枚举
 	 *
 	 * @param name 枚举name属性

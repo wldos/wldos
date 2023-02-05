@@ -13,7 +13,6 @@ import java.util.Map;
 import com.wldos.base.controller.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
-import com.wldos.cms.vo.BookUnit;
 import com.wldos.cms.vo.Product;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -48,7 +47,15 @@ public class ProductController extends NoRepoController {
 	 */
 	@GetMapping("product-{pid:\\d+}.html")
 	public Product productInfo(@PathVariable Long pid) {
-		return this.kcmsService.productInfo(pid);
+		return this.kcmsService.productInfo(pid, false);
+	}
+
+	/**
+	 * 预览产品
+	 */
+	@GetMapping("product-{id:[0-9]+}/preview")
+	public Product previewProduct(@PathVariable Long id) {
+		return this.kcmsService.productInfo(id, true);
 	}
 
 	/**
