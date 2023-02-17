@@ -12,7 +12,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -129,7 +131,7 @@ public class HttpUtils {
 			log.info(RECEIVE_TEMPLATE, result);
 		}
 		catch (Exception e) {
-			log.error(logTemplate(e.getCause().toString()), url, param, e);
+			log.error(logTemplate(ObjectUtils.string(e.getCause())), url, param, e);
 		}
 
 		return result.toString();
@@ -153,7 +155,7 @@ public class HttpUtils {
 			return connection.getInputStream();
 		}
 		catch (Exception e) {
-			log.error(logTemplate(e.getCause().toString()), url, e);
+			log.error(logTemplate(ObjectUtils.string(e.getCause())), url, e);
 		}
 
 		return null;
@@ -185,7 +187,7 @@ public class HttpUtils {
 			log.info(RECEIVE_TEMPLATE, result);
 		}
 		catch (Exception e) {
-			log.error(logTemplate(e.getCause().toString()), url, e);
+			log.error(logTemplate(ObjectUtils.string(e.getCause())), url, e);
 		}
 
 		return result.toString();
@@ -198,35 +200,46 @@ public class HttpUtils {
 	 * 向指定 URL 发送POST方法的请求
 	 *
 	 * @param url 发送请求的 URL
-	 * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+	 * @param param 请求参数，请求参数应该是 contentType 的形式,默认a=v1&b=v2&c=v3形式。
+	 * @param contentType 请求头的参数内容类型
 	 * @return 所代表远程资源的响应结果
 	 */
-	public static String sendPost(String url, String param) {
+	public static String sendPost(String url, String param, String contentType) {
 
 		StringBuilder result = new StringBuilder();
 		try {
 			log.info(RECEIVE_TEMPLATE, url);
 			URL realUrl = new URL(url);
-			URLConnection conn = realUrl.openConnection();
+			HttpURLConnection conn = (HttpURLConnection) realUrl.openConnection();
 			conn.setRequestProperty(HttpHeaders.ACCEPT, "*/*");
+			conn.setRequestMethod("POST");
+			conn.setUseCaches(false);
 			conn.setRequestProperty(HttpHeaders.CONNECTION, KEEP_ALIVE);
 			conn.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
 			conn.setRequestProperty(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
-			conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, StandardCharsets.UTF_8.name());
+			conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, ObjectUtils.isBlank(contentType) ? "application/x-www-form-urlencoded": contentType);
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			PrintWriter out = new PrintWriter(conn.getOutputStream());
-			out.print(param);
+			// 自动执行重定向
+			conn.setInstanceFollowRedirects(true);
+			conn.connect();
+
+			OutputStream out = conn.getOutputStream();
+			out.write(param.getBytes(StandardCharsets.UTF_8));
 			out.flush();
+			out.close();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8.name()));
 			String line;
 			while ((line = in.readLine()) != null) {
 				result.append(line);
 			}
+			in.close();
 			log.info(RECEIVE_TEMPLATE, result);
+
+			conn.disconnect();
 		}
 		catch (Exception e) {
-			log.error(logTemplate(e.getCause().toString()), url, param, e);
+			log.error(logTemplate(ObjectUtils.string(e.getCause())), url, param, e);
 		}
 
 		return result.toString();
@@ -261,11 +274,11 @@ public class HttpUtils {
 				}
 			}
 			log.info(RECEIVE_TEMPLATE, result);
-			conn.disconnect();
 			br.close();
+			conn.disconnect();
 		}
 		catch (Exception e) {
-			log.error(logTemplate(e.getCause().toString()), url, param, e);
+			log.error(logTemplate(ObjectUtils.string(e.getCause())), url, param, e);
 		}
 
 		return result.toString();

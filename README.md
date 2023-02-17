@@ -4,7 +4,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">WLDOS云物互联驱动 - 内容付费系统</h3>
 <p align="center">
  <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.9" src="https://img.shields.io/badge/WLDOS-V1.9-deepskyblue.svg"></a>
- <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.5" src="https://img.shields.io/badge/SpringBoot-2.5-bluegreen.svg"></a>
+ <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
 </p>    
@@ -48,8 +48,8 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 
 ###技术说明
 语言：Java8、ReactJs17。
-框架：springboot2.4.6（支持升级到2.5）。  
-ORM：spring-data-jdbc2.1.9，连接池采用boot自带hikari。  
+框架：springboot2.7.8。  
+ORM：spring-data-jdbc2.7.8，连接池采用boot自带hikari。  
 前端：ReactJs17，AntD ProV4.5。  
 中间件：tomcat9（支持换成其他）。  
 辅助：自带cache、自带JWT、自带文件服务。

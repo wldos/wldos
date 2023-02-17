@@ -58,7 +58,7 @@ class InfoUtil {
 			pub = om.readValue(om.writeValueAsString(entity), new TypeReference<Pub>() {});
 
 		List<PubTypeExt> pubTypeExs = remain.entrySet().parallelStream()
-				.filter(entry -> ObjectUtils.isBlank(entry.getValue()))
+				.filter(entry -> !ObjectUtils.isBlank(entry.getValue()))
 				.map(entry -> PubTypeExt.of(entry.getKey(), entry.getValue().toString())).collect(Collectors.toList());
 
 		pub.setPubTypeExt(pubTypeExs);

@@ -93,35 +93,42 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, p.id term_type_id, p.class_type, p.description, p.parent_id, p.count from k_term_type p join k_terms a on p.term_id=a.id where a.slug=:slugTerm")
 	Term queryTermBySlugTerm(@Param("slugTerm") String slugTerm);
 
-	@Query("select count(1) from k_terms t where t.name=:name")
-	boolean existsSameTermByName(@Param("name") String name);
+	/**
+	 * 是否存在同名或同别名的分类项，仅用于新增
+	 *
+	 * @param name 分类项名称
+	 * @param slug 分类项别名
+ 	 * @return 是否存在
+	 */
+	@Query("select count(1) from k_terms t where t.name=:name or t.slug=:slug")
+	boolean existsTermBySlugOrName(@Param("name") String name, @Param("slug") String slug);
 
 	/**
-	 * 是否存在同名的其他分类项，用于更新时判断是否重名
+	 * 是否存在同名或同别名的其他分类项，用于更新时判断是否重名
 	 *
 	 * @param name 分类项名称
 	 * @param id 分类项id
 	 * @return 是否存在重名
 	 */
-	@Query("select count(1) from k_terms t where t.name=:name and t.id!=:id")
-	boolean existsSameTermByNameAndId(String name, Long id);
+	@Query("select count(1) from k_terms t where (t.name=:name or t.slug=:slug) and t.id!=:id")
+	boolean existsDifTermByNameOrSlugAndId( @Param("name") String name, @Param("slug") String slug, @Param("id") Long id);
 
 	/**
-	 * 根据分类项别名查询同名分类项是否已存在，若存在说明原样保存，不区分分类法，仅用于更新场景
-	 *
-	 * @param slug 分类或标签的别名
-	 */
-	@Query("select count(1) from k_terms t where t.slug=:slug and t.name=:name")
-	boolean existsSameTermBySlugAndName(@Param("slug") String slug, @Param("name") String name);
-
-	/**
-	 * 用于更新分类项或新增分类项时判断是否与其他分类项重名，不区分分类法，仅用于更新场景
+	 * 用于新增分类项时判断是否与其他分类项别名重复，不区分分类法，仅用于新增
 	 *
 	 * @param slug 分类或标签的别名
 	 * @param name 分类/标签名
 	 */
 	@Query("select count(1) from k_terms t where t.slug=:slug and t.name!=:name")
 	boolean existsDifTermBySlugAndName(@Param("slug") String slug, @Param("name") String name);
+
+	/**
+	 * 根据分类项别名查询同名分类项是否已存在，若存在说明原样保存，仅用于更新时降低性能损耗
+	 *
+	 * @param slug 分类或标签的别名
+	 */
+	@Query("select count(1) from k_terms t where t.slug=:slug and t.name=:name")
+	boolean existsSameTermBySlugAndName(@Param("slug") String slug, @Param("name") String name);
 
 	/**
 	 * 根据分类项类型id判断其下是否存在子分类

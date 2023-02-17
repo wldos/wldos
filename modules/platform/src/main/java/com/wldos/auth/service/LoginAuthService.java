@@ -233,7 +233,7 @@ public class LoginAuthService extends Base {
 
 		// 发激活邮件到注册邮箱，受全局配置开关控制，邮箱注册激活开关，用id、loginName、createTime创建verify token
 		if (this.isEmailAction) {
-			String actUrl = this.reqProtocol+"://"+this.wldosDomain+"/user/active/verify="+user.getId();
+			String actUrl = this.reqProtocol+"://"+this.userService.getDomainUrlById(domainId)+"/user/active/verify="+user.getId();
 			String activeEmail = "<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/>"
 					+ "<title>账户激活</title></head><body>"
 					+ "您好，这是验证邮件，请点击下面的链接完成验证，</body></html>"

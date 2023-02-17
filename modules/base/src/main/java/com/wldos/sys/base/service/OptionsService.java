@@ -36,6 +36,7 @@ public class OptionsService  extends BaseService<OptionsRepo, WoOptions, Long> {
 	 * @return 配置属性
 	 */
 	public String findSettingsByKey(String key) {
+		// 配置应进缓存 todo 根据key值设置 修改此配置项时删掉对应key的缓存
 		List<WoOptions> optionsList = this.entityRepo.findAllByOptionKey(key);
 		if (ObjectUtils.isBlank(optionsList))
 			return "";

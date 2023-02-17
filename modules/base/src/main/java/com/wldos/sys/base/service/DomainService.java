@@ -267,22 +267,16 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 	}
 
 	/**
-	 * 根据域名取回域信息，不处理logo
+	 * 根据请求域名取回对应的主域信息，不处理logo
 	 *
-	 * @param domain 域名
+	 * @param domain 请求头域名
 	 * @return 域信息
 	 */
 	public WoDomain queryDomainByName(String domain) {
 		List<WoDomain> domains = this.queryAllDomain();
-		for (WoDomain d : domains) {
-			if (d.getSiteDomain().equals(domain)) {
-				return d;
-			}
-			String cnameDomain = d.getCnameDomain();
-			if (ObjectUtils.isBlank(cnameDomain))
-				continue;
-			String[] cname = cnameDomain.split(",");
-			if (Arrays.asList(cname).contains(domain)) { // 根据别名域名返回主域名
+		for (WoDomain d : domains) { // 主域名、个性域名和别名 都匹配到主域名
+			if (d.getSiteDomain().equals(domain) || ("www." + d.getSiteDomain()).equals(domain) ||
+					(d.getSecondDomain()+"."+this.getPlatDomain()).equals(domain) || (","+d.getCnameDomain()+",").contains(","+domain+",")) {
 				return d;
 			}
 		}

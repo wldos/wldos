@@ -11,6 +11,7 @@ package com.wldos.sys.base.service;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.BoolEnum;
+import com.wldos.common.vo.TreeNode;
 import com.wldos.sys.base.dto.Term;
 import com.wldos.sys.base.dto.TermObject;
 import com.wldos.sys.base.enums.TermTypeEnum;
@@ -262,7 +264,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 				// 全站分类树，为了规避不需要在门户展现的分类过滤
 				List<Category> viewNodes = allTerms.parallelStream().filter(v -> BoolEnum.YES.toString().equals(v.getInfoFlag()))
 						.map(res ->
-						Category.of(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug())).collect(Collectors.toList());
+						Category.of(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getDisplayOrder())).collect(Collectors.toList());
 
 				viewNodes = TreeUtils.buildFlatTree(viewNodes, Constants.TOP_TERM_ID);
 				// 没有孩子的无效，过滤掉
@@ -305,12 +307,12 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 				// 全站分类树
 				List<TreeSelectOption> infoCats = allTerms.parallelStream().map(term -> {
 					Long termTypeId = term.getTermTypeId();
-					return TreeSelectOption.of(termTypeId, term.getParentId(), term.getName(), termTypeId.toString(), termTypeId.toString());
+					return TreeSelectOption.of(termTypeId, term.getParentId(), term.getName(), termTypeId.toString(), termTypeId.toString(), term.getDisplayOrder());
 				}).collect(Collectors.toList());
 
 				String topTermId = String.valueOf(Constants.TOP_TERM_ID);
 				// 新增根分类
-				TreeSelectOption infoCate = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根分类", topTermId, topTermId);
+				TreeSelectOption infoCate = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根分类", topTermId, topTermId, 0L);
 
 				infoCats.add(0, infoCate);
 
@@ -344,15 +346,23 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	public List<Category> queryCategoriesFromPid(Long parentId) {
 		List<LevelNode> nodes = this.queryTermTreeByParentId(parentId);
 		// 分类类型id用于从对象分类关联表[存档]中作筛选分类条件，filter: termTypeIds ? {termTypeId: termTypeIds} : {}
-		List<Long> typeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
+		List<Long> typeIds = nodes.stream().map(LevelNode::getId).collect(Collectors.toList());
 		if (ObjectUtils.isBlank(typeIds))
 			return new ArrayList<>();
 		List<Term> terms = this.entityRepo.queryAllTermsByTermTypeIds(typeIds);
 		if (terms == null)
 			return new ArrayList<>();
 
-		return terms.parallelStream().map(res ->
-				Category.of(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug())).collect(Collectors.toList());
+		// 排序
+		return terms.stream().map(res -> {
+			Category c = Category.of(res.getTermTypeId(), res.getParentId(), res.getName(), res.getTermTypeId().toString(), res.getSlug(), res.getDisplayOrder());
+			if (c.getId().equals(parentId)) { // 父节点居首位
+				c.setDisplayOrder(0L);
+			}
+			return c;
+		}).sorted(Comparator.nullsLast(
+				Comparator.comparing(
+						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo)))).collect(Collectors.toList());
 	}
 
 	/**
@@ -363,9 +373,11 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 */
 	public List<Category> queryCategoriesFromPlug(String slugTerm) {
 		Term term = this.entityRepo.queryTermBySlugTerm(slugTerm);
+		if (term == null)
+			return new ArrayList<>();
 		List<LevelNode> nodes = this.queryTermTreeByParentId(term.getTermTypeId());
 		// 分类类型id用于从对象分类关联表[存档]中作筛选分类条件，filter: termTypeIds ? {termTypeId: termTypeIds} : {}
-		List<Long> typeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
+		List<Long> typeIds = nodes.stream().map(LevelNode::getId).collect(Collectors.toList());
 		if (ObjectUtils.isBlank(typeIds))
 			return new ArrayList<>();
 
@@ -373,8 +385,16 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 		if (terms == null)
 			return new ArrayList<>();
 
-		return terms.parallelStream().map(res ->
-				Category.of(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug())).collect(Collectors.toList());
+		// 排序
+		return terms.stream().map(res -> {
+			Category c = Category.of(res.getTermTypeId(), res.getParentId(), res.getName(), res.getTermTypeId().toString(), res.getSlug(), res.getDisplayOrder());
+			if (c.getId().equals(term.getTermTypeId())) { // 父节点居首位
+				c.setDisplayOrder(0L);
+			}
+			return c;
+		}).sorted(Comparator.nullsLast(
+				Comparator.comparing(
+						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo)))).collect(Collectors.toList());
 	}
 
 	/**
@@ -384,7 +404,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 */
 	public List<SelectOption> queryTopCategories() {
 		List<Term> terms = this.findAllCategory();
-		return terms.parallelStream().filter(t -> t.getParentId().equals(Constants.TOP_TERM_ID)).map(term -> SelectOption.of(term.getName(), term.getSlug())).collect(Collectors.toList());
+		return terms.parallelStream().filter(t -> t.getParentId().equals(Constants.TOP_TERM_ID)).map(term -> SelectOption.of(term.getName(), term.getTermTypeId().toString())).collect(Collectors.toList());
 	}
 
 	/**
@@ -531,8 +551,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 */
 	public String addTerm(Term term, Long userId, String userIp) {
 
-		if (this.entityRepo.existsSameTermByName(term.getName())
-				|| this.entityRepo.existsDifTermBySlugAndName(term.getSlug(), term.getName()))
+		if (this.entityRepo.existsTermBySlugOrName(term.getName(), term.getSlug()))
 			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
 
 		// 新增term
@@ -557,8 +576,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 * @param userIp 操作人ip
 	 */
 	public String updateTerm(Term term, Long userId, String userIp) {
-		if (this.entityRepo.existsSameTermByNameAndId(term.getName(), term.getId())
-				|| this.entityRepo.existsDifTermBySlugAndName(term.getSlug(), term.getName()))
+		if (this.entityRepo.existsDifTermByNameOrSlugAndId(term.getName(), term.getSlug(), term.getId()))
 			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
 		KTerms kTerms = new KTerms();
 		this.termCopier.copy(term, kTerms, null);
@@ -814,7 +832,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	 */
 	public List<LevelNode> queryTermTreeByParentId(Object pId) { // 可以改造为从所有分类的缓存中使用搜索算法查找，需要比较性能再取舍
 		String table = "k_term_type";
-		String key = RedisKeyEnum.WLDOS_TERM.toString() + table + pId + ":child";
+		String key = RedisKeyEnum.WLDOS_TERM + table + pId + ":child";
 		String value = ObjectUtils.string(this.cache.get(key));
 
 		try {
@@ -956,19 +974,22 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	@Value("${wldos.cms.tag.tagLength}")
 	private int tagLength;
 
-	public String existsAndDifSlugByTermSlug(String slug, String name) {
+	/*
+	 * 新增标签时系统已存在别名则自动加1去重
+	 */
+	private String existsAutoDifSlugBySlugAndName(String slug, String name) {
 		// 同名标签且别名相同，保持原样
 		if (this.entityRepo.existsSameTermBySlugAndName(slug, name))
 			return slug;
 		// 不同标签，别名冲突，必须处理
 		if (this.entityRepo.existsDifTermBySlugAndName(slug, name))
 			// 存在，自动加1再判断
-			return existsAndDifSlugByTermSlug(slug + "1", name);
+			return existsAutoDifSlugBySlugAndName(slug + "1", name);
 		// 不重复的别名
 		return slug;
 	}
 
-	// 到这里来的都是库里不存在的标签，但是自动生成的拼音别名可能是重复的
+	// 到这里来的都是库里名字不存在的标签，但是自动生成的拼音别名可能是重复的
 	private List<Long> addNewTags(List<String> tagNames, Long userId, String userIp) {
 		List<Term> newTerms = tagNames.stream().map(n -> {
 			// 标签超长，抛弃
@@ -977,7 +998,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 				return null;
 			}
 			// 别名存在的标签，别名自动加1消除冲突
-			String slug = this.existsAndDifSlugByTermSlug(ChineseUtils.hanZi2Pinyin(n, true), n);
+			String slug = this.existsAutoDifSlugBySlugAndName(ChineseUtils.hanZi2Pinyin(n, true), n);
 
 			Long id = this.nextId();
 			return Term.of(id, id, TermTypeEnum.TAG.toString(), Constants.TOP_TERM_ID, n, slug);

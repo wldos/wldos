@@ -180,7 +180,8 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 		List<Object> params = new ArrayList<>(); // 参数寄存器
 
 		// 子表动态存在,分类按过滤，标签不分层
-		if (condition.containsKey("termTypeId") || (filter != null && filter.containsKey("termTypeId"))) {
+		Object tId = condition.get("termTypeId");
+		if (!ObjectUtils.isBlank(tId) || (filter != null && filter.containsKey("termTypeId"))) {
 			String cAlias = "o";
 			String baseExistsSql = this.commonOperate.makeBaseExistsSql("k_term_object", cAlias, "p", "object_id");
 
@@ -188,15 +189,17 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 		}
 
 		// 自定义动态存在
-		if (condition.containsKey(KModelMetaKey.PUB_META_KEY_CITY)) {
+		Object city = condition.get(KModelMetaKey.PUB_META_KEY_CITY);
+		if (!ObjectUtils.isBlank(city)) {
 			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_CITY + "' and m.meta_value=?)";
-			params.add(condition.get(KModelMetaKey.PUB_META_KEY_CITY));
+			params.add(city);
 			sqlNoWhere += baseExistsSql;
 		}
 
-		if (condition.containsKey(KModelMetaKey.PUB_META_KEY_PROV)) {
+		Object prov = condition.get(KModelMetaKey.PUB_META_KEY_PROV);
+		if (!ObjectUtils.isBlank(prov)) {
 			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_PROV + "' and m.meta_value=?)";
-			params.add(condition.get(KModelMetaKey.PUB_META_KEY_PROV));
+			params.add(prov);
 			sqlNoWhere += baseExistsSql;
 		}
 
@@ -660,6 +663,7 @@ public class PubService extends BaseService<PubRepo, KPubs, Long> {
 	 * @return 不重复的别名
 	 */
 	public String existsAutoDiffPubName(String pubName, Long pubId) {
+		// 先判断当前记录是否没有修改别名，避免执行后面的性能消耗
 		if (this.entityRepo.existsPubNameByNameAndId(pubName, pubId))
 			return pubName;
 		if (this.entityRepo.existsDifPubByNameAndId(pubName, pubId))

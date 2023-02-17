@@ -9,7 +9,6 @@
 package com.wldos.sys.core.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ import com.wldos.base.service.BaseService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
-import com.wldos.common.utils.http.HttpUtils;
 import com.wldos.support.storage.vo.FileInfo;
 import com.wldos.sys.base.dto.MenuAndRoute;
 import com.wldos.auth.vo.Login;
@@ -480,6 +478,17 @@ public class UserService extends BaseService<UserRepo, WoUser, Long> {
 		WoDomain woDomain = this.domainService.findByDomain(domain);
 
 		return ObjectUtils.string(woDomain.getSlogan());
+	}
+
+	/**
+	 * 根据域id返回域的url
+	 *
+	 * @param domainId 域id
+	 * @return seo信息
+	 */
+	public String getDomainUrlById(Long domainId) {
+		WoDomain woDomain = this.domainService.findById(domainId);
+		return woDomain.getSiteUrl();
 	}
 
 	public void accountConfig(AccSecurity sec, Long curUserId) {

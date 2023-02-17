@@ -23,6 +23,7 @@ import com.wldos.cms.enums.MIMETypeEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.Constants;
+import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.model.Attachment;
 import com.wldos.cms.service.SpaceService;
@@ -128,9 +129,12 @@ public class SpaceController extends NoRepoController {
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
-		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isValidTerm(termTypeIds))
-			return this.resJson.ok("error", "使用了不可识别的分类数据");
+		List<SelectOption> typeIds = pub.getTermTypeIds();
+		if (typeIds != null) {
+			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
+			if (!this.kcmsService.isValidTerm(termTypeIds))
+				return this.resJson.ok("error", "使用了不可识别的分类数据");
+		}
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null ) {

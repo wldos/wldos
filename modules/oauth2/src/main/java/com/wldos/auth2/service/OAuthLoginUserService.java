@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class OAuthLoginUserService extends BaseService<OAuthLoginUserRepo, WoOauthLoginUser, Long> {
-	private final BeanCopier oAuthUserCopier = BeanCopier.create(OAuthUser.class, WoOauthLoginUser.class, false);
 
 	public WoOauthLoginUser findByUnionId(String openId, String unionId) {
 		// 查询是否已存在授权用户
@@ -38,8 +37,10 @@ public class OAuthLoginUserService extends BaseService<OAuthLoginUserRepo, WoOau
 
 	public WoOauthLoginUser createOAuthLoginUser(WoUser woUser, OAuthUser oAuthUser) {
 		WoOauthLoginUser oauthLoginUser = new WoOauthLoginUser();
-		oAuthUserCopier.copy(oAuthUser, oauthLoginUser, null);
 		oauthLoginUser.setUserId(woUser.getId());
+		oauthLoginUser.setOauthType(oAuthUser.getOauthType());
+		oauthLoginUser.setOpenId(oAuthUser.getOpenId());
+		oauthLoginUser.setUnionId(oAuthUser.getUnionId());
 		EntityAssists.beforeInsert(oauthLoginUser, this.nextId(), woUser.getId(), woUser.getCreateIp(), true);
 		this.save(oauthLoginUser);
 

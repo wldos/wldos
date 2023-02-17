@@ -57,7 +57,7 @@ public class KCMSController extends NoRepoController {
 	 * @param params 请求参数
 	 * @return 分页数据
 	 */
-	@GetMapping("/")
+	@GetMapping("")
 	public PageableResult<PubUnit> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);

@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +23,14 @@ import com.wldos.auth.vo.Login;
 import com.wldos.auth.vo.Register;
 import com.wldos.auth2.entity.WoOauthLoginUser;
 import com.wldos.auth2.model.AccessTokenEntity;
+import com.wldos.auth2.model.AccessTokenQQ;
+import com.wldos.auth2.model.AccessTokenWeibo;
 import com.wldos.auth2.model.OAuthConfig;
 import com.wldos.auth2.model.OAuthUser;
+import com.wldos.auth2.model.OAuthUserQQ;
+import com.wldos.auth2.model.OAuthUserWechat;
+import com.wldos.auth2.model.OAuthUserWeibo;
+import com.wldos.auth2.model.OpenIdQQ;
 import com.wldos.auth2.vo.OAuthLoginParams;
 import com.wldos.base.Base;
 import com.wldos.common.Constants;
@@ -39,6 +44,7 @@ import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
 import com.wldos.sys.base.dto.Tenant;
 import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.sys.base.enums.OAuthTypeEnum;
 import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.base.service.OptionsService;
 import com.wldos.sys.core.entity.WoUser;
@@ -127,31 +133,20 @@ public class OAuthService extends Base {
 			}
 		}
 
-		String settings = this.optionsService.findSettingsByKey(this.genOAuthSettingsKey(oAuthLoginParams.getAuthType()));
-		if (ObjectUtils.isBlank(settings)) {
-			throw new RuntimeException("社会化登录配置为空，请先配置" + this.genOAuthSettingsKey(oAuthLoginParams.getAuthType()));
-		}
-
-		OAuthConfig oAuthConfig = this.resJson.readEntity(settings, new TypeReference<OAuthConfig>() {});
-		String accessTokenUri = this.extractAccessTokenUriFromConfig(oAuthConfig, oAuthLoginParams.getCode());
-
-		String accessTokenJson = HttpUtils.sendGet(accessTokenUri);
-
-		AccessTokenEntity tokenEntity = this.resJson.readEntity(accessTokenJson, new TypeReference<AccessTokenEntity>() {});
-
-		String userInfoUri = this.extractUserInfoUriFromConfig(oAuthConfig, tokenEntity);
-		String userInfoJson = HttpUtils.sendGet(userInfoUri);
-		OAuthUser oAuthUser = this.resJson.readEntity(userInfoJson, new TypeReference<OAuthUser>() {});
+		OAuthUser oAuthUser = this.getOAuthUserInfo(oAuthLoginParams.getAuthType(), oAuthLoginParams.getCode());
 		WoOauthLoginUser oAuthLoginUser = this.oAuthLoginUserService.findByUnionId(oAuthUser.getOpenId(), oAuthUser.getUnionId());
 		WoUser woUser;
 		if (ObjectUtils.isBlank(oAuthLoginUser)) {
-			Register register = Register.of(this.nextId(), oAuthUser.getNickname(), oAuthUser.getNickname(), curUserIp);
+			Long uid = this.nextId();
+			Register register = Register.of(uid, uid.toString(), oAuthUser.getNickname(), curUserIp);
 			woUser = this.userService.createUser(domainId, register, false);
 			oAuthUser.setOauthType(oAuthLoginParams.getAuthType());
 			oAuthLoginUser = this.oAuthLoginUserService.createOAuthLoginUser(woUser, oAuthUser);
 
+			if (!OAuthTypeEnum.WeiBo.getValue().equals(oAuthLoginParams.getAuthType())) { // 目前微博头像io 403
 			String headImgUrl = oAuthUser.getHeadImgUrl();
 			this.userService.uploadAvatar(request, response, headImgUrl, new int[] { 144, 144 }, woUser.getId(), curUserIp);
+		}
 		}
 		else {
 			woUser = this.userService.findById(oAuthLoginUser.getUserId());
@@ -174,14 +169,66 @@ public class OAuthService extends Base {
 		return user;
 	}
 
-	private String extractUserInfoUriFromConfig(OAuthConfig oAuthConfig, AccessTokenEntity tokenEntity) {
-		return String.format(oAuthConfig.getUserInfoUri(), tokenEntity.getAccessToken(), tokenEntity.getOpenId());
-	}
+	private OAuthUser getOAuthUserInfo(String authType, String code) {
+		String settings = this.optionsService.findSettingsByKey(this.genOAuthSettingsKey(authType));
+		if (ObjectUtils.isBlank(settings)) {
+			throw new RuntimeException("社会化登录配置为空，请先配置" + this.genOAuthSettingsKey(authType));
+		}
 
-	private String extractAccessTokenUriFromConfig(OAuthConfig oAuthConfig, String authorizationCode) {
+		OAuthConfig oAuthConfig = this.resJson.readEntity(settings, new TypeReference<OAuthConfig>() {});
 		String accessTokenUri = oAuthConfig.getAccessTokenUri();
 
-		return String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(), authorizationCode);
+		if (OAuthTypeEnum.WeChat.getValue().equals(authType)) {
+
+			accessTokenUri =  String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(), code);
+
+			String accessTokenJson = HttpUtils.sendGet(accessTokenUri);
+
+			AccessTokenEntity tokenEntity = this.resJson.readEntity(accessTokenJson, new TypeReference<AccessTokenEntity>() {});
+
+			String userInfoUri = String.format(oAuthConfig.getUserInfoUri(), tokenEntity.getAccessToken(), tokenEntity.getOpenId());
+
+			String userInfoJson = HttpUtils.sendGet(userInfoUri);
+
+			return this.resJson.readEntity(userInfoJson, new TypeReference<OAuthUserWechat>() {});
+		} else if (OAuthTypeEnum.WeiBo.getValue().equals(authType)) {
+
+			String params = "client_id=" + oAuthConfig.getAppId() + "&client_secret=" + oAuthConfig.getAppSecret() +
+					"&grant_type=authorization_code&code=" + code + "&redirect_uri=" + this.getRedirectUri(oAuthConfig.getRedirectUri(), this.getRedirectSufix(authType));
+
+			String accessTokenJson = HttpUtils.sendPost(accessTokenUri, params, null);
+
+			AccessTokenWeibo tokenEntity = this.resJson.readEntity(accessTokenJson, new TypeReference<AccessTokenWeibo>() {});
+
+			String userInfoUri = String.format(oAuthConfig.getUserInfoUri(), tokenEntity.getAccessToken(), tokenEntity.getUid());
+
+			String userInfoJson = HttpUtils.sendGet(userInfoUri);
+
+			return this.resJson.readEntity(userInfoJson, new TypeReference<OAuthUserWeibo>() {});
+		} else {
+			// for qq
+			accessTokenUri =  String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(),
+					this.getRedirectUri(oAuthConfig.getRedirectUri(), this.getRedirectSufix(authType)), code);
+
+			String accessTokenJson = HttpUtils.sendGet(accessTokenUri);
+
+			AccessTokenQQ tokenEntity = this.resJson.readEntity(accessTokenJson, new TypeReference<AccessTokenQQ>() {});
+
+			// 需要另外获取openid
+			String openIdstr = HttpUtils.sendGet("https://graph.qq.com/oauth2.0/me?access_token="+tokenEntity.getAccessToken()+"&fmt=json");
+
+			OpenIdQQ openIdQQ = this.resJson.readEntity(openIdstr, new TypeReference<OpenIdQQ>() {});
+			String openid = openIdQQ.getOpenId();
+			String userInfoUri = String.format(oAuthConfig.getUserInfoUri(), tokenEntity.getAccessToken(), openIdQQ.getClientId(), openid);
+
+			String userInfoJson = HttpUtils.sendGet(userInfoUri);
+
+			OAuthUserQQ oAuthUserQQ = this.resJson.readEntity(userInfoJson, new TypeReference<OAuthUserQQ>() {});
+			oAuthUserQQ.setOpenId(openid);
+			oAuthUserQQ.setUnionId(openid);
+
+			return oAuthUserQQ;
+		}
 	}
 
 	private String genOAuthSettingsKey(String authType) {
@@ -207,7 +254,7 @@ public class OAuthService extends Base {
 
 		String stateCode = this.stateCodeService.genState();
 
-		String redirectSuFix = "/user/auth/login/"+oAuthType;
+		String redirectSuFix = this.getRedirectSufix(oAuthType);
 
 		if (!oAuthConfig.getRedirectUri().contains(redirectPrefix)) {
 			String realRedirect = "_" + redirectPrefix + redirectSuFix;
@@ -215,10 +262,23 @@ public class OAuthService extends Base {
 			stateCode += URLEncoder.encode(realRedirect, StandardCharsets.UTF_8.name());
 		}
 
-		String redirectUri = URLEncoder.encode(oAuthConfig.getRedirectUri() + redirectSuFix, StandardCharsets.UTF_8.name());
+		String redirectUri = this.getRedirectUri(oAuthConfig.getRedirectUri(), redirectSuFix);
 
 		return this.resJson.ok("url", String.format(oAuthConfig.getCodeUri(), oAuthConfig.getAppId(), redirectUri,
 				oAuthConfig.getScope(), stateCode));
+	}
+
+	private String getRedirectUri(String redirectUriConfig, String redirectSuFix) {
+		try {
+			return URLEncoder.encode(redirectUriConfig + redirectSuFix, StandardCharsets.UTF_8.name());
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("不支持的编码异常", e);
+		}
+	}
+
+	private String getRedirectSufix(String oAuthType) {
+		return "/user/auth/login/" + oAuthType;
 	}
 
 	/**

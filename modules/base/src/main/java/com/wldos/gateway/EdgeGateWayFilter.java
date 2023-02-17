@@ -23,7 +23,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wldos.common.Constants;
 import com.wldos.support.web.EdgeHandler;
 import com.wldos.support.web.FilterRequestWrapper;
 import com.wldos.common.res.Result;
@@ -45,10 +44,8 @@ import com.wldos.sys.base.vo.AuthVerify;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**

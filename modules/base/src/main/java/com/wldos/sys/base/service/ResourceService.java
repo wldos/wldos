@@ -207,12 +207,12 @@ public class ResourceService extends BaseService<ResourceRepo, WoResource, Long>
 
 				List<TreeSelectOption> menus = allRes.parallelStream().map(res -> {
 					Long resId = res.getId();
-					return TreeSelectOption.of(resId, res.getParentId(), res.getResourceName(), resId.toString(), resId.toString());
+					return TreeSelectOption.of(resId, res.getParentId(), res.getResourceName(), resId.toString(), resId.toString(), res.getDisplayOrder());
 				}).collect(Collectors.toList());
 
 				String topMenuId = String.valueOf(Constants.MENU_ROOT_ID);
 
-				TreeSelectOption topMenu = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根资源", topMenuId, topMenuId);
+				TreeSelectOption topMenu = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根资源", topMenuId, topMenuId, 0L);
 
 				menus.add(0, topMenu);
 

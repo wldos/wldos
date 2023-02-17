@@ -11,6 +11,7 @@ package com.wldos.cms.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.wldos.base.Base;
@@ -72,13 +73,16 @@ public class InfoService extends Base {
 
 		// 判断是否指定类目
 		Object termTypeId = pageQuery.getCondition().get("termTypeId");
-		if (termTypeId != null) {
+		if (!ObjectUtils.isBlank(termTypeId)) {
 			KTermType termType = this.termService.queryTermTypeById(Long.parseLong(String.valueOf(termTypeId)));
-
+			if (termType == null)
+				return new PageableResult<>();
 			List<Object> ids = this.queryOwnIds(termType.getId());
 			pageQuery.removeParam("termTypeId");
 			this.filterByParentTermTypeId(ids, pageQuery);
 		}
+
+		this.handleCondition(pageQuery);
 
 		return this.pubService.queryInfos(pageQuery);
 	}
@@ -92,27 +96,18 @@ public class InfoService extends Base {
 	 */
 	public PageableResult<InfoUnit> queryInfoCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
+		if (termType == null)
+			return new PageableResult<>();
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
 		// 判断是否指定类目
 		Object termTypeId = pageQuery.getCondition().get("termTypeId");
-		if (termTypeId != null && termType.getId().equals(Long.parseLong(String.valueOf(termTypeId)))) { // 实现动态表单后，应该删除此逻辑，使用动态路由切换
+		if (!ObjectUtils.isBlank(termTypeId) && termType.getId().equals(Long.parseLong(String.valueOf(termTypeId)))) { // 实现动态表单后，应该删除此逻辑，使用动态路由切换
 			pageQuery.removeParam("termTypeId");
 		}
 		this.filterByParentTermTypeId(ids, pageQuery);
 
-		// 处理city
-		Object city = pageQuery.getCondition().get("city");
-		long allCity = -1L;
-		if (!ObjectUtils.isBlank(city) && allCity == Long.parseLong(city.toString())) { // 是全部
-			pageQuery.removeParam("city");
-		}
-		// 处理price
-		Object price = pageQuery.getCondition().get("price");
-		String allPrice = "0,0";
-		if (allPrice.equals(price)) { // 是全部
-			pageQuery.removeParam("price");
-		}
+		this.handleCondition(pageQuery);
 
 		return this.pubService.queryInfos(pageQuery);
 	}
@@ -126,10 +121,32 @@ public class InfoService extends Base {
 	 */
 	public PageableResult<InfoUnit> queryInfoTag(String slugTag, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugTag);
+		if (termType == null)
+			return new PageableResult<>();
 		pageQuery.pushParam("termTypeId", termType.getId());
+
+		this.handleCondition(pageQuery);
 
 		return this.pubService.queryInfos(pageQuery);
 	}
+
+	private void handleCondition(PageQuery pageQuery) {
+
+		// 处理price
+		Object price = pageQuery.getCondition().get("price");
+		String allPrice = "0,0";
+		if (allPrice.equals(price)) { // 是全部
+			pageQuery.removeParam("price");
+		}
+
+		// 处理city
+		Object city = pageQuery.getCondition().get("city");
+		long allCity = -1L;
+		if (!ObjectUtils.isBlank(city) && allCity == Long.parseLong(city.toString())) { // 是全部
+			pageQuery.removeParam("city");
+		}
+	}
+
 
 	/**
 	 * 查询供求信息详情
@@ -168,7 +185,7 @@ public class InfoService extends Base {
 		String[] mainPics = { KModelMetaKey.PUB_META_KEY_MAIN_PIC1, KModelMetaKey.PUB_META_KEY_MAIN_PIC2, KModelMetaKey.PUB_META_KEY_MAIN_PIC3,
 				KModelMetaKey.PUB_META_KEY_MAIN_PIC4 };
 		List<MainPicture> pictures = Arrays.stream(mainPics).parallel().map(pic ->
-				this.kcmsService.exact(metas, pic)).collect(Collectors.toList());
+				this.kcmsService.exact(metas, pic)).filter(Objects::nonNull).collect(Collectors.toList());
 		product.setMainPic(pictures);
 
 		// 析取独立公共扩展属性

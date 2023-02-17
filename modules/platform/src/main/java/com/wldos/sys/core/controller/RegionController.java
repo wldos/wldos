@@ -39,6 +39,11 @@ public class RegionController extends RepoController<RegionService, WoRegion> {
 		return this.service.queryProvince();
 	}
 
+	/**
+	 * 根据省分取所有地市
+	 *
+	 * @param province 省分id
+	 */
 	@GetMapping(value = {"city/{province}", "city/"})
 	public List<City> queryCity(@PathVariable(required = false) Long province) {
 

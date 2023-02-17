@@ -83,7 +83,6 @@ public class InfoController extends NoRepoController {
 	 * 查看信息（预览模式）
 	 *
 	 * @param id 信息id
-	 * @param preview 预览参数
 	 * @return 当前信息
 	 */
 	@GetMapping("info-{id:[0-9]+}/preview")
@@ -162,25 +161,6 @@ public class InfoController extends NoRepoController {
 		return this.infoService.queryInfoDomain(pageQuery);
 	}
 
-	/**
-	 * 查看作者的信息(支持供求信息、作品)
-	 *
-	 * @param userId 作者用户id
-	 * @return 作者的内容存档页
-	 */
-	@GetMapping("info/author/{userId:[0-9]+}.html")
-	public PageableResult<InfoUnit> infoConTypeAuthor(@PathVariable String userId, @RequestParam Map<String, Object> params) {
-		//查询列表数据
-		PageQuery pageQuery = new PageQuery(params);
-		
-		pageQuery.pushParam("createBy", userId);
-		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
-		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
-
-		return this.infoService.queryInfoDomain(pageQuery);
-	}
-
 	@Value("${wldos.cms.tag.tagLength}")
 	private int tagLength;
 
@@ -197,9 +177,12 @@ public class InfoController extends NoRepoController {
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
-		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isValidTerm(termTypeIds))
-			return this.resJson.ok("error", "使用了不可识别的分类数据");
+		List<SelectOption> typeIds = pub.getTermTypeIds();
+		if (typeIds != null) {
+			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
+			if (!this.kcmsService.isValidTerm(termTypeIds))
+				return this.resJson.ok("error", "使用了不可识别的分类数据");
+		}
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null ) {
@@ -242,9 +225,12 @@ public class InfoController extends NoRepoController {
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
 		// 检查分类是否归属同一个类型
-		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		if (!this.kcmsService.isValidTerm(termTypeIds))
-			return this.resJson.ok("error", "使用了非法分类数据");
+		List<SelectOption> typeIds = pub.getTermTypeIds();
+		if (typeIds != null) {
+			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
+			if (!this.kcmsService.isValidTerm(termTypeIds))
+				return this.resJson.ok("error", "使用了不可识别的分类数据");
+		}
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null ) {
@@ -257,7 +243,7 @@ public class InfoController extends NoRepoController {
 			}
 		}
 		// 类型转换检查，暂定单体、复合类型不能互转
-		if (!this.kcmsService.isSamePubTypeStruct(pub.getId(), pub.getPubType())) {
+		if (null != pub.getPubType() && !this.kcmsService.isSamePubTypeStruct(pub.getId(), pub.getPubType())) {
 			return this.resJson.ok("error", "选择了不支持的转换类型");
 		}
 

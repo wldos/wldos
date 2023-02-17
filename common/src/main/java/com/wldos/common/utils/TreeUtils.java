@@ -168,10 +168,63 @@ public class TreeUtils {
 	/**
 	 * 构建扁平树，以一级根(父为顶级根节点)节点为根把子根节点变成叶子节点，平铺所有叶子节点，实现扁平化大、小类矮树
 	 *
+	 * @param treeNodes 源数据
+	 * @param root 顶级根节点id
+	 */
+	public static <T extends TreeNode<T>> List<T> buildFlatTree(final List<T> treeNodes, final long root) {
+
+		// 一级节点上树
+		List<T> trees = treeNodes.stream().filter(node -> node.getParentId() == root)
+				.sorted(Comparator.nullsLast(
+				Comparator.comparing(
+						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo)))).collect(Collectors.toList());
+
+		List<T> recordWithChild = new ArrayList<>();
+
+		trees.forEach(node -> {
+			List<T> nodeChildren = flatChildren(node, treeNodes);
+			// 子节点排序
+			if (nodeChildren.isEmpty()) {
+				return;
+			}
+			nodeChildren.sort(Comparator.nullsLast(
+					Comparator.comparing(
+							TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+			node.setChildren(nodeChildren);
+			recordWithChild.add(node);
+		});
+
+		return recordWithChild;
+	}
+
+	/**
+	 * 递归查询treeNode的子节点，平铺到其后
+	 *
+	 * @param treeNode 要找子节点的节点
+	 * @param treeNodes 源数据
+	 */
+	public static <T extends TreeNode<T>> List<T> flatChildren(final TreeNode<T> treeNode, final List<T> treeNodes) {
+		return treeNodes.stream().filter(node -> node.getParentId().equals(treeNode.getId()))
+				.peek(node -> {
+					List<T> nodeChildren = flatChildren(node, treeNodes);
+
+					if (nodeChildren.isEmpty()) {
+						return;
+					}
+					// 子节点排序
+					nodeChildren.sort(Comparator.nullsLast(
+							Comparator.comparing(
+									TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+				}).collect(Collectors.toList());
+	}
+
+	/**
+	 * 构建扁平树，以一级根(父为顶级根节点)节点为根把子根节点变成叶子节点，平铺所有叶子节点，实现扁平化大、小类矮树
+	 *
 	 * @param treeNodes 传入的树节点列表
 	 * @return 树状结构列表
 	 */
-	public static <T extends TreeNode<T>> List<T> buildFlatTree(List<T> treeNodes, long root) {
+	public static <T extends TreeNode<T>> List<T> buildFlatTreeOld(List<T> treeNodes, long root) {
 
 		List<T> trees = new ArrayList<>();
 

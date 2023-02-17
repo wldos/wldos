@@ -67,6 +67,9 @@ public class Base {
 	/** 平台域名 */
 	@Value("${wldos.platform.domain:wldos.com}")
 	protected String wldosDomain;
+	/** 平台url */
+	@Value("${wldos.platform.url:https://www.wldos.com}")
+	protected String wldosUrl;
 	/** 平台前端请求协议 */
 	@Value("${wldos.req.protocol:https}")
 	protected String reqProtocol;

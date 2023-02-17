@@ -42,6 +42,11 @@ public class TreeNode<T> {
 		this.parentId = parentId;
 	}
 
+	public TreeNode(Long id, Long parentId, Long displayOrder) {
+		this(id, parentId);
+		this.displayOrder = displayOrder;
+	}
+
 	public TreeNode(Long id, Long parentId, List<T> child) {
 		this(id, parentId);
 		this.children = child;

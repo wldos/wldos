@@ -313,7 +313,7 @@ public class KCMSService extends Base {
 		String[] mainPics = { KModelMetaKey.PUB_META_KEY_MAIN_PIC1, KModelMetaKey.PUB_META_KEY_MAIN_PIC2, KModelMetaKey.PUB_META_KEY_MAIN_PIC3,
 				KModelMetaKey.PUB_META_KEY_MAIN_PIC4 };
 		List<MainPicture> pictures = Arrays.stream(mainPics).parallel().map(pic ->
-				exact(metas, pic)).collect(Collectors.toList());
+				exact(metas, pic)).filter(Objects::nonNull).collect(Collectors.toList());
 		product.setMainPic(pictures);
 
 		// 析取独立公共扩展属性
@@ -379,16 +379,25 @@ public class KCMSService extends Base {
 
 		// 获取当前分类项类型
 		Term term = this.termService.queryTermBySlugTerm(slugTerm);
-		String name = term.getName();
+		String name;
+		List<Breadcrumb> crumb;
 
-		// 开始创建面包屑: 直属分类及所有父级分类
-		List<LevelNode> nodes = this.termService.queryTermTreeByChildId(term.getTermTypeId());
-		List<Long> termTypeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
+		if (term == null) {
+			name = "不存在";
+			crumb = new ArrayList<>();
+		} else {
+			name = term.getName();
 
-		List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
-		List<Breadcrumb> crumb =
-				terms.parallelStream().map(t ->
-						Breadcrumb.of("/" + tempType + this.getPathByTermType(t.getClassType()) + t.getSlug(), t.getName())).collect(Collectors.toList());
+			// 开始创建面包屑: 直属分类及所有父级分类
+			List<LevelNode> nodes = this.termService.queryTermTreeByChildId(term.getTermTypeId());
+			List<Long> termTypeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
+
+			List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
+
+			crumb = terms.parallelStream().map(t ->
+							Breadcrumb.of("/" + tempType + this.getPathByTermType(t.getClassType()) + t.getSlug(), t.getName())).collect(Collectors.toList());
+		}
+
 		return SeoCrumbs.of(name, this.getTemplateTypeByValue(tempType).getLabel() + "分类：" + name, name, crumb);
 	}
 
@@ -509,8 +518,7 @@ public class KCMSService extends Base {
 			}
 		}
 		if (mp.getUrl() == null) {
-			String noPicUrl = this.store.getFileUrl(MainPicture.noMainPicPath, "");
-			mp.setUrl(noPicUrl);
+			return null; // 为空的返回
 		}
 
 		return mp;
@@ -662,6 +670,8 @@ public class KCMSService extends Base {
 	public PageableResult<PubUnit> queryProductPortalByCategory(String slugCategory, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(slugCategory)) {
 			KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
+			if (termType == null)
+				return new PageableResult<>();
 			List<Object> ids = this.queryOwnIds(termType.getId());
 			// 查询分类及其子分类
 			this.filterByParentTermTypeId(ids, pageQuery);
@@ -690,7 +700,8 @@ public class KCMSService extends Base {
 	 */
 	public PageableResult<PubUnit> queryProductCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
-
+		if (termType == null)
+			return new PageableResult<>();
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
 		this.filterByParentTermTypeId(ids, pageQuery);
@@ -721,6 +732,8 @@ public class KCMSService extends Base {
 	public PageableResult<PubUnit> queryArchivesCategoryPortal(String slugCategory, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(slugCategory)) {
 			KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
+			if (termType == null)
+				return new PageableResult<>();
 			List<Object> ids = this.queryOwnIds(termType.getId());
 			// 查询分类及其子分类
 			this.filterByParentTermTypeId(ids, pageQuery);
@@ -748,6 +761,8 @@ public class KCMSService extends Base {
 	 */
 	public PageableResult<PubUnit> queryArchivesCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
+		if (termType == null)
+			return new PageableResult<>();
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
 		if (ids.isEmpty())
@@ -1058,15 +1073,12 @@ public class KCMSService extends Base {
 	 * @return 内容信息
 	 */
 	public PubMeta pubInfo(Long pid) {
-
-		
 		ContModelDto contBody = this.pubService.queryContModel(pid);
 
 		if (contBody == null)
 			return null;
 
 		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
-
 			return null;
 		}
 
@@ -1092,14 +1104,10 @@ public class KCMSService extends Base {
 			}
 		}
 
-		// 图片(主图和封面)处理url
-		String[] mainPics = { KModelMetaKey.PUB_META_KEY_MAIN_PIC1, KModelMetaKey.PUB_META_KEY_MAIN_PIC2, KModelMetaKey.PUB_META_KEY_MAIN_PIC3,
-				KModelMetaKey.PUB_META_KEY_MAIN_PIC4, KModelMetaKey.PUB_META_KEY_COVER };
-		Arrays.stream(mainPics).forEach(pic -> {
-			if (!pubMeta.containsKey(pic)) {
-				pubMeta.put(pic, MainPicture.noMainPicPath);
-			}
-		});
+		// 无封面处理url
+		if (!pubMeta.containsKey(KModelMetaKey.PUB_META_KEY_COVER)) {
+			pubMeta.put(KModelMetaKey.PUB_META_KEY_COVER, MainPicture.noMainPicPath);
+		}
 		// 设置ossUrl，用于前端拼装文件类完整url
 		pubMeta.put(IStore.KEY_OSS_URL, this.store.genOssUrl(FileAccessPolicyEnum.PUBLIC));
 
@@ -1125,6 +1133,8 @@ public class KCMSService extends Base {
 	}
 
 	public boolean isSamePubTypeStruct(Long id, String pubType) {
+		if (ObjectUtils.isBlank(pubType))
+			return true;
 		KPubs pub = this.pubService.findById(id);
 		if (PubTypeEnum.isSingle(pub.getPubType()))
 			return PubTypeEnum.isSingle(pubType);

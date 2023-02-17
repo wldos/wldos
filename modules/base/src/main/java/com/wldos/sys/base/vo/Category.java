@@ -18,7 +18,7 @@ import com.wldos.common.vo.TreeNode;
  * @date 2022/1/1
  * @version 1.0
  */
-@JsonIgnoreProperties({"id", "parentId"})
+@JsonIgnoreProperties({"id", "parentId", "displayOrder"})
 public class Category extends TreeNode<Category> {
 
 	private String title;
@@ -27,17 +27,15 @@ public class Category extends TreeNode<Category> {
 
 	private String slug;
 
-	private String conType;
-
 	public Category() {
 	}
 
-	public static Category of(Long id, Long parentId, String title, String key, String slug) {
-		return new Category(id, parentId, title, key, slug);
+	public static Category of(Long id, Long parentId, String title, String key, String slug, Long displayOrder) {
+		return new Category(id, parentId, title, key, slug, displayOrder);
 	}
 
-	private Category(Long id, Long parentId, String title, String key, String slug) {
-		super(id, parentId);
+	private Category(Long id, Long parentId, String title, String key, String slug, Long displayOrder) {
+		super(id, parentId, displayOrder);
 		this.title = title;
 		this.key = key;
 		this.slug = slug;
@@ -53,9 +51,5 @@ public class Category extends TreeNode<Category> {
 
 	public String getSlug() {
 		return slug;
-	}
-
-	public String getConType() {
-		return conType;
 	}
 }
