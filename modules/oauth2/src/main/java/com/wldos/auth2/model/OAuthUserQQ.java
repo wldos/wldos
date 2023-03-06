@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class OAuthUserQQ implements OAuthUser{
 	@JsonProperty("id")
 	private String openId;
-	@JsonProperty("nick_name")
 	private String nickname;
 	private String gender;
 	private String province;
@@ -45,8 +44,9 @@ public class OAuthUserQQ implements OAuthUser{
 		this.openId = openId;
 	}
 
+	@Override
 	public String getNickname() {
-		return nickname;
+		return this.nickname;
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class OAuthUserQQ implements OAuthUser{
 	}
 
 	public String getGender() {
-		return gender;
+		return this.gender;
 	}
 
 	public void setGender(String gender) {

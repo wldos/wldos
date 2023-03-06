@@ -32,6 +32,8 @@ public class WoDomain {
 
 	private String siteLogo;
 
+	private String favicon;
+
 	private String siteTitle;
 
 	private String siteKeyword;
@@ -125,6 +127,14 @@ public class WoDomain {
 
 	public void setSiteLogo(String siteLogo) {
 		this.siteLogo = siteLogo;
+	}
+
+	public String getFavicon() {
+		return favicon;
+	}
+
+	public void setFavicon(String favicon) {
+		this.favicon = favicon;
 	}
 
 	public String getSiteTitle() {

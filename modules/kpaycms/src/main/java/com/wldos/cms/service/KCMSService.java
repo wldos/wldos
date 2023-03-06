@@ -487,8 +487,7 @@ public class KCMSService extends Base {
 		List<KPubmeta> metasAttach = this.pubmetaService.queryPubMetaByPubIds(pIds);
 
 		// 处理附件、图片类
-		Map<Long, List<KPubmeta>> attMetaGroup = metasAttach.stream()
-				.collect(Collectors.groupingBy(KPubmeta::getPubId)); // 按附件id归集自身元数据
+		Map<Long, List<KPubmeta>> attMetaGroup = metasAttach.stream().collect(Collectors.groupingBy(KPubmeta::getPubId)); // 按附件id归集自身元数据
 
 		if (ObjectUtils.isBlank(attMetaGroup))
 			return iMeta;
@@ -530,26 +529,33 @@ public class KCMSService extends Base {
 			try {
 				PubPicture picture = new ObjectMapper().readValue(attMeta, new TypeReference<PubPicture>() {});
 
-				// srcset配合居中、自适应css实现跨终端展示最优尺寸缩略图
-				String template = "srcset=\"%s %sw, %s %sw, %s %sw, %s %sw\" sizes=\"(max-width: %spx) 100vw, %spx\"";
+				// srcset配合居中、自适应css实现跨终端展示最优尺寸缩略图，密度集的图型顺序取决于配置和排序
 				String url = this.store.getFileUrl(picture.getPath(), null);
-				List<Thumbnail> thumbnails = picture.getSrcset();
-				String url300 = this.store.getFileUrl(thumbnails.get(0).getPath(), null);
-				String url1024 = this.store.getFileUrl(thumbnails.get(1).getPath(), null);
-				String url768 = this.store.getFileUrl(thumbnails.get(2).getPath(), null);
 				int index = content.indexOf(url);
 				if (index <= -1)
 					continue;
+
 				String contentPre = content.substring(0, index);
 				String contentFix = content.substring(index);
-				String width = contentFix.substring(contentFix.indexOf("width="),
-						contentFix.indexOf("height=")).trim().replace("width=\"", "").replace("\"", "");
+
+				int start, end;
+				String width = (start = contentFix.indexOf("width=")) > -1 && (end = contentFix.indexOf("height=")) > -1 ?
+						contentFix.substring(start, end).trim().replace("width=\"", "").replace("\"", "") : String.valueOf(picture.getWidth());
 				width = ObjectUtils.isBlank(width) ? String.valueOf(picture.getWidth()) : width;
 
-				String srcset = String.format(template, url, picture.getWidth(), url300, thumbnails.get(0).getWidth(),
-						url768, thumbnails.get(2).getWidth(), url1024, thumbnails.get(1).getWidth(), width, width);
+				List<Thumbnail> thumbnails = picture.getSrcset();
 
-				content = contentPre + contentFix.replaceFirst("/>", srcset + "/>");
+				if (ObjectUtils.isBlank(thumbnails))
+					continue;
+
+				// String template = "srcset=\"%s %sw, %s %sw, %s %sw, %s %sw, %s %sw\" sizes=\"(max-width: %spx) 100vw, %spx\"";
+				StringBuilder srcset = new StringBuilder("srcset=\"");
+
+				thumbnails.forEach(t -> srcset.append(this.store.getFileUrl(t.getPath(), null)).append(" ").append(t.getWidth()).append("w,"));
+
+				srcset.deleteCharAt(srcset.lastIndexOf(",")).append("\" sizes=\"(max-width: ").append(width).append("px) 100vw, ").append(width).append("px\"/>");
+
+				content = contentPre + contentFix.replaceFirst("/>", srcset.toString());
 			}
 			catch (Exception e) { // 非核心业务任何异常就地捕获，不影响内容的输出
 				e.printStackTrace();
@@ -1067,7 +1073,7 @@ public class KCMSService extends Base {
 	}
 
 	/**
-	 * 查询内容信息
+	 * 创作工作台专用-查询内容信息（不检查发布状态）
 	 *
 	 * @param pid 内容id
 	 * @return 内容信息
@@ -1077,10 +1083,6 @@ public class KCMSService extends Base {
 
 		if (contBody == null)
 			return null;
-
-		if (this.pubStatusIsNotOk(contBody.getPubStatus(), contBody.getDeleteFlag(), contBody.getParentId())) {
-			return null;
-		}
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
 		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);

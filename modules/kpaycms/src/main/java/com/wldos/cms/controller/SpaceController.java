@@ -202,7 +202,7 @@ public class SpaceController extends NoRepoController {
 		String type = ObjectUtils.string(file.getContentType()).split("/")[0];
 		Map<String, Object> res = new HashMap<>();
 		if (MIMETypeEnum.IMAGE.getValue().equals(type)) { // 图片作格式等特殊处理
-			// 默认创建4种尺寸：150x150、300x300、1024x1024、Full（默认尺寸）
+			// 默认创建5种尺寸：150x150、300x300、1024x1024、1536x1536，其中Full（默认尺寸）超出2048压缩为2048。
 			List<Thumbnail> thumbnails = this.kcmsService.getSrcset();
 			// 保留中大尺寸缩略图适配移动端，不允许用户设置 {"type": "mediumLarge", "width": 768, "height": 768},
 			thumbnails.add(new Thumbnail(ThumbTypeEnum.MEDIUM_LARGE.getValue(), 768, 768, null, null));
@@ -219,7 +219,6 @@ public class SpaceController extends NoRepoController {
 			postPicture.setHeight(picture.getHeight());
 			postPicture.setWidth(picture.getWidth());
 
-			thumbnailList = thumbnailList.subList(1, thumbnailList.size() - 1);
 			postPicture.setSrcset(thumbnailList);
 
 			// 创建附件发布内容

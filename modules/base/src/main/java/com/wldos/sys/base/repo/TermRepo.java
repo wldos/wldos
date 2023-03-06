@@ -29,12 +29,12 @@ import org.springframework.data.repository.query.Param;
 public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 
 	/**
-	 * 查询某类下的分类项
+	 * 查询某类下的分类项，默认按展示顺序排序
 	 *
 	 * @param classType 分类类型：分类目录、标签等
 	 * @return 分类项列表
 	 */
-	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, o.id term_type_id, o.class_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and a.is_valid='1' and a.delete_flag='normal'")
+	@Query("select a.id, a.name, a.slug, a.info_flag, a.display_order, a.is_valid, o.id term_type_id, o.class_type, o.description, o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where o.class_type=:classType and a.is_valid='1' and a.delete_flag='normal' order by a.display_order")
 	List<Term> findAllByClassType(@Param("classType") String classType);
 
 	/**

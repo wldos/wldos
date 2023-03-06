@@ -90,4 +90,11 @@ public class TreeNode<T> {
 		}
 		this.children.add(node);
 	}
+
+	public void addAll(List<T> nodes) {
+		if (this.children == null) {
+			this.children = new ArrayList<T>();
+		}
+		this.children.addAll(nodes);
+	}
 }

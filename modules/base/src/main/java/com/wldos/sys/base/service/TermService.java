@@ -184,7 +184,7 @@ public class TermService extends BaseService<TermRepo, KTerms, Long> {
 	}
 
 	/**
-	 * 查询某域下的所有分类
+	 * 查询某域下的所有分类（默认按展示顺序排序）
 	 *
 	 * @return 分类项集合
 	 */

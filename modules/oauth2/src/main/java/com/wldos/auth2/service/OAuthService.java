@@ -10,6 +10,7 @@ package com.wldos.auth2.service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -255,9 +256,9 @@ public class OAuthService extends Base {
 		String stateCode = this.stateCodeService.genState();
 
 		String redirectSuFix = this.getRedirectSufix(oAuthType);
-
-		if (!oAuthConfig.getRedirectUri().contains(redirectPrefix)) {
-			String realRedirect = "_" + redirectPrefix + redirectSuFix;
+		String rdPrefix = URLDecoder.decode(redirectPrefix, StandardCharsets.UTF_8.name());
+		if (!oAuthConfig.getRedirectUri().contains(rdPrefix)) {
+			String realRedirect = "-" + rdPrefix + redirectSuFix;
 
 			stateCode += URLEncoder.encode(realRedirect, StandardCharsets.UTF_8.name());
 		}

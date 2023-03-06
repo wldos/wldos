@@ -19,6 +19,8 @@ public class Domain {
 
 	private String siteLogo;
 
+	private String favicon;
+
 	private String siteTitle;
 
 	private String siteKeyword;
@@ -87,6 +89,14 @@ public class Domain {
 
 	public void setSiteLogo(String siteLogo) {
 		this.siteLogo = siteLogo;
+	}
+
+	public String getFavicon() {
+		return favicon;
+	}
+
+	public void setFavicon(String favicon) {
+		this.favicon = favicon;
 	}
 
 	public String getFoot() {

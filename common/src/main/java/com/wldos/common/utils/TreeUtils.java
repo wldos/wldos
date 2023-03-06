@@ -166,55 +166,35 @@ public class TreeUtils {
 	}
 
 	/**
-	 * 构建扁平树，以一级根(父为顶级根节点)节点为根把子根节点变成叶子节点，平铺所有叶子节点，实现扁平化大、小类矮树
+	 * 构建扁平树，以一级根(父为顶级根节点)节点为根把次根节点变成叶子节点，按顺序平铺所有叶子节点，实现扁平化大、小类矮树
 	 *
 	 * @param treeNodes 源数据
-	 * @param root 顶级根节点id
+	 * @param root 顶级根节点id，创始元灵！
 	 */
 	public static <T extends TreeNode<T>> List<T> buildFlatTree(final List<T> treeNodes, final long root) {
 
-		// 一级节点上树
-		List<T> trees = treeNodes.stream().filter(node -> node.getParentId() == root)
-				.sorted(Comparator.nullsLast(
+		// 一级节点上树，闻道有先后
+		List<T> trees = treeNodes.stream().filter(node -> node.getParentId() == root).collect(Collectors.toList()); // 添加一级始祖，天下九分，各具一祖
+
+		return trees.stream().peek(node -> {
+			flatChildren(node, treeNodes, node); // 祖神下凡，自古流今谓之道，道恒长久，从一而始，至一而止，你我它凡此刻所见皆为道之生。
+		}).sorted(Comparator.nullsLast(
 				Comparator.comparing(
 						TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo)))).collect(Collectors.toList());
-
-		List<T> recordWithChild = new ArrayList<>();
-
-		trees.forEach(node -> {
-			List<T> nodeChildren = flatChildren(node, treeNodes);
-			// 子节点排序
-			if (nodeChildren.isEmpty()) {
-				return;
-			}
-			nodeChildren.sort(Comparator.nullsLast(
-					Comparator.comparing(
-							TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
-			node.setChildren(nodeChildren);
-			recordWithChild.add(node);
-		});
-
-		return recordWithChild;
 	}
 
 	/**
 	 * 递归查询treeNode的子节点，平铺到其后
 	 *
-	 * @param treeNode 要找子节点的节点
-	 * @param treeNodes 源数据
+	 * @param treeNode 要找子节点的节点，祖神下凡之法相，宇宙轮转、世界穿梭之化身
+	 * @param treeNodes 源数据，道之历劫
+	 * @param firstLevelNode 一级根节点，平行宇宙初祖
 	 */
-	public static <T extends TreeNode<T>> List<T> flatChildren(final TreeNode<T> treeNode, final List<T> treeNodes) {
+	public static <T extends TreeNode<T>> List<T> flatChildren(final TreeNode<T> treeNode, final List<T> treeNodes, final TreeNode<T> firstLevelNode) {
 		return treeNodes.stream().filter(node -> node.getParentId().equals(treeNode.getId()))
 				.peek(node -> {
-					List<T> nodeChildren = flatChildren(node, treeNodes);
-
-					if (nodeChildren.isEmpty()) {
-						return;
-					}
-					// 子节点排序
-					nodeChildren.sort(Comparator.nullsLast(
-							Comparator.comparing(
-									TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
+					firstLevelNode.add(node); // 道之动，曰前，曰左。左者成天地，前者开天地。左者，动源于祖；前者，动法于祖。左者为一宇，前者为一界。宇宙世界之动，呈膨胀趋势，宇宙之动膨胀之广，世界之动膨胀之深，盖道之恒久深远，洞穿寰宇，至于末世。
+					flatChildren(node, treeNodes, firstLevelNode);
 				}).collect(Collectors.toList());
 	}
 

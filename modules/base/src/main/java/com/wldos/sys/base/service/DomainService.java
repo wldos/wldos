@@ -52,12 +52,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021/4/28
  * @version 1.0
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 	@Value("${wldos.platform.logo.default}")
 	private String defaultLogo;
+	@Value("${wldos.platform.favicon.default}")
+	private String defaultFavicon;
 
 	private final DomainAppService domainAppService;
 
@@ -251,6 +252,7 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 		for (WoDomain d : domains) {
 			if (d.getSiteDomain().equals(domain)) {
 				d.setSiteLogo(ObjectUtils.string(this.getDomainLogo(d.getSiteLogo())));
+				d.setFavicon(ObjectUtils.string(this.getDomainFavicon(d.getFavicon())));
 				return d;
 			}
 			String cnameDomain = d.getCnameDomain();
@@ -259,6 +261,7 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 			String[] cname = cnameDomain.split(",");
 			if (Arrays.asList(cname).contains(domain)) { // 根据别名域名返回主域名
 				d.setSiteLogo(ObjectUtils.string(this.getDomainLogo(d.getSiteLogo())));
+				d.setFavicon(ObjectUtils.string(this.getDomainFavicon(d.getFavicon())));
 				return d;
 			}
 		}
@@ -295,13 +298,23 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 	}
 
 	/**
-	 * 获取域配置的url
+	 * 获取域配置的logo url
 	 *
 	 * @param logoPath 在文件服务器上的真实路径
 	 * @return url
 	 */
 	public String getDomainLogo(String logoPath) {
 		return this.store.getFileUrl(logoPath, this.store.getFileUrl(this.defaultLogo, null));
+	}
+
+	/**
+	 * 获取域配置的favicon url
+	 *
+	 * @param iconPath 在文件服务器上的真实路径
+	 * @return url
+	 */
+	public String getDomainFavicon(String iconPath) {
+		return this.store.getFileUrl(iconPath, this.store.getFileUrl(this.defaultFavicon, null));
 	}
 
 	/**
@@ -314,11 +327,13 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 		PageableResult<WoDomain> domainPage = this.execQueryForPage(new WoDomain(), pageQuery);
 		List<WoDomain> domains = domainPage.getData().getRows();
 
-		domains = domains.parallelStream().map(d -> {
+		domains = domains.parallelStream().peek(d -> {
 			String logo = d.getSiteLogo();
 			if (!ObjectUtils.isBlank(logo))
 				d.setSiteLogo(this.store.getFileUrl(logo, null));
-			return d;
+			String favicon = d.getFavicon();
+			if (!ObjectUtils.isBlank(favicon))
+				d.setFavicon(this.store.getFileUrl(favicon, null));
 		}).collect(Collectors.toList());
 
 		domainPage.setDataRows(domains);

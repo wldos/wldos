@@ -173,11 +173,14 @@ public class FileStore implements IStore {
 			String realPathPreFix = this.fileService.getRealStorePath();
 			String relativePath = fileInfo.getPath();
 			String src = realPathPreFix + relativePath; // 默认图，全尺寸
+
 			BufferedImage image = ImageIO.read(new File(src));
-			ImageUtils.imgThumb(src, src, image.getWidth(), image.getHeight()); // 重新压缩全尺寸
+			int setWidth = Math.min(image.getWidth(), 2048); // 缩略图宽
 
-			Thumbnail pubPicture = Thumbnail.of(image.getWidth(), image.getHeight(), fileInfo.getPath());
-
+			double scale = (double) image.getWidth()/image.getHeight(); // 原图宽高比
+			int scaleHeight = (int) (setWidth / scale); // 缩放后高度
+			ImageUtils.imgThumb(src, src, setWidth, scaleHeight); // 重新压缩全尺寸，最大2048像素，压缩必须保持宽高比，防止失真
+			Thumbnail pubPicture = Thumbnail.of(setWidth, scaleHeight, fileInfo.getPath());
 			thumbnails.add(pubPicture);
 
 			String[] fInfo = relativePath.split("\\.");
@@ -185,14 +188,18 @@ public class FileStore implements IStore {
 			String extName = fInfo[1];
 
 			for (Thumbnail tm : thumbnailList) { // 批量创建缩略图
+				int thumbWidth = tm.getWidth();
+				if (image.getWidth() < thumbWidth) // 不做放大处理
+					continue;
+				scaleHeight = (int) (thumbWidth / scale);
 				// 缩略图文件名
-				StringBuilder srcT = new StringBuilder(noExtNamePath).append("-").append(tm.getWidth()).append("x").append(tm.getHeight()).append(".").append(extName);
-				String outPath = realPathPreFix + srcT.toString();
-				ImageUtils.imgThumb(src, outPath, tm.getWidth(), tm.getHeight());
+				StringBuilder srcT = new StringBuilder(noExtNamePath).append("-").append(thumbWidth).append("x").append(scaleHeight).append(".").append(extName);
+				String outPath = realPathPreFix + srcT;
+				ImageUtils.imgThumb(src, outPath, thumbWidth, scaleHeight);
 
-				BufferedImage imageT = ImageIO.read(new File(outPath));
+				ImageIO.read(new File(outPath));
 				// 获取实际宽度 获取实际高度
-				thumbnails.add(new Thumbnail(tm.getType(), imageT.getWidth(), imageT.getHeight(), srcT.toString(), file.getContentType()));
+				thumbnails.add(new Thumbnail(tm.getType(), thumbWidth, scaleHeight, srcT.toString(), file.getContentType()));
 			}
 		}
 		else { // 转发远程文件服务
