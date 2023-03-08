@@ -47,7 +47,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 ![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
 ![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
 
-###技术说明
+### 技术说明
 语言：Java8、ReactJs17。
 框架：springboot2.7.8（理论支持Java17）。  
 ORM：spring-data-jdbc2.4.7，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
@@ -76,7 +76,7 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 ### 安装教程
 
-####启动后端：
+#### 启动后端：
 1. 后端工程下载到本地，用idea打开项目。<br/>
 2. 安装mysql数据库脚本，生成数据库。 <br/> 
 数据库脚本在wldos-web/db下，mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/> 
@@ -90,7 +90,7 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
    启动项目：    
    mvn -pl com.wldos:wldos-web spring-boot:run。<br/><br/>
 
-####启动前端： <br/>
+#### 启动前端： <br/>
   1.下载前端项目到本地后，打开项目，执行tyarn安装依赖js库。<br/> 
   2.执行npm start启动前端项目。前端访问路径：http://localhost:8000  <br/>
   3.登录。超级管理员admin，密码同名称。
