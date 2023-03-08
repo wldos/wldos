@@ -48,21 +48,21 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 ![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
 
 ### 技术说明
-语言：Java8、ReactJs17。
-框架：springboot2.7.8（理论支持Java17）。  
-ORM：spring-data-jdbc2.4.7，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
-前端：ReactJs17，AntD ProV4.5。  
-中间件：tomcat9（支持换成其他）。  
-辅助：自带cache、自带JWT、自带文件服务。
-兼容性：后端jdk1.8，前端IE11+、Google Chrome、Edge等。
+**语言：** Java8、ReactJs17。  
+**框架：** springboot2.7.8（理论支持Java17）。  
+**ORM：** spring-data-jdbc2.4.7，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
+**前端：** ReactJs17，AntD ProV4.5。  
+**中间件：** tomcat9（支持换成其他），apache2或nginx。  
+**辅助：** 自带cache、自带JWT、自带文件服务。  
+**兼容性：** 后端jdk1.8，前端IE11+、Google Chrome、Edge等。
 
-应用架构：前后端分离，前端ReactJs，后端springMVC(2.0计划推出webflux架构版)，JWT认证，无状态。
+**应用架构：** 前后端分离，前端ReactJs，后端springMVC(2.0推出webflux架构版)，JWT认证，无状态，原生兼容springCloud，支持融入serviceMesh。
 
-**1.0核心功能：系统管理（应用、资源、权限、用户、组织、租户、多域、分类），内容管理，信息发布，内容创作、内容付费（在线付费、在线交付）。**
+**1.0核心功能：** 系统管理（应用、资源、权限、用户、组织、租户、多域、分类），内容管理，信息发布，内容创作、内容付费（在线付费、在线交付）。
 
-**2.0规划功能：服务集成与开放能力、插件扩展管理能力、类serviceMesh Ad-hoc架构支撑能力。**
+**2.0规划功能：** 服务集成与开放能力、插件扩展管理能力、类serviceMesh Ad-hoc架构支撑能力。
 
-**3.0规划功能：软件工厂、云物互联支撑能力、智能建模与机器人系统。**
+**3.0规划功能：** 软件工厂、云物互联支撑能力、智能建模与机器人系统。
 
 ### 模块介绍
   
