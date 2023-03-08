@@ -10,14 +10,14 @@
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
 </p>    
 
-### WLDOS愿景
+### 项目介绍
 
 元宇宙融合虚拟与现实的理念与作者所想不谋而合，WLDOS（音：汉['wou'da'si]，World Operating System）为了这种目标孵化，是可以平台化和边缘化的云物互联支撑系统，面向社区开源、线上服务和业态孵化而生。<br/>  
 WLDOS®寓意：面向世界的系统，面向未来的系统，我的系统。<br/>
 
 解决痛点：想利用网络化拓展业务，对如何拓展业务有困惑，需要一个可落地的软件搭建平台，同时不需要昂贵的容器化基础设施。
 
-两条腿走路：WLDOS云应用支撑平台 + 内容付费业务场景实现
+**适合个人建站、企业建站、搭建业务中台的基础、研发平台，适合技术在起步阶段或想在云物互联领域开发项目的团队。**
 
 如果您觉得有前景，请<a href="https://gitee.com/wldos/wldos" style="color: red">star</a>我们!
 
@@ -49,8 +49,8 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 
 ###技术说明
 语言：Java8、ReactJs17。
-框架：springboot2.7.8。  
-ORM：spring-data-jdbc2.7.8，连接池采用boot自带hikari。  
+框架：springboot2.7.8（理论支持Java17）。  
+ORM：spring-data-jdbc2.4.7，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
 前端：ReactJs17，AntD ProV4.5。  
 中间件：tomcat9（支持换成其他）。  
 辅助：自带cache、自带JWT、自带文件服务。
