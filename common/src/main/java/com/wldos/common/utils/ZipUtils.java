@@ -34,10 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ZipUtils {
 	private static final int bufferSize = 2 * 1024;
 
-	public static void main(String[] args) throws Exception {
-
-	}
-
 	/**
 	 *  压缩成zip
 	 * @param srcDir 源文件夹
@@ -52,7 +48,7 @@ public class ZipUtils {
 		}
 	}
 
-	public static void toZip(List<File> srcFiles, OutputStream out) throws IOException {
+	public static void toZip(List<File> srcFiles, OutputStream out) {
 
 		try (ZipOutputStream zos = new ZipOutputStream(out)) {
 
@@ -67,9 +63,7 @@ public class ZipUtils {
 				FileInputStream in = new FileInputStream(srcFile);
 
 				while ((len = in.read(buf)) != -1) {
-
 					zos.write(buf, 0, len);
-
 				}
 
 				zos.closeEntry();
@@ -78,9 +72,7 @@ public class ZipUtils {
 			}
 		}
 		catch (Exception e) {
-
 			throw new RuntimeException("zip error from ZipUtils", e);
-
 		}
 	}
 
@@ -125,7 +117,7 @@ public class ZipUtils {
 						compress(file, zos, name + "/" + file.getName(), true);
 					}
 					else {
-						compress(file, zos, file.getName(), false);
+						compress(file, zos, file.getName(), true);
 					}
 				}
 			}

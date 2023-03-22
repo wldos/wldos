@@ -11,6 +11,7 @@ package com.wldos.gateway;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
  * @date 2021/5/8
  * @version 1.0
  */
+@RefreshScope
 @Configuration
 public class RestTemplateConfig {
 

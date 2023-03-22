@@ -19,6 +19,7 @@ import com.wldos.sys.core.enums.MailEnum;
 import com.wldos.sys.core.repo.MailRepo;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2022/8/23
  * @version 1.0
  */
+@RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class MailService extends BaseService<MailRepo, WoMail, Long> {

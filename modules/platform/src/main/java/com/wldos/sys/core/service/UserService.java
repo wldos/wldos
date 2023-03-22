@@ -34,7 +34,7 @@ import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
 import com.wldos.support.storage.vo.FileInfo;
-import com.wldos.sys.base.dto.MenuAndRoute;
+import com.wldos.support.resource.dto.MenuAndRoute;
 import com.wldos.auth.vo.Login;
 import com.wldos.auth.vo.MobileModifyParams;
 import com.wldos.auth.vo.PasswdModifyParams;
@@ -42,7 +42,7 @@ import com.wldos.auth.model.AccSecurity;
 import com.wldos.auth.model.AccountConfigKey;
 import com.wldos.auth.service.PasswdStatusCheck;
 import com.wldos.auth.vo.AccountInfo;
-import com.wldos.sys.base.vo.Menu;
+import com.wldos.support.resource.vo.Menu;
 import com.wldos.auth.vo.Register;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.service.AuthService;
@@ -51,7 +51,7 @@ import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.entity.WoOrgUser;
 import com.wldos.sys.core.entity.WoUser;
 import com.wldos.sys.core.entity.WoUsermeta;
-import com.wldos.sys.base.enums.ResourceEnum;
+import com.wldos.support.resource.enums.ResourceEnum;
 import com.wldos.sys.base.enums.SysOptionEnum;
 import com.wldos.sys.base.enums.UserStatusEnum;
 import com.wldos.sys.core.repo.UserRepo;
@@ -67,6 +67,7 @@ import com.wldos.sys.base.vo.Domain;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,6 +79,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2021/5/2
  * @version 1.0
  */
+@RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserService extends BaseService<UserRepo, WoUser, Long> {

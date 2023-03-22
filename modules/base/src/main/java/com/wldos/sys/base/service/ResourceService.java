@@ -9,7 +9,6 @@
 package com.wldos.sys.base.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -26,16 +25,16 @@ import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.entity.WoDomainResource;
-import com.wldos.sys.base.entity.WoResource;
-import com.wldos.sys.base.enums.ResourceEnum;
+import com.wldos.support.resource.entity.WoResource;
+import com.wldos.support.resource.enums.ResourceEnum;
 import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.sys.base.repo.ResourceRepo;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.sys.base.repo.TermRepo;
-import com.wldos.sys.base.vo.AuthInfo;
+import com.wldos.support.resource.vo.AuthInfo;
 import com.wldos.sys.base.vo.DomRes;
 import com.wldos.sys.base.vo.ResSimple;
 

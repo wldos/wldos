@@ -56,7 +56,7 @@ import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.dto.PubTypeExt;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.sys.base.enums.TermTypeEnum;

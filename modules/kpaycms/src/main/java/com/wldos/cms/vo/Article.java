@@ -14,7 +14,7 @@ import java.util.List;
 
 import com.wldos.cms.model.CMeta;
 import com.wldos.cms.model.IMeta;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 
 /**
  * 一篇文章或一个章节。

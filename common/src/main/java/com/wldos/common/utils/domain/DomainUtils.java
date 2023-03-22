@@ -8,6 +8,9 @@
 
 package com.wldos.common.utils.domain;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.common.utils.ObjectUtils;
@@ -31,7 +34,14 @@ public class DomainUtils {
 		// 约定所有终端使用请求头设置的域名为请求域名，作为白名单验证的依据
 		String domain = ObjectUtils.string(request.getHeader(domainHeader));
 		if (ObjectUtils.isBlank(domain)) { // 未设置header, 取真实域名
-			return request.getServerName().toLowerCase();
+			StringBuffer sbUrl = request.getRequestURL();
+			try {
+				URL reqUrl = new URL(sbUrl.toString());
+				return reqUrl.getHost();
+			}
+			catch (MalformedURLException e) {
+				throw new RuntimeException("获取url异常");
+			}
 		} // 带www访问时，请设置为别名域名
 		return domain;
 	}

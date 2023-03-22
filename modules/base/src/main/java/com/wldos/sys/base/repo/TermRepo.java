@@ -10,7 +10,7 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.KTerms;
 import com.wldos.sys.base.entity.KTermType;
 

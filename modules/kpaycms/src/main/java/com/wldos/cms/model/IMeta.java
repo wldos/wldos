@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.wldos.cms.vo.SeoCrumbs;
 import com.wldos.sys.base.dto.PubTypeExt;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 
 /**
  * 统一操作接口。

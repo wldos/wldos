@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.service;
+package com.wldos.support.resource;
 
 /**
  * 资源分类未找到异常。

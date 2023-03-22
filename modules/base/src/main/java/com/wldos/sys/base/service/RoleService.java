@@ -18,7 +18,7 @@ import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.sys.base.entity.WoAuthRole;
-import com.wldos.sys.base.entity.WoResource;
+import com.wldos.support.resource.entity.WoResource;
 import com.wldos.sys.base.entity.WoRole;
 import com.wldos.sys.base.entity.WoRoleOrg;
 import com.wldos.sys.base.enums.RoleTypeEnum;

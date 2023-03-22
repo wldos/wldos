@@ -9,7 +9,6 @@
 package com.wldos.conf;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -19,12 +18,11 @@ import com.wldos.support.PropertiesDyn;
 import com.wldos.sys.base.entity.WoOptions;
 import com.wldos.sys.base.service.OptionsNoRepoService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.env.PropertySource;
 
 /**
  * 加载配置信息。
@@ -34,7 +32,11 @@ import org.springframework.core.env.PropertySource;
  * @version 1.0
  */
 @Configuration
-public class PropertiesReader implements PropertiesDyn {
+public class PropertiesReader {
+	@SuppressWarnings("all")
+	@Autowired
+	@Lazy
+	private PropertiesDyn propsDyn;
 
 	private final ConfigurableEnvironment env;
 
@@ -52,42 +54,11 @@ public class PropertiesReader implements PropertiesDyn {
 
 	@PostConstruct
 	private void initialDBPropsSrc() {
-		MutablePropertySources propertySources = env.getPropertySources();
 		try {
-			Map<String, String> propertyMap = this.service.getAllByAppType().stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
+			Map<String, String> propertyMap = this.service.getAllByAppType()
+					.stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
-			Properties properties = new Properties();
-			properties.putAll(propertyMap);
-
-			PropertiesPropertySource dbPropertySource = new PropertiesPropertySource(this.propertyName, properties);
-
-			String configurationProperties = "configurationProperties"; // 匹配springboot系统默认配置的正则前缀
-
-			String name = null;
-			boolean flag = false;
-
-			for (PropertySource<?> source : propertySources) {
-				if (configurationProperties.equals(source.getName())) {
-					name = source.getName();
-					flag = true;
-					System.out.println("Find propertySources ".concat(name));
-					break;
-				}
-			}
-
-			System.out.println("*****************************读取配置开始********************************");
-
-			if (flag) { // 以application.properties为准，以数据库配置为准,则addBefore...
-				propertySources.addAfter(name, dbPropertySource);
-				System.out.println("已加载系统配置源：".concat(this.propertyName));
-			}
-			else { // 没有文件配置，则置前当前配置
-				propertySources.addFirst(dbPropertySource);
-			}
-			//异步调用refresh方法，避免阻塞一直等待无响应
-			new Thread(contextRefresher::refresh).start();
-			System.out.println("已刷新会话环境所有参量");
-			System.out.println("*****************************读取配置结束********************************");
+			this.propsDyn.initialDBProps(this.env, propertyMap, this.propertyName, this.contextRefresher);
 		}
 		catch (Exception e) {
 			System.out.println("Error during database properties load" + ObjectUtils.string(e.getMessage()));
@@ -99,20 +70,11 @@ public class PropertiesReader implements PropertiesDyn {
 	 * 重新装载系统配置
 	 */
 	public void reLoadDBPropsSrc() {
-		MutablePropertySources propertySources = env.getPropertySources();
 		try {
-			Map<String, String> propertyMap = this.service.getAllByAppType().stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
+			Map<String, String> propertyMap = this.service.getAllByAppType()
+					.stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
-			Properties properties = new Properties();
-			properties.putAll(propertyMap);
-
-			PropertiesPropertySource dbPropertySource = new PropertiesPropertySource(this.propertyName, properties);
-
-			propertySources.addFirst(dbPropertySource); // 在上面初始化方法的基础上，只需要加载数据库配置
-			System.out.println("成功新增会话参数");
-			//异步调用refresh方法，避免阻塞一直等待无响应
-			new Thread(contextRefresher::refresh).start();
-			System.out.println("已刷新会话环境所有参量");
+			this.propsDyn.reLoadDBPropsSrc(this.env, propertyMap, this.propertyName, this.contextRefresher);
 		}
 		catch (Exception e) {
 			System.out.println("Error during database properties load" + ObjectUtils.string(e.getMessage()));
@@ -121,30 +83,16 @@ public class PropertiesReader implements PropertiesDyn {
 	}
 
 	/**
-	 * 运行时修改系统配置
+	 * 运行时修改某些系统配置
 	 */
 	public void dynSetPropsSrc(Map<String, String> propertyMap) {
-		MutablePropertySources propertySources = env.getPropertySources();
+
 		try {
-			Properties properties = new Properties();
-			properties.putAll(propertyMap);
-
-			PropertiesPropertySource dbPropertySource = new PropertiesPropertySource(this.propertyName, properties);
-
-			propertySources.addFirst(dbPropertySource); // 在上面初始化方法的基础上，只需要加载数据库配置
-
-			//异步调用refresh方法，避免阻塞一直等待无响应
-			new Thread(contextRefresher::refresh).start();
-			System.out.println("设置运行时参数，已刷新会话环境所有参量");
+			this.propsDyn.reLoadDBPropsSrc(this.env, propertyMap, this.propertyName, this.contextRefresher);
 		}
 		catch (Exception e) {
 			System.out.println("Error during dyn properties set" + ObjectUtils.string(e.getMessage()));
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public ConfigurableEnvironment getEnvironment() {
-		return this.env;
 	}
 }

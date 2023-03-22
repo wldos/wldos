@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.enums;
+package com.wldos.support.auth.enums;
 
 import com.wldos.common.Constants;
 

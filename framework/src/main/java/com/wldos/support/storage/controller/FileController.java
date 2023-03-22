@@ -20,6 +20,7 @@ import com.wldos.support.storage.vo.FileInfo;
 import org.apache.commons.io.FilenameUtils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,13 +34,14 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2021/5/30
  * @version 1.0
  */
+@RefreshScope
 @RestController
 @RequestMapping("file")
 public class FileController extends RepoController<FileService, WoFile> {
 	@Value("${wldos.file.store.url:https://www.wldos.com}")
 	private String storeUrl;
 
-	@Value("${wldos.file.store.path:/mnt/store}")
+	@Value("${wldos.file.store.path:}")
 	private String uploadPath;
 
 	/**

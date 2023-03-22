@@ -11,8 +11,8 @@ package com.wldos.sys.core.vo;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.sys.base.vo.Menu;
-import com.wldos.sys.base.vo.Route;
+import com.wldos.support.resource.vo.Menu;
+import com.wldos.support.resource.vo.Route;
 import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
 

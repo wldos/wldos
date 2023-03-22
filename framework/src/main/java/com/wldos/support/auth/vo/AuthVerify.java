@@ -6,7 +6,9 @@
  *
  */
 
-package com.wldos.sys.base.vo;
+package com.wldos.support.auth.vo;
+
+import com.wldos.support.resource.vo.AuthInfo;
 
 /**
  * 资源请求权限检查器。

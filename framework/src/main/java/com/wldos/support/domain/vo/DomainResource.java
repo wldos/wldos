@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.vo;
+package com.wldos.support.domain.vo;
 
 import com.wldos.common.vo.TreeNode;
 

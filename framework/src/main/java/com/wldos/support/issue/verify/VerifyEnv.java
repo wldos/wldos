@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wldos.support.issue.IssueConstants;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  * @date 2022/1/24
  * @version 1.0
  */
+@RefreshScope
 @Component
 public class VerifyEnv {
 	@Value("${wldos.platform.domain:wldos.com}")

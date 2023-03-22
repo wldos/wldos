@@ -53,8 +53,6 @@ public class OptionsNoRepoService {
 		if (ObjectUtils.isBlank(apps))
 			return new ArrayList<>();
 		List<String> appTypes =  apps.parallelStream().map(WoApp::getAppCode).collect(Collectors.toList());
-		List<WoOptions> options = this.optionsRepo.findAllByAppTypeIn(appTypes);
-		log.info("加载数据库系统{}, 配置文件: {} ", appTypes, options);
-		return options;
+		return this.optionsRepo.findAllByAppTypeIn(appTypes);
 	}
 }

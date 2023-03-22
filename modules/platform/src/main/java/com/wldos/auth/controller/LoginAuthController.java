@@ -25,6 +25,7 @@ import com.wldos.auth.vo.MobileModifyParams;
 import com.wldos.sys.core.vo.User;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/4/29
  * @version 1.0
  */
+@RefreshScope
 @RequestMapping("login")
 @RestController
 public class LoginAuthController extends NoRepoController {

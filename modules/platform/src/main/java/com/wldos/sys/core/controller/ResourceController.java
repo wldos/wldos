@@ -19,7 +19,7 @@ import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
-import com.wldos.sys.base.entity.WoResource;
+import com.wldos.support.resource.entity.WoResource;
 import com.wldos.sys.base.service.ResourceService;
 import com.wldos.sys.base.vo.AuthRes;
 import com.wldos.sys.base.vo.DomRes;

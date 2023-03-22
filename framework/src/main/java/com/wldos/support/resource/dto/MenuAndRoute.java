@@ -6,13 +6,13 @@
  *
  */
 
-package com.wldos.sys.base.dto;
+package com.wldos.support.resource.dto;
 
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.sys.base.vo.Menu;
-import com.wldos.sys.base.vo.Route;
+import com.wldos.support.resource.vo.Menu;
+import com.wldos.support.resource.vo.Route;
 
 /**
  * 菜单和路由。

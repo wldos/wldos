@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.vo;
+package com.wldos.support.resource.vo;
 
 /**
  * 动态组件路由。

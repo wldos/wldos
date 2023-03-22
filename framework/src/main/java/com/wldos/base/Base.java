@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
  * @date 2021/6/14
  * @version 1.0
  */
+@RefreshScope
 @Component
 public class Base {
 	/** 缓存变量用，Redis替代方案 */

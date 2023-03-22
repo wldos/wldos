@@ -36,7 +36,10 @@ import com.wldos.support.storage.vo.FileInfo;
 import com.wldos.support.web.RestService;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -54,6 +57,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2021/5/30
  * @version 1.0
  */
+@RefreshScope
 @Slf4j
 @Component
 public class FileStore implements IStore {
@@ -64,18 +68,19 @@ public class FileStore implements IStore {
 	@Value("${gateway.proxy.prefix:/wldos}")
 	private String gatewayPrefix;
 
-	@Value("${wldos.file.store.path:/mnt/store}")
+	@Value("${wldos.file.store.path:}")
 	private String uploadPath;
 
 	@Value("${wldos.file.store.local:true}")
 	private boolean isLocalStore;
 
-	private final RestService restService;
+	@Autowired
+	@Lazy
+	private RestService restService;
 
 	private final NoRepoFileService fileService;
 
-	public FileStore(RestService restService, NoRepoFileService fileService) {
-		this.restService = restService;
+	public FileStore(NoRepoFileService fileService) {
 		this.fileService = fileService;
 	}
 

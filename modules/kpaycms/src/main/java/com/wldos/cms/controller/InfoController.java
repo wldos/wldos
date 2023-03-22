@@ -36,6 +36,7 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.support.storage.vo.FileInfo;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2022/01/05
  * @version 1.0
  */
+@RefreshScope
 @RestController
 public class InfoController extends NoRepoController {
 	@Value("${wldos.cms.content.maxLength}")

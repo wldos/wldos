@@ -31,6 +31,7 @@ import com.wldos.support.auth.vo.UserInfo;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021/6/17
  * @version 1.0
  */
+@RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class CommentService extends BaseService<CommentRepo, KComments, Long> {

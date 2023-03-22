@@ -11,7 +11,6 @@ package com.wldos.gateway;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -39,11 +38,13 @@ import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.base.service.DomainService;
 import com.wldos.support.storage.utils.StoreUtils;
-import com.wldos.sys.base.vo.AuthInfo;
-import com.wldos.sys.base.vo.AuthVerify;
+import com.wldos.support.resource.vo.AuthInfo;
+import com.wldos.support.auth.vo.AuthVerify;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -56,6 +57,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version V1.0
  */
 @Slf4j
+@RefreshScope
 public class EdgeGateWayFilter implements Filter {
 
 	private String proxyPrefix;
@@ -112,7 +114,6 @@ public class EdgeGateWayFilter implements Filter {
 		this.edgeHandler = ac.getBean(EdgeHandler.class);
 		this.jwtTool = ac.getBean(JWTTool.class);
 		this.resJson = ac.getBean(ResultJson.class);
-		log.info("网关启动成功");
 	}
 
 	@Override
@@ -142,17 +143,18 @@ public class EdgeGateWayFilter implements Filter {
 			}
 
 			String domain = DomainUtils.getDomain(request, this.domainHeader);
-			WoDomain reqDomain = this.domainService.queryDomainByName(domain);
+			boolean isExcludeUri = this.isMatchUri(reqUri, this.excludeUris);
+			WoDomain reqDomain = this.domainService.queryDomainByName(domain, isExcludeUri);
 			if (reqDomain == null) {// @todo 当没有设置域名 或者 没有开启多域名时，应存在默认域名
-				log.error("使用了非法域名: {}", domain);
-				throw new IllegalDomainException("使用了非法域名，禁止访问！");
+				log.error("使用了非法域名：{}", domain);
+				throw new IllegalDomainException("使用了非法域名，禁止访问！" + domain);
 			}
 
 			String token = request.getHeader(this.tokenHeader);
 			Long domainId = reqDomain.getId();
 			jwt = jwtTool.popJwt(token, userIP, reqUri, reqDomain.getSiteDomain(), domainId);
 
-			if (this.isMatchUri(reqUri, this.excludeUris)) {
+			if (isExcludeUri) {
 				FilterRequestWrapper headers = this.edgeHandler.handleRequest(request, jwt, domainId, this.proxyPrefix);
 				chain.doFilter(headers, res);
 				return;
@@ -242,11 +244,14 @@ public class EdgeGateWayFilter implements Filter {
 		return null;
 	}
 
+	@Value("${wldos.platform.adminEmail:306991142#qq.com}")
+	private String adminEmail;
+
 	private void throwException(HttpServletResponse response, BaseException ex, String userIP, String reqUri, String userId) {
 
 		try {
 			int status = ex.getStatus();
-			String message = status == 500 ? "Sorry, the server is abnormal, please try again, or contact the administrator: support#zhiletu.com"
+			String message = status == 500 ? "Sorry, the server is abnormal, please try again, or contact the administrator: " + this.adminEmail
 					: ObjectUtils.string(ex.getMessage());
 			response.setStatus(status == 500 ? 200 : status);
 			response.setCharacterEncoding(StandardCharsets.UTF_8.name());

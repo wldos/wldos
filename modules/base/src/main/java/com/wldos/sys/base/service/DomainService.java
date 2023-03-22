@@ -22,11 +22,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.utils.TreeUtils;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.entity.WoDomainApp;
 import com.wldos.sys.base.entity.WoDomainResource;
-import com.wldos.sys.base.entity.WoResource;
+import com.wldos.support.resource.entity.WoResource;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.common.Constants;
 import com.wldos.base.entity.EntityAssists;
@@ -39,9 +39,10 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.sys.base.repo.DomainRepo;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.sys.base.repo.TermRepo;
-import com.wldos.sys.base.vo.DomainResource;
+import com.wldos.support.domain.vo.DomainResource;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021/4/28
  * @version 1.0
  */
+@RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
@@ -273,9 +275,10 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 	 * 根据请求域名取回对应的主域信息，不处理logo
 	 *
 	 * @param domain 请求头域名
+	 * @param isExcludeUri 是否token认证排除uri，如果不需要登录，默认取根域名
 	 * @return 域信息
 	 */
-	public WoDomain queryDomainByName(String domain) {
+	public WoDomain queryDomainByName(String domain, boolean isExcludeUri) {
 		List<WoDomain> domains = this.queryAllDomain();
 		for (WoDomain d : domains) { // 主域名、个性域名和别名 都匹配到主域名
 			if (d.getSiteDomain().equals(domain) || ("www." + d.getSiteDomain()).equals(domain) ||
@@ -284,7 +287,12 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 			}
 		}
 
-		return null;
+		if (!isExcludeUri) {
+			return null;
+		}
+
+		// 返回默认域名
+		return this.queryDomainByName(this.wldosDomain, true);
 	}
 
 	/**
@@ -294,7 +302,7 @@ public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
 	 * @return 是否非法
 	 */
 	public boolean isInValidDomain(String domain) {
-		return this.queryDomainByName(domain) == null;
+		return this.queryDomainByName(domain, false) == null;
 	}
 
 	/**

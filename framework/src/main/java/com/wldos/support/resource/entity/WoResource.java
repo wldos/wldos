@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.entity;
+package com.wldos.support.resource.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;

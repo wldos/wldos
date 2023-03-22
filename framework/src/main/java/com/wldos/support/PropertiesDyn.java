@@ -10,6 +10,7 @@ package com.wldos.support;
 
 import java.util.Map;
 
+import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
@@ -18,8 +19,23 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @version 1.0
  */
 public interface PropertiesDyn {
+	/**
+	 * 合并数据库配置属性到运行时配置环境
+	 *
+	 * @param env 配置环境
+	 * @param propertyMap 属性集
+	 * @param propertyName 数据库配置别名
+	 * @param contextRefresher 会话刷新器
+	 */
+	void initialDBProps(ConfigurableEnvironment env, Map<String, String> propertyMap, String propertyName, ContextRefresher contextRefresher);
 
-	void dynSetPropsSrc(Map<String, String> propertyMap);
-
-	ConfigurableEnvironment getEnvironment();
+	/**
+	 * 重新加载数据库属性配置
+	 *
+	 * @param env 配置环境
+	 * @param propertyMap 属性集
+	 * @param propertyName 数据库配置别名
+	 * @param contextRefresher 会话刷新器
+	 */
+	void reLoadDBPropsSrc(ConfigurableEnvironment env, Map<String, String> propertyMap, String propertyName, ContextRefresher contextRefresher);
 }

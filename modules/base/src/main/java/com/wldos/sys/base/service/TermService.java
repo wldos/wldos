@@ -25,7 +25,8 @@ import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.vo.TreeNode;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.TermOpener;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.dto.TermObject;
 import com.wldos.sys.base.enums.TermTypeEnum;
 import com.wldos.sys.base.repo.TermObjectRepo;
@@ -50,6 +51,7 @@ import com.wldos.common.enums.RedisKeyEnum;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.util.ReflectionUtils;
@@ -63,9 +65,10 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021/4/28
  * @version 1.0
  */
+@RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class TermService extends BaseService<TermRepo, KTerms, Long> {
+public class TermService extends BaseService<TermRepo, KTerms, Long> implements TermOpener {
 
 	private final BeanCopier termCopier = BeanCopier.create(Term.class, KTerms.class, false);
 

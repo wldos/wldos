@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.dto;
+package com.wldos.support.term.dto;
 
 /**
  * 分类项。

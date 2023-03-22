@@ -8,12 +8,6 @@
 
 package com.wldos.handler;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.wldos.common.res.Result;
-import com.wldos.common.res.ResultJson;
-import com.wldos.support.auth.JWTTool;
-import com.wldos.support.auth.vo.Token;
 import com.wldos.support.web.EdgeHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 

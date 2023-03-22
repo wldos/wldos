@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021/4/29
  * @version 1.0
  */
+@RefreshScope
 @Service
 @SuppressWarnings({ "all"})
 @Transactional(rollbackFor = Exception.class)

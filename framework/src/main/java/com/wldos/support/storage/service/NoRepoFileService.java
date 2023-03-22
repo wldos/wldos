@@ -11,7 +11,6 @@ package com.wldos.support.storage.service;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +32,8 @@ import com.wldos.support.storage.vo.FileInfo;
 import org.apache.commons.io.FilenameUtils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,10 +45,11 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2021/4/28
  * @version 1.0
  */
+@RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class NoRepoFileService {
-	@Value("${wldos.file.store.path:/mnt/store}")
+	@Value("${wldos.file.store.path:}")
 	private String uploadPath;
 
 	private final FileRepo fileRepo;

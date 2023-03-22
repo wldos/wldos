@@ -8,36 +8,19 @@
 
 package com.wldos.sys.base.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.common.Constants;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.TreeUtils;
+import com.wldos.support.auth.AuthOpener;
 import com.wldos.support.cache.ICache;
-import com.wldos.sys.base.dto.MenuAndRoute;
-import com.wldos.sys.base.dto.Term;
-import com.wldos.sys.base.entity.WoResource;
-import com.wldos.sys.base.enums.ResourceEnum;
-import com.wldos.sys.base.enums.UserRoleEnum;
+import com.wldos.support.resource.dto.MenuAndRoute;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.sys.base.repo.ResourceRepo;
-import com.wldos.sys.base.vo.AuthInfo;
-import com.wldos.sys.base.vo.AuthVerify;
-import com.wldos.sys.base.vo.DomainResource;
-import com.wldos.sys.base.vo.Menu;
-import com.wldos.sys.base.vo.Route;
+import com.wldos.support.resource.vo.AuthInfo;
+import com.wldos.support.auth.vo.AuthVerify;
+import com.wldos.support.resource.vo.Menu;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 /**
@@ -50,6 +33,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AuthService {
+	@Autowired
+	@Lazy
+	private AuthOpener authOpener;
+
 	private final ResourceRepo resourceRepo;
 
 	private final DomainResourceRepo domainResourceRepo;
@@ -78,52 +65,7 @@ public class AuthService {
 	 * @return AuthVerify 验证结果
 	 */
 	public AuthVerify verifyReqAuth(Long domainId, String appCode, Long userId, Long comId, String reqUri, String reqMethod) {
-		AuthVerify authVerify = new AuthVerify();
-		if (this.termService.isAdmin(userId)) {
-			authVerify.setAuth(true);
-			return authVerify;
-		}
-		List<AuthInfo> allMenuAuthInfo = this.queryAllAuth(appCode);
-		List<AuthInfo> matchAuthInfos =
-				allMenuAuthInfo.parallelStream().filter(authInfo -> {
-					String uri = authInfo.getResourcePath();
-					if (uri.contains("{")) { // Redis cache json
-						uri = uri.replaceAll("\\{\\*\\}", "[a-zA-Z\\\\d]+");
-					}
-					String exp = "^" + uri + "$";
-
-					return (Pattern.compile(exp).matcher(reqUri).find() &&
-							reqMethod.equals(authInfo.getRequestMethod()));
-				}).collect(Collectors.toList());
-
-		if (matchAuthInfos.isEmpty()) {
-			authVerify.setAuth(true);
-			return authVerify;
-		}
-
-		List<AuthInfo> authInfos = this.isGuest(userId) ? this.resourceRepo.queryAuthInfoForGuest(domainId, appCode)
-				: this.resourceRepo.queryAuthInfo(domainId, comId, appCode, userId);
-
-		AuthInfo matchReq = null;
-
-		for (AuthInfo auth : authInfos) {
-
-			boolean isMatch = matchAuthInfos.stream().anyMatch(authInfo -> authInfo.getResourceCode().equals(auth.getResourceCode()));
-			if (isMatch) {
-				matchReq = auth;
-				break;
-			}
-		}
-
-		if (matchReq == null) {
-			authVerify.setAuth(false);
-		}
-		else {
-			authVerify.setAuthInfo(matchReq);
-			authVerify.setAuth(true);
-		}
-
-		return authVerify;
+		return this.authOpener.verifyReqAuth(domainId, appCode, userId, comId, reqUri, reqMethod, this.termService, this.resourceRepo, this.cache);
 	}
 
 	/**
@@ -133,27 +75,7 @@ public class AuthService {
 	 * @return 应用授权信息
 	 */
 	public List<AuthInfo> queryAllAuth(String appCode) {
-		// @todo 此处应设置所有资源的缓存取值逻辑（key存在取值，不存在查数据库并存储到缓存）
-		String key = this.authKey(appCode);
-		String value = ObjectUtils.string(this.cache.get(key));
-		try {
-			ObjectMapper om = new ObjectMapper();
-			if (ObjectUtils.isBlank(value)) {
-				List<AuthInfo> authInfos = this.resourceRepo.queryAuthInfo(appCode);
-
-				value = om.writeValueAsString(authInfos);
-
-				this.cache.set(key, value, 12, TimeUnit.HOURS);
-
-				return authInfos;
-			}
-
-			return JSON.parseArray(value, AuthInfo.class);
-		}
-		catch (JsonProcessingException e) {
-			log.error("json解析异常={} {}", value, e.getMessage());
-			return new ArrayList<>();
-		}
+		return this.authOpener.queryAllAuth(appCode, this.resourceRepo, this.cache);
 	}
 
 	/**
@@ -162,11 +84,7 @@ public class AuthService {
 	 * @param appCode 应用编码
 	 */
 	public void refreshAuth(String appCode) {
-		this.cache.remove(this.authKey(appCode));
-	}
-
-	private String authKey(String appCode) {
-		return RedisKeyEnum.WLDOS_AUTH.toString() + ":" + appCode;
+		this.authOpener.refreshAuth(appCode, this.cache);
 	}
 
 	/**
@@ -179,36 +97,7 @@ public class AuthService {
 	 * @return 菜单列表
 	 */
 	public MenuAndRoute queryMenuAndRouteByUserId(Long domainId, Long comId, String menuType, Long id) {
-		List<WoResource> resources = this.getResourcesByUserId(domainId, comId, menuType, id);
-
-		if (ObjectUtils.isBlank(resources))
-			return null;
-
-		List<Menu> menus = this.getMenuByUserId(resources);
-
-		List<DomainResource> domRes = this.domainResourceRepo.queryDomainDynamicRoutes(domainId);
-		List<Long> termTypeIds = domRes.parallelStream().map(DomainResource::getTermTypeId).collect(Collectors.toList());
-		if (ObjectUtils.isBlank(termTypeIds)) {
-			log.error("未配置首页模板，内容分类为空");
-			return null;
-		}
-		List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
-		Map<Long, Term> termMap = terms.parallelStream().collect(Collectors.toMap(Term::getTermTypeId, t -> t));
-
-		Map<String, Route> modules = domRes.parallelStream().collect(Collectors.toMap(DomainResource::getResourcePath,
-				d -> {
-					try {
-						if (d.getTermTypeId() == Constants.TOP_TERM_ID)
-							return new Route(d.getModuleName(), null);
-						Term term = termMap.get(d.getTermTypeId());
-						return new Route(d.getModuleName(), term.getSlug());
-					}
-					catch (RuntimeException e) {
-						throw new ResTermNoFoundException("资源对应的分类项不存在, 资源id：" + d.getId());
-					}
-				}));
-
-		return new MenuAndRoute(menus, modules);
+		return this.authOpener.queryMenuAndRouteByUserId(domainId, comId, menuType, id, this.termService, this.resourceRepo, this.domainResourceRepo);
 	}
 
 	/**
@@ -221,22 +110,7 @@ public class AuthService {
 	 * @return 菜单列表
 	 */
 	public List<Menu> queryMenuByUserId(Long domainId, Long comId, String menuType, Long id) {
-		List<WoResource> resources = this.getResourcesByUserId(domainId, comId, menuType, id);
-		return this.getMenuByUserId(resources);
-	}
-
-	private List<Menu> getMenuByUserId(List<WoResource> resources) {
-		List<Menu> menus = resources.parallelStream().map(res ->
-				Menu.of(res.getResourcePath(), res.getIcon(), res.getResourceName(), res.getTarget(), res.getId(), res.getParentId(), res.getDisplayOrder()))
-				.collect(Collectors.toList());
-
-		return TreeUtils.build(menus, Constants.MENU_ROOT_ID);
-	}
-
-	private List<WoResource> getResourcesByUserId(Long domainId, Long comId, String menuType, Long id) {
-		// @todo 二期优化：应该按照用户角色为key做缓存，根据用户id找到归属的用户组，根据组找到绑定的角色集，分别取缓存返回，需要去数据库查询的是根据userid找角色
-		return this.isGuest(id) ? this.resourceRepo.queryResourceForGuest(domainId, menuType)
-				: this.resourceRepo.queryResource(domainId, comId, menuType, id);
+		return this.authOpener.queryMenuByUserId(domainId, comId, menuType, id, this.resourceRepo);
 	}
 
 	/**
@@ -248,24 +122,7 @@ public class AuthService {
 	 * @return 操作权限列表
 	 */
 	public List<String> queryAuthorityButton(Long domainId, Long comId, Long id) {
-		// @todo 二期优化：应该按照用户角色为key做缓存，根据用户id找到归属的用户组，根据组找到绑定的角色集，分别取缓存返回，需要去数据库查询的是根据userid找角色
-		boolean isGuest = this.isGuest(id);
-		List<WoResource> resources = isGuest ? this.resourceRepo.queryResourceForGuest(domainId, ResourceEnum.BUTTON.getValue())
-				: this.resourceRepo.queryResource(domainId, comId, ResourceEnum.BUTTON.getValue(), id);
-
-		List<String> authorities = new ArrayList<>();
-
-		for (WoResource r : resources) {
-			authorities.add(r.getResourceCode());
-		}
-
-		if (isGuest) {
-			authorities.add(UserRoleEnum.GUEST.toString());
-		}
-		else
-			authorities.add(UserRoleEnum.USER.toString());
-
-		return authorities;
+		return this.authOpener.queryAuthorityButton(domainId, comId, id, this.resourceRepo);
 	}
 
 	/**
@@ -275,6 +132,6 @@ public class AuthService {
 	 * @return 是否游客
 	 */
 	public boolean isGuest(Long userId) {
-		return Constants.GUEST_ID.equals(userId);
+		return this.authOpener.isGuest(userId);
 	}
 }

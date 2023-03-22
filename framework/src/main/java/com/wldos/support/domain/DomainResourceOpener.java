@@ -6,22 +6,20 @@
  *
  */
 
-package com.wldos.sys.base.repo;
+package com.wldos.support.domain;
 
 import java.util.List;
 
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.support.domain.DomainResourceOpener;
 import com.wldos.support.domain.vo.DomainResource;
 
 /**
- * 域资源jdbc扩展。
+ * 域资源操作接口。
  *
  * @author 树悉猿
- * @date 2021/12/23
+ * @date 2023/3/22
  * @version 1.0
  */
-public interface DomainResourceJdbc extends DomainResourceOpener {
+public interface DomainResourceOpener {
 	/**
 	 * 查询某域的动态路由资源，获取指定域的动态路由资源，路由共享，组件专有，业务分类专有。
 	 * 不共享组件是为了多域应用隔离，应用包括视图、API两个层面，1.0仅考虑视图层面。
@@ -37,8 +35,4 @@ public interface DomainResourceJdbc extends DomainResourceOpener {
 	 * @return 域资源列表
 	 */
 	List<DomainResource> queryDomainResources(Long domainId);
-
-	default String queryDomainDynamicRoutesCacheKey(Long domainId) {
-		return RedisKeyEnum.WLDOS_DOMAIN_RES.toString() + domainId + "dynamic";
-	}
 }

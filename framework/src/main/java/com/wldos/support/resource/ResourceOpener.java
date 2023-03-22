@@ -6,15 +6,12 @@
  *
  */
 
-package com.wldos.sys.base.repo;
+package com.wldos.support.resource;
 
 import java.util.List;
 
-import com.wldos.support.resource.ResourceOpener;
 import com.wldos.support.resource.entity.WoResource;
 import com.wldos.support.resource.vo.AuthInfo;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 平台资源复杂查询接口声明。
@@ -24,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1.0
  */
 @SuppressWarnings("unused")
-@Transactional(readOnly = true) // 接口层面开启只读事务，防止死锁，写方法直接用@Transactional注解覆盖只读属性
-public interface ResourceJdbc extends ResourceOpener {
+public interface ResourceOpener {
 	/**
 	 * 查询SaaS平台某个用户在某应用(模块)下的所有资源，并拼装成权限信息。
 	 *

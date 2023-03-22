@@ -37,7 +37,7 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.AtomicUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.dto.TermObject;
 import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.sys.base.enums.TermTypeEnum;

@@ -16,7 +16,7 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
 import com.wldos.auth.service.LoginAuthService;
 import com.wldos.auth.vo.Login;
-import com.wldos.sys.base.vo.Menu;
+import com.wldos.support.resource.vo.Menu;
 import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.sys.core.entity.WoOrg;

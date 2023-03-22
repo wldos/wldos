@@ -11,9 +11,8 @@ package com.wldos.sys.core.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.sys.base.dto.Term;
+import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.KTerms;
 import com.wldos.sys.base.enums.TermTypeEnum;
 import com.wldos.sys.base.service.TermService;

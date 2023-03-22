@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.enums;
+package com.wldos.support.resource.enums;
 
 /**
  * 资源相关枚举值。
