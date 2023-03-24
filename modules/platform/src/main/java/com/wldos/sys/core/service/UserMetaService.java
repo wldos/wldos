@@ -10,7 +10,7 @@ package com.wldos.sys.core.service;
 
 import java.util.List;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.core.entity.WoUsermeta;
 import com.wldos.sys.core.repo.UsermetaRepo;
 
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class UserMetaService extends BaseService<UsermetaRepo, WoUsermeta, Long> {
+public class UserMetaService extends RepoService<UsermetaRepo, WoUsermeta, Long> {
 	public WoUsermeta findByUserIdAndMetaKey(Long uid, String ack) {
 		return this.entityRepo.findByUserIdAndMetaKey(uid, ack);
 	}

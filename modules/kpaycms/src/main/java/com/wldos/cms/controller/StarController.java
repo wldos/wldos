@@ -8,7 +8,7 @@
 
 package com.wldos.cms.controller;
 
-import com.wldos.base.controller.RepoController;
+import com.wldos.base.RepoController;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.service.StarService;
 import com.wldos.cms.vo.Pub;

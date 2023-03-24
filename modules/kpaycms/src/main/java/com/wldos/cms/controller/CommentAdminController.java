@@ -11,7 +11,7 @@ package com.wldos.cms.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.base.controller.RepoController;
+import com.wldos.base.RepoController;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.service.CommentService;
 import com.wldos.cms.vo.AuditComment;
@@ -87,6 +87,7 @@ public class CommentAdminController extends RepoController<CommentService, KComm
 	 * @param jsonObject 评论ids
 	 * @return 结果
 	 */
+	@SuppressWarnings("unchecked")
 	@DeleteMapping("delBatch")
 	public Boolean deletes(@RequestBody Map<String, Object> jsonObject) {
 		Object ids = jsonObject.get("ids");

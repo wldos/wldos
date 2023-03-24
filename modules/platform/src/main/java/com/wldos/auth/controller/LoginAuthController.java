@@ -18,7 +18,7 @@ import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.auth.vo.SecQuestModifyParams;
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 import com.wldos.auth.vo.Login;
 import com.wldos.auth.vo.LoginAuthParams;
 import com.wldos.auth.vo.MobileModifyParams;
@@ -43,18 +43,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RefreshScope
 @RequestMapping("login")
 @RestController
-public class LoginAuthController extends NoRepoController {
-	private final LoginAuthService loginAuthService;
-
-	public LoginAuthController(LoginAuthService loginAuthService) {
-		this.loginAuthService = loginAuthService;
-	}
+public class LoginAuthController extends NoRepoController<LoginAuthService> {
 
 	@PostMapping("account")
 	public Login loginAuth(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams, @Value("${passwd.hexKey.code}") String hexKeyCode) {
 
 		getLog().info("{} login in ", loginAuthParams.getUsername());
-		Login user = this.loginAuthService.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
+		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
 		if (user == null) {
 			getLog().info("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
@@ -70,7 +65,7 @@ public class LoginAuthController extends NoRepoController {
 
 		getLog().info("{} login in ", loginAuthParams.getUsername());
 		// todo 改造为手机验证码登录验证逻辑
-		Login user = this.loginAuthService.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
+		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
 		if (user == null) {
 			getLog().info("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
@@ -83,7 +78,7 @@ public class LoginAuthController extends NoRepoController {
 
 	@DeleteMapping("logout")
 	public User logout(@RequestHeader(value = "${token.access.header}") String token) {
-		return this.loginAuthService.logout(token, this.getDomainId());
+		return this.service.logout(token, this.getDomainId());
 	}
 
 	@PostMapping("register")
@@ -92,19 +87,19 @@ public class LoginAuthController extends NoRepoController {
 		register.setRegisterIp(this.getUserIp());
 		register.setLoginName(register.getEmail());
 		getLog().info("register= {} ", register.getLoginName());
-		return this.loginAuthService.register(this.getDomain(), this.getDomainId(), register, this.request);
+		return this.service.register(this.getDomain(), this.getDomainId(), register, this.request);
 	}
 
 	@PostMapping("active")
 	public Login active(@RequestBody ActiveParams active) {
-		return this.loginAuthService.active(this.getDomain(), active, this.request);
+		return this.service.active(this.getDomain(), active, this.request);
 	}
 
 	@PostMapping("reset")
 	public Login resetPasswd(@RequestBody PasswdResetParams resetParams) {
 
 		getLog().info("用户登录名: {} 密码重置 ", resetParams.getLoginName());
-		Login user = this.loginAuthService.resetPasswd(resetParams);
+		Login user = this.service.resetPasswd(resetParams);
 		if (user == null) {
 			getLog().info("{} 密码重置失败", resetParams.getLoginName());
 			user = new Login();
@@ -119,7 +114,7 @@ public class LoginAuthController extends NoRepoController {
 			@Value("${passwd.hexKey.code}") String hexKeyCode) {
 
 		getLog().info("用户id: {} 密码修改 ", passwdModifyParams.getId());
-		Login user = this.loginAuthService.changePasswd(passwdModifyParams, hexKeyCode);
+		Login user = this.service.changePasswd(passwdModifyParams, hexKeyCode);
 		if (user == null) {
 			getLog().info("{} 密码修改失败", passwdModifyParams.getId());
 			user = new Login();
@@ -132,7 +127,7 @@ public class LoginAuthController extends NoRepoController {
 	@PostMapping("mobile")
 	public Login changeMobile(@RequestBody MobileModifyParams mobileModifyParams) {
 		getLog().info("用户id: {} 密保手机修改 ", mobileModifyParams.getId());
-		Login user = this.loginAuthService.changeMobile(mobileModifyParams);
+		Login user = this.service.changeMobile(mobileModifyParams);
 		if (user == null) {
 			getLog().info("{} 密保手机修改失败", mobileModifyParams.getId());
 			user = new Login();
@@ -145,7 +140,7 @@ public class LoginAuthController extends NoRepoController {
 	@PostMapping("secQuest")
 	public Login changeSecQuest(@RequestBody SecQuestModifyParams params) {
 		getLog().info("用户id: {} 密保问题修改 ", params.getId());
-		Login user = this.loginAuthService.changeSecQuest(params);
+		Login user = this.service.changeSecQuest(params);
 		if (user == null) {
 			getLog().info("{} 密保问题修改失败", params.getId());
 			user = new Login();
@@ -158,7 +153,7 @@ public class LoginAuthController extends NoRepoController {
 	@PostMapping("bakEmail")
 	public Login changeBakEmail(@RequestBody BakEmailModifyParams params) {
 		getLog().info("用户id: {} 备用邮箱修改 ", params.getId());
-		Login user = this.loginAuthService.changeBakEmail(params);
+		Login user = this.service.changeBakEmail(params);
 		if (user == null) {
 			getLog().info("{} 备用邮箱修改失败", params.getId());
 			user = new Login();
@@ -171,7 +166,7 @@ public class LoginAuthController extends NoRepoController {
 	@PostMapping("mfa")
 	public Login changeMFA(@RequestBody MFAModifyParams params) {
 		getLog().info("用户id: {} 密保设备修改 ", params.getId());
-		Login user = this.loginAuthService.changeMFA(params);
+		Login user = this.service.changeMFA(params);
 		if (user == null) {
 			getLog().info("{} 密保设备修改失败", params.getId());
 			user = new Login();

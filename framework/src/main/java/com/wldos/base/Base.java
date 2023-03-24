@@ -8,12 +8,17 @@
 
 package com.wldos.base;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.PostConstruct;
 
-import com.wldos.base.entity.GetBeanHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.Constants;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.auth.JWTTool;
-import com.wldos.base.controller.IDGen;
 import com.wldos.support.cache.ICache;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.support.storage.IStore;
@@ -29,7 +34,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * 框架基础类。
+ * 框架基础会话类。
  *
  * @author 树悉猿
  * @date 2021/6/14
@@ -37,7 +42,7 @@ import org.springframework.stereotype.Component;
  */
 @RefreshScope
 @Component
-public class Base {
+class Base {
 	/** 缓存变量用，Redis替代方案 */
 	@Autowired
 	protected ICache cache;
@@ -146,6 +151,34 @@ public class Base {
 	/** 刷新权限体系：前缀为auth的所有缓存 */
 	protected void refreshAuth() {
 		this.refreshCacheByPrefix(RedisKeyEnum.WLDOS_AUTH.toString());
+	}
+
+	protected boolean isRightUser(Long userId, String key, CommonOperation commonOperate) {
+		String value = ObjectUtils.string(this.cache.get(key));
+		List<Long> adminIds;
+		try {
+			ObjectMapper om = new ObjectMapper();
+			if (ObjectUtils.isBlank(value)) {
+
+				adminIds = RedisKeyEnum.WLDOS_ADMIN.toString().equals(key) ? commonOperate.listSuperAdmin() : commonOperate.listTrustMan();
+
+				if (ObjectUtils.isBlank(adminIds))
+					return false;
+
+				value = om.writeValueAsString(adminIds);
+
+				this.cache.set(key, value, 12, TimeUnit.HOURS);
+
+				return adminIds.contains(userId);
+			}
+
+			adminIds = om.readValue(value, new TypeReference<List<Long>>(){});
+			return adminIds.contains(userId);
+		}
+		catch (JsonProcessingException e) {
+			this.getLog().error("json解析异常={} {}", value, e.getMessage());
+			return false;
+		}
 	}
 
 	// 定义application全局变量，存储hook

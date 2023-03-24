@@ -8,7 +8,7 @@
 
 package com.wldos.sys.base.service;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.base.entity.WoDomainResource;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 
@@ -24,6 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class DomainResourceService extends BaseService<DomainResourceRepo, WoDomainResource, Long> {
+public class DomainResourceService extends RepoService<DomainResourceRepo, WoDomainResource, Long> {
 
 }

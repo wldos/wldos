@@ -6,25 +6,25 @@
  *
  */
 
-package com.wldos.base.repo;
+package com.wldos.base;
 
 import com.wldos.common.exception.BaseException;
 
 /**
- * jdbc执行异常。
+ * service执行异常。
  *
  * @author 树悉猿
  * @date 2021/7/15
  * @since 1.0
  */
-public class JdbcToolsException extends BaseException {
+@SuppressWarnings("unused")
+public class BaseServiceException extends BaseException {
 
-	public JdbcToolsException(String s, Exception e) {
+	public BaseServiceException(String s, Exception e) {
 		super(s, e);
 	}
 
-	@SuppressWarnings("unused")
-	public JdbcToolsException(String s) {
+	public BaseServiceException(String s) {
 		super(s);
 	}
 }

@@ -35,7 +35,7 @@ import com.wldos.sys.base.repo.TermRepo;
 import com.wldos.sys.base.vo.Category;
 import com.wldos.sys.base.vo.TermTree;
 import com.wldos.common.res.PageableResult;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
@@ -68,7 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class TermService extends BaseService<TermRepo, KTerms, Long> implements TermOpener {
+public class TermService extends RepoService<TermRepo, KTerms, Long> implements TermOpener {
 
 	private final BeanCopier termCopier = BeanCopier.create(Term.class, KTerms.class, false);
 

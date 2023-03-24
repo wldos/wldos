@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class RoleService extends BaseService<RoleRepo, WoRole, Long> {
+public class RoleService extends RepoService<RoleRepo, WoRole, Long> {
 	private final AuthRoleRepo authRoleRepo;
 
 	private final ResourceService resourceService;

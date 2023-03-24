@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ApproveStatusEnum;
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class CommentService extends BaseService<CommentRepo, KComments, Long> {
+public class CommentService extends RepoService<CommentRepo, KComments, Long> {
 
 	@Value("${wldos.cms.comment.audit}")
 	private String auditFlag;

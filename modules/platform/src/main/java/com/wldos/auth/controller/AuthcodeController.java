@@ -13,7 +13,7 @@ import java.util.Map;
 
 import com.wldos.auth.service.AuthCodeService;
 import com.wldos.auth.vo.PasswdResetParams;
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 import com.wldos.common.res.Result;
 import com.wldos.auth.vo.CaptchaVO;
 
@@ -33,24 +33,18 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("authcode")
-public class AuthcodeController extends NoRepoController {
-
-	private final AuthCodeService authCodeService;
-
-	public AuthcodeController(AuthCodeService authCodeService) {
-		this.authCodeService = authCodeService;
-	}
+public class AuthcodeController extends NoRepoController<AuthCodeService> {
 
 	@GetMapping("code")
 	public Result authCode() {
-		Map<String, String> map = this.authCodeService.genCode();
+		Map<String, String> map = this.service.genCode();
 
 		return resJson.format(map);
 	}
 
 	@GetMapping("code4mobile")
 	public Result authCodeMobile(@RequestParam Map<String, String> mobile) {
-		Map<String, String> map = this.authCodeService.genCodeMobile(mobile.get("mobile"));
+		Map<String, String> map = this.service.genCodeMobile(mobile.get("mobile"));
 
 		return resJson.format(map);
 	}
@@ -58,7 +52,7 @@ public class AuthcodeController extends NoRepoController {
 	@GetMapping("code4email")
 	public Result authCodeEmail(@RequestParam Map<String, String> email) {
 
-		Map<String, String> map = this.authCodeService.genCodeEmail(email.get("email"));
+		Map<String, String> map = this.service.genCodeEmail(email.get("email"));
 
 		return resJson.format(map);
 	}
@@ -67,7 +61,7 @@ public class AuthcodeController extends NoRepoController {
 	public Result checkCode(@RequestBody CaptchaVO captchaVO) {
 		Map<String, String> res = new HashMap<>();
 		String status = "status";
-		if (!this.authCodeService.checkCode(captchaVO)) {
+		if (!this.service.checkCode(captchaVO)) {
 			res.put(status, "error");
 		}
 		else
@@ -80,7 +74,7 @@ public class AuthcodeController extends NoRepoController {
 	public Result checkEmail(@RequestBody PasswdResetParams email) {
 		Map<String, String> res = new HashMap<>();
 		String status = "status";
-		boolean isExists = this.authCodeService.checkEmail(email.getEmail());
+		boolean isExists = this.service.checkEmail(email.getEmail());
 
 		if (!isExists) {
 			getLog().info("不存在的邮箱校验尝试：{}", email);

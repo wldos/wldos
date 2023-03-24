@@ -10,7 +10,7 @@ package com.wldos.sys.core.controller;
 
 import java.util.Map;
 
-import com.wldos.base.controller.RepoController;
+import com.wldos.base.RepoController;
 import com.wldos.sys.base.entity.WoOptions;
 import com.wldos.sys.base.service.OptionsService;
 

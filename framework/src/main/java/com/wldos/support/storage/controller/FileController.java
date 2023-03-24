@@ -11,7 +11,7 @@ package com.wldos.support.storage.controller;
 import java.io.IOException;
 import java.util.Locale;
 
-import com.wldos.base.controller.RepoController;
+import com.wldos.base.RepoController;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.storage.entity.WoFile;
 import com.wldos.support.storage.service.FileService;

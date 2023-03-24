@@ -33,13 +33,10 @@ import com.wldos.auth2.model.OAuthUserWechat;
 import com.wldos.auth2.model.OAuthUserWeibo;
 import com.wldos.auth2.model.OpenIdQQ;
 import com.wldos.auth2.vo.OAuthLoginParams;
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.common.Constants;
-import com.wldos.common.res.ResultJson;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.HttpUtils;
-import com.wldos.support.auth.JWTTool;
-import com.wldos.support.auth.LoginUtils;
 import com.wldos.support.auth.vo.JWT;
 import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
@@ -52,10 +49,7 @@ import com.wldos.sys.core.entity.WoUser;
 import com.wldos.sys.core.service.MailService;
 import com.wldos.sys.core.service.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,18 +63,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @SuppressWarnings({ "all" })
 @Transactional(rollbackFor = Exception.class)
-public class OAuthService extends Base {
+public class OAuthService extends NoRepoService {
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
-
-	private final JWTTool jwtTool;
-
-	@Autowired
-	@Lazy
-	@Qualifier("commonOperation")
-	private LoginUtils loginUtils;
-
-	@Autowired
-	protected ResultJson resJson;
 
 	private final AuthService authService;
 
@@ -94,8 +78,7 @@ public class OAuthService extends Base {
 
 	private final OptionsService optionsService;
 
-	public OAuthService(JWTTool jwtTool, AuthService authService, UserService userService, OAuthLoginUserService oAuthLoginUserService, StateCodeService stateCodeService, MailService mailService, OptionsService optionsService) {
-		this.jwtTool = jwtTool;
+	public OAuthService(AuthService authService, UserService userService, OAuthLoginUserService oAuthLoginUserService, StateCodeService stateCodeService, MailService mailService, OptionsService optionsService) {
 		this.authService = authService;
 		this.userService = userService;
 		this.oAuthLoginUserService = oAuthLoginUserService;

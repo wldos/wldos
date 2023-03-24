@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 import com.wldos.cms.dto.PubPicture;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
@@ -59,18 +59,16 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RefreshScope
 @RestController
-public class SpaceController extends NoRepoController {
+public class SpaceController extends NoRepoController<SpaceService> {
 	@Value("${wldos.cms.content.maxLength}")
 	private int maxLength;
 
 	@Value("${wldos.cms.tag.maxTagNum}")
 	private int maxTagNum;
 
-	private final SpaceService spaceService;
 	private final KCMSService kcmsService;
 
-	public SpaceController(SpaceService spaceService, KCMSService kcmsService) {
-		this.spaceService = spaceService;
+	public SpaceController(KCMSService kcmsService) {
 		this.kcmsService = kcmsService;
 	}
 
@@ -112,7 +110,7 @@ public class SpaceController extends NoRepoController {
 	 */
 	@GetMapping("space/book/{bookId:\\d+}/chapter/{chapterId:\\d+}")
 	public Chapter curChapterByAuthorAndBkIdAndChapId(@PathVariable Long bookId, @PathVariable Long chapterId) {
-		return this.spaceService.queryChapter(chapterId);
+		return this.service.queryChapter(chapterId);
 	}
 
 	@Value("${wldos.cms.tag.tagLength}")
@@ -170,7 +168,7 @@ public class SpaceController extends NoRepoController {
 		chapter.setComId(this.getTenantId()); // 带上租户id，实现租户隔离, 关闭租户模式时该字段忽略
 		chapter.setDomainId(this.getDomainId()); // 带上域id，实现域隔离，同上
 
-		return this.spaceService.createChapter(chapter, this.getCurUserId(), this.getUserIp());
+		return this.service.createChapter(chapter, this.getCurUserId(), this.getUserIp());
 	}
 
 	/**
@@ -186,7 +184,7 @@ public class SpaceController extends NoRepoController {
 			return this.resJson.ok("error", "保存数据为空忽略");
 		if (ObjectUtils.isOutBoundsClearHtml(chapter.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
-		this.spaceService.saveChapter(chapter, this.getCurUserId(), this.getUserIp());
+		this.service.saveChapter(chapter, this.getCurUserId(), this.getUserIp());
 
 		return this.resJson.ok("ok");
 	}

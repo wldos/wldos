@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class SpaceService extends Base {
+public class SpaceService extends NoRepoService {
 
 	private final PubService pubService;
 

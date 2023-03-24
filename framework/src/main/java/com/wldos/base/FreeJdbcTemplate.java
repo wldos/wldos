@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.base.repo;
+package com.wldos.base;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,6 @@ import com.wldos.common.dto.SQLTable;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
-import com.wldos.support.BaseWrap;
 import com.wldos.support.God;
 
 import org.springframework.data.domain.Sort;

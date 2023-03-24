@@ -18,7 +18,7 @@ import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.base.entity.WoComUser;
 import com.wldos.sys.base.entity.WoCompany;
 import com.wldos.sys.base.repo.ComUserRepo;
@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class CompanyService extends BaseService<CompanyRepo, WoCompany, Long> {
+public class CompanyService extends RepoService<CompanyRepo, WoCompany, Long> {
 
 	private final OrgRepo orgRepo;
 

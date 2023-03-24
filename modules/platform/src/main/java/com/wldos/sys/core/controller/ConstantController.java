@@ -8,7 +8,8 @@
 
 package com.wldos.sys.core.controller;
 
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.DefaultNoRepoService;
+import com.wldos.base.NoRepoController;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.support.storage.IStore;
 
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("constant")
 @RestController
-public class ConstantController extends NoRepoController {
+public class ConstantController extends NoRepoController<DefaultNoRepoService> {
 	/**
 	 * 文件服务前缀
 	 *

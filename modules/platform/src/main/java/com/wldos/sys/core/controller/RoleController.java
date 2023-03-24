@@ -11,7 +11,7 @@ package com.wldos.sys.core.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.base.controller.RepoController;
+import com.wldos.base.RepoController;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;

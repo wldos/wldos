@@ -6,21 +6,19 @@
  *
  */
 
-package com.wldos.base.controller;
-
-import com.wldos.common.res.ResultJson;
+package com.wldos.base;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 无实体controller，用于没有数据仓(spring data repository)实现的场景。
+ * 无实体controller，用于没有唯一确定的数据仓(spring data repository)操作的场景。
  *
  * @author 树悉猿
  * @date 2021/5/5
  * @version 1.0
  */
-@SuppressWarnings("rawtypes")
-public abstract class NoRepoController extends BaseController {
+public abstract class NoRepoController<S extends NoRepoService> extends BaseController {
+
 	@Autowired
-	protected ResultJson resJson;
+	protected S service;
 }

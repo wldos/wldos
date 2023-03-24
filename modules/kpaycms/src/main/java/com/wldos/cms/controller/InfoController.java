@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.common.Constants;
 import com.wldos.common.vo.SelectOption;
@@ -55,18 +55,16 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RefreshScope
 @RestController
-public class InfoController extends NoRepoController {
+public class InfoController extends NoRepoController<InfoService> {
 	@Value("${wldos.cms.content.maxLength}")
 	private int maxLength;
 
 	@Value("${wldos.cms.tag.maxTagNum}")
 	private int maxTagNum;
 
-	private final InfoService infoService;
 	private final KCMSService kcmsService;
 
-	public InfoController(InfoService infoService, KCMSService kcmsService) {
-		this.infoService = infoService;
+	public InfoController(KCMSService kcmsService) {
 		this.kcmsService = kcmsService;
 	}
 
@@ -78,7 +76,7 @@ public class InfoController extends NoRepoController {
 	 */
 	@GetMapping("info-{pid:\\d+}.html")
 	public Info info(@PathVariable Long pid) {
-		return this.infoService.infoDetail(pid, false);
+		return this.service.infoDetail(pid, false);
 	}
 
 	/**
@@ -89,7 +87,7 @@ public class InfoController extends NoRepoController {
 	 */
 	@GetMapping("info-{id:[0-9]+}/preview")
 	public Info previewInfo(@PathVariable Long id) {
-		return this.infoService.infoDetail(id, true);
+		return this.service.infoDetail(id, true);
 	}
 
 	/**
@@ -105,7 +103,7 @@ public class InfoController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.infoService.queryInfoDomain(pageQuery);
+		return this.service.queryInfoDomain(pageQuery);
 	}
 
 	/**
@@ -123,7 +121,7 @@ public class InfoController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.infoService.queryInfoCategory(slugCategory, pageQuery);
+		return this.service.queryInfoCategory(slugCategory, pageQuery);
 	}
 
 	/**
@@ -141,7 +139,7 @@ public class InfoController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.infoService.queryInfoTag(slugTag, pageQuery);
+		return this.service.queryInfoTag(slugTag, pageQuery);
 	}
 
 	/**
@@ -160,7 +158,7 @@ public class InfoController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.infoService.queryInfoDomain(pageQuery);
+		return this.service.queryInfoDomain(pageQuery);
 	}
 
 	@Value("${wldos.cms.tag.tagLength}")

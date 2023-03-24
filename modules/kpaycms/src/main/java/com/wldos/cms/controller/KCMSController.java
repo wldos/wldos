@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Article;
@@ -43,13 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-public class KCMSController extends NoRepoController {
-
-	private final KCMSService kcmsService;
-
-	public KCMSController(KCMSService kcmsService) {
-		this.kcmsService = kcmsService;
-	}
+public class KCMSController extends NoRepoController<KCMSService> {
 
 	/**
 	 * 首页跨行业查询
@@ -65,7 +59,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryWorksList(pageQuery);
+		return this.service.queryWorksList(pageQuery);
 	}
 
 	/**
@@ -77,13 +71,13 @@ public class KCMSController extends NoRepoController {
 	@GetMapping("cms/listSideCar/{pageName}")
 	public PageableResult<PubUnit> listSideCar(@PathVariable String pageName) throws JsonProcessingException {
 		// 根据页面名称获取配置的侧边栏参数
-		Map<String, Object> params = this.kcmsService.readParamsSideCar(pageName);
+		Map<String, Object> params = this.service.readParamsSideCar(pageName);
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryWorksList(pageQuery);
+		return this.service.queryWorksList(pageQuery);
 	}
 
 	/**
@@ -102,7 +96,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryWorksList(pageQuery);
+		return this.service.queryWorksList(pageQuery);
 	}
 
 	/**
@@ -121,7 +115,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryArchivesDomain(pageQuery);
+		return this.service.queryArchivesDomain(pageQuery);
 	}
 
 	/**
@@ -140,7 +134,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryArchivesCategory(slugCategory, pageQuery);
+		return this.service.queryArchivesCategory(slugCategory, pageQuery);
 	}
 
 	/**
@@ -159,7 +153,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryArchivesTag(slugTag, pageQuery);
+		return this.service.queryArchivesTag(slugTag, pageQuery);
 	}
 
 	/**
@@ -177,7 +171,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryArchivesDomain(pageQuery);
+		return this.service.queryArchivesDomain(pageQuery);
 	}
 
 	/**
@@ -188,7 +182,7 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("archives-{id:[0-9]+}.html")
 	public Article archivesId(@PathVariable Long id) {
-		return this.kcmsService.queryArticle(id, false);
+		return this.service.queryArticle(id, false);
 	}
 
 	/**
@@ -199,7 +193,7 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("archives-{id:[0-9]+}/preview")
 	public Article previewArchive(@PathVariable Long id) {
-		return this.kcmsService.queryArticle(id, true);
+		return this.service.queryArticle(id, true);
 	}
 
 	/**
@@ -209,7 +203,7 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("/archive-{contAlias}")
 	public Long archivesId(@PathVariable String contAlias) throws IOException {
-		return this.kcmsService.queryIdByPubName(contAlias);
+		return this.service.queryIdByPubName(contAlias);
 	}
 
 	/**
@@ -228,7 +222,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryArchivesUserDomain(this.getDomainId(), pageQuery);
+		return this.service.queryArchivesUserDomain(this.getDomainId(), pageQuery);
 	}
 
 	/**
@@ -247,7 +241,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryArchivesUserDomain(this.getDomainId(), pageQuery);
+		return this.service.queryArchivesUserDomain(this.getDomainId(), pageQuery);
 	}
 
 	/**
@@ -289,7 +283,7 @@ public class KCMSController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryBookChapter(bookId, pageQuery);
+		return this.service.queryBookChapter(bookId, pageQuery);
 	}
 
 	/**
@@ -300,7 +294,7 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("element-{id:[0-9]+}")
 	public Article elementRead(@PathVariable Long id) {
-		return this.kcmsService.readElement(id, false);
+		return this.service.readElement(id, false);
 	}
 
 	/**
@@ -310,7 +304,7 @@ public class KCMSController extends NoRepoController {
 	 */
 	@GetMapping("element-{id:[0-9]+}/preview")
 	public Article previewElement(@PathVariable Long id) {
-		return this.kcmsService.readElement(id, true);
+		return this.service.readElement(id, true);
 	}
 
 	/**
@@ -345,7 +339,7 @@ public class KCMSController extends NoRepoController {
 	public SeoCrumbs genSeoCrumbs(@RequestParam Map<String, String> params) {
 		RouteParams routeParams = RouteParams.of(params.get("tempType"), params.get("slugTerm"));
 
-		return this.kcmsService.genSeoCrumbs(routeParams);
+		return this.service.genSeoCrumbs(routeParams);
 	}
 
 	/**

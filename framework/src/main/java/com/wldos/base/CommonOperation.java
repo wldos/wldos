@@ -6,15 +6,22 @@
  *
  */
 
-package com.wldos.base.service;
+package com.wldos.base;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import com.wldos.base.repo.FreeJdbcTemplate;
+import javax.servlet.http.HttpServletRequest;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.dto.SQLTable;
+import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.TreeNode;
 
 /**
@@ -223,4 +230,36 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * 获取可信用户
 	 */
 	List<Long> listTrustMan();
+
+	/**
+	 * 安全起见，实时查询当前用户是否超级管理员
+	 *
+	 * @param userId 用户id
+	 * @return 是否管理员
+	 */
+	boolean isAdmin(Long userId);
+
+	/**
+	 * 实时查询当前用户是否可信者
+	 *
+	 * @param userId 用户id
+	 * @return 是否可信者
+	 */
+	boolean isCanTrust(Long userId);
+
+
+	Long getCurUserId(HttpServletRequest request);
+
+	String getToken(HttpServletRequest request);
+
+	Long getTenantId(HttpServletRequest request);
+
+	String getDomain(HttpServletRequest request);
+
+	Long getDomainId(HttpServletRequest request);
+	void applyDomainFilter(PageQuery pageQuery, HttpServletRequest request);
+
+	void applyTenantFilter(PageQuery pageQuery, HttpServletRequest request);
+
+	long getTokenExpTime(HttpServletRequest request);
 }

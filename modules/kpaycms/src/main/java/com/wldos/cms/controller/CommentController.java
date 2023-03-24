@@ -10,7 +10,7 @@ package com.wldos.cms.controller;
 
 import java.util.List;
 
-import com.wldos.base.controller.RepoController;
+import com.wldos.base.RepoController;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.enums.ApproveStatusEnum;
 import com.wldos.cms.service.CommentService;

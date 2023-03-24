@@ -10,7 +10,7 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.repo.StarRepo;
 import com.wldos.common.enums.ValidStatusEnum;
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class StarService extends BaseService<StarRepo, KStars, Long> {
+public class StarService extends RepoService<StarRepo, KStars, Long> {
 
 	private final PubService pubService;
 

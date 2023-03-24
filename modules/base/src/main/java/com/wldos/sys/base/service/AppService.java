@@ -9,7 +9,7 @@
 package com.wldos.sys.base.service;
 
 import com.wldos.base.entity.AuditFields;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.res.PageableResult;
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class AppService extends BaseService<AppRepo, WoApp, Long> {
+public class AppService extends RepoService<AppRepo, WoApp, Long> {
 
 	/**
 	 * 查询应用和子表域预订应用关联

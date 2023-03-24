@@ -10,7 +10,7 @@ package com.wldos.support.storage.service;
 
 import java.io.IOException;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.support.storage.entity.WoFile;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.support.storage.repo.FileRepo;
@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class FileService extends BaseService<FileRepo, WoFile, Long> {
+public class FileService extends RepoService<FileRepo, WoFile, Long> {
 
 	private final NoRepoFileService noRepoFileService;
 

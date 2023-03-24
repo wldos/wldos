@@ -12,10 +12,9 @@ import com.wldos.auth2.entity.WoOauthLoginUser;
 import com.wldos.auth2.model.OAuthUser;
 import com.wldos.auth2.repo.OAuthLoginUserRepo;
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.core.entity.WoUser;
 
-import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class OAuthLoginUserService extends BaseService<OAuthLoginUserRepo, WoOauthLoginUser, Long> {
+public class OAuthLoginUserService extends RepoService<OAuthLoginUserRepo, WoOauthLoginUser, Long> {
 
 	public WoOauthLoginUser findByUnionId(String openId, String unionId) {
 		// 查询是否已存在授权用户

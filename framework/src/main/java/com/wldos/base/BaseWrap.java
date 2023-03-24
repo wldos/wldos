@@ -6,14 +6,13 @@
  *
  */
 
-package com.wldos.support;
+package com.wldos.base;
 
-import com.wldos.base.Base;
-import com.wldos.base.controller.IDGen;
-import com.wldos.base.entity.GetBeanHelper;
+import com.wldos.support.God;
 import com.wldos.support.auth.JWTTool;
 import com.wldos.support.cache.ICache;
 import com.wldos.support.storage.IStore;
+import org.slf4j.Logger;
 
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -107,5 +106,46 @@ public class BaseWrap extends Base implements God {
 
 	public IDGen getSnowflakeID() {
 		return IDGen;
+	}
+
+	protected Logger getLog() {
+		return super.getLog();
+	}
+
+	/** 主键生成器，加强雪花算法，分布式唯一 */
+	protected long nextId() {
+		return super.nextId();
+	}
+
+	/**
+	 * 是否平台侧管理
+	 *
+	 * @param tenantId 当前用户租户id
+	 * @return 是否平台侧管理
+	 */
+	protected boolean isPlatformAdmin(Long tenantId) {
+		return super.isPlatformAdmin(tenantId);
+	}
+
+	protected void refreshCache(String ...keys) {
+		super.refreshCache(keys);
+	}
+
+	protected void refreshCacheByPrefix(String keyPrefix) {
+		super.refreshCacheByPrefix(keyPrefix);
+	}
+
+	/** 刷新权限体系：前缀为auth的所有缓存 */
+	protected void refreshAuth() {
+		super.refreshAuth();
+	}
+
+	// 定义application全局变量，存储hook
+	protected void doAction(){
+		super.doAction();
+	}
+
+	protected Object applyFilter() {
+		return super.applyFilter();
 	}
 }

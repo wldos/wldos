@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.base.controller;
+package com.wldos.base;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

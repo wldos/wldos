@@ -12,8 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.wldos.auth.model.State;
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.UUIDUtils;
 import com.wldos.common.utils.captcha.VerifyCode;
@@ -32,7 +31,7 @@ import org.springframework.stereotype.Service;
  * @version 1.0
  */
 @Service
-public class AuthCodeService extends Base {
+public class AuthCodeService extends NoRepoService {
 
 	private final MailService mailService;
 	private final UserService userService;

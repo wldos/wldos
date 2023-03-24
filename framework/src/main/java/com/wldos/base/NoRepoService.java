@@ -6,15 +6,14 @@
  *
  */
 
-package com.wldos.support;
-
-import com.wldos.base.BaseWrap;
+package com.wldos.base;
 
 /**
+ * 不确定具体仓库操作的service继承此类，拥有基础会话和通用操作能力。
+ *
  * @author 树悉猿
- * @date 2022/2/8
+ * @date 2021/5/5
  * @version 1.0
  */
-public interface God {
-	BaseWrap getBaseWrap();
+public abstract class NoRepoService extends BaseService {
 }

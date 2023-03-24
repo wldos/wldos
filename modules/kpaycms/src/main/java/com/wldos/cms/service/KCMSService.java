@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.cms.dto.ContModelDto;
 import com.wldos.cms.dto.PubPicture;
@@ -86,7 +86,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class) // 符号错误异常是由于静默元数据没有创建成功，重新创建即可，不要回滚
-public class KCMSService extends Base {
+public class KCMSService extends NoRepoService {
 
 	private final BeanCopier contCopier = BeanCopier.create(ContModelDto.class, Product.class, false);
 

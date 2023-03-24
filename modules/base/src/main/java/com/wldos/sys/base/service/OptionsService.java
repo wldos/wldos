@@ -10,7 +10,7 @@ package com.wldos.sys.base.service;
 
 import java.util.List;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.sys.base.entity.WoOptions;
 import com.wldos.sys.base.repo.OptionsRepo;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class OptionsService  extends BaseService<OptionsRepo, WoOptions, Long> {
+public class OptionsService  extends RepoService<OptionsRepo, WoOptions, Long> {
 
 	/**
 	 * 根据配置key获取配置属性

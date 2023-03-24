@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -49,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class OrgService extends BaseService<OrgRepo, WoOrg, Long> {
+public class OrgService extends RepoService<OrgRepo, WoOrg, Long> {
 
 	private final RoleService roleService;
 

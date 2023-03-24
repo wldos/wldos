@@ -17,7 +17,7 @@ import com.wldos.auth.vo.BakEmailModifyParams;
 import com.wldos.auth.vo.MFAModifyParams;
 import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.auth.vo.SecQuestModifyParams;
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.sys.base.dto.Tenant;
@@ -36,7 +36,6 @@ import com.wldos.sys.core.service.MailService;
 import com.wldos.sys.core.service.UserService;
 import com.wldos.sys.core.vo.User;
 import com.wldos.support.auth.vo.JWT;
-import com.wldos.support.auth.JWTTool;
 import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
 
@@ -60,20 +59,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @SuppressWarnings({ "all"})
 @Transactional(rollbackFor = Exception.class)
-public class LoginAuthService extends Base {
+public class LoginAuthService extends NoRepoService {
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
 
 	/** 是否开启邮箱注册激活开关，开启后注册用户需要从邮箱激活 */
 	@Value("${wldos.platform.user.register.emailaction:true}")
 	protected boolean isEmailAction;
 
-	private final JWTTool jwtTool;
-
 	@Autowired
 	@Lazy
 	@Qualifier("commonOperation")
 	private LoginUtils loginUtils;
-
 
 	private final AuthService authService;
 
@@ -83,8 +79,7 @@ public class LoginAuthService extends Base {
 
 	private final MailService mailService;
 
-	public LoginAuthService(JWTTool jwtTool, AuthService authService, UserService userService, AuthCodeService authCodeService, MailService mailService) {
-		this.jwtTool = jwtTool;
+	public LoginAuthService(AuthService authService, UserService userService, AuthCodeService authCodeService, MailService mailService) {
 		this.authService = authService;
 		this.userService = userService;
 		this.authCodeService = authCodeService;

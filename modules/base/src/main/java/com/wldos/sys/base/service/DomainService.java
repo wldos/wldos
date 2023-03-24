@@ -33,7 +33,7 @@ import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.sys.base.repo.DomainRepo;
@@ -56,7 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class DomainService extends BaseService<DomainRepo, WoDomain, Long> {
+public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 	@Value("${wldos.platform.logo.default}")
 	private String defaultLogo;
 	@Value("${wldos.platform.favicon.default}")

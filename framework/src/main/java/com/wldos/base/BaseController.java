@@ -1,0 +1,147 @@
+/*
+ * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Licensed under the AGPL or a commercial license.
+ * For AGPL see License in the project root for license information.
+ * For commercial licenses see term.md or https://www.wldos.com
+ *
+ */
+
+package com.wldos.base;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wldos.common.enums.RedisKeyEnum;
+import com.wldos.common.res.ResultJson;
+import com.wldos.common.utils.ObjectUtils;
+import com.wldos.common.utils.http.IpUtils;
+import com.wldos.common.res.PageQuery;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+
+/**
+ * 顶层controller，共享资源。
+ *
+ * @author 树悉猿
+ * @date 2021/5/5
+ * @version 1.0
+ */
+abstract class BaseController extends Base{
+
+	/** 如果service层需要request，可以传给service，不要在service直接获取*/
+	@Autowired
+	protected HttpServletRequest request;
+
+	/** 如果service层需要response，可以传给service，不要在service直接获取 */
+	@Autowired
+	protected HttpServletResponse response;
+
+	@Autowired
+	protected ResultJson resJson;
+
+	/**
+	 * 通用的jdbc和业务操作
+	 */
+	@Autowired
+	@Lazy
+	@SuppressWarnings({ "all" })
+	protected CommonOperation commonOperate;
+
+	/**
+	 * 获取请求用户id
+	 */
+	protected Long getCurUserId() {
+		return this.commonOperate.getCurUserId(this.request);
+	}
+
+	/**
+	 * 获取请求用户token
+	 */
+	protected String getToken() {
+		return this.commonOperate.getToken(this.request);
+	}
+
+	/**
+	 * 获取当前用户IP
+	 */
+	protected String getUserIp() {
+		return IpUtils.getClientIp(this.request);
+	}
+
+	/**
+	 * 获取用户主企业id(租户)
+	 */
+	protected Long getTenantId() {
+		return this.commonOperate.getTenantId(this.request);
+	}
+
+	/**
+	 * 获取用户当前访问的域名
+	 */
+	protected String getDomain() {
+		return this.commonOperate.getDomain(this.request);
+	}
+
+	/**
+	 * 获取用户当前访问域名的id
+	 *
+	 * @return 域id
+	 */
+	protected Long getDomainId() {
+		return this.commonOperate.getDomainId(this.request);
+	}
+
+	/**
+	 * 针对分页查询应用域隔离
+	 *
+	 * @param pageQuery 分页查询参数
+	 */
+	protected void applyDomainFilter(PageQuery pageQuery) {
+		this.commonOperate.applyDomainFilter(pageQuery, this.request);
+	}
+
+	/**
+	 * 实体表分页查询应用租户隔离
+	 *
+	 * @param pageQuery 分页查询
+	 */
+	protected void applyTenantFilter(PageQuery pageQuery) {
+		this.commonOperate.applyTenantFilter(pageQuery, this.request);
+	}
+
+	/**
+	 * token超期时间
+	 *
+	 * @return expireTime
+	 */
+	protected long getTokenExpTime() {
+		return this.commonOperate.getTokenExpTime(this.request);
+	}
+
+	/**
+	 * 安全起见，实时查询当前用户是否超级管理员
+	 *
+	 * @param userId 用户id
+	 * @return 是否管理员
+	 */
+	public boolean isAdmin(Long userId) {
+		return this.commonOperate.isAdmin(userId);
+	}
+
+	/**
+	 * 实时查询当前用户是否可信者
+	 *
+	 * @param userId 用户id
+	 * @return 是否可信者
+	 */
+	public boolean isCanTrust(Long userId) {
+		return this.commonOperate.isCanTrust(userId);
+	}
+}

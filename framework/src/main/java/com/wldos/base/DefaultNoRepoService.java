@@ -6,23 +6,19 @@
  *
  */
 
-package com.wldos.sys.base.service;
-
-import com.wldos.sys.base.entity.KTermObject;
-import com.wldos.base.RepoService;
-import com.wldos.sys.base.repo.TermObjectRepo;
+package com.wldos.base;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 业务对象类型关联service。
+ * 不确定具体仓库操作的service继承此类，拥有基础会话和通用操作能力。
  *
  * @author 树悉猿
- * @date 2021/12/13
+ * @date 2021/5/5
  * @version 1.0
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class TermObjectService extends RepoService<TermObjectRepo, KTermObject, Long> {
+public class DefaultNoRepoService extends NoRepoService {
 }

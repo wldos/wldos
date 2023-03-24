@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.base.controller.NoRepoController;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.support.resource.enums.ResourceEnum;
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("enum")
 @RestController
-public class EnumController extends NoRepoController {
+public class EnumController {
 	/**
 	 * 模板类型枚举
 	 *

@@ -20,7 +20,7 @@ import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageableResult;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.utils.TreeUtils;
@@ -50,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class ResourceService extends BaseService<ResourceRepo, WoResource, Long> {
+public class ResourceService extends RepoService<ResourceRepo, WoResource, Long> {
 	private final DomainService domainService;
 	private final DomainAppService domainAppService;
 	private final DomainResourceRepo domainResourceRepo;

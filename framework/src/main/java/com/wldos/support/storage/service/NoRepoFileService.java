@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.controller.IDGen;
+import com.wldos.base.IDGen;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.HttpUtils;
 import com.wldos.support.storage.entity.WoFile;
@@ -33,7 +33,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

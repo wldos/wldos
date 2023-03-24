@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.cms.dto.ContModelDto;
 import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.model.KModelMetaKey;
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class InfoService extends Base {
+public class InfoService extends NoRepoService {
 	private final BeanCopier contCopier = BeanCopier.create(ContModelDto.class, Info.class, false);
 
 	private final PubService pubService;

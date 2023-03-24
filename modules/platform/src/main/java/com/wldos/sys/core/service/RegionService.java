@@ -10,7 +10,7 @@ package com.wldos.sys.core.service;
 
 import java.util.List;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.core.entity.WoRegion;
 import com.wldos.sys.base.enums.RegionLevelEnum;
 import com.wldos.sys.core.repo.RegionRepo;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class RegionService extends BaseService<RegionRepo, WoRegion, Long> {
+public class RegionService extends RepoService<RegionRepo, WoRegion, Long> {
 
 	public List<Prov> queryProvince() {
 		return this.entityRepo.queryByLevel(RegionLevelEnum.PROV.toString());

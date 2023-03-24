@@ -29,7 +29,7 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.base.entity.AuditFields;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
@@ -82,7 +82,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class UserService extends BaseService<UserRepo, WoUser, Long> {
+public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	private final BeanCopier domCopier = BeanCopier.create(WoDomain.class, Domain.class, false);
 	private final BeanCopier regUserCopier = BeanCopier.create(Register.class, WoUser.class, false);
 	@Value("${wldos.user.avatar.default}")

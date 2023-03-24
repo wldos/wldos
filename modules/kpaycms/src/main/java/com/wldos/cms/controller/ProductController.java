@@ -10,7 +10,7 @@ package com.wldos.cms.controller;
 
 import java.util.Map;
 
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Product;
@@ -32,12 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-public class ProductController extends NoRepoController {
-	private final KCMSService kcmsService;
-
-	public ProductController(KCMSService kcmsService) {
-		this.kcmsService = kcmsService;
-	}
+public class ProductController extends NoRepoController<KCMSService> {
 
 	/**
 	 * 付费内容详情信息
@@ -47,7 +42,7 @@ public class ProductController extends NoRepoController {
 	 */
 	@GetMapping("product-{pid:\\d+}.html")
 	public Product productInfo(@PathVariable Long pid) {
-		return this.kcmsService.productInfo(pid, false);
+		return this.service.productInfo(pid, false);
 	}
 
 	/**
@@ -55,7 +50,7 @@ public class ProductController extends NoRepoController {
 	 */
 	@GetMapping("product-{id:[0-9]+}/preview")
 	public Product previewProduct(@PathVariable Long id) {
-		return this.kcmsService.productInfo(id, true);
+		return this.service.productInfo(id, true);
 	}
 
 	/**
@@ -72,7 +67,7 @@ public class ProductController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryProductDomain(pageQuery);
+		return this.service.queryProductDomain(pageQuery);
 	}
 
 	/**
@@ -91,7 +86,7 @@ public class ProductController extends NoRepoController {
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryProductCategory(slugCategory, pageQuery);
+		return this.service.queryProductCategory(slugCategory, pageQuery);
 	}
 
 	/**

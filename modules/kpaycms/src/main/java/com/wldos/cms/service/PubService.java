@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.cms.entity.KPubs;
 import com.wldos.common.dto.SQLTable;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.cms.dto.ContModelDto;
 import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.entity.KStars;
@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class PubService extends BaseService<PubRepo, KPubs, Long> {
+public class PubService extends RepoService<PubRepo, KPubs, Long> {
 
 	private final UserService userService;
 

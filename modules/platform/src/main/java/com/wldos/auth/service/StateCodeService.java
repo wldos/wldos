@@ -10,8 +10,7 @@ package com.wldos.auth.service;
 
 import java.util.concurrent.TimeUnit;
 
-import com.wldos.auth.model.State;
-import com.wldos.base.Base;
+import com.wldos.base.NoRepoService;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.UUIDUtils;
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Service;
  * @version 1.0
  */
 @Service
-public class StateCodeService extends Base {
+public class StateCodeService extends NoRepoService {
 
 	/**
 	 * 状态码校验

@@ -8,7 +8,8 @@
 
 package com.wldos.sys.core.controller;
 
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.DefaultNoRepoService;
+import com.wldos.base.NoRepoController;
 import com.wldos.conf.PropertiesReader;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("system/options")
-public class OptionsController extends NoRepoController {
+public class OptionsController extends NoRepoController<DefaultNoRepoService> {
 
 	private final PropertiesReader propertiesReader;
 

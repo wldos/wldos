@@ -13,7 +13,7 @@ import java.io.File;
 import javax.mail.internet.MimeMessage;
 
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.core.entity.WoMail;
 import com.wldos.sys.core.enums.MailEnum;
 import com.wldos.sys.core.repo.MailRepo;
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class MailService extends BaseService<MailRepo, WoMail, Long> {
+public class MailService extends RepoService<MailRepo, WoMail, Long> {
 
 	/** 发件人邮箱地址 */
 	@Value("${wldos.mail.fromMail.addr}")

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.base.entity.WoDomainApp;
 import com.wldos.sys.base.repo.DomainAppRepo;
 
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class DomainAppService extends BaseService<DomainAppRepo, WoDomainApp, Long> {
+public class DomainAppService extends RepoService<DomainAppRepo, WoDomainApp, Long> {
 
 	public boolean existsByAppIdAndDomainId(Long appId, Long domainId) {
 		return this.entityRepo.existsByAppIdAndDomainId(appId, domainId);

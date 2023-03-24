@@ -11,14 +11,12 @@ package com.wldos.auth2.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.wldos.auth.vo.Login;
 import com.wldos.auth2.model.OAuthConfig;
 import com.wldos.auth2.vo.OAuthLoginParams;
 import com.wldos.sys.base.enums.OAuthTypeEnum;
 import com.wldos.auth2.service.OAuthService;
-import com.wldos.base.controller.NoRepoController;
+import com.wldos.base.NoRepoController;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,13 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("oauth")
-public class OAuthController extends NoRepoController {
-
-	private final OAuthService oAuthService;
-
-	public OAuthController(OAuthService oAuthService) {
-		this.oAuthService = oAuthService;
-	}
+public class OAuthController extends NoRepoController<OAuthService> {
 
 	/**
 	 * 获取授权码申请url
@@ -53,14 +45,14 @@ public class OAuthController extends NoRepoController {
 	@GetMapping("code/{authType}")
 	public String getCodeUrl(@PathVariable String authType, @RequestParam String redirectPrefix) throws UnsupportedEncodingException {
 		// 创建授权码申请链接
-		return OAuthTypeEnum.match(authType) ? this.oAuthService.genAuthCodeUrl(authType, redirectPrefix) : "";
+		return OAuthTypeEnum.match(authType) ? this.service.genAuthCodeUrl(authType, redirectPrefix) : "";
 	}
 
 	@PostMapping("login")
 	public Login loginAuth(@RequestBody OAuthLoginParams loginAuthParams) throws IOException {
 
 		getLog().info("{} OAuth login in {}", loginAuthParams.getAuthType(), this.getUserIp());
-		Login user = this.oAuthService.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request,
+		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request,
 				response, this.getUserIp());
 		if (user == null) {
 			getLog().info("{} 三方登录失败", loginAuthParams.getAuthType());
@@ -81,7 +73,7 @@ public class OAuthController extends NoRepoController {
 	@PostMapping("config/{authType}")
 	public String configOAuth(@RequestBody OAuthConfig config, @PathVariable String authType) {
 		if (OAuthTypeEnum.match(authType)) {
-			this.oAuthService.configOAuth(authType, config);
+			this.service.configOAuth(authType, config);
 			return this.resJson.ok("ok");
 		} else
 			throw new RuntimeException("提交了未知类型，系统已拒绝");
@@ -96,7 +88,7 @@ public class OAuthController extends NoRepoController {
 	@GetMapping("fetch/{authType}")
 	public OAuthConfig fetchConfig(@PathVariable String authType) {
 		if (OAuthTypeEnum.match(authType))
-			return this.oAuthService.fetchOAuthConfig(authType);
+			return this.service.fetchOAuthConfig(authType);
 		else
 			throw new RuntimeException("提交了未知类型，系统已拒绝");
 	}

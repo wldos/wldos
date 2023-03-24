@@ -6,17 +6,15 @@
  *
  */
 
-package com.wldos.base.controller;
+package com.wldos.base;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.service.BaseService;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.ResultJson;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,10 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @version 1.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public abstract class RepoController<S extends BaseService, E> extends BaseController {
-
-	@Autowired
-	protected ResultJson resJson;
+public abstract class RepoController<S extends RepoService, E> extends BaseController {
 
 	@Autowired
 	protected S service;
@@ -67,11 +62,6 @@ public abstract class RepoController<S extends BaseService, E> extends BaseContr
 	 * 新增完成后，触发的操作，比如刷新缓存
 	 */
 	protected void postAdd(E entity) {
-	}
-
-	@GetMapping("get")
-	public Object get(@RequestParam long id) {
-		return service.findById(id);
 	}
 
 	@PostMapping("update")
@@ -151,6 +141,11 @@ public abstract class RepoController<S extends BaseService, E> extends BaseContr
 	protected void postDeletes(List<Object> ids) {
 	}
 
+	@GetMapping("get")
+	public Object get(@RequestParam long id) {
+		return service.findById(id);
+	}
+
 	@GetMapping("all")
 	public List<E> all() {
 		if (this.isMultiTenancy && !this.service.isAdmin(this.getCurUserId())) {
@@ -187,16 +182,5 @@ public abstract class RepoController<S extends BaseService, E> extends BaseContr
 		Pageable page = PageRequest.of(pageQuery.getCurrent() - 1, pageQuery.getPageSize(), pageQuery.getSorter());
 
 		return service.findAll(page);
-	}
-
-	/**
-	 * 实体表分页查询应用租户隔离
-	 *
-	 * @param pageQuery 分页查询
-	 */
-	protected void applyTenantFilter(PageQuery pageQuery) {
-		if (this.isMultiTenancy && !this.service.isAdmin(this.getCurUserId())) {
-			pageQuery.appendParam(Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId()); // 过滤租户数据
-		}
 	}
 }

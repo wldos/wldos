@@ -8,7 +8,7 @@
 
 package com.wldos.sys.base.service;
 
-import com.wldos.base.service.BaseService;
+import com.wldos.base.RepoService;
 import com.wldos.sys.base.entity.WoArchitecture;
 import com.wldos.sys.base.repo.ArchitectureRepo;
 
@@ -24,5 +24,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class ArchitectureService extends BaseService<ArchitectureRepo, WoArchitecture, Long> {
+public class ArchitectureService extends RepoService<ArchitectureRepo, WoArchitecture, Long> {
 }
