@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -83,7 +84,8 @@ public class ConMapCache implements ICache {
 			delayQueue.put(new CacheObject(key, reference, expireTime));
 			if (log.isDebugEnabled())
 				log.debug("缓存写成功，key={} value={}", key, value);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("缓存写异常，key={}", key, e);
 		}
 	}
@@ -93,7 +95,8 @@ public class ConMapCache implements ICache {
 		try {
 			cache.remove(key);
 			log.info("缓存删成功，key={}", key);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("缓存删异常，key={} {}", key, e);
 		}
 	}
@@ -106,8 +109,9 @@ public class ConMapCache implements ICache {
 				cache.remove(key);
 				log.info("缓存删成功，key={}", key);
 			});
-		} catch (Exception e) {
-			log.error("缓存删异常，keyPrefix={} {}",keyPrefix, e);
+		}
+		catch (Exception e) {
+			log.error("缓存删异常，keyPrefix={} {}", keyPrefix, e);
 		}
 	}
 
@@ -117,7 +121,8 @@ public class ConMapCache implements ICache {
 			Object value = Optional.ofNullable(cache.get(key)).map(SoftReference::get).orElse(null);
 			log.debug("缓存读成功，key={} value={}", key, value);
 			return value;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("缓存读异常，key={} {}", key, e);
 		}
 		return null;

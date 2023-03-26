@@ -6,13 +6,13 @@
  *
  */
 
-package com.wldos.cms.vo;
+package com.wldos.support.cms.vo;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.wldos.cms.model.IMeta;
-import com.wldos.cms.model.KModelMeta;
+import com.wldos.support.cms.model.IMeta;
+import com.wldos.support.cms.model.KModelMeta;
 import com.wldos.support.term.dto.Term;
 
 /**

@@ -13,11 +13,11 @@ import java.util.Map;
 import com.wldos.base.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
-import com.wldos.cms.vo.Product;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
+import com.wldos.support.cms.vo.Product;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,7 +62,7 @@ public class ProductController extends NoRepoController<KCMSService> {
 	public PageableResult<PubUnit> productArchives(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -73,7 +73,6 @@ public class ProductController extends NoRepoController<KCMSService> {
 	/**
 	 * 查看某目录下的付费内容信息存档
 	 *
-	 
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
@@ -81,7 +80,7 @@ public class ProductController extends NoRepoController<KCMSService> {
 	public PageableResult<PubUnit> productCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -92,7 +91,6 @@ public class ProductController extends NoRepoController<KCMSService> {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 
 	 * @param xxTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */

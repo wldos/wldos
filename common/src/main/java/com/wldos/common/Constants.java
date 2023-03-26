@@ -56,10 +56,13 @@ public final class Constants {
 
 	/** 系统用户ID,用于初始化系统基础数据或者创建新用户时充当操作人 */
 	public static final long SYSTEM_USER_ID = 0L;
+
 	/** 枚举值：平台专用应用类型 */
 	public static final String ENUM_TYPE_APP_PLAT = "platform";
+
 	/** 枚举值：平台专用系统用户组类型 */
 	public static final String ENUM_TYPE_ORG_PLAT = "platform";
+
 	/** 枚举值：平台专用系统体系结构类型 */
 	public static final String ENUM_TYPE_ARCH_PLAT = "platform";
 
@@ -78,6 +81,7 @@ public final class Constants {
 	public static final String CONTEXT_KEY_USER_ID = "curUserId";
 
 	public static final String CONTEXT_KEY_USER_NAME = "curUserName";
+
 	/** 当前用户归属的租户（主企业）id，游客归属平台自身 */
 	public static final String CONTEXT_KEY_USER_TENANT = "tenantId";
 

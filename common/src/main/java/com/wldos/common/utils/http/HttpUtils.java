@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -73,7 +72,7 @@ public class HttpUtils {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 向指定 URL 发送GET方法的请求
 	 *
@@ -100,7 +99,7 @@ public class HttpUtils {
 	private static final String KEEP_ALIVE = "Keep-Alive";
 
 	private static String logTemplate(String exception) {
-		return "调用HttpUtils.sendSSLPost "+exception+", url={}, param={}";
+		return "调用HttpUtils.sendSSLPost " + exception + ", url={}, param={}";
 	}
 
 	/**
@@ -192,7 +191,7 @@ public class HttpUtils {
 
 		return result.toString();
 	}
-	
+
 	private static final String USER_AGENT =
 			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 
@@ -217,7 +216,7 @@ public class HttpUtils {
 			conn.setRequestProperty(HttpHeaders.CONNECTION, KEEP_ALIVE);
 			conn.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
 			conn.setRequestProperty(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
-			conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, ObjectUtils.isBlank(contentType) ? "application/x-www-form-urlencoded": contentType);
+			conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, ObjectUtils.isBlank(contentType) ? "application/x-www-form-urlencoded" : contentType);
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			// 自动执行重定向

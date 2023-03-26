@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.wldos.common.vo.SelectOption;
-import com.wldos.sys.base.enums.TemplateTypeEnum;
 import com.wldos.support.resource.enums.ResourceEnum;
+import com.wldos.support.web.enums.TemplateTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

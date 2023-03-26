@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.wldos.base.RepoController;
-import com.wldos.common.res.PageableResult;
-import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
 import com.wldos.sys.base.entity.WoRole;
 import com.wldos.sys.base.service.RoleService;
 import com.wldos.sys.base.vo.Role;
@@ -109,7 +109,8 @@ public class RoleController extends RepoController<RoleService, WoRole> {
 			WoRole plat = new WoRole(Constants.TOP_ROLE_ID, "根角色");
 			if (res.isEmpty()) {
 				res.add(plat);
-			}else
+			}
+			else
 				res.set(0, plat);
 		}
 

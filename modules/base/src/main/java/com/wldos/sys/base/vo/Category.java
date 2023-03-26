@@ -18,7 +18,7 @@ import com.wldos.common.vo.TreeNode;
  * @date 2022/1/1
  * @version 1.0
  */
-@JsonIgnoreProperties({"id", "parentId", "displayOrder"})
+@JsonIgnoreProperties({ "id", "parentId", "displayOrder" })
 public class Category extends TreeNode<Category> {
 
 	private String title;

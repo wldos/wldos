@@ -20,21 +20,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OAuthUserWeibo implements OAuthUser{
+public class OAuthUserWeibo implements OAuthUser {
 	@JsonProperty("id")
 	private String openId;
+
 	@JsonProperty("screen_name")
 	private String nickname;
+
 	private String gender;
+
 	private String province;
+
 	private String city;
+
 	private String location;
+
 	private String description;
+
 	private String url;
+
 	@JsonProperty("profile_image_url")
 	private String headImgUrl;
+
 	@JsonProperty("idstr")
 	private String unionId;
+
 	@JsonIgnore
 	private String oauthType;
 

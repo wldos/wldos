@@ -15,7 +15,7 @@ package com.wldos.support.cache;
  * @date 2021/7/15
  * @since 1.0
  */
-public class CacheException extends RuntimeException{
+public class CacheException extends RuntimeException {
 	@SuppressWarnings("unused")
 	public CacheException(String s, Exception e) {
 		super(s, e);

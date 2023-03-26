@@ -20,26 +20,26 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wldos.base.RepoService;
+import com.wldos.base.entity.EntityAssists;
+import com.wldos.common.Constants;
 import com.wldos.common.dto.SQLTable;
+import com.wldos.common.enums.DeleteFlagEnum;
+import com.wldos.common.enums.RedisKeyEnum;
+import com.wldos.common.enums.ValidStatusEnum;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
+import com.wldos.support.domain.vo.DomainResource;
+import com.wldos.support.resource.entity.WoResource;
 import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.entity.WoDomainApp;
 import com.wldos.sys.base.entity.WoDomainResource;
-import com.wldos.support.resource.entity.WoResource;
-import com.wldos.sys.base.repo.DomainResourceRepo;
-import com.wldos.common.Constants;
-import com.wldos.base.entity.EntityAssists;
-import com.wldos.common.res.PageableResult;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.RepoService;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
 import com.wldos.sys.base.repo.DomainRepo;
-import com.wldos.common.enums.RedisKeyEnum;
+import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.sys.base.repo.TermRepo;
-import com.wldos.support.domain.vo.DomainResource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -59,6 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 	@Value("${wldos.platform.logo.default}")
 	private String defaultLogo;
+
 	@Value("${wldos.platform.favicon.default}")
 	private String defaultFavicon;
 
@@ -282,7 +283,7 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 		List<WoDomain> domains = this.queryAllDomain();
 		for (WoDomain d : domains) { // 主域名、个性域名和别名 都匹配到主域名
 			if (d.getSiteDomain().equals(domain) || ("www." + d.getSiteDomain()).equals(domain) ||
-					(d.getSecondDomain()+"."+this.getPlatDomain()).equals(domain) || (","+d.getCnameDomain()+",").contains(","+domain+",")) {
+					(d.getSecondDomain() + "." + this.getPlatDomain()).equals(domain) || ("," + d.getCnameDomain() + ",").contains("," + domain + ",")) {
 				return d;
 			}
 		}
@@ -406,13 +407,13 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 	public PageableResult<DomainResource> queryDomainRes(Long domainId, PageQuery pageQuery) {
 		pageQuery.appendParam("isValid", ValidStatusEnum.VALID.toString());
 		pageQuery.appendParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		pageQuery.pushSort(new String[][]{{"s.resource_path"}, {"s.parent_id | s.display_order"}}); // 特殊排序
+		pageQuery.pushSort(new String[][] { { "s.resource_path" }, { "s.parent_id | s.display_order" } }); // 特殊排序
 		String sqlNoWhere = "select r.id, r.domain_id, r.module_name, r.term_type_id, s.id resource_id, s.resource_code, "
 				+ "s.resource_name, s.resource_path, s.icon, s.resource_type, s.request_method, s.target, s.app_id, s.parent_id, s.remark, s.is_valid from wo_domain_resource r "
 				+ "join wo_resource s on r.app_id=s.app_id and r.resource_id = s.id";
 		List<DomainResource> resList = this.commonOperate.execQueryForList(DomainResource.class, sqlNoWhere, pageQuery,
-				new SQLTable[]{new SQLTable("wo_domain_resource", "r", WoDomainResource.class),
-						new SQLTable("wo_resource", "s", WoResource.class)});
+				new SQLTable[] { new SQLTable("wo_domain_resource", "r", WoDomainResource.class),
+						new SQLTable("wo_resource", "s", WoResource.class) });
 
 		List<Long> termTypeIdsByDomain = this.queryTermTypeIdsByDomain(this.findById(domainId).getSiteDomain());
 		Map<Long, String> termNames = new HashMap<>();

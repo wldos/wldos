@@ -15,7 +15,7 @@ package com.wldos.common.utils.encrypt;
  * @date 2021/7/15
  * @since 1.0
  */
-public class AesEncException extends RuntimeException{
+public class AesEncException extends RuntimeException {
 
 	public AesEncException(String s, Exception e) {
 		super(s, e);

@@ -18,10 +18,12 @@ package com.wldos.auth.model;
 public class State {
 	/** 唯一随机码 */
 	private String uuid;
+
 	/** 字面随机数 */
 	private String text;
 
-	public State() {}
+	public State() {
+	}
 
 	public static State of(String uid, String text) {
 		return new State(uid, text);

@@ -12,12 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.wldos.auth.vo.CaptchaVO;
 import com.wldos.base.NoRepoService;
+import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.UUIDUtils;
 import com.wldos.common.utils.captcha.VerifyCode;
-import com.wldos.auth.vo.CaptchaVO;
-import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.sys.core.service.MailService;
 import com.wldos.sys.core.service.UserService;
 
@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 public class AuthCodeService extends NoRepoService {
 
 	private final MailService mailService;
+
 	private final UserService userService;
 
 	public AuthCodeService(MailService mailService, UserService userService) {

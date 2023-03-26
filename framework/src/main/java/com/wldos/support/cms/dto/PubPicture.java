@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.dto;
+package com.wldos.support.cms.dto;
 
 import java.util.List;
 

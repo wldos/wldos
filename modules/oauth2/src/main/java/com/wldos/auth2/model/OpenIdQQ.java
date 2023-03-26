@@ -19,9 +19,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OpenIdQQ{
+public class OpenIdQQ {
 	@JsonProperty("openid")
 	private String openId;
+
 	@JsonProperty("client_id")
 	private String clientId;
 

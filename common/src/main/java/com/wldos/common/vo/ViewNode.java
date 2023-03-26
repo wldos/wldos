@@ -17,7 +17,9 @@ package com.wldos.common.vo;
  */
 public class ViewNode extends TreeNode<ViewNode> {
 	private String title;
+
 	private String key;
+
 	private boolean disabled;
 
 	public String getTitle() {

@@ -23,8 +23,10 @@ public class AccessTokenWeibo {
 
 	@JsonProperty("access_token")
 	private String accessToken;
+
 	@JsonProperty("expires_in")
 	private int expiresIn;
+
 	private String uid;
 
 	public String getAccessToken() {

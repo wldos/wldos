@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 不确定具体仓库操作的service继承此类，拥有基础会话和通用操作能力。
+ * 不确定具体仓库操作也没有专门要实现的service时使用此类作为service注入无仓controller，拥有基础会话和通用操作能力。
  *
  * @author 树悉猿
  * @date 2021/5/5

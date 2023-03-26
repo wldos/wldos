@@ -22,6 +22,7 @@ public enum AppTypeEnum {
 	PRIVATE("私有", "private");
 
 	private final String label;
+
 	private final String value;
 
 	AppTypeEnum(String label, String value) {

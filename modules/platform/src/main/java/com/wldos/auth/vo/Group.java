@@ -18,8 +18,10 @@ package com.wldos.auth.vo;
 public class Group {
 	// id
 	private Long id;
+
 	// orgName
 	private String orgName;
+
 	// logo
 	private String orgLogo;
 	// href: 固定模板直拼

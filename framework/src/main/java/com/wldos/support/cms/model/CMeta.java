@@ -6,11 +6,11 @@
  *
  */
 
-package com.wldos.cms.model;
+package com.wldos.support.cms.model;
 
 import java.util.List;
 
-import com.wldos.sys.base.dto.PubTypeExt;
+import com.wldos.support.cms.dto.PubTypeExt;
 
 /**
  * Pub元模型定义。

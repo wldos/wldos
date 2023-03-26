@@ -10,13 +10,13 @@ package com.wldos.sys.core.controller;
 
 import java.io.IOException;
 
-import com.wldos.base.entity.EntityAssists;
-import com.wldos.base.RepoController;
 import com.wldos.auth.model.AccSecurity;
 import com.wldos.auth.vo.AccountInfo;
+import com.wldos.base.RepoController;
+import com.wldos.base.entity.EntityAssists;
+import com.wldos.sys.base.vo.Domain;
 import com.wldos.sys.core.entity.WoUser;
 import com.wldos.sys.core.service.UserService;
-import com.wldos.sys.base.vo.Domain;
 import com.wldos.sys.core.vo.User;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,7 +63,7 @@ public class UserController extends RepoController<UserService, WoUser> {
 	@PostMapping("uploadAvatar")
 	public String uploadAvatar(@RequestParam("avatar") MultipartFile file) throws IOException {
 		// 头像尺寸一般规定144x144px
-		this.service.uploadAvatar(this.request, this.response, file, new int[]{144, 144}, this.getCurUserId(), this.getUserIp());
+		this.service.uploadAvatar(this.request, this.response, file, new int[] { 144, 144 }, this.getCurUserId(), this.getUserIp());
 
 		return this.resJson.ok("ok");
 	}

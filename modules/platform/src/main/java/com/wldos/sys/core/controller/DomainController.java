@@ -17,10 +17,10 @@ import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
+import com.wldos.support.domain.vo.DomainResource;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.entity.WoDomainResource;
 import com.wldos.sys.base.service.DomainService;
-import com.wldos.support.domain.vo.DomainResource;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

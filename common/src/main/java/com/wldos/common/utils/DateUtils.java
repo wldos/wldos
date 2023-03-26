@@ -17,7 +17,7 @@ import java.util.Date;
 
 /**
  * 日期工具类。
- * 
+ *
  * @author 树悉猿
  * @date 2021/07/16
  * @version V1.0
@@ -27,7 +27,7 @@ public class DateUtils {
 	public static final String DATE_PATTER = "yyyy-MM-dd";
 
 	public static final String TIME_PATTER = "yyyy-MM-dd HH:mm:ss";
-	
+
 	private DateUtils() {
 		throw new IllegalStateException("Utility class");
 	}
@@ -49,7 +49,7 @@ public class DateUtils {
 
 		return sdf.format(date);
 	}
-	
+
 	public static String getTime() {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTER);
@@ -86,7 +86,7 @@ public class DateUtils {
 		return date;
 	}
 
-	public static int getValidDaysByYM(String dateString){
+	public static int getValidDaysByYM(String dateString) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTER);
 		ParsePosition pos = new ParsePosition(0);
 		Date date = sdf.parse(dateString + "-01", pos);
@@ -100,7 +100,7 @@ public class DateUtils {
 		curCal.add(Calendar.MONTH, 1);
 		int dd = curCal.get(Calendar.DATE);
 		curCal.add(Calendar.DATE, -dd);
-		
+
 		return curCal.get(Calendar.DATE);
 	}
 
@@ -110,7 +110,7 @@ public class DateUtils {
 		int dd = curCal.get(Calendar.DATE);
 		int max = getValidDays(date);
 		curCal.add(Calendar.DATE, max - dd);
-		
+
 		return curCal.getTime();
 	}
 
@@ -221,7 +221,7 @@ public class DateUtils {
 
 		int day = compareDateTime(beginDate, endDate);
 
-		return  (double) sec + min * 60 + hour * 60 * 60 + day * 24 * 60 * 60;
+		return (double) sec + min * 60 + hour * 60 * 60 + day * 24 * 60 * 60;
 	}
 
 	/**

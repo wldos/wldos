@@ -19,9 +19,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.UUIDUtils;
-import com.wldos.common.enums.FileAccessPolicyEnum;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -37,6 +37,7 @@ public class StoreUtils {
 
 	/** 静态资源区，公开访问, 物理存储根路径下再创建一级，方便权限控制等 */
 	public static final String PUBLIC_AREA = "/" + FileAccessPolicyEnum.PUBLIC;
+
 	/** 私密文件区，必须登陆，必须检查属主 */
 	public static final String PRIVATE_AREA = "/" + FileAccessPolicyEnum.PRIVATE;
 

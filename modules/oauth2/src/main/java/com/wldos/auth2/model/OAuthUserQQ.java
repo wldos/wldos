@@ -20,19 +20,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OAuthUserQQ implements OAuthUser{
+public class OAuthUserQQ implements OAuthUser {
 	@JsonProperty("id")
 	private String openId;
+
 	private String nickname;
+
 	private String gender;
+
 	private String province;
+
 	private String city;
+
 	private String location;
+
 	private String description;
+
 	private String url;
+
 	@JsonProperty("figureurl_qq_1")
 	private String headImgUrl;
+
 	private String unionId;
+
 	@JsonIgnore
 	private String oauthType;
 

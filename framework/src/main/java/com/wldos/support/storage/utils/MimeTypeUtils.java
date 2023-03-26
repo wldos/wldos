@@ -83,6 +83,7 @@ public class MimeTypeUtils {
 		String mimeType = readType(filename);
 		return String.format("image/%s", mimeType);
 	}
+
 	// 判断依据的最大字节长度
 	private static final int MAX_BYTE_LENGTH = 8;
 
@@ -102,7 +103,7 @@ public class MimeTypeUtils {
 			}
 
 			fis = new FileInputStream(f);
-			byte[] bufHeaders = readInputStreamAt(fis, 0, MAX_BYTE_LENGTH*3);
+			byte[] bufHeaders = readInputStreamAt(fis, 0, MAX_BYTE_LENGTH * 3);
 			if (isJPEG(bufHeaders)) {
 				return "jpeg";
 			}
@@ -140,7 +141,7 @@ public class MimeTypeUtils {
 			throw new IOException("文件流无效!");
 		}
 
-		byte[] bufHeaders = readInputStreamAt(in, 0, MAX_BYTE_LENGTH*3);
+		byte[] bufHeaders = readInputStreamAt(in, 0, MAX_BYTE_LENGTH * 3);
 		if (isJPEG(bufHeaders)) {
 			return "jpeg";
 		}

@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.entity;
+package com.wldos.support.cms.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
@@ -22,7 +22,8 @@ public class KPubmeta {
 
 	private String metaValue;
 
-	public KPubmeta() {}
+	public KPubmeta() {
+	}
 
 	public static KPubmeta of(Long id, Long pubId, String metaKey, String metaValue) {
 		return new KPubmeta(id, pubId, metaKey, metaValue);

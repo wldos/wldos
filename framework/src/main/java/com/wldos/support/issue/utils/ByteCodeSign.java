@@ -49,5 +49,7 @@ public final class ByteCodeSign {
 		return new String(Base64.encodeBase64(digest));
 	}
 
-	private ByteCodeSign() {throw new IllegalStateException("Utility class");}
+	private ByteCodeSign() {
+		throw new IllegalStateException("Utility class");
+	}
 }

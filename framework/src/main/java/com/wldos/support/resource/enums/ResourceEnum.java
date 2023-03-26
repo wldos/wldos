@@ -27,6 +27,7 @@ public enum ResourceEnum {
 	OTHER("其他", "other");
 
 	private final String label;
+
 	private final String value;
 
 	ResourceEnum(String label, String value) {

@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.vo;
+package com.wldos.support.cms.vo;
 
 import java.util.List;
 

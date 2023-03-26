@@ -127,7 +127,7 @@ public class BaseWrap extends Base implements God {
 		return super.isPlatformAdmin(tenantId);
 	}
 
-	protected void refreshCache(String ...keys) {
+	protected void refreshCache(String... keys) {
 		super.refreshCache(keys);
 	}
 
@@ -141,7 +141,7 @@ public class BaseWrap extends Base implements God {
 	}
 
 	// 定义application全局变量，存储hook
-	protected void doAction(){
+	protected void doAction() {
 		super.doAction();
 	}
 

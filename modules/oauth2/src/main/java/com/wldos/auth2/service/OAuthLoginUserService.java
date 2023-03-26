@@ -11,8 +11,8 @@ package com.wldos.auth2.service;
 import com.wldos.auth2.entity.WoOauthLoginUser;
 import com.wldos.auth2.model.OAuthUser;
 import com.wldos.auth2.repo.OAuthLoginUserRepo;
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.RepoService;
+import com.wldos.base.entity.EntityAssists;
 import com.wldos.sys.core.entity.WoUser;
 
 import org.springframework.stereotype.Service;

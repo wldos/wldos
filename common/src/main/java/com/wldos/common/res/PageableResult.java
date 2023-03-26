@@ -75,7 +75,7 @@ public class PageableResult<Entity> extends Result {
 			this.rows = rows;
 		}
 
-		public PageableData(long total, int current, int pageSize,List<Entity> rows) {
+		public PageableData(long total, int current, int pageSize, List<Entity> rows) {
 			this.total = total;
 			this.current = current;
 			this.pageSize = pageSize;

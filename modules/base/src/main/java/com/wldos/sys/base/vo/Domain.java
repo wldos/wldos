@@ -32,6 +32,7 @@ public class Domain {
 	private String flink;
 
 	private String copy;
+
 	// 平台版本号
 	private String version;
 

@@ -19,12 +19,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.IDGen;
+import com.wldos.base.entity.EntityAssists;
+import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.HttpUtils;
 import com.wldos.support.storage.entity.WoFile;
-import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.support.storage.repo.FileRepo;
 import com.wldos.support.storage.utils.FileTypeUtils;
 import com.wldos.support.storage.utils.StoreUtils;
@@ -75,7 +75,7 @@ public class NoRepoFileService {
 		String ext = ObjectUtils.string(FilenameUtils.getExtension(fileName)).toLowerCase(Locale.ENGLISH);
 		String storeName = StoreUtils.genFilename(ext);
 
-		String filePathName =  this.getOsPathname(storeName);
+		String filePathName = this.getOsPathname(storeName);
 
 		File dest = new File(filePathName);
 		dest = StoreUtils.getUniqueFile(dest);
@@ -123,7 +123,7 @@ public class NoRepoFileService {
 
 		String storeName = StoreUtils.genFilename(ext);
 
-		String filePathName =  this.getOsPathname(storeName);
+		String filePathName = this.getOsPathname(storeName);
 
 		File dest = new File(filePathName);
 		dest = StoreUtils.getUniqueFile(dest);

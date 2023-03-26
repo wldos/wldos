@@ -27,12 +27,16 @@ import org.springframework.stereotype.Component;
 public class VerifyEnv {
 	@Value("${wldos.platform.domain:wldos.com}")
 	private String domain;
+
 	@Value("${license.orgName:wldos.com}")
 	private String orgName;
+
 	@Value("${license.prodName:WLDOS平台}")
 	private String prodName;
-	@Value("${wldos.edition:"+ IssueConstants.DEFAULT_VERSION+"}")
+
+	@Value("${wldos.edition:" + IssueConstants.DEFAULT_VERSION + "}")
 	private String edition;
+
 	@Value("${wldos.version:v1.0.0}")
 	private String version;
 

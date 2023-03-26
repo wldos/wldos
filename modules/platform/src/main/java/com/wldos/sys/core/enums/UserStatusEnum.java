@@ -23,6 +23,7 @@ public enum UserStatusEnum {
 	normal("正常", "normal");
 
 	private final String label;
+
 	private final String value;
 
 	UserStatusEnum(String label, String value) {

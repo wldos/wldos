@@ -23,7 +23,8 @@ public class KTermObject {
 
 	private Long termOrder;
 
-	public KTermObject() {}
+	public KTermObject() {
+	}
 
 	public static KTermObject of(long id, Long termTypeId, Long objectId, Long termOrder) {
 		return new KTermObject(id, termTypeId, objectId, termOrder);

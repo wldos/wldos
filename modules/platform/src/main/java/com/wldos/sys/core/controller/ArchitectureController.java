@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.base.RepoController;
-import com.wldos.common.res.PageableResult;
-import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
 import com.wldos.sys.base.entity.WoArchitecture;
 import com.wldos.sys.base.enums.ArchTypeEnum;
 import com.wldos.sys.base.service.ArchitectureService;
@@ -76,7 +76,8 @@ public class ArchitectureController extends RepoController<ArchitectureService, 
 			WoArchitecture plat = new WoArchitecture(Constants.TOP_ARCH_ID, "平台");
 			if (res.isEmpty()) {
 				res.add(plat);
-			}else
+			}
+			else
 				res.set(0, plat);
 		}
 

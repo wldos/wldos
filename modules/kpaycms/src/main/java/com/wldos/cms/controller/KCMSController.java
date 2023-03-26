@@ -20,13 +20,13 @@ import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Article;
 import com.wldos.cms.vo.PubUnit;
-import com.wldos.cms.vo.SeoCrumbs;
-import com.wldos.cms.vo.RouteParams;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
 import com.wldos.common.vo.SelectOption;
+import com.wldos.support.cms.vo.RouteParams;
+import com.wldos.support.cms.vo.SeoCrumbs;
 import com.wldos.sys.base.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -102,7 +102,6 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	/**
 	 * 查询当前域下某类型的业务对象
 	 *
-	 
 	 * @return 按分类目录索引的存档列表页
 	 */
 	@GetMapping("archives")
@@ -110,7 +109,7 @@ public class KCMSController extends NoRepoController<KCMSService> {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -121,7 +120,6 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	/**
 	 * 查看目录下的内容存档
 	 *
-	 
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
@@ -129,7 +127,7 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	public PageableResult<PubUnit> archivesCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -140,7 +138,6 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	/**
 	 * 查看标签索引的内容存档
 	 *
-	 
 	 * @param slugTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */
@@ -148,7 +145,7 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	public PageableResult<PubUnit> archivesTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);

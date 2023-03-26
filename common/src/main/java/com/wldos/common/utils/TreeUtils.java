@@ -46,12 +46,14 @@ public class TreeUtils {
 					if (node.getChildren().isEmpty()) {
 						node.setChildren(null); // 空集合，会导致前端出现叶子节点的+号
 
-					} else
+					}
+					else
 						node.getChildren().sort(Comparator.nullsLast(
 								Comparator.comparing(
 										TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
 
-				}).collect(Collectors.toList());;
+				}).collect(Collectors.toList());
+		;
 
 		// 求差集
 		if (record.size() < treeNodes.size()) {
@@ -82,7 +84,8 @@ public class TreeUtils {
 					if (node.getChildren().isEmpty()) {
 						node.setChildren(null); // 空集合，会导致前端出现叶子节点的+号
 
-					} else
+					}
+					else
 						node.getChildren().sort(Comparator.nullsLast(
 								Comparator.comparing(
 										TreeNode::getDisplayOrder, Comparator.nullsLast(Long::compareTo))));
@@ -213,7 +216,7 @@ public class TreeUtils {
 		for (T treeNode : treeNodes) {// 遍历取出根节点
 			if (root == treeNode.getParentId()) { // 一级根节点
 
-				Map<Long , T> temp = new HashMap<>();
+				Map<Long, T> temp = new HashMap<>();
 				temp.put(treeNode.getId(), treeNode);
 				treeMap.put(treeNode.getId(), temp);
 			}
@@ -224,7 +227,8 @@ public class TreeUtils {
 						Map<Long, T> child = treeMap.get(treeNode.getId());
 						child.put(it.getId(), it);
 						treeMap.put(it.getParentId(), child);
-					} else {
+					}
+					else {
 						for (Map.Entry<Long, Map<Long, T>> parent : treeMap.entrySet()) {
 							Map<Long, T> child = parent.getValue();
 							if (child.containsKey(it.getParentId())) {

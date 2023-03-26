@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.dto;
+package com.wldos.support.cms.dto;
 
 /**
  * 发布类型扩展属性。

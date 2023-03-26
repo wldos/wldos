@@ -13,14 +13,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.base.RepoController;
+import com.wldos.common.Constants;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.Constants;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.sys.base.entity.WoCompany;
-import com.wldos.sys.core.service.CompanyService;
 import com.wldos.sys.base.vo.Company;
+import com.wldos.sys.core.service.CompanyService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({ "unchecked" })
 @RestController
 @RequestMapping("admin/sys/com")
 public class CompanyController extends RepoController<CompanyService, WoCompany> {
@@ -102,7 +102,8 @@ public class CompanyController extends RepoController<CompanyService, WoCompany>
 			WoCompany plat = new WoCompany(Constants.TOP_COM_ID, "平台");
 			if (res.isEmpty()) {
 				res.add(plat);
-			}else
+			}
+			else
 				res.set(0, plat);
 		}
 

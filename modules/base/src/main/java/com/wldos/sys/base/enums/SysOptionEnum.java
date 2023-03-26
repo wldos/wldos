@@ -27,6 +27,7 @@ public enum SysOptionEnum {
 	OTHER("其他", "other");
 
 	private final String title;
+
 	private final String key;
 
 	SysOptionEnum(String title, String key) {
@@ -44,6 +45,6 @@ public enum SysOptionEnum {
 
 	@Override
 	public String toString() {
-		return  "{title: '" + this.title + "', key: '" + this.key + "'}";
+		return "{title: '" + this.title + "', key: '" + this.key + "'}";
 	}
 }

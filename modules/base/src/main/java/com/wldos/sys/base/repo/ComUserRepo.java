@@ -27,7 +27,7 @@ import org.springframework.data.repository.query.Param;
 public interface ComUserRepo extends PagingAndSortingRepository<WoComUser, Long> {
 	@Modifying
 	@Query("delete from wo_com_user where com_id=:orgId and user_id in (:ids)")
-	void removeComStaff(@Param("ids") List<Long> ids, @Param("comId")Long comId);
+	void removeComStaff(@Param("ids") List<Long> ids, @Param("comId") Long comId);
 
 	/**
 	 * 批量查询用户与公司的关联关系

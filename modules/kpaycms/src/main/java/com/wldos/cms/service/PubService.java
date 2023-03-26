@@ -15,37 +15,38 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import com.wldos.cms.entity.KPubs;
-import com.wldos.common.dto.SQLTable;
 import com.wldos.base.RepoService;
-import com.wldos.cms.dto.ContModelDto;
-import com.wldos.cms.entity.KPubmeta;
+import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.enums.PubStatusEnum;
-import com.wldos.sys.base.enums.PubTypeEnum;
-import com.wldos.cms.model.KModelMetaKey;
 import com.wldos.cms.repo.PubRepo;
 import com.wldos.cms.vo.AuditPub;
 import com.wldos.cms.vo.Chapter;
+import com.wldos.cms.vo.InfoUnit;
 import com.wldos.cms.vo.MiniPub;
 import com.wldos.cms.vo.PubMember;
 import com.wldos.cms.vo.PubUnit;
-import com.wldos.cms.vo.InfoUnit;
 import com.wldos.cms.vo.SPub;
 import com.wldos.common.Constants;
+import com.wldos.common.dto.SQLTable;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.AtomicUtils;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
+import com.wldos.support.cms.PubOpener;
+import com.wldos.support.cms.dto.ContModelDto;
+import com.wldos.support.cms.entity.KPubmeta;
+import com.wldos.support.cms.model.KModelMetaKey;
+import com.wldos.support.region.vo.City;
 import com.wldos.support.term.dto.Term;
+import com.wldos.support.term.enums.TermTypeEnum;
 import com.wldos.sys.base.dto.TermObject;
 import com.wldos.sys.base.entity.KTermObject;
-import com.wldos.sys.base.enums.TermTypeEnum;
+import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.sys.base.service.DomainService;
-import com.wldos.sys.core.service.RegionService;
 import com.wldos.sys.base.service.TermService;
+import com.wldos.sys.core.service.RegionService;
 import com.wldos.sys.core.service.UserService;
-import com.wldos.sys.core.vo.City;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class PubService extends RepoService<PubRepo, KPubs, Long> {
+public class PubService extends RepoService<PubRepo, KPubs, Long> implements PubOpener {
 
 	private final UserService userService;
 
@@ -176,7 +177,7 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> {
 	public PageableResult<InfoUnit> queryInfos(PageQuery pageQuery) {
 		String sqlNoWhere = "select p.* from k_pubs p where 1=1 ";
 		Map<String, Object> condition = pageQuery.getCondition();
-		Map<String,List<Object>> filter = pageQuery.getFilter();
+		Map<String, List<Object>> filter = pageQuery.getFilter();
 		List<Object> params = new ArrayList<>(); // 参数寄存器
 
 		// 子表动态存在,分类按过滤，标签不分层
@@ -191,20 +192,20 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> {
 		// 自定义动态存在
 		Object city = condition.get(KModelMetaKey.PUB_META_KEY_CITY);
 		if (!ObjectUtils.isBlank(city)) {
-			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_CITY + "' and m.meta_value=?)";
+			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='" + KModelMetaKey.PUB_META_KEY_CITY + "' and m.meta_value=?)";
 			params.add(city);
 			sqlNoWhere += baseExistsSql;
 		}
 
 		Object prov = condition.get(KModelMetaKey.PUB_META_KEY_PROV);
 		if (!ObjectUtils.isBlank(prov)) {
-			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_PROV + "' and m.meta_value=?)";
+			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='" + KModelMetaKey.PUB_META_KEY_PROV + "' and m.meta_value=?)";
 			params.add(prov);
 			sqlNoWhere += baseExistsSql;
 		}
 
 		if (condition.containsKey("price")) {
-			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='"+KModelMetaKey.PUB_META_KEY_ORN_PRICE + "'";
+			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='" + KModelMetaKey.PUB_META_KEY_ORN_PRICE + "'";
 			Object price = condition.get("price");
 			String[] prices = price.toString().split(",");
 			if (!prices[0].equals("0")) {
@@ -220,7 +221,7 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> {
 		}
 
 		PageableResult<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, pageQuery,
-				new SQLTable[]{new SQLTable("k_pubs", "p", KPubs.class)}, params);
+				new SQLTable[] { new SQLTable("k_pubs", "p", KPubs.class) }, params);
 		return this.handleInfoUnit(pubUnits, pageQuery);
 	}
 
@@ -668,7 +669,7 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> {
 			return pubName;
 		if (this.entityRepo.existsDifPubByNameAndId(pubName, pubId))
 			// 存在，自动加1再判断
-			return existsAutoDiffPubName(pubName+"1", pubId);
+			return existsAutoDiffPubName(pubName + "1", pubId);
 		return pubName;
 	}
 

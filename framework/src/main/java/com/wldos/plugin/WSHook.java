@@ -35,7 +35,7 @@ public class WSHook {
 
 	}
 
-	public <R, T>  R applyFilter(Function<T, R> function, Object... args) {
+	public <R, T> R applyFilter(Function<T, R> function, Object... args) {
 		//return LambdaSafe.callback(function.getClass(), function, args).withLogger();
 		return null;
 	}

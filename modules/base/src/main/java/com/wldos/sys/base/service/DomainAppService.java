@@ -11,9 +11,9 @@ package com.wldos.sys.base.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.wldos.base.RepoService;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.RepoService;
 import com.wldos.sys.base.entity.WoDomainApp;
 import com.wldos.sys.base.repo.DomainAppRepo;
 

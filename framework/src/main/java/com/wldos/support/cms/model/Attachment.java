@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.model;
+package com.wldos.support.cms.model;
 
 /**
  * 内容附件：图片、文件、音频、视频等。
@@ -27,7 +27,8 @@ public class Attachment {
 
 	private String url; // 用户访问附件的web url
 
-	public Attachment() {}
+	public Attachment() {
+	}
 
 	public static Attachment of(String attachPath, String attachMetadata, String attachFileAlt) {
 		return new Attachment(attachPath, attachMetadata, attachFileAlt);

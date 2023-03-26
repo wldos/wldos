@@ -21,7 +21,8 @@ public class Token {
 	/** 过期分钟数， token的刷新周期*/
 	private int refresh;
 
-	public Token() {}
+	public Token() {
+	}
 
 	public Token(String accessToken) {
 		this.accessToken = accessToken;

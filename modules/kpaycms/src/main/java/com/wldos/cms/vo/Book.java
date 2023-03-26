@@ -25,6 +25,7 @@ public class Book {
 	private String pubTitle;
 
 	private String pubType;
+
 	/** 是否单体类型：'1'是，'0'否*/
 	private Boolean isSingle;
 
@@ -32,7 +33,8 @@ public class Book {
 
 	private List<Chapter> chapter;
 
-	public Book() {}
+	public Book() {
+	}
 
 	public static Book of(Long id, String pubTitle, String pubType, String pubStatus, List<Chapter> chapters) {
 		return new Book(id, pubTitle, pubType, PubTypeEnum.isSingle(pubType), pubStatus, chapters);

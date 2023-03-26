@@ -11,10 +11,10 @@ package com.wldos.sys.core.vo;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.support.resource.vo.Menu;
-import com.wldos.support.resource.vo.Route;
 import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
+import com.wldos.support.resource.vo.Menu;
+import com.wldos.support.resource.vo.Route;
 
 /**
  * 登录后返回用户信息。
@@ -26,10 +26,15 @@ import com.wldos.support.auth.vo.UserInfo;
 @SuppressWarnings("unused")
 public class User {
 	private UserInfo userInfo;
+
 	private List<Menu> menu;
+
 	private Map<String, Route> route;
+
 	private List<String> currentAuthority;
+
 	private Token token;
+
 	private int isManageSide = 0;
 
 

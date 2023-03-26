@@ -11,9 +11,9 @@ package com.wldos.sys.core.repo;
 
 import java.util.List;
 
+import com.wldos.support.auth.vo.UserInfo;
 import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.entity.WoUser;
-import com.wldos.support.auth.vo.UserInfo;
 
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

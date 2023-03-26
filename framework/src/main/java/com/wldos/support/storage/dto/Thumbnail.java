@@ -28,8 +28,10 @@ public class Thumbnail {
 
 	@JsonProperty("mimeType")
 	private String mimeType;
+
 	/* bean类要保留无参构造，否则json反序列化会失败 */
-	public Thumbnail() {}
+	public Thumbnail() {
+	}
 
 	/**
 	 * 获取一个缩略图实例

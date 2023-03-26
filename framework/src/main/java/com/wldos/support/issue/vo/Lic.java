@@ -21,14 +21,20 @@ import com.wldos.support.issue.verify.VerifyEnv;
 public class Lic {
 
 	private String domain;
+
 	private String orgName;
+
 	private String prodName;
+
 	private String edition;
+
 	private String version;
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date expiryTime;
 
-	public Lic() {}
+	public Lic() {
+	}
 
 	public static Lic of(VerifyEnv verifyEnv) {
 		return new Lic(verifyEnv.getDomain(), verifyEnv.getOrgName(), verifyEnv.getProdName(),

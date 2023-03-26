@@ -17,14 +17,14 @@ import com.wldos.base.NoRepoService;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.PubStatusEnum;
-import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Pub;
 import com.wldos.common.utils.DateUtils;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.sys.base.dto.PubTypeExt;
+import com.wldos.support.cms.dto.PubTypeExt;
 import com.wldos.support.term.dto.Term;
-import com.wldos.sys.base.enums.TermTypeEnum;
+import com.wldos.support.term.enums.TermTypeEnum;
+import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.sys.base.service.TermService;
 import lombok.extern.slf4j.Slf4j;
 

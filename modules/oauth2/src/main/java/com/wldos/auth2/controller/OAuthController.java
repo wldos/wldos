@@ -13,10 +13,10 @@ import java.io.UnsupportedEncodingException;
 
 import com.wldos.auth.vo.Login;
 import com.wldos.auth2.model.OAuthConfig;
-import com.wldos.auth2.vo.OAuthLoginParams;
-import com.wldos.sys.base.enums.OAuthTypeEnum;
 import com.wldos.auth2.service.OAuthService;
+import com.wldos.auth2.vo.OAuthLoginParams;
 import com.wldos.base.NoRepoController;
+import com.wldos.sys.base.enums.OAuthTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,7 +75,8 @@ public class OAuthController extends NoRepoController<OAuthService> {
 		if (OAuthTypeEnum.match(authType)) {
 			this.service.configOAuth(authType, config);
 			return this.resJson.ok("ok");
-		} else
+		}
+		else
 			throw new RuntimeException("提交了未知类型，系统已拒绝");
 	}
 

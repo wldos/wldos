@@ -10,7 +10,7 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
-import com.wldos.sys.base.dto.PubTypeExt;
+import com.wldos.support.cms.dto.PubTypeExt;
 import com.wldos.sys.base.entity.KModelPubTypeExt;
 
 import org.springframework.data.jdbc.repository.query.Query;

@@ -20,7 +20,7 @@ public enum RedisKeyEnum {
 	WLDOS_ADMIN("wldos:admin"),
 	/** wldos系统：可信者 */
 	WLDOS_TRUST("wldos:trust"),
-	/**	wldos系统：资源权限树 */
+	/**    wldos系统：资源权限树 */
 	WLDOS_AUTH("wldos:auth"),
 	/** CMS系统：资源权限树 */
 	WLDOS_ORG("wldos:org"),

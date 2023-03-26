@@ -6,31 +6,23 @@
  *
  */
 
-package com.wldos.cms.dto;
+package com.wldos.support.cms.vo;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-/**
- * 内容模型。
- *
- * @author 树悉猿
- * @date 2021/6/19
- * @version 1.0
- */
-public class ContModelDto {
+import com.wldos.support.cms.model.IMeta;
+import com.wldos.support.cms.model.KModelMeta;
+import com.wldos.support.term.dto.Term;
+
+public class Product extends KModelMeta implements IMeta {
+
+	// 内容pub id
 	private Long id;
 
-	private String PubTitle;
+	private String pubTitle;
 
-	private String PubExcerpt;
-
-	private String PubContent;
-
-	private String PubStatus;
-
-	private String commentStatus;
-
-	private String pubPassword;
+	private String pubContent;
 
 	private String pubName;
 
@@ -42,27 +34,27 @@ public class ContModelDto {
 
 	private Long commentCount;
 
-	private Long starCount;
-
-	private Long likeCount;
-
 	private Long createBy;
 
 	private Timestamp createTime;
-
-	private String createIp;
 
 	private Long updateBy;
 
 	private Timestamp updateTime;
 
-	private String updateIp;
-
-	private String deleteFlag;
-
 	private Long domainId;
 
 	private Long comId;
+
+	private List<Long> termTypeIds; // 一个发布内容可以属于多个分类
+
+	/** 标签列表 */
+	private List<Term> tags;
+
+	/** 面包屑及seo元素 */
+	private SeoCrumbs seoCrumbs;
+
+	private String realNo;
 
 	public Long getId() {
 		return id;
@@ -73,51 +65,19 @@ public class ContModelDto {
 	}
 
 	public String getPubTitle() {
-		return PubTitle;
+		return pubTitle;
 	}
 
-	public void setPubTitle(String PubTitle) {
-		this.PubTitle = PubTitle;
-	}
-
-	public String getPubExcerpt() {
-		return PubExcerpt;
-	}
-
-	public void setPubExcerpt(String PubExcerpt) {
-		this.PubExcerpt = PubExcerpt;
+	public void setPubTitle(String pubTitle) {
+		this.pubTitle = pubTitle;
 	}
 
 	public String getPubContent() {
-		return PubContent;
+		return pubContent;
 	}
 
 	public void setPubContent(String pubContent) {
-		PubContent = pubContent;
-	}
-
-	public String getPubStatus() {
-		return PubStatus;
-	}
-
-	public void setPubStatus(String PubStatus) {
-		this.PubStatus = PubStatus;
-	}
-
-	public String getCommentStatus() {
-		return commentStatus;
-	}
-
-	public void setCommentStatus(String commentStatus) {
-		this.commentStatus = commentStatus;
-	}
-
-	public String getPubPassword() {
-		return pubPassword;
-	}
-
-	public void setPubPassword(String pubPassword) {
-		this.pubPassword = pubPassword;
+		this.pubContent = pubContent;
 	}
 
 	public String getPubName() {
@@ -160,22 +120,6 @@ public class ContModelDto {
 		this.commentCount = commentCount;
 	}
 
-	public Long getStarCount() {
-		return starCount;
-	}
-
-	public void setStarCount(Long starCount) {
-		this.starCount = starCount;
-	}
-
-	public Long getLikeCount() {
-		return likeCount;
-	}
-
-	public void setLikeCount(Long likeCount) {
-		this.likeCount = likeCount;
-	}
-
 	public Long getCreateBy() {
 		return createBy;
 	}
@@ -190,14 +134,6 @@ public class ContModelDto {
 
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
 	}
 
 	public Long getUpdateBy() {
@@ -216,22 +152,6 @@ public class ContModelDto {
 		this.updateTime = updateTime;
 	}
 
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
 	public Long getDomainId() {
 		return domainId;
 	}
@@ -246,5 +166,37 @@ public class ContModelDto {
 
 	public void setComId(Long comId) {
 		this.comId = comId;
+	}
+
+	public List<Long> getTermTypeIds() {
+		return termTypeIds;
+	}
+
+	public void setTermTypeIds(List<Long> termTypeIds) {
+		this.termTypeIds = termTypeIds;
+	}
+
+	public List<Term> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Term> tags) {
+		this.tags = tags;
+	}
+
+	public SeoCrumbs getSeoCrumbs() {
+		return seoCrumbs;
+	}
+
+	public void setSeoCrumbs(SeoCrumbs seoCrumbs) {
+		this.seoCrumbs = seoCrumbs;
+	}
+
+	public String getRealNo() {
+		return realNo;
+	}
+
+	public void setRealNo(String realNo) {
+		this.realNo = realNo;
 	}
 }

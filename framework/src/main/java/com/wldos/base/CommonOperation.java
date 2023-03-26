@@ -10,18 +10,12 @@ package com.wldos.base;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.dto.SQLTable;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.utils.ObjectUtils;
+import com.wldos.common.res.PageableResult;
 import com.wldos.common.vo.TreeNode;
 
 /**
@@ -89,7 +83,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <V> VO类,系父表子集
 	 * @return VO列表
 	 */
-	<P, C, V> List<V> execQueryForList(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, String ...pTableAndCTableAndPIdKey);
+	<P, C, V> List<V> execQueryForList(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, String... pTableAndCTableAndPIdKey);
 
 	/**
 	 * 根据父子关系表查询父表的分页，支持父子表的查询条件、排序、过滤。
@@ -105,7 +99,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <V> VO类,系父表子集
 	 * @return 分页数据
 	 */
-	<P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String ...pTableAndCTableAndPIdKey);
+	<P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey);
 
 	/**
 	 * 根据父子关系表查询父表的分页，支持父子表的查询条件、排序、过滤。
@@ -257,6 +251,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	String getDomain(HttpServletRequest request);
 
 	Long getDomainId(HttpServletRequest request);
+
 	void applyDomainFilter(PageQuery pageQuery, HttpServletRequest request);
 
 	void applyTenantFilter(PageQuery pageQuery, HttpServletRequest request);

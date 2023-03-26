@@ -24,6 +24,7 @@ public class ImageUtils {
 	private ImageUtils() {
 		throw new IllegalStateException("Utility class");
 	}
+
 	/**
 	 * 按尺寸创建缩略图
 	 *

@@ -27,7 +27,9 @@ public interface OAuthUser {
 
 	String getCity();
 
-	default String getCountry() {return null;}
+	default String getCountry() {
+		return null;
+	}
 
 	String getHeadImgUrl();
 

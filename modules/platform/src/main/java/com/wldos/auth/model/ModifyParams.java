@@ -22,6 +22,7 @@ public interface ModifyParams {
 	 * @return 旧值
 	 */
 	String getOld();
+
 	/**
 	 * 获取新值
 	 *

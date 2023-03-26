@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,7 +37,7 @@ public class ShellUtils {
 		boolean flag = true;
 		try {
 			boolean isWin = ShellUtils.isWindows();
-			process = Runtime.getRuntime().exec(isWin ? new String[]{"cmd", "/c", command} : new String[]{"/bin/sh", "-c", command});
+			process = Runtime.getRuntime().exec(isWin ? new String[] { "cmd", "/c", command } : new String[] { "/bin/sh", "-c", command });
 			input = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName(isWin ? "GBK" : "UTF-8")));
 
 			String line;
@@ -46,7 +47,8 @@ public class ShellUtils {
 				else
 					log.info(line);
 			}
-		} catch (Throwable e) {
+		}
+		catch (Throwable e) {
 			flag = false;
 			log.error("执行异常", e);
 		}
@@ -54,9 +56,9 @@ public class ShellUtils {
 			int exitValue = 1;
 			try {
 				if (input != null)
-				input.close();
+					input.close();
 				if (process != null)
-				exitValue = process.waitFor();
+					exitValue = process.waitFor();
 			}
 			catch (IOException | InterruptedException e) {
 				log.error("exec command failed. command: {} {}", command, e);
@@ -80,7 +82,7 @@ public class ShellUtils {
 		Process process = null;
 		try {
 			boolean isWin = ShellUtils.isWindows();
-			process = Runtime.getRuntime().exec(isWin ? new String[]{"cmd", "/c", shellString} : new String[]{"/bin/sh", "-c", shellString});
+			process = Runtime.getRuntime().exec(isWin ? new String[] { "cmd", "/c", shellString } : new String[] { "/bin/sh", "-c", shellString });
 		}
 		catch (Throwable e) {
 			flag = false;
@@ -116,7 +118,7 @@ public class ShellUtils {
 		try {
 			try {
 				boolean isWin = ShellUtils.isWindows();
-				process = Runtime.getRuntime().exec(isWin ? new String[]{"cmd", "/c", command} : new String[]{"/bin/sh", "-c", command});
+				process = Runtime.getRuntime().exec(isWin ? new String[] { "cmd", "/c", command } : new String[] { "/bin/sh", "-c", command });
 				input = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName(isWin ? "GBK" : "UTF-8")));
 				String line;
 				while ((line = input.readLine()) != null) {

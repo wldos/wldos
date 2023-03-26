@@ -28,6 +28,7 @@ public enum ThumbTypeEnum {
 	HUGE("超大", "huge");
 
 	private final String label;
+
 	private final String value;
 
 	ThumbTypeEnum(String label, String value) {
@@ -45,6 +46,6 @@ public enum ThumbTypeEnum {
 
 	@Override
 	public String toString() {
-		return "{label: '"+this.label+"', value: '"+this.value+"'}";
+		return "{label: '" + this.label + "', value: '" + this.value + "'}";
 	}
 }

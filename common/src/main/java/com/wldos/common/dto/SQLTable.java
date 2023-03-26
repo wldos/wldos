@@ -19,6 +19,7 @@ public class SQLTable {
 	private final String tableName;
 
 	private final String alias;
+
 	/** 实体类型 */
 	private final Class<?> type;
 

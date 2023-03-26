@@ -31,17 +31,24 @@ import org.apache.commons.codec.binary.Base64;
 public class VerifyCode {
 	/** 验证码图片长 */
 	private int width = 120;
+
 	/** 验证码图片宽 */
 	private int height = 40;
+
 	/** 验证码图片色位1~8 */
 	private int colorBit = 4;
+
 	/** 验证码图片 */
 	private BufferedImage image;
+
 	/** 文本内容 */
 	private String text;
+
 	private static final Random r = new Random();
+
 	//字体数组
 	private static final String[] fontNames = { "Georgia" };
+
 	//验证码数组
 	private static final String codes = "23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
 

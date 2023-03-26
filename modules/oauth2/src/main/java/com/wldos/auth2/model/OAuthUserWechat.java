@@ -20,19 +20,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OAuthUserWechat implements OAuthUser{
+public class OAuthUserWechat implements OAuthUser {
 
 	@JsonProperty("openid")
 	String openId;
+
 	String nickname;
+
 	String sex;
+
 	String province;
+
 	String city;
+
 	String country;
+
 	@JsonProperty("headimgurl")
 	String headImgUrl;
+
 	String[] privilege;
+
 	String unionId;
+
 	@JsonIgnore
 	String oauthType;
 

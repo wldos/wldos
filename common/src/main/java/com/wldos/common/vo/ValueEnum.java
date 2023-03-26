@@ -17,6 +17,7 @@ package com.wldos.common.vo;
  */
 public class ValueEnum {
 	private String text;
+
 	private String value;
 
 	public ValueEnum() {

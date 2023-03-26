@@ -17,12 +17,13 @@ package com.wldos.common.vo;
  */
 public class SelectOption {
 	private String label;
+
 	private String value;
 
 	public SelectOption() {
 	}
 
-	public static SelectOption of(String label, String value){
+	public static SelectOption of(String label, String value) {
 		return new SelectOption(label, value);
 	}
 

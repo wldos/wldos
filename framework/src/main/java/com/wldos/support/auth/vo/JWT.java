@@ -99,6 +99,6 @@ public class JWT implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.userId + "," + this.id + "," + this.startDate.getTime() +"," + this.expireDate.getTime() +"," + (this.isExpired?"已过期":"有效");
+		return this.userId + "," + this.id + "," + this.startDate.getTime() + "," + this.expireDate.getTime() + "," + (this.isExpired ? "已过期" : "有效");
 	}
 }

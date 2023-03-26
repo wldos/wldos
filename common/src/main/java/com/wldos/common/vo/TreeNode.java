@@ -11,8 +11,6 @@ package com.wldos.common.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wldos.common.utils.ObjectUtils;
-
 /**
  * 树结构节点。
  *
@@ -24,6 +22,7 @@ public class TreeNode<T> {
 	protected Long id;
 
 	protected Long parentId;
+
 	// 排序时必须设置displayOrder
 	protected Long displayOrder;
 

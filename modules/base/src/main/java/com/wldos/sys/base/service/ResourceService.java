@@ -16,25 +16,25 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wldos.base.RepoService;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.res.PageableResult;
-import com.wldos.base.RepoService;
-import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
-import com.wldos.support.term.dto.Term;
-import com.wldos.sys.base.entity.WoDomain;
-import com.wldos.sys.base.entity.WoDomainResource;
 import com.wldos.support.resource.entity.WoResource;
 import com.wldos.support.resource.enums.ResourceEnum;
-import com.wldos.sys.base.enums.TemplateTypeEnum;
-import com.wldos.sys.base.repo.ResourceRepo;
-import com.wldos.sys.base.repo.DomainResourceRepo;
-import com.wldos.sys.base.repo.TermRepo;
 import com.wldos.support.resource.vo.AuthInfo;
+import com.wldos.support.term.dto.Term;
+import com.wldos.support.web.enums.TemplateTypeEnum;
+import com.wldos.sys.base.entity.WoDomain;
+import com.wldos.sys.base.entity.WoDomainResource;
+import com.wldos.sys.base.repo.DomainResourceRepo;
+import com.wldos.sys.base.repo.ResourceRepo;
+import com.wldos.sys.base.repo.TermRepo;
 import com.wldos.sys.base.vo.DomRes;
 import com.wldos.sys.base.vo.ResSimple;
 
@@ -52,8 +52,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class ResourceService extends RepoService<ResourceRepo, WoResource, Long> {
 	private final DomainService domainService;
+
 	private final DomainAppService domainAppService;
+
 	private final DomainResourceRepo domainResourceRepo;
+
 	private final TermRepo termRepo;
 
 	public ResourceService(DomainService domainService, DomainAppService domainAppService, DomainResourceRepo domainResourceRepo, TermRepo termRepo) {
@@ -148,7 +151,7 @@ public class ResourceService extends RepoService<ResourceRepo, WoResource, Long>
 	 */
 	public void addSimpleMenu(ResSimple resSimple, Long curUserId, String userIp) {
 
-		String tempType= resSimple.getTempType();
+		String tempType = resSimple.getTempType();
 		Long termTypeId = resSimple.getTermTypeId();
 
 		String resName = resSimple.getResName();
@@ -169,7 +172,8 @@ public class ResourceService extends RepoService<ResourceRepo, WoResource, Long>
 				resName = TemplateTypeEnum.getTemplateTypeEnumByValue(tempType).getLabel();
 			}
 			resCode = tempType;
-		} else {
+		}
+		else {
 			Term term = this.termRepo.queryTermByTermTypeId(termTypeId);
 			resPath = "/" + tempType + "/category/" + term.getSlug();
 			if (ObjectUtils.isBlank(resName)) {

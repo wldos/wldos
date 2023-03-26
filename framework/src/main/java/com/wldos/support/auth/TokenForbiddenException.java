@@ -19,7 +19,7 @@ import com.wldos.common.exception.BaseException;
  * @version V1.0
  */
 public class TokenForbiddenException extends BaseException {
-    public TokenForbiddenException(String message) {
-        super(message, Constants.TOKEN_FORBIDDEN_CODE);
-    }
+	public TokenForbiddenException(String message) {
+		super(message, Constants.TOKEN_FORBIDDEN_CODE);
+	}
 }

@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.base.RepoController;
-import com.wldos.common.res.PageableResult;
-import com.wldos.common.res.PageQuery;
 import com.wldos.common.Constants;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
@@ -23,8 +23,8 @@ import com.wldos.support.resource.entity.WoResource;
 import com.wldos.sys.base.service.ResourceService;
 import com.wldos.sys.base.vo.AuthRes;
 import com.wldos.sys.base.vo.DomRes;
-import com.wldos.sys.base.vo.Resource;
 import com.wldos.sys.base.vo.ResSimple;
+import com.wldos.sys.base.vo.Resource;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -142,7 +142,8 @@ public class ResourceController extends RepoController<ResourceService, WoResour
 			WoResource plat = new WoResource(Constants.MENU_ROOT_ID, "根资源");
 			if (res.isEmpty()) {
 				res.add(plat);
-			}else
+			}
+			else
 				res.set(0, plat);
 		}
 

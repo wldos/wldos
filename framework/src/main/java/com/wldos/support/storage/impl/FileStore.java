@@ -24,13 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.Constants;
+import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.common.res.DomainResult;
-import com.wldos.common.utils.http.IpUtils;
 import com.wldos.common.utils.ObjectUtils;
+import com.wldos.common.utils.http.IpUtils;
 import com.wldos.common.utils.img.ImageUtils;
 import com.wldos.support.storage.IStore;
 import com.wldos.support.storage.dto.Thumbnail;
-import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.support.storage.service.NoRepoFileService;
 import com.wldos.support.storage.vo.FileInfo;
 import com.wldos.support.web.RestService;
@@ -182,7 +182,7 @@ public class FileStore implements IStore {
 			BufferedImage image = ImageIO.read(new File(src));
 			int setWidth = Math.min(image.getWidth(), 2048); // 缩略图宽
 
-			double scale = (double) image.getWidth()/image.getHeight(); // 原图宽高比
+			double scale = (double) image.getWidth() / image.getHeight(); // 原图宽高比
 			int scaleHeight = (int) (setWidth / scale); // 缩放后高度
 			ImageUtils.imgThumb(src, src, setWidth, scaleHeight); // 重新压缩全尺寸，最大2048像素，压缩必须保持宽高比，防止失真
 			Thumbnail pubPicture = Thumbnail.of(setWidth, scaleHeight, fileInfo.getPath());

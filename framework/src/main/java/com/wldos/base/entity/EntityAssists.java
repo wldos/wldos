@@ -11,9 +11,9 @@ package com.wldos.base.entity;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.wldos.common.utils.DateUtils;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
+import com.wldos.common.utils.DateUtils;
 
 import org.springframework.beans.BeanUtils;
 

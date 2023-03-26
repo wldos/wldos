@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.vo;
+package com.wldos.support.cms.vo;
 
 /**
  * 路由参数，生成路由的依据，一般用模板类型和分类法构成。
@@ -22,11 +22,13 @@ public class RouteParams {
 	/** 分类项别名，分类项可能是分类法任一 */
 	private String slugTerm;
 
-	public RouteParams() {}
+	public RouteParams() {
+	}
 
 	public static RouteParams of(String tempType, String slugTerm) {
 		return new RouteParams(tempType, slugTerm);
 	}
+
 	private RouteParams(String tempType, String slugTerm) {
 		this.tempType = tempType;
 		this.slugTerm = slugTerm;

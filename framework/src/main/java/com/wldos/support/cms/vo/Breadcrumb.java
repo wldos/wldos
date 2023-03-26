@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.vo;
+package com.wldos.support.cms.vo;
 
 /**
  * 面包屑模型。
@@ -20,7 +20,8 @@ public class Breadcrumb {
 
 	private String breadcrumbName;
 
-	public Breadcrumb() {}
+	public Breadcrumb() {
+	}
 
 	public static Breadcrumb of(String path, String breadcrumbName) {
 		return new Breadcrumb(path, breadcrumbName);

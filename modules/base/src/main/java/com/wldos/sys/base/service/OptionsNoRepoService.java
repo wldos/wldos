@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.sys.base.entity.WoApp;
-import com.wldos.sys.base.entity.WoOptions;
-import com.wldos.support.cache.ICache;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.utils.ObjectUtils;
+import com.wldos.support.cache.ICache;
+import com.wldos.sys.base.entity.WoApp;
+import com.wldos.sys.base.entity.WoOptions;
 import com.wldos.sys.base.repo.AppRepo;
 import com.wldos.sys.base.repo.OptionsRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,7 @@ public class OptionsNoRepoService {
 		List<WoApp> apps = this.appRepo.findAllByDeleteFlagEqualsAndIsValidEquals(DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString());
 		if (ObjectUtils.isBlank(apps))
 			return new ArrayList<>();
-		List<String> appTypes =  apps.parallelStream().map(WoApp::getAppCode).collect(Collectors.toList());
+		List<String> appTypes = apps.parallelStream().map(WoApp::getAppCode).collect(Collectors.toList());
 		return this.optionsRepo.findAllByAppTypeIn(appTypes);
 	}
 }

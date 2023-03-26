@@ -20,12 +20,19 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthConfig {
 	private String appId;
+
 	private String appSecret;
+
 	private String redirectUri;
+
 	private String scope;
+
 	private String codeUri;
+
 	private String accessTokenUri;
+
 	private String refreshTokenUri;
+
 	private String userInfoUri;
 
 	public String getAppId() {

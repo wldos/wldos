@@ -41,6 +41,7 @@ public enum PubStatusEnum implements BaseEnum {
 	TRASH("已作废", "trash");
 
 	private final String name;
+
 	private final String value;
 
 	PubStatusEnum(String name, String value) {

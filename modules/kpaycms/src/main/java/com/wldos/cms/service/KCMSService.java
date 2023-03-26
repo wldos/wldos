@@ -8,7 +8,6 @@
 
 package com.wldos.cms.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,22 +21,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.base.NoRepoService;
 import com.wldos.base.entity.EntityAssists;
-import com.wldos.cms.dto.ContModelDto;
-import com.wldos.cms.dto.PubPicture;
-import com.wldos.cms.entity.KPubmeta;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
-import com.wldos.cms.vo.Info;
-import com.wldos.cms.vo.RouteParams;
-import com.wldos.sys.base.enums.PubTypeEnum;
-import com.wldos.cms.model.Attachment;
-import com.wldos.cms.model.IMeta;
-import com.wldos.cms.model.KModelMetaKey;
-import com.wldos.cms.model.MainPicture;
 import com.wldos.cms.vo.Article;
 import com.wldos.cms.vo.Book;
-import com.wldos.cms.vo.Breadcrumb;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Geographic;
 import com.wldos.cms.vo.MiniPub;
@@ -45,33 +33,43 @@ import com.wldos.cms.vo.Pub;
 import com.wldos.cms.vo.PubMember;
 import com.wldos.cms.vo.PubMeta;
 import com.wldos.cms.vo.PubUnit;
-import com.wldos.cms.vo.Product;
-import com.wldos.cms.vo.SeoCrumbs;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.DeleteFlagEnum;
+import com.wldos.common.enums.FileAccessPolicyEnum;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.sys.base.dto.PubTypeExt;
-import com.wldos.support.term.dto.Term;
-import com.wldos.sys.base.entity.KTermType;
-import com.wldos.sys.base.enums.TemplateTypeEnum;
-import com.wldos.sys.base.enums.TermTypeEnum;
-import com.wldos.sys.base.service.PubTypeExtService;
-import com.wldos.sys.core.service.RegionService;
-import com.wldos.sys.base.service.TermService;
-import com.wldos.sys.core.vo.City;
+import com.wldos.support.cms.CMSUtils;
+import com.wldos.support.cms.dto.ContModelDto;
+import com.wldos.support.cms.dto.PubTypeExt;
+import com.wldos.support.cms.entity.KPubmeta;
+import com.wldos.support.cms.model.Attachment;
+import com.wldos.support.cms.model.IMeta;
+import com.wldos.support.cms.model.KModelMetaKey;
+import com.wldos.support.cms.model.MainPicture;
+import com.wldos.support.cms.vo.Product;
+import com.wldos.support.cms.vo.RouteParams;
+import com.wldos.support.cms.vo.SeoCrumbs;
+import com.wldos.support.region.vo.City;
 import com.wldos.support.storage.IStore;
 import com.wldos.support.storage.dto.Thumbnail;
-import com.wldos.common.enums.FileAccessPolicyEnum;
+import com.wldos.support.term.dto.Term;
+import com.wldos.support.term.enums.TermTypeEnum;
+import com.wldos.sys.base.entity.KTermType;
+import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.sys.base.service.PubTypeExtService;
+import com.wldos.sys.base.service.TermService;
+import com.wldos.sys.core.service.RegionService;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,8 +90,6 @@ public class KCMSService extends NoRepoService {
 
 	private final BeanCopier artCopier = BeanCopier.create(ContModelDto.class, Article.class, false);
 
-	private final BeanCopier contExtCopier = BeanCopier.create(PubTypeExt.class, PubTypeExt.class, false);
-
 	private final BeanCopier pubMetaCopier = BeanCopier.create(ContModelDto.class, PubMeta.class, false);
 
 	@Value("${wldos.file.pic.srcset}")
@@ -101,6 +97,10 @@ public class KCMSService extends NoRepoService {
 
 	@Value("${wldos.sidecar.config}")
 	private String sideCar;
+
+	@Autowired
+	@Lazy
+	private CMSUtils cmsUtils;
 
 	private final PubService pubService;
 
@@ -241,7 +241,6 @@ public class KCMSService extends NoRepoService {
 
 		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
-			KPubs dbPub = this.pubService.findById(pub.getId());
 			List<Long> newTagIds = this.termService.handleTag(tagIds, userId, userIp);
 			this.termService.updateTermObject(newTagIds, pub.getId(), TermTypeEnum.TAG.toString());
 		}
@@ -331,33 +330,7 @@ public class KCMSService extends NoRepoService {
 	 * @param termTypeId 直属分类id，多者取首
 	 */
 	public void genSeoAndCrumbs(IMeta iMeta, Long termTypeId) {
-		SeoCrumbs seoCrumbs = new SeoCrumbs();
-		seoCrumbs.setTitle(iMeta.getPubTitle());
-		seoCrumbs.setDescription(this.pubService.genPubExcerpt(iMeta.getPubContent(), 140));
-		StringBuilder keywords = new StringBuilder();
-		List<Term> tags = iMeta.getTags();
-		if (!ObjectUtils.isBlank(tags)) { // 根据标签生成关键词
-			tags.forEach(tag -> keywords.append(tag.getName()).append(","));
-			keywords.deleteCharAt(keywords.length() - 1);
-			seoCrumbs.setKeywords(keywords.toString());
-		}
-		else
-			seoCrumbs.setKeywords(iMeta.getPubTitle());
-		// 开始创建面包屑: 直属分类及所有父级分类
-		List<LevelNode> nodes = this.termService.queryTermTreeByChildId(termTypeId);
-		List<Long> termTypeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
-		List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
-		List<Breadcrumb> crumb =
-				terms.parallelStream().map(term -> {
-					Breadcrumb bc = new Breadcrumb();
-					String termPath = this.getPathByTermType(term.getClassType());
-					bc.setPath((iMeta instanceof Product ? "/product" : iMeta instanceof Info ? "/info" : "/archives") + termPath + term.getSlug());
-					bc.setBreadcrumbName(term.getName());
-					return bc;
-				}).collect(Collectors.toList());
-		seoCrumbs.setCrumbs(crumb);
-
-		iMeta.setSeoCrumbs(seoCrumbs);
+		this.cmsUtils.genSeoAndCrumbs(iMeta, termTypeId, this.pubService, this.termService);
 	}
 
 	/**
@@ -367,144 +340,19 @@ public class KCMSService extends NoRepoService {
 	 * @return tdk和面包屑数据
 	 */
 	public SeoCrumbs genSeoCrumbs(RouteParams params) {
-		String slugTerm = params.getSlugTerm();
-		String tempType = params.getTempType(); // 模板类型决定返回的面包屑链接到的模板前缀
-
-		if (ObjectUtils.isBlank(slugTerm)) {
-			String name = tempType == null ? "所有领域" : TemplateTypeEnum.getTemplateTypeEnumByValue(tempType).getLabel();
-			List<Breadcrumb> breadcrumbs = new ArrayList<>();
-			breadcrumbs.add(Breadcrumb.of("/" + tempType, name));
-			return SeoCrumbs.of(name, "内容领域：" + name, name, breadcrumbs);
-		}
-
-		// 获取当前分类项类型
-		Term term = this.termService.queryTermBySlugTerm(slugTerm);
-		String name;
-		List<Breadcrumb> crumb;
-
-		if (term == null) {
-			name = "不存在";
-			crumb = new ArrayList<>();
-		} else {
-			name = term.getName();
-
-			// 开始创建面包屑: 直属分类及所有父级分类
-			List<LevelNode> nodes = this.termService.queryTermTreeByChildId(term.getTermTypeId());
-			List<Long> termTypeIds = nodes.parallelStream().map(LevelNode::getId).collect(Collectors.toList());
-
-			List<Term> terms = this.termService.queryAllByTermTypeIds(termTypeIds);
-
-			crumb = terms.parallelStream().map(t ->
-							Breadcrumb.of("/" + tempType + this.getPathByTermType(t.getClassType()) + t.getSlug(), t.getName())).collect(Collectors.toList());
-		}
-
-		return SeoCrumbs.of(name, this.getTemplateTypeByValue(tempType).getLabel() + "分类：" + name, name, crumb);
-	}
-
-	// 仅考虑动态模板
-	private TemplateTypeEnum getTemplateTypeByValue(String value) {
-		if (TemplateTypeEnum.PRODUCT.getValue().equals(value))
-			return TemplateTypeEnum.PRODUCT;
-		if (TemplateTypeEnum.ARCHIVES.getValue().equals(value))
-			return TemplateTypeEnum.ARCHIVES;
-		if (TemplateTypeEnum.CATEGORY.getValue().equals(value))
-			return TemplateTypeEnum.CATEGORY;
-		if (TemplateTypeEnum.INFO.getValue().equals(value))
-			return TemplateTypeEnum.INFO;
-
-		return TemplateTypeEnum.UNKNOWN;
-	}
-
-	// 目前支持目录和标签，根据分类项的类型决定面包屑的url类型
-	private String getPathByTermType(String termType) {
-		return TermTypeEnum.CATEGORY.toString().equals(termType) ? "/category/" : "/tag/";
+		return this.cmsUtils.genSeoCrumbs(params, this.termService);
 	}
 
 	public void termAndTagHandle(IMeta iMeta, Long pid) {
-		List<Term> termsType = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.CATEGORY.toString());
-		// 分类目录
-		List<Long> termTypeIds = termsType.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
-		iMeta.setTermTypeIds(termTypeIds);
-		// 标签
-		List<Term> terms = this.termService.findAllByObjectAndClassType(pid, TermTypeEnum.TAG.toString());
-
-		iMeta.setTags(terms);
+		this.cmsUtils.termAndTagHandle(iMeta, pid, this.termService);
 	}
 
 	public void populateMeta(IMeta product, Map<String, String> pubMeta) {
-		product.setCover(pubMeta.get(KModelMetaKey.PUB_META_KEY_COVER));
-		String subTitle = pubMeta.get(KModelMetaKey.PUB_META_KEY_SUB_TITLE);
-		if (!ObjectUtils.isBlank(subTitle))
-			product.setSubTitle(subTitle);
-		String ornPrice = pubMeta.get(KModelMetaKey.PUB_META_KEY_ORN_PRICE);
-		if (!ObjectUtils.isBlank(ornPrice))
-			product.setOrnPrice(new BigDecimal(ornPrice));
-		String pstPrice = pubMeta.get(KModelMetaKey.PUB_META_KEY_PST_PRICE);
-		if (!ObjectUtils.isBlank(pstPrice))
-			product.setOrnPrice(new BigDecimal(ornPrice));
-		String contact = pubMeta.get(KModelMetaKey.PUB_META_KEY_CONTACT);
-		if (!ObjectUtils.isBlank(contact))
-			product.setContact(ObjectUtils.hideName(contact));
-		String telephone = pubMeta.get(KModelMetaKey.PUB_META_KEY_TELEPHONE);
-		if (!ObjectUtils.isBlank(telephone)) {
-			product.setTelephone(ObjectUtils.hidePhone(telephone));
-			product.setRealNo(telephone);
-		}
-		String city = pubMeta.get(KModelMetaKey.PUB_META_KEY_CITY);
-		if (!ObjectUtils.isBlank(city)) {
-			City region = this.regionService.queryRegionInfoByCode(city);
-			if (region != null) {
-				product.setCity(region.getName());
-				product.setProv(region.getProvName());
-			}
-		}
-		String county = pubMeta.get(KModelMetaKey.PUB_META_KEY_COUNTY);
-		if (!ObjectUtils.isBlank(county))
-			product.setCounty(county);
-		String views = pubMeta.get(KModelMetaKey.PUB_META_KEY_VIEWS);
-		if (!ObjectUtils.isBlank(views))
-			product.setViews(views);
+		this.cmsUtils.populateMeta(product, pubMeta, this.regionService);
 	}
 
 	public IMeta handleContent(IMeta iMeta, List<KPubmeta> metas, ContModelDto contBody, Long pid) {
-		// 根据自定义行业门类找到自定义扩展属性集
-		List<PubTypeExt> pubTypeExt = this.pubTypeExtService.queryExtPropsByPubType(contBody.getPubType());
-		// 填充自定义属性
-		pubTypeExt = this.getPubTypeExt(pubTypeExt, metas);
-
-		iMeta.setPubTypeExt(pubTypeExt);
-
-		// 找到附件类，以此作为依据析取附件类元数据，这要求每一个 1.附件也要在发布内容表存储，对附件的处理采用宽进严出，
-		//  即使删帖，也不级联删除附件，附件的删除统一在用户文件库[媒体库]维护(反向级联：即不能删除被引用的文件)，
-		// 发布内容中图片编辑或删除时，都不级联更新附件(考虑复用和性能)，后期可能再优化
-		List<ContModelDto> contAttach = this.pubService.queryContAttach(pid);
-
-		if (ObjectUtils.isBlank(contAttach))
-			return iMeta;
-
-		List<Long> pIds = contAttach.parallelStream().map(ContModelDto::getId).collect(Collectors.toList());
-		// 查询内容主体附件的扩展属性值
-		List<KPubmeta> metasAttach = this.pubmetaService.queryPubMetaByPubIds(pIds);
-
-		// 处理附件、图片类
-		Map<Long, List<KPubmeta>> attMetaGroup = metasAttach.stream().collect(Collectors.groupingBy(KPubmeta::getPubId)); // 按附件id归集自身元数据
-
-		if (ObjectUtils.isBlank(attMetaGroup))
-			return iMeta;
-
-		List<Attachment> attachments = this.getAttachments(attMetaGroup);
-
-		// 附件没必要输出客户端，仅作内容再处理：应用附件、图片的元数据作为展示格式，这要求内容的保存要根据附件path对内容相应附件html
-		// 元素的样式作标记(暂时以附件url)，并在此处替换，以实现附件的复用和灵活更新
-		String content = iMeta.getPubContent();
-		if (ObjectUtils.isBlank(content))
-			return iMeta;
-
-		content = filterContent(attachments, content);
-
-		iMeta.setPubContent(content);
-
-		return iMeta;
+		return this.cmsUtils.handleContent(iMeta, metas, contBody, pid, this.pubTypeExtService, this.pubService, this.pubmetaService);
 	}
 
 	public MainPicture exact(List<KPubmeta> metas, String pic) {
@@ -521,48 +369,6 @@ public class KCMSService extends NoRepoService {
 		}
 
 		return mp;
-	}
-
-	private String filterContent(List<Attachment> attachments, String content) {
-		for (Attachment a : attachments) {
-			String attMeta = a.getAttachMetadata();
-			try {
-				PubPicture picture = new ObjectMapper().readValue(attMeta, new TypeReference<PubPicture>() {});
-
-				// srcset配合居中、自适应css实现跨终端展示最优尺寸缩略图，密度集的图型顺序取决于配置和排序
-				String url = this.store.getFileUrl(picture.getPath(), null);
-				int index = content.indexOf(url);
-				if (index <= -1)
-					continue;
-
-				String contentPre = content.substring(0, index);
-				String contentFix = content.substring(index);
-
-				int start, end;
-				String width = (start = contentFix.indexOf("width=")) > -1 && (end = contentFix.indexOf("height=")) > -1 ?
-						contentFix.substring(start, end).trim().replace("width=\"", "").replace("\"", "") : String.valueOf(picture.getWidth());
-				width = ObjectUtils.isBlank(width) ? String.valueOf(picture.getWidth()) : width;
-
-				List<Thumbnail> thumbnails = picture.getSrcset();
-
-				if (ObjectUtils.isBlank(thumbnails))
-					continue;
-
-				// String template = "srcset=\"%s %sw, %s %sw, %s %sw, %s %sw, %s %sw\" sizes=\"(max-width: %spx) 100vw, %spx\"";
-				StringBuilder srcset = new StringBuilder("srcset=\"");
-
-				thumbnails.forEach(t -> srcset.append(this.store.getFileUrl(t.getPath(), null)).append(" ").append(t.getWidth()).append("w,"));
-
-				srcset.deleteCharAt(srcset.lastIndexOf(",")).append("\" sizes=\"(max-width: ").append(width).append("px) 100vw, ").append(width).append("px\"/>");
-
-				content = contentPre + contentFix.replaceFirst("/>", srcset.toString());
-			}
-			catch (Exception e) { // 非核心业务任何异常就地捕获，不影响内容的输出
-				e.printStackTrace();
-			}
-		}
-
-		return content;
 	}
 
 	void createPubMeta(List<PubTypeExt> pubTypeExt, Long id) {
@@ -1003,32 +809,11 @@ public class KCMSService extends NoRepoService {
 	}
 
 	public List<PubTypeExt> getPubTypeExt(List<PubTypeExt> pubTypeExt, List<KPubmeta> metas) {
-		return pubTypeExt.parallelStream().map(cont -> { // 填充自定义属性
-			PubTypeExt ptx = null;
-			for (KPubmeta meta : metas) {
-				if (meta.getMetaKey().equals(cont.getMetaKey())) {
-					ptx = new PubTypeExt();
-					this.contExtCopier.copy(cont, ptx, null);
-					ptx.setMetaValue(meta.getMetaValue());
-					ptx.setPubId(meta.getPubId());
-					ptx.setMetaId(meta.getId());
-					break;
-				}
-			}
-			return ptx;
-		}).filter(Objects::nonNull).collect(Collectors.toList());
+		return this.cmsUtils.getPubTypeExt(pubTypeExt, metas);
 	}
 
 	public List<Attachment> getAttachments(Map<Long, List<KPubmeta>> attMetaGroup) {
-		return attMetaGroup.values().stream().map(curMetas -> {
-			// 元数据自身枚举不可能为空，故省略空处理
-			Map<String, String> attMeta = curMetas.stream()
-					.collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
-
-			return Attachment.of(attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_PATH),
-								attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_METADATA),
-								attMeta.get(KModelMetaKey.ATT_META_KEY_ATTACH_FILE_ALT));
-		}).filter(a -> !ObjectUtils.isBlank(a.getAttachMetadata())).collect(Collectors.toList());
+		return this.cmsUtils.getAttachments(attMetaGroup);
 	}
 
 	private void populateMeta(Article article, Map<String, String> pubMeta) {

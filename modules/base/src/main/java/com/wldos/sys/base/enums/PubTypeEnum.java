@@ -69,8 +69,10 @@ public enum PubTypeEnum {
 
 
 	private final String name;
+
 	// 只对外展示主类型数据，子类型仅作为系统内部辅助
 	private final String subType;
+
 	// 名称
 	private final String label;
 
@@ -115,7 +117,7 @@ public enum PubTypeEnum {
 	 */
 	public static String takeSubType(String complexTypeName) {
 		PubTypeEnum complexType = PubTypeEnum.valueOfName(complexTypeName);
-		if (PubTypeEnum.isComplex(complexType) )
+		if (PubTypeEnum.isComplex(complexType))
 			return complexType.subType;
 		return null;
 	}

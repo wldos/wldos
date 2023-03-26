@@ -12,22 +12,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.RepoService;
+import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
-import com.wldos.sys.base.entity.WoAuthRole;
 import com.wldos.support.resource.entity.WoResource;
+import com.wldos.sys.base.entity.WoAuthRole;
 import com.wldos.sys.base.entity.WoRole;
 import com.wldos.sys.base.entity.WoRoleOrg;
 import com.wldos.sys.base.enums.RoleTypeEnum;
+import com.wldos.sys.base.repo.AuthRoleRepo;
 import com.wldos.sys.base.repo.RoleOrgRepo;
 import com.wldos.sys.base.repo.RoleRepo;
+import com.wldos.sys.base.vo.AuthRes;
 import com.wldos.sys.base.vo.RoleRes;
 import com.wldos.sys.base.vo.RoleResTree;
-import com.wldos.sys.base.repo.AuthRoleRepo;
-import com.wldos.sys.base.vo.AuthRes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +97,7 @@ public class RoleService extends RepoService<RoleRepo, WoRole, Long> {
 
 		List<AuthRes> authResList = resources.parallelStream().map(res -> {
 			AuthRes authRes =
-			AuthRes.of(res.getResourceName(), res.getId().toString(), res.getId(), res.getParentId());
+					AuthRes.of(res.getResourceName(), res.getId().toString(), res.getId(), res.getParentId());
 			roleRes.parallelStream().forEach(role -> {
 				if (authRes.getId().equals(role.getId())) {
 					authRes.setDisabled(role.isInherit()); // @todo 暂不实行颜色标记，先保证继承资源不可编辑

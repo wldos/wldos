@@ -31,7 +31,7 @@ import org.json.JSONObject;
  * @date 2021-04-13
  * @version V1.0
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({ "rawtypes" })
 public final class ObjectUtils {
 	/**
 	 * Object属性值转数组，自动排除null值。
@@ -91,7 +91,7 @@ public final class ObjectUtils {
 	 * @param obj 对象
 	 * @return 是否为空
 	 */
-	public static boolean existsBlank(Object ...obj) {
+	public static boolean existsBlank(Object... obj) {
 		if (obj == null)
 			return true;
 
@@ -186,9 +186,9 @@ public final class ObjectUtils {
 	 * @return 纯文本
 	 */
 	public static String htmlToText(String html) {
-		return html == null ? "" : html.replaceAll("<script[^>]*?>[\\s\\S]*?<\\/script>","")
-				.replaceAll("<style[^>]*?>[\\s\\S]*?<\\/style>","")
-				.replaceAll("<[^>]+>","").trim();
+		return html == null ? "" : html.replaceAll("<script[^>]*?>[\\s\\S]*?<\\/script>", "")
+				.replaceAll("<style[^>]*?>[\\s\\S]*?<\\/style>", "")
+				.replaceAll("<[^>]+>", "").trim();
 	}
 
 	/**
@@ -198,9 +198,9 @@ public final class ObjectUtils {
 	 * @return 带p标签的纯文本
 	 */
 	public static String htmlToGraph(String html) {
-		return html == null ? "" : html.replaceAll("<script[^>]*?>[\\s\\S]*?<\\/script>","")
-				.replaceAll("<style[^>]*?>[\\s\\S]*?<\\/style>","")
-				.replaceAll("<(?!\\/?[pP])[^>]+>","").trim();
+		return html == null ? "" : html.replaceAll("<script[^>]*?>[\\s\\S]*?<\\/script>", "")
+				.replaceAll("<style[^>]*?>[\\s\\S]*?<\\/style>", "")
+				.replaceAll("<(?!\\/?[pP])[^>]+>", "").trim();
 	}
 
 	/**
@@ -253,7 +253,7 @@ public final class ObjectUtils {
 
 		String left = StringUtils.left(address, 3);
 		String leftPad = StringUtils.leftPad(StringUtils.right(address,
-				address.length()-11), StringUtils.length(address), "*");
+				address.length() - 11), StringUtils.length(address), "*");
 		String removeStart = StringUtils.removeStart(leftPad, "***");
 
 		return left.concat(removeStart);

@@ -14,30 +14,30 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.auth.vo.ActiveParams;
 import com.wldos.auth.vo.BakEmailModifyParams;
+import com.wldos.auth.vo.Login;
+import com.wldos.auth.vo.LoginAuthParams;
 import com.wldos.auth.vo.MFAModifyParams;
+import com.wldos.auth.vo.MobileModifyParams;
+import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.PasswdResetParams;
+import com.wldos.auth.vo.Register;
 import com.wldos.auth.vo.SecQuestModifyParams;
 import com.wldos.base.NoRepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.sys.base.dto.Tenant;
-import com.wldos.auth.vo.Login;
-import com.wldos.auth.vo.LoginAuthParams;
-import com.wldos.auth.vo.MobileModifyParams;
-import com.wldos.auth.vo.PasswdModifyParams;
-import com.wldos.auth.vo.Register;
 import com.wldos.support.auth.LoginUtils;
+import com.wldos.support.auth.vo.JWT;
+import com.wldos.support.auth.vo.Token;
+import com.wldos.support.auth.vo.UserInfo;
+import com.wldos.sys.base.dto.Tenant;
 import com.wldos.sys.base.enums.SysOptionEnum;
+import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.entity.WoUser;
-import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.core.enums.UserStatusEnum;
 import com.wldos.sys.core.service.MailService;
 import com.wldos.sys.core.service.UserService;
 import com.wldos.sys.core.vo.User;
-import com.wldos.support.auth.vo.JWT;
-import com.wldos.support.auth.vo.Token;
-import com.wldos.support.auth.vo.UserInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,7 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RefreshScope
 @Service
-@SuppressWarnings({ "all"})
+@SuppressWarnings({ "all" })
 @Transactional(rollbackFor = Exception.class)
 public class LoginAuthService extends NoRepoService {
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
@@ -230,11 +230,11 @@ public class LoginAuthService extends NoRepoService {
 
 		// 发激活邮件到注册邮箱，受全局配置开关控制，邮箱注册激活开关，用id、loginName、createTime创建verify token
 		if (this.isEmailAction) {
-			String actUrl = this.reqProtocol+"://"+this.userService.getDomainUrlById(domainId)+"/user/active/verify="+user.getId();
+			String actUrl = this.reqProtocol + "://" + this.userService.getDomainUrlById(domainId) + "/user/active/verify=" + user.getId();
 			String activeEmail = "<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/>"
 					+ "<title>账户激活</title></head><body>"
 					+ "您好，这是验证邮件，请点击下面的链接完成验证，</body></html>"
-					+ "<a href=\""+ actUrl +"\" target=\"_blank\">激活账号</a>"+ actUrl +"<br/>"
+					+ "<a href=\"" + actUrl + "\" target=\"_blank\">激活账号</a>" + actUrl + "<br/>"
 					+ "如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。";
 			String subject = this.wldosDomain + "账号激活邮件";
 			this.mailService.sendMailHtml(register.getLoginName(), subject, activeEmail, user.getId(), user.getRegisterIp());
@@ -279,12 +279,14 @@ public class LoginAuthService extends NoRepoService {
 
 				// 激活用户信息审计、token记录
 				this.getLog().info("用户激活{}，domain: {} userId: {}", login.getNews(), domain, active.getVerify());
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				login.setNews("激活失败");
 				login.setStatus("error");
 				throw new RuntimeException(e);
 			}
-		} else {
+		}
+		else {
 			login.setNews("无效操作");
 			login.setStatus("failure");
 			this.getLog().info("非法或冗余操作：用户激活{}，domain: {} userId: {}", login.getNews(), domain, active.getVerify());

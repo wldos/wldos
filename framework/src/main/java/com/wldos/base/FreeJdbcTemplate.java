@@ -11,10 +11,10 @@ package com.wldos.base;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.common.dto.SQLTable;
 import com.wldos.common.dto.LevelNode;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
 import com.wldos.support.God;
 
 import org.springframework.data.domain.Sort;
@@ -273,10 +273,13 @@ public interface FreeJdbcTemplate extends God {
 
 	/** 在线用户数 */
 	int queryOnlineUserNum();
+
 	/** 系统用户数 */
 	int queryUserSum();
+
 	/** 虚拟域数 */
 	int queryDomainSum();
+
 	/** 租户数 */
 	int queryComSum();
 }

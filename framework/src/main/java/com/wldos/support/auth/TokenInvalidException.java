@@ -20,7 +20,7 @@ import com.wldos.common.exception.BaseException;
  * @version V1.0
  */
 public class TokenInvalidException extends BaseException {
-    public TokenInvalidException(String message) {
-        super(message, Constants.EX_USER_INVALID_CODE);
-    }
+	public TokenInvalidException(String message) {
+		super(message, Constants.EX_USER_INVALID_CODE);
+	}
 }

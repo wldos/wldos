@@ -10,7 +10,7 @@ package com.wldos.cms.repo;
 
 import java.util.List;
 
-import com.wldos.cms.entity.KPubmeta;
+import com.wldos.support.cms.entity.KPubmeta;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;

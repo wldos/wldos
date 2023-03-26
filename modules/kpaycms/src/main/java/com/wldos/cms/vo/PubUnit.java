@@ -24,7 +24,7 @@ import com.wldos.support.term.dto.Term;
  * @version 1.0
  */
 @JsonIgnoreProperties({ "pubContent", "domainId" })
-public class PubUnit extends BookUnit{
+public class PubUnit extends BookUnit {
 	private Long id;
 
 	private String pubTitle;

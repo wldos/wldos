@@ -22,24 +22,24 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wldos.support.web.EdgeHandler;
-import com.wldos.support.web.FilterRequestWrapper;
+import com.wldos.common.exception.BaseException;
 import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultJson;
-import com.wldos.common.utils.http.IpUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.domain.DomainUtils;
-import com.wldos.support.auth.vo.JWT;
+import com.wldos.common.utils.http.IpUtils;
 import com.wldos.support.auth.JWTTool;
-import com.wldos.common.exception.BaseException;
 import com.wldos.support.auth.TokenForbiddenException;
 import com.wldos.support.auth.TokenInvalidException;
+import com.wldos.support.auth.vo.AuthVerify;
+import com.wldos.support.auth.vo.JWT;
+import com.wldos.support.resource.vo.AuthInfo;
+import com.wldos.support.storage.utils.StoreUtils;
+import com.wldos.support.web.EdgeHandler;
+import com.wldos.support.web.FilterRequestWrapper;
 import com.wldos.sys.base.entity.WoDomain;
 import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.base.service.DomainService;
-import com.wldos.support.storage.utils.StoreUtils;
-import com.wldos.support.resource.vo.AuthInfo;
-import com.wldos.support.auth.vo.AuthVerify;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 
@@ -76,12 +76,16 @@ public class EdgeGateWayFilter implements Filter {
 
 	/** jwt全家桶工具 */
 	protected JWTTool jwtTool;
+
 	/** 要放行的uri前缀 */
 	private List<String> excludeUris;
+
 	/** 必须登陆的uri前缀 */
 	private List<String> verifyTokenUris;
+
 	/** 静态资源uri前缀 */
 	private String staticUri;
+
 	/** 记录操作日志uri前缀 */
 	private List<String> recLogUris;
 
@@ -200,7 +204,8 @@ public class EdgeGateWayFilter implements Filter {
 
 			FilterRequestWrapper headers = this.edgeHandler.handleRequest(request, jwt, domainId, this.proxyPrefix);
 			chain.doFilter(headers, res);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			String userId = jwt == null ? "" : jwt.getUserId().toString();
 			if (e instanceof BaseException)
 				this.throwException(response, (BaseException) e, userIP, reqUri, userId);
@@ -238,7 +243,8 @@ public class EdgeGateWayFilter implements Filter {
 			String[] temp = reqUri.split(root);
 
 			return ObjectUtils.isBlank(temp[1]) ? null : temp[1].toLowerCase();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("请求截取应用编码异常");
 		}
 		return null;

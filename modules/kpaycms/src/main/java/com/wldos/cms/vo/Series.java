@@ -77,5 +77,4 @@ public class Series extends Chapter {
 		this.pubStatus = pubStatus;
 	}
 
-
 }

@@ -17,23 +17,23 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.base.NoRepoController;
-import com.wldos.cms.enums.PubStatusEnum;
-import com.wldos.common.Constants;
-import com.wldos.common.vo.SelectOption;
-import com.wldos.sys.base.enums.PubTypeEnum;
 import com.wldos.cms.enums.PrivacyLevelEnum;
+import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.InfoService;
 import com.wldos.cms.service.KCMSService;
-import com.wldos.cms.vo.Info;
+import com.wldos.cms.vo.InfoUnit;
 import com.wldos.cms.vo.Pub;
 import com.wldos.cms.vo.PubMeta;
-import com.wldos.cms.vo.InfoUnit;
+import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
+import com.wldos.common.vo.SelectOption;
+import com.wldos.support.cms.vo.Info;
 import com.wldos.support.storage.vo.FileInfo;
+import com.wldos.sys.base.enums.PubTypeEnum;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -116,7 +116,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	public PageableResult<InfoUnit> infoCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -134,7 +134,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	public PageableResult<InfoUnit> infoTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		
+
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		this.applyDomainFilter(pageQuery);
@@ -185,11 +185,11 @@ public class InfoController extends NoRepoController<InfoService> {
 		}
 		// 检查标签
 		List<String> tags = pub.getTagIds();
-		if (tags != null ) {
+		if (tags != null) {
 			if (pub.getTagIds().size() > this.maxTagNum) {
 				return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
 			}
-			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))){
+			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))) {
 
 				return this.resJson.ok("error", "标签超长");
 			}
@@ -233,11 +233,11 @@ public class InfoController extends NoRepoController<InfoService> {
 		}
 		// 检查标签
 		List<String> tags = pub.getTagIds();
-		if (tags != null ) {
+		if (tags != null) {
 			if (pub.getTagIds().size() > this.maxTagNum) {
 				return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
 			}
-			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))){
+			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))) {
 
 				return this.resJson.ok("error", "标签超长");
 			}

@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.base.RepoController;
+import com.wldos.common.Constants;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.Constants;
-import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.base.enums.OrgTypeEnum;
+import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.service.OrgService;
 import com.wldos.sys.core.vo.Org;
 import com.wldos.sys.core.vo.OrgRoleTree;
@@ -162,7 +162,8 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 			WoOrg plat = new WoOrg(Constants.TOP_ORG_ID, "平台");
 			if (res.isEmpty()) {
 				res.add(plat);
-			}else
+			}
+			else
 				res.set(0, plat);
 		}
 
@@ -177,8 +178,8 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 	@GetMapping("type")
 	public List<Map<String, Object>> fetchEnumAppType() {
 		return (this.isPlatformAdmin(this.getTenantId()) ?
-					Arrays.stream(OrgTypeEnum.values())
-					: Arrays.stream(OrgTypeEnum.values()).filter(v -> !v.getValue().equals(Constants.ENUM_TYPE_ORG_PLAT))).map(item -> {
+				Arrays.stream(OrgTypeEnum.values())
+				: Arrays.stream(OrgTypeEnum.values()).filter(v -> !v.getValue().equals(Constants.ENUM_TYPE_ORG_PLAT))).map(item -> {
 			Map<String, Object> em = new HashMap<>();
 			em.put("label", item.getLabel());
 			em.put("value", item.getValue());

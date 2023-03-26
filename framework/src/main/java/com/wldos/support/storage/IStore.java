@@ -15,8 +15,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wldos.support.storage.dto.Thumbnail;
 import com.wldos.common.enums.FileAccessPolicyEnum;
+import com.wldos.support.storage.dto.Thumbnail;
 import com.wldos.support.storage.vo.FileInfo;
 
 import org.springframework.web.multipart.MultipartFile;

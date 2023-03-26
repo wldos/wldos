@@ -19,6 +19,7 @@ public enum ArchTypeEnum {
 	ARCH("体系结构", "arch");
 
 	private final String label;
+
 	private final String value;
 
 	ArchTypeEnum(String label, String value) {

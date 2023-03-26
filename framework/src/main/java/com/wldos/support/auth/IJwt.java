@@ -11,5 +11,6 @@ package com.wldos.support.auth;
 public interface IJwt {
 
 	String KEY_JWT_TENANT = "tenantId";
+
 	String KEY_JWT_DOMAIN = "domainId";
 }

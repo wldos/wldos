@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.model;
+package com.wldos.support.cms.model;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -32,7 +32,7 @@ public class Chapter {
 	public Chapter() {
 	}
 
-	public static Chapter of (KPubs single) {
+	public static Chapter of(KPubs single) {
 		return of(single.getId(), ObjectUtils.string(single.getPubTitle()), ObjectUtils.string(single.getPubContent())/* 过滤null值，防止前端不刷新*/,
 				single.getParentId(), single.getPubStatus());
 	}

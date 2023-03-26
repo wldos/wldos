@@ -12,8 +12,8 @@ import java.io.File;
 
 import javax.mail.internet.MimeMessage;
 
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.RepoService;
+import com.wldos.base.entity.EntityAssists;
 import com.wldos.sys.core.entity.WoMail;
 import com.wldos.sys.core.enums.MailEnum;
 import com.wldos.sys.core.repo.MailRepo;
@@ -84,7 +84,8 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 			helper.setText(content, true);
 
 			this.sendMail(to, content, message, cUid, cUip);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException("发送html邮件时异常！", e);
 		}
 	}
@@ -114,7 +115,8 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 			helper.addAttachment(fileName, fsr);
 
 			this.sendMail(to, content, message, cUid, cUip);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException("发送带附件的邮件时异常！", e);
 		}
 	}
@@ -143,7 +145,8 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 			helper.addInline(Long.toString(this.nextId()), fsr);
 
 			this.sendMail(to, content, message, cUid, cUip);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException("发送嵌入静态资源邮件时异常！", e);
 		}
 	}
@@ -156,7 +159,8 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 			this.mailSender.send(message);
 			this.updateEmail(mail, MailEnum.SUCCESS.getValue());
 			getLog().info("发送邮件成功：{}", to);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			assert mail != null;
 			this.updateEmail(mail, MailEnum.SUCCESS.getValue());
 			throw new RuntimeException("发送邮件异常！", e);
@@ -171,7 +175,8 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 			this.mailSender.send(message);
 			this.updateEmail(mail, MailEnum.SUCCESS.getValue());
 			getLog().info("发送邮件成功：{}", to);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			assert mail != null;
 			this.updateEmail(mail, MailEnum.SUCCESS.getValue());
 			throw new RuntimeException("发送邮件异常！", e);

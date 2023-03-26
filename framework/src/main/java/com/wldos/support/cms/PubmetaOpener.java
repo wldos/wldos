@@ -6,27 +6,19 @@
  *
  */
 
-package com.wldos.sys.base.enums;
+package com.wldos.support.cms;
+
+import java.util.List;
+
+import com.wldos.support.cms.entity.KPubmeta;
 
 /**
- * 分类法枚举值。
+ * 发布元语操作开瓶器。
  *
  * @author 树悉猿
- * @date 2021/6/13
+ * @date 2023/3/26
  * @version 1.0
  */
-public enum TermTypeEnum {
-	CATEGORY("category"),
-	TAG("tag");
-
-	private final String name;
-
-	TermTypeEnum(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return this.name;
-	}
+public interface PubmetaOpener {
+	List<KPubmeta> queryPubMetaByPubIds(List<Long> pids);
 }

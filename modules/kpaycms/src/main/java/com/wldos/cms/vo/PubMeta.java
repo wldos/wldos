@@ -67,6 +67,7 @@ public class PubMeta {
 	private List<String> tagIds;
 
 	private Geographic geographic;
+
 	// todo 后期可以改成<String, PubTypeExt>，以描述每个扩展属性的元信息，比如数据类型、取值来源，以展示动态表单或者展示动态内容
 	private Map<String, String> pubTypeExt;
 

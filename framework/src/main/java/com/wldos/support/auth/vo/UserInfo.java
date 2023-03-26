@@ -17,14 +17,21 @@ package com.wldos.support.auth.vo;
  */
 public class UserInfo {
 	private Long id;
+
 	private String username;
+
 	private String nickname;
+
 	private String remark;
+
 	private String avatar;
+
 	private Long tenantId;
+
 	private Long domainId;
 
-	public UserInfo() {}
+	public UserInfo() {
+	}
 
 	public UserInfo(JWT jwt) {
 		this.id = jwt.getUserId();

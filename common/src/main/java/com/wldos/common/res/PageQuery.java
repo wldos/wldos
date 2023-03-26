@@ -37,12 +37,16 @@ public class PageQuery {
 
 	// 当前页码
 	private int current = 1;
+
 	// 每页条数
 	private int pageSize = 10;
+
 	// 常规查询条件
 	private Map<String, Object> condition;
+
 	// 排序规则
 	private Sort sorter;
+
 	// 表头筛选值集
 	private Map<String, List<Object>> filter;
 
@@ -56,7 +60,7 @@ public class PageQuery {
 		//分页参数
 		if (params.get(currentKey) != null) {
 			this.current = Integer.parseInt(params.get(currentKey).toString());
-			if ( this.current == 0 )
+			if (this.current == 0)
 				this.current = 1;
 		}
 		if (params.get(pageSizeKey) != null) {
@@ -65,7 +69,8 @@ public class PageQuery {
 
 		if (params.get(sorterKey) != null) {
 			this.sort(params, sorterKey);
-		} else {
+		}
+		else {
 			this.sorter = Sort.unsorted();
 		}
 
@@ -149,7 +154,8 @@ public class PageQuery {
 		List<Order> orders;
 		if (this.sorter == null || this.sorter == Sort.unsorted()) {
 			orders = new ArrayList<>();
-		} else
+		}
+		else
 			orders = this.sorter.get().collect(Collectors.toList());
 
 		List<Order> ords = Arrays.stream(newOrders).filter(Objects::nonNull).filter(n -> n.length == 0).map(this::extractOrder).collect(Collectors.toList());

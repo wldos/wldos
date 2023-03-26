@@ -17,9 +17,13 @@ package com.wldos.support.storage.vo;
  */
 public class FileInfo {
 	private Long id;
+
 	private String name;
+
 	private String path;
+
 	private String url;
+
 	private String mimeType;
 
 	public FileInfo(Long id, String name, String path, String url, String mimeType) {

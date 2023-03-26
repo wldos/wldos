@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 import com.wldos.base.RepoController;
 import com.wldos.common.Constants;
-import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
 import com.wldos.sys.base.entity.WoApp;
 import com.wldos.sys.base.enums.AppTypeEnum;
 import com.wldos.sys.base.service.AppService;
@@ -64,7 +64,7 @@ public class AppController extends RepoController<AppService, WoApp> {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
-		return  this.service.queryAppForPage(pageQuery);
+		return this.service.queryAppForPage(pageQuery);
 	}
 
 	/**

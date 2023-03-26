@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.core.vo;
+package com.wldos.support.region.vo;
 
 /**
  * 省分。

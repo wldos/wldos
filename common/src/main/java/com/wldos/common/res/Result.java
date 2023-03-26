@@ -21,7 +21,8 @@ public class Result {
 
 	private String message;
 
-	public Result() {}
+	public Result() {
+	}
 
 	public Result(int status, String message) {
 		this.status = status;

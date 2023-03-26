@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.wldos.auth.service.AuthCodeService;
+import com.wldos.auth.vo.CaptchaVO;
 import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.base.NoRepoController;
 import com.wldos.common.res.Result;
-import com.wldos.auth.vo.CaptchaVO;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

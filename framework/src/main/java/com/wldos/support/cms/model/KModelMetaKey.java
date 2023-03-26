@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.cms.model;
+package com.wldos.support.cms.model;
 
 /**
  * 系统统一内容模型key。

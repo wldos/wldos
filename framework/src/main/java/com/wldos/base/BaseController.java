@@ -8,20 +8,12 @@
 
 package com.wldos.base;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.res.ResultJson;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.http.IpUtils;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.ResultJson;
+import com.wldos.common.utils.http.IpUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -33,7 +25,7 @@ import org.springframework.context.annotation.Lazy;
  * @date 2021/5/5
  * @version 1.0
  */
-abstract class BaseController extends Base{
+abstract class BaseController extends Base {
 
 	/** 如果service层需要request，可以传给service，不要在service直接获取*/
 	@Autowired

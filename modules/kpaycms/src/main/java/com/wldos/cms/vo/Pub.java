@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.wldos.common.vo.SelectOption;
-import com.wldos.sys.base.dto.PubTypeExt;
+import com.wldos.support.cms.dto.PubTypeExt;
 
 /**
  * 不能匹配的属性进入map以扩展字段处理

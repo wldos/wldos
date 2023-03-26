@@ -11,8 +11,8 @@ package com.wldos.sys.base.repo;
 import java.util.List;
 
 import com.wldos.support.term.dto.Term;
-import com.wldos.sys.base.entity.KTerms;
 import com.wldos.sys.base.entity.KTermType;
+import com.wldos.sys.base.entity.KTerms;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -98,7 +98,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 *
 	 * @param name 分类项名称
 	 * @param slug 分类项别名
- 	 * @return 是否存在
+	 * @return 是否存在
 	 */
 	@Query("select count(1) from k_terms t where t.name=:name or t.slug=:slug")
 	boolean existsTermBySlugOrName(@Param("name") String name, @Param("slug") String slug);
@@ -111,7 +111,7 @@ public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
 	 * @return 是否存在重名
 	 */
 	@Query("select count(1) from k_terms t where (t.name=:name or t.slug=:slug) and t.id!=:id")
-	boolean existsDifTermByNameOrSlugAndId( @Param("name") String name, @Param("slug") String slug, @Param("id") Long id);
+	boolean existsDifTermByNameOrSlugAndId(@Param("name") String name, @Param("slug") String slug, @Param("id") Long id);
 
 	/**
 	 * 用于新增分类项时判断是否与其他分类项别名重复，不区分分类法，仅用于新增

@@ -128,9 +128,9 @@ public class OAuthService extends NoRepoService {
 			oAuthLoginUser = this.oAuthLoginUserService.createOAuthLoginUser(woUser, oAuthUser);
 
 			if (!OAuthTypeEnum.WeiBo.getValue().equals(oAuthLoginParams.getAuthType())) { // 目前微博头像io 403
-			String headImgUrl = oAuthUser.getHeadImgUrl();
-			this.userService.uploadAvatar(request, response, headImgUrl, new int[] { 144, 144 }, woUser.getId(), curUserIp);
-		}
+				String headImgUrl = oAuthUser.getHeadImgUrl();
+				this.userService.uploadAvatar(request, response, headImgUrl, new int[] { 144, 144 }, woUser.getId(), curUserIp);
+			}
 		}
 		else {
 			woUser = this.userService.findById(oAuthLoginUser.getUserId());
@@ -164,7 +164,7 @@ public class OAuthService extends NoRepoService {
 
 		if (OAuthTypeEnum.WeChat.getValue().equals(authType)) {
 
-			accessTokenUri =  String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(), code);
+			accessTokenUri = String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(), code);
 
 			String accessTokenJson = HttpUtils.sendGet(accessTokenUri);
 
@@ -175,7 +175,8 @@ public class OAuthService extends NoRepoService {
 			String userInfoJson = HttpUtils.sendGet(userInfoUri);
 
 			return this.resJson.readEntity(userInfoJson, new TypeReference<OAuthUserWechat>() {});
-		} else if (OAuthTypeEnum.WeiBo.getValue().equals(authType)) {
+		}
+		else if (OAuthTypeEnum.WeiBo.getValue().equals(authType)) {
 
 			String params = "client_id=" + oAuthConfig.getAppId() + "&client_secret=" + oAuthConfig.getAppSecret() +
 					"&grant_type=authorization_code&code=" + code + "&redirect_uri=" + this.getRedirectUri(oAuthConfig.getRedirectUri(), this.getRedirectSufix(authType));
@@ -189,9 +190,10 @@ public class OAuthService extends NoRepoService {
 			String userInfoJson = HttpUtils.sendGet(userInfoUri);
 
 			return this.resJson.readEntity(userInfoJson, new TypeReference<OAuthUserWeibo>() {});
-		} else {
+		}
+		else {
 			// for qq
-			accessTokenUri =  String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(),
+			accessTokenUri = String.format(accessTokenUri, oAuthConfig.getAppId(), oAuthConfig.getAppSecret(),
 					this.getRedirectUri(oAuthConfig.getRedirectUri(), this.getRedirectSufix(authType)), code);
 
 			String accessTokenJson = HttpUtils.sendGet(accessTokenUri);
@@ -199,7 +201,7 @@ public class OAuthService extends NoRepoService {
 			AccessTokenQQ tokenEntity = this.resJson.readEntity(accessTokenJson, new TypeReference<AccessTokenQQ>() {});
 
 			// 需要另外获取openid
-			String openIdstr = HttpUtils.sendGet("https://graph.qq.com/oauth2.0/me?access_token="+tokenEntity.getAccessToken()+"&fmt=json");
+			String openIdstr = HttpUtils.sendGet("https://graph.qq.com/oauth2.0/me?access_token=" + tokenEntity.getAccessToken() + "&fmt=json");
 
 			OpenIdQQ openIdQQ = this.resJson.readEntity(openIdstr, new TypeReference<OpenIdQQ>() {});
 			String openid = openIdQQ.getOpenId();

@@ -10,17 +10,11 @@ package com.wldos.base;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.dto.LevelNode;
-import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.ResultJson;
-import com.wldos.common.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -29,6 +29,7 @@ public class AccountInfo {
 	private String username;
 
 	private String nickname;
+
 	/** 个人简介、个性签名 */
 	private String remark;
 
@@ -63,8 +64,10 @@ public class AccountInfo {
 	private String city;
 
 	private String area;
+
 	/** 邀请码 */
 	private String inviteCode;
+
 	/** 推荐码 */
 	private String recommendCode;
 
@@ -79,10 +82,13 @@ public class AccountInfo {
 
 	/** 头衔 */
 	private String title;
+
 	/** 组织，主企业，根据用户设置获取，@todo 后期统一关联公司表 */
 	private String company;
+
 	/** 标签 */
 	private List<Map<String, String>> tags;
+
 	/** 群组，根据用户所属系统会员组获取，@todo 后期改成群组/团队/圈子 */
 	private List<Group> group;
 

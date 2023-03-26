@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * @date 2021-04-17
  * @version V1.0
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({ "unused" })
 @Slf4j
 @Component
 public class ResultJson {
@@ -133,7 +133,7 @@ public class ResultJson {
 			return this.objectMapper.readValue(json, anyEntity);
 		}
 		catch (JsonProcessingException e) {
-			log.error("json转对象异常，json="+json, e);
+			log.error("json转对象异常，json=" + json, e);
 		}
 		return null;
 	}
@@ -153,7 +153,7 @@ public class ResultJson {
 			return new ObjectMapper().writeValueAsString(obj);
 		}
 		catch (JsonProcessingException e) {
-			log.error("转换json异常，转换对象obj="+obj, e);
+			log.error("转换json异常，转换对象obj=" + obj, e);
 		}
 		return "";
 	}

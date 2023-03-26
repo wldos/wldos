@@ -25,7 +25,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @date 2022/12/13
  * @version 1.0
  */
-public class DemoPlugin implements PluginBootStrap  {
+public class DemoPlugin implements PluginBootStrap {
 
 	@Override
 	public void boot(ConfigurableApplicationContext context) {

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wldos.base.RepoController;
+import com.wldos.support.region.vo.City;
 import com.wldos.sys.core.entity.WoRegion;
 import com.wldos.sys.core.service.RegionService;
-import com.wldos.sys.core.vo.City;
 import com.wldos.sys.core.vo.Prov;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +44,7 @@ public class RegionController extends RepoController<RegionService, WoRegion> {
 	 *
 	 * @param province 省分id
 	 */
-	@GetMapping(value = {"city/{province}", "city/"})
+	@GetMapping(value = { "city/{province}", "city/" })
 	public List<City> queryCity(@PathVariable(required = false) Long province) {
 
 		if (null == province)

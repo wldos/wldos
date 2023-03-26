@@ -26,7 +26,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 public class ChineseUtils {
 	/***
 	 * 将汉字转成拼音(取首字母或全拼)
-	 * 
+	 *
 	 * @param hanZi  中文字面值
 	 * @param full  是否全拼
 	 * @return 拼音
@@ -47,10 +47,12 @@ public class ChineseUtils {
 				pinyin = singleHanZi2Pinyin(unit);
 				if (full) {
 					sb.append(pinyin);
-				} else {
+				}
+				else {
 					sb.append(pinyin.charAt(0));
 				}
-			} else {
+			}
+			else {
 				sb.append(unit);
 			}
 		}
@@ -59,7 +61,7 @@ public class ChineseUtils {
 
 	/***
 	 * 将单个汉字转成拼音
-	 * 
+	 *
 	 * @param hanZi 单个中文
 	 * @return 拼音
 	 */
@@ -71,7 +73,8 @@ public class ChineseUtils {
 		try {
 			res = PinyinHelper.toHanyuPinyinStringArray(hanZi, outputFormat);
 			sb.append(res[0]); // 对于多音字，只用第一个拼音
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return "";
 		}
 		return sb.toString();

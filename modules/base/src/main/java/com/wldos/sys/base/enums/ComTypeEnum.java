@@ -24,6 +24,7 @@ public enum ComTypeEnum {
 	PARTY("中国共产党", "31");
 
 	private final String label;
+
 	private final String value;
 
 	ComTypeEnum(String label, String value) {

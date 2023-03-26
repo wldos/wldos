@@ -11,10 +11,6 @@ package com.wldos.auth2.entity;
 
 import java.sql.Timestamp;
 
-import com.wldos.auth2.model.OAuthUser;
-import com.wldos.base.entity.EntityAssists;
-import com.wldos.sys.core.entity.WoUser;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;

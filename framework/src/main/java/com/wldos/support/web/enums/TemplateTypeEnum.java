@@ -6,7 +6,7 @@
  *
  */
 
-package com.wldos.sys.base.enums;
+package com.wldos.support.web.enums;
 
 /**
  * 模板类型枚举值。模板是指为了实现特定业务模型而实现的功能，偏指前端表现层，如：商品详情页面、电子书目录页面。
@@ -27,6 +27,7 @@ public enum TemplateTypeEnum {
 	UNKNOWN("未知", "unknown");
 
 	private final String label;
+
 	private final String value;
 
 	TemplateTypeEnum(String label, String value) {
@@ -42,7 +43,7 @@ public enum TemplateTypeEnum {
 		return value;
 	}
 
-	public static TemplateTypeEnum  getTemplateTypeEnumByValue(String value) {
+	public static TemplateTypeEnum getTemplateTypeEnumByValue(String value) {
 		for (TemplateTypeEnum t : TemplateTypeEnum.values()) {
 			if (t.getValue().equals(value))
 				return t;

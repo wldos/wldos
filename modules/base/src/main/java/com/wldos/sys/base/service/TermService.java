@@ -21,42 +21,42 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wldos.base.RepoService;
 import com.wldos.base.entity.EntityAssists;
+import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.BoolEnum;
+import com.wldos.common.enums.RedisKeyEnum;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
+import com.wldos.common.utils.ChineseUtils;
+import com.wldos.common.utils.NameConvert;
+import com.wldos.common.utils.ObjectUtils;
+import com.wldos.common.utils.TreeUtils;
+import com.wldos.common.vo.SelectOption;
 import com.wldos.common.vo.TreeNode;
+import com.wldos.common.vo.TreeSelectOption;
 import com.wldos.support.term.TermOpener;
 import com.wldos.support.term.dto.Term;
+import com.wldos.support.term.enums.TermTypeEnum;
 import com.wldos.sys.base.dto.TermObject;
-import com.wldos.sys.base.enums.TermTypeEnum;
-import com.wldos.sys.base.repo.TermObjectRepo;
-import com.wldos.sys.base.repo.TermTypeRepo;
-import com.wldos.sys.base.repo.TermRepo;
-import com.wldos.sys.base.vo.Category;
-import com.wldos.sys.base.vo.TermTree;
-import com.wldos.common.res.PageableResult;
-import com.wldos.base.RepoService;
-import com.wldos.common.utils.ChineseUtils;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.Constants;
 import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.entity.KTerms;
-import com.wldos.common.utils.NameConvert;
-import com.wldos.common.utils.TreeUtils;
-import com.wldos.common.vo.SelectOption;
-import com.wldos.common.vo.TreeSelectOption;
-import com.wldos.common.enums.RedisKeyEnum;
+import com.wldos.sys.base.repo.TermObjectRepo;
+import com.wldos.sys.base.repo.TermRepo;
+import com.wldos.sys.base.repo.TermTypeRepo;
+import com.wldos.sys.base.vo.Category;
+import com.wldos.sys.base.vo.TermTree;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * 分类操作service。
@@ -267,7 +267,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 				// 全站分类树，为了规避不需要在门户展现的分类过滤
 				List<Category> viewNodes = allTerms.parallelStream().filter(v -> BoolEnum.YES.toString().equals(v.getInfoFlag()))
 						.map(res ->
-						Category.of(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getDisplayOrder())).collect(Collectors.toList());
+								Category.of(res.getId(), res.getParentId(), res.getName(), res.getId().toString(), res.getSlug(), res.getDisplayOrder())).collect(Collectors.toList());
 
 				viewNodes = TreeUtils.buildFlatTree(viewNodes, Constants.TOP_TERM_ID);
 				// 没有孩子的无效，过滤掉

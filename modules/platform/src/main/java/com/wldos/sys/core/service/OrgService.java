@@ -13,28 +13,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.base.RepoService;
+import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.DeleteFlagEnum;
+import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.sys.base.entity.WoComUser;
-import com.wldos.sys.base.service.RoleService;
-import com.wldos.sys.core.entity.WoOrg;
-import com.wldos.sys.core.entity.WoOrgUser;
 import com.wldos.sys.base.entity.WoRole;
 import com.wldos.sys.base.entity.WoRoleOrg;
-import com.wldos.sys.base.repo.RoleOrgRepo;
 import com.wldos.sys.base.repo.ComUserRepo;
+import com.wldos.sys.base.repo.RoleOrgRepo;
+import com.wldos.sys.base.service.RoleService;
+import com.wldos.sys.base.vo.AuthRes;
+import com.wldos.sys.core.entity.WoOrg;
+import com.wldos.sys.core.entity.WoOrgUser;
 import com.wldos.sys.core.repo.OrgRepo;
 import com.wldos.sys.core.repo.OrgUserRepo;
-import com.wldos.sys.base.vo.AuthRes;
 import com.wldos.sys.core.vo.Org;
 import com.wldos.sys.core.vo.OrgRole;
 import com.wldos.sys.core.vo.OrgRoleTree;
-import com.wldos.common.enums.RedisKeyEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,8 +94,8 @@ public class OrgService extends RepoService<OrgRepo, WoOrg, Long> {
 		List<WoRole> roles = this.isAdmin(userId) ? this.roleService.findAll() : this.roleService.findAllTenant();
 		List<OrgRole> orgRoles = this.queryAuthRole(orgId);
 		List<AuthRes> authResList = roles.parallelStream().map(role ->
-					AuthRes.of(role.getRoleName(), role.getId().toString(), role.getId(), role.getParentId())
-			).collect(Collectors.toList());
+				AuthRes.of(role.getRoleName(), role.getId().toString(), role.getId(), role.getParentId())
+		).collect(Collectors.toList());
 
 		authResList = TreeUtils.build(authResList, Constants.TOP_ROLE_ID);
 

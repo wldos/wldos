@@ -17,6 +17,7 @@ package com.wldos.common.exception;
  */
 public class BaseException extends RuntimeException {
 	private static final int DEFAULT_STATUS = 200;
+
 	private final int status;
 
 	public BaseException(String message) {

@@ -126,7 +126,7 @@ public class IpUtils {
 			return new byte[0];
 		}
 
-		for (int i = 0; i < elements.length - 1 ; ++i) {
+		for (int i = 0; i < elements.length - 1; ++i) {
 			l = Integer.parseInt(elements[i]);
 			if ((l < 0L) || (l > 255L)) {
 				return new byte[0];

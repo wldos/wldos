@@ -17,10 +17,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.Constants;
+import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.auth.JWTTool;
 import com.wldos.support.cache.ICache;
-import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.support.storage.IStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,12 +71,15 @@ class Base {
 	/** 判断当前系统是否多域(站点)模式 */
 	@Value("${wldos.system.multi-domain.switch:true}")
 	protected boolean isMultiDomain;
+
 	/** 平台域名 */
 	@Value("${wldos.platform.domain:wldos.com}")
 	protected String wldosDomain;
+
 	/** 平台url */
 	@Value("${wldos.platform.url:https://www.wldos.com}")
 	protected String wldosUrl;
+
 	/** 平台前端请求协议 */
 	@Value("${wldos.req.protocol:https}")
 	protected String reqProtocol;
@@ -136,7 +139,7 @@ class Base {
 		return tenantId.equals(Constants.TOP_COM_ID);
 	}
 
-	protected void refreshCache(String ...keys) {
+	protected void refreshCache(String... keys) {
 		for (String key : keys) {
 			this.cache.remove(key);
 			getLog().info("已刷新缓存：{}", key);
@@ -172,7 +175,7 @@ class Base {
 				return adminIds.contains(userId);
 			}
 
-			adminIds = om.readValue(value, new TypeReference<List<Long>>(){});
+			adminIds = om.readValue(value, new TypeReference<List<Long>>() {});
 			return adminIds.contains(userId);
 		}
 		catch (JsonProcessingException e) {
@@ -182,7 +185,7 @@ class Base {
 	}
 
 	// 定义application全局变量，存储hook
-	protected void doAction(){
+	protected void doAction() {
 		// @todo 添加一过性hook函数的钩子埋点函数，多用于写操作校验
 	}
 

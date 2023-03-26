@@ -19,36 +19,36 @@ import org.springframework.core.env.ConfigurableEnvironment;
 @SuppressWarnings("unused")
 public class DynLoadPluginListener implements SpringApplicationRunListener {
 
-    private final PluginManager pluginManager;
+	private final PluginManager pluginManager;
 
-    public DynLoadPluginListener(SpringApplication application, String[] args) {
-        pluginManager = new PluginManager();
-    }
+	public DynLoadPluginListener(SpringApplication application, String[] args) {
+		pluginManager = new PluginManager();
+	}
 
 	@Override
 	public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment configurableEnvironment) {
 		pluginManager.setClassLoader((URLClassLoader) configurableEnvironment.getClass().getClassLoader());
 	}
 
-    @Override
-    public void contextPrepared(ConfigurableApplicationContext configurableApplicationContext) {
-    }
+	@Override
+	public void contextPrepared(ConfigurableApplicationContext configurableApplicationContext) {
+	}
 
-    @Override
-    public void contextLoaded(ConfigurableApplicationContext configurableApplicationContext) {
-        pluginManager.register(configurableApplicationContext);
-    }
+	@Override
+	public void contextLoaded(ConfigurableApplicationContext configurableApplicationContext) {
+		pluginManager.register(configurableApplicationContext);
+	}
 
-    @Override
-    public void started(ConfigurableApplicationContext context) {
-        pluginManager.boot(context);
-    }
+	@Override
+	public void started(ConfigurableApplicationContext context) {
+		pluginManager.boot(context);
+	}
 
-    @Override
-    public void running(ConfigurableApplicationContext context) {
-    }
+	@Override
+	public void running(ConfigurableApplicationContext context) {
+	}
 
-    @Override
-    public void failed(ConfigurableApplicationContext context, Throwable exception) {
-    }
+	@Override
+	public void failed(ConfigurableApplicationContext context, Throwable exception) {
+	}
 }

@@ -19,50 +19,50 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.auth.model.ModifyParams;
-import com.wldos.auth.vo.BakEmailModifyParams;
-import com.wldos.auth.vo.Group;
-import com.wldos.auth.vo.MFAModifyParams;
-import com.wldos.auth.vo.SecQuestModifyParams;
-import com.wldos.base.entity.EntityAssists;
-import com.wldos.common.res.PageableResult;
-import com.wldos.base.entity.AuditFields;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.base.RepoService;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.Constants;
-import com.wldos.support.storage.vo.FileInfo;
-import com.wldos.support.resource.dto.MenuAndRoute;
-import com.wldos.auth.vo.Login;
-import com.wldos.auth.vo.MobileModifyParams;
-import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.model.AccSecurity;
 import com.wldos.auth.model.AccountConfigKey;
+import com.wldos.auth.model.ModifyParams;
 import com.wldos.auth.service.PasswdStatusCheck;
 import com.wldos.auth.vo.AccountInfo;
-import com.wldos.support.resource.vo.Menu;
+import com.wldos.auth.vo.BakEmailModifyParams;
+import com.wldos.auth.vo.Group;
+import com.wldos.auth.vo.Login;
+import com.wldos.auth.vo.MFAModifyParams;
+import com.wldos.auth.vo.MobileModifyParams;
+import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.Register;
+import com.wldos.auth.vo.SecQuestModifyParams;
+import com.wldos.base.RepoService;
+import com.wldos.base.entity.AuditFields;
+import com.wldos.base.entity.EntityAssists;
+import com.wldos.common.Constants;
+import com.wldos.common.enums.DeleteFlagEnum;
+import com.wldos.common.enums.ValidStatusEnum;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.PageableResult;
+import com.wldos.common.utils.ObjectUtils;
+import com.wldos.support.auth.vo.Token;
+import com.wldos.support.auth.vo.UserInfo;
+import com.wldos.support.resource.dto.MenuAndRoute;
+import com.wldos.support.resource.enums.ResourceEnum;
+import com.wldos.support.resource.vo.Menu;
+import com.wldos.support.storage.vo.FileInfo;
+import com.wldos.sys.base.dto.Tenant;
 import com.wldos.sys.base.entity.WoDomain;
+import com.wldos.sys.base.enums.SysOptionEnum;
+import com.wldos.sys.base.enums.UserStatusEnum;
+import com.wldos.sys.base.repo.CompanyRepo;
 import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.base.service.DomainService;
+import com.wldos.sys.base.vo.Domain;
 import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.entity.WoOrgUser;
 import com.wldos.sys.core.entity.WoUser;
 import com.wldos.sys.core.entity.WoUsermeta;
-import com.wldos.support.resource.enums.ResourceEnum;
-import com.wldos.sys.base.enums.SysOptionEnum;
-import com.wldos.sys.base.enums.UserStatusEnum;
-import com.wldos.sys.core.repo.UserRepo;
-import com.wldos.sys.core.vo.User;
-import com.wldos.support.auth.vo.Token;
-import com.wldos.support.auth.vo.UserInfo;
 import com.wldos.sys.core.repo.OrgRepo;
 import com.wldos.sys.core.repo.OrgUserRepo;
-import com.wldos.sys.base.dto.Tenant;
-import com.wldos.sys.base.repo.CompanyRepo;
-import com.wldos.sys.base.vo.Domain;
+import com.wldos.sys.core.repo.UserRepo;
+import com.wldos.sys.core.vo.User;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,9 +84,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(rollbackFor = Exception.class)
 public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	private final BeanCopier domCopier = BeanCopier.create(WoDomain.class, Domain.class, false);
+
 	private final BeanCopier regUserCopier = BeanCopier.create(Register.class, WoUser.class, false);
+
 	@Value("${wldos.user.avatar.default}")
 	private String defaultAvatar;
+
 	@Value("${wldos.version}")
 	private String wldosVersion;
 
@@ -437,7 +440,8 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 			long expireTime = Long.parseLong(request.getHeader(Constants.CONTEXT_KEY_TOKEN_EXPIRE_TIME));
 
 			return this.jwtTool.refresh(domain, refreshToken, userId, tenantId, domainId, expireTime);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			getLog().error("refreshToken异常：{}", e.getMessage());
 			return null;
 		}
@@ -452,7 +456,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	 */
 	public PageableResult<WoUser> queryUserForPage(WoUser woUser, PageQuery pageQuery) {
 		pageQuery.appendParam(AuditFields.DELETE_FLAG, DeleteFlagEnum.NORMAL.toString())
-		.appendParam(AuditFields.IS_VALID, ValidStatusEnum.VALID.toString()); // 注意枚举类型必须转换为String，否则jdbc模板无法自动转换，会导致查询结果为空
+				.appendParam(AuditFields.IS_VALID, ValidStatusEnum.VALID.toString()); // 注意枚举类型必须转换为String，否则jdbc模板无法自动转换，会导致查询结果为空
 
 		return this.execQueryForPage(WoUser.class, WoOrgUser.class, "wo_user", "wo_org_user", "user_id", pageQuery);
 	}

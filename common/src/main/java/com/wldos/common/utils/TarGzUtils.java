@@ -34,7 +34,9 @@ import org.apache.tools.tar.TarInputStream;
  */
 public class TarGzUtils {
 
-	private TarGzUtils() {throw new IllegalStateException("Utility class");}
+	private TarGzUtils() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	/**
 	 * 压缩文件

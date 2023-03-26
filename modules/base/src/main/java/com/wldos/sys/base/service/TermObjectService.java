@@ -8,8 +8,8 @@
 
 package com.wldos.sys.base.service;
 
-import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.base.RepoService;
+import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.sys.base.repo.TermObjectRepo;
 
 import org.springframework.stereotype.Service;

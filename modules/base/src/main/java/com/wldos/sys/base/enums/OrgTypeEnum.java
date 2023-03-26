@@ -25,6 +25,7 @@ public enum OrgTypeEnum {
 	CIRCLE("圈子", "circle");
 
 	private final String label;
+
 	private final String value;
 
 	OrgTypeEnum(String label, String value) {
