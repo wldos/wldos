@@ -24,7 +24,13 @@ import org.springframework.data.repository.query.Param;
  */
 public interface OptionsRepo extends PagingAndSortingRepository<WoOptions, Long> {
 
-	List<WoOptions> findAllByAppTypeIn(@Param("appType") List<String> appType);
+	List<WoOptions> findAllByOptionTypeIn(@Param("optionType") List<String> optionType);
+
+	List<WoOptions> findAllByOptionType(@Param("optionType") String optionType);
 
 	List<WoOptions> findAllByOptionKey(@Param("optionKey") String optionKey);
+
+	WoOptions findByOptionKey(@Param("optionKey") String optionKey);
+
+	List<WoOptions> findAllByAppCode(@Param("appCode") String appCode);
 }

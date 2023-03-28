@@ -92,10 +92,10 @@ public class KCMSService extends NoRepoService {
 
 	private final BeanCopier pubMetaCopier = BeanCopier.create(ContModelDto.class, PubMeta.class, false);
 
-	@Value("${wldos.file.pic.srcset}")
+	@Value("${wldos_file_pic_srcset}")
 	private String thumbnail;
 
-	@Value("${wldos.sidecar.config}")
+	@Value("${wldos_sidecar_config}")
 	private String sideCar;
 
 	@Autowired

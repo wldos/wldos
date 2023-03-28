@@ -250,7 +250,7 @@ public class EdgeGateWayFilter implements Filter {
 		return null;
 	}
 
-	@Value("${wldos.platform.adminEmail:306991142#qq.com}")
+	@Value("${wldos_platform_adminEmail:306991142#qq.com}")
 	private String adminEmail;
 
 	private void throwException(HttpServletResponse response, BaseException ex, String userIP, String reqUri, String userId) {

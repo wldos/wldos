@@ -48,7 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class NoRepoFileService {
-	@Value("${wldos.file.store.path:}")
+	@Value("${wldos_file_store_path:}")
 	private String uploadPath;
 
 	private final FileRepo fileRepo;

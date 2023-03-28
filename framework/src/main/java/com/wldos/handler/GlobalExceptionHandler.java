@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice("com.wldos")
 public class GlobalExceptionHandler {
-	@Value("${wldos.platform.adminEmail:306991142#qq.com}")
+	@Value("${wldos_platform_adminEmail:306991142#qq.com}")
 	private String adminEmail;
 
 	@ExceptionHandler(TokenInvalidException.class)

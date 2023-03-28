@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.PropertiesDyn;
 import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.sys.base.enums.OptionTypeEnum;
 import com.wldos.sys.base.service.OptionsNoRepoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class PropertiesReader {
 	@PostConstruct
 	private void initialDBPropsSrc() {
 		try {
-			Map<String, String> propertyMap = this.service.getAllByAppType()
+			Map<String, String> propertyMap = this.service.getAllSysOptionsByOptionType(OptionTypeEnum.AUTO_RELOAD.getValue())
 					.stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
 			this.propsDyn.initialDBProps(this.env, propertyMap, this.propertyName, this.contextRefresher);
@@ -71,7 +72,7 @@ public class PropertiesReader {
 	 */
 	public void reLoadDBPropsSrc() {
 		try {
-			Map<String, String> propertyMap = this.service.getAllByAppType()
+			Map<String, String> propertyMap = this.service.getAllSysOptionsByOptionType(OptionTypeEnum.AUTO_RELOAD.getValue())
 					.stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
 			this.propsDyn.reLoadDBPropsSrc(this.env, propertyMap, this.propertyName, this.contextRefresher);

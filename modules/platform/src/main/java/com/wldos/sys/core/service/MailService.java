@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MailService extends RepoService<MailRepo, WoMail, Long> {
 
 	/** 发件人邮箱地址 */
-	@Value("${wldos.mail.fromMail.addr}")
+	@Value("${wldos_mail_fromMail_addr}")
 	private String from;
 
 	private JavaMailSender mailSender;

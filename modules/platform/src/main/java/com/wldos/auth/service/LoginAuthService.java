@@ -63,7 +63,7 @@ public class LoginAuthService extends NoRepoService {
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
 
 	/** 是否开启邮箱注册激活开关，开启后注册用户需要从邮箱激活 */
-	@Value("${wldos.platform.user.register.emailaction:true}")
+	@Value("${wldos_platform_user_register_emailaction:true}")
 	protected boolean isEmailAction;
 
 	@Autowired

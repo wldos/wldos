@@ -87,7 +87,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 
 	private final BeanCopier regUserCopier = BeanCopier.create(Register.class, WoUser.class, false);
 
-	@Value("${wldos.user.avatar.default}")
+	@Value("${wldos_user_avatar_default}")
 	private String defaultAvatar;
 
 	@Value("${wldos.version}")

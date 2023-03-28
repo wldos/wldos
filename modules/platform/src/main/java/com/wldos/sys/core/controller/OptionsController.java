@@ -8,12 +8,19 @@
 
 package com.wldos.sys.core.controller;
 
-import com.wldos.base.DefaultNoRepoService;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.wldos.base.NoRepoController;
 import com.wldos.conf.PropertiesReader;
+import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.sys.base.service.OptionsNoRepoService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("system/options")
-public class OptionsController extends NoRepoController<DefaultNoRepoService> {
+public class OptionsController extends NoRepoController<OptionsNoRepoService> {
 
 	private final PropertiesReader propertiesReader;
 
@@ -35,8 +42,21 @@ public class OptionsController extends NoRepoController<DefaultNoRepoService> {
 		this.propertiesReader = propertiesReader;
 	}
 
+	@GetMapping("")
+	public Map<String, String> fetchAutoReloadOptions() {
+		List<WoOptions> allSysOptions = this.service.getSystemOptions();
+		return allSysOptions.stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
+	}
+
+	@PostMapping("config")
+	public String configSysOptions(@RequestBody Map<String, Object> config) {
+		Map<String, String> propertyMap = this.service.configSysOptions(config);
+		this.propertiesReader.dynSetPropsSrc(propertyMap);
+		return this.resJson.ok("ok");
+	}
+
 	/**
-	 * 刷新配置接口
+	 * 刷新所有自动加载配置
 	 */
 	@GetMapping("refresh")
 	public String refresh() {

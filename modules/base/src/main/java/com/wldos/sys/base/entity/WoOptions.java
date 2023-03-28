@@ -31,11 +31,11 @@ public class WoOptions {
 
 	private String description;
 
-	private String appType;
+	private String optionType;
 
-	public WoOptions() {
+	private String appCode;
 
-	}
+	public WoOptions() {}
 
 	private WoOptions(Long id, String optionKey, String optionValue) {
 		this.id = id;
@@ -45,6 +45,18 @@ public class WoOptions {
 
 	public static WoOptions of(Long id, String key, String value) {
 		return new WoOptions(id, key, value);
+	}
+
+	public static WoOptions of(Long id, String optionKey, String optionValue, String optionType, String appCode) {
+		return new WoOptions(id, optionKey, optionValue, optionType, appCode);
+	}
+
+	private WoOptions(Long id, String optionKey, String optionValue, String optionType, String appCode) {
+		this.id = id;
+		this.optionKey = optionKey;
+		this.optionValue = optionValue;
+		this.optionType = optionType;
+		this.appCode = appCode;
 	}
 
 	public Long getId() {
@@ -87,11 +99,19 @@ public class WoOptions {
 		this.description = description;
 	}
 
-	public String getAppType() {
-		return appType;
+	public String getOptionType() {
+		return optionType;
 	}
 
-	public void setAppType(String appType) {
-		this.appType = appType;
+	public void setOptionType(String optionType) {
+		this.optionType = optionType;
+	}
+
+	public String getAppCode() {
+		return appCode;
+	}
+
+	public void setAppCode(String appCode) {
+		this.appCode = appCode;
 	}
 }

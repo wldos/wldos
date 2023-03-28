@@ -8,7 +8,7 @@
 
 package com.wldos.sys.core.controller;
 
-import java.util.Map;
+import java.util.List;
 
 import com.wldos.base.RepoController;
 import com.wldos.sys.base.entity.WoOptions;
@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("admin/sys/options")
 public class OptionsAdminController extends RepoController<OptionsService, WoOptions> {
 	@GetMapping("")
-	public String readOptions() {
-		Map<String, String> options = System.getenv();
-		return this.resJson.ok(options);
+	public List<WoOptions> fetchAllOptions() {
+		return this.service.findAll();
 	}
+
 }

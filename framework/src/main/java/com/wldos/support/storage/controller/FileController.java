@@ -41,7 +41,7 @@ public class FileController extends RepoController<FileService, WoFile> {
 	@Value("${wldos.file.store.url:https://www.wldos.com}")
 	private String storeUrl;
 
-	@Value("${wldos.file.store.path:}")
+	@Value("${wldos_file_store_path:}")
 	private String uploadPath;
 
 	/**

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @Component
 public class VerifyEnv {
-	@Value("${wldos.platform.domain:wldos.com}")
+	@Value("${wldos_platform_domain:wldos.com}")
 	private String domain;
 
 	@Value("${license.orgName:wldos.com}")

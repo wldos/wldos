@@ -65,15 +65,15 @@ class Base {
 	protected StringRedisTemplate stringRedisTemplate;
 
 	/** 判断当前系统是否多租户模式 */
-	@Value("${wldos.system.multi-tenancy.switch:true}")
+	@Value("${wldos_system_multitenancy_switch:true}")
 	protected boolean isMultiTenancy;
 
 	/** 判断当前系统是否多域(站点)模式 */
-	@Value("${wldos.system.multi-domain.switch:true}")
+	@Value("${wldos_system_multidomain_switch:true}")
 	protected boolean isMultiDomain;
 
 	/** 平台域名 */
-	@Value("${wldos.platform.domain:wldos.com}")
+	@Value("${wldos_platform_domain:wldos.com}")
 	protected String wldosDomain;
 
 	/** 平台url */
@@ -81,7 +81,7 @@ class Base {
 	protected String wldosUrl;
 
 	/** 平台前端请求协议 */
-	@Value("${wldos.req.protocol:https}")
+	@Value("${wldos_req_protocol:https}")
 	protected String reqProtocol;
 
 	@Value("${token.access.header:X-CU-AccessToken-Default}")

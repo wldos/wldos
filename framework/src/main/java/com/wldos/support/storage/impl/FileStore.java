@@ -68,7 +68,7 @@ public class FileStore implements IStore {
 	@Value("${gateway.proxy.prefix:/wldos}")
 	private String gatewayPrefix;
 
-	@Value("${wldos.file.store.path:}")
+	@Value("${wldos_file_store_path:}")
 	private String uploadPath;
 
 	@Value("${wldos.file.store.local:true}")

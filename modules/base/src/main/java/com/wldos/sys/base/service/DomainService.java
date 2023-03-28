@@ -57,10 +57,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
-	@Value("${wldos.platform.logo.default}")
+	@Value("${wldos_platform_logo_default}")
 	private String defaultLogo;
 
-	@Value("${wldos.platform.favicon.default}")
+	@Value("${wldos_platform_favicon_default}")
 	private String defaultFavicon;
 
 	private final DomainAppService domainAppService;

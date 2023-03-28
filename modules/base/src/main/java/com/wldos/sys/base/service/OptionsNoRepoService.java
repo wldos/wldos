@@ -10,14 +10,14 @@ package com.wldos.sys.base.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
+import com.wldos.base.NoRepoService;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.support.cache.ICache;
-import com.wldos.sys.base.entity.WoApp;
 import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.sys.base.enums.OptionTypeEnum;
 import com.wldos.sys.base.repo.AppRepo;
 import com.wldos.sys.base.repo.OptionsRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -33,26 +33,49 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class OptionsNoRepoService {
-
-	private ICache cache;
+public class OptionsNoRepoService extends NoRepoService {
 
 	private final AppRepo appRepo;
 
 	private final OptionsRepo optionsRepo;
 
-
-	public OptionsNoRepoService(ICache cache, AppRepo appRepo, OptionsRepo optionsRepo) {
-		this.cache = cache;
+	public OptionsNoRepoService(AppRepo appRepo, OptionsRepo optionsRepo) {
 		this.appRepo = appRepo;
 		this.optionsRepo = optionsRepo;
 	}
 
-	public List<WoOptions> getAllByAppType() {
-		List<WoApp> apps = this.appRepo.findAllByDeleteFlagEqualsAndIsValidEquals(DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString());
-		if (ObjectUtils.isBlank(apps))
-			return new ArrayList<>();
-		List<String> appTypes = apps.parallelStream().map(WoApp::getAppCode).collect(Collectors.toList());
-		return this.optionsRepo.findAllByAppTypeIn(appTypes);
+	public List<WoOptions> getAllSysOptionsByOptionType(String optionType) {
+		return this.optionsRepo.findAllByOptionType(optionType);
+	}
+
+	private final String APP_CODE_SYSTEM = "sys_option";
+
+	public List<WoOptions> getSystemOptions() {
+		return this.optionsRepo.findAllByAppCode(this.APP_CODE_SYSTEM);
+	}
+
+	public Map<String, String> configSysOptions(Map<String, Object> config) {
+		List<WoOptions> insertOptions = new ArrayList<>();
+		List<WoOptions> updateOptions =
+		config.entrySet().stream().map(c -> {
+			WoOptions option = this.optionsRepo.findByOptionKey(c.getKey());
+			if (option == null) {
+				insertOptions.add(WoOptions.of(this.nextId(), c.getKey(), ObjectUtils.string(c.getValue()), OptionTypeEnum.AUTO_RELOAD.getValue(), this.APP_CODE_SYSTEM));
+				return null;
+			}
+			option.setOptionValue(ObjectUtils.string(c.getValue()));
+			return option;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+
+		if (!updateOptions.isEmpty()) {
+			// 1.存在则更新，2.不存在则创建
+			this.commonOperate.dynamicBatchUpdateByEntities(updateOptions);
+		}
+
+		if (!insertOptions.isEmpty()) {
+			this.insertOtherEntitySelective(insertOptions);
+		}
+
+		return this.optionsRepo.findAllByAppCode(this.APP_CODE_SYSTEM).stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 	}
 }
