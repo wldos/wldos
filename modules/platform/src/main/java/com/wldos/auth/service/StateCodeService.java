@@ -8,12 +8,9 @@
 
 package com.wldos.auth.service;
 
-import java.util.concurrent.TimeUnit;
-
 import com.wldos.base.NoRepoService;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.UUIDUtils;
 
 import org.springframework.stereotype.Service;
 
@@ -67,12 +64,6 @@ public class StateCodeService extends NoRepoService {
 	 */
 	public String genState() {
 
-		String uid = UUIDUtils.generateShortUuid();
-
-		String text = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
-		// 验证码有效期120秒
-		this.cache.set(String.format(RedisKeyEnum.STATE.toString(), uid), text, 2, TimeUnit.MINUTES);
-
-		return text + uid;
+		return this.commonOperate.genStateCode();
 	}
 }

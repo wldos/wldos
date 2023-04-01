@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class CommentService extends RepoService<CommentRepo, KComments, Long> {
 
-	@Value("${wldos_cms_comment_audit}")
+	@Value("${wldos_cms_comment_audit:false}")
 	private String auditFlag;
 
 	private final UserService userService;

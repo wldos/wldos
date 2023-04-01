@@ -257,4 +257,11 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	void applyTenantFilter(PageQuery pageQuery, HttpServletRequest request);
 
 	long getTokenExpTime(HttpServletRequest request);
+
+	/**
+	 * 生成状态码的逻辑涉及安全封装实现，二次开发可以自行实现
+	 *
+	 * @return 6位随机状态码+uuid
+	 */
+	String genStateCode();
 }

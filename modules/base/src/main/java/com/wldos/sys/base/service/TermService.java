@@ -74,7 +74,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 
 	private final BeanCopier termTypeCopier = BeanCopier.create(Term.class, KTermType.class, false);
 
-	@Value("${wldos_cms_defaultTermTypeId}")
+	@Value("${wldos_cms_defaultTermTypeId:1}")
 	private Long defaultTermTypeId;
 
 	private final TermTypeRepo termTypeRepo;
@@ -974,7 +974,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 		return this.addNewTags(tagNames, userId, userIp);
 	}
 
-	@Value("${wldos_cms_tag_tagLength}")
+	@Value("${wldos_cms_tag_tagLength:30}")
 	private int tagLength;
 
 	/*

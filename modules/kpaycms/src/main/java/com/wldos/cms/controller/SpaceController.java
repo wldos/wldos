@@ -60,10 +60,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RefreshScope
 @RestController
 public class SpaceController extends NoRepoController<SpaceService> {
-	@Value("${wldos_cms_content_maxLength}")
+	@Value("${wldos_cms_content_maxLength:33031}")
 	private int maxLength;
 
-	@Value("${wldos_cms_tag_maxTagNum}")
+	@Value("${wldos_cms_tag_maxTagNum:5}")
 	private int maxTagNum;
 
 	private final KCMSService kcmsService;
@@ -113,7 +113,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 		return this.service.queryChapter(chapterId);
 	}
 
-	@Value("${wldos_cms_tag_tagLength}")
+	@Value("${wldos_cms_tag_tagLength:30}")
 	private int tagLength;
 
 	/**

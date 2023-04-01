@@ -31,10 +31,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-	@Value("${restemplate.connection.timeout}")
+	@Value("${restemplate.connection.timeout:50}")
 	private int restConnTimeout;
 
-	@Value("${restemplate.read.timeout}")
+	@Value("${restemplate.read.timeout:50}")
 	private int restReadTimeout;
 
 	@Bean

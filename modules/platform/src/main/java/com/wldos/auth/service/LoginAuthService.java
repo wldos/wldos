@@ -230,11 +230,11 @@ public class LoginAuthService extends NoRepoService {
 
 		// 发激活邮件到注册邮箱，受全局配置开关控制，邮箱注册激活开关，用id、loginName、createTime创建verify token
 		if (this.isEmailAction) {
-			String actUrl = this.reqProtocol + "://" + this.userService.getDomainUrlById(domainId) + "/user/active/verify=" + user.getId();
+			String actUrl = this.userService.getDomainUrlById(domainId) + "/user/active/verify=" + user.getId();
 			String activeEmail = "<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/>"
 					+ "<title>账户激活</title></head><body>"
 					+ "您好，这是验证邮件，请点击下面的链接完成验证，</body></html>"
-					+ "<a href=\"" + actUrl + "\" target=\"_blank\">激活账号</a>" + actUrl + "<br/>"
+					+ "<a href=\"" + actUrl + "\" target=\"_blank\">激活账号" + actUrl + "</a><br/>"
 					+ "如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。";
 			String subject = this.wldosDomain + "账号激活邮件";
 			this.mailService.sendMailHtml(register.getLoginName(), subject, activeEmail, user.getId(), user.getRegisterIp());
@@ -272,7 +272,13 @@ public class LoginAuthService extends NoRepoService {
 				WoOrg orgUnActive = this.userService.queryUserOrg(SysOptionEnum.UN_ACTIVE_GROUP.getKey());
 				WoOrg orgActive = this.userService.queryUserOrg(SysOptionEnum.DEFAULT_GROUP.getKey());
 				// 切换用户组织
-				this.userService.updateUserOrg(uId, orgUnActive.getId(), orgActive.getId());
+				String res = this.userService.updateUserOrg(uId, orgUnActive.getId(), orgActive.getId());
+
+				if ("invalid".equals(res)) {
+					login.setNews("激活已失效");
+					login.setStatus("error");
+					return login;
+				}
 
 				login.setNews("激活成功");
 				login.setStatus("ok");

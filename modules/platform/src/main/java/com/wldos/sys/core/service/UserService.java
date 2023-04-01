@@ -87,10 +87,10 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 
 	private final BeanCopier regUserCopier = BeanCopier.create(Register.class, WoUser.class, false);
 
-	@Value("${wldos_user_avatar_default}")
+	@Value("${wldos_user_avatar_default:}")
 	private String defaultAvatar;
 
-	@Value("${wldos.version}")
+	@Value("${wldos.version:v2.0}")
 	private String wldosVersion;
 
 	private final AuthService authService;
@@ -410,12 +410,16 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	 * @param userId 用户id
 	 * @param orgIdOld 原组织
 	 * @param orgIdNew 新组织
+	 * @return String 无效用户或已激活过：“invalid”，激活成功："ok"
 	 */
-	public void updateUserOrg(Long userId, Long orgIdOld, Long orgIdNew) {
+	public String updateUserOrg(Long userId, Long orgIdOld, Long orgIdNew) {
 		WoOrgUser orgUser = this.orgUserRepo.queryByUserIdAndOrgId(orgIdOld, userId, ValidStatusEnum.VALID.toString(),
 				DeleteFlagEnum.NORMAL.toString());
+		if (orgUser == null)
+			return "invalid";
 		orgUser.setOrgId(orgIdNew);
 		this.commonOperate.dynamicUpdateByEntity(orgUser);
+		return "ok";
 	}
 
 	@Value("${token.access.header}")
