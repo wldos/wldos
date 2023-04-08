@@ -10,62 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2023-03-28 21:07:17
+Date: 2023-04-02 17:19:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for `k_commentmeta`
--- ----------------------------
-DROP TABLE IF EXISTS `k_commentmeta`;
-CREATE TABLE `k_commentmeta` (
-                                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                                 `comment_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                                 `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `meta_value` longtext COLLATE utf8mb4_unicode_ci,
-                                 PRIMARY KEY (`id`),
-                                 KEY `comment_id` (`comment_id`),
-                                 KEY `meta_key` (`meta_key`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------
--- Records of k_commentmeta
--- ----------------------------
-
--- ----------------------------
--- Table structure for `k_comments`
--- ----------------------------
-DROP TABLE IF EXISTS `k_comments`;
-CREATE TABLE `k_comments` (
-                              `id` bigint(20) unsigned NOT NULL,
-                              `pub_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                              `author` tinytext COLLATE utf8mb4_unicode_ci,
-                              `author_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `author_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `author_ip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `content` text COLLATE utf8mb4_unicode_ci,
-                              `karma` int(11) NOT NULL DEFAULT '0' ,
-                              `approved` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `comment_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-                              `create_by` bigint(20) unsigned DEFAULT '0' ,
-                              `create_time` datetime DEFAULT NULL ,
-                              `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL ,
-                              `update_time` datetime DEFAULT NULL ,
-                              `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `versions` int(10) DEFAULT NULL ,
-                              PRIMARY KEY (`id`),
-                              KEY `comment_post_ID` (`pub_id`),
-                              KEY `comment_approved_date_gmt` (`approved`),
-                              KEY `comment_parent` (`parent_id`),
-                              KEY `comment_author_email` (`author_email`(10)),
-                              KEY `comment_delete_flag` (`delete_flag`) USING BTREE,
-                              KEY `comment_create_by` (`create_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of k_comments
@@ -77,6 +25,7 @@ INSERT INTO `k_comments` VALUES ('81171206641467395', '1544414732358434826', '�
 INSERT INTO `k_comments` VALUES ('81171244939657216', '1544414732358434826', '龙神', null, null, null, '你好', '0', '1', null, null, '81171206641467395', '1', '2021-10-27 18:23:23', '192.168.1.23', '1', '2021-10-27 18:23:23', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('83309870280523787', '1544401257229893635', '龙神', null, null, null, '讲得很好，这是很透彻的解析！', '0', '1', null, null, '0', '1', '2021-11-02 16:01:31', '192.168.1.23', '1', '2021-11-02 16:01:31', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('245425828037050371', '71095902778605572', '龙神', null, null, null, '测试评论。', '0', '1', null, null, '0', '1', '2023-01-24 00:32:27', '192.168.1.23', '1', '2023-01-24 00:32:27', '192.168.1.23', 'normal', '1');
+INSERT INTO `k_comments` VALUES ('269978973119365121', '252542677308588037', '龙神', null, null, null, '测试评论', '0', '1', null, null, '0', '1', '2023-04-01 18:37:53', '127.0.0.1', '1', '2023-04-01 18:37:53', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531030094781005833', '0', null, null, null, null, '<p>你好，感受呢</p>', '0', null, null, null, '0', '0', '2021-07-26 20:07:00', '192.168.1.23', '0', '2021-07-26 20:07:00', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531051319343366147', '0', null, null, null, null, '<p>士大夫</p>', '0', null, null, null, '0', '0', '2021-07-26 21:31:20', '192.168.1.23', '0', '2021-07-26 21:31:20', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1531054120156971019', '1525843814879248388', '龙神', null, null, null, '<p>1234</p>', '0', '1', null, null, '0', '0', '2021-07-26 21:42:28', '192.168.1.23', '0', '2021-07-26 21:42:28', '192.168.1.23', 'normal', '1');
@@ -102,49 +51,6 @@ INSERT INTO `k_comments` VALUES ('1541173859747282952', '1529498101626880001', '
 INSERT INTO `k_comments` VALUES ('1541176621235093514', '1525843966499143682', '龙神', null, null, null, '牛逼', '0', '1', null, null, '0', '1', '2021-08-23 20:05:40', '192.168.1.23', '1', '2021-08-23 20:05:40', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_comments` VALUES ('1549902403000254465', '33', '龙神', null, null, null, '你好', '0', '1', null, null, '0', '1', '2021-09-16 21:58:49', '192.168.1.23', '1', '2021-09-16 21:58:49', '192.168.1.23', 'normal', '1');
 
--- ----------------------------
--- Table structure for `k_links`
--- ----------------------------
-DROP TABLE IF EXISTS `k_links`;
-CREATE TABLE `k_links` (
-                           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                           `link_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_target` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_visible` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_owner` bigint(20) unsigned NOT NULL DEFAULT '1',
-                           `link_rating` int(11) NOT NULL DEFAULT '0',
-                           `link_updated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-                           `link_rel` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `link_notes` mediumtext COLLATE utf8mb4_unicode_ci,
-                           `link_rss` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           PRIMARY KEY (`id`),
-                           KEY `link_visible` (`link_visible`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------
--- Records of k_links
--- ----------------------------
-
--- ----------------------------
--- Table structure for `k_model_pub_type_ext`
--- ----------------------------
-DROP TABLE IF EXISTS `k_model_pub_type_ext`;
-CREATE TABLE `k_model_pub_type_ext` (
-                                        `id` bigint(20) unsigned NOT NULL,
-                                        `meta_key` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                        `meta_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                        `meta_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                        `data_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                        `enum_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
-                                        `pub_type` varchar(20) DEFAULT NULL ,
-                                        PRIMARY KEY (`id`),
-                                        UNIQUE KEY `uni_meta_key` (`pub_type`,`meta_key`) USING BTREE,
-                                        KEY `k_model_content_id` (`pub_type`),
-                                        KEY `k_model_data_type` (`data_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of k_model_pub_type_ext
@@ -157,20 +63,6 @@ INSERT INTO `k_model_pub_type_ext` VALUES ('10', 'privacy_level', '隐私级别'
 INSERT INTO `k_model_pub_type_ext` VALUES ('11', 'prov', '省分', '', null, null, 'annual');
 INSERT INTO `k_model_pub_type_ext` VALUES ('12', 'city', '地市', '', null, null, 'annual');
 INSERT INTO `k_model_pub_type_ext` VALUES ('13', 'county', '区县', '', null, null, 'annual');
-
--- ----------------------------
--- Table structure for `k_pubmeta`
--- ----------------------------
-DROP TABLE IF EXISTS `k_pubmeta`;
-CREATE TABLE `k_pubmeta` (
-                             `id` bigint(20) unsigned NOT NULL,
-                             `pub_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                             `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `meta_value` longtext COLLATE utf8mb4_unicode_ci,
-                             PRIMARY KEY (`id`),
-                             KEY `meta_key` (`meta_key`(191)),
-                             KEY `post_id` (`pub_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of k_pubmeta
@@ -516,7 +408,7 @@ INSERT INTO `k_pubmeta` VALUES ('108325789645848586', '108325789582934025', 'pro
 INSERT INTO `k_pubmeta` VALUES ('108325789645848587', '108325789582934025', 'cover', '/202201/10164503sLfL87Ba.jpg');
 INSERT INTO `k_pubmeta` VALUES ('108325789645848588', '108325789582934025', 'ornPrice', '12');
 INSERT INTO `k_pubmeta` VALUES ('108325789645848589', '108325789582934025', 'mainPic1', '/202201/10164515E4EK1kZz.jpg');
-INSERT INTO `k_pubmeta` VALUES ('108326074728497153', '108325789582934025', 'views', '53');
+INSERT INTO `k_pubmeta` VALUES ('108326074728497153', '108325789582934025', 'views', '59');
 INSERT INTO `k_pubmeta` VALUES ('109053851878473734', '108321427372556297', 'views', '9');
 INSERT INTO `k_pubmeta` VALUES ('111610378539679750', '1529498096614686730', 'views', '0');
 INSERT INTO `k_pubmeta` VALUES ('112622016260653060', '112622016239681542', 'attachMetadata', '{\"width\":682,\"height\":562,\"path\":\"/202201/22131730EnjO34yN.png\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":124,\"path\":\"/202201/22131730EnjO34yN-150x150.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":247,\"path\":\"/202201/22131730EnjO34yN-300x300.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":844,\"path\":\"/202201/22131730EnjO34yN-1024x1024.png\",\"mimeType\":\"image/png\"}]}');
@@ -620,7 +512,7 @@ INSERT INTO `k_pubmeta` VALUES ('150341156328882192', '150341155934617611', 'sub
 INSERT INTO `k_pubmeta` VALUES ('150341156328882193', '150341155934617611', 'telephone', '15665730355');
 INSERT INTO `k_pubmeta` VALUES ('150341156328882194', '150341155934617611', 'mainPic1', '/202205/06151951JTjIsxjL.png');
 INSERT INTO `k_pubmeta` VALUES ('150341739441995782', '1521175523606839304', 'views', '4');
-INSERT INTO `k_pubmeta` VALUES ('151375661776945159', '150341155934617611', 'views', '23');
+INSERT INTO `k_pubmeta` VALUES ('151375661776945159', '150341155934617611', 'views', '24');
 INSERT INTO `k_pubmeta` VALUES ('151376227458531333', '150300613628575749', 'views', '4');
 INSERT INTO `k_pubmeta` VALUES ('151380931693428741', '108315676512010250', 'views', '15');
 INSERT INTO `k_pubmeta` VALUES ('151453718286090246', '150295498133782530', 'views', '8');
@@ -720,7 +612,7 @@ INSERT INTO `k_pubmeta` VALUES ('249778133180006401', '249778133171617796', 'vie
 INSERT INTO `k_pubmeta` VALUES ('249778134136307720', '249778134123724800', 'views', '0');
 INSERT INTO `k_pubmeta` VALUES ('249778135050665995', '249778135042277383', 'views', '0');
 INSERT INTO `k_pubmeta` VALUES ('249800696631312386', '150301236507885576', 'views', '3');
-INSERT INTO `k_pubmeta` VALUES ('252542677585412096', '252542677308588037', 'views', '17');
+INSERT INTO `k_pubmeta` VALUES ('252542677585412096', '252542677308588037', 'views', '19');
 INSERT INTO `k_pubmeta` VALUES ('252547675744550918', '252542677308588037', 'cover', '/2023/02/12161140mQbzeBAM.png');
 INSERT INTO `k_pubmeta` VALUES ('252547675744550919', '252542677308588037', 'subTitle', '测试信息发布');
 INSERT INTO `k_pubmeta` VALUES ('252547675744550920', '252542677308588037', 'province', '370000');
@@ -838,7 +730,7 @@ INSERT INTO `k_pubmeta` VALUES ('254429704874541067', '254429704866152448', 'att
 INSERT INTO `k_pubmeta` VALUES ('254429704878735363', '254429704866152448', 'attachPath', '/2023/02/17205037aV5ZluqQ.jpg');
 INSERT INTO `k_pubmeta` VALUES ('254430174762418177', '254430174745640968', 'attachMetadata', '{\"width\":1001,\"height\":789,\"path\":\"/2023/02/17205229uPlwJ9zT.jpg\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":118,\"path\":\"/2023/02/17205229uPlwJ9zT-150x150.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":300,\"height\":236,\"path\":\"/2023/02/17205229uPlwJ9zT-300x300.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"large\",\"width\":1024,\"height\":807,\"path\":\"/2023/02/17205229uPlwJ9zT-1024x1024.jpg\",\"mimeType\":\"image/jpeg\"}]}');
 INSERT INTO `k_pubmeta` VALUES ('254430174762418178', '254430174745640968', 'attachPath', '/2023/02/17205229uPlwJ9zT.jpg');
-INSERT INTO `k_pubmeta` VALUES ('254430352709959686', '254429302993108996', 'views', '2');
+INSERT INTO `k_pubmeta` VALUES ('254430352709959686', '254429302993108996', 'views', '3');
 INSERT INTO `k_pubmeta` VALUES ('254830554172276743', '254830554155499531', 'attachMetadata', '{\"width\":4032,\"height\":2151,\"path\":\"/2023/02/18232324rAE2xUhu.jpg\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":80,\"path\":\"/2023/02/18232324rAE2xUhu-150x150.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":300,\"height\":160,\"path\":\"/2023/02/18232324rAE2xUhu-300x300.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"large\",\"width\":1024,\"height\":546,\"path\":\"/2023/02/18232324rAE2xUhu-1024x1024.jpg\",\"mimeType\":\"image/jpeg\"}]}');
 INSERT INTO `k_pubmeta` VALUES ('254830554184859657', '254830554155499531', 'attachPath', '/2023/02/18232324rAE2xUhu.jpg');
 INSERT INTO `k_pubmeta` VALUES ('254838153613590539', '254838153596813317', 'attachMetadata', '{\"width\":5792,\"height\":4344,\"path\":\"/2023/02/18235331JTYG8Hj5.jpg\",\"srcset\":[{\"type\":\"thumbnail\",\"width\":150,\"height\":113,\"path\":\"/2023/02/18235331JTYG8Hj5-150x150.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":300,\"height\":225,\"path\":\"/2023/02/18235331JTYG8Hj5-300x300.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"large\",\"width\":1024,\"height\":768,\"path\":\"/2023/02/18235331JTYG8Hj5-1024x1024.jpg\",\"mimeType\":\"image/jpeg\"}]}');
@@ -871,8 +763,9 @@ INSERT INTO `k_pubmeta` VALUES ('258421466236370954', '258421466089570306', 'tel
 INSERT INTO `k_pubmeta` VALUES ('258421466236370955', '258421466089570306', 'province', '120000');
 INSERT INTO `k_pubmeta` VALUES ('258421466236370956', '258421466089570306', 'city', '120100');
 INSERT INTO `k_pubmeta` VALUES ('258421466236370957', '258421466089570306', 'contact', '朱元璋');
-INSERT INTO `k_pubmeta` VALUES ('258711267036545024', '258421466089570306', 'views', '16');
-INSERT INTO `k_pubmeta` VALUES ('260893876621590537', '254182050299035648', 'views', '1');
+INSERT INTO `k_pubmeta` VALUES ('258711267036545024', '258421466089570306', 'views', '39');
+INSERT INTO `k_pubmeta` VALUES ('260893876621590537', '254182050299035648', 'views', '16');
+INSERT INTO `k_pubmeta` VALUES ('268996040631959556', '254189937775788040', 'views', '3');
 INSERT INTO `k_pubmeta` VALUES ('1520933243109163018', '1520933242983333892', 'subTitle', '轩辕年谱之凤鸣岐山武王伐纣');
 INSERT INTO `k_pubmeta` VALUES ('1520933243113357313', '1520933242983333892', 'province', '130000');
 INSERT INTO `k_pubmeta` VALUES ('1520933243117551622', '1520933242983333892', 'city', '130200');
@@ -1238,47 +1131,6 @@ INSERT INTO `k_pubmeta` VALUES ('1548449415811481602', '39', 'views', '15');
 INSERT INTO `k_pubmeta` VALUES ('1549902341083938822', '33', 'views', '15');
 
 -- ----------------------------
--- Table structure for `k_pubs`
--- ----------------------------
-DROP TABLE IF EXISTS `k_pubs`;
-CREATE TABLE `k_pubs` (
-                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                          `pub_content` longtext COLLATE utf8mb4_unicode_ci,
-                          `pub_title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `pub_excerpt` text COLLATE utf8mb4_unicode_ci ,
-                          `pub_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `comment_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `pub_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `pub_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-                          `pub_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `domain_id` bigint(20) unsigned DEFAULT NULL ,
-                          `com_id` bigint(20) unsigned DEFAULT NULL ,
-                          `pub_mime_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `comment_count` int(10) NOT NULL DEFAULT '0' ,
-                          `star_count` int(10) DEFAULT '0' ,
-                          `like_count` int(10) DEFAULT '0' ,
-                          `views` int(10) unsigned DEFAULT NULL ,
-                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                          `create_time` datetime DEFAULT NULL ,
-                          `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                          `update_time` datetime DEFAULT NULL ,
-                          `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `versions` int(10) unsigned DEFAULT NULL ,
-                          PRIMARY KEY (`id`),
-                          KEY `post_name` (`pub_name`(191)) USING BTREE,
-                          KEY `post_parent` (`parent_id`) USING BTREE,
-                          KEY `post_create_by` (`create_by`) USING BTREE,
-                          KEY `post_delete_flag` (`delete_flag`) USING BTREE,
-                          KEY `post_type_code` (`pub_type`) USING BTREE,
-                          KEY `post_com_id` (`com_id`) USING BTREE,
-                          KEY `type_status_date` (`com_id`,`pub_type`,`domain_id`,`pub_status`,`create_time`,`id`) USING BTREE,
-                          KEY `post_domain_id` (`domain_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1547701778556567557 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------
 -- Records of k_pubs
 -- ----------------------------
 INSERT INTO `k_pubs` VALUES ('71095902778605572', '<p>各种文字和图片排版你随意。</p>\n<p>我又来了。</p>\n<p>&nbsp;</p>', '测试一些分类是否正确', null, 'inherit', null, null, null, '71090908285288456', 'chapter', '1533544727530094592', null, null, '1', '0', '1', '20', '1', '2021-09-29 23:07:34', '192.168.1.23', '1', '2021-09-29 23:30:51', '192.168.1.23', 'normal', '1');
@@ -1421,12 +1273,12 @@ INSERT INTO `k_pubs` VALUES ('249778132257259520', null, '2023-02-05 00:46:57', 
 INSERT INTO `k_pubs` VALUES ('249778133171617796', null, '2023-02-05 00:46:57', null, 'inherit', null, null, null, '249734249511043078', 'chapter', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-05 00:46:58', '192.168.1.23', '1', '2023-02-05 00:46:58', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('249778134123724800', null, '2023-02-05 00:46:57', null, 'inherit', null, null, null, '249734249511043078', 'chapter', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-05 00:46:58', '192.168.1.23', '1', '2023-02-05 00:46:58', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('249778135042277383', null, '2023-02-05 00:46:58', null, 'inherit', null, null, null, '249734249511043078', 'chapter', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-05 00:46:58', '192.168.1.23', '1', '2023-02-05 00:46:58', '192.168.1.23', 'normal', '1');
-INSERT INTO `k_pubs` VALUES ('252542677308588037', '<p>121sdssadasasd</p>', '测试信息发布是否正常', '撒旦发射点撒发射点发射点撒旦发射点撒旦飞洒地方', 'publish', null, null, 'ceshiinfo', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', '10', '1', '2023-02-12 15:52:16', '192.168.1.23', '1', '2023-02-17 17:12:25', '127.0.0.1', 'normal', '1');
+INSERT INTO `k_pubs` VALUES ('252542677308588037', '<p>121sdssadasasd</p>', '测试信息发布是否正常', '撒旦发射点撒发射点发射点撒旦发射点撒旦飞洒地方', 'publish', null, null, 'ceshiinfo', '0', 'info', '1533544727530094592', '0', null, '1', '0', '0', '10', '1', '2023-02-12 15:52:16', '192.168.1.23', '1', '2023-02-17 17:12:25', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('252924035583361031', null, '2023-02-13 17:07:39', null, 'inherit', null, null, null, '108315676512010250', 'chapter', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-13 17:07:39', '192.168.1.23', '1', '2023-02-13 17:07:39', '192.168.1.23', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('254140838116507657', '<p>信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑。</p>\n<p>这个信息涉及的美图如下：</p>\n<p><img src=\"http://localhost:8000/store/2023/02/17014501F5kvgzNi.jpg\" /></p>', '测试信息富文本编辑器', null, 'publish', null, null, 'ceshixinxifuwenbenbianjiqi', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-17 01:42:48', '127.0.0.1', '1', '2023-02-17 01:45:24', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('254141403579990027', null, 'file', null, 'inherit', null, null, null, '254140838116507657', 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '1', '2023-02-17 01:45:02', '127.0.0.1', '1', '2023-02-17 01:45:02', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('254180658352144392', '<p>这是内容。</p>\n<p><img src=\"http://localhost:8000/store/2023/02/17052220fYwW4BpE.jpg\" width=\"1170\" height=\"658\" /></p>', '测试信息富文本编辑器', '信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑。', 'publish', null, null, 'ceshixinxifuwenbenbianjiqi1111', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-17 04:21:01', '127.0.0.1', '1', '2023-02-17 05:22:27', '127.0.0.1', 'normal', '1');
-INSERT INTO `k_pubs` VALUES ('254182050299035648', '<p>123123</p>', '测试信息富文本编辑器', '信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑。', 'publish', null, null, 'ceshixinxifuwenbenbianjiqi11111', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-17 04:26:33', '127.0.0.1', '1', '2023-02-17 17:12:04', '127.0.0.1', 'normal', '1');
+INSERT INTO `k_pubs` VALUES ('254182050299035648', '<p>123123</p>', '测试信息富文本编辑器', '信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑。', 'publish', null, null, 'ceshixinxifuwenbenbianjiqi11111', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', '10', '1', '2023-02-17 04:26:33', '127.0.0.1', '1', '2023-02-17 17:12:04', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('254182115797286920', null, 'file', null, 'inherit', null, null, null, '254182050299035648', 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '1', '2023-02-17 04:26:49', '127.0.0.1', '1', '2023-02-17 04:26:49', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('254182155659952128', '<p>去问我去我去饿</p>', '测试信息富文本编辑器', '信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑。', 'publish', null, null, 'ceshixinxifuwenbenbianjiqi1', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-17 04:26:58', '127.0.0.1', '1', '2023-02-17 16:30:38', '127.0.0.1', 'deleted', '1');
 INSERT INTO `k_pubs` VALUES ('254183939329671176', '<p>3</p>', '测试信息富文本编辑器', '信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑信息也可以富文本编辑。', 'publish', null, null, 'ceshixinxifuwenbenbianjiqi11', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-17 04:34:04', '127.0.0.1', '1', '2023-02-17 18:40:42', '127.0.0.1', 'deleted', '1');
@@ -1457,7 +1309,7 @@ INSERT INTO `k_pubs` VALUES ('254970117008048137', null, 'file', null, 'inherit'
 INSERT INTO `k_pubs` VALUES ('254970524639870981', null, 'file', null, 'inherit', null, null, null, '254429302993108996', 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '1', '2023-02-19 08:39:40', '127.0.0.1', '1', '2023-02-19 08:39:40', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('258055544652873737', '<p>雅迪M2电动车挺好的， 做工细致 ， 做工细致 ，做工用料足,属于老牌子！雅迪电动车m2质量价格方面还是不算贵的。我觉得雅迪M2真的好的，在众多品牌中选择了雅迪折叠电动车，收到货后发现这款车颜值较高，车子也比较好骑，挺好的代步工具！搞活动买的性价比不错，活动也给力，用优惠券后很划算的，大家可以入手的！雅迪电动车m2质量外形外观：外形比较小巧，很好看，黑色的很耐看 骑行体验：骑起来比较舒服，一般颠簸路也过滤的了，不错 车子质量：质量目前还是很OK的，可以载人，不费劲 电池续航：电池目前续航还可以，跑了七八十公里才耗电2格，而且不是满格电的状态下 适用场景：使用很方便，可以美团外卖，代驾，周边逛都很方便外形外观：外形比较小巧，很好看，黑色的很耐看 骑行体验：骑起来比较舒服，一般颠簸路也过滤的了，不错 车子质量：质量目前还是很OK的，可以载人，不费劲 电池续航：电池目前续航还可以，跑了七八十公里才耗电2格，而且不是满格电的状态下 适用场景：使用很方便，可以美团外卖，代驾，周边逛都很方便感谢您一如既往的支持，我们将不断完善，争取做的更好。</p>\n<p>仅接受同城自提。</p>\n<p><img src=\"http://localhost:8000/store/2023/02/27205856WE9XaoSI.png\" /></p>', '二手雅迪电动车M2电动两轮轻便摩托车60V20Ah电池 M2', null, 'publish', null, null, 'ddc-yd', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', null, '1', '2023-02-27 20:58:26', '127.0.0.1', '1', '2023-02-27 20:58:58', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('258055671857725442', null, 'file', null, 'inherit', null, null, null, '258055544652873737', 'attachment', '1533544727530094592', '0', 'image', '0', '0', '0', null, '1', '2023-02-27 20:58:57', '127.0.0.1', '1', '2023-02-27 20:58:57', '127.0.0.1', 'normal', '1');
-INSERT INTO `k_pubs` VALUES ('258421466089570306', '<p>121212121</p>\n<p>&nbsp;</p>', '测试子找父查询算法', null, 'publish', null, null, '', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', '10', '1', '2023-02-28 21:12:29', '127.0.0.1', '1', '2023-02-28 21:12:34', '127.0.0.1', 'normal', '1');
+INSERT INTO `k_pubs` VALUES ('258421466089570306', '<p>121212121</p>\n<p>&nbsp;</p>', '测试子找父查询算法', null, 'publish', null, null, '', '0', 'info', '1533544727530094592', '0', null, '0', '0', '0', '30', '1', '2023-02-28 21:12:29', '127.0.0.1', '1', '2023-02-28 21:12:34', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('1519009285308858375', '<p>你好n21</p>', '2021-06-23 16:00:351224你好1我们1223吃了没223', null, null, null, null, null, '25', null, '1533544727530094592', null, null, '0', '0', '0', null, '0', '2021-06-23 16:00:35', '127.0.0.1', '1', '2021-06-24 10:02:09', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('1519009335221075974', '<p>干点什么呢，有时候会不知道感受。</p><p>下面我们就看一下吧。</p><p>效果不错啊。</p><p>这是什么神能力。</p><p><br data-mce-bogus=\"1\"></p>', '2021-06-23 16:00:47', null, null, null, null, null, '25', null, '1533544727530094592', null, null, '0', '0', '0', null, '0', '2021-06-23 16:00:47', '127.0.0.1', '1', '2021-06-24 10:46:00', '127.0.0.1', 'normal', '1');
 INSERT INTO `k_pubs` VALUES ('1519009343114756104', '<p>121334你好11</p>', '2021-06-23 16:00:4漂亮一下', null, 'in_review', null, null, null, '25', null, '1533544727530094592', null, null, '0', '0', '0', null, '0', '2021-06-23 16:00:49', '127.0.0.1', '1', '2021-06-25 16:13:54', '127.0.0.1', 'normal', '1');
@@ -1651,22 +1503,6 @@ INSERT INTO `k_pubs` VALUES ('1547701724307439620', '详情有很多', '测试�
 INSERT INTO `k_pubs` VALUES ('1547701778556567556', '<div class=\"para\" data-pid=\"2\"><strong>作品目录</strong></div>\n<div class=\"para\" data-pid=\"3\">第1章：测试基础知识</div>\n<div class=\"para\" data-pid=\"4\">1.1 现状和前景</div>\n<div class=\"para\" data-pid=\"5\">1.1.1 现状</div>\n<div class=\"para\" data-pid=\"6\">1.1.2 前景</div>\n<div class=\"para\" data-pid=\"7\">1.2 测试简介</div>\n<div class=\"para\" data-pid=\"8\">1.3 测试内容</div>\n<div class=\"para\" data-pid=\"9\">1.3.1 测试方法</div>\n<div class=\"para\" data-pid=\"10\">1.3.2 测试分类</div>\n<div class=\"para\" data-pid=\"11\">1.3.3 测试流程</div>\n<div class=\"para\" data-pid=\"12\">1.3.4 测试阶段</div>\n<div class=\"para\" data-pid=\"13\">1.3.5 测试模型</div>\n<div class=\"para\" data-pid=\"14\">1.4 测试工具</div>\n<div class=\"para\" data-pid=\"15\">第2章：前端自动化 - Selenium</div>\n<div class=\"para\" data-pid=\"16\">2.1&nbsp;<a href=\"https://baike.baidu.com/item/Selenium/18266\" target=\"_blank\" rel=\"noopener\" data-lemmaid=\"18266\">Selenium</a>&ndash; IDE</div>\n<div class=\"para\" data-pid=\"17\">2.1.1 Selenium IDE下载</div>\n<div class=\"para\" data-pid=\"18\">2.1.2 Selenium - IDE 工具特点</div>\n<div class=\"para\" data-pid=\"19\">2.1.3 Selenium IDE 测试创建</div>\n<div class=\"para\" data-pid=\"20\">2.2 Selenium &ndash; Java</div>\n<div class=\"para\" data-pid=\"21\">2.2.1 环境安装设置</div>\n<div class=\"para\" data-pid=\"22\">2.2.2 下载并配置<a href=\"https://baike.baidu.com/item/Eclipse/61703\" target=\"_blank\" rel=\"noopener\" data-lemmaid=\"61703\">Eclipse</a></div>\n<div class=\"para\" data-pid=\"23\">2.2.3 配置Firebug</div>\n<div class=\"para\" data-pid=\"24\">2.2.4 配置Selenium的WebDriver</div>\n<div class=\"para\" data-pid=\"25\">2.3 Selenium - Webdriver</div>\n<div class=\"para\" data-pid=\"26\">2.3.1 Selenium RC 对比 Webdriver</div>\n<div class=\"para\" data-pid=\"27\">2.3.2 Webdriver脚本使用</div>\n<div class=\"para\" data-pid=\"28\">2.3.3 Selenium 定位器</div>\n<div class=\"para\" data-pid=\"29\">2.3.4 等待机制</div>\n<div class=\"para\" data-pid=\"30\">2.3.5 捕捉屏幕截图</div>\n<div class=\"para\" data-pid=\"31\">2.4 Selenium - Python</div>\n<div class=\"para\" data-pid=\"32\">2.4.1 下载和安装<a href=\"https://baike.baidu.com/item/Python\" target=\"_blank\" rel=\"noopener\">Python</a>&nbsp;Selenium</div>\n<div class=\"para\" data-pid=\"33\">2.4.2 编写测试代码</div>\n<div class=\"para\" data-pid=\"34\">第3章：项目构建管理</div>\n<div class=\"para\" data-pid=\"35\">3.1&nbsp;<a href=\"https://baike.baidu.com/item/Maven\" target=\"_blank\" rel=\"noopener\">Maven</a>&nbsp;是什么<sup class=\"sup--normal\" data-sup=\"1\" data-ctrmap=\":1,\">&nbsp;[1]</sup><a class=\"sup-anchor\" name=\"ref_[1]_20892336\"></a>&nbsp;</div>\n<div class=\"para\" data-pid=\"36\">3.2 Maven 安装配置</div>\n<div class=\"para\" data-pid=\"37\">3.3 Maven POM</div>\n<div class=\"para\" data-pid=\"38\">3.4 Maven 构建配置文件</div>\n<div class=\"para\" data-pid=\"39\">3.5 Maven 存储库</div>\n<div class=\"para\" data-pid=\"40\">3.5.1 本地库</div>\n<div class=\"para\" data-pid=\"41\">3.5.2 中央存储库</div>\n<div class=\"para\" data-pid=\"42\">3.5.3 远程仓库</div>\n<div class=\"para\" data-pid=\"43\">3.5.4 Maven 依赖搜索序列</div>\n<div class=\"para\" data-pid=\"44\">3.6 Maven 插件</div>\n<div class=\"para\" data-pid=\"45\">3.6.1 什么是Maven插件</div>\n<div class=\"para\" data-pid=\"46\">3.6.2 插件类型</div>\n<div class=\"para\" data-pid=\"47\">3.6.3 Eclipse IDE集成Maven</div>\n<div class=\"para\" data-pid=\"48\">3.6.4 Eclipse 构建Maven项目</div>\n<div class=\"para\" data-pid=\"49\">第4章：测试框架</div>\n<div class=\"para\" data-pid=\"50\">4.1 TestNG 介绍</div>\n<div class=\"para\" data-pid=\"51\">4.2 TestNG 环境设置</div>\n<div class=\"para\" data-pid=\"52\">4.3 TestNG Eclipse 插件</div>\n<div class=\"para\" data-pid=\"53\">4.4 TestNG 获取方式</div>\n<div class=\"para\" data-pid=\"54\">4.5 TestNG 编写测试</div>\n<div class=\"para\" data-pid=\"55\">4.6 TestNG 基本注解</div>\n<div class=\"para\" data-pid=\"56\">4.6.1 TestNG套件测试</div>\n<div class=\"para\" data-pid=\"57\">4.6.2 TestNG Ignore测试</div>\n<div class=\"para\" data-pid=\"58\">4.6.3 TestNG 组测试</div>\n<div class=\"para\" data-pid=\"59\">4.6.4 TestNG 异常测试</div>\n<div class=\"para\" data-pid=\"60\">4.6.5 TestNG 依赖测试</div>\n<div class=\"para\" data-pid=\"61\">4.6.6 TestNG 参数化测试</div>\n<div class=\"para\" data-pid=\"62\">4.6.7 TestNG 测试结果报告</div>\n<div class=\"para\" data-pid=\"63\">第5章：持续集成</div>\n<div class=\"para\" data-pid=\"64\">5.1&nbsp;<a href=\"https://baike.baidu.com/item/Jenkins\" target=\"_blank\" rel=\"noopener\">Jenkins</a>&nbsp;简介<sup class=\"sup--normal\" data-sup=\"1\" data-ctrmap=\":1,\">&nbsp;[1]</sup><a class=\"sup-anchor\" name=\"ref_[1]_20892336\"></a>&nbsp;</div>\n<div class=\"para\" data-pid=\"65\">5.2 Jenkins 安装</div>\n<div class=\"para\" data-pid=\"66\">5.3 Jenkins 启动</div>\n<div class=\"para\" data-pid=\"67\">5.4 Jenkins 任务</div>\n<div class=\"para\" data-pid=\"68\">5.4.1 与svn工具集成</div>\n<div class=\"para\" data-pid=\"69\">5.4.2 设置构建触发器</div>\n<div class=\"para\" data-pid=\"70\">5.4.3 配置如何构建</div>\n<div class=\"para\" data-pid=\"71\">5.4.4 构建开始</div>\n<div class=\"para\" data-pid=\"72\">5.5 Jenkins 邮件通知</div>\n<div class=\"para\" data-pid=\"73\">第6章：Linux Shell 编程</div>\n<div class=\"para\" data-pid=\"74\">6.1&nbsp;<a href=\"https://baike.baidu.com/item/Shell/99702\" target=\"_blank\" rel=\"noopener\" data-lemmaid=\"99702\">Shell</a>&nbsp;简介<sup class=\"sup--normal\" data-sup=\"1\" data-ctrmap=\":1,\">&nbsp;[1]</sup><a class=\"sup-anchor\" name=\"ref_[1]_20892336\"></a>&nbsp;</div>\n<div class=\"para\" data-pid=\"75\">6.1.1 几种常见的Shell</div>\n<div class=\"para\" data-pid=\"76\">6.1.2 什么时候使用Shell</div>\n<div class=\"para\" data-pid=\"77\">6.2 Shell 实例</div>\n<div class=\"para\" data-pid=\"78\">6.2.1 配置Java环境</div>\n<div class=\"para\" data-pid=\"79\">6.2.2 配置Tomcat和Apache负载均衡</div>\n<div class=\"para\" data-pid=\"80\">6.2.3 配置MySQL环境</div>\n<div class=\"para\" data-pid=\"81\">6.2.4 配置Hadoop环境</div>\n<div class=\"para\" data-pid=\"82\">第7章：敏捷模式</div>\n<div class=\"para\" data-pid=\"83\">7.1 价值观</div>\n<div class=\"para\" data-pid=\"84\">7.2 原则</div>\n<div class=\"para\" data-pid=\"85\">7.3 实践</div>\n<div class=\"para\" data-pid=\"86\">第8章：移动端自动化测试</div>\n<div class=\"para\" data-pid=\"87\">8.1 Android 环境搭建</div>\n<div class=\"para\" data-pid=\"88\">8.2 Monkey 测试</div>\n<div class=\"para\" data-pid=\"89\">8.2.1 高级篇：Monkey UI自动化</div>\n<div class=\"para\" data-pid=\"90\">8.2.2 用Monkey实现登录QQ</div>\n<div class=\"para\" data-pid=\"91\">8.3 MonkeyRunner 测试</div>\n<div class=\"para\" data-pid=\"92\">8.4&nbsp;<a href=\"https://baike.baidu.com/item/Robotium\" target=\"_blank\" rel=\"noopener\">Robotium</a>&nbsp;测试</div>\n<div class=\"para\" data-pid=\"93\">8.5 Appium 测试</div>\n<div class=\"para\" data-pid=\"94\">第9章：接口自动化测试</div>\n<div class=\"para\" data-pid=\"95\">9.1 接口自动化测试 - 基于Python<sup class=\"sup--normal\" data-sup=\"1\" data-ctrmap=\":1,\">&nbsp;[1]</sup><a class=\"sup-anchor\" name=\"ref_[1]_20892336\"></a>&nbsp;</div>\n<div class=\"para\" data-pid=\"96\">9.1.1 Get 请求</div>\n<div class=\"para\" data-pid=\"97\">9.1.2 Post 请求</div>', '测试之道目录', null, 'inherit', null, null, null, '1547701724307439620', 'chapter', '1533544727530094592', null, null, '0', '0', '0', null, '1547698179520774144', '2021-09-10 20:14:19', '192.168.1.23', '1547698179520774144', '2021-09-10 20:15:29', '192.168.1.23', 'normal', '1');
 
 -- ----------------------------
--- Table structure for `k_stars`
--- ----------------------------
-DROP TABLE IF EXISTS `k_stars`;
-CREATE TABLE `k_stars` (
-                           `id` bigint(20) unsigned NOT NULL,
-                           `object_id` bigint(20) unsigned NOT NULL ,
-                           `user_id` bigint(20) unsigned NOT NULL ,
-                           `stars` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
-                           `likes` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
-                           PRIMARY KEY (`id`),
-                           UNIQUE KEY `star_obj_user` (`object_id`,`user_id`) USING BTREE,
-                           KEY `star_obj_id` (`object_id`) USING BTREE,
-                           KEY `star_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------
 -- Records of k_stars
 -- ----------------------------
 INSERT INTO `k_stars` VALUES ('67851930685849605', '1544422567918092296', '0', '1', '0');
@@ -1711,21 +1547,6 @@ INSERT INTO `k_stars` VALUES ('249785124875059207', '108321427372556297', '1', '
 INSERT INTO `k_stars` VALUES ('249785134589067265', '150301922083651586', '1', '1', '0');
 INSERT INTO `k_stars` VALUES ('249785143896227840', '150300613628575749', '1', '1', '0');
 INSERT INTO `k_stars` VALUES ('249785157473189890', '150300213835907079', '1', '1', '0');
-
--- ----------------------------
--- Table structure for `k_term_object`
--- ----------------------------
-DROP TABLE IF EXISTS `k_term_object`;
-CREATE TABLE `k_term_object` (
-                                 `id` bigint(20) unsigned NOT NULL,
-                                 `object_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                                 `term_type_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                                 `term_order` int(11) NOT NULL DEFAULT '0',
-                                 PRIMARY KEY (`id`),
-                                 KEY `term_class_id` (`term_type_id`) USING BTREE,
-                                 KEY `term_object_id` (`object_id`),
-                                 KEY `term_object_type` (`object_id`,`term_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of k_term_object
@@ -2245,16 +2066,16 @@ INSERT INTO `k_term_object` VALUES ('1547701778581733379', '1547701778556567556'
 -- ----------------------------
 DROP TABLE IF EXISTS `k_term_type`;
 CREATE TABLE `k_term_type` (
-                               `id` bigint(20) unsigned NOT NULL,
-                               `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL ,
-                               `description` longtext COLLATE utf8mb4_unicode_ci,
-                               `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `count` bigint(20) unsigned NOT NULL DEFAULT '0' ,
-                               PRIMARY KEY (`id`),
-                               UNIQUE KEY `term_id_class` (`term_id`,`class_type`) USING BTREE,
-                               KEY `class_type` (`class_type`) USING BTREE,
-                               KEY `term_parent_id` (`parent_id`)
+  `id` bigint(20) unsigned NOT NULL,
+  `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `class_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL ,
+  `description` longtext COLLATE utf8mb4_unicode_ci,
+  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `count` bigint(20) unsigned NOT NULL DEFAULT '0' ,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `term_id_class` (`term_id`,`class_type`) USING BTREE,
+  KEY `class_type` (`class_type`) USING BTREE,
+  KEY `term_parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
@@ -2385,46 +2206,8 @@ INSERT INTO `k_term_type` VALUES ('1522031020211879945', '1522031020211879945', 
 INSERT INTO `k_term_type` VALUES ('1522031215049883657', '1522031215049883657', 'category', null, '0', '0');
 
 -- ----------------------------
--- Table structure for `k_termmeta`
--- ----------------------------
-DROP TABLE IF EXISTS `k_termmeta`;
-CREATE TABLE `k_termmeta` (
-                              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                              `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                              `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `meta_value` longtext COLLATE utf8mb4_unicode_ci,
-                              PRIMARY KEY (`id`),
-                              KEY `term_id` (`term_id`),
-                              KEY `meta_key` (`meta_key`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------
 -- Records of k_termmeta
 -- ----------------------------
-
--- ----------------------------
--- Table structure for `k_terms`
--- ----------------------------
-DROP TABLE IF EXISTS `k_terms`;
-CREATE TABLE `k_terms` (
-                           `id` bigint(20) unsigned NOT NULL,
-                           `name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `slug` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `info_flag` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' ,
-                           `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT '1' ,
-                           `display_order` int(10) DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
-                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
-                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
-                           PRIMARY KEY (`id`),
-                           UNIQUE KEY `slug` (`slug`(191)) USING BTREE,
-                           KEY `name` (`name`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of k_terms
@@ -2553,57 +2336,8 @@ INSERT INTO `k_terms` VALUES ('1522031020211879945', '热门爱好', 'rmah', '1'
 INSERT INTO `k_terms` VALUES ('1522031215049883657', '网红打卡', 'whdk', '1', '1', null, null, null, null, null, null, null, 'normal', '1');
 
 -- ----------------------------
--- Table structure for `wo_account_association`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_account_association`;
-CREATE TABLE `wo_account_association` (
-                                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
-                                          `user_id` bigint(20) unsigned DEFAULT NULL ,
-                                          `bind_account` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `third_domain` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                          `create_time` datetime DEFAULT NULL ,
-                                          `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                          `update_time` datetime DEFAULT NULL ,
-                                          `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `versions` int(10) DEFAULT NULL ,
-                                          PRIMARY KEY (`id`),
-                                          KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
-
--- ----------------------------
 -- Records of wo_account_association
 -- ----------------------------
-
--- ----------------------------
--- Table structure for `wo_app`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_app`;
-CREATE TABLE `wo_app` (
-                          `id` bigint(20) unsigned NOT NULL ,
-                          `app_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_secret` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_code` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_desc` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `app_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `com_id` bigint(20) unsigned DEFAULT NULL ,
-                          `is_valid` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                          `create_time` datetime DEFAULT NULL ,
-                          `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                          `update_time` datetime DEFAULT NULL ,
-                          `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `versions` int(10) DEFAULT NULL ,
-                          PRIMARY KEY (`id`),
-                          UNIQUE KEY `app_code` (`app_code`),
-                          KEY `app_type` (`app_type`),
-                          KEY `app_com_id` (`com_id`),
-                          KEY `app_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
 
 -- ----------------------------
 -- Records of wo_app
@@ -2625,35 +2359,6 @@ INSERT INTO `wo_app` VALUES ('1511494438434291716', '用户设置', 'abcdefgjdlf
 INSERT INTO `wo_app` VALUES ('1533901932104171527', '文档', 'wldos-doc', 'doc', '文档库', 'platform', '0', '1', '1', '2021-08-03 18:18:39', '192.168.1.23', '1', '2021-08-03 18:18:39', '192.168.1.23', 'normal', '1');
 
 -- ----------------------------
--- Table structure for `wo_architecture`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_architecture`;
-CREATE TABLE `wo_architecture` (
-                                   `id` bigint(20) unsigned NOT NULL ,
-                                   `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `com_id` bigint(20) unsigned DEFAULT NULL ,
-                                   `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                                   `display_order` int(10) DEFAULT NULL ,
-                                   `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                   `create_time` datetime DEFAULT NULL ,
-                                   `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                   `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                   `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                   `update_time` datetime DEFAULT NULL ,
-                                   `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                   `versions` int(10) DEFAULT NULL ,
-                                   PRIMARY KEY (`id`),
-                                   UNIQUE KEY `un_com_arch` (`arch_code`,`com_id`),
-                                   KEY `arch_code` (`arch_code`),
-                                   KEY `arch_com_id` (`com_id`),
-                                   KEY `arch_parent_id` (`parent_id`),
-                                   KEY `arch_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
 -- Records of wo_architecture
 -- ----------------------------
 INSERT INTO `wo_architecture` VALUES ('100', 'org', '组织机构', null, '0', '0', '2', '1', '0', '2021-05-08 14:58:35', '0', '0', '127.0.0.1', '2021-05-26 23:13:40', 'normal', null);
@@ -2664,31 +2369,6 @@ INSERT INTO `wo_architecture` VALUES ('93033238315581451', 'test', 'test', null,
 INSERT INTO `wo_architecture` VALUES ('103228366573453322', 'test-c', '子体系', null, '0', '93033238315581451', '1', '1', '1', '2021-12-27 15:10:30', '192.168.1.23', '1', '192.168.1.23', '2021-12-27 15:10:30', 'normal', '1');
 INSERT INTO `wo_architecture` VALUES ('1529501287100104708', 'finance', '金融模块', '这是一个示例，作为平台唯一的超级管理员有权限查看所有数据，当然可以设置租户数据保密，那样任何人都看不到对方数据。', '1508972831958548480', '0', '6', '1', '1', '2021-07-22 14:52:04', '192.168.1.23', '1', '192.168.1.23', '2021-07-22 14:52:04', 'normal', '1');
 
--- ----------------------------
--- Table structure for `wo_auth_role`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_auth_role`;
-CREATE TABLE `wo_auth_role` (
-                                `id` bigint(20) unsigned NOT NULL ,
-                                `role_id` bigint(20) unsigned DEFAULT NULL ,
-                                `resource_id` bigint(20) unsigned DEFAULT NULL ,
-                                `app_id` bigint(20) unsigned DEFAULT NULL ,
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                `create_time` datetime DEFAULT NULL ,
-                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                `update_time` datetime DEFAULT NULL ,
-                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                `versions` int(10) DEFAULT NULL ,
-                                PRIMARY KEY (`id`),
-                                KEY `auth_role_id` (`role_id`),
-                                KEY `auth_res_id` (`resource_id`),
-                                KEY `auth_app_id` (`app_id`),
-                                KEY `auth_is_valid_del` (`is_valid`,`delete_flag`),
-                                KEY `auth_role_res_app` (`role_id`,`resource_id`,`app_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_auth_role
@@ -2875,31 +2555,6 @@ INSERT INTO `wo_auth_role` VALUES ('246163246881095687', '1525946478916976648', 
 INSERT INTO `wo_auth_role` VALUES ('246163246885289991', '1525946478916976648', '1520466841923403786', '1504618238889869317', '1', '1', '2023-01-26 01:22:42', '192.168.1.23', '1', '2023-01-26 01:22:42', '192.168.1.23', 'normal', '0');
 
 -- ----------------------------
--- Table structure for `wo_com_user`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_com_user`;
-CREATE TABLE `wo_com_user` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `user_id` bigint(20) unsigned DEFAULT NULL ,
-                               `com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
-                               `create_time` datetime DEFAULT NULL ,
-                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
-                               `update_time` datetime DEFAULT NULL ,
-                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `versions` int(10) DEFAULT NULL ,
-                               PRIMARY KEY (`id`),
-                               KEY `com_user_id` (`user_id`),
-                               KEY `com_id` (`com_id`),
-                               KEY `com_is_main` (`is_main`),
-                               KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
 -- Records of wo_com_user
 -- ----------------------------
 INSERT INTO `wo_com_user` VALUES ('76410037242347529', '100', '0', '1', '1', '1', '2021-10-14 15:04:03', '192.168.1.23', '1', '2021-10-14 15:04:03', '192.168.1.23', 'normal', '0');
@@ -2908,32 +2563,6 @@ INSERT INTO `wo_com_user` VALUES ('79375255673159685', '1502777260587532299', '0
 INSERT INTO `wo_com_user` VALUES ('91933652180189185', '1', '0', '1', '1', '1', '2021-11-26 11:09:21', '192.168.1.23', '1', '2021-11-26 11:09:21', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_com_user` VALUES ('92816916029816835', '81514195872038918', '1508132284859596808', '1', '1', '1', '2021-11-28 21:39:07', '192.168.1.23', '1', '2021-11-28 21:39:07', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_com_user` VALUES ('92829651731922951', '92829405966680072', '1508132284859596808', '1', '1', '1', '2021-11-28 22:29:44', '192.168.1.23', '1', '2021-11-28 22:29:44', '192.168.1.23', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_company`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_company`;
-CREATE TABLE `wo_company` (
-                              `id` bigint(20) unsigned NOT NULL ,
-                              `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                              `display_order` int(10) DEFAULT NULL ,
-                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `create_by` bigint(20) unsigned DEFAULT NULL ,
-                              `create_time` datetime DEFAULT NULL ,
-                              `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `update_by` bigint(20) unsigned DEFAULT NULL ,
-                              `update_time` datetime DEFAULT NULL ,
-                              `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `versions` int(10) DEFAULT NULL ,
-                              PRIMARY KEY (`id`),
-                              UNIQUE KEY `un_com_code` (`com_code`),
-                              KEY `com_parent_id` (`parent_id`),
-                              KEY `com_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_company
@@ -2946,45 +2575,6 @@ INSERT INTO `wo_company` VALUES ('1508972512004456457', '88688785432123423', '�
 INSERT INTO `wo_company` VALUES ('1508972831958548480', 'babala100', '给你未来科创股份有限公司', null, '0', '6', '1', '0', '2021-05-26 23:19:18', '127.0.0.1', '0', '2021-05-26 23:19:18', '127.0.0.1', 'normal', '1');
 
 -- ----------------------------
--- Table structure for `wo_domain`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_domain`;
-CREATE TABLE `wo_domain` (
-                             `id` bigint(20) unsigned NOT NULL ,
-                             `com_id` bigint(20) unsigned DEFAULT NULL ,
-                             `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `second_domain` varchar(255) DEFAULT NULL ,
-                             `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `site_logo` varchar(50) DEFAULT NULL ,
-                             `favicon` varchar(50) DEFAULT NULL ,
-                             `site_title` varchar(255) DEFAULT NULL ,
-                             `site_keyword` varchar(500) DEFAULT NULL ,
-                             `site_description` varchar(500) DEFAULT NULL ,
-                             `slogan` varchar(100) DEFAULT NULL ,
-                             `foot` text ,
-                             `flink` text ,
-                             `copy` text ,
-                             `parent_id` bigint(20) DEFAULT NULL ,
-                             `display_order` int(10) DEFAULT NULL ,
-                             `cname_domain` varchar(255) DEFAULT NULL ,
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `create_by` bigint(20) unsigned DEFAULT NULL ,
-                             `create_time` datetime DEFAULT NULL ,
-                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL ,
-                             `update_time` datetime DEFAULT NULL ,
-                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `versions` int(10) DEFAULT NULL ,
-                             PRIMARY KEY (`id`),
-                             UNIQUE KEY `uni_idx_site_domain` (`site_domain`),
-                             UNIQUE KEY `uni_second_dom` (`second_domain`),
-                             KEY `domain_com_id` (`com_id`),
-                             KEY `dom_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
 -- Records of wo_domain
 -- ----------------------------
 INSERT INTO `wo_domain` VALUES ('1', '0', 'wldos.com', 'www', 'WLDOS', 'http://www.wldos.com', '/logo-wldos.svg', null, 'WLDOS互联网开放运营系统', '业务中台|多租户|SaaS', 'WLDOS互联网开放运营系统是一个业务中台的最佳实践', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '2', null, '1', '1', '2021-08-02 18:39:15', '192.168.1.23', '1', '2021-09-12 21:08:29', '192.168.1.23', 'normal', '1');
@@ -2993,32 +2583,6 @@ INSERT INTO `wo_domain` VALUES ('134430616675074056', '0', 'test.com', 'test', '
 INSERT INTO `wo_domain` VALUES ('134434749914202120', '0', 'tst.com', 'tst', 'tst', 'tst.com', '/202203/23175316LUhpaUfQ.svg', null, 'tst', 'tst', 'sts', null, null, null, null, null, '8', null, '1', '1', '2022-03-23 17:53:32', '192.168.1.23', '1', '2022-03-23 17:53:32', '192.168.1.23', 'normal', '1');
 INSERT INTO `wo_domain` VALUES ('1533544727530094592', '0', 'localhost', 'localhost', 'WLDOS-KPayCMS', 'http://localhost:8000', '/logo-wldos.svg', '/2023/03/03004258r0wEVSCe.png', '基于WLDOS开发的内容付费系统', 'WLDOS|内容付费|多租户|多站|SaaS|微服务|serviceMesh|云管端', '基于WLDOS搭建云物互联应用', 'KPayCMS 是WLDOS开发的 内容付费系统', '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-ABCD-EFG</strong></span>\r\n</p>\r\n<p>Q Q： 583ABC365 30DEFQ142</p>\r\n<p>邮箱： support#abcdefg.com</p>\r\n<p>服务： 周一至周六 9:00~17:30</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\n<a href=\"https://www.xiupu.cc\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37xxxx20xxxxx\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> X公网安备 3701xxx20xxxxx号</a>&nbsp;\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备2xx1xxxx号</a>\n<a href=\"https://www.wldos.com/privacy\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\">隐私协议</a> | Copyright © 2022\n<a href=\"https://www.wldos.com/\" rel=\"nofollow\">WLDOS</a> 版权所有\n</p>', null, '6', 'god.com,192.168.1.23', '1', '1', '2021-08-06 18:11:32', '1', '1', '2023-03-03 00:43:04', '127.0.0.1', 'normal', '1');
 INSERT INTO `wo_domain` VALUES ('1533985924929208330', '0', 'xiupu.cc', 'xiupu', '嗅谱网', 'https://www.xiupu.net', '', '', '嗅谱网_找谱·写谱·出谱-嗅谱·秀谱·说谱', '找谱·写谱·出谱-嗅谱·秀谱·说谱', '一个和各种谱打交道的靠谱网站', null, '<div>\r\n<h3>关于本站</h3>\r\n<div>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>会员通道</h3>\r\n<div>\r\n<p>\r\n<a href=\"https://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\r\n</p>\r\n<p><a href=\"https://www.wldos.com/archives-category/blog\">技术博客</a></p>\r\n<p><a href=\"https://www.wldos.com/help\">会员帮助</a></p>\r\n</div>\r\n</div>\r\n<div><h3>服务领域</h3>\r\n<div>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\r\n</p>\r\n<p>\r\n  <a href=\"https://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\r\n</p>\r\n<p><a\r\n  href=\"https://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\r\n</p>\r\n</div>\r\n</div>\r\n<div>\r\n<h3>官方微信</h3>\r\n<div>\r\n<p>\r\n  <img loading=\"lazy\" style=\"float: none; margin-left: auto;margin-right: auto; clear: both; border: 0;  vertical-align: middle;  max-width: 100%;  height: auto;\"\r\n       src=\"http://localhost:8088/store/zltcode.jpg\" alt=\"wx\" width=\"150\" height=\"165\"/>\r\n</p>\r\n</div>\r\n</div>\r\n<div style=\"padding:0; width:28%;\">\r\n<h3>联系方式</h3>\r\n<div>\r\n<p>\r\n  <span><strong>1566-5730-355</strong></span>\r\n</p>\r\n<p>Q Q： 583716365 306991142</p>\r\n<p>邮箱： support@zhiletu.com</p>\r\n<p>地址： 山东省济南市长清区海棠路5555</p>\r\n<p>&nbsp;</p>\r\n<p>\r\n  <a href=\"https://weibo.com/u/5810954456?is_all=1\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weibo.svg\" style=\"margin-right: 4px\" alt=\"官方微博\"/>\r\n  </a>\r\n  <a href=\"http://localhost:8088/store/zltcode.jpg\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <img src=\"http://localhost:8088/store/weixin.svg\" style=\"margin-right: 4px\" alt=\"官方微信\"/>\r\n  </a>\r\n  <a href=\"https://user.qzone.qq.com/583716365\" target=\"_blank\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qqzone.svg\" style=\"margin-right: 4px\" alt=\"QQ空间\"/>\r\n  </a>\r\n  <a href=\"https://wpa.qq.com/msgrd?v=3&amp;uin=583716365&amp;site=zhiletu.com&amp;menu=yes\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/qq.svg\" style=\"margin-right: 4px\" alt=\"联系QQ\"/>\r\n  </a>\r\n  <a href=\"mailto:support@zhiletu.com\" rel=\"noopener nofollow noreferrer\">\r\n    <img src=\"http://localhost:8088/store/mail.svg\" style=\"margin-right: 4px\" alt=\"电子邮箱\"/>\r\n  </a>\r\n</p>\r\n</div>\r\n</div>', '<strong>友情链接：</strong>\r\n<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\r\n<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>', '<p>\r\n<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37011302000311\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\r\n<img src=\"https://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> 鲁公网安备 37011302000311号</a>&nbsp;\r\n<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">鲁ICP备20011831号</a>\r\n<a href=\"https://www.zhiletu.com/privacy\">法律声明</a> | <a href=\"https://www.zhiletu.com/privacy\">隐私协议</a> | Copyright © 2021\r\n<a href=\"https://www.zhiletu.com/\" rel=\"nofollow\">智乐兔</a> 版权所有\r\n</p>', null, '4', null, '0', '1', '2021-08-03 23:52:25', '192.168.1.23', '1', '2023-03-22 22:29:26', '127.0.0.1', 'normal', '1');
-
--- ----------------------------
--- Table structure for `wo_domain_app`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_domain_app`;
-CREATE TABLE `wo_domain_app` (
-                                 `id` bigint(21) unsigned NOT NULL,
-                                 `app_id` bigint(21) unsigned DEFAULT NULL ,
-                                 `domain_id` bigint(21) DEFAULT NULL ,
-                                 `com_id` bigint(21) unsigned DEFAULT NULL ,
-                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                 `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                 `create_time` datetime DEFAULT NULL ,
-                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                 `update_time` datetime DEFAULT NULL ,
-                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                 `versions` int(10) DEFAULT NULL ,
-                                 PRIMARY KEY (`id`),
-                                 KEY `dom_app_id` (`app_id`),
-                                 KEY `domain_id` (`domain_id`),
-                                 KEY `dom_com_id` (`com_id`),
-                                 KEY `dom_is_valid_del` (`is_valid`,`delete_flag`),
-                                 KEY `dom_app_com` (`app_id`,`domain_id`,`com_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of wo_domain_app
@@ -3084,35 +2648,6 @@ INSERT INTO `wo_domain_app` VALUES ('1546146354355159044', '1504618238889869317'
 INSERT INTO `wo_domain_app` VALUES ('1546146354363547648', '1504620908216238080', '1', '0', '1', '1', '2021-09-06 13:13:37', '192.168.1.23', '1', '2021-09-06 13:13:37', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_domain_app` VALUES ('1546146354367741959', '1504621411327197195', '1', '0', '1', '1', '2021-09-06 13:13:37', '192.168.1.23', '1', '2021-09-06 13:13:37', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_domain_app` VALUES ('1546146354371936260', '1504619730199822347', '1', '0', '1', '1', '2021-09-06 13:13:37', '192.168.1.23', '1', '2021-09-06 13:13:37', '192.168.1.23', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_domain_resource`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_domain_resource`;
-CREATE TABLE `wo_domain_resource` (
-                                      `id` bigint(20) NOT NULL,
-                                      `module_name` varchar(50) NOT NULL DEFAULT 'static' ,
-                                      `resource_id` bigint(20) unsigned NOT NULL ,
-                                      `app_id` bigint(20) unsigned DEFAULT NULL ,
-                                      `term_type_id` bigint(20) DEFAULT '0' ,
-                                      `domain_id` bigint(20) unsigned NOT NULL ,
-                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                      `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                      `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                      `create_time` datetime DEFAULT NULL ,
-                                      `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                      `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                      `update_time` datetime DEFAULT NULL ,
-                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                      `versions` int(10) unsigned DEFAULT NULL ,
-                                      PRIMARY KEY (`id`),
-                                      UNIQUE KEY `dom_res_route` (`domain_id`,`resource_id`) USING BTREE,
-                                      KEY `dom_res_valid` (`is_valid`,`delete_flag`),
-                                      KEY `dom_res_app` (`domain_id`,`app_id`,`resource_id`),
-                                      KEY `dom_res_module` (`module_name`),
-                                      KEY `dom_res_did` (`domain_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of wo_domain_resource
@@ -3382,29 +2917,6 @@ INSERT INTO `wo_domain_resource` VALUES ('1542170368806666243', 'static', '15421
 INSERT INTO `wo_domain_resource` VALUES ('1542170368806666244', 'static', '1542170368806666244', '1504618238889869317', '0', '1', '1', '内容领域：文章类', '1', '192.168.1.23', '2021-08-26 13:54:28', '1', '192.168.1.23', '2021-09-07 16:04:10', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1542939849472524292', 'static', '1542939849472524294', '1504618238889869317', '0', '1532487189283913738', '1', '技术分享', '1', '192.168.1.23', '2021-08-28 16:52:07', '1', '192.168.1.23', '2021-09-16 09:15:20', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1544340805720391680', 'static', '1544340805720391680', '1504618238889869317', '0', '1', '1', null, '1', '192.168.1.23', '2021-09-01 13:39:01', '1', '192.168.1.23', '2021-09-01 13:39:01', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_file`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_file`;
-CREATE TABLE `wo_file` (
-                           `id` bigint(20) unsigned NOT NULL,
-                           `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
-                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
-                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
-                           PRIMARY KEY (`id`),
-                           KEY `file_is_valid_del` (`is_valid`,`delete_flag`),
-                           KEY `file_mime_type` (`mime_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of wo_file
@@ -3896,28 +3408,6 @@ INSERT INTO `wo_file` VALUES ('1547701666350546953', '1.jpg', '/202109/10201352B
 INSERT INTO `wo_file` VALUES ('1547701709300219911', 'bg_corner_tr.png', '/202109/102014020rrgsZvG.png', 'image/png', '1', '1547698179520774144', '2021-09-10 20:14:02', '192.168.1.23', '1547698179520774144', '2021-09-10 20:14:02', '192.168.1.23', 'normal', '0');
 
 -- ----------------------------
--- Table structure for `wo_mail`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_mail`;
-CREATE TABLE `wo_mail` (
-                           `id` bigint(20) NOT NULL,
-                           `from_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `to_addr` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `content` text COLLATE utf8mb4_unicode_ci ,
-                           `status` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `result` text COLLATE utf8mb4_unicode_ci ,
-                           `create_by` bigint(20) unsigned DEFAULT '0' ,
-                           `create_time` datetime DEFAULT NULL ,
-                           `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
-                           `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
-                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------
 -- Records of wo_mail
 -- ----------------------------
 INSERT INTO `wo_mail` VALUES ('192743754746740744', 'wldos.com@88.com', 'yuanxi2@zhiletu.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"/user/active/id=192743746152611843\">激活账号</a>', '1', null, '192743746152611843', '2022-08-31 15:32:42', '192.168.1.23', '192743746152611843', '2022-08-31 15:32:43', '192.168.1.23', 'normal', '0');
@@ -3941,52 +3431,17 @@ INSERT INTO `wo_mail` VALUES ('202209610958553091', 'wldos.com@88.com', '3069911
 INSERT INTO `wo_mail` VALUES ('202240758027829249', 'wldos.com@88.com', '306991142@qq.com', '228319', '1', null, '1', '2022-09-26 20:30:24', '0.0.0.0', '1', '2022-09-26 20:30:25', '0.0.0.0', 'normal', '0');
 INSERT INTO `wo_mail` VALUES ('202241429774974985', 'wldos.com@88.com', '306991142@qq.com', '649294', '1', null, '1', '2022-09-26 20:33:04', '0.0.0.0', '1', '2022-09-26 20:33:05', '0.0.0.0', 'normal', '0');
 INSERT INTO `wo_mail` VALUES ('202264058024083462', 'wldos.com@88.com', '306991142@qq.com', '963991', '1', null, '1', '2022-09-26 22:02:59', '0.0.0.0', '1', '2022-09-26 22:03:01', '0.0.0.0', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_oauth_login_user`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_oauth_login_user`;
-CREATE TABLE `wo_oauth_login_user` (
-                                       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,
-                                       `user_id` bigint(20) unsigned DEFAULT NULL ,
-                                       `oauth_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                       `open_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `union_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                       `create_time` datetime DEFAULT NULL ,
-                                       `create_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                       `update_time` datetime DEFAULT NULL ,
-                                       `update_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                       `delete_flag` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                       `versions` int(10) DEFAULT NULL ,
-                                       PRIMARY KEY (`id`),
-                                       KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=214858324877426693 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
+INSERT INTO `wo_mail` VALUES ('268888154186629121', 'wldos.com@88.com', '3385115357@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"http://http://localhost:8000/user/active/verify=268888145382785029\" target=\"_blank\">激活账号</a>http://http://localhost:8000/user/active/verify=268888145382785029<br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '268888145382785029', '2023-03-29 18:23:22', '127.0.0.1', '268888145382785029', '2023-03-29 18:23:23', '127.0.0.1', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('268914110947311625', 'wldos.com@88.com', '2902825652@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"http://localhost:8000/user/active/verify=268914102432874506\" target=\"_blank\">激活账号http://localhost:8000/user/active/verify=268914102432874506</a><br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '268914102432874506', '2023-03-29 20:06:30', '127.0.0.1', '268914102432874506', '2023-03-29 20:06:32', '127.0.0.1', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('268915702396272643', 'wldos.com@88.com', '2902825652@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"http://localhost:8000/user/active/verify=268915694989131787\" target=\"_blank\">激活账号http://localhost:8000/user/active/verify=268915694989131787</a><br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '268915694989131787', '2023-03-29 20:12:50', '127.0.0.1', '268915694989131787', '2023-03-29 20:12:50', '127.0.0.1', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('268929746314379268', 'wldos.com@88.com', '2902825652@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"http://localhost:8000/user/active/verify=268929738777214984\" target=\"_blank\">激活账号http://localhost:8000/user/active/verify=268929738777214984</a><br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '268929738777214984', '2023-03-29 21:08:38', '127.0.0.1', '268929738777214984', '2023-03-29 21:08:39', '127.0.0.1', 'normal', '0');
+INSERT INTO `wo_mail` VALUES ('269269459126632455', 'wldos.com@88.com', '2902825652@qq.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"http://localhost:8000/user/active/verify=269269451643994119\" target=\"_blank\">激活账号http://localhost:8000/user/active/verify=269269451643994119</a><br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', null, '269269451643994119', '2023-03-30 19:38:32', '127.0.0.1', '269269451643994119', '2023-03-30 19:38:34', '127.0.0.1', 'normal', '0');
 
 -- ----------------------------
 -- Records of wo_oauth_login_user
 -- ----------------------------
 INSERT INTO `wo_oauth_login_user` VALUES ('214132160290537481', '214132159892078601', 'wechat', 'oTKkX6BqkQWVx2YmBUUNQYZZuJh4', null, '214132159892078601', '2022-10-29 16:02:35', '192.168.1.23', '214132159892078601', '2022-10-29 16:02:35', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_oauth_login_user` VALUES ('214858324877426692', '214858324143423489', 'wechat', 'oTKkX6BmQvjm7dtnItBcCLHBAQdE', null, '214858324143423489', '2022-10-31 16:08:07', '192.168.1.23', '214858324143423489', '2022-10-31 16:08:07', '192.168.1.23', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_options`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_options`;
-CREATE TABLE `wo_options` (
-                              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                              `option_key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `option_name` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              `option_value` longtext COLLATE utf8mb4_unicode_ci,
-                              `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `option_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT 'no' ,
-                              `app_code` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                              PRIMARY KEY (`id`),
-                              UNIQUE KEY `option_name` (`option_key`),
-                              KEY `options_app_type` (`option_type`),
-                              KEY `opetions_app_code` (`app_code`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=268563415123542024 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of wo_options
@@ -4005,42 +3460,13 @@ INSERT INTO `wo_options` VALUES ('268459378134925319', 'wldos_cms_tag_tagLength'
 INSERT INTO `wo_options` VALUES ('268507090779815937', 'wldos_system_multitenancy_switch', null, 'true', null, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES ('268507090792398857', 'wldos_system_multidomain_switch', null, 'true', null, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES ('268507343822176260', 'wldos_platform_user_register_emailaction', null, 'true', null, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES ('268507343834759168', 'spring_mail_host', null, 'smtp.xx.com', null, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES ('268507343847342087', 'spring_mail_username', null, 'senderName', null, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES ('268507343859924993', 'spring_mail_password', null, 'passwdxx', null, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES ('268507343876702209', 'wldos_mail_fromMail_addr', null, 'sender@send.com', null, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES ('268507343834759168', 'spring_mail_host', null, 'smtp.88.com', null, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES ('268507343847342087', 'spring_mail_username', null, 'wldos.com', null, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES ('268507343859924993', 'spring_mail_password', null, 'wiVQA8hEUhYX432E', null, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES ('268507343876702209', 'wldos_mail_fromMail_addr', null, 'wldos.com@88.com', null, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES ('268563415123542023', 'wldos_cms_comment_audit', null, 'true', null, 'auto_reload', 'sys_option');
-
--- ----------------------------
--- Table structure for `wo_org`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_org`;
-CREATE TABLE `wo_org` (
-                          `id` bigint(20) unsigned NOT NULL ,
-                          `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `org_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `arch_id` bigint(20) unsigned DEFAULT NULL ,
-                          `com_id` bigint(20) unsigned DEFAULT NULL ,
-                          `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                          `display_order` int(10) DEFAULT NULL ,
-                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                          `create_time` datetime DEFAULT NULL ,
-                          `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                          `update_time` datetime DEFAULT NULL ,
-                          `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                          `versions` int(10) DEFAULT NULL ,
-                          PRIMARY KEY (`id`),
-                          UNIQUE KEY `un_com_arch_org` (`org_code`,`arch_id`,`com_id`),
-                          KEY `org_type` (`org_type`),
-                          KEY `org_arch_id` (`arch_id`),
-                          KEY `org_com_id` (`com_id`),
-                          KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+INSERT INTO `wo_options` VALUES ('268993001648996359', 'wldos_file_store_path', null, 'E:\\\\Temp', null, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES ('269981894250774529', 'wldos_platform_adminEmail', null, '306991142@qq.com', null, 'auto_reload', 'sys_option');
 
 -- ----------------------------
 -- Records of wo_org
@@ -4063,36 +3489,6 @@ INSERT INTO `wo_org` VALUES ('1508976067088138249', '10110123451201001', '套圈
 INSERT INTO `wo_org` VALUES ('1508976740328456200', '101101234512010011', '圈长', null, 'role_org', '100', '1508972831958548480', '1508976067088138249', '1', '1', '0', '2021-05-26 23:34:50', '127.0.0.1', '0', '2021-05-26 23:34:50', '127.0.0.1', 'normal', '1');
 INSERT INTO `wo_org` VALUES ('1525968690709446657', 'tadmin', '租户管理员', null, 'role_org', '0', '0', '0', '1', '1', '1', '2021-07-12 20:54:47', '192.168.1.23', '1', '2021-07-30 20:53:08', '192.168.1.23', 'normal', '1');
 INSERT INTO `wo_org` VALUES ('1526214941484957699', 'badmin', '二级管理员', null, 'platform', '0', '0', '1', '1', '1', '1', '2021-07-13 13:13:18', '192.168.1.23', '1', '2021-07-13 13:13:18', '192.168.1.23', 'normal', '1');
-
--- ----------------------------
--- Table structure for `wo_org_user`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_org_user`;
-CREATE TABLE `wo_org_user` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `user_id` bigint(20) unsigned DEFAULT NULL ,
-                               `user_com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `org_id` bigint(20) unsigned DEFAULT NULL ,
-                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
-                               `com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
-                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `create_time` datetime DEFAULT NULL ,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
-                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_time` datetime DEFAULT NULL ,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'normal' ,
-                               `versions` int(10) DEFAULT NULL ,
-                               PRIMARY KEY (`id`),
-                               KEY `org_user_id` (`user_id`),
-                               KEY `org_id` (`org_id`),
-                               KEY `org_user_arch` (`arch_id`),
-                               KEY `org_user_com` (`com_id`),
-                               KEY `org_user_is_valid_del` (`is_valid`,`delete_flag`),
-                               KEY `org_user_arch_com` (`user_id`,`user_com_id`,`org_id`,`arch_id`,`com_id`) USING BTREE,
-                               KEY `org_u_com_id` (`user_com_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_org_user
@@ -4119,6 +3515,11 @@ INSERT INTO `wo_org_user` VALUES ('214120914220662792', '0', null, '300', '0', '
 INSERT INTO `wo_org_user` VALUES ('214132159988547595', '214132159892078601', null, '200', '0', '0', '1', '214132159892078601', '192.168.1.23', '2022-10-29 16:02:35', '214132159892078601', '192.168.1.23', '2022-10-29 16:02:35', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('214858324277641220', '214858324143423489', null, '200', '0', '0', '1', '214858324143423489', '192.168.1.23', '2022-10-31 16:08:06', '214858324143423489', '192.168.1.23', '2022-10-31 16:08:06', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('247228766472552455', '1', '0', '247227424555319302', '0', '0', '1', '1', '192.168.1.23', '2023-01-28 23:56:41', '1', '192.168.1.23', '2023-01-28 23:56:41', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('268888153029001220', '268888145382785029', null, '200', '0', '0', '1', '268888145382785029', '127.0.0.1', '2023-03-29 18:23:21', '268888145382785029', '127.0.0.1', '2023-03-29 18:23:21', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('268914109286367238', '268914102432874506', null, '300', '0', '0', '1', '268914102432874506', '127.0.0.1', '2023-03-29 20:06:30', '268914102432874506', '127.0.0.1', '2023-03-29 20:06:30', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('268915701775515651', '268915694989131787', null, '200', '0', '0', '1', '268915694989131787', '127.0.0.1', '2023-03-29 20:12:50', '268915694989131787', '127.0.0.1', '2023-03-29 20:12:50', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('268929745500684298', '268929738777214984', null, '200', '0', '0', '1', '268929738777214984', '127.0.0.1', '2023-03-29 21:08:38', '268929738777214984', '127.0.0.1', '2023-03-29 21:08:38', 'normal', '0');
+INSERT INTO `wo_org_user` VALUES ('269269458258411526', '269269451643994119', null, '200', '0', '0', '1', '269269451643994119', '127.0.0.1', '2023-03-30 19:38:32', '269269451643994119', '127.0.0.1', '2023-03-30 19:38:32', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('1502723278259273735', '1502723278108278788', null, '200', '0', '0', '1', '1502723278108278788', '127.0.0.1', '2021-05-09 17:25:49', '1502723278108278788', '127.0.0.1', '2021-05-09 17:25:49', 'normal', '1');
 INSERT INTO `wo_org_user` VALUES ('1502726588278161413', '1502726588102000651', null, '200', '0', '0', '1', '1502726588102000651', '127.0.0.1', '2021-05-09 17:38:58', '1502726588102000651', '127.0.0.1', '2021-05-09 17:38:58', 'normal', '1');
 INSERT INTO `wo_org_user` VALUES ('1502739709487136769', '1502739709344530437', null, '200', '0', '0', '1', '1502739709344530437', '127.0.0.1', '2021-05-09 18:31:06', '1502739709344530437', '127.0.0.1', '2021-05-09 18:31:06', 'normal', '1');
@@ -4142,33 +3543,6 @@ INSERT INTO `wo_org_user` VALUES ('1547693780165640200', '1547693779586826246', 
 INSERT INTO `wo_org_user` VALUES ('1547695225283723266', '1547695225065619462', null, '200', '0', '0', '1', '1547695225065619462', '192.168.1.23', '2021-09-10 19:48:16', '1547695225065619462', '192.168.1.23', '2021-09-10 19:48:16', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('1547696559332442119', '1547696496472408073', null, '200', '0', '0', '1', '1547696496472408073', '192.168.1.23', '2021-09-10 19:53:37', '1547696496472408073', '192.168.1.23', '2021-09-10 19:53:37', 'normal', '0');
 INSERT INTO `wo_org_user` VALUES ('1547698181106221065', '1547698179520774144', null, '200', '0', '0', '1', '1547698179520774144', '192.168.1.23', '2021-09-10 20:00:01', '1547698179520774144', '192.168.1.23', '2021-09-10 20:00:01', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_region`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_region`;
-CREATE TABLE `wo_region` (
-                             `id` bigint(20) unsigned NOT NULL,
-                             `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                             `display_order` int(10) DEFAULT NULL ,
-                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `create_by` bigint(20) unsigned DEFAULT NULL ,
-                             `create_time` datetime DEFAULT NULL ,
-                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `update_by` bigint(20) unsigned DEFAULT NULL ,
-                             `update_time` datetime DEFAULT NULL ,
-                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                             `versions` int(10) DEFAULT NULL ,
-                             PRIMARY KEY (`id`),
-                             UNIQUE KEY `region_code` (`region_code`),
-                             KEY `region_level` (`level`),
-                             KEY `region_parent_id` (`parent_id`),
-                             KEY `region_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of wo_region
@@ -4553,40 +3927,6 @@ INSERT INTO `wo_region` VALUES ('810000', '810000', '香港特别行政区', '1'
 INSERT INTO `wo_region` VALUES ('820000', '820000', '澳门特别行政区', '1', '0', '820000', '1', '1', '2021-06-07 13:03:41', '127.0.0.1', '1', '2021-06-07 13:03:41', '127.0.0.1', 'normal', '1');
 
 -- ----------------------------
--- Table structure for `wo_resource`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_resource`;
-CREATE TABLE `wo_resource` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `resource_type` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `app_id` bigint(20) unsigned DEFAULT NULL ,
-                               `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                               `display_order` int(10) DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
-                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_time` datetime DEFAULT NULL ,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
-                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `update_time` datetime DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `versions` int(10) DEFAULT NULL ,
-                               PRIMARY KEY (`id`),
-                               UNIQUE KEY `un_app_res_code` (`resource_code`,`app_id`) USING BTREE,
-                               KEY `res_type` (`resource_type`) USING BTREE,
-                               KEY `res_app_id` (`app_id`) USING BTREE,
-                               KEY `res_parent_id` (`parent_id`) USING BTREE,
-                               KEY `res_is_valid_del` (`is_valid`,`delete_flag`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
 -- Records of wo_resource
 -- ----------------------------
 INSERT INTO `wo_resource` VALUES ('100', 'home', '首页', '/', 'home', 'menu', 'GET', '_self', '1506113043159498757', '0', '1', '1', '平台门户，内容中心', '0', '0', '2021-05-08 13:44:35', '1', '192.168.1.23', '2023-01-27 22:41:31', 'normal', '0');
@@ -4688,34 +4028,6 @@ INSERT INTO `wo_resource` VALUES ('1542170368806666244', 'article-blog', '分享
 INSERT INTO `wo_resource` VALUES ('1542939849472524294', 'a-jsfx', '技术分享', '/archives/category/jsfx', 'list', 'menu', 'GET', '_self', '1504618238889869317', '1542170368806666244', '1', '0', '技术分享', '1', '192.168.1.23', '2021-08-28 16:52:07', '1', '192.168.1.23', '2023-02-03 02:20:27', 'normal', '1');
 
 -- ----------------------------
--- Table structure for `wo_role`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_role`;
-CREATE TABLE `wo_role` (
-                           `id` bigint(20) unsigned NOT NULL ,
-                           `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `parent_id` bigint(20) unsigned DEFAULT NULL ,
-                           `display_order` int(10) DEFAULT NULL ,
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `create_time` datetime DEFAULT NULL ,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_time` datetime DEFAULT NULL ,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
-                           PRIMARY KEY (`id`),
-                           UNIQUE KEY `uni_role_code` (`role_code`),
-                           KEY `role_type` (`role_type`),
-                           KEY `role_parent_id` (`parent_id`),
-                           KEY `role_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
 -- Records of wo_role
 -- ----------------------------
 INSERT INTO `wo_role` VALUES ('1', 'guest', '游客', '未登录用户', 'sys_role', '0', '1', '1', '0', '0', '2021-05-08 11:20:34', '0', '127.0.0.1', '2021-05-20 15:30:23', 'normal', '1');
@@ -4734,32 +4046,6 @@ INSERT INTO `wo_role` VALUES ('1525946478916976648', 'tadmin', '租户管理员'
 INSERT INTO `wo_role` VALUES ('1526213891793272839', 'badmin', '二级管理员', '二级管理员集成超级管理员功能权限。', 'sys_role', '1509213016482824194', '1', '1', '1', '192.168.1.23', '2021-07-13 13:09:07', '1', '192.168.1.23', '2021-12-07 17:34:24', 'normal', '1');
 
 -- ----------------------------
--- Table structure for `wo_role_org`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_role_org`;
-CREATE TABLE `wo_role_org` (
-                               `id` bigint(20) unsigned NOT NULL ,
-                               `role_id` bigint(20) unsigned DEFAULT NULL ,
-                               `org_id` bigint(20) unsigned DEFAULT NULL ,
-                               `arch_id` bigint(20) unsigned DEFAULT NULL ,
-                               `com_id` bigint(20) unsigned DEFAULT NULL ,
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `create_by` bigint(20) unsigned DEFAULT NULL ,
-                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `create_time` datetime DEFAULT NULL ,
-                               `update_by` bigint(20) unsigned DEFAULT NULL ,
-                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `update_time` datetime DEFAULT NULL ,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `versions` int(10) DEFAULT NULL ,
-                               PRIMARY KEY (`id`),
-                               KEY `org_role_id` (`role_id`),
-                               KEY `org_role_org_id` (`org_id`),
-                               KEY `org_arch_com` (`org_id`,`arch_id`,`com_id`),
-                               KEY `org_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
 -- Records of wo_role_org
 -- ----------------------------
 INSERT INTO `wo_role_org` VALUES ('0', '1', '0', '0', '0', '1', '0', '0', '2021-05-08 12:10:41', '0', '0', '2021-05-08 12:10:47', 'normal', '1');
@@ -4771,164 +4057,8 @@ INSERT INTO `wo_role_org` VALUES ('1508573862422036488', '1508572257052180489', 
 INSERT INTO `wo_role_org` VALUES ('1525968743872249860', '1525946478916976648', '1525968690709446657', '0', '0', '1', '1', '192.168.1.23', '2021-07-12 20:55:00', '1', '192.168.1.23', '2021-07-12 20:55:00', 'normal', '0');
 
 -- ----------------------------
--- Table structure for `wo_subject_association`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_subject_association`;
-CREATE TABLE `wo_subject_association` (
-                                          `id` bigint(20) unsigned NOT NULL ,
-                                          `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
-                                          `role_id` bigint(20) unsigned DEFAULT NULL ,
-                                          `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                          `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `create_time` datetime DEFAULT NULL ,
-                                          `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                          `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                          `update_time` datetime DEFAULT NULL ,
-                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                          `versions` int(10) DEFAULT NULL ,
-                                          PRIMARY KEY (`id`),
-                                          KEY `sub_type_id` (`subject_type_id`),
-                                          KEY `sub_role_id` (`role_id`),
-                                          KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
--- Records of wo_subject_association
--- ----------------------------
-
--- ----------------------------
--- Table structure for `wo_subject_authentication`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_subject_authentication`;
-CREATE TABLE `wo_subject_authentication` (
-                                             `id` bigint(20) unsigned NOT NULL ,
-                                             `subject_type_id` bigint(20) unsigned DEFAULT NULL ,
-                                             `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                             `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                             `user_id` bigint(20) unsigned DEFAULT NULL ,
-                                             `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `create_time` datetime DEFAULT NULL ,
-                                             `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                             `update_time` datetime DEFAULT NULL ,
-                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                             `versions` int(10) DEFAULT NULL ,
-                                             PRIMARY KEY (`id`),
-                                             KEY `sub_type_id` (`subject_type_id`),
-                                             KEY `sub_user_id` (`user_id`),
-                                             KEY `sub_is_valid_del` (`is_valid`,`delete_flag`),
-                                             KEY `sub_code` (`subject_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
--- Records of wo_subject_authentication
--- ----------------------------
-
--- ----------------------------
--- Table structure for `wo_subject_define`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_subject_define`;
-CREATE TABLE `wo_subject_define` (
-                                     `id` bigint(20) unsigned NOT NULL ,
-                                     `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                     `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `create_time` datetime DEFAULT NULL ,
-                                     `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                     `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `update_time` datetime DEFAULT NULL ,
-                                     `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                     `versions` int(10) DEFAULT NULL ,
-                                     PRIMARY KEY (`id`),
-                                     UNIQUE KEY `uni_subject_type_code` (`subject_type_code`) USING BTREE,
-                                     KEY `sub_def_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
--- Records of wo_subject_define
--- ----------------------------
-
--- ----------------------------
--- Table structure for `wo_subject_model_define`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_subject_model_define`;
-CREATE TABLE `wo_subject_model_define` (
-                                           `id` bigint(20) unsigned DEFAULT NULL ,
-                                           `subject_type_id` bigint(20) unsigned NOT NULL ,
-                                           `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                           `create_time` datetime DEFAULT NULL ,
-                                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                           `update_time` datetime DEFAULT NULL ,
-                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                                           `versions` int(10) DEFAULT NULL ,
-                                           PRIMARY KEY (`subject_type_id`),
-                                           KEY `sub_model_type_id` (`subject_type_id`),
-                                           KEY `sub_is_valid_del` (`is_valid`,`delete_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
--- ----------------------------
 -- Records of wo_subject_model_define
 -- ----------------------------
-
--- ----------------------------
--- Table structure for `wo_user`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_user`;
-CREATE TABLE `wo_user` (
-                           `id` bigint(20) unsigned NOT NULL ,
-                           `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
-                           `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `domain_id` bigint(20) unsigned DEFAULT NULL ,
-                           `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `birthday` datetime DEFAULT NULL ,
-                           `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '注册会员' ,
-                           `company` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '网络用户' ,
-                           `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `display_order` bigint(20) DEFAULT NULL ,
-                           `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `create_by` bigint(20) unsigned DEFAULT NULL ,
-                           `create_time` datetime DEFAULT NULL ,
-                           `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `update_by` bigint(20) unsigned DEFAULT NULL ,
-                           `update_time` datetime DEFAULT NULL ,
-                           `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                           `versions` int(10) DEFAULT NULL ,
-                           PRIMARY KEY (`id`),
-                           UNIQUE KEY `uni_login` (`login_name`) USING BTREE,
-                           KEY `user_status` (`status`),
-                           KEY `user_sex` (`sex`),
-                           KEY `user_del` (`delete_flag`),
-                           KEY `user_prov_city_area_coun` (`province`,`city`,`area`,`country`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- ----------------------------
 -- Records of wo_user
@@ -4950,6 +4080,9 @@ INSERT INTO `wo_user` VALUES ('198204851142443011', '5837163615@qq.com', 'wldos2
 INSERT INTO `wo_user` VALUES ('198575893094514697', '583716365@qq.com', 'yuanxi2023', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '583716365@qq.com', '/202209/16192006kkX6YHpz.png', null, null, null, null, null, null, null, null, null, '192.168.1.23', '198575893094514697', '2022-09-16 17:47:34', '192.168.1.23', '198575893094514697', '2022-09-16 19:20:06', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_user` VALUES ('214132159892078601', '行者', '行者', null, 'normal', '1', null, null, null, null, null, null, null, null, null, null, null, '/2022/10/29165431nSPtJhlt.jpg', null, null, null, null, null, null, null, null, null, '192.168.1.23', '214132159892078601', '2022-10-29 16:02:35', '192.168.1.23', '214132159892078601', '2022-10-29 16:54:32', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_user` VALUES ('214858324143423489', '元悉科技', '元悉科技', null, 'normal', '1', null, null, null, null, null, null, null, null, null, null, null, '/2022/10/31160806yDuzotP7.jpg', null, null, null, null, null, null, null, null, null, '192.168.1.23', '214858324143423489', '2022-10-31 16:08:06', '192.168.1.23', '214858324143423489', '2022-10-31 16:08:07', '192.168.1.23', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('268888145382785029', '3385115357@qq.com', '3385115357', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '3385115357@qq.com', null, null, null, null, null, null, null, null, null, null, '127.0.0.1', '268888145382785029', '2023-03-29 18:23:21', '127.0.0.1', '268888145382785029', '2023-03-29 18:23:21', '127.0.0.1', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('268914102432874506', '29028256512@qq.com', '29028256521', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '2902825652@qq.com', null, null, null, null, null, null, null, null, null, null, '127.0.0.1', '268914102432874506', '2023-03-29 20:06:30', '127.0.0.1', '1', '2023-03-29 20:12:16', '127.0.0.1', 'normal', '0');
+INSERT INTO `wo_user` VALUES ('269269451643994119', '2902825652@qq.com', '2902825652', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, null, null, null, null, '2902825652@qq.com', null, null, null, null, null, null, null, null, null, null, '127.0.0.1', '269269451643994119', '2023-03-30 19:38:32', '127.0.0.1', '269269451643994119', '2023-03-30 19:38:32', '127.0.0.1', 'normal', '0');
 INSERT INTO `wo_user` VALUES ('1502723278108278788', 'support@zhiletu.com', null, 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', null, '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'support@zhiletu.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502723278108278788', '2021-05-09 17:25:49', '127.0.0.1', '1502723278108278788', '2021-05-09 17:25:49', '127.0.0.1', 'normal', '1');
 INSERT INTO `wo_user` VALUES ('1502726588102000651', '3069911421@qq.com', null, 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', null, '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '3069911421@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502726588102000651', '2021-05-09 17:38:58', '127.0.0.1', '1502726588102000651', '2021-05-09 17:38:58', '127.0.0.1', 'normal', '1');
 INSERT INTO `wo_user` VALUES ('1502739709344530437', '5837163651@qq.com', '小五义', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '0', null, null, null, null, null, null, '注册会员', '网络用户', null, null, '583716365@qq.com', null, null, '0', null, null, null, null, null, null, null, '127.0.0.1', '1502739709344530437', '2021-05-09 18:31:06', '127.0.0.1', '0', '2021-05-26 22:45:15', '127.0.0.1', 'normal', '1');
@@ -4971,20 +4104,6 @@ INSERT INTO `wo_user` VALUES ('1547693779586826246', 'test4@163.com', 'test4', '
 INSERT INTO `wo_user` VALUES ('1547695225065619462', 'test5@163.com', 'test5', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test5@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547695225065619462', '2021-09-10 19:48:16', '192.168.1.23', '1547695225065619462', '2021-09-10 19:48:16', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_user` VALUES ('1547696496472408073', 'test6@163.com', 'test6', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, null, '注册会员', '网络用户', null, null, 'test6@163.com', null, null, null, null, null, null, null, null, null, null, '192.168.1.23', '1547696496472408073', '2021-09-10 19:53:20', '192.168.1.23', '1547696496472408073', '2021-09-10 19:53:20', '192.168.1.23', 'normal', '0');
 INSERT INTO `wo_user` VALUES ('1547698179520774144', 'test7@163.com', 'test7', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', '1533544727530094592', null, null, null, null, null, '0533-19388888', '注册会员', '网络用户', '太原市', null, 'test7@163.com', '/202109/10201135YqsgC7J0.jpg', '个人简介', null, null, 'China', '140000', '140100', null, null, null, '192.168.1.23', '1547698179520774144', '2021-09-10 20:00:01', '192.168.1.23', '1547698179520774144', '2021-09-10 20:11:35', '192.168.1.23', 'normal', '0');
-
--- ----------------------------
--- Table structure for `wo_usermeta`
--- ----------------------------
-DROP TABLE IF EXISTS `wo_usermeta`;
-CREATE TABLE `wo_usermeta` (
-                               `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                               `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                               `meta_key` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL ,
-                               `meta_value` longtext COLLATE utf8mb4_unicode_ci ,
-                               PRIMARY KEY (`id`),
-                               KEY `user_id` (`user_id`),
-                               KEY `meta_key` (`meta_key`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=214155705741656076 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of wo_usermeta
@@ -5031,3 +4150,8 @@ INSERT INTO `wo_usermeta` VALUES ('192753338811072518', '192753329898176517', 'p
 INSERT INTO `wo_usermeta` VALUES ('198204861032611850', '198204851142443011', 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES ('198575901655089156', '198575893094514697', 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES ('214155705741656075', '214132159892078601', 'tags', '[{\"key\":\"tag-0\",\"label\":\"第一登录人\"}]');
+INSERT INTO `wo_usermeta` VALUES ('268888153649758214', '268888145382785029', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('268914110121033731', '268914102432874506', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('268915702140420107', '268915694989131787', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('268929746012389385', '268929738777214984', 'passStatus', 'medium');
+INSERT INTO `wo_usermeta` VALUES ('269269458744950784', '269269451643994119', 'passStatus', 'medium');

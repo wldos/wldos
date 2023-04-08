@@ -9,12 +9,15 @@
 package com.wldos.sys.base.service;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.support.auth.AuthOpener;
 import com.wldos.support.auth.vo.AuthVerify;
 import com.wldos.support.cache.ICache;
-import com.wldos.support.resource.dto.MenuAndRoute;
 import com.wldos.support.resource.vo.AuthInfo;
+import com.wldos.support.resource.vo.DynSet;
 import com.wldos.support.resource.vo.Menu;
 import com.wldos.sys.base.repo.DomainResourceRepo;
 import com.wldos.sys.base.repo.ResourceRepo;
@@ -33,7 +36,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class AuthService {
+public class AuthService implements AuthOpener {
 	@Autowired
 	@Lazy
 	private AuthOpener authOpener;
@@ -89,19 +92,6 @@ public class AuthService {
 	}
 
 	/**
-	 * 查询某域内用户的可见菜单以及域上定制的动态路由模板，授权资源来源：1.组织权限，2.平台权限。
-	 *
-	 * @param domainId 域id
-	 * @param comId 用户主企业id，用于判定用户的组织权限
-	 * @param menuType 菜单类型：普通菜单、管理菜单
-	 * @param id 用户id
-	 * @return 菜单列表
-	 */
-	public MenuAndRoute queryMenuAndRouteByUserId(Long domainId, Long comId, String menuType, Long id) {
-		return this.authOpener.queryMenuAndRouteByUserId(domainId, comId, menuType, id, this.termService, this.resourceRepo, this.domainResourceRepo);
-	}
-
-	/**
 	 * 查询某域内用户的可见菜单，授权菜单来源：1.组织权限，2.平台权限。
 	 *
 	 * @param domainId 域id
@@ -134,5 +124,26 @@ public class AuthService {
 	 */
 	public boolean isGuest(Long userId) {
 		return this.authOpener.isGuest(userId);
+	}
+
+	/**
+	 * 查询动态路由配置
+	 *
+	 * @param domainId 域名id
+	 * @param routePath 动态路由路径映射表
+	 * @return 动态路由配置
+	 */
+	public Map<String, DynSet> queryDynRoute(Long domainId, Map<String, String> routePath) {
+		return this.authOpener.queryDynRoute(this.termService, this.domainResourceRepo, routePath, domainId);
+	}
+
+	/**
+	 *
+	 * 如果是放开路由 直接返回200
+	 * 如果是鉴权路由 先检查token，游客返回401
+	 * 已登录检查是否有权限，无权限返回403，否则返回200
+	 */
+	public String authorityRouteCheck(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request, List<String> excludeUrls) {
+		return this.authOpener.authorityRoute(route, userId, domainId, tenantId, request, excludeUrls, this);
 	}
 }

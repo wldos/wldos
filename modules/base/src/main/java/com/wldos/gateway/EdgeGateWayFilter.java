@@ -147,7 +147,7 @@ public class EdgeGateWayFilter implements Filter {
 			}
 
 			String domain = DomainUtils.getDomain(request, this.domainHeader);
-			boolean isExcludeUri = this.isMatchUri(reqUri, this.excludeUris);
+			boolean isExcludeUri = GateWayHelper.isMatchUri(reqUri, this.excludeUris);
 			WoDomain reqDomain = this.domainService.queryDomainByName(domain, isExcludeUri);
 			if (reqDomain == null) {// @todo 当没有设置域名 或者 没有开启多域名时，应存在默认域名
 				log.error("使用了非法域名：{}", domain);
@@ -172,7 +172,7 @@ public class EdgeGateWayFilter implements Filter {
 				throw new TokenInvalidException("user token is expired");
 			}
 
-			if (this.isMatchUri(reqUri, this.verifyTokenUris)) {
+			if (GateWayHelper.isMatchUri(reqUri, this.verifyTokenUris)) {
 				if (this.authService.isGuest(jwt.getUserId()))
 					throw new TokenInvalidException("user token is invalid");
 			}
@@ -181,7 +181,7 @@ public class EdgeGateWayFilter implements Filter {
 				throw new BaseException("非法请求(invalid request)!");
 			}
 
-			String appCode = this.appCode(reqUri);
+			String appCode = GateWayHelper.appCode(reqUri);
 			if (appCode == null) {
 				throw new BaseException("root path forbidden!");
 			}
@@ -190,7 +190,7 @@ public class EdgeGateWayFilter implements Filter {
 
 			if (authVerify.isAuth()) {
 				AuthInfo auth = authVerify.getAuthInfo();
-				if (this.isMatchUri(reqUri, this.recLogUris) && auth != null) {
+				if (GateWayHelper.isMatchUri(reqUri, this.recLogUris) && auth != null) {
 					log.info("{}, {}, {}, {}, {}, {}", IpUtils.getClientIp(request), jwt.getUserId(), auth.getResourceName(), auth.getResourcePath()
 							, request.getQueryString(), request.getParameterMap().keySet());
 				}
@@ -217,37 +217,6 @@ public class EdgeGateWayFilter implements Filter {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private boolean isMatchUri(String reqUri, List<String> target) {
-		for (String s : target) {
-			if (reqUri.startsWith(s))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * 应用编码最长5位，作为应用在平台上的请求路径前缀。
-	 * @todo 应该为appId，从缓存获取appId，或者其他的方式优化权限验证的性能，权限逻辑：资源 ~ 应用 ~ 域，资源 ~ 权限 ~ 角色 ~ 组织 ~ 租户|用户
-	 *
-	 * @param reqUri 请求资源URI
-	 * @return 应用编码
-	 */
-	private String appCode(String reqUri) {
-		try {
-			String root = "/";
-			if ("".equals(reqUri) || root.equals(ObjectUtils.string(reqUri).trim()))
-				return root;
-
-			String[] temp = reqUri.split(root);
-
-			return ObjectUtils.isBlank(temp[1]) ? null : temp[1].toLowerCase();
-		}
-		catch (Exception e) {
-			log.error("请求截取应用编码异常");
-		}
-		return null;
 	}
 
 	@Value("${wldos_platform_adminEmail:306991142#qq.com}")

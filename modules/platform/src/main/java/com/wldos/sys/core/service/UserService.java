@@ -9,10 +9,12 @@
 package com.wldos.sys.core.service;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,8 +45,8 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
-import com.wldos.support.resource.dto.MenuAndRoute;
 import com.wldos.support.resource.enums.ResourceEnum;
+import com.wldos.support.resource.vo.DynSet;
 import com.wldos.support.resource.vo.Menu;
 import com.wldos.support.storage.vo.FileInfo;
 import com.wldos.sys.base.dto.Tenant;
@@ -93,6 +95,9 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	@Value("${wldos.version:v2.0}")
 	private String wldosVersion;
 
+	@Value("${gateway.ignore.path:}")
+	private String pathIgnore;
+
 	private final AuthService authService;
 
 	private final OrgRepo orgRepo;
@@ -105,6 +110,8 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 
 	private final UserMetaService userMetaService;
 
+	private List<String> excludeUris;
+
 	public UserService(AuthService authService, OrgRepo orgRepo, OrgUserRepo orgUserRepo, CompanyRepo companyRepo, DomainService domainService, UserMetaService userMetaService) {
 		this.authService = authService;
 		this.orgRepo = orgRepo;
@@ -112,6 +119,11 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		this.companyRepo = companyRepo;
 		this.domainService = domainService;
 		this.userMetaService = userMetaService;
+	}
+
+	@PostConstruct
+	private void init() {
+		this.excludeUris = Arrays.asList(pathIgnore.split(","));
 	}
 
 	/**
@@ -127,10 +139,9 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		User user = new User();
 		UserInfo userInfo = this.queryUserInfo(userId);
 		user.setUserInfo(userInfo);
-		MenuAndRoute mar = this.authService.queryMenuAndRouteByUserId(domainId, comId, ResourceEnum.MENU.getValue(), userId);
+		List<Menu> mar = this.authService.queryMenuByUserId(domainId, comId, ResourceEnum.MENU.getValue(), userId);
 		if (!ObjectUtils.isBlank(mar)) {
-			user.setMenu(mar.getMenu());
-			user.setRoute(mar.getRoute());
+			user.setMenu(mar);
 		}
 		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, comId, userId);
 		user.setCurrentAuthority(currentAuthority);
@@ -163,10 +174,9 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		User user = new User();
 		UserInfo userInfo = this.queryUserInfo(Constants.GUEST_ID);
 		user.setUserInfo(userInfo);
-		MenuAndRoute mar = this.authService.queryMenuAndRouteByUserId(domainId, Constants.TOP_COM_ID, ResourceEnum.MENU.getValue(), Constants.GUEST_ID);
+		List<Menu> mar = this.authService.queryMenuByUserId(domainId, Constants.TOP_COM_ID, ResourceEnum.MENU.getValue(), Constants.GUEST_ID);
 		if (!ObjectUtils.isBlank(mar)) {
-			user.setMenu(mar.getMenu());
-			user.setRoute(mar.getRoute());
+			user.setMenu(mar);
 		}
 		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, Constants.TOP_COM_ID, Constants.GUEST_ID);
 		user.setCurrentAuthority(currentAuthority);
@@ -686,5 +696,23 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		user.setAvatar(fileInfo.getPath());
 		EntityAssists.beforeUpdated(user, userId, userIp);
 		this.update(user);
+	}
+
+	public String checkRoute(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request) {
+		return this.authService.authorityRouteCheck(route, userId, domainId, tenantId, request, this.excludeUris);
+	}
+
+	@Value("${wldos_dyn_route:}")
+	private String dynRoutePath;
+
+	/**
+	 * 查询动态路由配置
+	 *
+	 * @param domainId 域名id
+	 * @return 动态路由配置
+	 */
+	public Map<String, DynSet> queryDynRoute(Long domainId) {
+		Map<String, String> routePath = this.resJson.readEntity(this.dynRoutePath, new TypeReference<Map<String, String>>(){});
+		return this.authService.queryDynRoute(domainId, routePath);
 	}
 }

@@ -34,3 +34,4 @@ build/
 /.mvn/wrapper/
 /src/main/resources/static/
 /modules/license/
+/wldos-web/temp/

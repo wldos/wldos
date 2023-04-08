@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the AGPL or a commercial license.
- * For AGPL see License in the project root for license information.
+ * Licensed under the Apache License Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
  *
  */
@@ -25,6 +25,7 @@ import java.util.jar.JarFile;
 
 import com.wldos.common.Constants;
 import com.wldos.support.storage.utils.StoreUtils;
+import com.wldos.support.system.ResourceLoader;
 import lombok.SneakyThrows;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -86,12 +87,10 @@ public class PluginManager {
 	@SneakyThrows
 	private List<Plugin> getPlugins() {
 		List<Plugin> pluginList = new ArrayList<>();
-		String extendJarPath = "/include/wldos-agent-release.jar";
+		String extendJarPath = "/include/wldos-agent-release.jar"; // 使用jar是为了以接口的形式合法开源
 		ClassPathResource loader = new ClassPathResource(extendJarPath);
 		try (InputStream jarStream = loader.getInputStream()) {
-			ClassPathResource resource = new ClassPathResource("/wldos.lic");
-			File lic = resource.getFile();
-			String resPath = lic.getParentFile().getAbsolutePath() + "/" + Constants.DIRECTORY_TEMP_NAME + extendJarPath;
+			String resPath = ResourceLoader.appHome() + Constants.DIRECTORY_TEMP_NAME + extendJarPath;
 
 			StoreUtils.saveAsFile(jarStream, resPath);
 
@@ -106,7 +105,6 @@ public class PluginManager {
 			plugin.setUrl(resPath);
 			plugin.setScanPath("com.wldos"); // 默认jar放在本平台包下
 			pluginList.add(plugin);
-
 		}
 		catch (Exception e) {
 			throw new RuntimeException("加载框架扩展异常", e);

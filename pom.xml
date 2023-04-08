@@ -41,7 +41,9 @@
 		<developer>
 			<name>树悉猿</name>
 			<email>306991142@qq.com</email>
-			<roles><role>leader</role></roles>
+			<roles>
+				<role>leader</role>
+			</roles>
 		</developer>
 	</developers>
 	<modules>
@@ -233,16 +235,24 @@
 		<repository>
 			<id>aliyun-repos</id>
 			<url>https://maven.aliyun.com/repository/public</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>false</enabled></snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>aliyun-repos</id>
 			<url>https://maven.aliyun.com/repository/public</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>false</enabled></snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
