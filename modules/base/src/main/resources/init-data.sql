@@ -2652,9 +2652,58 @@ INSERT INTO `wo_domain_app` VALUES ('1546146354371936260', '1504619730199822347'
 -- ----------------------------
 -- Records of wo_domain_resource
 -- ----------------------------
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : 192.168.1.24
+Source Server Version : 50729
+Source Host           : 192.168.1.24:3306
+Source Database       : worldos
+
+Target Server Type    : MYSQL
+Target Server Version : 50729
+File Encoding         : 65001
+
+Date: 2023-04-09 15:39:31
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `wo_domain_resource`
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_domain_resource`;
+CREATE TABLE `wo_domain_resource` (
+  `id` bigint(20) NOT NULL,
+  `module_name` varchar(50) NOT NULL DEFAULT 'static' COMMENT '组件名（模板名），作为多域环境下前端基于某路由定位组件的依据，静态模板路由默认为“static”仅作域下的资源项，比如首页，不同站点需要不同的模板展示不同的数据、业务和行为，用前端的定制解决多域业务的复杂性，从而降低后端系统的复杂性',
+  `resource_id` bigint(20) unsigned NOT NULL COMMENT '资源id',
+  `app_id` bigint(20) unsigned DEFAULT NULL COMMENT '应用id',
+  `term_type_id` bigint(20) DEFAULT '0' COMMENT '该资源关联的分类法类型，一般是菜单类分类法类型，这种分类法父级是正常的业务分类，业务分类可能还包含子业务分类，关联后菜单的展示数据取决于关联的分类及其子分类，遵循分类法规则，有子不删',
+  `domain_id` bigint(20) unsigned NOT NULL COMMENT '域id，用于确定路由、资源、组件的属主关联关系',
+  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注说明',
+  `create_by` bigint(20) unsigned DEFAULT NULL COMMENT '创建人',
+  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` bigint(20) unsigned DEFAULT NULL COMMENT '更新人',
+  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
+  `versions` int(10) unsigned DEFAULT NULL COMMENT '乐观锁',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dom_res_route` (`domain_id`,`resource_id`) USING BTREE,
+  KEY `dom_res_valid` (`is_valid`,`delete_flag`) USING BTREE,
+  KEY `dom_res_app` (`domain_id`,`app_id`,`resource_id`) USING BTREE,
+  KEY `dom_res_module` (`module_name`) USING BTREE,
+  KEY `dom_res_did` (`domain_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of wo_domain_resource
+-- ----------------------------
 INSERT INTO `wo_domain_resource` VALUES ('3', 'static', '1506101733801771011', '1506005013902311434', '0', '1', '1', '系统管理', '1', '127.0.0.1', '2021-09-09 22:31:29', '1', '127.0.0.1', '2021-09-09 22:31:38', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('5', 'default', '100', '1506113043159498757', '4', '1532487189283913738', '1', '轩辕年谱首页门户组件映射', '1', '127.0.0.1', '2021-09-24 01:29:33', '1', '127.0.0.1', '2021-09-24 01:29:41', 'normal', '0');
-INSERT INTO `wo_domain_resource` VALUES ('6', 'category', '100', '1506113043159498757', '0', '1533544727530094592', '1', '本地开发环境', '1', '123', '2021-09-24 01:37:34', '1', '111', '2021-09-24 01:37:42', 'normal', '0');
+INSERT INTO `wo_domain_resource` VALUES ('6', 'admin', '100', '1506113043159498757', '0', '1533544727530094592', '1', '本地开发环境', '1', '123', '2021-09-24 01:37:34', '1', '111', '2021-09-24 01:37:42', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('72187658739826689', 'static', '72187658739826691', '1504618238889869317', '0', '1533544727530094592', '1', '管理一个作品，文章、年谱、视频等', '1', '192.168.1.23', '2021-10-02 23:25:49', '1', '192.168.1.23', '2021-10-02 23:27:01', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('72188271301148674', 'static', '72188271301148676', '1504618238889869317', '0', '1533544727530094592', '1', '作品合集管理，对应一个产品信息', '1', '192.168.1.23', '2021-10-02 23:28:15', '1', '192.168.1.23', '2021-10-02 23:28:15', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('76422235884797960', 'static', '1542939849472524294', '1504618238889869317', '1520551727518629888', '1533544727530094592', '1', null, '1', '192.168.1.23', '2021-10-14 15:52:31', '1', '192.168.1.23', '2021-10-14 15:52:31', 'normal', '0');
@@ -2917,6 +2966,7 @@ INSERT INTO `wo_domain_resource` VALUES ('1542170368806666243', 'static', '15421
 INSERT INTO `wo_domain_resource` VALUES ('1542170368806666244', 'static', '1542170368806666244', '1504618238889869317', '0', '1', '1', '内容领域：文章类', '1', '192.168.1.23', '2021-08-26 13:54:28', '1', '192.168.1.23', '2021-09-07 16:04:10', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1542939849472524292', 'static', '1542939849472524294', '1504618238889869317', '0', '1532487189283913738', '1', '技术分享', '1', '192.168.1.23', '2021-08-28 16:52:07', '1', '192.168.1.23', '2021-09-16 09:15:20', 'normal', '0');
 INSERT INTO `wo_domain_resource` VALUES ('1544340805720391680', 'static', '1544340805720391680', '1504618238889869317', '0', '1', '1', null, '1', '192.168.1.23', '2021-09-01 13:39:01', '1', '192.168.1.23', '2021-09-01 13:39:01', 'normal', '0');
+
 
 -- ----------------------------
 -- Records of wo_file
