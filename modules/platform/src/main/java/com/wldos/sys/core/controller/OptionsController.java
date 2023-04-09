@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.base.NoRepoController;
 import com.wldos.conf.PropertiesReader;
-import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.support.system.entity.WoOptions;
 import com.wldos.sys.base.service.OptionsNoRepoService;
 import lombok.extern.slf4j.Slf4j;
 

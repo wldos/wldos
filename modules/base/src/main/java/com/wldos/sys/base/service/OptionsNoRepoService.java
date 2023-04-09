@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
 
 import com.wldos.base.NoRepoService;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.sys.base.entity.WoOptions;
-import com.wldos.sys.base.enums.OptionTypeEnum;
+import com.wldos.support.system.OptionsOpener;
+import com.wldos.support.system.entity.WoOptions;
+import com.wldos.support.system.enums.OptionTypeEnum;
 import com.wldos.sys.base.repo.AppRepo;
 import com.wldos.sys.base.repo.OptionsRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class OptionsNoRepoService extends NoRepoService {
+public class OptionsNoRepoService extends NoRepoService implements OptionsOpener {
 
 	private final AppRepo appRepo;
 

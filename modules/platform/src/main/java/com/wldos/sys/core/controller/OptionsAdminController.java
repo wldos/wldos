@@ -11,7 +11,7 @@ package com.wldos.sys.core.controller;
 import java.util.List;
 
 import com.wldos.base.RepoController;
-import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.support.system.entity.WoOptions;
 import com.wldos.sys.base.service.OptionsService;
 
 import org.springframework.web.bind.annotation.GetMapping;

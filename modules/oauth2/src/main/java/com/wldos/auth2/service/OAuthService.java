@@ -41,7 +41,7 @@ import com.wldos.support.auth.vo.JWT;
 import com.wldos.support.auth.vo.Token;
 import com.wldos.support.auth.vo.UserInfo;
 import com.wldos.sys.base.dto.Tenant;
-import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.support.system.entity.WoOptions;
 import com.wldos.sys.base.enums.OAuthTypeEnum;
 import com.wldos.sys.base.service.AuthService;
 import com.wldos.sys.base.service.OptionsService;

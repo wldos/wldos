@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the AGPL or a commercial license.
- * For AGPL see License in the project root for license information.
+ * Licensed under the Apache License Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
  *
  */
 
-package com.wldos.sys.base.enums;
+package com.wldos.support.system.enums;
 
 /**
  * 配置选项类型。

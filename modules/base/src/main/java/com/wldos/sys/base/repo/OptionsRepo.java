@@ -10,7 +10,7 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
-import com.wldos.sys.base.entity.WoOptions;
+import com.wldos.support.system.entity.WoOptions;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;

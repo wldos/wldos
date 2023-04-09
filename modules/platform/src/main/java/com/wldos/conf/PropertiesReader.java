@@ -15,8 +15,8 @@ import javax.annotation.PostConstruct;
 
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.PropertiesDyn;
-import com.wldos.sys.base.entity.WoOptions;
-import com.wldos.sys.base.enums.OptionTypeEnum;
+import com.wldos.support.system.entity.WoOptions;
+import com.wldos.support.system.enums.OptionTypeEnum;
 import com.wldos.sys.base.service.OptionsNoRepoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +56,8 @@ public class PropertiesReader {
 	@PostConstruct
 	private void initialDBPropsSrc() {
 		try {
-			Map<String, String> propertyMap = this.service.getAllSysOptionsByOptionType(OptionTypeEnum.AUTO_RELOAD.getValue())
-					.stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));
 
-			this.propsDyn.initialDBProps(this.env, propertyMap, this.propertyName, this.contextRefresher);
+			this.propsDyn.initialDBProps(this.env, this.propertyName, this.contextRefresher, this.service);
 		}
 		catch (Exception e) {
 			System.out.println("Error during database properties load" + ObjectUtils.string(e.getMessage()));
