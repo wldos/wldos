@@ -95,9 +95,6 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	@Value("${wldos.version:v2.0}")
 	private String wldosVersion;
 
-	@Value("${gateway.ignore.path:}")
-	private String pathIgnore;
-
 	private final AuthService authService;
 
 	private final OrgRepo orgRepo;
@@ -110,8 +107,6 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 
 	private final UserMetaService userMetaService;
 
-	private List<String> excludeUris;
-
 	public UserService(AuthService authService, OrgRepo orgRepo, OrgUserRepo orgUserRepo, CompanyRepo companyRepo, DomainService domainService, UserMetaService userMetaService) {
 		this.authService = authService;
 		this.orgRepo = orgRepo;
@@ -119,11 +114,6 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		this.companyRepo = companyRepo;
 		this.domainService = domainService;
 		this.userMetaService = userMetaService;
-	}
-
-	@PostConstruct
-	private void init() {
-		this.excludeUris = Arrays.asList(pathIgnore.split(","));
 	}
 
 	/**
@@ -699,11 +689,8 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	}
 
 	public String checkRoute(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request) {
-		return this.authService.authorityRouteCheck(route, userId, domainId, tenantId, request, this.excludeUris);
+		return this.authService.authorityRouteCheck(route, userId, domainId, tenantId, request);
 	}
-
-	@Value("${wldos_dyn_route:}")
-	private String dynRoutePath;
 
 	/**
 	 * 查询动态路由配置
@@ -712,7 +699,6 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	 * @return 动态路由配置
 	 */
 	public Map<String, DynSet> queryDynRoute(Long domainId) {
-		Map<String, String> routePath = this.resJson.readEntity(this.dynRoutePath, new TypeReference<Map<String, String>>(){});
-		return this.authService.queryDynRoute(domainId, routePath);
+		return this.authService.queryDynRoute(domainId);
 	}
 }

@@ -25,8 +25,8 @@ import java.util.jar.JarFile;
 
 import com.wldos.common.Constants;
 import com.wldos.support.storage.utils.StoreUtils;
-import com.wldos.support.system.ResourceLoader;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -87,10 +87,13 @@ public class PluginManager {
 	@SneakyThrows
 	private List<Plugin> getPlugins() {
 		List<Plugin> pluginList = new ArrayList<>();
-		String extendJarPath = "/include/wldos-agent-release.jar"; // 使用jar是为了以接口的形式合法开源
-		ClassPathResource loader = new ClassPathResource(extendJarPath);
-		try (InputStream jarStream = loader.getInputStream()) {
-			String resPath = ResourceLoader.appHome() + Constants.DIRECTORY_TEMP_NAME + extendJarPath;
+
+		InputStream jarStream = null;
+		try {
+			ClassPathResource loader = new ClassPathResource("/include/wldos-agent-release.jar");
+			jarStream = loader.getInputStream();
+
+			String resPath = System.getProperty("wldos.platform.web-inf") + File.separator + Constants.DIRECTORY_TEMP_NAME + File.separator+"include"+File.separator+"wldos-agent-release.jar";
 
 			StoreUtils.saveAsFile(jarStream, resPath);
 
@@ -108,6 +111,10 @@ public class PluginManager {
 		}
 		catch (Exception e) {
 			throw new RuntimeException("加载框架扩展异常", e);
+		} finally {
+			if (jarStream != null) {
+				jarStream.close();
+			}
 		}
 
 		return pluginList;

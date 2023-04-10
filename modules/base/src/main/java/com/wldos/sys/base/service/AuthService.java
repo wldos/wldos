@@ -130,11 +130,10 @@ public class AuthService implements AuthOpener {
 	 * 查询动态路由配置
 	 *
 	 * @param domainId 域名id
-	 * @param routePath 动态路由路径映射表
 	 * @return 动态路由配置
 	 */
-	public Map<String, DynSet> queryDynRoute(Long domainId, Map<String, String> routePath) {
-		return this.authOpener.queryDynRoute(this.termService, this.domainResourceRepo, routePath, domainId);
+	public Map<String, DynSet> queryDynRoute(Long domainId) {
+		return this.authOpener.queryDynRoute(this.termService, this.domainResourceRepo, domainId);
 	}
 
 	/**
@@ -143,7 +142,7 @@ public class AuthService implements AuthOpener {
 	 * 如果是鉴权路由 先检查token，游客返回401
 	 * 已登录检查是否有权限，无权限返回403，否则返回200
 	 */
-	public String authorityRouteCheck(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request, List<String> excludeUrls) {
-		return this.authOpener.authorityRoute(route, userId, domainId, tenantId, request, excludeUrls, this);
+	public String authorityRouteCheck(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request) {
+		return this.authOpener.authorityRoute(route, userId, domainId, tenantId, request, this);
 	}
 }

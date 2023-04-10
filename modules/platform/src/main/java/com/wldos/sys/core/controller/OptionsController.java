@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.base.NoRepoController;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.conf.PropertiesReader;
 import com.wldos.support.system.entity.WoOptions;
 import com.wldos.sys.base.service.OptionsNoRepoService;
@@ -51,6 +52,7 @@ public class OptionsController extends NoRepoController<OptionsNoRepoService> {
 	@PostMapping("config")
 	public String configSysOptions(@RequestBody Map<String, Object> config) {
 		Map<String, String> propertyMap = this.service.configSysOptions(config);
+
 		this.propertiesReader.dynSetPropsSrc(propertyMap);
 		return this.resJson.ok("ok");
 	}

@@ -8,6 +8,7 @@
 
 package com.wldos.plugin;
 
+import java.io.File;
 import java.net.URLClassLoader;
 
 import org.springframework.boot.ConfigurableBootstrapContext;
@@ -15,6 +16,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 @SuppressWarnings("unused")
 public class DynLoadPluginListener implements SpringApplicationRunListener {
@@ -26,8 +29,8 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 	}
 
 	@Override
-	public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment configurableEnvironment) {
-		pluginManager.setClassLoader((URLClassLoader) configurableEnvironment.getClass().getClassLoader());
+	public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment env) {
+		pluginManager.setClassLoader((URLClassLoader) env.getClass().getClassLoader());
 	}
 
 	@Override
@@ -35,8 +38,27 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 	}
 
 	@Override
-	public void contextLoaded(ConfigurableApplicationContext configurableApplicationContext) {
-		pluginManager.register(configurableApplicationContext);
+	public void contextLoaded(ConfigurableApplicationContext context) {
+		String root;
+		String inf;
+		try {
+			File webINF = new ClassPathResource("/wldos.lic").getFile().getParentFile().getParentFile();
+			root = webINF.getParentFile().getAbsolutePath();
+			inf = webINF.getAbsolutePath();
+		} catch (Exception e) {
+			try { // for macOs
+				Resource resource = context.getResource("classpath:wldos.lic");
+				File webINF = resource.getFile().getParentFile().getParentFile();
+				root = webINF.getParentFile().getAbsolutePath();
+				inf = webINF.getAbsolutePath();
+			} catch (Exception ignored) {
+				root = "";
+				inf = "";
+			}
+		}
+		System.setProperty("wldos.platform.root", root);
+		System.setProperty("wldos.platform.web-inf", inf);
+		pluginManager.register(context);
 	}
 
 	@Override

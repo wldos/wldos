@@ -109,9 +109,8 @@ public interface AuthOpener {
 	 * @param domainId 域名id
 	 * @return 动态路由配置
 	 */
-	default Map<String, DynSet> queryDynRoute(TermOpener termOpener, DomainResourceOpener domainResourceRepo,
-			Map<String, String> routePath, Long domainId) {return null;}
+	default Map<String, DynSet> queryDynRoute(TermOpener termOpener, DomainResourceOpener domainResourceRepo, Long domainId) {return null;}
 
-	default String authorityRoute(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request, List<String> excludeUris,
+	default String authorityRoute(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request,
 			AuthOpener authService) {return null;}
 }

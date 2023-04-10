@@ -8,8 +8,6 @@
 
 package com.wldos.conf;
 
-import java.nio.charset.StandardCharsets;
-
 import javax.sql.DataSource;
 
 import com.wldos.sys.base.service.OptionsNoRepoService;
@@ -32,7 +30,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
  * @version 1.0
  */
 @Configuration
-@Slf4j
 public class CustomDataSourceInitializer {
 
 	@Value("classpath:init.sql")
@@ -47,26 +44,23 @@ public class CustomDataSourceInitializer {
 	@Bean
 	public DataSourceInitializer dataSourceInitializer(final DataSource dataSource) {
 		final DataSourceInitializer initializer = new DataSourceInitializer();
-		// 设置数据源
 		initializer.setDataSource(dataSource);
 		initializer.setDatabasePopulator(databasePopulator());
 		return initializer;
 	}
 
 	private DatabasePopulator databasePopulator() {
-		final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		final ResourceDatabasePopulator populate = new ResourceDatabasePopulator();
 
 		try {
 			this.service.getSystemOptions();
 		}
 		catch (DataAccessException ignored) {
-			log.warn("将执行初始化脚本: classpath:init.sql");
-			populator.setSqlScriptEncoding("UTF-8");
-			populator.addScripts(sql);
+			populate.setSqlScriptEncoding("UTF-8");
+			populate.addScripts(sql);
 		}
-		catch (Exception ignored) {
-		}
+		catch (Exception ignored) {}
 
-		return populator;
+		return populate;
 	}
 }

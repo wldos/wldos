@@ -29,6 +29,7 @@ import com.wldos.support.storage.repo.FileRepo;
 import com.wldos.support.storage.utils.FileTypeUtils;
 import com.wldos.support.storage.utils.StoreUtils;
 import com.wldos.support.storage.vo.FileInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 1.0
  */
 @RefreshScope
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class NoRepoFileService {
@@ -194,6 +196,7 @@ public class NoRepoFileService {
 	 * @throws IOException io异常
 	 */
 	public void storeFile(InputStream src, String filePathName) throws IOException {
+		log.info("上传文件：{}", filePathName);
 		StoreUtils.saveAsFile(src, filePathName);
 	}
 
@@ -225,7 +228,7 @@ public class NoRepoFileService {
 	 * @return 文件完整web地址
 	 */
 	public String genOssUrl(String storeUrl, FileAccessPolicyEnum accessPolicy) {
-		return storeUrl + this.getVirtualPath(accessPolicy);
+		return storeUrl + StoreUtils.urlSeparator + this.getVirtualPath(accessPolicy);
 	}
 
 	/**
@@ -236,7 +239,7 @@ public class NoRepoFileService {
 	 * @return 文件完整web地址
 	 */
 	public String genWebUrl(String storeUrl, String filePath) {
-		return storeUrl + this.getVirtualPath() + filePath;
+		return storeUrl + StoreUtils.urlSeparator + this.getVirtualPath() + filePath;
 	}
 
 	/**
@@ -255,7 +258,7 @@ public class NoRepoFileService {
 	 * @return 文件存储路径
 	 */
 	public String getRealStorePath() {
-		return this.uploadPath + this.getVirtualPath();
+		return this.uploadPath + StoreUtils.fileSeparator + this.getVirtualPath();
 	}
 
 	private String getVirtualPath() {
@@ -263,7 +266,7 @@ public class NoRepoFileService {
 	}
 
 	private String getVirtualPath(FileAccessPolicyEnum accessPolicy) {
-		return accessPolicy.equals(FileAccessPolicyEnum.PUBLIC) ? StoreUtils.PUBLIC_AREA
-				: StoreUtils.PRIVATE_AREA;
+		return (accessPolicy.equals(FileAccessPolicyEnum.PUBLIC) ? StoreUtils.PUBLIC_AREA
+				: StoreUtils.PRIVATE_AREA);
 	}
 }

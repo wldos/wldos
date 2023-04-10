@@ -21,4 +21,5 @@ import com.wldos.support.system.entity.WoOptions;
  */
 public interface OptionsOpener {
 	List<WoOptions> getAllSysOptionsByOptionType(String optionType);
+	String getWebRoot();
 }

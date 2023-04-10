@@ -56,7 +56,6 @@ public class PropertiesReader {
 	@PostConstruct
 	private void initialDBPropsSrc() {
 		try {
-
 			this.propsDyn.initialDBProps(this.env, this.propertyName, this.contextRefresher, this.service);
 		}
 		catch (Exception e) {

@@ -110,7 +110,7 @@ public class EdgeGateWayFilter implements Filter {
 		this.excludeUris = Arrays.asList(pathIgnore.split(","));
 		assert tokenUri != null;
 		this.verifyTokenUris = Arrays.asList(tokenUri.split(","));
-		this.staticUri = StoreUtils.PUBLIC_AREA;
+		this.staticUri = "/" + StoreUtils.PUBLIC_AREA;
 		assert logUri != null;
 		this.recLogUris = Arrays.asList(logUri.split(","));
 		this.domainService = ac.getBean(DomainService.class);

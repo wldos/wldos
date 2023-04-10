@@ -35,11 +35,15 @@ public class StoreUtils {
 
 	public static final String fileSecurityPolicyKey = "isOss";
 
+	public static final String fileSeparator = File.separator;
+
+	public static final String urlSeparator = "/";
+
 	/** 静态资源区，公开访问, 物理存储根路径下再创建一级，方便权限控制等 */
-	public static final String PUBLIC_AREA = "/" + FileAccessPolicyEnum.PUBLIC;
+	public static final String PUBLIC_AREA = FileAccessPolicyEnum.PUBLIC.toString();
 
 	/** 私密文件区，必须登陆，必须检查属主 */
-	public static final String PRIVATE_AREA = "/" + FileAccessPolicyEnum.PRIVATE;
+	public static final String PRIVATE_AREA = FileAccessPolicyEnum.PRIVATE.toString();
 
 	/** 日期格式化对象 */
 	public static final DateFormat MONTH_FORMAT = new SimpleDateFormat("/yyyy/MM/ddHHmmss");

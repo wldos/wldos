@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
  */
 @RefreshScope
 @Component
-class Base {
+public class Base {
 	/** 缓存变量用，Redis替代方案 */
 	@Autowired
 	protected ICache cache;
@@ -63,6 +63,9 @@ class Base {
 	/** Redis单机缓存模板 */
 	@Autowired
 	protected StringRedisTemplate stringRedisTemplate;
+
+	/** 系统根目录 */
+	protected String webRoot;
 
 	/** 判断当前系统是否多租户模式 */
 	@Value("${wldos_system_multitenancy_switch:true}")
@@ -113,6 +116,9 @@ class Base {
 	protected Logger getLog() {
 		if (log == null) {
 			log = LoggerFactory.getLogger(this.getClass());
+		}
+		if (this.webRoot == null) {
+			this.setWebRoot(System.getProperty("wldos.platform.root"));
 		}
 		return log;
 	}
@@ -182,6 +188,14 @@ class Base {
 			this.getLog().error("json解析异常={} {}", value, e.getMessage());
 			return false;
 		}
+	}
+
+	public String getWebRoot() {
+		return webRoot;
+	}
+
+	public void setWebRoot(String webRoot) {
+		this.webRoot = webRoot;
 	}
 
 	// 定义application全局变量，存储hook
