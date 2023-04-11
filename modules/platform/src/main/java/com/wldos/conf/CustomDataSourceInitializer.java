@@ -11,7 +11,6 @@ package com.wldos.conf;
 import javax.sql.DataSource;
 
 import com.wldos.sys.base.service.OptionsNoRepoService;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

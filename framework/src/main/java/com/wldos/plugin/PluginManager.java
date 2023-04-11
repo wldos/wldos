@@ -26,7 +26,6 @@ import java.util.jar.JarFile;
 import com.wldos.common.Constants;
 import com.wldos.support.storage.utils.StoreUtils;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
