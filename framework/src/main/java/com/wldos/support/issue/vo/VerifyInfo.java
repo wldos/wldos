@@ -9,6 +9,7 @@
 package com.wldos.support.issue.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.wldos.support.issue.verify.VerifyEnv;
@@ -91,7 +92,7 @@ public class VerifyInfo implements Serializable {
 	}
 
 	public List<String> getIpAddress() {
-		return ipAddress;
+		return ipAddress == null ? new ArrayList<>() : ipAddress;
 	}
 
 	public List<String> getMacAddress() {
