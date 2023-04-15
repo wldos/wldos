@@ -22,11 +22,14 @@ import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.auth.vo.SecQuestModifyParams;
 import com.wldos.base.NoRepoController;
+import com.wldos.common.Constants;
+import com.wldos.support.auth.KeyConfig;
 import com.wldos.sys.core.vo.User;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -44,12 +47,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("login")
 @RestController
 public class LoginAuthController extends NoRepoController<LoginAuthService> {
+	private final KeyConfig keyConfig;
+
+	public LoginAuthController(KeyConfig keyConfig) {
+		this.keyConfig = keyConfig;
+	}
+
+	@GetMapping("encrypt")
+	public String fetchPubKey() {
+		byte[] pubKey = this.keyConfig.getUserPubKey();
+		return this.resJson.ok(pubKey == null ? "" : KeyConfig.toHexString(pubKey));
+	}
 
 	@PostMapping("account")
-	public Login loginAuth(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams, @Value("${passwd.hexKey.code}") String hexKeyCode) {
+	public Login loginAuth(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams) {
 
 		getLog().info("{} login in ", loginAuthParams.getUsername());
-		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
+		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request);
 		if (user == null) {
 			getLog().info("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
@@ -61,11 +75,11 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 	}
 
 	@PostMapping("login4mobile")
-	public Login loginAuthMobile(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams, @Value("${passwd.hexKey.code}") String hexKeyCode) {
+	public Login loginAuthMobile(HttpServletRequest request, @RequestBody LoginAuthParams loginAuthParams) {
 
 		getLog().info("{} login in ", loginAuthParams.getUsername());
 		// todo 改造为手机验证码登录验证逻辑
-		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request, hexKeyCode);
+		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request);
 		if (user == null) {
 			getLog().info("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
@@ -77,7 +91,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 	}
 
 	@DeleteMapping("logout")
-	public User logout(@RequestHeader(value = "${token.access.header}") String token) {
+	public User logout(@RequestHeader(value = Constants.TOKEN_ACCESS_HEADER) String token) {
 		return this.service.logout(token, this.getDomainId());
 	}
 

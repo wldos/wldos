@@ -121,4 +121,9 @@ public final class Constants {
 	public static final String OAUTH_SETTINGS_PREFIX = "oauth_login_";
 
 	public static final String DIRECTORY_TEMP_NAME = "temp";
+
+	public static final String TOKEN_ACCESS_HEADER = "X-CU-AccessToken-WLDOS";
+
+	// 约定的前端domain请求头名称，用于多站点场景下获取授权域，app端和web端的实现方式略有不同：app用app_key缓存唯一授权domain，web用浏览器判定
+	public static final String WLDOS_DOMAIN_HEADER = "domain-wldos";
 }

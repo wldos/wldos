@@ -87,10 +87,10 @@ public class Base {
 	@Value("${wldos_req_protocol:https}")
 	protected String reqProtocol;
 
-	@Value("${token.access.header:X-CU-AccessToken-Default}")
+	@Value("${token.access.header:"+Constants.TOKEN_ACCESS_HEADER+"}")
 	protected String tokenHeader;
 
-	@Value("${wldos.domain.header:domain-default}")
+	@Value("${wldos.domain.header:"+Constants.WLDOS_DOMAIN_HEADER+"}")
 	protected String domainHeader;
 
 	/**

@@ -22,6 +22,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wldos.common.Constants;
 import com.wldos.common.exception.BaseException;
 import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultJson;
@@ -96,15 +97,17 @@ public class EdgeGateWayFilter implements Filter {
 	public void init(FilterConfig filterConfig) {
 		ServletContext ctx = filterConfig.getServletContext();
 		ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext(ctx);
-		assert ac != null;
+		if (ac == null)
+			return;
+
 		Environment env = ac.getEnvironment();
 
 		String pathIgnore = env.getProperty("gateway.ignore.path");
 		String tokenUri = env.getProperty("gateway.token.path");
 		String logUri = env.getProperty("gateway.log.path");
 		this.proxyPrefix = env.getProperty("gateway.proxy.prefix");
-		this.domainHeader = env.getProperty("wldos.domain.header");
-		this.tokenHeader = env.getProperty("token.access.header");
+		this.domainHeader = Constants.WLDOS_DOMAIN_HEADER;
+		this.tokenHeader = Constants.TOKEN_ACCESS_HEADER;
 
 		assert pathIgnore != null;
 		this.excludeUris = Arrays.asList(pathIgnore.split(","));

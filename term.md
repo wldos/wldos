@@ -2,7 +2,7 @@ WLDOS®软件商业授权协议
 
 当您以任何形式使用WLDOS®软件及其任何衍生软件时，默认您遵循以下服务条款：
 
-1.不得应用于危害国家安全、荣誉和利益的行为，不能以任何形式用于非法为目的的用途。
+1.不得应用于危害国家安全、荣誉和利益的行为，不能以任何形式用于非法为目的的用途，如有违反与WLDOS官方无关。
 
 2.要闭源使用本软件的未授权程序、代码或其他资源等必须付费获取WLDOS®官方的商业授权，付费之前请确认已通过免费版了解和试用“产品”，并确认产品功能符合您的需求；
 
@@ -16,13 +16,16 @@ WLDOS®软件商业授权协议
 
 5.若您已经购买本产品许可文件或以其它方式获得的许可文件，将被视为您对本服务条款全部的完全接受，如果您未能遵守本服务条款，您的许可授权将被终止，许可的权利将被收回，同时您应承担相应法律责任。
 
+6.在本软件中使用的商标和Logo归WLDOS软件官方所有，您在商业应用中不能直接使用，除非有WLDOS官方的授权。
+
 WLDOS® software Business license agreement
 
 When you use WLDOS® software and any derivative software in any form, you will abide by
 the following terms of service by default:
 
-1. It shall not be applied to acts endangering national security, honor and interests, and
-   shall not be used in any form for illegal purposes.
+1. It shall not be applied to actions that endanger national security, honor, and
+   interests, and shall not be used in any form for illegal purposes. Any violation shall
+   not be related to the official WLDOS.
 
 2. To close the source, you must pay for the official business license of WLDOS. Before
    paying, please confirm that you have learned and tried the "product" through the free
@@ -47,3 +50,5 @@ Once the license document is issued, no return service will be provided.
    other means, it will be deemed that you fully accept the terms of service. If you fail
    to comply with the terms of service, your license will be terminated, your license
    right will be withdrawn, and you shall bear the corresponding legal responsibility.
+6. The trademarks and logos used in this software are officially owned by WLDOS software
+   and cannot be directly used in commercial applications unless authorized by WLDOS.

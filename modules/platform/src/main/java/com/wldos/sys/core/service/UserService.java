@@ -422,10 +422,10 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		return "ok";
 	}
 
-	@Value("${token.access.header}")
+	@Value("${token.access.header:"+Constants.TOKEN_ACCESS_HEADER+"}")
 	private String tokenHeader;
 
-	@Value("${wldos.domain.header}")
+	@Value("${wldos.domain.header:"+Constants.WLDOS_DOMAIN_HEADER+"}")
 	private String domainHeader;
 
 	/**

@@ -33,8 +33,8 @@
 	<url>https://www.wldos.com</url>
 	<licenses>
 		<license>
-			<name>AGPL, Version 3</name>
-			<url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
 		</license>
 	</licenses>
 	<developers>

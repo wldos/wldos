@@ -45,4 +45,6 @@ public interface LoginUtils extends PasswordEncoder {
 	 * @return boolean 是否匹配
 	 */
 	boolean verify(String loginName, String passwdInput, String passwdEnc, String hexKeyCode);
+
+	boolean verifyRSA(String passwdInput, String passwdEnc);
 }

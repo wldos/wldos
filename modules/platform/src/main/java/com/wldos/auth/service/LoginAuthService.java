@@ -94,10 +94,9 @@ public class LoginAuthService extends NoRepoService {
 	 * @param comId 用户主企业id
 	 * @param loginAuthParams 登陆参数
 	 * @param request 请求
-	 * @param hexKeyCode 十六进制加密key
 	 * @return 登录实例
 	 */
-	public Login login(String domain, Long domainId, Long comId, LoginAuthParams loginAuthParams, HttpServletRequest request, String hexKeyCode) {
+	public Login login(String domain, Long domainId, Long comId, LoginAuthParams loginAuthParams, HttpServletRequest request) {
 		Login user = new Login();
 		// 先校验验证码
 		String verifyCode = loginAuthParams.getVerifyCode();
@@ -116,7 +115,7 @@ public class LoginAuthService extends NoRepoService {
 			}
 		}
 
-		UserInfo userInfo = this.validateLogin(loginAuthParams, hexKeyCode);
+		UserInfo userInfo = this.validateLogin(loginAuthParams);
 		if (ObjectUtils.isBlank(userInfo)) {
 			return null;
 		}
@@ -159,6 +158,23 @@ public class LoginAuthService extends NoRepoService {
 		}
 
 		if (loginUtils.verify(loginAuthParams.getUsername(), loginAuthParams.getPassword(), woUser.getPasswd(), hexKeyCode)) {
+			this.userCopier.copy(woUser, userInfo, null);
+			userInfo.setUsername(woUser.getLoginName());
+			Tenant tenant = this.userService.queryTenantInfoByTAdminId(userInfo.getId());
+			userInfo.setTenantId(tenant.getId());
+			return userInfo;
+		}
+		return null;
+	}
+
+	private UserInfo validateLogin(LoginAuthParams loginAuthParams) {
+		UserInfo userInfo = new UserInfo();
+		WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername());
+		if (woUser == null) {
+			return null;
+		}
+
+		if (loginUtils.verifyRSA(loginAuthParams.getPassword(), woUser.getPasswd())) {
 			this.userCopier.copy(woUser, userInfo, null);
 			userInfo.setUsername(woUser.getLoginName());
 			Tenant tenant = this.userService.queryTenantInfoByTAdminId(userInfo.getId());
