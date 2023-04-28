@@ -72,6 +72,7 @@ public class RoleController extends RepoController<RoleService, WoRole> {
 		String uip = this.getUserIp();
 
 		this.service.authRole(resIds, roleId, curUserId, uip);
+		this.refreshAuth();
 
 		return this.resJson.ok("ok");
 	}

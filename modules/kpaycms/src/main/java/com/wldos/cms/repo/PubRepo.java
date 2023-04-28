@@ -31,13 +31,23 @@ import org.springframework.data.repository.query.Param;
  */
 public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	/**
-	 * 根据发布内容id查询发布内容信息和行业门类
+	 * 根据发布内容id查询发布内容信息
 	 *
 	 * @param pid 发布内容id
 	 * @return 内容信息
 	 */
 	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.id=:pid")
 	ContModelDto queryContModel(Long pid);
+
+	/**
+	 * 根据发布内容id和域id查询发布内容信息
+	 *
+	 * @param pid 发布内容id
+	 * @param domainId 要匹配的域id
+	 * @return 内容信息
+	 */
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.id=:pid and p.domain_id=:domainId")
+	ContModelDto queryContModel(Long pid, Long domainId);
 
 	/**
 	 * 根据作品id、发布类型查询作品的某类子实体(图片附件、章节等)

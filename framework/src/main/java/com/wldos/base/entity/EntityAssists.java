@@ -39,7 +39,7 @@ public class EntityAssists {
 	 * @param newID 主键
 	 * @param operateUserId 操作人id
 	 * @param userIp 操作ip
-	 * @param isRepo 当要使用数据库默认值时使用框架jdbc方式,需要显式设置乐观锁设置为false，否则使用spring-data repo自动维护乐观锁为true
+	 * @param isRepo 使用框架jdbc模板方式执行insert,设置为false;使用spring-data-jdbc时设置为true
 	 * @param <T> 实体bean
 	 */
 	public static <T> void beforeInsert(T entity, Long newID, long operateUserId, String userIp, boolean isRepo) {

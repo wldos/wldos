@@ -30,6 +30,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -45,9 +46,15 @@ public class PluginManager {
 
 	private URLClassLoader classLoader;
 
+	private ConfigurableEnvironment env;
+
+	private ConfigurableApplicationContext context;
+
 	private static final List<Class<?>> springIOCAnnotations = new ArrayList<>();
 
 	private static final List<PluginBootStrap> bootClasses = new ArrayList<>();
+
+	private static PluginManager instance;
 
 	//可以放进spring容器的类的注解，待优化
 	static {
@@ -57,15 +64,22 @@ public class PluginManager {
 		springIOCAnnotations.add(Component.class);
 	}
 
-	public void setClassLoader(URLClassLoader urlClassLoader) {
+	private PluginManager() {}
+
+	public static PluginManager newInstance() {
+		return PluginManager.instance == null ? new PluginManager() : PluginManager.instance;
+	}
+
+	public void setClassLoader(URLClassLoader urlClassLoader, ConfigurableEnvironment env) {
 		this.classLoader = urlClassLoader;
+		this.env = env;
 	}
 
 	public void register(ConfigurableApplicationContext context) {
+		this.context = context;
 		List<Plugin> plugins = getPlugins();
 		plugins.forEach(plugin -> {
 			addJarToClasspath(plugin);
-
 			JarFile jarFile = readJarFile(plugin);
 			Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
 
@@ -74,6 +88,7 @@ public class PluginManager {
 			if (plugin.getScanPath() != null) {
 				//遍历jar包，将指定路径下的类添加到spring容器
 				traverseJar(jarEntryEnumeration, context, plugin);
+				traverseProps(jarEntryEnumeration, env, plugin);
 			}
 		});
 	}
@@ -92,7 +107,8 @@ public class PluginManager {
 			ClassPathResource loader = new ClassPathResource("/include/wldos-agent-release.jar");
 			jarStream = loader.getInputStream();
 
-			String resPath = System.getProperty("wldos.platform.web-inf") + File.separator + Constants.DIRECTORY_TEMP_NAME + File.separator+"include"+File.separator+"wldos-agent-release.jar";
+			String resPath = System.getProperty("wldos.platform.web-inf") + File.separator + Constants.DIRECTORY_TEMP_NAME
+					+ File.separator + "include" + File.separator + "wldos-agent-release.jar";
 
 			StoreUtils.saveAsFile(jarStream, resPath);
 
@@ -162,6 +178,26 @@ public class PluginManager {
 		}
 	}
 
+	private void traverseProps(Enumeration<JarEntry> jarEntryEnumeration, ConfigurableEnvironment env,
+			Plugin plugin) {
+		while (jarEntryEnumeration.hasMoreElements()) {
+			JarEntry jarEntry = jarEntryEnumeration.nextElement();
+			if (jarEntry.isDirectory() || !jarEntry.getName().endsWith(".properties")
+					|| plugin.getScanPath().stream().noneMatch(scanPath -> jarEntry.getName().startsWith(scanPath))) {
+				continue;
+			}
+
+			String className = jarEntry.getName().substring(0, jarEntry.getName().length() - 6);
+
+			try {
+				// 开始加载配置属性
+			}
+			catch (NoClassDefFoundError e) {
+				traverseProps(jarEntryEnumeration, env, plugin);
+			}
+		}
+	}
+
 	private void addJarToClasspath(Plugin plugin) {
 		try {
 			File file = new File(plugin.getUrl());
@@ -183,5 +219,17 @@ public class PluginManager {
 		catch (IOException e) {
 			throw new RuntimeException("获取插件中的文件信息失败，插件名称：" + plugin.getName(), e);
 		}
+	}
+
+	public URLClassLoader getClassLoader() {
+		return classLoader;
+	}
+
+	public ConfigurableEnvironment getEnv() {
+		return env;
+	}
+
+	public ConfigurableApplicationContext getContext() {
+		return context;
 	}
 }

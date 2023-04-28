@@ -155,10 +155,10 @@ public class InfoService extends NoRepoService {
 	 * @param isPreview 是否预览
 	 * @return 供求信息
 	 */
-	public Info infoDetail(Long pid, boolean isPreview) {
+	public Info infoDetail(Long pid, boolean isPreview, Long domainId) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
 
-		ContModelDto contBody = this.pubService.queryContModel(pid);
+		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid) : this.pubService.queryContModel(pid, domainId);
 		if (contBody == null)
 			return null;
 

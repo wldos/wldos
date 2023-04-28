@@ -632,8 +632,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 		// 类目或标签下的内容关联关系级联删除，相关内容如果没有其他分类，将默认按未分类处理，归属‘未分类’目录
 		List<KTermObject> termObjects = this.termObjectRepo.findAllByTermTypeId(term.getTermTypeId());
 		if (!ObjectUtils.isBlank(termObjects)) {
-			List<Long> ids = termObjects.parallelStream().map(KTermObject::getId).collect(Collectors.toList());
-			this.deleteByEntityAndIds(termObjects.get(0), false, ids.toArray());
+			this.deleteByEntityAndIds(termObjects.get(0), false, termObjects.parallelStream().map(KTermObject::getId).toArray());
 		}
 
 		// 删除term
@@ -951,11 +950,11 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 			return new ArrayList<>();
 		// 批量查询标签项
 		List<Term> terms = this.entityRepo.findAllByNameAndClassType(tagNames, TermTypeEnum.TAG.toString());
-		List<String> existsTermNames = terms.stream().map(Term::getName).collect(Collectors.toList());
+		List<String> existsTermNames = terms.stream().map(term -> term.getName().toLowerCase()).collect(Collectors.toList());
 		List<Long> tagIds;
 		if (terms.size() > 0) {
 			// 查找不存在的标签
-			List<String> noTagNames = tagNames.stream().filter(name -> !existsTermNames.contains(name)).collect(Collectors.toList());
+			List<String> noTagNames = tagNames.stream().filter(name -> !existsTermNames.contains(name.trim().toLowerCase())).collect(Collectors.toList());
 
 			if (ObjectUtils.isBlank(noTagNames)) // 全部存在，无需保存，直接复用
 				return terms.stream().map(Term::getTermTypeId).collect(Collectors.toList());

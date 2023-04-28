@@ -93,7 +93,7 @@ public class SpaceService extends NoRepoService {
 		List<Term> termsType = this.termService.findAllByObjectAndClassType(chapter.getParentId(), TermTypeEnum.CATEGORY.toString());
 		List<Long> termTypeIds = termsType.stream().map(Term::getTermTypeId).collect(Collectors.toList());
 
-		// 内容分类以作品为准，作品分类的变更不能超出创建时确定的行业门类（这是为了模型的一致性），另外已经被内容继承的作品分类不允许删除（暂未作约束）
+		// 内容分类以作品为准，另外已经被内容继承的作品分类不允许删除（暂未作约束）
 		// 首先，内容的分类应该继承作品，这是模型确定的结果，而标签则无此限制，标签仅是反映了当下内容的信息特征，可以脱离业务边界而设置。
 		this.termService.saveTermObject(termTypeIds, id);
 		// 标签同分类

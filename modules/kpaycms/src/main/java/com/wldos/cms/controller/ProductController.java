@@ -42,7 +42,7 @@ public class ProductController extends NoRepoController<KCMSService> {
 	 */
 	@GetMapping("product-{pid:\\d+}.html")
 	public Product productInfo(@PathVariable Long pid) {
-		return this.service.productInfo(pid, false);
+		return this.service.productInfo(pid, false, this.getDomainId());
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class ProductController extends NoRepoController<KCMSService> {
 	 */
 	@GetMapping("product-{id:[0-9]+}/preview")
 	public Product previewProduct(@PathVariable Long id) {
-		return this.service.productInfo(id, true);
+		return this.service.productInfo(id, true, null);
 	}
 
 	/**

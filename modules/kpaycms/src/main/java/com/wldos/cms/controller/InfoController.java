@@ -76,7 +76,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	 */
 	@GetMapping("info-{pid:\\d+}.html")
 	public Info info(@PathVariable Long pid) {
-		return this.service.infoDetail(pid, false);
+		return this.service.infoDetail(pid, false, this.getDomainId());
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	 */
 	@GetMapping("info-{id:[0-9]+}/preview")
 	public Info previewInfo(@PathVariable Long id) {
-		return this.service.infoDetail(id, true);
+		return this.service.infoDetail(id, true, null);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	 */
 	@GetMapping("info-{id:\\d+}")
 	public PubMeta preUpdate(@PathVariable Long id) {
-		return this.kcmsService.pubInfo(id);
+		return this.kcmsService.pubInfo(id, this.getDomainId());
 	}
 
 	/**

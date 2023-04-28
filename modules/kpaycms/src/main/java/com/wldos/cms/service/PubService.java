@@ -94,6 +94,18 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 	}
 
 	/**
+	 * 指定域查询内容主体
+	 *
+	 * @param pid 发布内容id
+	 * @param domainId 要匹配的域id
+	 * @return 内容主体
+	 */
+	public ContModelDto queryContModel(Long pid, Long domainId) {
+
+		return this.entityRepo.queryContModel(pid, domainId);
+	}
+
+	/**
 	 * 查询内容附件(文件、图片等附属子实体)
 	 *
 	 * @param pid 发布内容id

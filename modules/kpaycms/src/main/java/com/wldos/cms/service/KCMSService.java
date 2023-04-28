@@ -283,9 +283,9 @@ public class KCMSService extends NoRepoService {
 	 * @param isPreview 是否预览
 	 * @return 产品信息
 	 */
-	public Product productInfo(Long pid, boolean isPreview) {
+	public Product productInfo(Long pid, boolean isPreview, Long domainId) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
-		ContModelDto contBody = this.pubService.queryContModel(pid);
+		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid) : this.pubService.queryContModel(pid, domainId);
 		if (contBody == null)
 			return null;
 
@@ -661,12 +661,13 @@ public class KCMSService extends NoRepoService {
 	 *
 	 * @param pid 发布内容id
 	 * @param isPreview 是否预览
+	 * @param domainId 域id
 	 * @return 篇章实体
 	 */
-	public Article queryArticle(Long pid, boolean isPreview) { // @todo 以id访问业务对象，应该检查域隔离，防止恶意跨域请求，暂不处理
+	public Article queryArticle(Long pid, boolean isPreview, Long domainId) {
 		//@todo 已删除或发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
 
-		ContModelDto contBody = this.pubService.queryContModel(pid);
+		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid): this.pubService.queryContModel(pid, domainId);
 
 		if (contBody == null)
 			return null;
@@ -863,8 +864,8 @@ public class KCMSService extends NoRepoService {
 	 * @param pid 内容id
 	 * @return 内容信息
 	 */
-	public PubMeta pubInfo(Long pid) {
-		ContModelDto contBody = this.pubService.queryContModel(pid);
+	public PubMeta pubInfo(Long pid, Long domainId) {
+		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid) : this.pubService.queryContModel(pid, domainId);
 
 		if (contBody == null)
 			return null;

@@ -10,6 +10,7 @@ package com.wldos.plugin;
 
 import java.io.File;
 import java.net.URLClassLoader;
+import java.time.Duration;
 
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
@@ -25,12 +26,12 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 	private final PluginManager pluginManager;
 
 	public DynLoadPluginListener(SpringApplication application, String[] args) {
-		pluginManager = new PluginManager();
+		pluginManager = PluginManager.newInstance();
 	}
 
 	@Override
 	public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment env) {
-		pluginManager.setClassLoader((URLClassLoader) env.getClass().getClassLoader());
+		pluginManager.setClassLoader((URLClassLoader) env.getClass().getClassLoader(), env);
 	}
 
 	@Override
@@ -62,12 +63,12 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 	}
 
 	@Override
-	public void started(ConfigurableApplicationContext context) {
+	public void started(ConfigurableApplicationContext context, Duration timeTaken) {
 		pluginManager.boot(context);
 	}
 
 	@Override
-	public void running(ConfigurableApplicationContext context) {
+	public void ready(ConfigurableApplicationContext context, Duration timeTaken) {
 	}
 
 	@Override

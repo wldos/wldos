@@ -65,6 +65,22 @@ public class ResultJson {
 	}
 
 	/**
+	 * 返回ok字符串
+	 *
+	 * @return 转换的json
+	 */
+	public String ok() {
+		Result res = this.format("ok");
+		try {
+			return this.objectMapper.writeValueAsString(res);
+		}
+		catch (JsonProcessingException e) {
+			log.error("转换json异常，转换对象res={}", res);
+		}
+		return "";
+	}
+
+	/**
 	 * 返回json字符串
 	 *
 	 * @param obj 要转换的对象实例

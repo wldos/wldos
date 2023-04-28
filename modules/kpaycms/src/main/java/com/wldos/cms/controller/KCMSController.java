@@ -172,25 +172,25 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	}
 
 	/**
-	 * 指定id查看内容，检查付费设置
+	 * 指定id查看内容，检查付费设置，域隔离
 	 *
 	 * @param id 内容id
 	 * @return 当前内容
 	 */
 	@GetMapping("archives-{id:[0-9]+}.html")
 	public Article archivesId(@PathVariable Long id) {
-		return this.service.queryArticle(id, false);
+		return this.service.queryArticle(id, false, this.getDomainId());
 	}
 
 	/**
-	 * 预览内容
+	 * 预览内容，后端预览不加域隔离
 	 *
 	 * @param id 内容id
 	 * @return 当前内容
 	 */
 	@GetMapping("archives-{id:[0-9]+}/preview")
 	public Article previewArchive(@PathVariable Long id) {
-		return this.service.queryArticle(id, true);
+		return this.service.queryArticle(id, true, null);
 	}
 
 	/**
