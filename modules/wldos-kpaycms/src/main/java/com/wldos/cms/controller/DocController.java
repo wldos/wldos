@@ -55,12 +55,12 @@ public class DocController extends NoRepoController<DocService> {
 		return this.service.queryDocList(pageQuery);
 	}
 
-	@GetMapping("book/{bookId:\\d+}")
+	@GetMapping("book/{bookId:\\d+}.html")
 	public Doc curDocById(@PathVariable Long bookId) {
 		return this.service.queryDoc(bookId, this.getDomainId());
 	}
 
-	@GetMapping("book/{bookId:\\d+}/chapter/{chapterId:\\d+}")
+	@GetMapping("book/{bookId:\\d+}/chapter/{chapterId:\\d+}.html")
 	public Article curChapterByChapId(@PathVariable Long bookId, @PathVariable Long chapterId) {
 		return this.kcmsService.queryArticle(chapterId, false, this.getDomainId());
 	}

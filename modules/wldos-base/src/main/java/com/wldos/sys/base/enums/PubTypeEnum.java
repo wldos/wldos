@@ -37,7 +37,7 @@ public enum PubTypeEnum {
 	DOC("doc", "chapter", "文档"), // 特指知识库文档
 
 	ANNUAL("annual", "chapter", "年谱"), // 年谱
-	CLASS("class", "series", "教程"), // 教程
+	CLASS("class", "chapter", "教程"), // 教程
 	COOK("cook", "chapter", "菜谱"), // 菜谱
 	MUSIC("music", "chapter", "乐谱"), // 乐谱
 	MEDICAL("medical", "chapter", "药谱"), // 药谱

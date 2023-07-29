@@ -288,7 +288,7 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	 * @param id 元素内容id
 	 * @return 作品片段
 	 */
-	@GetMapping("element-{id:[0-9]+}")
+	@GetMapping("element-{id:[0-9]+}.html")
 	public Article elementRead(@PathVariable Long id) {
 		return this.service.readElement(id, false);
 	}
