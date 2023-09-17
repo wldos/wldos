@@ -2,7 +2,7 @@
  <img alt="WLDOS" src="https://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px; ">
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
-<h5 align="center" style="margin:30px 0 30px;font-size:20px;">让专业更有价值，聚焦、开放、管控你的应用生态</h5>
+<h5 align="center" style="margin:30px 0 30px;font-size:20px;">基于 WLDOS 开发 云物互联应用 聚焦、开放、管控你的生态</h5>
 <p align="center">
  <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V1.9" src="https://img.shields.io/badge/WLDOS-V1.9-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
@@ -12,26 +12,28 @@
 
 ### 项目介绍
 
-WLDOS（音：汉['wou'da'si]，World Operating System），是支持云、管、端的一体化云物互联支撑系统。<br/>  
-WLDOS®寓意：面向世界的系统，面向未来的系统，我的系统。<br/>
+WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力于为云物互联场景下的云、管、端应用提供基础支撑平台，适用于搭建各类网站、开发SaaS服务、研发业务中台等。<br/>
 
-WLDOS发展理念：高效、灵活、持续。
-
-解决痛点：想利用网络化拓展业务，对如何落地有困惑，需要一个可落地的软件搭建可持续扩展平台，同时不需要昂贵的基础设施。
+解决痛点：想利用线上技术拓展业务，对如何实现、落地有困惑，需要一个可落地的支撑底座搭建可持续扩展的平台，同时不需要昂贵的基础设施。
 
 **适合个人建站、企业建站、业务中台、研发平台和综合支撑系统，适合技术在起步阶段或想在云物互联领域开发项目的团队。**
 
-如果您觉得有前景，请<a href="https://gitee.com/wldos/wldos" style="color: red">star</a>我们!
+如果您觉得有价值，请<a href="https://gitee.com/wldos/wldos" style="color: red">star支持</a>我们！
 
 ### 项目特点
 
-低成本，仅需要通用基础设施，封装了陡峭的技术库以通用的技术风格面向开发人员，无需太多学习成本，开箱即用。
+1.深入浅出：  
+低成本，低门槛，仅需要传统基础设施，一线顶级架构师数十年磨一剑，封装陡峭的技术库以传统的技术风格面向开发人员，无需太多学习成本，开箱即用。
 
-1.干净：框架底层仅引用了springboot为主的开源包，形成了可持续优化的开发框架wldos-framework，在此基础上实现了wldos支撑平台，没有引入spring全家桶所造成的噪声，按需自研、从零开始有利于开发团队、项目的积累和成长。
+<br/>框架底层仅引用了springboot为主的开源库，形成了可持续优化的框架wldos-framework，基础上实现了wldos支撑平台，按需自研、从零开始有利于积累和成长。
 
-2.完整：包含底层到业务应用的完整产品线，是云物互联场景下的最佳实践，不迷信业内各种高大上的轮子，崇尚自主研发，屏蔽深奥实现细节降低技术门槛，以大家熟悉的技术范式实现高级的功能特性。
+2.灵活：   
+不迷信业内各种高大上的轮子，崇尚自主研发，屏蔽深奥实现细节降低技术门槛，以大家熟悉的技术范式实现高级的功能扩展能力，深度定制的接口支持灵活扩展。<br/>  
+基于springboot搭建，你可以随时定制自己的技术栈，比如引入mybatis作为orm框架 或者引入flowable作为你的业务流程引擎。<br/>  
+3.务实：  
+自主研发、自主运营，理论与实践相结合、研发与运营相结合，问题导向，以务实拥抱未来。
 
-3.真实：自主研发、自主运营，研发与运营同时进行的模式更务实。
+更多特点，请阅读代码。
 
 #### 技术交流
 
@@ -70,7 +72,6 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
   
 wldos-common：通用模块  
 wldos-framework：wldos开发框架
-wldos-platform-base: wldos支撑平台基础
 wldos-platform: wldos支撑平台    
 wldos-oauth2: wldos社会化登录模块    
 wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    

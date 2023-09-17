@@ -26,6 +26,8 @@ public class SeoCrumbs {
 
 	private List<Breadcrumb> crumbs;
 
+	private String pubType; // 用于框架级分类处理
+
 	public SeoCrumbs() {
 	}
 
@@ -33,11 +35,22 @@ public class SeoCrumbs {
 		return new SeoCrumbs(title, description, keywords, crumbs);
 	}
 
+	public static SeoCrumbs of(String title, String description, String keywords, String pubType) {
+		return new SeoCrumbs(title, description, keywords, pubType);
+	}
+
 	private SeoCrumbs(String title, String description, String keywords, List<Breadcrumb> crumbs) {
 		this.title = title;
 		this.description = description;
 		this.keywords = keywords;
 		this.crumbs = crumbs;
+	}
+
+	private SeoCrumbs(String title, String description, String keywords, String pubType) {
+		this.title = title;
+		this.description = description;
+		this.keywords = keywords;
+		this.pubType = pubType;
 	}
 
 	public String getTitle() {
@@ -70,5 +83,13 @@ public class SeoCrumbs {
 
 	public void setCrumbs(List<Breadcrumb> crumbs) {
 		this.crumbs = crumbs;
+	}
+
+	public String getPubType() {
+		return pubType;
+	}
+
+	public void setPubType(String pubType) {
+		this.pubType = pubType;
 	}
 }

@@ -1,17 +1,18 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
 package com.wldos.base;
 
 import java.util.List;
-import java.util.Map;
 
+import com.wldos.base.core.Base;
+import com.wldos.base.tools.CommonOperation;
 import com.wldos.common.dto.LevelNode;
+import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.ResultJson;
@@ -23,7 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 
 /**
- * 声明公共顶层service。
+ * 抽象基类service，不允许直接继承。
  */
 @Slf4j
 @SuppressWarnings({ "unused" })
@@ -96,34 +97,42 @@ abstract class BaseService extends Base {
 		this.commonOperate.dynamicUpdateByEntity(entity);
 	}
 
+	/* ************************************** 分页查询API start************************************************/
+
 	/**
-	 * 自定义分页查询，不带参数
+	 * 多表关联动态查询分页，动态绑定查询条件，用于自定义关联查询场景的复杂sql生成
+	 * 注意：约定sql中用到的所有表都存在标准驼峰格式名的实体bean，实体bean名必须是表名的驼峰格式化，也可以用覆盖所有查询条件的VO代替。
+	 * 支持查询条件类型：字符串（模糊匹配）、日期（单个）、其他类型（=），默认and连接，更多功能后续增加
 	 *
-	 * @param sql 执行的sql
-	 * @param currentPage 当前页号
-	 * @param pageSize 每页条数
-	 * @return 一页数据
+	 * @param vo 结果集映射bean
+	 * @param sqlNoWhere 任意自定义sql，可以是复杂查询sql。子查询存在where时，主sql最外层必须带where语句。
+	 * @param pageQuery 分页查询参数，可以指定查询条件、过滤条件、排序字段
+	 * @param sqlTables 用于声明sqlNoWhere中的表对应的bean类型和表别名，用于动态拼装查询条件，bean是能覆盖相关表查询条件的实体bean或者视图bean
+	 * @param <V> VO类
+	 * @return VO分页列表
 	 */
-	public List<Map<String, Object>> execQueryForPage(String sql, int currentPage, int pageSize) {
-		return this.commonOperate.execQueryForPage(sql, currentPage, pageSize, new Object[] {});
+	<V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
+		return this.commonOperate.execQueryForPage(vo, sqlNoWhere, pageQuery, sqlTables);
 	}
 
 	/**
-	 * 自定义分页查询支持排序、过滤，带参数和分页对象，返回对象级通用分页模板结构
+	 * 多表关联动态全量查询，查询条件、过滤条件、排序动态生成。
+	 * 支持查询条件类型：字符串（模糊匹配）、日期（单个）、其他类型（=），默认and连接，更多功能后续增加
 	 *
-	 * @param clazz 实体bean或领域bean，属性应该与sql返回结果集一致
-	 * @param sql 查询sql，可以自由组装任意复杂sql
-	 * @param sqlOrder 排序sql，查询总数时不宜排序，所以分开设置
-	 * @param pageQuery 分页查询参数
-	 * @param params 查询参数，查询条件和过滤参数来自pageQuery
-	 * @return 一页数据
+	 * @param vo 结果集映射bean
+	 * @param sqlNoWhere 任意自定义sql，可以是复杂查询sql。子查询存在where时，主sql最外层必须带where语句。
+	 * @param pageQuery 分页查询参数，可以指定查询条件、过滤条件、排序字段
+	 * @param sqlTables 用于声明sqlNoWhere中的表对应的bean类型和表别名，用于动态拼装查询条件，bean是能覆盖相关表查询条件的实体bean或者视图bean
+	 * @param <V> VO类
+	 * @return VO列表
 	 */
-	public <D> PageableResult<D> execQueryForPage(Class<D> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object... params) {
-		return this.commonOperate.execQueryForPage(clazz, sql, sqlOrder, pageQuery, params);
+	<V> List<V> execQueryForList(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
+		return this.commonOperate.execQueryForList(vo, sqlNoWhere, pageQuery, sqlTables);
 	}
 
 	/**
-	 * 根据父子关系表查询父表子集VO的分页，支持父子表的查询条件、排序、过滤。
+	 * 父子表查询父表子集VO的分页，支持父子表的查询条件、排序、过滤。
+	 * 父子表 又叫 主从表
 	 *
 	 * @param vo VO实例
 	 * @param pClass 父表实体bean的类型
@@ -142,7 +151,7 @@ abstract class BaseService extends Base {
 	}
 
 	/**
-	 * 根据父子关系表查询父表的分页，支持父子表的查询条件、排序、过滤。
+	 * 父子表查询父表的分页，支持父子表的查询条件、排序、过滤。
 	 *
 	 * @param pClass 父表实体bean的类型
 	 * @param cClass 子表实体bean的类型
@@ -159,7 +168,7 @@ abstract class BaseService extends Base {
 	}
 
 	/**
-	 * 根据父子关系表查询父表的分页，支持父子表的查询条件、排序、过滤。
+	 * 父子表查询父表的分页，支持父子表的查询条件、排序、过滤。
 	 *
 	 * @param pClass 父表实体bean的类型
 	 * @param cClass 子表实体bean的类型
@@ -174,7 +183,7 @@ abstract class BaseService extends Base {
 	}
 
 	/**
-	 * 根据父子关系表查询父表vo的分页或不分页，支持父子表的查询条件、排序、过滤。
+	 * 父子表查询父表vo的分页或全量结果集，支持父子表的查询条件、排序、过滤。
 	 *
 	 * @param vo VO实例
 	 * @param pClass 父表实体bean的类型
@@ -192,7 +201,7 @@ abstract class BaseService extends Base {
 	}
 
 	/**
-	 * 根据父子关系表查询VO列表，支持父子表的查询条件、排序、过滤。
+	 * 父子表查询VO列表，支持父子表的查询条件、排序、过滤。
 	 *
 	 * @param vo VO实例
 	 * @param pClass 父表实体bean的类型
@@ -207,6 +216,8 @@ abstract class BaseService extends Base {
 	public <P, C, V> List<V> execQueryForList(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, String... pTableAndCTableAndPIdKey) {
 		return this.commonOperate.execQueryForList(vo, pClass, cClass, pageQuery, pTableAndCTableAndPIdKey);
 	}
+
+	/* ************************************** 分页查询API end ************************************************/
 
 	/**
 	 * 安全起见，实时查询当前用户是否超级管理员
@@ -228,19 +239,20 @@ abstract class BaseService extends Base {
 		return this.commonOperate.isCanTrust(userId);
 	}
 
+	/* ************************************** sql操作API start************************************************/
+
 	/**
-	 * 基于单表指定参数获取查询sql，并绑定查询条件，用于单表、父子关联查询场景的复杂sql生成
-	 * 注意：约定生成的表查询sql的表别名默认为a。
+	 * 根据查询条件动态绑定自定义查询sql，用于自定义关联查询场景的复杂sql生成
+	 * 注意：约定sql中用到的所有表都存在标准驼峰格式名的实体bean，实体bean名必须是表名的驼峰格式化，也可以用覆盖所有查询条件的VO代替。
+	 * 支持查询条件类型：字符串（模糊匹配）、日期（单个）、其他类型（=），默认and连接，更多功能后续增加
 	 *
-	 * @param tableName 表名
-	 * @param entity 当前表对应的实体类型
+	 * @param sqlNoWhere 任意自定义sql，可以是复杂查询sql，子查询存在where时,主sql最外层必须带where语句
 	 * @param params 参数表寄存器
-	 * @param condition 查询条件
-	 * @param filter 过滤参数
+	 * @param pageQuery 查询条件、过滤条件
 	 * @return 查询sql
 	 */
-	protected StringBuilder querySqlByTable(String tableName, Class<?> entity, List<Object> params, Map<String, Object> condition, Map<String, List<Object>> filter) {
-		return this.commonOperate.querySqlByTable(tableName, entity, params, condition, filter);
+	protected StringBuilder genDynamicSql(String sqlNoWhere, List<Object> params, PageQuery pageQuery, SQLTable... sqlTables) {
+		return this.commonOperate.querySqlByTable(sqlNoWhere, sqlTables, params, pageQuery.getCondition(), pageQuery.getFilter());
 	}
 
 	/**
@@ -270,6 +282,8 @@ abstract class BaseService extends Base {
 		return this.commonOperate.existsSql(cAlias, entity, this.commonOperate.makeBaseExistsSql(cTable, cAlias, pAlias, pIdKey),
 				params, pageQuery.getCondition(), pageQuery.getFilter());
 	}
+
+	/* ************************************** sql操作API end************************************************/
 
 	/**
 	 * 通过父节点id查询所有子节点(含父节点自身)

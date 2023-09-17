@@ -48,6 +48,9 @@ public final class Constants {
 	/** 顶级分类ID，即无 */
 	public static final long TOP_TERM_ID = 0L;
 
+	/** 顶级分类别名 */
+	public static final String TOP_TERM_SLUG = "0";
+
 	/** 顶级评论ID */
 	public static final long TOP_COMMENT_ID = 0L;
 

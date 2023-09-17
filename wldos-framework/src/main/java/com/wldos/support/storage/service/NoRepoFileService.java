@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.wldos.base.IDGen;
+import com.wldos.base.tools.IDGen;
 import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.common.utils.ObjectUtils;

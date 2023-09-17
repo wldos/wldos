@@ -14,6 +14,7 @@ import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.DocItem;
 import com.wldos.cms.vo.MiniPub;
 import com.wldos.cms.vo.PubMember;
+import com.wldos.cms.vo.PubType;
 import com.wldos.support.cms.dto.ContModelDto;
 import com.wldos.support.cms.entity.KPubmeta;
 
@@ -150,7 +151,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param pid 帖子id
 	 * @return 上一篇
 	 */
-	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id < :pid order by id desc limit 1)")
+	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id < :pid order by id desc limit 1)")
 	MiniPub queryPrev(Long pid);
 
 	/**
@@ -160,7 +161,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param termTypeId 分类id
 	 * @return 上一篇
 	 */
-	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id < :pid and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id desc limit 1)")
+	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id < :pid and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id desc limit 1)")
 	MiniPub queryPrev(Long pid, Long termTypeId);
 
 	/**
@@ -169,7 +170,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param pid 帖子id
 	 * @return 下一篇
 	 */
-	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id > :pid order by id asc limit 1)")
+	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id > :pid order by id asc limit 1)")
 	MiniPub queryNext(Long pid);
 
 	/**
@@ -179,7 +180,7 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param termTypeId 分类id
 	 * @return 下一篇
 	 */
-	@Query("select * from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id > :pid and exists(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id asc limit 1)")
+	@Query("select * from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id > :pid and exists(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id asc limit 1)")
 	MiniPub queryNext(Long pid, Long termTypeId);
 
 	/**
@@ -210,21 +211,22 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	 * @param num 查询数量
 	 * @return 相关帖子
 	 */
-	@Query("select t.id, t.pub_title from k_pubs t where t.delete_flag='normal' and t.pub_type=:pubType and t.pub_status in ('publish', 'inherit') and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id in (:termTypeIds)) order by id desc limit 1,:num")
-	List<MiniPub> queryRelatedPubs(String pubType, List<Long> termTypeIds, int num);
+	@Query("select t.id, t.pub_title from k_pubs t where t.delete_flag='normal' and t.pub_type=:pubType and t.domain_id=:domainId and t.pub_status in ('publish', 'inherit') and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id in (:termTypeIds)) order by id desc limit 1,:num")
+	List<MiniPub> queryRelatedPubs(String pubType, Long domainId, List<Long> termTypeIds, int num);
 
 	@Modifying
 	@Query("update k_pubs set pub_status=:pubStatus where id=:id")
 	void changePubStatus(Long id, String pubStatus);
 
 	/**
-	 * 根据内容别名判断是否已被其他记录占用
+	 * 根据内容别名判断是否已被其他记录占用（不跨域）
 	 *
+	 * @param domainId 域id
 	 * @param pubName 内容别名
 	 * @return 是否
 	 */
-	@Query("select count(1) from k_pubs p where p.pub_name=:pubName and p.id != :pubId")
-	boolean existsDifPubByNameAndId(String pubName, Long pubId);
+	@Query("select count(1) from k_pubs p where p.domain_id = :domainId and p.pub_name=:pubName and p.id != IFNULL(:pubId, 0)") /* IFNULL(:pubId, 0) 保证null值可以在mysql正确工作，新增时为null，将导致查询结果为0*/
+	boolean existsDifPubByNameAndId(Long domainId, String pubName, Long pubId);
 
 	/**
 	 * 判断当前发布是否已存在相同别名
@@ -247,8 +249,11 @@ public interface PubRepo extends PagingAndSortingRepository<KPubs, Long> {
 	@Query("select count(1) from k_pubs p where p.pub_name is null and p.id = :pubId")
 	boolean pubNameIsNull(Long pubId);
 
-	@Query("select p.id from k_pubs p where p.pub_name = :pubName")
-	Long queryIdByPubName(@Param("pubName") String pubName);
+	@Query("select p.id from k_pubs p where p.domain_id = :domainId and p.pub_name = :pubName")
+	Long queryIdByPubName(Long domainId, @Param("pubName") String pubName);
+
+	@Query("select p.id, p.pub_type from k_pubs p where p.domain_id = :domainId and p.pub_name = :pubName and p.delete_flag = :deleteFlag limit 1")
+	PubType queryPubTypeByPubName(@Param("domainId") Long domainId, @Param("pubName") String pubName, @Param("deleteFlag") String deleteFlag);
 
 	boolean existsByIdAndPubStatusAndDeleteFlag(Long id, String pubStatus, String deleteFlag);
 }

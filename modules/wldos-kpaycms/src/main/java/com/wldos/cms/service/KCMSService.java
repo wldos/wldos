@@ -31,6 +31,7 @@ import com.wldos.cms.vo.MiniPub;
 import com.wldos.cms.vo.Pub;
 import com.wldos.cms.vo.PubMember;
 import com.wldos.cms.vo.PubMeta;
+import com.wldos.cms.vo.PubType;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
@@ -131,6 +132,24 @@ public class KCMSService extends NoRepoService {
 		// 列表样式：卡片式、存档式，卡片式要求的参数简约
 		Object listStyle = pageQuery.getCondition().get("listStyle");
 
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
+
+		return ListStyleEnum.archive.toString().equals(listStyle) ? this.pubService.queryArchives(pageQuery)
+				: this.pubService.queryPubWithExtList(pageQuery);
+	}
+
+	/**
+	 * 包含页面的作品列表页(存档模:，参数详细; 卡片模式，参数简约)
+	 * 不传listStyle默认是卡片模式
+	 *
+	 * @param pageQuery 页面参数
+	 * @return 分页数据
+	 */
+	public PageableResult<PubUnit> queryWorksListWithPage(PageQuery pageQuery) {
+		// 列表样式：卡片式、存档式，卡片式要求的参数简约
+		Object listStyle = pageQuery.getCondition().get("listStyle");
+
 		return ListStyleEnum.archive.toString().equals(listStyle) ? this.pubService.queryArchives(pageQuery)
 				: this.pubService.queryPubWithExtList(pageQuery);
 	}
@@ -147,7 +166,7 @@ public class KCMSService extends NoRepoService {
 	 * @param userId 用户id
 	 * @param userIp 用户ip
 	 */
-	public Long insertSelective(Pub pub, String pubType, Long userId, String userIp) {
+	public Long insertSelective(Pub pub, String pubType, Long userId, String userIp, Long domainId) {
 
 		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(pub.getId())) // 创建标题别名
 			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));
@@ -158,7 +177,7 @@ public class KCMSService extends NoRepoService {
 		this.pubCopier.copy(pub, pubs, null);
 		// 存在别名，自动加1设置不重复别名
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
-			pubs.setPubName(this.pubService.existsAutoDiffPubName(pubs.getPubName(), pubs.getId()));
+			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
 
 		pubs.setPubType(pubType);
 		// 属于可信者用户组的会员跳过审核直接发布
@@ -201,7 +220,7 @@ public class KCMSService extends NoRepoService {
 	 * @param userId user id
 	 * @param userIp user ip
 	 */
-	public void update(Pub pub, Long userId, String userIp) {
+	public void update(Pub pub, Long userId, String userIp, Long domainId) {
 		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(pub.getId()))
 			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));  // 创建标题别名
 
@@ -252,7 +271,7 @@ public class KCMSService extends NoRepoService {
 
 		// 设置不重复的别名
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
-			pubs.setPubName(this.pubService.existsAutoDiffPubName(pubs.getPubName(), pubs.getId()));
+			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
 
 		this.pubService.update(pubs);
 	}
@@ -528,6 +547,8 @@ public class KCMSService extends NoRepoService {
 	 * @return 分类存档列表页
 	 */
 	public PageableResult<PubUnit> queryArchivesPortal(PageQuery pageQuery) {
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
 
 		return this.pubService.queryArchives(pageQuery);
 	}
@@ -550,6 +571,9 @@ public class KCMSService extends NoRepoService {
 			this.filterByParentTermTypeId(ids, pageQuery);
 		}
 
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
+
 		return this.pubService.queryArchives(pageQuery);
 	}
 
@@ -560,6 +584,9 @@ public class KCMSService extends NoRepoService {
 	 * @return 分类存档列表页
 	 */
 	public PageableResult<PubUnit> queryArchivesDomain(PageQuery pageQuery) {
+
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
 
 		return this.pubService.queryArchives(pageQuery);
 	}
@@ -581,6 +608,9 @@ public class KCMSService extends NoRepoService {
 
 		this.filterByParentTermTypeId(ids, pageQuery);
 
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
+
 		return this.pubService.queryArchives(pageQuery);
 	}
 
@@ -593,6 +623,9 @@ public class KCMSService extends NoRepoService {
 	public PageableResult<PubUnit> queryArchivesTag(String slugTag, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugTag);
 		pageQuery.pushParam("termTypeId", termType.getId());
+
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
 
 		return this.pubService.queryArchives(pageQuery);
 	}
@@ -630,6 +663,9 @@ public class KCMSService extends NoRepoService {
 	public PageableResult<PubUnit> queryArchivesUserDomain(Long domainId, PageQuery pageQuery) {
 		pageQuery.pushParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
 
+		// 前台数据展现，排除页面类型
+		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
+
 		return this.pubService.queryArchivesUser(pageQuery);
 	}
 
@@ -646,13 +682,25 @@ public class KCMSService extends NoRepoService {
 	}
 
 	/**
-	 * 根据别名查询pubId
+	 * 根据别名查询内容
 	 *
 	 * @param pubName 发布内容别名
-	 * @return 发布id
+	 * @return 发布信息
 	 */
-	public Long queryIdByPubName(String pubName) {
-		return this.pubService.queryIdByPubName(pubName);
+	public Article queryContentByPubName(String pubName, Long domainId) {
+		if (ObjectUtils.isBlank(pubName))
+			return null;
+		// 返回id 和 发布类型
+		PubType pubType = this.pubService.queryPubTypeByPubName(domainId, pubName, DeleteFlagEnum.NORMAL.toString());
+		if (pubType == null) // 不存在返回null
+			return null;
+		// 是页面，按文章获取方式返回完整信息
+		if (PubTypeEnum.PAGE.getName().equals(pubType.getPubType())) {
+			return this.queryArticle(pubType.getId(), false, domainId);
+		}
+
+		// 如果不是页面，直接返回基本信息
+		return Article.of(pubType);
 	}
 
 	/**
@@ -751,9 +799,9 @@ public class KCMSService extends NoRepoService {
 			return;
 		List<Term> tags = article.getTags();
 		List<Long> tagTermTypeIds = ObjectUtils.isBlank(tags) ? termTypeIds : tags.parallelStream().map(Term::getTermTypeId).collect(Collectors.toList());
-		List<MiniPub> relPubs = this.pubService.queryRelatedPubs(pubType, tagTermTypeIds, 8);
+		List<MiniPub> relPubs = this.pubService.queryRelatedPubs(pubType, article.getDomainId(), tagTermTypeIds, 8);
 		if (ObjectUtils.isBlank(relPubs)) {
-			relPubs = this.pubService.queryRelatedPubs(pubType, termTypeIds, 8);
+			relPubs = this.pubService.queryRelatedPubs(pubType, article.getDomainId(), termTypeIds, 8);
 		}
 		article.setRelPubs(relPubs);
 	}

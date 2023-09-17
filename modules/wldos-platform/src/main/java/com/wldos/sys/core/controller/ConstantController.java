@@ -7,7 +7,7 @@
 
 package com.wldos.sys.core.controller;
 
-import com.wldos.base.DefaultNoRepoService;
+import com.wldos.base.tools.DefaultNoRepoService;
 import com.wldos.base.NoRepoController;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.support.storage.IStore;

@@ -8,10 +8,8 @@
 package com.wldos.sys.core.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wldos.auth.model.AccSecurity;
 import com.wldos.auth.vo.AccountInfo;
 import com.wldos.base.RepoController;
@@ -20,7 +18,6 @@ import com.wldos.support.resource.vo.DynSet;
 import com.wldos.sys.base.vo.Domain;
 import com.wldos.sys.core.entity.WoUser;
 import com.wldos.sys.core.service.UserService;
-import com.wldos.sys.core.vo.Router;
 import com.wldos.sys.core.vo.User;
 
 import org.springframework.web.bind.annotation.GetMapping;

@@ -49,7 +49,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 
-		return this.service.queryAdminPubs(this.getDomain(), pageQuery);
+		return this.service.queryAdminPubs(this.getDomainId(), pageQuery);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 
-		return this.service.queryAdminPubs(this.getDomain(), pageQuery);
+		return this.service.queryAdminPubs(this.getDomainId(), pageQuery);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class PubController extends RepoController<PubService, KPubs> {
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
 		this.applyTenantFilter(pageQuery);
 
-		return this.service.queryAdminPubs(this.getDomain(), pageQuery);
+		return this.service.queryAdminPubs(this.getDomainId(), pageQuery);
 	}
 
 	/**

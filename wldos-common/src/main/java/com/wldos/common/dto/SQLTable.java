@@ -16,14 +16,24 @@ package com.wldos.common.dto;
  * @version 1.0
  */
 public class SQLTable {
-	private final String tableName;
-
-	private final String alias;
+	private String tableName;
 
 	/** 实体类型 */
-	private final Class<?> type;
+	private Class<?> type;
 
-	public SQLTable(String tableName, String alias, Class<?> type) {
+	private String alias;
+
+	public SQLTable() {}
+
+	public static SQLTable of(Class<?> type, String alias) {
+		return new SQLTable(null, alias, type);
+	}
+
+	public static SQLTable of(Class<?> type, String tableName, String alias) {
+		return new SQLTable(tableName, alias, type);
+	}
+
+	private SQLTable(String tableName, String alias, Class<?> type) {
 		this.tableName = tableName;
 		this.alias = alias;
 		this.type = type;

@@ -36,12 +36,12 @@
 			<artifactId>wldos-kpaycms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- wldos OAuth2 -->
+		<!-- wldos OAuth2
 		<dependency>
 			<groupId>com.wldos</groupId>
 			<artifactId>wldos-oauth2</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	<build><!-- 构建不带版本号的包 -->
 		<finalName>${projectName}</finalName>

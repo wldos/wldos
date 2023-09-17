@@ -27,6 +27,8 @@ public interface IMeta {
 
 	void setPubContent(String content);
 
+	String getPubType();
+
 	String getPubContent();
 
 	String getPubTitle();

@@ -158,7 +158,7 @@ public class PageQuery {
 		else
 			orders = this.sorter.get().collect(Collectors.toList());
 
-		List<Order> ords = Arrays.stream(newOrders).filter(Objects::nonNull).filter(n -> n.length == 0).map(this::extractOrder).collect(Collectors.toList());
+		List<Order> ords = Arrays.stream(newOrders).filter(Objects::nonNull).filter(n -> n.length > 0).map(this::extractOrder).collect(Collectors.toList());
 		orders.addAll(ords);
 		this.sorter = Sort.by(orders);
 	}

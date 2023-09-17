@@ -55,7 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RefreshScope
 @RestController
 public class InfoController extends NoRepoController<InfoService> {
-	@Value("${wldos_cms_content_maxLength:33031}")
+	@Value("${wldos_cms_content_maxLength:53610}")
 	private int maxLength;
 
 	@Value("${wldos_cms_tag_maxTagNum:5}")
@@ -174,7 +174,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	public String addContent(@RequestBody String json) throws JsonProcessingException {
 		Pub pub = InfoUtil.extractPubInfo(json);
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
-			return this.resJson.ok("error", "内容超过一万字");
+			return this.resJson.ok("error", "内容超长，最多1万字");
 		// 检查分类是否归属同一个类型
 		List<SelectOption> typeIds = pub.getTermTypeIds();
 		if (typeIds != null) {
@@ -197,7 +197,7 @@ public class InfoController extends NoRepoController<InfoService> {
 		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.INFO.getName(), this.getCurUserId(), this.getUserIp());
+		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.INFO.getName(), this.getCurUserId(), this.getUserIp(), this.getDomainId());
 		return this.resJson.ok("id", id);
 	}
 
@@ -222,7 +222,7 @@ public class InfoController extends NoRepoController<InfoService> {
 	public String updateContent(@RequestBody String json) throws JsonProcessingException {
 		Pub pub = InfoUtil.extractPubInfo(json);
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
-			return this.resJson.ok("error", "内容超过一万字");
+			return this.resJson.ok("error", "内容超长，最多1万字");
 		// 检查分类是否归属同一个类型
 		List<SelectOption> typeIds = pub.getTermTypeIds();
 		if (typeIds != null) {
@@ -246,7 +246,7 @@ public class InfoController extends NoRepoController<InfoService> {
 			return this.resJson.ok("error", "选择了不支持的转换类型");
 		}
 
-		this.kcmsService.update(pub, this.getCurUserId(), this.getUserIp());
+		this.kcmsService.update(pub, this.getCurUserId(), this.getUserIp(), this.getDomainId());
 		return this.resJson.ok("ok");
 	}
 

@@ -71,6 +71,17 @@ public class Article extends CMeta implements IMeta {
 	/** seo和面包屑数据 */
 	private SeoCrumbs seoCrumbs;
 
+	public Article() {}
+
+	private Article(Long id, String pubType) {
+		this.id = id;
+		this.pubType = pubType;
+	}
+
+	public static Article of(PubType pubType) {
+		return new Article(pubType.getId(), pubType.getPubType());
+	}
+
 	public Long getId() {
 		return id;
 	}

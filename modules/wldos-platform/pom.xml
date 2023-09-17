@@ -28,13 +28,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wldos</groupId>
-			<artifactId>wldos-common</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-platform-base</artifactId>
+			<artifactId>wldos-framework</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>

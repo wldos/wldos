@@ -25,6 +25,7 @@ import com.wldos.cms.vo.DocItem;
 import com.wldos.cms.vo.InfoUnit;
 import com.wldos.cms.vo.MiniPub;
 import com.wldos.cms.vo.PubMember;
+import com.wldos.cms.vo.PubType;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.cms.vo.SPub;
 import com.wldos.common.Constants;
@@ -43,7 +44,6 @@ import com.wldos.support.term.enums.TermTypeEnum;
 import com.wldos.sys.base.dto.TermObject;
 import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.sys.base.enums.PubTypeEnum;
-import com.wldos.sys.base.service.DomainService;
 import com.wldos.sys.base.service.TermService;
 import com.wldos.sys.core.service.RegionService;
 import com.wldos.sys.core.service.UserService;
@@ -70,15 +70,12 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 
 	private final PubmetaService pubmetaService;
 
-	private final DomainService domainService;
-
 	private final RegionService regionService;
 
-	public PubService(UserService userService, TermService termService, PubmetaService pubmetaService, DomainService domainService, RegionService regionService) {
+	public PubService(UserService userService, TermService termService, PubmetaService pubmetaService, RegionService regionService) {
 		this.userService = userService;
 		this.termService = termService;
 		this.pubmetaService = pubmetaService;
-		this.domainService = domainService;
 		this.regionService = regionService;
 	}
 
@@ -242,8 +239,7 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 			sqlNoWhere += baseExistsSql + ")";
 		}
 
-		PageableResult<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, pageQuery,
-				new SQLTable[] { new SQLTable("k_pubs", "p", KPubs.class) }, params);
+		PageableResult<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, pageQuery, SQLTable.of(KPubs.class, "p"));
 		return this.handleInfoUnit(pubUnits, pageQuery);
 	}
 
@@ -373,12 +369,11 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 	/**
 	 * 通过分站查询分站内容
 	 *
-	 * @param domain 分站域名
+	 * @param domainId 分站域名Id
 	 * @param pageQuery 查询参数
 	 * @return 业务对象列表，仅关注概要信息：id、title、createBy、termTypeIds、tags、updateTime、**count等
 	 */
-	public PageableResult<AuditPub> queryAdminPubs(String domain, PageQuery pageQuery) {
-		Long domainId = this.domainService.queryIdByDomain(domain);
+	public PageableResult<AuditPub> queryAdminPubs(Long domainId, PageQuery pageQuery) {
 
 		// 域隔离
 		pageQuery.appendParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
@@ -424,17 +419,15 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 	/**
 	 * 全文检索
 	 *
-	 * @param domain 分站域名
+	 * @param domainId 分站域名Id
 	 * @param pageQuery 查询参数
 	 * @return 检索结果集
 	 */
-	public PageableResult<SPub> searchPubs(String domain, PageQuery pageQuery) {
-		Long domainId = this.domainService.queryIdByDomain(domain);
+	public PageableResult<SPub> searchPubs(Long domainId, PageQuery pageQuery, String keywords) {
 
-		// 域隔离
-		pageQuery.appendParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
+		String sql = "select s.id, s.pub_title, s.pub_type from k_pubs s where s.delete_flag = 'normal' and s.pub_status in ('publish', 'inherit')  and (instr(s.pub_title, ?)>0 or instr(s.pub_content, ?) >0) and domain_id=?";
 
-		return this.execQueryForPage(SPub.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+		return this.commonOperate.execQueryForPageNoOrder(SPub.class, sql, pageQuery.getCurrent(), pageQuery.getPageSize(), keywords, keywords, domainId);
 	}
 
 	/**
@@ -628,12 +621,13 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 	 * 在指定标签或分类范围内查询相关发布内容
 	 *
 	 * @param pubType 内容发布类型
+	 * @param domainId 域id
 	 * @param termTypeIds 标签集、分类集等
 	 * @param num 查询数量
 	 * @return 相关发布内容
 	 */
-	public List<MiniPub> queryRelatedPubs(String pubType, List<Long> termTypeIds, int num) {
-		return this.entityRepo.queryRelatedPubs(pubType, termTypeIds, num);
+	public List<MiniPub> queryRelatedPubs(String pubType, Long domainId, List<Long> termTypeIds, int num) {
+		return this.entityRepo.queryRelatedPubs(pubType, domainId, termTypeIds, num);
 	}
 
 	/**
@@ -690,19 +684,20 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 	}
 
 	/**
-	 * 别名已存在，则自动追加1，直到找到不重复的别名返回
+	 * 别名已存在，则自动追加1，直到在同域内找到不重复的别名返回
 	 *
+	 * @param domainId 域名id
 	 * @param pubName 用户输入别名
 	 * @param pubId 发布内容id
 	 * @return 不重复的别名
 	 */
-	public String existsAutoDiffPubName(String pubName, Long pubId) {
+	public String existsAutoDiffPubName(Long domainId, String pubName, Long pubId) {
 		// 先判断当前记录是否没有修改别名，避免执行后面的性能消耗
 		if (this.entityRepo.existsPubNameByNameAndId(pubName, pubId))
 			return pubName;
-		if (this.entityRepo.existsDifPubByNameAndId(pubName, pubId))
+		if (this.entityRepo.existsDifPubByNameAndId(domainId, pubName, pubId))
 			// 存在，自动加1再判断
-			return existsAutoDiffPubName(pubName + "1", pubId);
+			return existsAutoDiffPubName(domainId, pubName + "1", pubId);
 		return pubName;
 	}
 
@@ -710,8 +705,8 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 		return this.entityRepo.pubNameIsNull(pubId);
 	}
 
-	public Long queryIdByPubName(String pubName) {
-		return this.entityRepo.queryIdByPubName(pubName);
+	public PubType queryPubTypeByPubName(Long domainId, String pubName, String deleteFlag) {
+		return this.entityRepo.queryPubTypeByPubName(domainId, pubName, deleteFlag);
 	}
 
 	public boolean existsByIdAndPubStatusAndDeleteFlag(Long id, String pubStatus, String deleteFlag) {

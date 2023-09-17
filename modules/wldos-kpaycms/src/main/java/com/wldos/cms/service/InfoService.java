@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.base.NoRepoService;
 import com.wldos.cms.vo.InfoUnit;
+import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
@@ -24,6 +25,7 @@ import com.wldos.support.cms.entity.KPubmeta;
 import com.wldos.support.cms.model.KModelMetaKey;
 import com.wldos.support.cms.model.MainPicture;
 import com.wldos.support.cms.vo.Info;
+import com.wldos.support.term.enums.TermTypeEnum;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.service.TermService;
 import lombok.extern.slf4j.Slf4j;
@@ -73,12 +75,17 @@ public class InfoService extends NoRepoService {
 		// 判断是否指定类目
 		Object termTypeId = pageQuery.getCondition().get("termTypeId");
 		if (!ObjectUtils.isBlank(termTypeId)) {
-			KTermType termType = this.termService.queryTermTypeById(Long.parseLong(String.valueOf(termTypeId)));
-			if (termType == null)
-				return new PageableResult<>();
-			List<Object> ids = this.queryOwnIds(termType.getId());
-			pageQuery.removeParam("termTypeId");
-			this.filterByParentTermTypeId(ids, pageQuery);
+			long tId = Long.parseLong(String.valueOf(termTypeId));
+			if (tId == Constants.TOP_TERM_ID) {
+				pageQuery.removeParam("termTypeId");
+			} else { // 不是根节点，则继续
+				KTermType termType = this.termService.queryTermTypeById(tId);
+				if (termType == null)
+					return new PageableResult<>();
+				List<Object> ids = this.queryOwnIds(termType.getId());
+				pageQuery.removeParam("termTypeId");
+				this.filterByParentTermTypeId(ids, pageQuery);
+			}
 		}
 
 		this.handleCondition(pageQuery);

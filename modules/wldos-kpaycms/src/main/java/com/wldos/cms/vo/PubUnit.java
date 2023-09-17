@@ -58,6 +58,8 @@ public class PubUnit extends BookUnit {
 	/** 标签列表 */
 	private List<Term> tags;
 
+	private String pubName;
+
 	public Long getId() {
 		return id;
 	}
@@ -176,5 +178,13 @@ public class PubUnit extends BookUnit {
 
 	public void setTags(List<Term> tags) {
 		this.tags = tags;
+	}
+
+	public String getPubName() {
+		return pubName;
+	}
+
+	public void setPubName(String pubName) {
+		this.pubName = pubName;
 	}
 }

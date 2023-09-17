@@ -86,7 +86,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 		pageQuery.pushFilter("parentId", Constants.TOP_PUB_ID); // 父id为0的都是主类型
 		this.applyDomainFilter(pageQuery);
 
-		return this.kcmsService.queryWorksList(pageQuery);
+		return this.kcmsService.queryWorksListWithPage(pageQuery);
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(pub, pub.getPubType(), this.getCurUserId(), this.getUserIp());
+		Long id = this.kcmsService.insertSelective(pub, pub.getPubType(), this.getCurUserId(), this.getUserIp(), this.getDomainId());
 		return this.resJson.ok("id", id);
 	}
 
@@ -183,7 +183,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 			return this.resJson.ok("error", "保存数据为空忽略");
 		if (ObjectUtils.isOutBoundsClearHtml(chapter.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
-		this.service.saveChapter(chapter, this.getCurUserId(), this.getUserIp());
+		this.service.saveChapter(chapter, this.getCurUserId(), this.getUserIp(), this.getDomainId());
 
 		return this.resJson.ok("ok");
 	}

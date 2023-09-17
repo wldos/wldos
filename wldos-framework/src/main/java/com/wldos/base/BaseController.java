@@ -1,9 +1,8 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
 package com.wldos.base;
@@ -11,6 +10,8 @@ package com.wldos.base;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wldos.base.core.Base;
+import com.wldos.base.tools.CommonOperation;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.ResultJson;
 import com.wldos.common.utils.http.IpUtils;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 /**
- * 顶层controller，共享资源。
+ * 抽象基础controller，不允许直接继承。
  *
  * @author 树悉猿
  * @date 2021/5/5

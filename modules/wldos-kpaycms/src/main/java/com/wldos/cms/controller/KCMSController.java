@@ -7,7 +7,6 @@
 
 package com.wldos.cms.controller;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +98,7 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	}
 
 	/**
-	 * 查询当前域下某类型的业务对象
+	 * 查询当前域下某类型的业务对象，默认输出所有类型（有明确体裁模板的内容），不包括页面这种强自定义类型。
 	 *
 	 * @return 按分类目录索引的存档列表页
 	 */
@@ -198,8 +197,8 @@ public class KCMSController extends NoRepoController<KCMSService> {
 	 * @param contAlias 内容别名
 	 */
 	@GetMapping("/archive-{contAlias}")
-	public Long archivesId(@PathVariable String contAlias) throws IOException {
-		return this.service.queryIdByPubName(contAlias);
+	public Article archivesId(@PathVariable String contAlias) {
+		return this.service.queryContentByPubName(contAlias, this.getDomainId());
 	}
 
 	/**
@@ -238,18 +237,6 @@ public class KCMSController extends NoRepoController<KCMSService> {
 		this.applyDomainFilter(pageQuery);
 
 		return this.service.queryArchivesUserDomain(this.getDomainId(), pageQuery);
-	}
-
-	/**
-	 * 查看页面，页面是通过驱动页面模板+配置内容渲染的独立网页
-	 *
-	 * @param pageAlias 页面别名
-	 * @return 页面内容
-	 */
-	@GetMapping("/page/{pageAlias}")
-	public String page(@PathVariable String pageAlias) {
-
-		return this.resJson.ok("");
 	}
 
 	/**

@@ -46,9 +46,7 @@ public class FrontPubController extends RepoController<PubService, KPubs> {
 			return new PageableResult<>();
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("pubTitle", wd); // 暂时以标题为查询标的，后期作全文检索实现
-		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 
-		return this.service.searchPubs(this.getDomain(), pageQuery);
+		return this.service.searchPubs(this.getDomainId(), pageQuery, wd);
 	}
 }

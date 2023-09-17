@@ -49,9 +49,7 @@
 	<modules>
 		<module>wldos-common</module>
 		<module>wldos-framework</module>
-		<module>modules/wldos-base</module><!-- modules下的子模块需要加<relativePath>配置parent pom路径 -->
 		<module>modules/wldos-platform</module>
-		<module>modules/wldos-oauth2</module>
 		<module>modules/wldos-kpaycms</module>
 		<module>wldos-web</module>
 	</modules>

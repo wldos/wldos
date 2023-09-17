@@ -109,9 +109,10 @@ public class SpaceService extends NoRepoService {
 	 * @param chapter 章节信息
 	 * @param curUserId 操作用户id
 	 * @param userIp 用户ip
+	 * @param domainId 当前域id
 	 */
-	public void saveChapter(Pub chapter, Long curUserId, String userIp) {
-		this.kcmsService.update(chapter, curUserId, userIp);
+	public void saveChapter(Pub chapter, Long curUserId, String userIp, Long domainId) {
+		this.kcmsService.update(chapter, curUserId, userIp, domainId);
 	}
 
 	private final BeanCopier pubCopier = BeanCopier.create(Pub.class, KPubs.class, false);

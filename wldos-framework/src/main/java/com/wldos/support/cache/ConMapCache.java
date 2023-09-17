@@ -78,6 +78,10 @@ public class ConMapCache implements ICache {
 				throw new CacheException("暂时不支持的时间单位，请使用分钟、小时或者毫秒");
 			}
 
+			// 主动删掉历史缓存，防止高并发场景 或 高时延缓存 导致的内存泄露
+			if (this.get(key) != null)
+				this.remove(key);
+
 			long expireTime = System.currentTimeMillis() + sourceDuration * multiple;
 			SoftReference<Object> reference = new SoftReference<>(value);
 			cache.put(key, reference);
@@ -94,6 +98,8 @@ public class ConMapCache implements ICache {
 	public void remove(String key) {
 		try {
 			cache.remove(key);
+			// 主动删掉历史缓存，防止高并发场景 或 高时延缓存 导致的内存泄露
+			delayQueue.removeIf((o) -> key.equals(o.getKey()));
 			log.info("缓存删成功，key={}", key);
 		}
 		catch (Exception e) {
