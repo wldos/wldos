@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
@@ -71,7 +71,7 @@ public class CompanyController extends RepoController<CompanyService, WoCompany>
 	public String addTenantAdmin(@RequestBody Map<String, Object> orgUser) {
 		Long userComId = Long.parseLong(orgUser.get("userComId").toString());
 		List<String> userIds = (List<String>) orgUser.get("userIds");
-		Long curUserId = this.getCurUserId();
+		Long curUserId = this.getUserId();
 		String uip = this.getUserIp();
 
 		String message = this.service.addTenantAdmin(userIds, userComId, curUserId, uip);

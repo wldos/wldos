@@ -10,6 +10,8 @@ package com.wldos.base.tools;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -88,8 +90,9 @@ public final class IDGen {
 	 *
 	 * @return 主键
 	 */
-	public synchronized long nextId() {
-		long currentTimeMillis = this.currentTimeMillis();
+	public synchronized static long nextId() {
+		return IdWorker.getId(); // 统一改为mybatis plus 分布式唯一id
+		/* long currentTimeMillis = this.currentTimeMillis();
 		if (currentTimeMillis < this.lastTimestamp) {
 			throw new RuntimeException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds",
 					(this.lastTimestamp - currentTimeMillis)));
@@ -111,7 +114,7 @@ public final class IDGen {
 		return ((currentTimeMillis - EPOCH_STAMP) << TIMESTAMP_LEFT)
 				| (this.dataCenterId << DATA_CENTER_LEFT)
 				| (this.machineId << MACHINE_LEFT)
-				| this.sequence;
+				| this.sequence;*/
 	}
 
 	private long tilNextMillis(long lastTimestamp) {

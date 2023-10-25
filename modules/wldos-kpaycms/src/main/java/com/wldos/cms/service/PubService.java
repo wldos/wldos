@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.enums.PubStatusEnum;

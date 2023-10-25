@@ -9,10 +9,10 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.base.entity.WoRole;
 
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -22,7 +22,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface RoleRepo extends PagingAndSortingRepository<WoRole, Long> {
+public interface RoleRepo extends BaseRepo<WoRole, Long> {
 	@Query("select r.* from wo_role r where r.delete_flag='normal' and r.is_valid='1' and r.role_type=:roleType")
 	List<WoRole> findAllTenant(@Param("roleType") String roleType);
 }

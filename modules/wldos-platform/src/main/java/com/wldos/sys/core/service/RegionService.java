@@ -9,7 +9,7 @@ package com.wldos.sys.core.service;
 
 import java.util.List;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.support.region.RegionOpener;
 import com.wldos.support.region.vo.City;
 import com.wldos.sys.base.enums.RegionLevelEnum;

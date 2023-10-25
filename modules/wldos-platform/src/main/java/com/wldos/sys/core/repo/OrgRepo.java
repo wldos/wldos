@@ -10,11 +10,11 @@ package com.wldos.sys.core.repo;
 import java.util.List;
 
 import com.wldos.auth.vo.Group;
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.vo.Org;
 
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 组织结构仓库操作类。
@@ -23,7 +23,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface OrgRepo extends PagingAndSortingRepository<WoOrg, Long> {
+public interface OrgRepo extends BaseRepo<WoOrg, Long> {
 	@Query("select o.* from wo_org o where o.delete_flag=:deleteFlag and o.is_valid=:isValid and o.org_type=:orgType")
 	List<Org> findAllByOrgType(String deleteFlag, String isValid, String orgType);
 

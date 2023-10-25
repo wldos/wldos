@@ -10,7 +10,7 @@ package com.wldos.sys.core.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
@@ -148,14 +148,14 @@ public class TermController extends RepoController<TermService, KTerms> {
 	public String addCategory(@RequestBody Term term) {
 		term.setClassType(TermTypeEnum.CATEGORY.toString());
 		this.handleDisplayOrder(term);
-		String res = this.service.addTerm(term, this.getCurUserId(), this.getUserIp());
+		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
 		return this.resJson.ok(res);
 	}
 
 	@PostMapping("/admin/cms/category/update")
 	public String updateCategory(@RequestBody Term term) {
-		String res = this.service.updateTerm(term, this.getCurUserId(), this.getUserIp());
+		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
 		return this.resJson.ok(res);
 	}
@@ -183,7 +183,7 @@ public class TermController extends RepoController<TermService, KTerms> {
 	public String addTag(@RequestBody Term term) {
 		term.setClassType(TermTypeEnum.TAG.toString());
 		this.handleDisplayOrder(term);
-		String res = this.service.addTerm(term, this.getCurUserId(), this.getUserIp());
+		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
 		this.service.appendCacheTag(term); // 新增标签追加缓存
 		return this.resJson.ok(res);
 	}

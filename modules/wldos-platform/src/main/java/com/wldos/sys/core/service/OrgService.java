@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
+import com.wldos.base.tools.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -122,7 +122,6 @@ public class OrgService extends RepoService<OrgRepo, WoOrg, Long> {
 			WoRoleOrg roleOrg = new WoRoleOrg();
 			roleOrg.setOrgId(orgId);
 			roleOrg.setRoleId(roleId);
-			EntityAssists.beforeInsert(roleOrg, this.nextId(), curUserId, uip, true);
 			roleOrg.setArchId(archId);
 			roleOrg.setComId(comId);
 
@@ -165,7 +164,6 @@ public class OrgService extends RepoService<OrgRepo, WoOrg, Long> {
 			WoOrgUser orgUser = new WoOrgUser();
 			orgUser.setOrgId(orgId);
 			orgUser.setUserId(userId);
-			EntityAssists.beforeInsert(orgUser, this.nextId(), curUserId, uip, true);
 			orgUser.setArchId(archId);
 			orgUser.setComId(comId);
 			orgUser.setUserComId(comId); // 默认添加成员的租户即当前租户，只有在超级管理员设置租户管理员或者其他类似身份时以及借调场景，用户归属公司不同于组织公司，涉及场景自行设置
@@ -185,7 +183,6 @@ public class OrgService extends RepoService<OrgRepo, WoOrg, Long> {
 			comUser.setComId(comId);
 			comUser.setUserId(userId);
 			comUser.setIsMain(userComList.isEmpty() ? BoolEnum.YES.toString() : BoolEnum.NO.toString());
-			EntityAssists.beforeInsert(comUser, this.nextId(), curUserId, uip, true);
 
 			return comUser;
 		}).filter(Objects::nonNull).collect(Collectors.toList());

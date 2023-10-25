@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
@@ -157,7 +157,7 @@ public class ResourceController extends RepoController<ResourceService, WoResour
 	 */
 	@PostMapping("addSimple")
 	public String addSimpleMenu(@RequestBody ResSimple resSimple) {
-		this.service.addSimpleMenu(resSimple, this.getCurUserId(), this.getUserIp());
+		this.service.addSimpleMenu(resSimple, this.getUserId(), this.getUserIp());
 		this.refreshAuth();
 		return resJson.ok(Boolean.TRUE);
 	}

@@ -9,7 +9,7 @@ package com.wldos.sys.base.service;
 
 import java.util.List;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.support.cms.PubTypeExtOpener;
 import com.wldos.support.cms.dto.PubTypeExt;
 import com.wldos.sys.base.entity.KModelPubTypeExt;

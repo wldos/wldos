@@ -1,12 +1,11 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
-package com.wldos.base.entity;
+package com.wldos.base.tools;
 
 /**
  * 公共审计字段，用于声明公共字段的key以追加临时参数。

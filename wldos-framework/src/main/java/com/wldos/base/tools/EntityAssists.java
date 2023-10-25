@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
-package com.wldos.base.entity;
+package com.wldos.base.tools;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.wldos.framework.entity.BaseEntity;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.utils.DateUtils;
@@ -48,7 +48,6 @@ public class EntityAssists {
 		BaseEntity baseEntity = new BaseEntity(newID, operateUserId, curTime, userIp, operateUserId,
 				curTime, userIp, DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString(), 1);
 
-
 		BeanUtils.copyProperties(baseEntity, entity, isRepo ? "versions" : null);
 	}
 
@@ -62,7 +61,7 @@ public class EntityAssists {
 	 */
 	public static <T> void beforeUpdated(T entity, long operateUserId, String userIp) {
 		Timestamp curTime = DateUtils.convSQLDate(new Date()); // 默认是UTC，否则在分布式架构下，要考虑时区的转换
-		BaseEntity baseEntity = new BaseEntity(operateUserId, curTime, userIp);
+		BaseEntity baseEntity = new BaseEntity(operateUserId, curTime, userIp); // 配合spring data 等框架支持乐观锁
 
 		BeanUtils.copyProperties(baseEntity, entity, "id", "createBy", "createTime", "createIp", "isValid", "deleteFlag", "versions");
 	}

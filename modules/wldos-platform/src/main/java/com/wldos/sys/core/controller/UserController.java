@@ -12,8 +12,7 @@ import java.util.Map;
 
 import com.wldos.auth.model.AccSecurity;
 import com.wldos.auth.vo.AccountInfo;
-import com.wldos.base.RepoController;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.support.resource.vo.DynSet;
 import com.wldos.sys.base.vo.Domain;
 import com.wldos.sys.core.entity.WoUser;
@@ -41,7 +40,7 @@ public class UserController extends RepoController<UserService, WoUser> {
 
 	@GetMapping("route")
 	public String checkRoute(@RequestParam String route) {
-		return this.resJson.ok(this.service.checkRoute(route, this.getCurUserId(), this.getDomainId(), this.getTenantId(), this.request));
+		return this.resJson.ok(this.service.checkRoute(route, this.getUserId(), this.getDomainId(), this.getTenantId(), this.request));
 	}
 
 	@GetMapping("dynamite")
@@ -57,7 +56,7 @@ public class UserController extends RepoController<UserService, WoUser> {
 	@GetMapping("currentUser")
 	public User currentUser() {
 
-		return this.service.queryUser(this.getDomainId(), this.request, this.getTenantId(), this.getCurUserId());
+		return this.service.queryUser(this.getDomainId(), this.request, this.getTenantId(), this.getUserId());
 	}
 
 	/**
@@ -68,13 +67,13 @@ public class UserController extends RepoController<UserService, WoUser> {
 	@GetMapping("curAccount")
 	public AccountInfo currentAccount() {
 
-		return this.service.queryAccountInfo(this.getCurUserId());
+		return this.service.queryAccountInfo(this.getUserId());
 	}
 
 	@PostMapping("uploadAvatar")
 	public String uploadAvatar(@RequestParam("avatar") MultipartFile file) throws IOException {
 		// 头像尺寸一般规定144x144px
-		this.service.uploadAvatar(this.request, this.response, file, new int[] { 144, 144 }, this.getCurUserId(), this.getUserIp());
+		this.service.uploadAvatar(this.request, this.response, file, new int[] { 144, 144 }, this.getUserId(), this.getUserIp());
 
 		return this.resJson.ok("ok");
 	}
@@ -86,44 +85,41 @@ public class UserController extends RepoController<UserService, WoUser> {
 	 */
 	@PostMapping("conf")
 	public String userConfig(@RequestBody WoUser user) {
-		Long userId = this.getCurUserId();
-		EntityAssists.beforeUpdated(user, userId, this.getUserIp());
+		Long userId = this.getUserId();
 		user.setId(userId);
-		this.service.update(user);
+		this.service.update(user, true);
 
 		return this.resJson.ok("ok");
 	}
 
 	@PostMapping("conf/tags")
 	public String tagsConfig(@RequestBody String tags) {
-		this.service.tagsConfig(tags, this.getCurUserId());
+		this.service.tagsConfig(tags, this.getUserId());
 
 		return this.resJson.ok("ok");
 	}
 
 	@PostMapping("conf/sec")
 	public String securityConfig(@RequestBody AccSecurity sec) {
-		this.service.accountConfig(sec, this.getCurUserId());
+		this.service.accountConfig(sec, this.getUserId());
 
 		return this.resJson.ok("ok");
 	}
 
 	@PostMapping("conf/bind")
 	public String bindConfig(@RequestBody WoUser user) {
-		Long userId = this.getCurUserId();
-		EntityAssists.beforeUpdated(user, userId, this.getUserIp());
+		Long userId = this.getUserId();
 		user.setId(userId);
-		this.service.update(user);
+		this.service.update(user, true);
 
 		return this.resJson.ok("ok");
 	}
 
 	@PostMapping("conf/notice")
 	public String noticeConfig(@RequestBody WoUser user) {
-		Long userId = this.getCurUserId();
-		EntityAssists.beforeUpdated(user, userId, this.getUserIp());
+		Long userId = this.getUserId();
 		user.setId(userId);
-		this.service.update(user);
+		this.service.update(user, true);
 
 		return this.resJson.ok("ok");
 	}

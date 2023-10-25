@@ -7,7 +7,7 @@
 
 package com.wldos.cms.controller;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.service.StarService;
 import com.wldos.cms.vo.Pub;
@@ -30,11 +30,11 @@ public class StarController extends RepoController<StarService, KStars> {
 
 	@PostMapping("star")
 	public int starObject(@RequestBody Pub pub) {
-		return this.service.starObject(pub.getId(), this.getCurUserId());
+		return this.service.starObject(pub.getId(), this.getUserId());
 	}
 
 	@PostMapping("like")
 	public int likeObject(@RequestBody Pub pub) {
-		return this.service.likeObject(pub.getId(), this.getCurUserId());
+		return this.service.likeObject(pub.getId(), this.getUserId());
 	}
 }

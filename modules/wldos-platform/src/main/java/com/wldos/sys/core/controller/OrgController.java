@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
@@ -78,7 +78,7 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 	public OrgRoleTree queryAuthRole(@RequestParam Map<String, String> authOrg) {
 
 		// 查询当前组织关联的角色列表
-		return this.service.queryAllRoleTreeByOrgId(Long.parseLong(authOrg.get("orgId")), this.getCurUserId());
+		return this.service.queryAllRoleTreeByOrgId(Long.parseLong(authOrg.get("orgId")), this.getUserId());
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 		Long archId = Long.parseLong(roleOrg.get("archId").toString());
 		Long comId = Long.parseLong(roleOrg.get("comId").toString());
 		List<String> roleIds = (List<String>) roleOrg.get("roleIds");
-		Long curUserId = this.getCurUserId();
+		Long curUserId = this.getUserId();
 		String uip = this.getUserIp();
 
 		this.service.authOrg(roleIds, orgId, archId, comId, curUserId, uip);
@@ -112,7 +112,7 @@ public class OrgController extends RepoController<OrgService, WoOrg> {
 		Long archId = Long.parseLong(orgUser.get("archId").toString());
 		Long comId = Long.parseLong(orgUser.get("comId").toString());
 		List<String> userIds = (List<String>) orgUser.get("userIds");
-		Long curUserId = this.getCurUserId();
+		Long curUserId = this.getUserId();
 		String uip = this.getUserIp();
 
 		String message = this.service.userOrg(userIds, orgId, archId, comId, curUserId, uip);

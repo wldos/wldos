@@ -7,9 +7,8 @@
 
 package com.wldos.sys.core.repo;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.core.entity.WoMail;
-
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 邮件仓库操作类。
@@ -18,5 +17,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2022/8/23
  * @version 1.0
  */
-public interface MailRepo extends PagingAndSortingRepository<WoMail, Long> {
+public interface MailRepo extends BaseRepo<WoMail, Long> {
 }

@@ -5,9 +5,9 @@
  * For commercial licenses see term.md or https://www.wldos.com
  */
 
-package com.wldos.base.tools;
+package com.wldos.framework.service.impl;
 
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

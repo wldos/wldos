@@ -38,7 +38,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * 框架基础会话类，不允许直接继承。
+ * 框架基础会话类，组织平台扩展接口，不允许直接继承。
  *
  * @author 树悉猿
  * @date 2021/6/14

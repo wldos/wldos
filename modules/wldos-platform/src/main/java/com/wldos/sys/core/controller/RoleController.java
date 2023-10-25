@@ -10,7 +10,7 @@ package com.wldos.sys.core.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
@@ -67,7 +67,7 @@ public class RoleController extends RepoController<RoleService, WoRole> {
 	public String authRole(@RequestBody Map<String, Object> resRole) {
 		Long roleId = Long.parseLong(resRole.get("roleId").toString());
 		List<String> resIds = (List<String>) resRole.get("resIds");
-		Long curUserId = this.getCurUserId();
+		Long curUserId = this.getUserId();
 		String uip = this.getUserIp();
 
 		this.service.authRole(resIds, roleId, curUserId, uip);

@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.base.NoRepoController;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.controller.NoRepoController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -81,7 +80,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 	public PageableResult<PubUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		pageQuery.pushParam("createBy", this.getCurUserId());
+		pageQuery.pushParam("createBy", this.getUserId());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		pageQuery.pushFilter("parentId", Constants.TOP_PUB_ID); // 父id为0的都是主类型
 		this.applyDomainFilter(pageQuery);
@@ -149,7 +148,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(pub, pub.getPubType(), this.getCurUserId(), this.getUserIp(), this.getDomainId());
+		Long id = this.kcmsService.insertSelective(pub, pub.getPubType(), this.getUserId(), this.getUserIp(), this.getDomainId());
 		return this.resJson.ok("id", id);
 	}
 
@@ -167,7 +166,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 		chapter.setComId(this.getTenantId()); // 带上租户id，实现租户隔离, 关闭租户模式时该字段忽略
 		chapter.setDomainId(this.getDomainId()); // 带上域id，实现域隔离，同上
 
-		return this.service.createChapter(chapter, this.getCurUserId(), this.getUserIp());
+		return this.service.createChapter(chapter, this.getUserId(), this.getUserIp());
 	}
 
 	/**
@@ -183,7 +182,7 @@ public class SpaceController extends NoRepoController<SpaceService> {
 			return this.resJson.ok("error", "保存数据为空忽略");
 		if (ObjectUtils.isOutBoundsClearHtml(chapter.getPubContent(), this.maxLength))
 			return this.resJson.ok("error", "内容超过一万字");
-		this.service.saveChapter(chapter, this.getCurUserId(), this.getUserIp(), this.getDomainId());
+		this.service.saveChapter(chapter, this.getUserId(), this.getUserIp(), this.getDomainId());
 
 		return this.resJson.ok("ok");
 	}
@@ -222,7 +221,6 @@ public class SpaceController extends NoRepoController<SpaceService> {
 
 			// 创建附件发布内容
 			KPubs attachment = new KPubs();
-			EntityAssists.beforeInsert(attachment, this.nextId(), this.getCurUserId(), this.getUserIp(), false);
 			attachment.setPubType(PubTypeEnum.ATTACHMENT.getName());
 			attachment.setParentId(id);
 			attachment.setPubMimeType(type);

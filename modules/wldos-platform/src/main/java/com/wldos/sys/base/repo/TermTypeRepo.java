@@ -9,11 +9,11 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.base.entity.KTermType;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -23,7 +23,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface TermTypeRepo extends PagingAndSortingRepository<KTermType, Long> {
+public interface TermTypeRepo extends BaseRepo<KTermType, Long> {
 	@Modifying
 	@Query("update k_term_type set count = (count + 1) where id=:termTypeId")
 	void countPlus(@Param("termTypeId") Long termTypeId);

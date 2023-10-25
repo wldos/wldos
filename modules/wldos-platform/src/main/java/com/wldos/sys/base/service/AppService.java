@@ -7,8 +7,8 @@
 
 package com.wldos.sys.base.service;
 
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.AuditFields;
+import com.wldos.framework.service.RepoService;
+import com.wldos.base.tools.AuditFields;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.res.PageQuery;

@@ -9,7 +9,7 @@ package com.wldos.cms.controller;
 
 import java.util.Map;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.AuditPub;

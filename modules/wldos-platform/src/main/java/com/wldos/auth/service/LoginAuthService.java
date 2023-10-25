@@ -23,7 +23,7 @@ import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.auth.vo.SecQuestModifyParams;
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.IpUtils;
@@ -348,7 +348,7 @@ public class LoginAuthService extends NoRepoService {
 				WoUser user = new WoUser();
 				user.setId(uId);
 				user.setStatus(UserStatusEnum.normal.getValue());
-				this.userService.update(user);
+				this.userService.update(user, false);
 
 				WoOrg orgUnActive = this.userService.queryUserOrg(SysOptionEnum.UN_ACTIVE_GROUP.getKey());
 				WoOrg orgActive = this.userService.queryUserOrg(SysOptionEnum.DEFAULT_GROUP.getKey());

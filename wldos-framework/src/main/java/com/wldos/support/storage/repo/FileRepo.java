@@ -8,9 +8,8 @@
 
 package com.wldos.support.storage.repo;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.support.storage.entity.WoFile;
-
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 文件仓库操作类。
@@ -19,5 +18,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface FileRepo extends PagingAndSortingRepository<WoFile, Long> {
+public interface FileRepo extends BaseRepo<WoFile, Long> {
 }

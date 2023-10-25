@@ -12,8 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.base.NoRepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.vo.Chapter;
@@ -131,12 +130,9 @@ public class SpaceService extends NoRepoService {
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
 
-		Long id = this.nextId();
-		EntityAssists.beforeInsert(pubs, id, userId, userIp, false);
-
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
-		this.pubService.insertSelective(pubs);
+		Long id = this.pubService.insertSelective(pubs, true);
 
 		List<PubTypeExt> pubTypeExt = pub.getPubTypeExt();
 

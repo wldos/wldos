@@ -9,11 +9,11 @@ package com.wldos.cms.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.cms.entity.KComments;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 评论repository操作类
@@ -22,7 +22,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface CommentRepo extends PagingAndSortingRepository<KComments, Long> {
+public interface CommentRepo extends BaseRepo<KComments, Long> {
 
 	@Query("select c.* from k_comments c where c.delete_flag=:delFlag and c.approved=:comStatus and c.pub_id=:pubId")
 	List<KComments> queryCommentsByPubId(Long pubId, String delFlag, String comStatus);

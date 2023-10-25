@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ApproveStatusEnum;
@@ -103,11 +102,11 @@ public class CommentService extends RepoService<CommentRepo, KComments, Long> {
 	 * @return 评论主键id
 	 */
 	public Long comment(KComments entity, Long curUserId, String userIp) {
-		Long id = this.nextId();
-		EntityAssists.beforeInsert(entity, id, curUserId, userIp, false);
+
 		entity.setApproved("true".equals(this.auditFlag) /* 开启评论审核 */
 				? ApproveStatusEnum.APPROVING.getValue() : ApproveStatusEnum.APPROVED.getValue());
-		this.insertSelective(entity);
+		this.insertSelective(entity, true);
+		Long id = entity.getId();
 		// 更新发布内容评论数
 		Long pId = entity.getPubId();
 		this.pubService.updateCommentCount(pId, 1);

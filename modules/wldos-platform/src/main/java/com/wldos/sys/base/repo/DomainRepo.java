@@ -9,9 +9,9 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.base.entity.WoDomain;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface DomainRepo extends PagingAndSortingRepository<WoDomain, Long> {
+public interface DomainRepo extends BaseRepo<WoDomain, Long> {
 
 	List<WoDomain> findAllByDeleteFlagAndIsValid(@Param("deleteFlag") String deleteFlag, @Param("isValid") String isValid);
 

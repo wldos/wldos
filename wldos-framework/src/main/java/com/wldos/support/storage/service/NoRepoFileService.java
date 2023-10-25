@@ -19,8 +19,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.wldos.base.tools.EntityAssists;
 import com.wldos.base.tools.IDGen;
-import com.wldos.base.entity.EntityAssists;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.HttpUtils;
@@ -86,15 +86,13 @@ public class NoRepoFileService {
 
 		String url = this.genWebUrl(storeUrl, storeName);
 
-		long id = this.IDGen.nextId();
 		// 保存相对路径，相对于uploadPath的路径，uploadPath割接时不会影响到数据库
 		String mimeType = file.getContentType();
 		WoFile woFile = WoFile.of(fileName, storeName, mimeType);
-		EntityAssists.beforeInsert(woFile, id, usrId, userIp, true);
 
-		this.fileRepo.save(woFile);
+		woFile = this.fileRepo.save(woFile);
 
-		return new FileInfo(id, fileName, storeName, url, mimeType);
+		return new FileInfo(woFile.getId(), fileName, storeName, url, mimeType);
 	}
 
 	/**
@@ -151,15 +149,13 @@ public class NoRepoFileService {
 
 		String url = this.genWebUrl(storeUrl, storeName);
 
-		long id = this.IDGen.nextId();
 		// 保存相对路径，相对于uploadPath的路径，uploadPath割接时不会影响到数据库
 		String mimeType = "image/" + ext;
 		WoFile woFile = WoFile.of(fileName, storeName, mimeType);
-		EntityAssists.beforeInsert(woFile, id, usrId, userIp, true);
 
-		this.fileRepo.save(woFile);
+		woFile = this.fileRepo.save(woFile);
 
-		return new FileInfo(id, fileName, storeName, url, mimeType);
+		return new FileInfo(woFile.getId(), fileName, storeName, url, mimeType);
 	}
 
 	// bufHead必须是3个字节

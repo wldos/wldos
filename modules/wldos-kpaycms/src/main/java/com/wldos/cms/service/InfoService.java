@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.cms.vo.InfoUnit;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
@@ -25,7 +25,6 @@ import com.wldos.support.cms.entity.KPubmeta;
 import com.wldos.support.cms.model.KModelMetaKey;
 import com.wldos.support.cms.model.MainPicture;
 import com.wldos.support.cms.vo.Info;
-import com.wldos.support.term.enums.TermTypeEnum;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.service.TermService;
 import lombok.extern.slf4j.Slf4j;

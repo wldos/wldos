@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.base.NoRepoController;
+import com.wldos.framework.controller.NoRepoController;
 import com.wldos.cms.enums.PrivacyLevelEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.InfoService;
@@ -197,7 +197,7 @@ public class InfoController extends NoRepoController<InfoService> {
 		pub.setComId(this.getTenantId()); // 带上租户id，实现数据隔离
 		pub.setDomainId(this.getDomainId());
 
-		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.INFO.getName(), this.getCurUserId(), this.getUserIp(), this.getDomainId());
+		Long id = this.kcmsService.insertSelective(pub, PubTypeEnum.INFO.getName(), this.getUserId(), this.getUserIp(), this.getDomainId());
 		return this.resJson.ok("id", id);
 	}
 
@@ -246,7 +246,7 @@ public class InfoController extends NoRepoController<InfoService> {
 			return this.resJson.ok("error", "选择了不支持的转换类型");
 		}
 
-		this.kcmsService.update(pub, this.getCurUserId(), this.getUserIp(), this.getDomainId());
+		this.kcmsService.update(pub, this.getUserId(), this.getUserIp(), this.getDomainId());
 		return this.resJson.ok("ok");
 	}
 

@@ -15,8 +15,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageQuery;
@@ -186,8 +185,7 @@ public class ResourceService extends RepoService<ResourceRepo, WoResource, Long>
 
 		WoResource resource = new WoResource(resCode, resName, resPath, icon, resType, reqMethod, target, appId, parentId, displayOrder, remark);
 
-		EntityAssists.beforeInsert(resource, this.nextId(), curUserId, userIp, false);
-		this.insertSelective(resource);
+		this.insertSelective(resource, true);
 	}
 
 	/**

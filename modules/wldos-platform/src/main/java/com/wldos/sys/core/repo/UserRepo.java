@@ -10,12 +10,12 @@ package com.wldos.sys.core.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.support.auth.vo.UserInfo;
 import com.wldos.sys.core.entity.WoOrg;
 import com.wldos.sys.core.entity.WoUser;
 
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 用户仓库操作类。
@@ -24,7 +24,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface UserRepo extends PagingAndSortingRepository<WoUser, Long>, UserJdbc {
+public interface UserRepo extends BaseRepo<WoUser, Long>, UserJdbc {
 
 	boolean existsByLoginName(String loginName);
 

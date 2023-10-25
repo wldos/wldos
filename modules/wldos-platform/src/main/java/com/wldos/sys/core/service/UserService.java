@@ -32,9 +32,9 @@ import com.wldos.auth.vo.MobileModifyParams;
 import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.auth.vo.SecQuestModifyParams;
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.AuditFields;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
+import com.wldos.base.tools.AuditFields;
+import com.wldos.base.tools.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
@@ -366,11 +366,8 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		WoOrg org = this.entityRepo.queryOrgByDefaultRole(isEmailAction ? SysOptionEnum.UN_ACTIVE_GROUP.getKey()
 				: SysOptionEnum.DEFAULT_GROUP.getKey());
 		woOrgUser.setOrgId(org.getId());
-		// 初始化实体公共参数
-		EntityAssists.beforeInsert(woUser, userId, userId, userIp, true);
-		EntityAssists.beforeInsert(woOrgUser, this.nextId(), userId, userIp, true);
 
-		this.save(woUser);
+		this.save(woUser, true);
 		this.orgUserRepo.save(woOrgUser);
 
 		return woUser;
@@ -386,7 +383,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		woUser.setId(passwdModifyParams.getId());
 		woUser.setPasswd(passwdModifyParams.getPassword());
 
-		this.update(woUser);
+		this.update(woUser, true);
 	}
 
 	/**
@@ -412,7 +409,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		if (orgUser == null)
 			return "invalid";
 		orgUser.setOrgId(orgIdNew);
-		this.commonOperate.dynamicUpdateByEntity(orgUser);
+		this.commonOperate.dynamicUpdateByEntity(orgUser, true);
 		return "ok";
 	}
 
@@ -617,13 +614,13 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		usermeta.setMetaKey(metaKey);
 		usermeta.setMetaValue(metaValue);
 
-		this.userMetaService.insertSelective(usermeta);
+		this.userMetaService.insertSelective(usermeta, false);
 	}
 
 	private void userMetaModify(WoUsermeta usermeta, String metaValue) {
 
 		usermeta.setMetaValue(metaValue);
-		this.userMetaService.update(usermeta);
+		this.userMetaService.update(usermeta, false);
 	}
 
 	/**
@@ -655,8 +652,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		WoUser user = new WoUser();
 		user.setId(userId);
 		user.setAvatar(fileInfo.getPath());
-		EntityAssists.beforeUpdated(user, userId, userIp);
-		this.update(user);
+		this.update(user, true);
 	}
 
 	/**
@@ -678,8 +674,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		WoUser user = new WoUser();
 		user.setId(userId);
 		user.setAvatar(fileInfo.getPath());
-		EntityAssists.beforeUpdated(user, userId, userIp);
-		this.update(user);
+		this.update(user, true);
 	}
 
 	public String checkRoute(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request) {

@@ -1,18 +1,17 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
-package com.wldos.base;
+package com.wldos.framework.controller;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 
@@ -36,16 +35,15 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @version 1.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public abstract class RepoController<S extends RepoService, E> extends BaseController {
+public abstract class RepoController<S extends RepoService, E> extends AbstractController {
 
 	@Autowired
 	protected S service;
 
 	@PostMapping("add")
 	public String add(@RequestBody E entity) {
-		EntityAssists.beforeInsert(entity, this.nextId(), this.getCurUserId(), this.getUserIp(), false);
 		this.preAdd(entity);
-		service.insertSelective(entity);
+		service.insertSelective(entity, true);
 		this.postAdd(entity);
 		return resJson.ok(Boolean.TRUE);
 	}
@@ -66,9 +64,8 @@ public abstract class RepoController<S extends RepoService, E> extends BaseContr
 
 	@PostMapping("update")
 	public String update(@RequestBody E entity) {
-		EntityAssists.beforeUpdated(entity, this.getCurUserId(), this.getUserIp());
 		this.preUpdate(entity);
-		service.update(entity);
+		service.update(entity, true);
 		this.postUpdate(entity);
 		return resJson.ok(Boolean.TRUE);
 	}
@@ -148,7 +145,7 @@ public abstract class RepoController<S extends RepoService, E> extends BaseContr
 
 	@GetMapping("all")
 	public List<E> all() {
-		if (this.isMultiTenancy && !this.service.isAdmin(this.getCurUserId())) {
+		if (this.isMultiTenancy && !this.service.isAdmin(this.getUserId())) {
 			Map<String, Object> cond = new HashMap<>();
 			Class<E> clazz = this.service.getEntityClass(1);
 			cond.put(clazz.getSimpleName().equals(Constants.CLASS_NAME_COMPANY) ? "id" : Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId());

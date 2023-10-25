@@ -11,8 +11,7 @@ import java.io.File;
 
 import javax.mail.internet.MimeMessage;
 
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
 import com.wldos.support.mail.MailSender;
 import com.wldos.sys.core.entity.WoMail;
 import com.wldos.sys.core.enums.MailEnum;
@@ -191,14 +190,12 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 		mail.setContent(content);
 		mail.setFromAddr(from);
 		mail.setToAddr(to);
-		EntityAssists.beforeInsert(mail, this.nextId(), cUid, cUip, true);
-		this.save(mail);
+		this.save(mail, true);
 		return mail;
 	}
 
 	private void updateEmail(WoMail mail, String status) {
 		mail.setStatus(status);
-		EntityAssists.beforeUpdated(mail, mail.getCreateBy(), mail.getCreateIp());
-		this.update(mail);
+		this.update(mail, true);
 	}
 }

@@ -1,18 +1,19 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
-package com.wldos.base;
+package com.wldos.framework.service;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.wldos.base.tools.EntityAssists;
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 有唯一确定实体的公共顶层service，实现基础curd操作，固定service层与entityRepo层。
@@ -35,7 +35,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 @Slf4j
 @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-public abstract class RepoService<R extends PagingAndSortingRepository<E, PK>, E, PK> extends BaseService {
+public abstract class RepoService<R extends BaseRepo<E, PK>, E, PK> extends AbstractService {
 	/**
 	 * 实体Repo
 	 */
@@ -106,7 +106,9 @@ public abstract class RepoService<R extends PagingAndSortingRepository<E, PK>, E
 	 *
 	 * @param entity 实体bean
 	 */
-	public void save(E entity) {
+	public void save(E entity, boolean isAutoFill) {
+		if (isAutoFill)
+			EntityAssists.beforeInsert(entity, this.nextId(), this.commonOperate.getUserId(), this.commonOperate.getUserIp(), true);
 		entityRepo.save(entity);
 	}
 
@@ -115,7 +117,12 @@ public abstract class RepoService<R extends PagingAndSortingRepository<E, PK>, E
 	 *
 	 * @param entities 实体bean迭代器
 	 */
-	public void saveAll(Iterable<E> entities) {
+	public void saveAll(Iterable<E> entities, boolean isAutoFill) {
+		if (isAutoFill) {
+			Long uId = this.commonOperate.getUserId();
+			String uip = this.commonOperate.getUserIp();
+			entities.forEach(entity -> EntityAssists.beforeInsert(entity, this.nextId(), uId, uip, true));
+		}
 		this.entityRepo.saveAll(entities);
 	}
 
@@ -174,36 +181,40 @@ public abstract class RepoService<R extends PagingAndSortingRepository<E, PK>, E
 	 * 有选择地insert记录，空值不插入(采用数据库可能存在的默认值)。实现了mybatis mapper能力。
 	 *
 	 * @param entity 实体
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public void insertSelective(E entity) {
-		this.commonOperate.dynamicInsertByEntity(entity);
+	public Long insertSelective(E entity, boolean isAutoFill) {
+		return this.commonOperate.dynamicInsertByEntity(entity, isAutoFill);
 	}
 
 	/**
 	 * 批量有选择地insert记录，空值不插入(采用数据库可能存在的默认值)。实现了mybatis mapper能力。
 	 *
 	 * @param entities 多个实体
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public void insertSelectiveAll(Iterable<E> entities) {
-		this.commonOperate.dynamicBatchInsertByEntities((List<E>) entities);
+	public void insertSelectiveAll(Iterable<E> entities, boolean isAutoFill) {
+		this.commonOperate.dynamicBatchInsertByEntities((List<E>) entities, isAutoFill);
 	}
 
 	/**
 	 * 根据实体属性更新，属性为空值的Long类型不更新。
 	 *
 	 * @param entity 实体bean
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public void update(E entity) {
-		this.commonOperate.dynamicUpdateByEntity(entity);
+	public void update(E entity, boolean isAutoFill) {
+		this.commonOperate.dynamicUpdateByEntity(entity, isAutoFill);
 	}
 
 	/**
 	 * 批量更新
 	 *
 	 * @param entities 实体bean迭代器
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public void updateAll(Iterable<E> entities) {
-		this.commonOperate.dynamicBatchUpdateByEntities((List<E>) entities);
+	public void updateAll(Iterable<E> entities, boolean isAutoFill) {
+		this.commonOperate.dynamicBatchUpdateByEntities((List<E>) entities, isAutoFill);
 	}
 
 	/**

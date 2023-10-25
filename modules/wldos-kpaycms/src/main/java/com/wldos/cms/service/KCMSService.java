@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.base.NoRepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -182,12 +181,10 @@ public class KCMSService extends NoRepoService {
 		pubs.setPubType(pubType);
 		// 属于可信者用户组的会员跳过审核直接发布
 		pubs.setPubStatus(this.pubService.isCanTrust(userId) ? PubStatusEnum.PUBLISH.toString() : PubStatusEnum.IN_REVIEW.toString());
-		Long id = this.nextId();
-		EntityAssists.beforeInsert(pubs, id, userId, userIp, false);
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
-		this.pubService.insertSelective(pubs);
+		Long id = this.pubService.insertSelective(pubs, true);
 
 		// 批量关联发布内容分类并计数
 		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
@@ -245,9 +242,9 @@ public class KCMSService extends NoRepoService {
 			List<KPubmeta> pubMetasN = pubMetas.parallelStream().filter(p -> p.getId() == null).collect(Collectors.toList());
 			if (!pubMetasN.isEmpty())
 				pubMetasN.forEach(pm -> pm.setId(this.nextId()));
-			this.pubmetaService.insertSelectiveAll(pubMetasN);
+			this.pubmetaService.insertSelectiveAll(pubMetasN, false);
 			if (!pubMetasU.isEmpty())
-				this.pubmetaService.updateAll(pubMetasU);
+				this.pubmetaService.updateAll(pubMetasU, false);
 		}
 
 		// 处理分类和标签
@@ -265,7 +262,6 @@ public class KCMSService extends NoRepoService {
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
-		EntityAssists.beforeUpdated(pubs, userId, userIp);
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("updatePub", pubs);
 
@@ -273,7 +269,7 @@ public class KCMSService extends NoRepoService {
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
 			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
 
-		this.pubService.update(pubs);
+		this.pubService.update(pubs, true);
 	}
 
 	/**
@@ -403,7 +399,7 @@ public class KCMSService extends NoRepoService {
 			return pubMeta;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
-		this.pubmetaService.insertSelectiveAll(pubMetas);
+		this.pubmetaService.insertSelectiveAll(pubMetas, false);
 	}
 
 	/**
@@ -437,9 +433,9 @@ public class KCMSService extends NoRepoService {
 				objectMap.entrySet().parallelStream().map(entry ->
 						KPubmeta.of(this.nextId(), pub.getId(), entry.getKey(), entry.getValue().toString())).collect(Collectors.toList());
 
-		this.pubService.insertSelective(pub);
+		this.pubService.insertSelective(pub, true);
 
-		this.pubmetaService.insertSelectiveAll(pubMetas);
+		this.pubmetaService.insertSelectiveAll(pubMetas, false);
 	}
 
 	/**

@@ -7,7 +7,7 @@
 
 package com.wldos.auth.service;
 
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
 

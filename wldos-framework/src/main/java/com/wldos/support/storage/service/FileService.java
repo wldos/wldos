@@ -10,7 +10,7 @@ package com.wldos.support.storage.service;
 
 import java.io.IOException;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.support.storage.entity.WoFile;
 import com.wldos.support.storage.repo.FileRepo;

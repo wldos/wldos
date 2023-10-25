@@ -17,7 +17,6 @@ import com.wldos.support.auth.vo.AuthVerify;
 import com.wldos.support.cache.ICache;
 import com.wldos.support.domain.DomainResourceOpener;
 import com.wldos.support.resource.ResourceOpener;
-import com.wldos.support.resource.dto.MenuAndRoute;
 import com.wldos.support.resource.vo.AuthInfo;
 import com.wldos.support.resource.vo.DynSet;
 import com.wldos.support.resource.vo.Menu;

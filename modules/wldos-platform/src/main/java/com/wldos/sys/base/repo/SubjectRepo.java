@@ -7,9 +7,8 @@
 
 package com.wldos.sys.base.repo;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.base.entity.WoSubject;
-
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 社会主体仓库操作类。
@@ -18,5 +17,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface SubjectRepo extends PagingAndSortingRepository<WoSubject, Long> {
+public interface SubjectRepo extends BaseRepo<WoSubject, Long> {
 }

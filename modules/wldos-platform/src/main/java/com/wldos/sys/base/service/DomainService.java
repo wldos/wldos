@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
+import com.wldos.base.tools.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -98,14 +98,14 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 			WoDomainApp domainApp = new WoDomainApp();
 			domainApp.setDomainId(domainId);
 			domainApp.setAppId(appId);
-			EntityAssists.beforeInsert(domainApp, this.nextId(), curUserId, uip, true);
+
 			domainApp.setComId(comId);
 
 			return domainApp;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
 		if (!domainAppList.isEmpty())
-			this.domainAppService.saveAll(domainAppList);
+			this.domainAppService.saveAll(domainAppList, true);
 
 		return mes.toString();
 	}
@@ -126,7 +126,6 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 				mes.append("资源：").append(resId).append(" 已存在; ");
 				return null;
 			}
-			EntityAssists.beforeInsert(domainRes, this.nextId(), curUserId, uip, true);
 			return domainRes;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
@@ -177,7 +176,7 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 					domain.setSiteDescription("平台主站");
 					domain.setSiteUrl("https://" + this.getPlatDomain());
 					EntityAssists.beforeInsert(domain, this.nextId(), Constants.SYSTEM_USER_ID, "127.0.0.1", false);
-					this.insertSelective(domain);
+					this.insertSelective(domain, false); // 特殊情况，需要手动设置公共字段
 					domains = new ArrayList<>();
 					domains.add(domain);
 				}
@@ -421,6 +420,6 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 	}
 
 	public void domainResConf(WoDomainResource dRes) {
-		this.commonOperate.dynamicUpdateByEntity(dRes);
+		this.commonOperate.dynamicUpdateByEntity(dRes, true);
 	}
 }

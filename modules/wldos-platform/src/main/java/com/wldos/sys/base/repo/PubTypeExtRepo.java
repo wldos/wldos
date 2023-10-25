@@ -9,11 +9,11 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.support.cms.dto.PubTypeExt;
 import com.wldos.sys.base.entity.KModelPubTypeExt;
 
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -23,7 +23,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface PubTypeExtRepo extends PagingAndSortingRepository<KModelPubTypeExt, Long> {
+public interface PubTypeExtRepo extends BaseRepo<KModelPubTypeExt, Long> {
 	@Query("select e.* from k_model_pub_type_ext e where e.pub_type=:pubType")
 	List<PubTypeExt> queryExtPropsByPubType(@Param("pubType") String pubType);
 }

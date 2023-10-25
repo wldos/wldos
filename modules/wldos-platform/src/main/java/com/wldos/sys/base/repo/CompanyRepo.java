@@ -10,6 +10,7 @@ package com.wldos.sys.base.repo;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
@@ -17,7 +18,6 @@ import com.wldos.sys.base.dto.Tenant;
 import com.wldos.sys.base.entity.WoCompany;
 
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -27,7 +27,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface CompanyRepo extends PagingAndSortingRepository<WoCompany, Long> {
+public interface CompanyRepo extends BaseRepo<WoCompany, Long> {
 	// 平台自身租户实例
 	Tenant tenant = new Tenant(Constants.TOP_COM_ID, Constants.TOP_COM_CODE, Constants.TOP_COM_NAME,
 			"根平台", -1L, 1L, ValidStatusEnum.VALID.toString(), Constants.SYSTEM_USER_ID, new Timestamp(new Date().getTime()),

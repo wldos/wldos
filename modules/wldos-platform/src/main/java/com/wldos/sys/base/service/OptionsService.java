@@ -9,7 +9,7 @@ package com.wldos.sys.base.service;
 
 import java.util.List;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.system.entity.WoOptions;
 import com.wldos.sys.base.repo.OptionsRepo;

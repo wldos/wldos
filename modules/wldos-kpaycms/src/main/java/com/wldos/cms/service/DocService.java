@@ -9,7 +9,7 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.cms.vo.Doc;
 import com.wldos.cms.vo.DocItem;
 import com.wldos.common.enums.DeleteFlagEnum;

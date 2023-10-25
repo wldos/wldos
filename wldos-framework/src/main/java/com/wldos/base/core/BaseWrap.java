@@ -5,12 +5,12 @@
  * For commercial licenses see term.md or https://www.wldos.com
  */
 
-package com.wldos.base.tools;
+package com.wldos.base.core;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.wldos.base.core.Base;
+import com.wldos.base.tools.GetBeanHelper;
 import com.wldos.support.God;
 import com.wldos.support.auth.JWTTool;
 import com.wldos.support.cache.ICache;
@@ -117,7 +117,7 @@ public class BaseWrap extends Base implements God {
 	}
 
 	/** 主键生成器，加强雪花算法，分布式唯一 */
-	protected long nextId() {
+	public long nextId() {
 		return super.nextId();
 	}
 

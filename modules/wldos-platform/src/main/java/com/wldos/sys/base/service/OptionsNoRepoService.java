@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.system.OptionsOpener;
 import com.wldos.support.system.entity.WoOptions;
@@ -69,11 +69,11 @@ public class OptionsNoRepoService extends NoRepoService implements OptionsOpener
 
 		if (!updateOptions.isEmpty()) {
 			// 1.存在则更新，2.不存在则创建
-			this.commonOperate.dynamicBatchUpdateByEntities(updateOptions);
+			this.commonOperate.dynamicBatchUpdateByEntities(updateOptions, false);
 		}
 
 		if (!insertOptions.isEmpty()) {
-			this.insertOtherEntitySelective(insertOptions);
+			this.insertOtherEntitySelective(insertOptions, false);
 		}
 
 		return this.optionsRepo.findAllByAppCode(this.APP_CODE_SYSTEM).stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));

@@ -10,6 +10,7 @@ package com.wldos.base.tools;
 import java.util.List;
 import java.util.Map;
 
+import com.wldos.base.core.BaseWrap;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
@@ -24,7 +25,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.lang.NonNull;
 
 /**
- * 实现自由的jdbc操作，自定义cache，支持实体级的CRUD 和 自定义复杂SQL，定义公共jdbc操作模板。
+ * 实现自由的数据库操作，自定义cache，支持实体级的CRUD 和 自定义复杂SQL，定义公共jdbc操作模板。
  * 主要提供基础API，用于构建动态API。
  *
  * @author 树悉猿

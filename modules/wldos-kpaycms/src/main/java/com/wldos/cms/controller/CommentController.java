@@ -9,7 +9,7 @@ package com.wldos.cms.controller;
 
 import java.util.List;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.enums.ApproveStatusEnum;
 import com.wldos.cms.service.CommentService;
@@ -45,7 +45,7 @@ public class CommentController extends RepoController<CommentService, KComments>
 	@PostMapping("commit")
 	public Long comment(@RequestBody KComments entity) {
 
-		return this.service.comment(entity, this.getCurUserId(), this.getUserIp());
+		return this.service.comment(entity, this.getUserId(), this.getUserIp());
 	}
 
 	@DeleteMapping("del")

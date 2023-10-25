@@ -5,7 +5,7 @@
  * For commercial licenses see term.md or https://www.wldos.com
  */
 
-package com.wldos.base;
+package com.wldos.framework.service;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import org.springframework.lang.NonNull;
  */
 @Slf4j
 @SuppressWarnings({ "unused" })
-abstract class BaseService extends Base {
+abstract class AbstractService extends Base {
 
 	/**
 	 * 通用的jdbc和业务操作
@@ -72,9 +72,10 @@ abstract class BaseService extends Base {
 	 *
 	 * @param entity 辅助系实体
 	 * @param <O> 其他实体，比如主表的子表对应的实体bean
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public <O> void insertOtherEntitySelective(O entity) {
-		this.commonOperate.dynamicInsertByEntity(entity);
+	public <O> void insertOtherEntitySelective(O entity, boolean isAutoFill) {
+		this.commonOperate.dynamicInsertByEntity(entity, isAutoFill);
 	}
 
 	/**
@@ -82,9 +83,10 @@ abstract class BaseService extends Base {
 	 *
 	 * @param entities 辅助系实体
 	 * @param <O> 其他实体，比如主表的子表对应的实体bean
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public <O> void insertOtherEntitySelective(Iterable<O> entities) {
-		this.commonOperate.dynamicBatchInsertByEntities((List<O>) entities);
+	public <O> void insertOtherEntitySelective(Iterable<O> entities, boolean isAutoFill) {
+		this.commonOperate.dynamicBatchInsertByEntities((List<O>) entities, isAutoFill);
 	}
 
 	/**
@@ -92,9 +94,10 @@ abstract class BaseService extends Base {
 	 *
 	 * @param entity 辅助系实体
 	 * @param <O> 其他实体，比如主表的子表对应的实体bean
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	public <O> void updateOtherEntity(O entity) {
-		this.commonOperate.dynamicUpdateByEntity(entity);
+	public <O> void updateOtherEntity(O entity, boolean isAutoFill) {
+		this.commonOperate.dynamicUpdateByEntity(entity, isAutoFill);
 	}
 
 	/* ************************************** 分页查询API start************************************************/

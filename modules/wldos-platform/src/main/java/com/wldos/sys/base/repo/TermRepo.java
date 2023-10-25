@@ -9,13 +9,13 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.support.term.dto.Term;
 import com.wldos.sys.base.entity.KTermType;
 import com.wldos.sys.base.entity.KTerms;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface TermRepo extends PagingAndSortingRepository<KTerms, Long> {
+public interface TermRepo extends BaseRepo<KTerms, Long> {
 
 	/**
 	 * 查询某类下的分类项，默认按展示顺序排序

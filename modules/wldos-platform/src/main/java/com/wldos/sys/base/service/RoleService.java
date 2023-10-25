@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
@@ -132,7 +131,6 @@ public class RoleService extends RepoService<RoleRepo, WoRole, Long> {
 					WoAuthRole authRole = new WoAuthRole();
 					authRole.setRoleId(roleId);
 					authRole.setResourceId(resId);
-					EntityAssists.beforeInsert(authRole, this.nextId(), curUserId, uip, true);
 					WoResource resource = this.resourceService.findById(resId);
 					authRole.setAppId(resource.getAppId());
 
@@ -145,7 +143,6 @@ public class RoleService extends RepoService<RoleRepo, WoRole, Long> {
 			WoAuthRole authRole = new WoAuthRole();
 			authRole.setRoleId(roleId);
 			authRole.setResourceId(resId);
-			EntityAssists.beforeInsert(authRole, this.nextId(), curUserId, uip, true);
 			WoResource resource = this.resourceService.findById(resId);
 			authRole.setAppId(resource.getAppId());
 

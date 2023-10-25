@@ -9,11 +9,11 @@ package com.wldos.cms.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.cms.entity.KStars;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 点赞关注repository操作类
@@ -22,7 +22,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface StarRepo extends PagingAndSortingRepository<KStars, Long> {
+public interface StarRepo extends BaseRepo<KStars, Long> {
 
 	@Query("select c.* from k_stars c where c.object_id=:objId")
 	List<KStars> queryStarsByObjectId(Long objId);

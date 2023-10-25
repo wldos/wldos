@@ -57,4 +57,13 @@ public interface EdgeHandler {
 	 * @return 包装过的请求对象
 	 */
 	FilterRequestWrapper handleRequest(HttpServletRequest request, JWT jwt, Long domainId, String proxyPrefix);
+
+	/**
+	 * 获取用户当前访问的顶级域名
+	 *
+	 * @param request 请求
+	 * @param domainHeader 域参数在request中保存的header
+	 * @return 所用域名的顶级域名，类似： xxx.com...
+	 */
+	String getDomain(HttpServletRequest request, String domainHeader);
 }

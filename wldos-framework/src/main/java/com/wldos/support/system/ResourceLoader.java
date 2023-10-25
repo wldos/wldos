@@ -8,11 +8,6 @@
 
 package com.wldos.support.system;
 
-import java.io.File;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 /**
  * 。
  *

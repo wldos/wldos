@@ -11,7 +11,7 @@ package com.wldos.support.storage.controller;
 import java.io.IOException;
 import java.util.Locale;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.storage.entity.WoFile;
 import com.wldos.support.storage.service.FileService;
@@ -63,7 +63,7 @@ public class FileController extends RepoController<FileService, WoFile> {
 		// String path = this.request.getContextPath() + this.uploadPath;
 
 		return this.service.storeAndSaveInfo(file, this.storeUrl,
-				this.getCurUserId(), this.getUserIp());
+				this.getUserId(), this.getUserIp());
 	}
 
 	// @todo 按文件名称存储文件，需要在seo等场合展示有意义的文件名称，比如图片的英文名称有一定意义，是seo要求，logo可能需要定义包含logo字样的图片名称，此种情况下名称冲突时自动加数字

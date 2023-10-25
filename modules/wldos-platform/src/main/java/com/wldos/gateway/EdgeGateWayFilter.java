@@ -26,7 +26,6 @@ import com.wldos.common.exception.BaseException;
 import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultJson;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.domain.DomainUtils;
 import com.wldos.common.utils.http.IpUtils;
 import com.wldos.support.auth.JWTTool;
 import com.wldos.support.auth.TokenForbiddenException;
@@ -148,7 +147,7 @@ public class EdgeGateWayFilter implements Filter {
 				return;
 			}
 
-			String domain = DomainUtils.getDomain(request, this.domainHeader);
+			String domain = this.edgeHandler.getDomain(request, this.domainHeader);
 			boolean isExcludeUri = GateWayHelper.isMatchUri(reqUri, this.excludeUris);
 			WoDomain reqDomain = this.domainService.queryDomainByName(domain, isExcludeUri);
 			if (reqDomain == null) {// @todo 当没有设置域名 或者 没有开启多域名时，应存在默认域名

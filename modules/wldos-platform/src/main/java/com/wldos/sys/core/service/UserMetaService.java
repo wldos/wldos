@@ -9,7 +9,7 @@ package com.wldos.sys.core.service;
 
 import java.util.List;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.sys.core.entity.WoUsermeta;
 import com.wldos.sys.core.repo.UsermetaRepo;
 

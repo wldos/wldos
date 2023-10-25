@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
@@ -76,7 +76,7 @@ public class AppController extends RepoController<AppService, WoApp> {
 	public PageableResult<WoApp> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		if (this.isMultiTenancy && !this.service.isAdmin(this.getCurUserId())) { // @todo 暂不支持发布私有应用(小程序)，还没有想好如何设计API开放平台
+		if (this.isMultiTenancy && !this.service.isAdmin(this.getUserId())) { // @todo 暂不支持发布私有应用(小程序)，还没有想好如何设计API开放平台
 			pageQuery.pushFilter(Constants.COMMON_KEY_APP_TYPE, AppTypeEnum.APP.toString(), AppTypeEnum.PRIVATE.toString());
 		}
 

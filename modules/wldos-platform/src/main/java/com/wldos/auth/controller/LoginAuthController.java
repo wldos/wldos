@@ -9,7 +9,6 @@ package com.wldos.auth.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wldos.auth.enums.PasswdStatusEnum;
 import com.wldos.auth.service.LoginAuthService;
 import com.wldos.auth.vo.ActiveParams;
 import com.wldos.auth.vo.BakEmailModifyParams;
@@ -21,9 +20,8 @@ import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.PasswdResetParams;
 import com.wldos.auth.vo.Register;
 import com.wldos.auth.vo.SecQuestModifyParams;
-import com.wldos.base.NoRepoController;
+import com.wldos.framework.controller.NoRepoController;
 import com.wldos.common.Constants;
-import com.wldos.common.res.Result;
 import com.wldos.support.auth.KeyConfig;
 import com.wldos.sys.core.vo.User;
 

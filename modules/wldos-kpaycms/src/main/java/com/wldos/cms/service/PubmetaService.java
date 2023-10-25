@@ -9,7 +9,7 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.cms.repo.PubmetaRepo;
 import com.wldos.support.cms.PubmetaOpener;
 import com.wldos.support.cms.entity.KPubmeta;

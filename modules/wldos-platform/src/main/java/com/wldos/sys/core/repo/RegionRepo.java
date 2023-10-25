@@ -9,12 +9,12 @@ package com.wldos.sys.core.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.support.region.vo.City;
 import com.wldos.sys.core.entity.WoRegion;
 import com.wldos.sys.core.vo.Prov;
 
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 行政区划仓库操作类。
@@ -23,7 +23,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface RegionRepo extends PagingAndSortingRepository<WoRegion, Long> {
+public interface RegionRepo extends BaseRepo<WoRegion, Long> {
 	@Query("select g.id, g.name from wo_region g where g.`level`=:regionLevel")
 	List<Prov> queryByLevel(String regionLevel);
 

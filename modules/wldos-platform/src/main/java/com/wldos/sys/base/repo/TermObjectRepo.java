@@ -9,11 +9,11 @@ package com.wldos.sys.base.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.base.entity.KTermObject;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -23,7 +23,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface TermObjectRepo extends PagingAndSortingRepository<KTermObject, Long> {
+public interface TermObjectRepo extends BaseRepo<KTermObject, Long> {
 	/**
 	 * 查询某个分类下关联的作品集或作品列表
 	 *

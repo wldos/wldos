@@ -9,7 +9,7 @@ package com.wldos.sys.core.controller;
 
 import java.util.List;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.support.system.entity.WoOptions;
 import com.wldos.sys.base.service.OptionsService;
 

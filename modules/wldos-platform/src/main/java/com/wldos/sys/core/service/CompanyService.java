@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
+import com.wldos.base.tools.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -83,7 +83,6 @@ public class CompanyService extends RepoService<CompanyRepo, WoCompany, Long> {
 			WoOrgUser orgUser = new WoOrgUser();
 			orgUser.setOrgId(org.getId());
 			orgUser.setUserId(userId);
-			EntityAssists.beforeInsert(orgUser, this.nextId(), curUserId, uip, true);
 			orgUser.setArchId(org.getArchId());
 			orgUser.setComId(org.getComId());
 			orgUser.setUserComId(userComId); // 超级管理员设置租户管理员或者其他类似身份时以及借调场景，用户归属公司不同于组织公司
@@ -103,7 +102,6 @@ public class CompanyService extends RepoService<CompanyRepo, WoCompany, Long> {
 			comUser.setComId(userComId);
 			comUser.setUserId(userId);
 			comUser.setIsMain(userComList.isEmpty() ? BoolEnum.YES.toString() : BoolEnum.NO.toString());
-			EntityAssists.beforeInsert(comUser, this.nextId(), curUserId, uip, true);
 
 			return comUser;
 		}).filter(Objects::nonNull).collect(Collectors.toList());

@@ -9,11 +9,11 @@ package com.wldos.sys.core.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.core.entity.WoOrgUser;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 用户归属组织仓库操作类。
@@ -22,7 +22,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/5/9
  * @version 1.0
  */
-public interface OrgUserRepo extends PagingAndSortingRepository<WoOrgUser, Long> {
+public interface OrgUserRepo extends BaseRepo<WoOrgUser, Long> {
 	@Modifying
 	@Query("delete from wo_org_user where org_id=:orgId and user_id in (:ids)")
 	void removeOrgStaff(List<Long> ids, Long orgId);

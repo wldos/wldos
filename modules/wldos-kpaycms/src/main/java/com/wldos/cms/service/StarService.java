@@ -9,7 +9,7 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.repo.StarRepo;
 import com.wldos.common.enums.ValidStatusEnum;
@@ -53,7 +53,7 @@ public class StarService extends RepoService<StarRepo, KStars, Long> {
 		if (stars == null) {
 			// 生成点赞记录
 			stars = KStars.of(this.nextId(), objId, userId, ValidStatusEnum.VALID.toString(), null);
-			this.insertSelective(stars);
+			this.insertSelective(stars, false);
 			return 1;
 		}
 		else {
@@ -79,7 +79,7 @@ public class StarService extends RepoService<StarRepo, KStars, Long> {
 		if (stars == null) {
 			// 生成关注记录
 			stars = KStars.of(this.nextId(), objId, userId, null, ValidStatusEnum.VALID.toString());
-			this.insertSelective(stars);
+			this.insertSelective(stars, false);
 			return 1;
 		}
 		else {

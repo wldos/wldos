@@ -9,11 +9,11 @@ package com.wldos.cms.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.support.cms.entity.KPubmeta;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 发布内容扩展数据repository操作类
@@ -22,7 +22,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface PubmetaRepo extends PagingAndSortingRepository<KPubmeta, Long> {
+public interface PubmetaRepo extends BaseRepo<KPubmeta, Long> {
 	@Query("select m.* from k_pubmeta m where m.pub_id=:pid")
 	List<KPubmeta> queryPubMetaByPubId(Long pid);
 

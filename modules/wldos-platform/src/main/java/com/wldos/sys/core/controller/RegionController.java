@@ -10,7 +10,7 @@ package com.wldos.sys.core.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.support.region.vo.City;
 import com.wldos.sys.core.entity.WoRegion;
 import com.wldos.sys.core.service.RegionService;

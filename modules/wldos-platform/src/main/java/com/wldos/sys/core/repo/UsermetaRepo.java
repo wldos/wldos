@@ -9,9 +9,8 @@ package com.wldos.sys.core.repo;
 
 import java.util.List;
 
+import com.wldos.framework.repo.BaseRepo;
 import com.wldos.sys.core.entity.WoUsermeta;
-
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * 帖子扩展数据repository操作类
@@ -20,7 +19,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @date 2021/4/17
  * @version 1.0
  */
-public interface UsermetaRepo extends PagingAndSortingRepository<WoUsermeta, Long> {
+public interface UsermetaRepo extends BaseRepo<WoUsermeta, Long> {
 	WoUsermeta findByUserIdAndMetaKey(Long userId, String MetaKey);
 
 	List<WoUsermeta> findAllByUserId(Long userId);

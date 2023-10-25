@@ -1,14 +1,24 @@
 /*
  * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
- * Licensed under the Apache License Version 2.0 or a commercial license.
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or https://www.wldos.com
- *
  */
 
-package com.wldos.base.entity;
+package com.wldos.framework.entity;
 
 import java.sql.Timestamp;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.wldos.common.enums.ValidStatusEnum;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 
 /**
  * 抽象实体，用于定义公共字段对应的公共属性。
@@ -17,27 +27,42 @@ import java.sql.Timestamp;
  * @date 2021-02-11
  * @version V1.0
  */
+@Data
+@Accessors(chain = true)
 public class BaseEntity {
+	@Id
+	@TableId
 	private Long id;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Long createBy;
 
-	private java.sql.Timestamp createTime;
+	@TableField(fill = FieldFill.INSERT)
+	private Timestamp createTime;
 
+	@TableField(fill = FieldFill.INSERT)
 	private String createIp;
 
-	private final Long updateBy;
+	@TableField(fill = FieldFill.INSERT_UPDATE)
+	private Long updateBy;
 
-	private final java.sql.Timestamp updateTime;
+	@TableField(fill = FieldFill.INSERT_UPDATE)
+	private Timestamp updateTime;
 
-	private final String updateIp;
+	@TableField(fill = FieldFill.INSERT_UPDATE)
+	private String updateIp;
 
+	@TableLogic
 	private String deleteFlag;
 
-	private String isValid;
+	private String isValid = ValidStatusEnum.VALID.toString();
 
+	@Version
+	@com.baomidou.mybatisplus.annotation.Version
 	private Integer versions;
 
+	public BaseEntity() {
+	}
 
 	public BaseEntity(Long updateBy, Timestamp updateTime, String updateIp) {
 		this.updateBy = updateBy;
@@ -57,45 +82,5 @@ public class BaseEntity {
 		this.deleteFlag = deleteFlag;
 		this.isValid = isValid;
 		this.versions = versions;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public String getIsValid() {
-		return isValid;
-	}
-
-	public Integer getVersions() {
-		return versions;
 	}
 }

@@ -8,7 +8,7 @@
 
 package com.wldos.support;
 
-import com.wldos.base.tools.BaseWrap;
+import com.wldos.base.core.BaseWrap;
 
 /**
  * @author 树悉猿

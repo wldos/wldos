@@ -8,11 +8,12 @@
 package com.wldos.sys.base.repo;
 
 
+import com.wldos.framework.repo.BaseRepo;
+import com.wldos.framework.repo.RepoExt;
 import com.wldos.sys.base.entity.WoAuthRole;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -22,7 +23,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface AuthRoleRepo extends PagingAndSortingRepository<WoAuthRole, Long> {
+public interface AuthRoleRepo extends BaseRepo<WoAuthRole, Long>, RepoExt {
 	@Modifying
 	@Query("delete from wo_auth_role where role_id=:roleId")
 	void deleteByRoleId(@Param("roleId") Long roleId);

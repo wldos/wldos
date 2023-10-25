@@ -10,15 +10,13 @@ package com.wldos.base.tools;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.vo.TreeNode;
 
 /**
- * 公共jdbc操作和业务辅助。
+ * 公共数据库操作扩展和平台支撑扩展能力接口。
  *
  * @author 树悉猿
  * @date 2021/5/5
@@ -158,29 +156,33 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * 根据实体bean运行时动态拼装更新sql并更新
 	 *
 	 * @param entity 实体
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	<E> void dynamicUpdateByEntity(E entity);
+	<E> void dynamicUpdateByEntity(E entity, boolean isAutoFill);
 
 	/**
 	 * 有选择地insert记录，空值不插入(采用数据库可能存在的默认值)。
 	 *
 	 * @param entity 实体
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	<E> void dynamicInsertByEntity(E entity);
+	<E> Long dynamicInsertByEntity(E entity, boolean isAutoFill);
 
 	/**
 	 * 有选择地批量更新记录，空值不插入(采用数据库可能存在的默认值)。
 	 *
 	 * @param entities 实体集合
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	<E> void dynamicBatchUpdateByEntities(List<E> entities);
+	<E> void dynamicBatchUpdateByEntities(List<E> entities, boolean isAutoFill);
 
 	/**
 	 * 有选择地批量insert记录，空值不插入(采用数据库可能存在的默认值)。
 	 *
 	 * @param entities 实体结合
+	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
 	 */
-	<E> void dynamicBatchInsertByEntities(List<E> entities);
+	<E> void dynamicBatchInsertByEntities(List<E> entities, boolean isAutoFill);
 
 	/**
 	 * 批量删除
@@ -227,22 +229,23 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 */
 	boolean isCanTrust(Long userId);
 
+	Long getUserId();
 
-	Long getCurUserId(HttpServletRequest request);
+	String getToken();
 
-	String getToken(HttpServletRequest request);
+	Long getTenantId();
 
-	Long getTenantId(HttpServletRequest request);
+	String getDomain();
 
-	String getDomain(HttpServletRequest request);
+	Long getDomainId();
 
-	Long getDomainId(HttpServletRequest request);
+	String getUserIp();
 
-	void applyDomainFilter(PageQuery pageQuery, HttpServletRequest request);
+	void applyDomainFilter(PageQuery pageQuery);
 
-	void applyTenantFilter(PageQuery pageQuery, HttpServletRequest request);
+	void applyTenantFilter(PageQuery pageQuery);
 
-	long getTokenExpTime(HttpServletRequest request);
+	long getTokenExpTime();
 
 	/**
 	 * 生成状态码的逻辑涉及安全封装实现，二次开发可以自行实现

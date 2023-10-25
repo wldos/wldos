@@ -7,7 +7,7 @@
 
 package com.wldos.sys.base.service;
 
-import com.wldos.base.RepoService;
+import com.wldos.framework.service.RepoService;
 import com.wldos.sys.base.entity.WoArchitecture;
 import com.wldos.sys.base.repo.ArchitectureRepo;
 

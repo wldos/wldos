@@ -14,7 +14,7 @@ import com.wldos.auth.service.LoginAuthService;
 import com.wldos.auth.vo.Login;
 import com.wldos.auth.vo.PasswdModifyParams;
 import com.wldos.auth.vo.Register;
-import com.wldos.base.RepoController;
+import com.wldos.framework.controller.RepoController;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.support.resource.vo.Menu;
@@ -115,7 +115,7 @@ public class UserAdminController extends RepoController<UserService, WoUser> {
 	 */
 	@GetMapping("adminMenu")
 	public List<Menu> adminMenu() {
-		return this.service.queryAdminMenuByUser(this.getDomainId(), this.getTenantId(), this.getCurUserId());
+		return this.service.queryAdminMenuByUser(this.getDomainId(), this.getTenantId(), this.getUserId());
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class UserAdminController extends RepoController<UserService, WoUser> {
 	@PostMapping("passwd4admin")
 	public Login changePasswd4admin(@RequestBody PasswdModifyParams passwdModifyParams) {
 
-		getLog().info("用户id: {} 密码修改, 修改人id：{}", passwdModifyParams.getId(), this.getCurUserId());
+		getLog().info("用户id: {} 密码修改, 修改人id：{}", passwdModifyParams.getId(), this.getUserId());
 		Login user = this.loginAuthService.changePasswd4admin(passwdModifyParams);
 		if (user == null) {
 			getLog().info("{} 密码修改失败", passwdModifyParams.getId());

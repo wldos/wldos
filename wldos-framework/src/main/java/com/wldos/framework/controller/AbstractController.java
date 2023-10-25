@@ -5,7 +5,7 @@
  * For commercial licenses see term.md or https://www.wldos.com
  */
 
-package com.wldos.base;
+package com.wldos.framework.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +14,6 @@ import com.wldos.base.core.Base;
 import com.wldos.base.tools.CommonOperation;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.ResultJson;
-import com.wldos.common.utils.http.IpUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.Lazy;
  * @date 2021/5/5
  * @version 1.0
  */
-abstract class BaseController extends Base {
+abstract class AbstractController extends Base {
 
 	/** 如果service层需要request，可以传给service，不要在service直接获取*/
 	@Autowired
@@ -50,36 +49,36 @@ abstract class BaseController extends Base {
 	/**
 	 * 获取请求用户id
 	 */
-	protected Long getCurUserId() {
-		return this.commonOperate.getCurUserId(this.request);
+	protected Long getUserId() {
+		return this.commonOperate.getUserId();
 	}
 
 	/**
 	 * 获取请求用户token
 	 */
 	protected String getToken() {
-		return this.commonOperate.getToken(this.request);
+		return this.commonOperate.getToken();
 	}
 
 	/**
 	 * 获取当前用户IP
 	 */
 	protected String getUserIp() {
-		return IpUtils.getClientIp(this.request);
+		return this.commonOperate.getUserIp();
 	}
 
 	/**
 	 * 获取用户主企业id(租户)
 	 */
 	protected Long getTenantId() {
-		return this.commonOperate.getTenantId(this.request);
+		return this.commonOperate.getTenantId();
 	}
 
 	/**
 	 * 获取用户当前访问的域名
 	 */
 	protected String getDomain() {
-		return this.commonOperate.getDomain(this.request);
+		return this.commonOperate.getDomain();
 	}
 
 	/**
@@ -88,7 +87,7 @@ abstract class BaseController extends Base {
 	 * @return 域id
 	 */
 	protected Long getDomainId() {
-		return this.commonOperate.getDomainId(this.request);
+		return this.commonOperate.getDomainId();
 	}
 
 	/**
@@ -97,7 +96,7 @@ abstract class BaseController extends Base {
 	 * @param pageQuery 分页查询参数
 	 */
 	protected void applyDomainFilter(PageQuery pageQuery) {
-		this.commonOperate.applyDomainFilter(pageQuery, this.request);
+		this.commonOperate.applyDomainFilter(pageQuery);
 	}
 
 	/**
@@ -106,7 +105,7 @@ abstract class BaseController extends Base {
 	 * @param pageQuery 分页查询
 	 */
 	protected void applyTenantFilter(PageQuery pageQuery) {
-		this.commonOperate.applyTenantFilter(pageQuery, this.request);
+		this.commonOperate.applyTenantFilter(pageQuery);
 	}
 
 	/**
@@ -115,7 +114,7 @@ abstract class BaseController extends Base {
 	 * @return expireTime
 	 */
 	protected long getTokenExpTime() {
-		return this.commonOperate.getTokenExpTime(this.request);
+		return this.commonOperate.getTokenExpTime();
 	}
 
 	/**

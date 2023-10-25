@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.wldos.auth.vo.CaptchaVO;
-import com.wldos.base.NoRepoService;
+import com.wldos.framework.service.NoRepoService;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.UUIDUtils;

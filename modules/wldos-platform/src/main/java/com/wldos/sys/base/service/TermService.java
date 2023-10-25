@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.base.RepoService;
-import com.wldos.base.entity.EntityAssists;
+import com.wldos.framework.service.RepoService;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.BoolEnum;
@@ -576,14 +575,13 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 		// 新增term
 		KTerms kTerm = new KTerms();
 		this.termCopier.copy(term, kTerm, null);
-		EntityAssists.beforeInsert(kTerm, this.nextId(), userId, userIp, false);
-		this.insertSelective(kTerm);
+		this.insertSelective(kTerm, true);
 		// 新增term type
 		KTermType termType = new KTermType();
 		this.termTypeCopier.copy(term, termType, null);
 		termType.setId(kTerm.getId());
 		termType.setTermId(kTerm.getId());
-		this.insertOtherEntitySelective(termType);
+		this.insertOtherEntitySelective(termType, false);
 		return "ok";
 	}
 
@@ -599,13 +597,12 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
 		KTerms kTerms = new KTerms();
 		this.termCopier.copy(term, kTerms, null);
-		EntityAssists.beforeUpdated(kTerms, userId, userIp);
-		this.update(kTerms);
+		this.update(kTerms, true);
 
 		KTermType termType = new KTermType();
 		this.termTypeCopier.copy(term, termType, null);
 		termType.setId(term.getTermTypeId());
-		this.updateOtherEntity(termType);
+		this.updateOtherEntity(termType, false);
 		return "ok";
 	}
 
@@ -620,7 +617,6 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 		for (Term term : terms) {
 			KTerms kTerm = new KTerms();
 			this.termCopier.copy(term, kTerm, null);
-			EntityAssists.beforeInsert(kTerm, kTerm.getId(), userId, userIp, false);
 			kTerms.add(kTerm);
 
 			KTermType termType = new KTermType();
@@ -630,9 +626,9 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 			kTermTypes.add(termType);
 		}
 		// 新增term
-		this.insertSelectiveAll(kTerms);
+		this.insertSelectiveAll(kTerms, true);
 		// 新增term type
-		this.insertOtherEntitySelective(kTermTypes);
+		this.insertOtherEntitySelective(kTermTypes, false);
 	}
 
 	/**
@@ -676,7 +672,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 	 */
 	public void relTermObject(KTermObject termObject) {
 		// 数据保存
-		this.insertOtherEntitySelective(termObject);
+		this.insertOtherEntitySelective(termObject, false);
 		// 计数+1
 		this.termTypeRepo.countPlus(termObject.getTermTypeId());
 	}
@@ -758,7 +754,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 		}).collect(Collectors.toList());
 
 		// 数据保存
-		this.termObjectService.insertSelectiveAll(termObjects);
+		this.termObjectService.insertSelectiveAll(termObjects, false);
 		// 计数+1
 		this.termTypeRepo.countPlus(termTypeIds);
 	}
@@ -795,7 +791,7 @@ public class TermService extends RepoService<TermRepo, KTerms, Long> implements 
 				KTermObject.of(this.nextId(), tId, pId, 0L)).collect(Collectors.toList());
 
 		// 数据保存
-		this.termObjectService.insertSelectiveAll(tObjects);
+		this.termObjectService.insertSelectiveAll(tObjects, false);
 		// 计数+1
 		this.termTypeRepo.countPlus(termTypeIds);
 	}
