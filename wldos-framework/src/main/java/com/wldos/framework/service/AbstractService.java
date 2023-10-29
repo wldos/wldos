@@ -31,7 +31,7 @@ import org.springframework.lang.NonNull;
 abstract class AbstractService extends Base {
 
 	/**
-	 * 通用的jdbc和业务操作
+	 * 扩展的jdbc和业务操作
 	 */
 	@Autowired
 	@Lazy

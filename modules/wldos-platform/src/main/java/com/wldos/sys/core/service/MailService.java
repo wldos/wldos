@@ -86,7 +86,7 @@ public class MailService extends RepoService<MailRepo, WoMail, Long> {
 			this.sendMail(to, content, message, cUid, cUip);
 		}
 		catch (Exception ignored) {
-			this.getLog().info("发送html邮件时异常！请检查邮箱配置");
+			this.getLog().warn("发送html邮件时异常！请检查邮箱配置");
 			// throw new RuntimeException("发送html邮件时异常！", e);
 		}
 	}

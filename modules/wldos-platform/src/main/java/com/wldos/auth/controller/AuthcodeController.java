@@ -76,7 +76,7 @@ public class AuthcodeController extends NoRepoController<AuthCodeService> {
 		boolean isExists = this.service.checkEmail(email.getEmail());
 
 		if (!isExists) {
-			getLog().info("不存在的邮箱校验尝试：{}", email);
+			getLog().warn("不存在的邮箱校验尝试：{}", email);
 			res.put(status, "error");
 		}
 		else

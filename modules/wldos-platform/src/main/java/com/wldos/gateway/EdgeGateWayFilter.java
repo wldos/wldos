@@ -211,7 +211,7 @@ public class EdgeGateWayFilter implements Filter {
 			if (e instanceof BaseException)
 				this.throwException(response, (BaseException) e, userIP, reqUri, userId);
 			else if (e instanceof ClientAbortException) {
-				log.info("主机中止了一个连接");
+				log.warn("主机中止了一个连接");
 			}
 			else {
 				this.throwException(response, new BaseException("请求异常，请重试！"), userIP, reqUri, userId);

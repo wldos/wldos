@@ -16,7 +16,8 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.vo.TreeNode;
 
 /**
- * 公共数据库操作扩展和平台支撑扩展能力接口。
+ * 数据库操作扩展和底层支撑能力扩展。
+ * 出于安全和底层原因，参照JVM底层模式框架封装了扩展实现，不影响二次开发，可以同开源代码一起免费使用，请勿纠结。
  *
  * @author 树悉猿
  * @date 2021/5/5

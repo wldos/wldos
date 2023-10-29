@@ -65,7 +65,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("{} login in ", loginAuthParams.getUsername());
 		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request);
 		if (user == null) {
-			getLog().info("{} 登录失败", loginAuthParams.getUsername());
+			getLog().warn("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("登陆失败，请重试！");
@@ -81,7 +81,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		// todo 改造为手机验证码登录验证逻辑
 		Login user = this.service.login(this.getDomain(), this.getDomainId(), this.getTenantId(), loginAuthParams, request);
 		if (user == null) {
-			getLog().info("{} 登录失败", loginAuthParams.getUsername());
+			getLog().warn("{} 登录失败", loginAuthParams.getUsername());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("登陆失败，请重试！");
@@ -121,7 +121,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("用户登录名: {} 密码重置 ", resetParams.getLoginName());
 		Login user = this.service.resetPasswd(resetParams);
 		if (user == null) {
-			getLog().info("{} 密码重置失败", resetParams.getLoginName());
+			getLog().warn("{} 密码重置失败", resetParams.getLoginName());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密码重置失败，请重试！");
@@ -136,7 +136,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("用户id: {} 密码修改 ", passwdModifyParams.getId());
 		Login user = this.service.changePasswd(passwdModifyParams, hexKeyCode);
 		if (user == null) {
-			getLog().info("{} 密码修改失败", passwdModifyParams.getId());
+			getLog().warn("{} 密码修改失败", passwdModifyParams.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密码修改失败，请重试！");
@@ -149,7 +149,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("用户id: {} 密保手机修改 ", mobileModifyParams.getId());
 		Login user = this.service.changeMobile(mobileModifyParams);
 		if (user == null) {
-			getLog().info("{} 密保手机修改失败", mobileModifyParams.getId());
+			getLog().warn("{} 密保手机修改失败", mobileModifyParams.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密保手机修改失败，请重试！");
@@ -162,7 +162,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("用户id: {} 密保问题修改 ", params.getId());
 		Login user = this.service.changeSecQuest(params);
 		if (user == null) {
-			getLog().info("{} 密保问题修改失败", params.getId());
+			getLog().warn("{} 密保问题修改失败", params.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密保问题修改失败，请重试！");
@@ -175,7 +175,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("用户id: {} 备用邮箱修改 ", params.getId());
 		Login user = this.service.changeBakEmail(params);
 		if (user == null) {
-			getLog().info("{} 备用邮箱修改失败", params.getId());
+			getLog().warn("{} 备用邮箱修改失败", params.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("备用邮箱修改失败，请重试！");
@@ -188,7 +188,7 @@ public class LoginAuthController extends NoRepoController<LoginAuthService> {
 		getLog().info("用户id: {} 密保设备修改 ", params.getId());
 		Login user = this.service.changeMFA(params);
 		if (user == null) {
-			getLog().info("{} 密保设备修改失败", params.getId());
+			getLog().warn("{} 密保设备修改失败", params.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密保设备修改失败，请重试！");

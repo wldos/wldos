@@ -130,7 +130,7 @@ public class UserAdminController extends RepoController<UserService, WoUser> {
 		getLog().info("用户id: {} 密码修改, 修改人id：{}", passwdModifyParams.getId(), this.getUserId());
 		Login user = this.loginAuthService.changePasswd4admin(passwdModifyParams);
 		if (user == null) {
-			getLog().info("{} 密码修改失败", passwdModifyParams.getId());
+			getLog().warn("{} 密码修改失败", passwdModifyParams.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密码修改失败，请重试！");

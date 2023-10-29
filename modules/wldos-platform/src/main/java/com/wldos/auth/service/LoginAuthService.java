@@ -132,7 +132,7 @@ public class LoginAuthService extends NoRepoService {
 			user.setStatus("error");
 			user.setNews("失败次数过多，已锁定当前ip");
 			user.setType(loginAuthParams.getType());
-			getLog().info("失败次数过多，已锁定当前ip: {}", ip);
+			getLog().warn("失败次数过多，已锁定当前ip: {}", ip);
 			return user;
 		}
 
@@ -143,7 +143,7 @@ public class LoginAuthService extends NoRepoService {
 			user.setStatus("error");
 			user.setNews("失败次数超过3次，已锁定，请稍后再试");
 			user.setType(loginAuthParams.getType());
-			getLog().info("user locked: {} ip: {}", loginAuthParams.getUsername(), ip);
+			getLog().warn("user locked: {} ip: {}", loginAuthParams.getUsername(), ip);
 
 			return user;
 		}
@@ -376,7 +376,7 @@ public class LoginAuthService extends NoRepoService {
 		else {
 			login.setNews("无效操作");
 			login.setStatus("failure");
-			this.getLog().info("非法或冗余操作：用户激活{}，domain: {} userId: {}", login.getNews(), domain, active.getVerify());
+			this.getLog().warn("非法或冗余操作：用户激活{}，domain: {} userId: {}", login.getNews(), domain, active.getVerify());
 		}
 
 		return login;

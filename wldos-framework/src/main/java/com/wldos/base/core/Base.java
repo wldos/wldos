@@ -152,13 +152,13 @@ public class Base {
 	protected void refreshCache(String... keys) {
 		for (String key : keys) {
 			this.cache.remove(key);
-			getLog().info("已刷新缓存：{}", key);
+			getLog().debug("已刷新缓存：{}", key);
 		}
 	}
 
 	protected void refreshCacheByPrefix(String keyPrefix) {
 		this.cache.removeByPrefix(keyPrefix);
-		getLog().info("已刷新缓存，前缀：{}", keyPrefix);
+		getLog().debug("已刷新缓存，前缀：{}", keyPrefix);
 	}
 
 	/** 刷新权限体系：前缀为auth的所有缓存 */

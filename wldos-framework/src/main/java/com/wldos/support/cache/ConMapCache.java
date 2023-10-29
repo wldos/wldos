@@ -100,7 +100,7 @@ public class ConMapCache implements ICache {
 			cache.remove(key);
 			// 主动删掉历史缓存，防止高并发场景 或 高时延缓存 导致的内存泄露
 			delayQueue.removeIf((o) -> key.equals(o.getKey()));
-			log.info("缓存删成功，key={}", key);
+			log.debug("缓存删成功，key={}", key);
 		}
 		catch (Exception e) {
 			log.error("缓存删异常，key={} {}", key, e);
