@@ -114,7 +114,7 @@ abstract class AbstractService extends Base {
 	 * @param <V> VO类
 	 * @return VO分页列表
 	 */
-	<V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
+	public <V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
 		return this.commonOperate.execQueryForPage(vo, sqlNoWhere, pageQuery, sqlTables);
 	}
 
@@ -129,7 +129,7 @@ abstract class AbstractService extends Base {
 	 * @param <V> VO类
 	 * @return VO列表
 	 */
-	<V> List<V> execQueryForList(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
+	public <V> List<V> execQueryForList(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
 		return this.commonOperate.execQueryForList(vo, sqlNoWhere, pageQuery, sqlTables);
 	}
 

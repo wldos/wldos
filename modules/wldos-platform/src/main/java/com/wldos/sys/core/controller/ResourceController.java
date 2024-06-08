@@ -7,6 +7,7 @@
 
 package com.wldos.sys.core.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -142,8 +143,10 @@ public class ResourceController extends RepoController<ResourceService, WoResour
 			if (res.isEmpty()) {
 				res.add(plat);
 			}
-			else
-				res.set(0, plat);
+			else{
+				res.add(plat);
+				res.sort(Comparator.comparing(WoResource::getId));
+			}
 		}
 
 		return res;

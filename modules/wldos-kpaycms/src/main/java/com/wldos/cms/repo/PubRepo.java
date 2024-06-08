@@ -161,7 +161,8 @@ public interface PubRepo extends BaseRepo<KPubs, Long> {
 	 * @param termTypeId 分类id
 	 * @return 上一篇
 	 */
-	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id < :pid and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id desc limit 1)")
+	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id < :pid "
+			+ " and t.domain_id = (select s.domain_id from k_pubs s where s.id = :pid) and EXISTS(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id desc limit 1)")
 	MiniPub queryPrev(Long pid, Long termTypeId);
 
 	/**
@@ -180,7 +181,8 @@ public interface PubRepo extends BaseRepo<KPubs, Long> {
 	 * @param termTypeId 分类id
 	 * @return 下一篇
 	 */
-	@Query("select * from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id > :pid and exists(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id asc limit 1)")
+	@Query("select * from k_pubs s where s.delete_flag='normal' and s.id | s.domain_id = (select t.id | t.domain_id from k_pubs t where t.delete_flag='normal' and t.pub_type='post' and t.pub_status='publish' and t.id > :pid "
+			+ " and t.domain_id = (select s.domain_id from k_pubs s where s.id = :pid) and exists(select 1 from k_term_object o where o.object_id=t.id and o.term_type_id = :termTypeId) order by id asc limit 1)")
 	MiniPub queryNext(Long pid, Long termTypeId);
 
 	/**

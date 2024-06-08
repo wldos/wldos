@@ -16,6 +16,8 @@ import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.support.God;
+import com.wldos.support.plugins.Handler;
+import com.wldos.support.plugins.Invoker;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -292,4 +294,61 @@ public interface FreeJdbcTemplate extends God {
 
 	/** 租户数 */
 	int queryComSum();
+
+
+	/* **************************************************Hook api start**********************************************************/
+
+	/**
+	 * 注册扩展调用
+	 *
+	 * @param extName 扩展点名称
+	 * @param priority 执行优先级
+	 * @param numArgs 参数个数
+	 */
+	void addInvoke(String extName, Class<Invoker> instClazz, int priority, int numArgs);
+
+	/**
+	 * 执行扩展调用，用于针对参数args执行注册在指定扩展点extName上所有扩展调用
+	 *
+	 * @param extName 扩展点名称
+	 * @param args 参数
+	 */
+	void doInvoke(String extName, Object... args);
+
+	/**
+	 * 移除扩展Invoke
+	 *
+	 * @param extName 扩展点名称
+	 * @param args 参数
+	 */
+	void removeInvoke(String extName, Object... args);
+
+	/**
+	 * 注册扩展处理
+	 *
+	 * @param extName 扩展点名称
+	 * @param instClazz 实现扩展bean的类名，必须实现Handler
+	 * @param priority 执行优先级
+	 * @param numArgs 参数个数
+	 */
+	void addHandler(String extName, Class<Handler> instClazz, int priority, int numArgs);
+
+	/**
+	 * 执行扩展处理，用于针对参数args执行注册在指定扩展点extName上所有扩展处理，并输出处理结果
+	 *
+	 * @param extName 扩展点名称
+	 * @param args 参数，约定args[0]为处理对象，其余为辅助参数
+	 * @return 对args[0]的处理结果
+	 */
+	Object applyHandler(String extName, Object... args);
+
+	/**
+	 * 移除扩展Handler
+	 *
+	 * @param extName 扩展点名称
+	 * @param args 参数
+	 */
+	void removeHandler(String extName, Object... args);
+
+	/* **************************************************Hook api end*********************************************************/
 }

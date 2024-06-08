@@ -41,7 +41,7 @@ public class InfoUnit {
 
 	private String city;
 
-	private Timestamp updateTime;
+	private Timestamp createTime;
 
 	private Long createBy;
 
@@ -119,12 +119,12 @@ public class InfoUnit {
 		this.city = city;
 	}
 
-	public Timestamp getUpdateTime() {
-		return updateTime;
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 
 	public Integer getCommentCount() {

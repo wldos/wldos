@@ -20,6 +20,8 @@ public enum RedisKeyEnum {
 	WLDOS_ADMIN("wldos:admin"),
 	/** wldos系统：可信者 */
 	WLDOS_TRUST("wldos:trust"),
+	/** wldos系统：租户管理员 */
+	WLDOS_TENANT_ADMIN("wldos:tenant:admin"),
 	/**    wldos系统：资源权限树 */
 	WLDOS_AUTH("wldos:auth"),
 	/** CMS系统：资源权限树 */

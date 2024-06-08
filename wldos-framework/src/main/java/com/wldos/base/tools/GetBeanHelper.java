@@ -58,4 +58,8 @@ public class GetBeanHelper implements ApplicationContextAware {
 		}
 		return applicationContext.getBean(beanName);
 	}
+
+	public <T> T getBean(Class<T> requiredType) throws BeansException {
+		return this.beanFactory.getBean(requiredType);
+	}
 }

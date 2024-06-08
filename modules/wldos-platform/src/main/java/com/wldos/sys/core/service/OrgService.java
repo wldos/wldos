@@ -176,13 +176,14 @@ public class OrgService extends RepoService<OrgRepo, WoOrg, Long> {
 		Map<Long, List<WoComUser>> userComList = comUsers.parallelStream().collect(Collectors.groupingBy(WoComUser::getUserId));
 		List<WoComUser> woComUsers = ids.parallelStream().map(userId -> {
 			WoComUser comUser;
-			if (userComList.containsKey(userId))
+			boolean isCurCom = true; // 是否存在当前企业关联 或者 是否创建当前为主企业
+			if (userComList.containsKey(userId) && (isCurCom = userComList.get(userId).stream().allMatch(com -> Objects.equals(comId, com.getComId()))))
 				return null;
 
 			comUser = new WoComUser();
 			comUser.setComId(comId);
 			comUser.setUserId(userId);
-			comUser.setIsMain(userComList.isEmpty() ? BoolEnum.YES.toString() : BoolEnum.NO.toString());
+			comUser.setIsMain(isCurCom ? BoolEnum.YES.toString() : BoolEnum.NO.toString());
 
 			return comUser;
 		}).filter(Objects::nonNull).collect(Collectors.toList());

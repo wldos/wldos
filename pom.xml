@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.8</version>
+		<version>2.7.18</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.wldos</groupId>
@@ -27,8 +27,6 @@
 	</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<spring-boot-admin.version>2.7.4</spring-boot-admin.version>
-		<spring-cloud.version>2021.0.5</spring-cloud.version>
 	</properties>
 	<url>https://www.wldos.com</url>
 	<licenses>
@@ -139,7 +137,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.3.2</version>
+			<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -176,7 +174,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180130</version>
+			<version>20231013</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -194,7 +192,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.70</version>
+			<version>1.2.71_noneautotype</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -208,7 +206,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-context</artifactId>
-			<version>3.0.3</version>
+			<version>3.0.3</version><!-- 3.1.5 初始化加载数据库资源配置时 application空指针异常-->
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

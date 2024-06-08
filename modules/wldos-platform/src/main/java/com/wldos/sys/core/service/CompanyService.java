@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.wldos.framework.service.RepoService;
-import com.wldos.base.tools.EntityAssists;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -55,6 +54,7 @@ public class CompanyService extends RepoService<CompanyRepo, WoCompany, Long> {
 
 	/**
 	 * 超级管理员给租户添加管理员
+	 * 约定：一个用户只能作为一个租户管理员，一个公司可以拥有多个租户管理员，用户作为租户管理员时主企业可以不是受托租户，前端权限用主企业，后端管理用受托租户。
 	 *
 	 * @param userIds 待添加为租户管理员的用户ids
 	 * @param userComId 待添加管理员的租户id
@@ -70,13 +70,13 @@ public class CompanyService extends RepoService<CompanyRepo, WoCompany, Long> {
 		List<Long> ids = userIds.parallelStream().map(Long::parseLong).collect(Collectors.toList());
 		// 判断已设置为本租户管理员的用户清单
 		WoOrg org = this.orgRepo.findByOrgCodeAndIsValidAndDeleteFlag(Constants.TAdminOrgCode, ValidStatusEnum.VALID.toString(), DeleteFlagEnum.NORMAL.toString());
-		List<WoOrgUser> orgUsers = this.orgUserRepo.queryAllByUserIds(org.getId(), userComId, ids, ValidStatusEnum.VALID.toString(), DeleteFlagEnum.NORMAL.toString());
-		Map<Long, Long> userInOrg = orgUsers.parallelStream().collect(Collectors.toMap(WoOrgUser::getUserId, WoOrgUser::getUserId));
+		List<WoOrgUser> orgUsers = this.orgUserRepo.queryAllByUserIds(org.getId(),ids, ValidStatusEnum.VALID.toString(), DeleteFlagEnum.NORMAL.toString());
+		Map<Long, Long> userInOrg = orgUsers.parallelStream().collect(Collectors.toMap(WoOrgUser::getUserId, WoOrgUser::getUserComId));
 		StringBuilder mes = new StringBuilder(50);
 		List<WoOrgUser> orgUserList = ids.parallelStream().map(userId -> {
 
 			if (userInOrg.containsKey(userId)) {
-				mes.append("用户：").append(userId).append(" 已是管理员; ");
+				mes.append("用户：").append(userId).append(" 已是租户管理员，一个用户最多只能管理一个租户");
 				return null;
 			}
 
@@ -95,13 +95,14 @@ public class CompanyService extends RepoService<CompanyRepo, WoCompany, Long> {
 		Map<Long, List<WoComUser>> userComList = comUsers.parallelStream().collect(Collectors.groupingBy(WoComUser::getUserId));
 		List<WoComUser> woComUsers = ids.parallelStream().map(userId -> {
 			WoComUser comUser;
-			if (userComList.containsKey(userId))
+			boolean isCurCom = true; // 是否存在当前企业关联 或者 是否创建当前为主企业
+			if (userComList.containsKey(userId) && (isCurCom = userComList.get(userId).stream().allMatch(com -> Objects.equals(userComId, com.getComId()))))
 				return null;
 
 			comUser = new WoComUser();
 			comUser.setComId(userComId);
 			comUser.setUserId(userId);
-			comUser.setIsMain(userComList.isEmpty() ? BoolEnum.YES.toString() : BoolEnum.NO.toString());
+			comUser.setIsMain(isCurCom ? BoolEnum.YES.toString() : BoolEnum.NO.toString());
 
 			return comUser;
 		}).filter(Objects::nonNull).collect(Collectors.toList());

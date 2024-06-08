@@ -7,14 +7,10 @@
 
 package com.wldos.base.core;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import com.wldos.base.tools.GetBeanHelper;
 import com.wldos.support.God;
 import com.wldos.support.auth.JWTTool;
 import com.wldos.support.cache.ICache;
-import com.wldos.support.plugins.Handler;
 import com.wldos.support.storage.IStore;
 import org.slf4j.Logger;
 
@@ -142,21 +138,5 @@ public class BaseWrap extends Base implements God {
 	/** 刷新权限体系：前缀为auth的所有缓存 */
 	protected void refreshAuth() {
 		super.refreshAuth();
-	}
-
-	protected void addInvoke(String extName, Consumer<?> extMethod, String beanName, int priority, int numArgs) {
-		// 由基类实现
-	}
-
-	protected void doInvoke(String extName, Object... args) {
-		// 由基类实现
-	}
-
-	protected void addHandler(String extName, Function<Handler, Object> extMethod, int priority, int numArgs) {
-		// 由基类实现
-	}
-
-	protected Object applyHandler(String extName, Object args) {
-		return null;
 	}
 }

@@ -352,7 +352,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		regUserCopier.copy(register, woUser, null);
 		woUser.setStatus(isEmailAction ? UserStatusEnum.notActive.getValue() : UserStatusEnum.normal.getValue());
 
-		woUser.setDomainId(domainId);
+		woUser.setDomainId(domainId); // 通过域归属的公司 确定注册的用户是否属于租户
 
 		long userId = register.getId();
 		String userIp = register.getRegisterIp();

@@ -9,8 +9,6 @@ package com.wldos.base.core;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
 
@@ -24,7 +22,6 @@ import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.support.auth.JWTTool;
 import com.wldos.support.cache.ICache;
-import com.wldos.support.plugins.Handler;
 import com.wldos.support.storage.IStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +126,7 @@ public class Base {
 
 	/** 主键生成器，加强雪花算法，分布式唯一 */
 	protected long nextId() {
-		return this.IDGen.nextId();
+		return com.wldos.base.tools.IDGen.nextId();
 	}
 
 	/**
@@ -200,50 +197,5 @@ public class Base {
 
 	public void setWebRoot(String webRoot) {
 		this.webRoot = webRoot;
-	}
-
-	/**
-	 * 注册扩展调用
-	 *
-	 * @param extName 扩展点名称
-	 * @param extMethod 要执行的扩展方法（对象.方法）
-	 * @param priority 执行优先级
-	 * @param numArgs 参数个数
-	 */
-	protected void addInvoke(String extName, Consumer<?> extMethod, int priority, int numArgs) {
-		// 由基类实现
-	}
-
-	/**
-	 * 执行扩展调用，用于针对参数args执行注册在指定扩展点extName上所有扩展调用
-	 *
-	 * @param extName 扩展点名称
-	 * @param args 参数
-	 */
-	protected void doInvoke(String extName, Object... args) {
-		// 由基类实现
-	}
-
-	/**
-	 * 注册扩展处理
-	 *
-	 * @param extName 扩展点名称
-	 * @param extMethod 要执行的扩展方法（对象.方法）
-	 * @param beanName 实现扩展bean的类名，必须实现Handler
-	 * @param priority 执行优先级
-	 * @param numArgs 参数个数
-	 */
-	protected void addHandler(String extName, Function<Handler, Object> extMethod, String beanName, int priority, int numArgs) {
-		// 由基类实现
-	}
-
-	/**
-	 * 执行扩展处理，用于针对参数args执行注册在指定扩展点extName上所有扩展处理，并输出处理结果
-	 *
-	 * @param extName 扩展点名称
-	 * @return 处理结果
-	 */
-	protected Object applyHandler(String extName, Object args) {
-		return null;
 	}
 }

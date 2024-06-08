@@ -7,10 +7,12 @@
 
 package com.wldos.sys.core.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.wldos.common.vo.TreeNode;
 import com.wldos.framework.controller.RepoController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
@@ -98,12 +100,14 @@ public class CompanyController extends RepoController<CompanyService, WoCompany>
 	protected List<WoCompany> doFilter(List<WoCompany> res) {
 
 		if (this.isPlatformAdmin(this.getTenantId())) {
-			WoCompany plat = new WoCompany(Constants.TOP_COM_ID, "平台");
+			WoCompany plat = new WoCompany(Constants.TOP_COM_ID, Constants.TOP_COM_NAME);
 			if (res.isEmpty()) {
 				res.add(plat);
 			}
-			else
-				res.set(0, plat);
+			else {
+				res.add(plat);
+				res.sort(Comparator.comparing(WoCompany::getId));
+			}
 		}
 
 		return res;

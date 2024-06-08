@@ -7,6 +7,7 @@
 
 package com.wldos.sys.core.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -110,8 +111,10 @@ public class RoleController extends RepoController<RoleService, WoRole> {
 			if (res.isEmpty()) {
 				res.add(plat);
 			}
-			else
-				res.set(0, plat);
+			else{
+				res.add(plat);
+				res.sort(Comparator.comparing(WoRole::getId));
+			}
 		}
 
 		return res;

@@ -7,15 +7,23 @@
 
 package com.wldos.base.tools;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.entity.BaseEntity;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.utils.DateUtils;
+import lombok.SneakyThrows;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
 /**
  * 实体公共字段统一设置，这里不采用spring data jdbc的事件监听而是主动调用填充，因为自定义的写方法不确定。
@@ -36,19 +44,22 @@ public class EntityAssists {
 	 * insert时需要统一设置的公共字段。
 	 *
 	 * @param entity 实体
-	 * @param newID 主键
+	 * @param newID 主键，如果已经显式设置了主键，不会被newID覆盖
 	 * @param operateUserId 操作人id
 	 * @param userIp 操作ip
 	 * @param isRepo 使用框架jdbc模板方式执行insert,设置为false;使用spring-data-jdbc时设置为true
 	 * @param <T> 实体bean
 	 */
+	@SneakyThrows
 	public static <T> void beforeInsert(T entity, Long newID, long operateUserId, String userIp, boolean isRepo) {
 
 		Timestamp curTime = DateUtils.convSQLDate(new Date()); // 默认是UTC，否则在分布式架构下，要考虑时区的转换
+		// 如果主键不为空，则不自动生成主键
+		boolean hasId = isNoNullProperty(entity, "id");
 		BaseEntity baseEntity = new BaseEntity(newID, operateUserId, curTime, userIp, operateUserId,
 				curTime, userIp, DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString(), 1);
 
-		BeanUtils.copyProperties(baseEntity, entity, isRepo ? "versions" : null);
+		BeanUtils.copyProperties(baseEntity, entity, hasId ? "id" : null, isRepo ? "versions" : null);
 	}
 
 	/**
@@ -64,5 +75,17 @@ public class EntityAssists {
 		BaseEntity baseEntity = new BaseEntity(operateUserId, curTime, userIp); // 配合spring data 等框架支持乐观锁
 
 		BeanUtils.copyProperties(baseEntity, entity, "id", "createBy", "createTime", "createIp", "isValid", "deleteFlag", "versions");
+	}
+
+	private static boolean isNoNullProperty(Object instance, String name) {
+		BeanWrapper srcBean = new BeanWrapperImpl(instance);
+		PropertyDescriptor[] pds = srcBean.getPropertyDescriptors();
+		for (PropertyDescriptor p : pds) {
+			if (!p.getName().equals(name))
+				continue;
+			Object value = srcBean.getPropertyValue(p.getName());
+			return value != null;
+		}
+		return false;
 	}
 }

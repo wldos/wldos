@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.wldos.cms.vo.PubUnit;
+import com.wldos.common.dto.SQLTable;
 import com.wldos.framework.service.RepoService;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.entity.KPubs;
@@ -25,7 +27,9 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.support.auth.vo.UserInfo;
+import com.wldos.sys.base.entity.KTermObject;
 import com.wldos.sys.core.service.UserService;
+import org.apache.ibatis.jdbc.SQL;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
@@ -185,7 +189,8 @@ public class CommentService extends RepoService<CommentRepo, KComments, Long> {
 	 * @return 评论列表
 	 */
 	public PageableResult<AuditComment> queryAdminComments(PageQuery pageQuery) {
-		PageableResult<AuditComment> commentPage = this.execQueryForPage(new AuditComment(), new KComments(), pageQuery);
+		PageableResult<AuditComment> commentPage = this.execQueryForPage(AuditComment.class, "select c.* from k_comments c LEFT JOIN k_pubs p on c.pub_id=p.id", pageQuery,
+				SQLTable.of(KComments.class, "c"), SQLTable.of(KPubs.class, "p"));
 
 		List<AuditComment> comments = commentPage.getData().getRows();
 

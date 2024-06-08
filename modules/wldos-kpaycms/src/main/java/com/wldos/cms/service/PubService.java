@@ -208,7 +208,7 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 			sqlNoWhere += this.commonOperate.existsSql(cAlias, KTermObject.class, baseExistsSql, params, pageQuery);
 		}
 
-		// 自定义动态存在
+		// 自定义动态存在（这里用法其实不对，应该是确定的sqlNoWhere：使用表关联确定sql主体，然后在底层生成where的动态条件，不过此种可能更适应具体场景）
 		Object city = condition.get(KModelMetaKey.PUB_META_KEY_CITY);
 		if (!ObjectUtils.isBlank(city)) {
 			String baseExistsSql = " and exists(select 1 from k_pubmeta m where m.pub_id=p.id and m.meta_key='" + KModelMetaKey.PUB_META_KEY_CITY + "' and m.meta_value=?)";
@@ -239,7 +239,8 @@ public class PubService extends RepoService<PubRepo, KPubs, Long> implements Pub
 			sqlNoWhere += baseExistsSql + ")";
 		}
 
-		PageableResult<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, pageQuery, SQLTable.of(KPubs.class, "p"));
+
+		PageableResult<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, params, pageQuery, SQLTable.of(KPubs.class, "p"));
 		return this.handleInfoUnit(pubUnits, pageQuery);
 	}
 

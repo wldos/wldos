@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 分类管理controller。
+ * 租户共享平台分类、标签设置，不具备管理权限。
  *
  * @author 树悉猿
  * @date 2021/5/2

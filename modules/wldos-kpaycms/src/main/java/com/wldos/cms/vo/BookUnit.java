@@ -26,7 +26,7 @@ public class BookUnit {
 
 	private String cover; // 扩展属性：封面url
 
-	private Timestamp updateTime;
+	private Timestamp createTime;
 
 	private Long createBy;
 
@@ -64,12 +64,12 @@ public class BookUnit {
 		this.cover = cover;
 	}
 
-	public Timestamp getUpdateTime() {
-		return updateTime;
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 
 	public Long getCreateBy() {

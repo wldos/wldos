@@ -38,7 +38,7 @@ public interface OrgUserRepo extends BaseRepo<WoOrgUser, Long> {
 	List<WoOrgUser> queryAllByUserIds(Long orgId, Long archId, Long comId, List<Long> userIds, String isValid, String deleteFlag);
 
 	/**
-	 * 查询某租户管理员列表
+	 * 查询某租户管理员在指定用户中存在的列表
 	 *
 	 * @param tAdminOrgId 租户管理员系统用户组id
 	 * @param userComId 待查询的租户id
@@ -49,6 +49,18 @@ public interface OrgUserRepo extends BaseRepo<WoOrgUser, Long> {
 	 */
 	@Query("select c.* from wo_org_user c where c.is_valid =:isValid and c.delete_flag =:deleteFlag and c.org_id=:tAdminOrgId and c.user_com_id=:userComId and c.user_id in (:userIds)")
 	List<WoOrgUser> queryAllByUserIds(Long tAdminOrgId, Long userComId, List<Long> userIds, String isValid, String deleteFlag);
+
+	/**
+	 * 查询指定用户存在租户管理员的列表
+	 *
+	 * @param tAdminOrgId 租户管理员系统用户组id
+	 * @param userIds 待查询用户id
+	 * @param isValid 是否有效
+	 * @param deleteFlag 删除标识
+	 * @return 租户管理员列表
+	 */
+	@Query("select c.* from wo_org_user c where c.is_valid =:isValid and c.delete_flag =:deleteFlag and c.org_id=:tAdminOrgId and c.user_id in (:userIds)")
+	List<WoOrgUser> queryAllByUserIds(Long tAdminOrgId, List<Long> userIds, String isValid, String deleteFlag);
 
 	/**
 	 * 指定组织为超级管理员组，取出管理员

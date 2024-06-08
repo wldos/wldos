@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 用户管理相关controller。
+ * 租户管理员不具备删除用户权限，这是因为注销属于用户权力，租户不能删除平台用户。
  *
  * @author 树悉猿
  * @date 2021/5/2
@@ -140,6 +141,7 @@ public class UserAdminController extends RepoController<UserService, WoUser> {
 
 	/**
 	 * 管理员后台添加新用户
+	 * 租户管理员添加后，还需要从组织管理添加人员到组织，才能在用户管理看到用户
 	 *
 	 * @param register 用户注册信息
 	 * @return 注册结果

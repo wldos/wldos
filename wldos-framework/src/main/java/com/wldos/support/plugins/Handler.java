@@ -8,12 +8,18 @@
 package com.wldos.support.plugins;
 
 /**
- * 扩展处理器。
+ * 业务扩展处理器，给某个功能增加再处理操作。
  *
  * @author 树悉猿
  * @date 2023/9/12
  * @version 1.0
  */
 public interface Handler {
-	String applyHandler();
+	/**
+	 * 处理扩展
+	 *
+	 * @param args 参数，约定args[0]为处理对象，其余为辅助参数
+	 * @return 对args[0]的处理结果
+	 */
+	Object applyHandler(Object... args);
 }

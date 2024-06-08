@@ -8,12 +8,12 @@
 package com.wldos.support.plugins;
 
 /**
- * 扩展调用器。
+ * 业务扩展调用器，给某个功能追加无返回操作。
  *
  * @author 树悉猿
  * @date 2023/9/12
  * @version 1.0
  */
 public interface Invoker {
-	void invoke();
+	void invoke(Object... args);
 }

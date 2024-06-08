@@ -38,6 +38,19 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	<V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables);
 
 	/**
+	 * 自定义基础sql分页查询，查询条件、过滤条件、排序动态生成。
+	 *
+	 * @param vo 结果集映射bean
+	 * @param sqlNoWhere 结果集为VO的复杂查询sql，子查询存在where时主sql最外层必须带where
+	 * @param pageQuery 分页查询参数
+	 * @param params 预置参数（在生成sqlNoWhere时确定下来的子查询参数）
+	 * @param sqlTables 用于声明sqlNoWhere中的表对应的bean类型和表别名，用于动态拼装查询条件，bean是能覆盖相关表查询条件的实体bean或者视图bean
+	 * @param <V> VO类,系父表子集
+	 * @return VO分页列表
+	 */
+	<V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere,List<Object> params, PageQuery pageQuery, SQLTable... sqlTables);
+
+	/**
 	 * 自定义基础sql全量查询，查询条件、过滤条件、排序动态生成。
 	 *
 	 * @param vo 结果集映射bean
@@ -215,6 +228,11 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	List<Long> listTrustMan();
 
 	/**
+	 * 获取租户管理员
+	 */
+	List<Long> listTenantAdmin();
+
+	/**
 	 * 安全起见，实时查询当前用户是否超级管理员
 	 *
 	 * @param userId 用户id
@@ -229,6 +247,14 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @return 是否可信者
 	 */
 	boolean isCanTrust(Long userId);
+
+	/**
+	 * 租户管理区别于超级管理员，实时查询当前用户是否租户管理员
+	 *
+	 * @param userId 用户id
+	 * @return 是否租户管理员
+	 */
+	boolean isTenantAdmin(Long userId);
 
 	Long getUserId();
 

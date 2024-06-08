@@ -34,7 +34,7 @@ public class PubUnit extends BookUnit {
 
 	private String cover; // 扩展属性：封面url
 
-	private Timestamp updateTime;
+	private Timestamp createTime;
 
 	private Long createBy;
 
@@ -100,12 +100,14 @@ public class PubUnit extends BookUnit {
 		this.cover = cover;
 	}
 
-	public Timestamp getUpdateTime() {
-		return updateTime;
+	@Override
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
+	@Override
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 
 	public Integer getCommentCount() {

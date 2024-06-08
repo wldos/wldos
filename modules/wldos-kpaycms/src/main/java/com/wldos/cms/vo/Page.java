@@ -46,7 +46,7 @@ public class Page extends CMeta implements IMeta {
 
 	private Long likeCount;
 
-	private Timestamp updateTime;
+	private Timestamp createTime;
 
 	private Long domainId;
 
@@ -151,12 +151,12 @@ public class Page extends CMeta implements IMeta {
 		this.likeCount = likeCount;
 	}
 
-	public Timestamp getUpdateTime() {
-		return updateTime;
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 
 	public Long getDomainId() {

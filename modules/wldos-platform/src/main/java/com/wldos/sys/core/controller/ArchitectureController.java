@@ -8,6 +8,7 @@
 package com.wldos.sys.core.controller;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +77,10 @@ public class ArchitectureController extends RepoController<ArchitectureService, 
 			if (res.isEmpty()) {
 				res.add(plat);
 			}
-			else
-				res.set(0, plat);
+			else{
+				res.add(plat);
+				res.sort(Comparator.comparing(WoArchitecture::getId));
+			}
 		}
 
 		return res;
