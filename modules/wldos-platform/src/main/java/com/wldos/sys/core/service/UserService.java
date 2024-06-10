@@ -90,7 +90,7 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 	@Value("${wldos_user_avatar_default:}")
 	private String defaultAvatar;
 
-	@Value("${wldos.version:v2.0}")
+	@Value("${wldos.version:v1.0.0}")
 	private String wldosVersion;
 
 	private final AuthService authService;
