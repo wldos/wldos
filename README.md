@@ -42,7 +42,9 @@ QQ 群：830355512
 
 ![公众号：wldos](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)
 
-作者抖音：  ![输入图片说明](IMG_20240620_181720.png)  
+作者抖音：    
+![输入图片说明](IMG_20240620_181720.png)  
+
 演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（官网即演示环境）
 
 ### 功能说明
