@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.base.tools;
@@ -30,7 +30,7 @@ import org.springframework.lang.NonNull;
  * 实现自由的数据库操作，自定义cache，支持实体级的CRUD 和 自定义复杂SQL，定义公共jdbc操作模板。
  * 主要提供基础API，用于构建动态API。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021-04-16
  * @version V1.0
  */

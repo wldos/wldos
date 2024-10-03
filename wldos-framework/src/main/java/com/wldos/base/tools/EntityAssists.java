@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.base.tools;
@@ -30,7 +30,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 另外建议复杂系统模块使用纯jdbc实现，过度封装的spring data repository对聚合根的jdbc操作存在大量冗余操作，
  * 设置聚合根某个属性会引发全聚合根的更新、删除、再插入，这对于一对多的系统权限配置数据等场景的持久化需求十分不友好，没必要更新历史记录。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021-04-20
  * @version V1.0
  */

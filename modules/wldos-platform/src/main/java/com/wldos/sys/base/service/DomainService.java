@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.sys.base.service;
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 域管理service。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/4/28
  * @version 1.0
  */
@@ -174,7 +174,7 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 					domain.setSiteDomain(this.getPlatDomain());
 					domain.setDisplayOrder(1L);
 					domain.setSiteDescription("平台主站");
-					domain.setSiteUrl("https://" + this.getPlatDomain());
+					domain.setSiteUrl("http://" + this.getPlatDomain());
 					EntityAssists.beforeInsert(domain, this.nextId(), Constants.SYSTEM_USER_ID, "127.0.0.1", false);
 					this.insertSelective(domain, false); // 特殊情况，需要手动设置公共字段
 					domains = new ArrayList<>();

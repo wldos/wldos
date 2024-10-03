@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.gateway;
@@ -51,7 +51,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 /**
  * 边缘网关。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021-04-18
  * @version V1.0
  */
@@ -230,7 +230,7 @@ public class EdgeGateWayFilter implements Filter {
 			String message = status == 500 ? "Sorry, the server is abnormal, please try again, or contact the administrator: " + this.adminEmail
 					: ObjectUtils.string(ex.getMessage());
 			response.setStatus(status == 500 ? 200 : status);
-			response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+			response.setContentType("text/plain;charset=utf-8");
 			log.error("userIP: {}, reqUri: {}, userId: {}, exception: {}", userIP, reqUri, userId, message);
 			String json = this.resJson.ok(new Result(status, message));
 			response.getOutputStream().write(json.getBytes(StandardCharsets.UTF_8));

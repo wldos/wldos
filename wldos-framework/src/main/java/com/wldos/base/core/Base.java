@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.base.core;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 /**
  * 框架基础会话类，组织平台扩展接口，不允许直接继承。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/6/14
  * @version 1.0
  */
@@ -81,11 +81,11 @@ public class Base {
 	protected String wldosDomain;
 
 	/** 平台url */
-	@Value("${wldos.platform.url:https://www.wldos.com}")
+	@Value("${wldos.platform.url:http://www.wldos.com}")
 	protected String wldosUrl;
 
-	/** 平台前端请求协议 */
-	@Value("${wldos_req_protocol:https}")
+	/** 平台前端请求协议，默认http */
+	@Value("${wldos_req_protocol:http}")
 	protected String reqProtocol;
 
 	@Value("${token.access.header:"+Constants.TOKEN_ACCESS_HEADER+"}")

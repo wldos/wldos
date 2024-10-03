@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.sys.base.enums;
@@ -17,7 +17,7 @@ import com.wldos.common.utils.ObjectUtils;
  * 把各种类型放在一起方便系统地实现业务，世界是普遍联系的，分而治之已经走到尽头
  * 作品发布类型分为主类型和子类型，其中主类型又分单体类型、复合类型，子类型表示主类型的元素内容，主与子是父子关系，展现作品时以主类型为依据。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/6/13
  * @version 1.0
  */

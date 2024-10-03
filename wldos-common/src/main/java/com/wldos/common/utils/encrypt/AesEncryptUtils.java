@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  *
  */
 
@@ -25,7 +25,7 @@ import org.apache.commons.codec.binary.Hex;
  * AES加/解密工具类。使用密钥时请使用 initKey()方法来生成随机密钥。initKey方法内部使用 java.crypto.KeyGenerator密钥生成器
  * 来生成特定于AES算法参数集的随机密钥。使用密钥生成器生成的密钥能保证更强的随机性，生成的二进制密钥建议使用Hex进行编码。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/7/15
  * @version 1.0
  */

@@ -4,7 +4,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">基于 WLDOS 开发 云物互联应用 聚焦、开放、管控你的生态</h5>
 <p align="center">
- <a href="http://wldos.com/" target="__blank"><img alt="WLDOS-V1.9" src="https://img.shields.io/badge/WLDOS-V1.9-deepskyblue.svg"></a>
+ <a href="https://wldos.com/" target="__blank"><img alt="WLDOS-V2.0" src="https://img.shields.io/badge/WLDOS-V2.0-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -40,10 +40,10 @@ WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力�
 QQ 群：830355512   
 公众号：wldos
 
-![公众号：wldos](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)
+![公众号：wldos](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)    
 
 作者抖音：    
-![输入图片说明](IMG_20240620_1817201.png)
+![作者抖音：元悉笔记](wldos-dy.png)
 
 演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（官网即演示环境）
 
@@ -113,7 +113,7 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 WLDOS平台已申请软件著作权证书，开放出的源代码以及软件可以商用(无需魔改^0^)，与商业版代码完全一致。   
 商业合作qq：306991142。
 
-官网：https://www.wldos.com
+官网：http://www.wldos.com or 306991142@qq.com
 
 *附：*
 #### 项目结构(以实际为准)

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  *
  */
 
@@ -15,7 +15,7 @@ package com.wldos.support.cms.model;
  * 附件扩展属性：特点是一个实体可以拥有多个附件，表达附件扩展属性的key相同。
  * 自定义扩展属性：二次开发者追加扩展属性，特点是绑定具体的行业门类，由开发者决定何时输入、何时输出以及处理、展现的逻辑。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/6/19
  * @version 1.0
  */

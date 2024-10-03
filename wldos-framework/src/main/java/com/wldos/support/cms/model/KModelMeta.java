@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  *
  */
 
@@ -15,7 +15,7 @@ import java.util.List;
  * 在CMS-Pub基础上的知识元模型定义。知识内容模型包括两部分：数据和行为。数据定义了结构，行为定义了流程、逻辑和展现，本系统以相对固定的行为和数据模板实现一种模式，
  * 基于数据和行为的扩展同样遵循这个模式。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/6/19
  * @version 1.0
  */

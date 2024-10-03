@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.framework.repo;
@@ -13,7 +13,7 @@ import com.wldos.base.tools.CommonOperation;
  * 在repo层引入数据库和支撑平台的增强扩展。
  * 当前BaseRepo提供的框架功能不够时，引入此接口，可以获得更多扩展能力。当这些能力仍不足够时，可以自行扩展。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2023/10/23
  * @version 1.0
  */

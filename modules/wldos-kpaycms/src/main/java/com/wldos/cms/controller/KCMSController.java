@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.cms.controller;
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 知识内容管理系统前端响应controller。
  * 默认用户端不按多租隔离查询内容，只按分站（业务分类绑定分站，如果分类是区域，则是地区分站）查询。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/6/12
  * @version 1.0
  */

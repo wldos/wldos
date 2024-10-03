@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+  ~ Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
   ~ Licensed under the AGPL or a commercial license.
   ~ For AGPL see License in the project root for license information.
-  ~ For commercial licenses see term.md or https://www.wldos.com
+  ~ For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
   ~
   -->
 
@@ -28,7 +28,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-	<url>https://www.wldos.com</url>
+	<url>http://www.wldos.com</url>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -37,7 +37,7 @@
 	</licenses>
 	<developers>
 		<developer>
-			<name>树悉猿</name>
+			<name>元悉宇宙</name>
 			<email>306991142@qq.com</email>
 			<roles>
 				<role>leader</role>

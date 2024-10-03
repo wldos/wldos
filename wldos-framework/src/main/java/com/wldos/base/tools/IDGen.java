@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.base.tools;
@@ -21,7 +21,7 @@ import static java.security.SecureRandom.getInstanceStrong;
 /**
  * 主键生成器。需要根据实际需要规划，前端js最大支持16位正整数：9007199254740991，普通业务系统不宜超出。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021年3月11日
  * @version V1.0
  */

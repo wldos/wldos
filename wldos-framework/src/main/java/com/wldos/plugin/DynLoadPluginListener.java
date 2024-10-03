@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  *
  */
 
@@ -11,6 +11,7 @@ package com.wldos.plugin;
 import java.io.File;
 import java.net.URLClassLoader;
 import java.time.Duration;
+import java.util.Objects;
 
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
@@ -43,12 +44,14 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 		String root;
 		String inf;
 		try {
-			File webINF = new ClassPathResource("/wldos.lic").getFile().getParentFile().getParentFile();
+			ClassLoader classLoader = getClass().getClassLoader();
+
+			File webINF = new File(Objects.requireNonNull(classLoader.getResource("")).getFile()).getParentFile();
 			root = webINF.getParentFile().getAbsolutePath();
 			inf = webINF.getAbsolutePath();
 		} catch (Exception e) {
 			try { // for macOs
-				Resource resource = context.getResource("classpath:wldos.lic");
+				Resource resource = context.getResource("classpath:wldos");
 				File webINF = resource.getFile().getParentFile().getParentFile();
 				root = webINF.getParentFile().getAbsolutePath();
 				inf = webINF.getAbsolutePath();
@@ -65,6 +68,8 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 	@Override
 	public void started(ConfigurableApplicationContext context, Duration timeTaken) {
 		pluginManager.boot(context);
+
+
 	}
 
 	@Override

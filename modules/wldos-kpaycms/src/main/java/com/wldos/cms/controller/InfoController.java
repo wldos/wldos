@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  */
 
 package com.wldos.cms.controller;
@@ -48,7 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 供求信息controller。信息不能线上交易，只能线下交易。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2022/01/05
  * @version 1.0
  */

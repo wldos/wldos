@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  *
  */
 
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * 为什么不用redis，因为Redis的作用不在于缓存，如果你想使用Redis，重写这个接口的实现就是了。
  * 实现理念：一切以实际业务需求和系统的整体架构为依据，我们只实现1，如果你需要10，那么继续造9个就是了！
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/5/7
  * @version 1.0
  */

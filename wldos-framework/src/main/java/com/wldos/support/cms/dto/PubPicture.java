@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2020 - 2023 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
  * Licensed under the Apache License Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or https://www.wldos.com
+ * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
  *
  */
 
@@ -16,7 +16,7 @@ import com.wldos.support.storage.dto.Thumbnail;
  * 发布内容图片元数据结构。用于创建发布内容图片的元数据，保存用户设置的图片格式，适配多终端的缩略图元信息。
  * 是创建带格式的发布内容对象的图片格式存储器和格式化筛。
  *
- * @author 树悉猿
+ * @author 元悉宇宙
  * @date 2021/7/5
  * @version 1.0
  */
