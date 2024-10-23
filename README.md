@@ -37,14 +37,13 @@ WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力�
 
 #### 技术交流
 
-QQ 群：792559964(已满) 请加2000人大群：830355512   
-加微信：dadaowuju
-公众号：wldos
+QQ群：群一：792559964(已满) 群二：830355512   
+作者公众号：元悉世界 （id:yuanxiyuzhou）
 
-![公众号：wldos](https://gitee.com/wldos/wldos/raw/master/wldos.jpg)    
+![作者公众号：元悉世界](%E5%85%83%E6%82%89%E4%B8%96%E7%95%8C%E5%85%AC%E4%BC%97%E5%8F%B7.jpg)  
 
 作者抖音：    
-![作者抖音：元悉笔记](wldos-dy.png)
+![作者抖音：元悉宇宙](wldos-dy.png)
 
 演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（官网即演示环境）
 
