@@ -85,8 +85,7 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
    数据库脚本在wldos-web/db下，mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/>
 
 3. 设置文件存储位置。  <br/>
-   默认E:\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  
-   把zone目录下的store.rar(图片压缩包较大，去qq群830355512文件里下载)解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有演示数据对应的图片，如果不设置相关图片显示404。<br/><br/>
+   默认:${project-root}\\wldos-web\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  <br/><br/>
 4. 项目更新maven库。服务器端口号默认8080。<br/><br/>
 5. 安装项目；  <br/>
    mvn clean install -pl com.wldos:wldos-web -am -DskipTests  <br/><br/>
