@@ -40,10 +40,7 @@ WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力�
 QQ群：群一：792559964(已满) 群二：830355512   
 作者公众号：元悉世界 （id:yuanxiyuzhou）
 
-![作者公众号：元悉世界](%E5%85%83%E6%82%89%E4%B8%96%E7%95%8C%E5%85%AC%E4%BC%97%E5%8F%B7.jpg)  
-
-作者抖音：    
-![作者抖音：元悉宇宙](wldos-dy.png)
+![作者公众号：元悉世界](元悉世界公众号.jpg)
 
 演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（官网即演示环境）
 
@@ -72,7 +69,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 **3.0规划功能：** 软件工厂、云物互联支撑能力、智能建模与机器人系统。
 
 ### 模块介绍
-  
+
 wldos-common：通用模块  
 wldos-framework：wldos开发框架
 wldos-platform: wldos支撑平台    
@@ -84,22 +81,22 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 #### 启动后端：
 1. 后端工程下载到本地，用idea打开项目。<br/>
-2. 安装mysql数据库脚本，生成数据库。 <br/> 
-数据库脚本在wldos-web/db下，mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/> 
-    
+2. 安装mysql数据库脚本，生成数据库。 <br/>
+   数据库脚本在wldos-web/db下，mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/>
+
 3. 设置文件存储位置。  <br/>
-    默认E:\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  
-    把zone目录下的store.rar(图片压缩包较大，去qq群830355512文件里下载)解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有演示数据对应的图片，如果不设置相关图片显示404。<br/><br/>
+   默认E:\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  
+   把zone目录下的store.rar(图片压缩包较大，去qq群830355512文件里下载)解压到设置的文件存储位置，store为指定存储位置下的一级目录，里面有演示数据对应的图片，如果不设置相关图片显示404。<br/><br/>
 4. 项目更新maven库。服务器端口号默认8080。<br/><br/>
-5. 安装项目；  <br/> 
+5. 安装项目；  <br/>
    mvn clean install -pl com.wldos:wldos-web -am -DskipTests  <br/><br/>
    启动项目：    
    mvn -pl com.wldos:wldos-web spring-boot:run。<br/><br/>
 
 #### 启动前端： <br/>
-  1.下载前端项目到本地后，打开项目，执行tyarn安装依赖js库。<br/> 
-  2.执行npm start启动前端项目。前端访问路径：http://localhost:8000  <br/>
-  3.登录。超级管理员admin，密码同名称。
+1.下载前端项目到本地后，打开项目，执行tyarn安装依赖js库。<br/>
+2.执行npm start启动前端项目。前端访问路径：http://localhost:8000  <br/>
+3.登录。超级管理员admin，密码同名称。
 
 #### 部署到服务器: <br/>
     1.在服务器上安装好mysql5.7、tomcat9、apache2.4，数据库配置好DBA权限的用户，更新配置到platform/application*.properties中；  

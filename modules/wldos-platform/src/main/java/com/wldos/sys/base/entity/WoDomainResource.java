@@ -27,6 +27,8 @@ public class WoDomainResource {
 
 	private Long termTypeId;
 
+	private String url;
+
 	private Long domainId;
 
 	private String isValid;
@@ -89,6 +91,14 @@ public class WoDomainResource {
 
 	public void setTermTypeId(Long termTypeId) {
 		this.termTypeId = termTypeId;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public Long getDomainId() {

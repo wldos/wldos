@@ -396,7 +396,7 @@ public class DomainService extends RepoService<DomainRepo, WoDomain, Long> {
 		pageQuery.appendParam("isValid", ValidStatusEnum.VALID.toString());
 		pageQuery.appendParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		pageQuery.pushSort(new String[][] { { "s.resource_path" }, { "s.parent_id | s.display_order" } }); // 特殊排序
-		String sqlNoWhere = "select r.id, r.domain_id, r.module_name, r.term_type_id, s.id resource_id, s.resource_code, "
+		String sqlNoWhere = "select r.id, r.domain_id, r.module_name, r.term_type_id, r.url, s.id resource_id, s.resource_code, "
 				+ "s.resource_name, s.resource_path, s.icon, s.resource_type, s.request_method, s.target, s.app_id, s.parent_id, s.remark, s.is_valid from wo_domain_resource r "
 				+ "join wo_resource s on r.app_id=s.app_id and r.resource_id = s.id";
 		List<DomainResource> resList = this.commonOperate.execQueryForList(DomainResource.class, sqlNoWhere, pageQuery,

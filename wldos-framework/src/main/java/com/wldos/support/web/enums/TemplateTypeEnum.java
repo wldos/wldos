@@ -24,6 +24,7 @@ public enum TemplateTypeEnum {
 	CATEGORY("类目", "category"),
 	INFO("信息", "info"),
 	ADMIN("系统管理", "admin"),
+	URL("指定url", "url"),
 	STATIC("静态", "static"),
 	UNKNOWN("未知", "unknown");
 

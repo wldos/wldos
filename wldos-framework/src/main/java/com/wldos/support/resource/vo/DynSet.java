@@ -22,12 +22,26 @@ public class DynSet {
 	/** 绑定的分类别名 */
 	private String category;
 
+	/** 指定url */
+	private String url;
+
+
 	public DynSet() {
 	}
 
-	public DynSet(String module, String category) {
+	public static DynSet of(String module, String category, String url) {
+		return new DynSet(module, category, url);
+	}
+
+	private DynSet(String module, String category) {
 		this.module = module;
 		this.category = category;
+	}
+
+	private DynSet(String module, String category, String url) {
+		this.module = module;
+		this.category = category;
+		this.url = url;
 	}
 
 	public String getModule() {
@@ -44,5 +58,13 @@ public class DynSet {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }

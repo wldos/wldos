@@ -43,6 +43,8 @@ public class DomainResource extends TreeNode<DomainResource> {
 
 	private Long termTypeId;
 
+	private String url;
+
 	/** 分类目录名称 */
 	private String termName;
 
@@ -184,6 +186,14 @@ public class DomainResource extends TreeNode<DomainResource> {
 
 	public void setTermTypeId(Long termTypeId) {
 		this.termTypeId = termTypeId;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public Long getDomainId() {
