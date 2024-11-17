@@ -44,6 +44,25 @@ public class EntityAssists {
 	 * insert时需要统一设置的公共字段。
 	 *
 	 * @param entity 实体
+	 * @param operateUserId 操作人id
+	 * @param userIp 操作ip
+	 * @param isRepo 使用框架jdbc模板方式执行insert,设置为false;使用spring-data-jdbc时设置为true
+	 * @param <T> 实体bean
+	 */
+	@SneakyThrows
+	public static <T> void beforeInsert(T entity, long operateUserId, String userIp, boolean isRepo) {
+
+		Timestamp curTime = DateUtils.convSQLDate(new Date()); // 默认是UTC，否则在分布式架构下，要考虑时区的转换
+		BaseEntity baseEntity = BaseEntity.of(operateUserId, curTime, userIp, operateUserId,
+				curTime, userIp, DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString(), 1);
+
+		BeanUtils.copyProperties(baseEntity, entity, "id", isRepo ? "versions" : null);
+	}
+
+	/**
+	 * insert时需要统一设置的公共字段。
+	 *
+	 * @param entity 实体
 	 * @param newID 主键，如果已经显式设置了主键，不会被newID覆盖
 	 * @param operateUserId 操作人id
 	 * @param userIp 操作ip
@@ -51,12 +70,12 @@ public class EntityAssists {
 	 * @param <T> 实体bean
 	 */
 	@SneakyThrows
-	public static <T> void beforeInsert(T entity, Long newID, long operateUserId, String userIp, boolean isRepo) {
+	public static <T> void beforeInsert(T entity, long newID, long operateUserId, String userIp, boolean isRepo) {
 
 		Timestamp curTime = DateUtils.convSQLDate(new Date()); // 默认是UTC，否则在分布式架构下，要考虑时区的转换
 		// 如果主键不为空，则不自动生成主键
 		boolean hasId = isNoNullProperty(entity, "id");
-		BaseEntity baseEntity = new BaseEntity(newID, operateUserId, curTime, userIp, operateUserId,
+		BaseEntity baseEntity = BaseEntity.of(newID, operateUserId, curTime, userIp, operateUserId,
 				curTime, userIp, DeleteFlagEnum.NORMAL.toString(), ValidStatusEnum.VALID.toString(), 1);
 
 		BeanUtils.copyProperties(baseEntity, entity, hasId ? "id" : null, isRepo ? "versions" : null);
@@ -72,12 +91,12 @@ public class EntityAssists {
 	 */
 	public static <T> void beforeUpdated(T entity, long operateUserId, String userIp) {
 		Timestamp curTime = DateUtils.convSQLDate(new Date()); // 默认是UTC，否则在分布式架构下，要考虑时区的转换
-		BaseEntity baseEntity = new BaseEntity(operateUserId, curTime, userIp); // 配合spring data 等框架支持乐观锁
+		BaseEntity baseEntity = BaseEntity.of(operateUserId, curTime, userIp); // 配合spring data 等框架支持乐观锁
 
 		BeanUtils.copyProperties(baseEntity, entity, "id", "createBy", "createTime", "createIp", "isValid", "deleteFlag", "versions");
 	}
 
-	private static boolean isNoNullProperty(Object instance, String name) {
+	public static boolean isNoNullProperty(Object instance, String name) {
 		BeanWrapper srcBean = new BeanWrapperImpl(instance);
 		PropertyDescriptor[] pds = srcBean.getPropertyDescriptors();
 		for (PropertyDescriptor p : pds) {

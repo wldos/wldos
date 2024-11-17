@@ -64,13 +64,43 @@ public class BaseEntity {
 	public BaseEntity() {
 	}
 
-	public BaseEntity(Long updateBy, Timestamp updateTime, String updateIp) {
+	public static BaseEntity of(Long updateBy, Timestamp updateTime, String updateIp) {
+		return new BaseEntity(updateBy, updateTime, updateIp);
+	}
+
+	public static BaseEntity of(Long createBy, Timestamp createTime, String createIp, Long updateBy, Timestamp updateTime,
+			String updateIp, String deleteFlag, String isValid, Integer versions) {
+		return new BaseEntity(createBy, createTime, createIp, updateBy, updateTime, updateIp,
+				deleteFlag, isValid, versions);
+	}
+
+	public static BaseEntity of(Long id, Long createBy, Timestamp createTime, String createIp, Long updateBy, Timestamp updateTime,
+			String updateIp, String deleteFlag, String isValid, Integer versions) {
+		return new BaseEntity(id, createBy, createTime, createIp, updateBy, updateTime, updateIp,
+				deleteFlag, isValid, versions);
+	}
+
+	private BaseEntity(Long updateBy, Timestamp updateTime, String updateIp) {
 		this.updateBy = updateBy;
 		this.updateTime = updateTime;
 		this.updateIp = updateIp;
 	}
 
-	public BaseEntity(Long id, Long createBy, Timestamp createTime, String createIp, Long updateBy, Timestamp updateTime,
+	private BaseEntity(Long createBy, Timestamp createTime, String createIp, Long updateBy, Timestamp updateTime,
+			String updateIp, String deleteFlag, String isValid, Integer versions) {
+		this.id = null;
+		this.createBy = createBy;
+		this.createTime = createTime;
+		this.createIp = createIp;
+		this.updateBy = updateBy;
+		this.updateTime = updateTime;
+		this.updateIp = updateIp;
+		this.deleteFlag = deleteFlag;
+		this.isValid = isValid;
+		this.versions = versions;
+	}
+
+	private BaseEntity(Long id, Long createBy, Timestamp createTime, String createIp, Long updateBy, Timestamp updateTime,
 			String updateIp, String deleteFlag, String isValid, Integer versions) {
 		this.id = id;
 		this.createBy = createBy;

@@ -355,10 +355,11 @@ public class UserService extends RepoService<UserRepo, WoUser, Long> {
 		woUser.setDomainId(domainId); // 通过域归属的公司 确定注册的用户是否属于租户
 
 		long userId = register.getId();
-		String userIp = register.getRegisterIp();
+		// String userIp = register.getRegisterIp();
 
 		WoOrgUser woOrgUser = new WoOrgUser();
 		woOrgUser.setUserId(userId);
+		woUser.setId(userId);
 		woOrgUser.setArchId(Constants.TOP_ARCH_ID);
 		woOrgUser.setComId(Constants.TOP_COM_ID);
 		woOrgUser.setIsValid(ValidStatusEnum.VALID.toString());

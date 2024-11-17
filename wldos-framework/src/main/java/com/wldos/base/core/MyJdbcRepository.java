@@ -99,7 +99,7 @@ public class MyJdbcRepository<T, ID> extends SimpleJdbcRepository<T, ID> {
 				EntityAssists.beforeUpdated(instance, this.getUserId(), this.getUserIp());
 			}
 			else {
-				EntityAssists.beforeInsert(instance, IDGen.nextId(), this.getUserId(), this.getUserIp(), true);
+				EntityAssists.beforeInsert(instance, this.getUserId(), this.getUserIp(), true);
 			}
 		}
 		else {
