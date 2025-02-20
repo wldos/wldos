@@ -53,8 +53,8 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 
 ### 技术说明
 **语言：** Java8、ReactJs17。  
-**框架：** springboot2.7.8（理论支持Java17）。  
-**ORM：** spring-data-jdbc2.4.7，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
+**框架：** springboot2.7.18（理论支持Java17）。  
+**ORM：** spring-data-jdbc2.4.17，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
 **前端：** ReactJs17，AntD ProV4.5。  
 **中间件：** tomcat9（支持换成其他），apache2或nginx。  
 **辅助：** 自带cache、自带JWT、自带文件服务。  
@@ -72,8 +72,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 
 wldos-common：通用模块  
 wldos-framework：wldos开发框架
-wldos-platform: wldos支撑平台    
-wldos-oauth2: wldos社会化登录模块    
+wldos-platform: wldos支撑平台       
 wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
 wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
 
@@ -137,7 +136,7 @@ wldos根目录
 │  │  │  └─resources----------------------------静态资源包
 │  │  └─test------------------------------------单元测试包
 │  └─target-------------------------------------编译打包输出目录
-├─lib-------------------------------------------本地依赖jar
+|——wldos-framework----------------------------------wldos framework框架
 ├─modules---------------------------------------功能模块目录
 │  ├─wldos-kpaycms------------------------------------wldos内容付费管理系统
 │  │  ├─src-------------------------------------内容付费系统源码包

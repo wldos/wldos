@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2020 - 2024 wldos.com. All rights reserved.
+ * Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or http://www.wldos.com or 306991142@qq.com
+ * For commercial licenses see term.md or contact 306991142@qq.com
  */
 
 package com.wldos.cms.enums;
@@ -23,6 +24,8 @@ public enum MIMETypeEnum {
 	VIDEO("视频", "video"),
 	/** 音频 */
 	AUDIO("音频", "audio"),
+	/** 插件 */
+	JAR("插件", "jar"),
 	/** 应用程序 */
 	APPLICATION("应用程序", "application");
 
