@@ -72,8 +72,18 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 ### 模块介绍
 
 wldos-common：通用模块  
-wldos-framework：wldos开发框架
-wldos-platform: wldos支撑平台       
+wldos-framework：wldos开发框架，已经连同common包发布到maven中央仓库，建议在项目中直接依赖，防止与官方版本产生分歧 
+````
+<dependencies>
+   <dependency>
+      <groupId>com.wldos</groupId>
+      <artifactId>wldos-framework</artifactId> <!-- framework默认依赖了common包 无需单独引入common包的依赖 -->
+      <version>${project.parent.version}</version>
+      <scope>compile</scope>
+   </dependency>
+</dependencies>
+````
+wldos-platform: wldos支撑平台，整个系统管理功能全在这一模块实现。       
 wldos-kpaycms: 为支撑平台基础上开发的内容付费管理系统，如果只需要支撑平台，可以仅运行wldos-platform模块，启动后在系统管理后台-资源管理清除cms的菜单；    
 wldos-web：项目入口模块，资源配置，打war包或可执行jar从这里开始。
 

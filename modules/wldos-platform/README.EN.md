@@ -14,10 +14,11 @@ This project includes the following closed-source components, which are essentia
 - **Email Service**: Supports sending and receiving emails.
 - **WLDOS JDBC**: Provides support for database connections and operations.
 - **Hook and Plugin Engine**: Supports dynamic plugin loading and management.
+- **Other and potential future libraries**: plugin extensions or value-added features.
 
 ## License
 
-- The closed-source components of this project are not covered by open-source licenses. They can be used for personal purposes, but distribution requires compliance with a commercial license agreement.
+- The closed source components of this project are not compatible with open source licenses, but are compatible and can be used for free. Distribution must comply with commercial license agreements.
 - System infrastructure modules unrelated to business functions are part of the WLDOS platform infrastructure. They are delivered with open-source code and can be used for free for personal purposes. Distribution requires commercial authorization. Due to long-term development considerations, source code delivery is not supported (unless purchased outright).
 - Closed-source implementation modules related to business functions are commercial components. They are delivered with open-source code and can be used for free for personal purposes. Distribution requires commercial authorization. Negotiations are needed for source code access.
 - For more plugin extensions, please follow the community or visit wldos.com.

@@ -74,9 +74,19 @@ Outputs two projects: WLDOS Cloud Application Support Platform (Management End) 
 
 ### Module Introduction
 
-wldos-common: General module  
-wldos-framework: WLDOS development framework  
-wldos-platform: WLDOS support platform       
+wldos-common: General module
+wldos-framework: The WLDOS development framework has been published to the Maven Central Repository along with the common package. It is recommended to directly depend on it in your project to prevent divergence from the official version.
+````
+<dependencies>
+   <dependency>
+      <groupId>com.wldos</groupId>
+      <artifactId>wldos-framework</artifactId> <!-- The framework by default depends on the common package, so there's no need to separately include the common package dependency -->
+      <version>${project.parent.version}</version>
+      <scope>compile</scope>
+   </dependency>
+</dependencies>
+````
+wldos-platform: The WLDOS support platform, where all system management functions are implemented in this module.      
 wldos-kpaycms: Content payment management system developed on the support platform. If only the support platform is needed, you can run only the wldos-platform module and clear the CMS menu in the system management backend after startup;    
 wldos-web: Project entry module, resource configuration, start from here to package WAR or executable JAR.
 

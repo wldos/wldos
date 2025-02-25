@@ -54,8 +54,6 @@
         <url>https://github.com/wldos/wldos/tree/master</url>
     </scm>
 	<modules>
-		<module>wldos-common</module>
-		<module>wldos-framework</module>
 		<module>modules/wldos-platform</module>
 		<module>modules/wldos-kpaycms</module>
 		<module>wldos-web</module>
