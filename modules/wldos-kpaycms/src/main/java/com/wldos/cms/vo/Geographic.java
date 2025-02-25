@@ -27,7 +27,7 @@ public class Geographic {
 		return new Geographic(province, city);
 	}
 
-	public static Geographic of(com.wldos.support.region.vo.City region) {
+	public static Geographic of(com.wldos.platform.support.region.vo.City region) {
 		return new Geographic(region);
 	}
 
@@ -36,7 +36,7 @@ public class Geographic {
 		this.city = city;
 	}
 
-	private Geographic(com.wldos.support.region.vo.City region) {
+	private Geographic(com.wldos.platform.support.region.vo.City region) {
 		this.province = Province.of(region.getParentId().toString(), region.getProvName());
 		this.city = City.of(region.getId().toString(), region.getName());
 	}

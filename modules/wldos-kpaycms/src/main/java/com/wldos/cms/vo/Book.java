@@ -10,7 +10,7 @@ package com.wldos.cms.vo;
 
 import java.util.List;
 
-import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.platform.core.enums.PubTypeEnum;
 
 /**
  * 作品，以电子书为蓝本代表所有类型的作品，必要的时候再细化。

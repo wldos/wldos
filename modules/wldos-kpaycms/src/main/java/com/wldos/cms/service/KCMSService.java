@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.framework.service.NoRepoService;
+import com.wldos.framework.mvc.service.NonEntityService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ListStyleEnum;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -42,27 +42,27 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.support.cms.CMSUtils;
-import com.wldos.support.cms.dto.ContModelDto;
-import com.wldos.support.cms.dto.PubTypeExt;
-import com.wldos.support.cms.entity.KPubmeta;
-import com.wldos.support.cms.model.Attachment;
-import com.wldos.support.cms.model.IMeta;
-import com.wldos.support.cms.model.KModelMetaKey;
-import com.wldos.support.cms.model.MainPicture;
-import com.wldos.support.cms.vo.Product;
-import com.wldos.support.cms.vo.RouteParams;
-import com.wldos.support.cms.vo.SeoCrumbs;
-import com.wldos.support.region.vo.City;
-import com.wldos.support.storage.IStore;
-import com.wldos.support.storage.dto.Thumbnail;
-import com.wldos.support.term.dto.Term;
-import com.wldos.support.term.enums.TermTypeEnum;
-import com.wldos.sys.base.entity.KTermType;
-import com.wldos.sys.base.enums.PubTypeEnum;
-import com.wldos.sys.base.service.PubTypeExtService;
-import com.wldos.sys.base.service.TermService;
-import com.wldos.sys.core.service.RegionService;
+import com.wldos.platform.core.service.PubTypeExtService;
+import com.wldos.platform.core.service.TermService;
+import com.wldos.platform.support.cms.CMSUtils;
+import com.wldos.platform.support.cms.dto.ContModelDto;
+import com.wldos.platform.support.cms.dto.PubTypeExt;
+import com.wldos.platform.support.cms.entity.KPubmeta;
+import com.wldos.platform.support.cms.model.Attachment;
+import com.wldos.platform.support.cms.model.IMeta;
+import com.wldos.platform.support.cms.model.KModelMetaKey;
+import com.wldos.platform.support.cms.model.MainPicture;
+import com.wldos.platform.support.cms.vo.Product;
+import com.wldos.platform.support.cms.vo.RouteParams;
+import com.wldos.platform.support.cms.vo.SeoCrumbs;
+import com.wldos.platform.support.region.vo.City;
+import com.wldos.framework.support.storage.IStore;
+import com.wldos.framework.support.storage.dto.Thumbnail;
+import com.wldos.platform.support.term.dto.Term;
+import com.wldos.platform.support.term.enums.TermTypeEnum;
+import com.wldos.platform.core.entity.KTermType;
+import com.wldos.platform.core.enums.PubTypeEnum;
+import com.wldos.platform.core.service.RegionService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class) // 符号错误异常是由于静默元数据没有创建成功，重新创建即可，不要回滚
-public class KCMSService extends NoRepoService {
+public class KCMSService extends NonEntityService {
 
 	private final BeanCopier contCopier = BeanCopier.create(ContModelDto.class, Product.class, false);
 

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.framework.controller.NoRepoController;
+import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -33,11 +33,11 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.support.cms.dto.PubPicture;
-import com.wldos.support.cms.model.Attachment;
-import com.wldos.support.storage.dto.Thumbnail;
-import com.wldos.support.storage.vo.FileInfo;
-import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.platform.support.cms.dto.PubPicture;
+import com.wldos.platform.support.cms.model.Attachment;
+import com.wldos.framework.support.storage.dto.Thumbnail;
+import com.wldos.framework.support.storage.vo.FileInfo;
+import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -58,7 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RefreshScope
 @RestController
-public class SpaceController extends NoRepoController<SpaceService> {
+public class SpaceController extends NonEntityController<SpaceService> {
 	@Value("${wldos_cms_content_maxLength:33031}")
 	private int maxLength;
 

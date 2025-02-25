@@ -11,7 +11,7 @@ package com.wldos.cms.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.framework.controller.RepoController;
+import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.service.CommentService;
 import com.wldos.cms.vo.AuditComment;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("admin/cms/comment")
 @RestController
-public class CommentAdminController extends RepoController<CommentService, KComments> {
+public class CommentAdminController extends EntityController<CommentService, KComments> {
 
 	/**
 	 * 评论管理列表，后端管理功能既有租户隔离，又有域隔离，前端公共信息可以免登录访问只需域隔离

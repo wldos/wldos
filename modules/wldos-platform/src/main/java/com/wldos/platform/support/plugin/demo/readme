@@ -1,0 +1,69 @@
+插件结构：
+
+```plaintext
+plugins/demo-plugin/
+├── plugin.properties                # 插件配置文件
+├── demo-plugin.jar                  # 插件主程序包
+├── icons/                          # 图标目录
+│   ├── demo-16x16.png             # 小图标
+│   ├── demo-32x32.png             # 中图标
+│   └── demo-64x64.png             # 大图标
+├── images/                         # 展示图片目录
+│   ├── screenshot1.png            # 功能截图1
+│   ├── screenshot2.png            # 功能截图2
+│   └── banner.png                 # 横幅图片
+└── docs/                          # 文档目录
+    ├── index.md                   # 主文档
+    └── CHANGELOG.md               # 变更日志
+```
+
+docs/index.md:
+```markdown
+# WLDOS演示插件
+
+## 简介
+这是一个WLDOS框架的演示插件，用于展示插件的基本功能和使用方法。
+
+## 功能特性
+- 功能1：XXX
+- 功能2：XXX
+- 功能3：XXX
+
+## 使用说明
+1. 安装插件
+2. 配置参数
+3. 启用插件
+
+## API文档
+...
+```
+
+docs/CHANGELOG.md:
+```markdown
+# 更新日志
+
+## [1.0.0] - 2024-03-21
+### 新增
+- 初始版本发布
+- 基础功能实现
+- 完整文档支持
+
+### 修复
+- 无
+
+### 变更
+- 无
+```
+
+图片资源建议：
+1. icons/
+   - demo-16x16.png: 浅色系简洁图标，适合菜单显示
+   - demo-32x32.png: 中等大小，用于工具栏
+   - demo-64x64.png: 大图标，用于插件市场展示
+
+2. images/
+   - screenshot1.png: 主要功能界面截图 (建议 1280x720)
+   - screenshot2.png: 配置界面截图 (建议 1280x720)
+   - banner.png: 市场展示横幅 (建议 1920x320)
+
+需要我提供这些图片资源的示例吗？

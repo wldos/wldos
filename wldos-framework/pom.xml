@@ -14,20 +14,15 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.9</version>
+		<version>2.0.0</version>
 	</parent>
 	<artifactId>wldos-framework</artifactId>
 	<packaging>jar</packaging>
-	<name>WLDOS开发框架</name>
+	<name>wldos-framework</name>
 	<description>
-		WLDOS®开发框架，基于springboot实现的轻量级快速开发框架。
+		WLDOS®开发框架，是基于springboot实现的轻量级快速开发框架。
 	</description>
 	<dependencies>
-		<dependency>
-			<groupId>de.schlichtherle.truelicense</groupId>
-			<artifactId>truelicense-core</artifactId>
-			<version>1.33</version>
-		</dependency>
 		<dependency>
 			<groupId>com.wldos</groupId>
 			<artifactId>wldos-common</artifactId>
@@ -38,6 +33,16 @@
 			<groupId>org.sejda.imageio</groupId>
 			<artifactId>webp-imageio</artifactId>
 			<version>0.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truelicense</groupId>
+			<artifactId>truelicense-core</artifactId>
+			<version>1.33</version>
 		</dependency>
 	</dependencies>
 	<properties>

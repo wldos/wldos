@@ -10,12 +10,12 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.framework.service.RepoService;
+import com.wldos.cms.dao.StarDao;
+import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.cms.entity.KStars;
-import com.wldos.cms.repo.StarRepo;
 import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.sys.base.service.AuthService;
 
+import com.wldos.platform.core.service.AuthService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class StarService extends RepoService<StarRepo, KStars, Long> {
+public class StarService extends EntityService<StarDao, KStars, Long> {
 
 	private final PubService pubService;
 

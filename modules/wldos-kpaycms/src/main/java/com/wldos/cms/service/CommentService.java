@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.cms.vo.PubUnit;
+import com.wldos.cms.dao.CommentDao;
 import com.wldos.common.dto.SQLTable;
-import com.wldos.framework.service.RepoService;
+import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.ApproveStatusEnum;
-import com.wldos.cms.repo.CommentRepo;
 import com.wldos.cms.vo.AuditComment;
 import com.wldos.cms.vo.Comment;
 import com.wldos.common.Constants;
@@ -27,10 +26,8 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
-import com.wldos.support.auth.vo.UserInfo;
-import com.wldos.sys.base.entity.KTermObject;
-import com.wldos.sys.core.service.UserService;
-import org.apache.ibatis.jdbc.SQL;
+import com.wldos.platform.support.auth.vo.UserInfo;
+import com.wldos.platform.core.service.UserService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
@@ -48,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class CommentService extends RepoService<CommentRepo, KComments, Long> {
+public class CommentService extends EntityService<CommentDao, KComments, Long> {
 
 	@Value("${wldos_cms_comment_audit:false}")
 	private String auditFlag;

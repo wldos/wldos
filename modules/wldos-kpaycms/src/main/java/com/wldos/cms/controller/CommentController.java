@@ -10,7 +10,7 @@ package com.wldos.cms.controller;
 
 import java.util.List;
 
-import com.wldos.framework.controller.RepoController;
+import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.cms.entity.KComments;
 import com.wldos.cms.enums.ApproveStatusEnum;
 import com.wldos.cms.service.CommentService;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("cms/comment")
 @RestController
-public class CommentController extends RepoController<CommentService, KComments> {
+public class CommentController extends EntityController<CommentService, KComments> {
 
 
 	@GetMapping("/{pubId:\\d+}")

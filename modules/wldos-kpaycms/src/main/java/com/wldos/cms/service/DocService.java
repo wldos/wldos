@@ -10,14 +10,14 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.framework.service.NoRepoService;
+import com.wldos.framework.mvc.service.NonEntityService;
 import com.wldos.cms.vo.Doc;
 import com.wldos.cms.vo.DocItem;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
-import com.wldos.support.cms.dto.ContModelDto;
-import com.wldos.sys.base.service.AuthService;
+import com.wldos.platform.core.service.AuthService;
+import com.wldos.platform.support.cms.dto.ContModelDto;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class DocService extends NoRepoService {
+public class DocService extends NonEntityService {
 
 	private final PubService pubService;
 

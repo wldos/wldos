@@ -10,7 +10,7 @@ package com.wldos.cms.controller;
 
 import java.util.Map;
 
-import com.wldos.framework.controller.NoRepoController;
+import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.DocService;
 import com.wldos.cms.service.KCMSService;
@@ -20,7 +20,7 @@ import com.wldos.cms.vo.DocItem;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
-import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/doc")
 @RestController
-public class DocController extends NoRepoController<DocService> {
+public class DocController extends NonEntityController<DocService> {
 	private final KCMSService kcmsService;
 
 	public DocController(KCMSService kcmsService) {

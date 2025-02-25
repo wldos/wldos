@@ -13,18 +13,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.framework.service.NoRepoService;
+import com.wldos.framework.mvc.service.NonEntityService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Pub;
 import com.wldos.common.utils.DateUtils;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.support.cms.dto.PubTypeExt;
-import com.wldos.support.term.dto.Term;
-import com.wldos.support.term.enums.TermTypeEnum;
-import com.wldos.sys.base.enums.PubTypeEnum;
-import com.wldos.sys.base.service.TermService;
+import com.wldos.platform.core.service.TermService;
+import com.wldos.platform.support.cms.dto.PubTypeExt;
+import com.wldos.platform.support.term.dto.Term;
+import com.wldos.platform.support.term.enums.TermTypeEnum;
+import com.wldos.platform.core.enums.PubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cglib.beans.BeanCopier;
@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class SpaceService extends NoRepoService {
+public class SpaceService extends NonEntityService {
 
 	private final PubService pubService;
 

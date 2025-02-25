@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.framework.controller.NoRepoController;
+import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.enums.PrivacyLevelEnum;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.InfoService;
@@ -31,9 +31,9 @@ import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.support.cms.vo.Info;
-import com.wldos.support.storage.vo.FileInfo;
-import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.platform.support.cms.vo.Info;
+import com.wldos.framework.support.storage.vo.FileInfo;
+import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -55,7 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RefreshScope
 @RestController
-public class InfoController extends NoRepoController<InfoService> {
+public class InfoController extends NonEntityController<InfoService> {
 	@Value("${wldos_cms_content_maxLength:53610}")
 	private int maxLength;
 

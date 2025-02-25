@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import com.wldos.framework.service.RepoService;
+import com.wldos.cms.dao.PubDao;
+import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.enums.PubStatusEnum;
-import com.wldos.cms.repo.PubRepo;
 import com.wldos.cms.vo.AuditPub;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.DocItem;
@@ -35,19 +35,19 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.AtomicUtils;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.support.cms.PubOpener;
-import com.wldos.support.cms.dto.ContModelDto;
-import com.wldos.support.cms.entity.KPubmeta;
-import com.wldos.support.cms.model.KModelMetaKey;
-import com.wldos.support.region.vo.City;
-import com.wldos.support.term.dto.Term;
-import com.wldos.support.term.enums.TermTypeEnum;
-import com.wldos.sys.base.dto.TermObject;
-import com.wldos.sys.base.entity.KTermObject;
-import com.wldos.sys.base.enums.PubTypeEnum;
-import com.wldos.sys.base.service.TermService;
-import com.wldos.sys.core.service.RegionService;
-import com.wldos.sys.core.service.UserService;
+import com.wldos.platform.core.dto.TermObject;
+import com.wldos.platform.core.entity.KTermObject;
+import com.wldos.platform.core.service.TermService;
+import com.wldos.platform.support.cms.PubOpener;
+import com.wldos.platform.support.cms.dto.ContModelDto;
+import com.wldos.platform.support.cms.entity.KPubmeta;
+import com.wldos.platform.support.cms.model.KModelMetaKey;
+import com.wldos.platform.support.region.vo.City;
+import com.wldos.platform.support.term.dto.Term;
+import com.wldos.platform.support.term.enums.TermTypeEnum;
+import com.wldos.platform.core.enums.PubTypeEnum;
+import com.wldos.platform.core.service.RegionService;
+import com.wldos.platform.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
@@ -63,7 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class PubService extends RepoService<PubRepo, KPubs, Long> implements PubOpener {
+public class PubService extends EntityService<PubDao, KPubs, Long> implements PubOpener {
 
 	private final UserService userService;
 

@@ -28,18 +28,18 @@ import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultJson;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.IpUtils;
-import com.wldos.support.auth.JWTTool;
-import com.wldos.support.auth.TokenForbiddenException;
-import com.wldos.support.auth.TokenInvalidException;
-import com.wldos.support.auth.vo.AuthVerify;
-import com.wldos.support.auth.vo.JWT;
-import com.wldos.support.resource.vo.AuthInfo;
-import com.wldos.support.storage.utils.StoreUtils;
-import com.wldos.support.web.EdgeHandler;
-import com.wldos.support.web.FilterRequestWrapper;
-import com.wldos.sys.base.entity.WoDomain;
-import com.wldos.sys.base.service.AuthService;
-import com.wldos.sys.base.service.DomainService;
+import com.wldos.framework.support.auth.JWTTool;
+import com.wldos.framework.support.auth.TokenForbiddenException;
+import com.wldos.framework.support.auth.TokenInvalidException;
+import com.wldos.platform.core.entity.WoDomain;
+import com.wldos.platform.core.service.AuthService;
+import com.wldos.platform.core.service.DomainService;
+import com.wldos.platform.support.auth.vo.AuthVerify;
+import com.wldos.framework.support.auth.vo.JWT;
+import com.wldos.platform.support.resource.vo.AuthInfo;
+import com.wldos.framework.support.storage.utils.StoreUtils;
+import com.wldos.framework.support.web.EdgeHandler;
+import com.wldos.framework.support.web.FilterRequestWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 
@@ -50,7 +50,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * 边缘网关。
+ * 轻量级边缘网关。
  *
  * @author 元悉宇宙
  * @date 2021-04-18

@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wldos.framework.controller.NoRepoController;
+import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Article;
@@ -24,9 +24,9 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.Result;
 import com.wldos.common.vo.SelectOption;
-import com.wldos.support.cms.vo.RouteParams;
-import com.wldos.support.cms.vo.SeoCrumbs;
-import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.platform.support.cms.vo.RouteParams;
+import com.wldos.platform.support.cms.vo.SeoCrumbs;
+import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-public class KCMSController extends NoRepoController<KCMSService> {
+public class KCMSController extends NonEntityController<KCMSService> {
 
 	/**
 	 * 首页跨行业查询

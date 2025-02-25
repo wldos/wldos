@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.cms.vo.Pub;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.support.cms.dto.PubTypeExt;
+import com.wldos.platform.support.cms.dto.PubTypeExt;
 
 import org.springframework.util.ReflectionUtils;
 

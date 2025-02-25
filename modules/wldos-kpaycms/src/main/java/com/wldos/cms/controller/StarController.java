@@ -8,7 +8,7 @@
 
 package com.wldos.cms.controller;
 
-import com.wldos.framework.controller.RepoController;
+import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.service.StarService;
 import com.wldos.cms.vo.Pub;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("cms")
 @RestController
-public class StarController extends RepoController<StarService, KStars> {
+public class StarController extends EntityController<StarService, KStars> {
 
 	@PostMapping("star")
 	public int starObject(@RequestBody Pub pub) {

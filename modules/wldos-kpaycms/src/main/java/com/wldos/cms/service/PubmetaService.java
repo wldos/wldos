@@ -10,11 +10,11 @@ package com.wldos.cms.service;
 
 import java.util.List;
 
-import com.wldos.framework.service.RepoService;
-import com.wldos.cms.repo.PubmetaRepo;
-import com.wldos.support.cms.PubmetaOpener;
-import com.wldos.support.cms.entity.KPubmeta;
-import com.wldos.support.cms.model.KModelMetaKey;
+import com.wldos.cms.dao.PubmetaDao;
+import com.wldos.framework.mvc.service.EntityService;
+import com.wldos.platform.support.cms.PubmetaOpener;
+import com.wldos.platform.support.cms.entity.KPubmeta;
+import com.wldos.platform.support.cms.model.KModelMetaKey;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class PubmetaService extends RepoService<PubmetaRepo, KPubmeta, Long> implements PubmetaOpener {
+public class PubmetaService extends EntityService<PubmetaDao, KPubmeta, Long> implements PubmetaOpener {
 
 	public List<KPubmeta> queryPubMetaByPubId(Long pid) {
 		return this.entityRepo.queryPubMetaByPubId(pid);

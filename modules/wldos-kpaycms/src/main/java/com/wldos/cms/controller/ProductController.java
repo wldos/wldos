@@ -10,14 +10,14 @@ package com.wldos.cms.controller;
 
 import java.util.Map;
 
-import com.wldos.framework.controller.NoRepoController;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
-import com.wldos.support.cms.vo.Product;
+import com.wldos.framework.mvc.controller.NonEntityController;
+import com.wldos.platform.support.cms.vo.Product;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-public class ProductController extends NoRepoController<KCMSService> {
+public class ProductController extends NonEntityController<KCMSService> {
 
 	/**
 	 * 付费内容详情信息

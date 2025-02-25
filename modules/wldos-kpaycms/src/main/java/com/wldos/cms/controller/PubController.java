@@ -10,14 +10,14 @@ package com.wldos.cms.controller;
 
 import java.util.Map;
 
-import com.wldos.framework.controller.RepoController;
+import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.AuditPub;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
-import com.wldos.sys.base.enums.PubTypeEnum;
+import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/admin/cms/pub")
 @RestController
-public class PubController extends RepoController<PubService, KPubs> {
+public class PubController extends EntityController<PubService, KPubs> {
 
 	/**
 	 * 作品元素列表，作品内的章节、剧集或附件等

@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.9</version>
+		<version>2.0.0</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>

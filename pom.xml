@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>1.9</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
@@ -34,24 +34,25 @@
 		<license>
 			<name>Apache License, Version 2.0</name>
 			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	<developers>
 		<developer>
-			<name>元悉宇宙</name>
+			<name>元悉宇宙(yuanxiyuzhou)</name>
 			<email>306991142@qq.com</email>
 			<roles>
-				<role>original author</role>
+				<role>leader</role>
 			</roles>
-		</developer>
-		<developer>
-			<name>元悉宇宙</name>
-			<email>583716365@qq.com</email>
-			<roles>
-				<role>maintainer</role>
-			</roles>
-		</developer>
+            <organization>WLDOS</organization>
+            <organizationUrl>https://github.com/wldos</organizationUrl>
+        </developer>
 	</developers>
+	<scm>
+        <connection>scm:git:git://github.com/wldos/wldos.git</connection>
+        <developerConnection>scm:git:ssh://github.com:wldos/wldos.git</developerConnection>
+        <url>https://github.com/wldos/wldos/tree/master</url>
+    </scm>
 	<modules>
 		<module>wldos-common</module>
 		<module>wldos-framework</module>
@@ -288,7 +289,7 @@
 						<tag>
 							<name>date</name>
 							<placement>a</placement>
-							<head>create date:</head>
+							<head>创建日期:</head>
 						</tag>
 					</tags>
 				</configuration>
@@ -369,10 +370,4 @@
 			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-
-	<scm>
-		<connection>scm:git:https://gitee.com/wldos/wldos.git</connection>
-		<developerConnection>scm:git:https://gitee.com/wldos/wldos.git</developerConnection>
-		<url>https://gitee.com/wldos/wldos</url>
-	</scm>
 </project>

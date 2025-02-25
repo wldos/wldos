@@ -14,7 +14,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wldos.common.res.Integer2JsonSerializer;
-import com.wldos.support.term.dto.Term;
+import com.wldos.platform.support.term.dto.Term;
 
 /**
  * 发布内容列表单元信息。

@@ -14,20 +14,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.framework.service.NoRepoService;
+import com.wldos.framework.mvc.service.NonEntityService;
 import com.wldos.cms.vo.InfoUnit;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
-import com.wldos.support.cms.dto.ContModelDto;
-import com.wldos.support.cms.entity.KPubmeta;
-import com.wldos.support.cms.model.KModelMetaKey;
-import com.wldos.support.cms.model.MainPicture;
-import com.wldos.support.cms.vo.Info;
-import com.wldos.sys.base.entity.KTermType;
-import com.wldos.sys.base.service.TermService;
+import com.wldos.platform.core.service.TermService;
+import com.wldos.platform.support.cms.dto.ContModelDto;
+import com.wldos.platform.support.cms.entity.KPubmeta;
+import com.wldos.platform.support.cms.model.KModelMetaKey;
+import com.wldos.platform.support.cms.model.MainPicture;
+import com.wldos.platform.support.cms.vo.Info;
+import com.wldos.platform.core.entity.KTermType;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cglib.beans.BeanCopier;
@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class InfoService extends NoRepoService {
+public class InfoService extends NonEntityService {
 	private final BeanCopier contCopier = BeanCopier.create(ContModelDto.class, Info.class, false);
 
 	private final PubService pubService;

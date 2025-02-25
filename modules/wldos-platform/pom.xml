@@ -14,18 +14,30 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>1.9</version>
+		<version>2.0.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>wldos-platform</artifactId>
 	<packaging>jar</packaging>
 	<name>WLDOS云应用支撑平台</name>
 	<description>
-		WLDOS®平台，基于wldos-framework实现的企业级云物互联支撑平台，云物互联解决方案，SaaS应用架构的自驱演化系统。
+		WLDOS®平台，也叫wldos-X，基于wldos-framework实现的企业级云物互联支撑平台，云物互联解决方案，SaaS应用架构的自驱演化系统。
 		默认支持多租户运行模式，同时支持以单租户模式运行。
 		WLDOS®寓意：面向世界的系统，面向未来的系统，我的系统。
 		读音：汉['wou'da'si] 拼音[wou da si]。
 	</description>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+		<license>
+			<name>GNU General Public License (GPL) version 2, or any later version</name>
+			<url>http://www.gnu.org/licenses/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>com.wldos</groupId>

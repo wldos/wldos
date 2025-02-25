@@ -40,7 +40,7 @@ WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力�
 QQ群：群一：792559964(已满) 群二：830355512   
 作者公众号：元悉世界 （id:yuanxiyuzhou）
 
-![作者公众号：元悉世界](元悉世界公众号.jpg)
+![作者公众号：元悉世界](zone/dev/元悉世界公众号.jpg)
 
 演示地址：<a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwldos.com%2Fadmin%2Fres%2Fapp">点击前往</a>（官网即演示环境）
 

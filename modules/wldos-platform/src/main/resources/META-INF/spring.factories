@@ -1,0 +1,1 @@
+org.springframework.boot.SpringApplicationRunListener=com.wldos.platform.support.system.internal.DynLoadPluginListener

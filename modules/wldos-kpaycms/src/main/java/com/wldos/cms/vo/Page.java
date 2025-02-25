@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.wldos.support.cms.model.CMeta;
-import com.wldos.support.cms.model.IMeta;
-import com.wldos.support.cms.vo.SeoCrumbs;
-import com.wldos.support.term.dto.Term;
+import com.wldos.platform.support.cms.model.CMeta;
+import com.wldos.platform.support.cms.model.IMeta;
+import com.wldos.platform.support.cms.vo.SeoCrumbs;
+import com.wldos.platform.support.term.dto.Term;
 
 /**
  * 一个页面的数据，前端提供某种定制页面模板，然后用此数据去填充。

@@ -10,7 +10,7 @@ package com.wldos.cms.controller;
 
 import java.util.Map;
 
-import com.wldos.framework.controller.RepoController;
+import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.SPub;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/cms/pub")
 @RestController
-public class FrontPubController extends RepoController<PubService, KPubs> {
+public class FrontPubController extends EntityController<PubService, KPubs> {
 	/**
 	 * 全文检索
 	 *

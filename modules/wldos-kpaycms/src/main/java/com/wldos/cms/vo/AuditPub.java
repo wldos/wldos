@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wldos.common.res.Integer2JsonSerializer;
-import com.wldos.support.term.dto.Term;
+import com.wldos.platform.support.term.dto.Term;
 
 /**
  * 管理列表发布内容信息。
