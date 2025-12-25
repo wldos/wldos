@@ -32,4 +32,8 @@ public interface DomainAppDao extends BaseDao<WoDomainApp, Long> {
 	boolean existsByAppIdAndDomainId(@Param("appId") Long appId, @Param("domainId") Long domainId);
 
 	List<WoDomainApp> queryAllByDomainIdAndIsValidAndDeleteFlag(@Param("domainId") Long domainId, @Param("isValid") String isValid, @Param("deleteFlag") String deleteFlag);
+
+    @Modifying
+    @Query("delete from wo_domain_app where app_id=:appId")
+    void deleteByAppId(@Param("appId") Long appId);
 }

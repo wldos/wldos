@@ -34,6 +34,7 @@ import com.wldos.platform.auth.vo.PasswdModifyParams;
 import com.wldos.platform.auth.vo.Register;
 import com.wldos.platform.auth.vo.SecQuestModifyParams;
 import com.wldos.framework.mvc.service.EntityService;
+import com.wldos.platform.support.web.enums.TemplateTypeEnum;
 import com.wldos.framework.common.AuditFields;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
@@ -49,6 +50,7 @@ import com.wldos.platform.core.entity.*;
 import com.wldos.platform.core.enums.SysOptionEnum;
 import com.wldos.platform.core.enums.UserStatusEnum;
 import com.wldos.platform.core.vo.Domain;
+import com.wldos.platform.core.vo.UserAuth;
 import com.wldos.platform.support.auth.vo.UserInfo;
 import com.wldos.platform.support.resource.enums.ResourceEnum;
 import com.wldos.platform.support.resource.vo.DynSet;
@@ -57,7 +59,10 @@ import com.wldos.framework.support.storage.vo.FileInfo;
 import com.wldos.platform.core.dao.OrgUserDao;
 import com.wldos.platform.core.vo.User;
 
+
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -98,6 +103,8 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 
 	private final UserMetaService userMetaService;
 
+
+
 	public UserService(AuthService authService, OrgDao orgRepo, OrgUserDao orgUserRepo, CompanyDao companyRepo, DomainService domainService, UserMetaService userMetaService) {
 		this.authService = authService;
 		this.orgRepo = orgRepo;
@@ -120,15 +127,42 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		User user = new User();
 		UserInfo userInfo = this.queryUserInfo(userId);
 		user.setUserInfo(userInfo);
-		List<Menu> mar = this.authService.queryMenuByUserId(domainId, comId, ResourceEnum.MENU.getValue(), userId);
+		List<Menu> mar = this.authService.queryMenuByUserId(domainId, comId, new String[]{ResourceEnum.MENU.getValue(), ResourceEnum.PLUGIN_MENU.getValue()}, userId);
 		if (!ObjectUtils.isBlank(mar)) {
+			Map<String, DynSet> dynRouteMap = this.authService.queryDynRoute(domainId);
+			this.mergeDynSetToMenus(mar, dynRouteMap);
 			user.setMenu(mar);
 		}
+		
+		// 插件菜单通过 resourceType === 'plugin_menu' 识别，由前端动态加载
+		
 		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, comId, userId);
 		user.setCurrentAuthority(currentAuthority);
 		Token refreshToken = this.refreshToken(request);
 		if (refreshToken != null) { // 自动token续签，由于前端仅打开布局时请求一次不能保证持续续签
 			user.setToken(refreshToken);
+		}
+		return user;
+	}
+
+	/**
+	 * 查询某域下指定用户的授权资源信息
+	 *
+	 * @param domainId 请求的域id
+	 * @param request 请求
+	 * @param comId 用户主企业id
+	 * @param userId 用户id
+	 * @return 用户授权信息
+	 */
+	public UserAuth queryUserAuth(Long domainId, HttpServletRequest request, Long comId, Long userId) {
+		UserAuth user = new UserAuth();
+		WoUser woUser = this.findById(userId);
+		// 获取头像
+		woUser.setAvatar(this.getAvatarUrl(woUser.getAvatar()));
+		user.setUserInfo(woUser);
+		List<Menu> mar = this.authService.queryMenuByUserId(domainId, comId, new String[]{ResourceEnum.MENU.getValue(), ResourceEnum.PLUGIN_MENU.getValue()}, userId);
+		if (!ObjectUtils.isBlank(mar)) {
+			user.setMenu(mar);
 		}
 		return user;
 	}
@@ -142,7 +176,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 	 * @return 管理菜单列表
 	 */
 	public List<Menu> queryAdminMenuByUser(Long domainId, Long comId, Long curUserId) {
-		return this.authService.queryMenuByUserId(domainId, comId, ResourceEnum.ADMIN_MENU.getValue(), curUserId);
+		return this.authService.queryMenuByUserId(domainId, comId, new String[] {ResourceEnum.ADMIN_MENU.getValue(), ResourceEnum.ADMIN_PLUGIN_MENU.getValue()}, curUserId);
 	}
 
 	/**
@@ -155,7 +189,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		User user = new User();
 		UserInfo userInfo = this.queryUserInfo(Constants.GUEST_ID);
 		user.setUserInfo(userInfo);
-		List<Menu> mar = this.authService.queryMenuByUserId(domainId, Constants.TOP_COM_ID, ResourceEnum.MENU.getValue(), Constants.GUEST_ID);
+		List<Menu> mar = this.authService.queryMenuByUserId(domainId, Constants.TOP_COM_ID, new String[] {ResourceEnum.MENU.getValue(), ResourceEnum.PLUGIN_MENU.getValue()}, Constants.GUEST_ID);
 		if (!ObjectUtils.isBlank(mar)) {
 			user.setMenu(mar);
 		}
@@ -166,6 +200,8 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 	}
 
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
+
+
 
 	/**
 	 * 查询用户信息
@@ -427,8 +463,9 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 			Long tenantId = Long.parseLong(request.getHeader(Constants.CONTEXT_KEY_USER_TENANT));
 			Long domainId = Long.parseLong(request.getHeader(Constants.CONTEXT_KEY_USER_DOMAIN));
 			long expireTime = Long.parseLong(request.getHeader(Constants.CONTEXT_KEY_TOKEN_EXPIRE_TIME));
+			int refresh = Integer.parseInt(request.getHeader(Constants.CONTEXT_KEY_TOKEN_REFRESH));
 
-			return this.jwtTool.refresh(domain, refreshToken, userId, tenantId, domainId, expireTime);
+			return this.jwtTool.refresh(domain, refreshToken, userId, tenantId, domainId, expireTime, refresh);
 		}
 		catch (NumberFormatException e) {
 			getLog().error("refreshToken异常：{}", e.getMessage());
@@ -676,12 +713,42 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 	}
 
 	/**
-	 * 查询动态路由配置
+	 * 查询分域动态路由配置
 	 *
 	 * @param domainId 域名id
 	 * @return 动态路由配置
 	 */
 	public Map<String, DynSet> queryDynRoute(Long domainId) {
 		return this.authService.queryDynRoute(domainId);
+	}
+
+	/**
+	 * 将 DynSet 按 path 合并到菜单树中
+	 *
+	 * @param menus 菜单列表
+	 * @param dynRouteMap 动态路由配置映射
+	 */
+	private void mergeDynSetToMenus(List<Menu> menus, Map<String, DynSet> dynRouteMap) {
+		if (menus == null || dynRouteMap == null || dynRouteMap.isEmpty()) {
+			return;
+		}
+
+		for (Menu menu : menus) {
+			String path = menu.getPath();
+			if (path != null && dynRouteMap.containsKey(path)) {
+				DynSet dynSet = dynRouteMap.get(path);
+
+				// 如果url不为空并且module类型为component，则设置到 component
+				if (dynSet.getUrl() != null && !dynSet.getUrl().trim().isEmpty()
+					&& TemplateTypeEnum.COMPONENT.getValue().equals(dynSet.getModule())) {
+					menu.setComponent(dynSet.getUrl());
+				}
+			}
+
+			// 递归处理子菜单
+			if (menu.getChildren() != null && !menu.getChildren().isEmpty()) {
+				this.mergeDynSetToMenus(menu.getChildren(), dynRouteMap);
+			}
+		}
 	}
 }

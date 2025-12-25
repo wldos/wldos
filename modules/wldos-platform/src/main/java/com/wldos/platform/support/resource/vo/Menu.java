@@ -21,8 +21,14 @@ import com.wldos.common.vo.TreeNode;
  * @version 1.0
  */
 public class Menu extends TreeNode<Menu> implements Serializable {
+	/** 菜单类型：@see com.wldos.platform.support.resource.enums.ResourceEnum */
+	private String type;
+
 	/** 菜单URI */
 	private String path;
+
+	/** 组件路径 */
+	private String component;
 
 	/** 菜单icon */
 	private String icon;
@@ -58,8 +64,10 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 		super();
 	}
 
-	private Menu(String path, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
+	private Menu(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
+		this.type = type;
 		this.path = path;
+		this.component = comPath;
 		this.icon = icon;
 		this.name = name;
 		this.target = target;
@@ -68,8 +76,16 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 		this.displayOrder = displayOrder;
 	}
 
-	public static Menu of(String path, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
-		return new Menu(path, icon, name, target, id, parentId, displayOrder);
+	public static Menu of(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
+		return new Menu(type, path, comPath, icon, name, target, id, parentId, displayOrder);
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getPath() {
@@ -78,6 +94,14 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+
+	public void setComponent(String component) {
+		this.component = component;
 	}
 
 	public String getIcon() {
@@ -113,6 +137,6 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 	}
 
 	public String toString() {
-		return "{name: " + this.name + ", path: " + this.path + ", icon: " + this.icon + ", target: " + this.target + "}";
+		return "{name: " + this.name + ", path: " + this.path + ", type: " + this.type + ", icon: " + this.icon + ", target: " + this.target + "}";
 	}
 }

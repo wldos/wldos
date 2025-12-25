@@ -28,4 +28,12 @@ public interface AuthRoleDao extends BaseDao<WoAuthRole, Long>, RepoExt {
 	@Modifying
 	@Query("delete from wo_auth_role where role_id=:roleId")
 	void deleteByRoleId(@Param("roleId") Long roleId);
+
+	@Modifying
+	@Query("delete from wo_auth_role where resource_id=:resId and app_id=:appId")
+	void deleteByResourceIdAndAppId(@Param("resId") Long resId, @Param("appId") Long appId);
+
+	@Modifying
+	@Query("delete from wo_auth_role where app_id=:id")
+	void deleteByAppId(@Param("id") Long id);
 }

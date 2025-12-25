@@ -24,6 +24,10 @@ public enum ResourceEnum {
 	STATIC("静态", "_static"),
 	ADMIN_MENU("管理菜单", "admin_menu"),
 	ADMIN_BUTTON("管理操作", "admin_button"),
+	PLUGIN_MENU("扩展菜单", "plugin_menu"), // 约定path：/pluginCode/xxx/[.../yyy]
+	PLUGIN_BUTTON("扩展操作", "plugin_button"),
+	ADMIN_PLUGIN_MENU("扩展管理菜单", "admin_plugin_menu"), // 约定path：/admin/pluginCode/xxx/[.../yyy]
+	ADMIN_PLUGIN_BUTTON("扩展管理操作", "admin_plugin_button"),
 	OTHER("其他", "other");
 
 	private final String label;

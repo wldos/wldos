@@ -13,4 +13,6 @@ public interface IJwt {
 	String KEY_JWT_TENANT = "tenantId";
 
 	String KEY_JWT_DOMAIN = "domainId";
+
+	String KEY_JWT_REFRESH = "refresh";
 }

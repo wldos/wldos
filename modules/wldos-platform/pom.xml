@@ -33,6 +33,17 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<properties>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+		<!--<javacv.version>1.5.8</javacv.version>
+		<opencv.version>4.6.0-${javacv.version}</opencv.version>
+		<ffmpeg.version>5.1.2-${javacv.version}</ffmpeg.version>-->
+		<javacv.version>1.5.8</javacv.version>
+		<opencv.version>4.6.0-${javacv.version}</opencv.version>
+		<ffmpeg.version>5.1.2-${javacv.version}</ffmpeg.version>
+		<platform.classifier>windows-x86_64</platform.classifier>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.wldos</groupId>
@@ -40,10 +51,230 @@
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.java-json-tools</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>2.2.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv</artifactId>
+			<version>${javacv.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>opencv</artifactId>
+			<version>${opencv.version}</version>
+			<classifier>${platform.classifier}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>ffmpeg</artifactId>
+			<version>${ffmpeg.version}</version>
+			<classifier>${platform.classifier}</classifier>
+		</dependency>
+		
+		<!-- 注解处理器相关依赖 -->
+		<dependency>
+			<groupId>com.google.auto.service</groupId>
+			<artifactId>auto-service</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.auto.service</groupId>
+			<artifactId>auto-service-annotations</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-	<properties>
-		<maven.compiler.source>8</maven.compiler.source>
-		<maven.compiler.target>8</maven.compiler.target>
-	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.bytedeco</groupId>
+				<artifactId>javacv</artifactId>
+				<version>${javacv.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bytedeco</groupId>
+				<artifactId>opencv</artifactId>
+				<version>${opencv.version}</version>
+				<classifier>${platform.classifier}</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.bytedeco</groupId>
+				<artifactId>ffmpeg</artifactId>
+				<version>${ffmpeg.version}</version>
+				<classifier>${platform.classifier}</classifier>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
+	<profiles>
+		<!-- Windows x86_64 -->
+		<profile>
+			<id>windows-x86_64</id>
+			<properties>
+				<platform.classifier>windows-x86_64</platform.classifier>
+				<platform.name>windows-x86_64</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>windows-x86_64</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>windows-x86_64</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- Windows x86
+		<profile>
+			<id>windows-x86</id>
+			<properties>
+				<platform.classifier>windows-x86</platform.classifier>
+				<platform.name>windows-x86</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>windows-x86</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>windows-x86</classifier>
+				</dependency>
+			</dependencies>
+		</profile> -->
+
+		<!-- Linux x86_64 -->
+		<profile>
+			<id>linux-x86_64</id>
+			<properties>
+				<platform.classifier>linux-x86_64</platform.classifier>
+				<platform.name>linux-x86_64</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>linux-x86_64</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>linux-x86_64</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- Linux x86
+		<profile>
+			<id>linux-x86</id>
+			<properties>
+				<platform.classifier>linux-x86</platform.classifier>
+				<platform.name>linux-x86</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>linux-x86</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>linux-x86</classifier>
+				</dependency>
+			</dependencies>
+		</profile> -->
+
+		<!-- Linux ARM64 (树莓派) -->
+		<profile>
+			<id>linux-arm64</id>
+			<properties>
+				<platform.classifier>linux-arm64</platform.classifier>
+				<platform.name>linux-arm64</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>linux-arm64</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>linux-arm64</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- macOS x86_64 -->
+		<profile>
+			<id>macosx-x86_64</id>
+			<properties>
+				<platform.classifier>macosx-x86_64</platform.classifier>
+				<platform.name>macosx-x86_64</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>macosx-x86_64</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>macosx-x86_64</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- macOS ARM64 (M1/M2) -->
+		<profile>
+			<id>macosx-arm64</id>
+			<properties>
+				<platform.classifier>macosx-arm64</platform.classifier>
+				<platform.name>macosx-arm64</platform.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>opencv</artifactId>
+					<version>${opencv.version}</version>
+					<classifier>macosx-arm64</classifier>
+				</dependency>
+				<dependency>
+					<groupId>org.bytedeco</groupId>
+					<artifactId>ffmpeg</artifactId>
+					<version>${ffmpeg.version}</version>
+					<classifier>macosx-arm64</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>

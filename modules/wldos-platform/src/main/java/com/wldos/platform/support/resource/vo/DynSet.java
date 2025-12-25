@@ -16,15 +16,17 @@ package com.wldos.platform.support.resource.vo;
  * @version 1.0
  */
 public class DynSet {
-	/** 对应组件的包装对象名称，js实现类的类名 */
+	/** 对应组件的包装对象名称，js实现类的类名，或者模板类型（static、url、component、other） */
 	private String module;
 
 	/** 绑定的分类别名 */
 	private String category;
 
-	/** 指定url */
+	/** 指定url 或 组件路径 */
 	private String url;
 
+	/** 扩展属性（JSON格式，用于传递额外参数） */
+	private String extraProps;
 
 	public DynSet() {
 	}
@@ -66,5 +68,13 @@ public class DynSet {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getExtraProps() {
+		return extraProps;
+	}
+
+	public void setExtraProps(String extraProps) {
+		this.extraProps = extraProps;
 	}
 }

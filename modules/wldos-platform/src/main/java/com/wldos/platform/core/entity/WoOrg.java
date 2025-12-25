@@ -12,6 +12,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+/**
+ * 组织
+ */
 @Table
 public class WoOrg {
 	@Id

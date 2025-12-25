@@ -64,4 +64,8 @@ public interface DomainResourceDao extends BaseDao<WoDomainResource, Long>, Doma
 	@Modifying
 	@Query("delete from wo_domain_resource where domain_id=:domainId and resource_id in (:ids)")
 	void removeDomainRes(@Param("ids") List<Long> ids, @Param("domainId") Long domainId);
+
+    @Modifying
+    @Query("delete from wo_domain_resource where app_id=:appId")
+    void deleteByAppId(@Param("appId") Long appId);
 }

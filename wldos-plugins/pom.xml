@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Licensed under the Apache License, Version 2.0 or a commercial license.
+  ~ For Apache License Version 2.0 see License in the project root for license information.
+  ~ For commercial licenses see term.md or contact 306991142@qq.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>wldos-parent</artifactId>
+        <groupId>com.wldos</groupId>
+        <version>2.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>wldos-plugins</artifactId>
+    <packaging>pom</packaging>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <!-- 统一使用 wldos-ui 的 Node.js 和 Yarn 版本和安装位置 -->
+        <node.version>v20.19.4</node.version>
+        <yarn.version>v1.22.19</yarn.version>
+        <frontend.install.directory>../wldos-ui</frontend.install.directory>
+    </properties>
+
+    <modules>
+        <module>wldos-plugin-demo</module>
+        <module>plugin-demo</module>
+        <!-- 其他插件 -->
+    </modules>
+</project>

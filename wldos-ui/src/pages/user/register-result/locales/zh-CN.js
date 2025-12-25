@@ -1,0 +1,22 @@
+export default {
+  'userRegister-result.login.userName': '用户名',
+  'userRegister-result.login.password': '密码',
+  'userRegister-result.login.message-invalid-credentials': '账户或密码错误',
+  'userRegister-result.login.message-invalid-verification-code': '验证码错误',
+  'userRegister-result.login.tab-login-credentials': '账户密码登录',
+  'userRegister-result.login.tab-login-mobile': '手机号登录',
+  'userRegister-result.login.remember-me': '自动登录',
+  'userRegister-result.login.forgot-password': '忘记密码',
+  'userRegister-result.login.sign-in-with': '其他登录方式',
+  'userRegister-result.login.signup': '注册账户',
+  'userRegister-result.login.login': '登录',
+  'userRegister-result.register.register': '注册',
+  'userRegister-result.register.get-verification-code': '获取验证码',
+  'userRegister-result.register.sign-in': '使用已有账户登录',
+  'userRegister-result.register-result.msg': '你的账户：{email} 注册成功',
+  'userRegister-result.register-result.activation-email':
+    '激活邮件已发送到你的邮箱中，邮件有效期为24小时。请及时登录邮箱，点击邮件中的链接激活帐户。',
+  'userRegister-result.register-result.back-home': '返回首页',
+  'userRegister-result.register-result.view-mailbox': '查看邮箱',
+  'userRegister-result.navBar.lang': '语言',
+};

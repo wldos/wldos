@@ -124,9 +124,70 @@ The WLDOS platform has applied for software copyright, and the source code and s
 Modules that have not been open-sourced follow internal agreements, what you see is what you get, and do not affect personal use. Distribution requires commercial authorization.
 Commercial cooperation: 306991142@qq.com.
 
-Official website: http://www.wldos.com or 306991142@qq.com
+Official website: http://gitee.com/wldos/ or 306991142@qq.com
 
 *Appendix:*
 #### Project Backend Structure (subject to actual conditions)
+
+#### 2.0 Dynamic Monolithic Project Structure
+````
+wldos root directory
+├── modules---------------------------------Multi-module sub-projects
+│   ├── wldos-kpaycms-----------------------Content Payment CMS System
+│   │   ├── pom.xml
+│   │   └── src
+│   ├── wldos-oauth2------------------------Social Login (Not Open)
+│   │   ├── pom.xml
+│   │   └── src
+│   ├── wldos-platform----------------------WLDOS Support Platform
+│   │   ├── pom.xml
+│   │   └── src
+│   └── wldos-store-------------------------Application Store (Not Open)
+│       ├── pom.xml
+│       └── src
+├── wldos-common----------------------------General Package
+│   ├── pom.xml
+│   └── src
+├── wldos-framework-------------------------WLDOS Development Framework
+│   ├── pom.xml
+│   └── src
+├── wldos-installer-------------------------Desktop Version (Not Open)
+│   ├── pom.xml
+│   ├── src
+├── wldos-plugins---------------------------Plugin Module
+│   ├── plugin-config-template.yml----------Plugin Configuration Template
+│   ├── plugin-demo-------------------------Full Stack Plugin Demo
+│   │   ├── CHANGELOG.md
+│   │   ├── README.md
+│   │   ├── build-ui.bat
+│   │   ├── build-ui.sh
+│   │   ├── plugin.yml-----------------------Plugin Configuration
+│   │   ├── pom.xml
+│   │   └── src------------------------------Plugin Source Code (Backend + Frontend)
+│   ├── pom.xml
+│   └── wldos-plugin-demo-------------------Pure Backend Plugin Demo
+│       ├── plugin.properties
+│       ├── plugin.yml
+│       ├── pom.xml
+│       └── src
+├── wldos-ui--------------------------------Frontend (Dynamic Monolithic)
+│   ├── config
+│   ├── node--------------------------------Built-in Node (Development Stage)
+│   ├── package.json
+│   ├── src
+├── wldos-web-------------------------------Project Web Entry Module
+│   ├── plugins-----------------------------Built-in Plugin Directory
+│   │   ├── plugin-demo---------------------Installed Plugin Directory (Full Stack Plugin Demo)
+│   │   ├── plugin-demo.zip-----------------Full Stack Plugin Demo Installation Package
+│   │   ├── wldos-plugin-demo---------------Backend Plugin Demo Installation Directory
+│   │   └── wldos-plugin-demo.zip-----------Backend Plugin Demo Installation Package
+│   ├── pom.xml
+│   ├── src---------------------------------Source Code Directory
+│   └── store-------------------------------Attachment Directory (Local Storage Service)
+│       ├── 2025----------------------------Random Attachment File Directory
+│       └── plugins-------------------------Built-in Plugin Directory (Plugin Market)
+└── Development Log.txt
+
+````
 
 [中文版README](README.md)

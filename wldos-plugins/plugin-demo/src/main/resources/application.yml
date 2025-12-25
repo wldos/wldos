@@ -1,0 +1,6 @@
+# 插件演示应用配置
+demo:
+  # 示例配置项
+  enabled: true
+  version: 1.0.0
+

@@ -23,12 +23,7 @@ import com.wldos.platform.core.entity.WoOrg;
 import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.UserService;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户管理相关controller。
@@ -111,13 +106,23 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 	}
 
 	/**
-	 * 获取用户有权限的管理菜单
+	 * 获取当前用户有权限的管理菜单
 	 *
 	 * @return 管理菜单
 	 */
 	@GetMapping("adminMenu")
 	public List<Menu> adminMenu() {
 		return this.service.queryAdminMenuByUser(this.getDomainId(), this.getTenantId(), this.getUserId());
+	}
+
+	/**
+	 * 获取指定用户有权限的管理菜单
+	 *
+	 * @return 管理菜单
+	 */
+	@GetMapping("adminMenu/{userId}")
+	public List<Menu> adminMenuByUserId(@PathVariable Long userId) {
+		return this.service.queryAdminMenuByUser(this.getDomainId(), this.getTenantId(), userId);
 	}
 
 	/**

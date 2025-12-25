@@ -1,0 +1,37 @@
+# 301跳转域名控制，每个域都得独立配置，上生产时一定要改成你自己的域名
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^wldos.com [NC]
+RewriteRule ^(.*)$ http://www.wldos.com/$1 [L,R=301]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+   RewriteCond %{HTTP_HOST} ^xiupu.cc [NC]
+   RewriteRule ^(.*)$ http://www.xiupu.cc/$1 [L,R=301]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?xiupu.net [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(api\.)?xiupu.net [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?xiupu.cc [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?wldos.com [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?kpaycms.com [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?gitee.com [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?github.com [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?baidu.com [NC]
+RewriteRule \.(jpe?g?|png|gif|ico|pdf|flv|swf|gz|svg|bmp)$ - [NC,F,L]
+</IfModule>
+<IfModule mod_rewrite.c>
+RewriteEngine on
+# 如果是爬虫，转发到rendertron,因使用x-forwarded-proto拿不到外网负载均衡服务器的https协议导致rendertron返回301页面，这里写死https。此配置为apache服务器适用
+RewriteCond %{HTTP_USER_AGENT} googlebot|bingbot|yandex|baiduspider|sogou.*|soso.*|360.*|youdaobot|msnbot|yahoo.*|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator [NC]
+RewriteRule ^(.*)$ http://localhost:3000/render/http://%{HTTP_HOST}/$1 [P,L]
+# 不按文件或目录重写
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+# 其他都重写为index.html
+RewriteRule ^ index.html [L]
+</IfModule>

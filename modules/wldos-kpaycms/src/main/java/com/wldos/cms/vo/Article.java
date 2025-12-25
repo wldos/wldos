@@ -33,6 +33,8 @@ public class Article extends CMeta implements IMeta {
 
 	private String pubContent;
 
+	private String pubMimeType;
+
 	private String pubName;
 
 	private String pubType;
@@ -105,6 +107,14 @@ public class Article extends CMeta implements IMeta {
 
 	public void setPubContent(String pubContent) {
 		this.pubContent = pubContent;
+	}
+
+	public String getPubMimeType() {
+		return pubMimeType;
+	}
+
+	public void setPubMimeType(String pubMimeType) {
+		this.pubMimeType = pubMimeType;
 	}
 
 	public String getPubName() {

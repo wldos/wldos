@@ -1,0 +1,26 @@
+# WLDOS 框架配置
+wldos:
+  # 框架自动配置（第三方项目使用）
+  framework:
+    # 是否启用自动配置
+    auto-config:
+      enabled: false  # WLDOS主项目禁用自动配置
+    # 是否启用插件系统
+    plugin-enabled: true
+    # 是否启用调试模式
+    debug: false
+  
+  # 插件系统配置
+  plugins:
+    # 插件调试模式
+    debug: false
+    # Hook功能是否启用
+    hook:
+      enabled: true
+    # 插件自动启动配置
+    auto-start:
+      enabled: true
+      # 延迟启动时间（毫秒）
+      delay: 5000
+
+

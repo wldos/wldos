@@ -1,6 +1,6 @@
 [English Version README](README.EN.md)
 <p align="center">
- <img alt="WLDOS" src="http://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px; ">
+ <img alt="WLDOS" src="http://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px;">
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">基于 WLDOS 开发 云物互联应用 聚焦、开放、管控你的生态</h5>
@@ -121,7 +121,7 @@ WLDOS平台已申请软件著作权，已经开放源代码及其软件可商用
 未开放源代码的模块，遵循内部协议，所见即所得，不影响自用，分发需商业授权。
 商业合作：306991142@qq.com。
 
-官网：http://www.wldos.com or 306991142@qq.com
+官网：http://gitee.com/wldos or 306991142@qq.com
 
 *附：*
 #### 项目后端结构(以实际为准)
@@ -161,5 +161,66 @@ wldos-pro根目录
 └─zone----------------------------------------------README图片
 
 ````
+#### 2.0动态单体项目结构
+````
+wldos根目录
+├── modules---------------------------------多模块子项目
+│   ├── wldos-kpaycms-----------------------内容付费CMS系统
+│   │   ├── pom.xml
+│   │   └── src
+│   ├── wldos-oauth2------------------------社会化登录（未开放）
+│   │   ├── pom.xml
+│   │   └── src
+│   ├── wldos-platform----------------------WLDOS支撑平台
+│   │   ├── pom.xml
+│   │   └── src
+│   └── wldos-store-------------------------应用商店（未开放）
+│       ├── pom.xml
+│       └── src
+├── wldos-common----------------------------通用包
+│   ├── pom.xml
+│   └── src
+├── wldos-framework-------------------------WLDOS开发框架
+│   ├── pom.xml
+│   └── src
+├── wldos-installer-------------------------桌面版（未开放）
+│   ├── pom.xml
+│   ├── src
+├── wldos-plugins---------------------------插件模块
+│   ├── plugin-config-template.yml----------插件配置模板
+│   ├── plugin-demo-------------------------全栈插件demo
+│   │   ├── CHANGELOG.md
+│   │   ├── README.md
+│   │   ├── build-ui.bat
+│   │   ├── build-ui.sh
+│   │   ├── plugin.yml-----------------------插件配置
+│   │   ├── pom.xml
+│   │   └── src------------------------------插件源码（后端+前端）
+│   ├── pom.xml
+│   └── wldos-plugin-demo-------------------纯后端插件demo
+│       ├── plugin.properties
+│       ├── plugin.yml
+│       ├── pom.xml
+│       └── src
+├── wldos-ui--------------------------------前端（动态单体）
+│   ├── config
+│   ├── node--------------------------------内置node（开发阶段）
+│   ├── package.json
+│   ├── src
+├── wldos-web-------------------------------项目web入口模块
+│   ├── plugins-----------------------------内置插件目录
+│   │   ├── plugin-demo---------------------已安装插件目录（全栈插件demo）
+│   │   ├── plugin-demo.zip-----------------全栈插件demo安装包
+│   │   ├── wldos-plugin-demo---------------后端插件demo安装目录
+│   │   └── wldos-plugin-demo.zip-----------后端插件demo安装包
+│   ├── pom.xml
+│   ├── src---------------------------------源码目录
+│   └── store-------------------------------附件目录（本地存储服务）
+│       ├── 2025----------------------------随机附件文件目录
+│       └── plugins-------------------------内置插件目录（插件市场）
+└── 开发日志.txt
+
+````
+
 
 [English Version README](README.EN.md)

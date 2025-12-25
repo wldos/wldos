@@ -1,0 +1,130 @@
+@import '~antd/es/style/themes/default.less';
+
+.imageUpload {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    border-color: #1890ff;
+    background: #f0f8ff;
+  }
+
+  // 上传的图片
+  .uploadedImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // 改为cover，确保图片填满容器并保持比例
+    border-radius: 6px;
+  }
+
+  // 上传按钮
+  .uploadButton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  // 操作按钮
+  .actionButtons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 6px;
+  }
+
+  &:hover .actionButtons {
+    opacity: 1;
+  }
+
+  .reuploadLink {
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.6);
+      color: white;
+      text-decoration: none;
+    }
+  }
+
+  .deleteIcon {
+    color: white;
+    font-size: 16px;
+    padding: 8px;
+    background: rgba(255, 77, 79, 0.8);
+    border: 1px solid rgba(255, 77, 79, 0.9);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(255, 77, 79, 1);
+      border-color: #ff4d4f;
+      color: white;
+    }
+  }
+
+  // 类型样式
+  &.cover {
+    height: 200px;
+  }
+
+  &.main {
+    height: 100px;
+  }
+
+  // 移动端适配
+  @media screen and (max-width: @screen-md) {
+    &.cover {
+      height: 160px;
+    }
+    
+    &.main {
+      height: 80px;
+    }
+  }
+}

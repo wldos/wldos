@@ -1,0 +1,231 @@
+@import '~antd/es/style/themes/default.less';
+
+.stepForm {
+  max-width: 750px;
+  margin: 40px auto 0;
+}
+
+.stepFormText {
+  margin-bottom: 24px;
+  :global {
+    .ant-form-item-label,
+    .ant-form-item-control {
+      line-height: 22px;
+    }
+  }
+}
+
+.desc {
+  padding: 0 56px;
+  color: @text-color-secondary;
+  h3 {
+    margin: 0 0 12px 0;
+    color: @text-color-secondary;
+    font-size: 16px;
+    line-height: 32px;
+  }
+  h4 {
+    margin: 0 0 4px 0;
+    color: @text-color-secondary;
+    font-size: 14px;
+    line-height: 22px;
+  }
+  p {
+    margin-top: 0;
+    margin-bottom: 12px;
+    line-height: 22px;
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .desc {
+    padding: 0;
+  }
+}
+
+.result {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 0 8px;
+}
+
+.information {
+  line-height: 22px;
+  :global {
+    .ant-row:not(:last-child) {
+      margin-bottom: 24px;
+    }
+  }
+  .label {
+    padding-right: 8px;
+    color: @heading-color;
+    text-align: right;
+    @media screen and (max-width: @screen-sm) {
+      text-align: left;
+    }
+  }
+}
+
+.money {
+  font-weight: 500;
+  font-size: 20px;
+  font-family: 'Helvetica Neue', sans-serif;
+  line-height: 14px;
+}
+
+.uppercase {
+  font-size: 12px;
+}
+
+.baseView {
+  display: flex;
+  width: 750px;
+  margin: auto;
+  padding-top: 12px;
+  :global {
+    .ant-legacy-form-item .ant-legacy-form-item-control-wrapper {
+      width: 100%;
+    }
+  }
+
+  .left {
+    width: 70%;
+    :global {
+      .ant-spin-container {
+        display: flex;
+      }
+    }
+  }
+  .right {
+    flex: 1;
+    margin-top: 44px;
+    margin-left: 10px;
+    .avatar_title {
+      height: 22px;
+      margin-bottom: 8px;
+      color: @heading-color;
+      font-size: @font-size-base;
+      line-height: 22px;
+    }
+    .avatar {
+      width: 110px;
+      height: 66px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      border: 1px solid #d9d9d9;
+      img {
+        width: 100%;
+      }
+    }
+    .button_view {
+      width: 110px;
+      text-align: center;
+    }
+    .mainPic {
+      width: 110px;
+      height: 110px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      border: 1px solid #d9d9d9;
+      img {
+        width: 100%;
+      }
+    }
+    .button_pic {
+      width: 110px;
+      text-align: center;
+    }
+  }
+
+  .content {
+    width: 100%;
+    :global {
+      .ant-spin-container {
+        display: flex;
+      }
+    }
+  }
+  .main {
+    flex: 1;
+    .avatar_title {
+      height: 22px;
+      margin-bottom: 8px;
+      color: @heading-color;
+      font-size: @font-size-base;
+      line-height: 22px;
+    }
+    .avatar {
+      width: 70px;
+      height: 42px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      border: 1px solid #d9d9d9;
+      img {
+        width: 100%;
+      }
+    }
+    .button_view {
+      width: 60px;
+      text-align: center;
+    }
+    .mainPic {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      border: 1px solid #d9d9d9;
+      img {
+        width: 100%;
+      }
+    }
+    .button_pic {
+      width: 60px;
+      text-align: center;
+    }
+  }
+}
+
+.cropperModal{
+  display:flex;
+  flex-direction:column;
+  .right_content{
+    .preview{
+      flex:1;
+      overflow:hidden;
+      border:1px solid #e8e8e8;
+    }
+    .button_group {
+      width: 240px;
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: @screen-xl) {
+  .cropperModal{
+    .right_content {
+      display:none;
+    }
+  }
+}
+
+@media screen and (max-width: @screen-xl) {
+  .baseView {
+    flex-direction: column-reverse;
+    width: auto;
+    .left {
+      width: 100%;
+    }
+    .right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 448px;
+      padding: 20px;
+      .avatar_title {
+        display: none;
+      }
+    }
+  }
+}

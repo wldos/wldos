@@ -13,6 +13,7 @@ import java.util.List;
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.WoRole;
 
+import com.wldos.platform.core.vo.RoleIdCode;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -26,4 +27,7 @@ import org.springframework.data.repository.query.Param;
 public interface RoleDao extends BaseDao<WoRole, Long> {
 	@Query("select r.* from wo_role r where r.delete_flag='normal' and r.is_valid='1' and r.role_type=:roleType")
 	List<WoRole> findAllTenant(@Param("roleType") String roleType);
+
+	@Query("SELECT id, role_code FROM wo_role WHERE role_code IN ( :roleCodes )")
+	List<RoleIdCode> findAllByRoleCode(@Param("roleCodes") List<String> roleCodes);
 }

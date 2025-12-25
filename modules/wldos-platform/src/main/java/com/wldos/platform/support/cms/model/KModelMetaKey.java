@@ -73,6 +73,9 @@ public final class KModelMetaKey {
 	public static final String ATT_META_KEY_ATTACH_METADATA = "attachMetadata";
 
 	public static final String ATT_META_KEY_ATTACH_FILE_ALT = "attachFileAlt";
+	// 水印保护
+	public static final String watermarkText = "watermarkText";
+	public static final String watermarkEnabled = "watermarkEnabled";
 
 	// 自由扩展域
 	public static final String EXT_META_KEY_EXT_ID = "id";

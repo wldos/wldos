@@ -12,6 +12,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+/**
+ * 角色
+ */
 @Table
 public class WoRole {
 	@Id

@@ -15,11 +15,11 @@ import com.wldos.common.Constants;
  * @date 2021/4/27
  * @version 1.0
  */
-public enum AppTypeEnum {
+public enum AppTypeEnum { // 重命名语义：管理类型，作为应用可见范围/管理边界（AppScope）
 
-	PLATFORM("平台", Constants.ENUM_TYPE_APP_PLAT),
-	APP("市场", "app"),
-	PRIVATE("私有", "private");
+	PLATFORM("系统", Constants.ENUM_TYPE_APP_PLAT), // 系统应用 是平台官方实现应用
+	APP("公共", "app"), // 公共应用（APP）是面向所有用户开放的通用应用，可以在应用市场购买
+	PRIVATE("私有", "private"); // 私有应用 是租户或组织内私有的应用，组织外不可见
 
 	private final String label;
 

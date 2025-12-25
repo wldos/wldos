@@ -20,6 +20,8 @@ public class Resource extends TreeNode<Resource> {
 
 	private String resourcePath;
 
+	private String componentPath;
+
 	private String icon;
 
 	private String resourceType;
@@ -84,6 +86,14 @@ public class Resource extends TreeNode<Resource> {
 
 	public void setResourcePath(String resourcePath) {
 		this.resourcePath = resourcePath;
+	}
+
+	public String getComponentPath() {
+		return componentPath;
+	}
+
+	public void setComponentPath(String componentPath) {
+		this.componentPath = componentPath;
 	}
 
 	public String getIcon() {

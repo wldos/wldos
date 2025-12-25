@@ -19,6 +19,7 @@ import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoApp;
+import com.wldos.platform.core.enums.AppOriginEnum;
 import com.wldos.platform.core.enums.AppTypeEnum;
 
 import com.wldos.platform.core.service.AppService;
@@ -101,6 +102,19 @@ public class AppController extends EntityController<AppService, WoApp> {
 			return em;
 		}).collect(Collectors.toList());
 	}
+
+	/**
+     * 获取应用来源枚举列表（下拉列表）
+     */
+    @GetMapping("/origins")
+    public List<Map<String, String>> getAppOrigins() {
+		return Arrays.stream(AppOriginEnum.values()).map(item -> {
+			Map<String, String> em = new HashMap<>();
+			em.put("label", item.getLabel());
+			em.put("value", item.getValue());
+			return em;
+		}).collect(Collectors.toList());
+    }
 
 	@Override
 	protected void preAdd(WoApp entity) { // 创建应用时绑定租户id

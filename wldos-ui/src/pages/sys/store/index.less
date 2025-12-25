@@ -1,0 +1,92 @@
+.plugin-card {
+  height: 100%;
+  transition: all 0.3s;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .ant-card-body {
+    padding: 16px;
+  }
+
+  .ant-card-cover {
+    height: 180px;
+    overflow: hidden;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .plugin-card-cover {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 20px;
+    }
+
+    .plugin-card-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .plugin-card-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1;
+    }
+  }
+
+  .ant-card-meta-title {
+    margin-bottom: 8px;
+  }
+
+  .ant-card-meta-description {
+    min-height: 120px;
+  }
+
+  .ant-card-actions {
+    border-top: 1px solid #f0f0f0;
+    background: #fafafa;
+
+    li {
+      margin: 8px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        color: #1890ff;
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+// 移动端适配
+@media (max-width: 768px) {
+  .plugin-card {
+    .plugin-card-cover {
+      height: 150px;
+    }
+
+    .ant-card-meta-description {
+      min-height: 100px;
+    }
+  }
+}
+

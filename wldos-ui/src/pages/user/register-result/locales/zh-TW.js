@@ -1,0 +1,22 @@
+export default {
+  'userRegister-result.login.userName': '賬戶',
+  'userRegister-result.login.password': '密碼',
+  'userRegister-result.login.message-invalid-credentials': '賬戶或密碼錯誤',
+  'userRegister-result.login.message-invalid-verification-code': '驗證碼錯誤',
+  'userRegister-result.login.tab-login-credentials': '賬戶密碼登錄',
+  'userRegister-result.login.tab-login-mobile': '手機號登錄',
+  'userRegister-result.login.remember-me': '自動登錄',
+  'userRegister-result.login.forgot-password': '忘記密碼',
+  'userRegister-result.login.sign-in-with': '其他登錄方式',
+  'userRegister-result.login.signup': '註冊賬戶',
+  'userRegister-result.login.login': '登錄',
+  'userRegister-result.register.register': '註冊',
+  'userRegister-result.register.get-verification-code': '獲取驗證碼',
+  'userRegister-result.register.sign-in': '使用已有賬戶登錄',
+  'userRegister-result.register-result.msg': '妳的賬戶：{email} 註冊成功',
+  'userRegister-result.register-result.activation-email':
+    '激活郵件已發送到妳的郵箱中，郵件有效期為24小時。請及時登錄郵箱，點擊郵件中的鏈接激活帳戶。',
+  'userRegister-result.register-result.back-home': '返回首頁',
+  'userRegister-result.register-result.view-mailbox': '查看郵箱',
+  'userRegister-result.navBar.lang': '語言',
+};

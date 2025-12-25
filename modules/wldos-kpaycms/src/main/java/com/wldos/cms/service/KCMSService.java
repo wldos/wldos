@@ -868,6 +868,27 @@ public class KCMSService extends NonEntityService {
 		String views = pubMeta.get(KModelMetaKey.PUB_META_KEY_VIEWS);
 		if (!ObjectUtils.isBlank(views))
 			article.setViews(views);
+
+		if (PubTypeEnum.isSub(article.getPubType())) {
+			// 水印继承父级文集
+			List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(article.getParentId()); // 水印继承父级文集设置
+			// 析取独立公共扩展属性
+			Map<String, String> pubMeta1 = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
+			String watermarkText = pubMeta1.get(KModelMetaKey.watermarkText);
+			if (!ObjectUtils.isBlank(watermarkText))
+				article.setWatermarkText(watermarkText);
+			String watermarkEnabled = pubMeta1.get(KModelMetaKey.watermarkEnabled);
+			if (!ObjectUtils.isBlank(watermarkEnabled))
+				article.setWatermarkEnabled(watermarkEnabled);
+		} else {
+			String watermarkText = pubMeta.get(KModelMetaKey.watermarkText);
+			if (!ObjectUtils.isBlank(watermarkText))
+				article.setWatermarkText(watermarkText);
+			String watermarkEnabled = pubMeta.get(KModelMetaKey.watermarkEnabled);
+			if (!ObjectUtils.isBlank(watermarkEnabled))
+				article.setWatermarkEnabled(watermarkEnabled);
+		}
+
 	}
 
 	/**

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Licensed under the Apache License, Version 2.0 or a commercial license.
+  ~ For Apache License Version 2.0 see License in the project root for license information.
+  ~ For commercial licenses see term.md or contact 306991142@qq.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>wldos-parent</artifactId>
+		<groupId>com.wldos</groupId>
+		<version>2.0.0</version>
+	</parent>
+	<artifactId>wldos-common</artifactId>
+	<properties>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.20</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.10.12</version>
+		</dependency>
+	</dependencies>
+</project>

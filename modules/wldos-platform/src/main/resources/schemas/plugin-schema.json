@@ -1,0 +1,256 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WLDOS Plugin Configuration Schema",
+  "description": "插件配置文件规范定义 - 基于 WLDOS 资源权限体系精髓之二",
+  "type": "object",
+  "required": ["code", "name", "version", "description", "author", "mainClass"],
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "插件唯一标识符",
+      "pattern": "^[a-z][a-z0-9:.-]*[a-z0-9]$",
+      "minLength": 1,
+      "maxLength": 50,
+      "examples": ["demo-plugin", "airdrop", "user-manager"]
+    },
+    "name": {
+      "type": "string",
+      "description": "插件显示名称",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["演示插件", "批量任务", "用户管理"]
+    },
+    "version": {
+      "type": "string",
+      "description": "插件版本号",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?(\\+[a-zA-Z0-9.-]+)?$",
+      "examples": ["1.0.0", "2.1.3", "1.0.0-beta.1"]
+    },
+    "description": {
+      "type": "string",
+      "description": "插件功能描述",
+      "minLength": 1,
+      "maxLength": 500,
+      "examples": ["这是一个演示插件", "自动化脚本任务管理插件"]
+    },
+    "author": {
+      "type": "string",
+      "description": "插件作者",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["WLDOS Team", "admin", "张三"]
+    },
+    "mainClass": {
+      "type": "string",
+      "description": "插件主类的完整类名",
+      "pattern": "^[a-zA-Z_$][a-zA-Z0-9_$]*(\\.[a-zA-Z_$][a-zA-Z0-9_$]*)*$",
+      "examples": ["com.wldos.plugin.demo.DemoPlugin", "com.wldos.plugin.airdrop.AirdropPlugin"]
+    },
+    "autoStart": {
+      "type": "boolean",
+      "description": "是否自动启动",
+      "default": false
+    },
+    "category": {
+      "type": "string",
+      "description": "插件分类",
+      "enum": ["工具", "管理", "监控", "集成", "安全", "其他"],
+      "default": "其他"
+    },
+    "icon": {
+      "type": "object",
+      "description": "插件图标配置",
+      "properties": {
+        "small": {
+          "type": "string",
+          "description": "小图标路径（16x16）"
+        },
+        "medium": {
+          "type": "string",
+          "description": "中图标路径（32x32）"
+        },
+        "large": {
+          "type": "string",
+          "description": "大图标路径（64x64）"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "插件标签",
+      "items": {
+        "type": "string",
+        "maxLength": 20
+      },
+      "maxItems": 10
+    },
+    "screenshots": {
+      "type": "array",
+      "description": "插件截图",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 5
+    },
+    "banner": {
+      "type": "string",
+      "description": "插件横幅图片路径"
+    },
+    "documentation": {
+      "type": "string",
+      "description": "插件文档URL"
+    },
+    "changelog": {
+      "type": "string",
+      "description": "变更日志URL"
+    },
+    "menus": {
+      "type": "array",
+      "description": "菜单资源配置 - 所有资源（菜单和按钮操作）都在这里定义，按钮操作作为菜单的 children",
+      "items": {
+        "type": "object",
+        "required": ["code", "name", "path"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "资源编码（权限字）",
+            "pattern": "^[a-z][a-z0-9:.-]*[a-z0-9]$"
+          },
+          "name": {
+            "type": "string",
+            "description": "资源名称"
+          },
+          "path": {
+            "type": "string",
+            "description": "资源路径（菜单为请求路由，按钮为API操作路由）。菜单路径必须遵循插件路径约定：用户侧 /pluginCode/xxx 或 /pluginCode/xxx/.../，管理侧 /admin/pluginCode/xxx 或 /admin/pluginCode/xxx/.../",
+            "pattern": "^(/[a-z][a-z0-9/-]*|/admin/[a-z][a-z0-9/-]*)$"
+          },
+          "icon": {
+            "type": "string",
+            "description": "菜单图标（仅菜单资源）"
+          },
+          "component": {
+            "type": "string",
+            "description": "前端组件路径（仅菜单资源）"
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序值",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "资源类型",
+            "enum": ["adminMenu", "adminButton", "menu", "button", "plugin_menu", "admin_plugin_menu"],
+            "default": "adminMenu"
+          },
+          "method": {
+            "type": "string",
+            "description": "请求方法（仅按钮操作资源）",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+            "default": "GET"
+          },
+          "children": {
+            "type": "array",
+            "description": "子资源（子菜单或按钮操作）",
+            "items": {
+              "$ref": "#/properties/menus/items"
+            }
+          }
+        }
+      }
+    },
+    "hooks": {
+      "type": "array",
+      "description": "钩子定义",
+      "items": {
+        "type": "object",
+        "required": ["extName", "type", "method"],
+        "properties": {
+          "extName": {
+            "type": "string",
+            "description": "扩展点名称",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9:.-]*[a-zA-Z0-9]$|^[a-zA-Z]$"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["HANDLER", "INVOKE"],
+            "description": "钩子类型"
+          },
+          "priority": {
+            "type": "integer",
+            "description": "优先级",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 10
+          },
+          "numArgs": {
+            "type": "integer",
+            "description": "参数数量",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "description": {
+            "type": "string",
+            "description": "钩子描述"
+          },
+          "method": {
+            "type": "string",
+            "description": "处理方法名"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "errorMessages": {
+    "required": {
+      "code": "插件编码是必需的",
+      "name": "插件名称是必需的",
+      "version": "插件版本是必需的",
+      "description": "插件描述是必需的",
+      "author": "插件作者是必需的",
+      "mainClass": "插件主类是必需的"
+    },
+    "properties": {
+      "code": {
+        "pattern": "插件编码只能包含小写字母、数字、连字符、冒号、点号，且必须以字母开头和结尾"
+      },
+      "version": {
+        "pattern": "版本号格式应为 x.y.z 或 x.y.z-标识符"
+      },
+      "mainClass": {
+        "pattern": "主类名必须是有效的Java类名"
+      },
+      "menus": {
+        "code": {
+          "pattern": "资源编码只能包含小写字母、数字、连字符、冒号、点号，且以字母开头"
+        },
+        "path": {
+          "pattern": "资源路径必须遵循插件路径约定：用户侧 /pluginCode/xxx 或 /pluginCode/xxx/.../，管理侧 /admin/pluginCode/xxx 或 /admin/pluginCode/xxx/.../"
+        },
+        "resourceType": {
+          "enum": "资源类型必须是 adminMenu、adminButton、menu、button、plugin_menu 或 admin_plugin_menu"
+        },
+        "method": {
+          "enum": "请求方法必须是 GET、POST、PUT、DELETE 或 PATCH"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "database": {
+            "type": "object"
+          }
+        }
+      },
+      "then": {
+        "errorMessage": "插件配置文件中不再需要 database 配置节。请将数据库脚本放在 src/main/database/ 目录下，系统会自动检测并执行。"
+      }
+    }
+  ]
+}

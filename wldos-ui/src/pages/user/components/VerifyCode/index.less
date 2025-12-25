@@ -1,0 +1,25 @@
+@import '~antd/es/style/themes/default.less';
+
+.captcha {
+  display: flex;
+  justify-content: space-between;
+  .prefixIcon {
+    color: @primary-color;
+    font-size: @font-size-base;
+  }
+  .input{
+    flex: 1
+  }
+  .image {
+    margin-left: 10px;
+    height: @input-height-lg; // 与 large 尺寸输入框等高
+    display: flex;
+    align-items: center;
+    
+    img {
+      height: 100%;
+      width: auto;
+      display: block;
+    }
+  }
+}

@@ -1,0 +1,93 @@
+code: plugin-demo
+name: 插件开发演示
+version: 1.0.0
+description: WLDOS插件开发演示项目，作为插件开发者的基础框架和参考示例
+author: WLDOS Team
+mainClass: com.wldos.plugin.demo.DemoPlugin
+main: com.wldos.plugin.demo.DemoPlugin
+
+# 菜单资源配置 - 所有资源（菜单和按钮操作）都在这里定义
+# 按钮操作作为菜单的 children，通过 parent_id 关联
+# 系统管理侧：adminMenu/adminButton，用户侧：menu/button
+#
+# 菜单配置规范：
+# 1. 顶级菜单：仅作为模块占用和角色授权资源占位，不配置 component，不可点击
+# 2. 第一个子菜单：作为首页，路径指向顶级菜单路径，使用首页组件
+# 3. 菜单层级：支持最多3级（包含顶级菜单）
+menus:
+  - code: demo-home
+    name: 插件演示
+    path: /admin/demo
+    icon: AppstoreOutlined
+    sort: 100
+    resourceType: admin_plugin_menu  # 系统管理菜单
+    # 注意：顶级菜单不配置 component，仅作占位和权限控制
+    children:
+      # 第一个子菜单作为首页，路径指向顶级菜单路径
+      - code: demo-index
+        name: 首页
+        path: /admin/demo/home  # 指向首页路径
+        component: /home  # 页面路径，/ 表示 pages 目录
+        sort: 0
+        resourceType: admin_plugin_menu
+        children:
+          # 首页的按钮操作
+          - code: demo:home:view
+            name: 查看首页
+            path: /admin/demo/home/view
+            sort: 1
+            resourceType: admin_plugin_button  # 系统管理按钮
+            method: GET  # 只读操作，默认所有用户可访问
+      
+      - code: demo-example
+        name: 示例页面
+        path: /admin/demo/example
+        icon: FileTextOutlined
+        component: /example  # 页面路径，/ 表示 pages 目录
+        sort: 1
+        resourceType: admin_plugin_menu  # 系统管理菜单
+        children:
+          # 示例页面的按钮操作
+          - code: demo:example:view
+            name: 查看示例
+            path: /admin/demo/example/view
+            sort: 1
+            resourceType: admin_plugin_button  # 系统管理按钮
+            method: GET  # 只读操作，默认所有用户可访问
+          - code: demo:example:create
+            name: 创建示例
+            path: /admin/demo/example/create
+            sort: 2
+            resourceType: admin_plugin_button  # 系统管理按钮
+            method: POST  # 操作类型，需要显式关联角色
+          - code: demo:example:edit
+            name: 编辑示例
+            path: /admin/demo/example/edit
+            sort: 3
+            resourceType: admin_plugin_button  # 系统管理按钮
+            method: POST  # 操作类型，需要显式关联角色
+          - code: demo:example:delete
+            name: 删除示例
+            path: /admin/demo/example/delete
+            sort: 4
+            resourceType: admin_plugin_button  # 系统管理按钮
+            method: DELETE  # 操作类型，需要显式关联角色
+
+hooks:
+  - extName: demo.plugin.init
+    type: INVOKE
+    priority: 10
+    description: 插件初始化
+    method: initPlugin
+  - extName: demo.plugin.cleanup
+    type: INVOKE
+    priority: 10
+    description: 插件清理
+    method: cleanupPlugin
+  - extName: demo.example.process
+    type: HANDLER
+    priority: 10
+    numArgs: 1
+    description: 处理示例数据
+    method: processExample
+

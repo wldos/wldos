@@ -1,0 +1,109 @@
+@import '~antd/es/style/themes/default.less';
+
+/*
+ * 本文件用于定制wldos前端样式。 顶部导航栏限制宽度，并居中对齐
+ */
+.topNavWldos {
+  :global {
+    .ant-pro-top-nav-header-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: 0;
+
+      /* 小于1200px时 logo左边距24px */
+      @media screen and (max-width: @screen-xl) {
+        padding-left: 24px;
+      }
+    }
+
+    // 修正面包屑局域与内容不等宽
+    .ant-pro-basicLayout-content > .ant-pro-page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+}
+
+.topNavContent {
+  :global {
+    // 修正面包屑局域与内容不等宽
+    .ant-pro-page-container-children-content {
+      margin: 24px auto;
+    }
+  }
+}
+
+.topNavContentNoBread {
+  :global {
+    // 关闭面包屑时，覆盖面包屑区域
+    .ant-pro-page-container-children-content {
+      margin: 0 auto;
+    }
+  }
+}
+
+/* 修复菜单选中状态：只让完全匹配的菜单项显示选中背景 */
+:global {
+  // 当访问子路径时，移除父路径菜单项的选中背景
+  .ant-pro-sider-menu {
+    // 只让完全匹配的菜单项显示选中背景
+    .ant-menu-item {
+      // 如果菜单项不是完全匹配（是父路径），移除选中背景和字体颜色
+      &:has(a[data-is-exact-match="false"]) {
+        &.ant-menu-item-selected {
+          background-color: transparent !important;
+          color: rgba(0, 0, 0, 0.65) !important; // 恢复默认字体颜色
+          &::after {
+            display: none !important;
+          }
+          a {
+            color: rgba(0, 0, 0, 0.65) !important; // 恢复链接默认颜色
+          }
+        }
+      }
+    }
+  }
+  
+  .ant-pro-global-header-logo a img {
+    @media screen and (max-width: @screen-sm) {
+      content: var(--mobile-logo);
+    }
+  }
+  .ant-pro-top-nav-header-logo img {
+    background-color: #fff !important;
+  }
+}
+
+/*
+ * 用于管理端
+ */
+.slideNavWldos {
+  :global {
+    .ant-pro-top-nav-header-main {
+      margin: 0 auto;
+      padding-left: 0;
+
+      /* 小于1200px时 logo左边距24px */
+      @media screen and (max-width: @screen-xl) {
+        padding-left: 24px;
+      }
+    }
+  }
+  
+}
+.docLayout {
+  // 通过完整的DOM路径定位到main元素
+  :global(.ant-layout .ant-layout main.ant-layout-content.ant-pro-basicLayout-content) {
+    margin: 0;
+  }
+  // 文档模块防横向滚动
+  :global {
+    .ant-layout {
+      overflow-x: hidden;
+    }
+    
+    .ant-layout-content {
+      overflow-x: hidden;
+    }
+  }
+}

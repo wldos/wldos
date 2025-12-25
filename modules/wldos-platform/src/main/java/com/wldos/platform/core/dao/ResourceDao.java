@@ -13,6 +13,7 @@ import java.util.List;
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.support.resource.entity.WoResource;
 
+import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,4 +35,8 @@ public interface ResourceDao extends BaseDao<WoResource, Long>, ResourceJdbc {
 
 	@Query("select max(r.display_order) max_order from wo_resource r where r.delete_flag='normal' and r.is_valid='1' and r.parent_id=:pId")
 	Long queryMaxOrder(@Param("pId") Long parentId);
+
+	@Modifying
+	@Query("delete from wo_resource where app_id=:appId")
+	void deleteByAppId(@Param("appId") Long appId);
 }

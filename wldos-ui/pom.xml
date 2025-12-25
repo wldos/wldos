@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Licensed under the Apache License, Version 2.0 or a commercial license.
+  ~ For Apache License Version 2.0 see License in the project root for license information.
+  ~ For commercial licenses see term.md or contact 306991142@qq.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.wldos</groupId>
+    <artifactId>wldos-ui</artifactId>
+    <name>WLDOS UI</name>
+    <description>WLDOS UI</description>
+    <version>2.0.0</version>
+
+    <properties>
+        <node.version>v20.19.4</node.version>
+        <yarn.version>v1.22.19</yarn.version>
+        <frontend.src.dir>.</frontend.src.dir>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.1</version>
+                <configuration>
+                    <workingDirectory>${frontend.src.dir}</workingDirectory>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <yarnVersion>${yarn.version}</yarnVersion>
+                </configuration>
+                <executions>
+                    <!-- 安装 Node 和 Yarn -->
+                    <execution>
+                        <id>install-node-and-yarn</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${node.version}</nodeVersion>
+                            <yarnVersion>${yarn.version}</yarnVersion>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- 安装依赖 -->
+                    <execution>
+                        <id>yarn-install</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- 构建 -->
+                    <execution>
+                        <id>yarn-build</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

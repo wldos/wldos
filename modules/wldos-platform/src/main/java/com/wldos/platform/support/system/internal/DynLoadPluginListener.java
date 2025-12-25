@@ -15,12 +15,16 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.env.MapPropertySource;
+import java.util.Collections;
 
 /**
  * 不要修改此类，否则系统可能无法启动！
@@ -52,14 +56,51 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 
 	@Override
 	public void contextLoaded(ConfigurableApplicationContext context) {
-		String root;
-		String inf;
+		String root = "";
+		String inf = "";
 		try {
-			ClassLoader classLoader = getClass().getClassLoader();
-
-			File webINF = new File(Objects.requireNonNull(classLoader.getResource("")).getFile()).getParentFile();
-			root = webINF.getParentFile().getAbsolutePath();
-			inf = webINF.getAbsolutePath();
+			// 1. 优先用 ServletContext 获取 webroot
+			ServletContext servletContext = null;
+			try {
+				servletContext = context.getBean(ServletContext.class);
+			} catch (Exception ignored) {}
+			if (servletContext != null) {
+				String realPath = servletContext.getRealPath("/");
+				if (realPath != null) {
+					File webRootDir = new File(realPath);
+					root = webRootDir.getAbsolutePath();
+					File webInfDir = new File(webRootDir, "WEB-INF");
+					if (webInfDir.exists()) {
+						inf = webInfDir.getAbsolutePath();
+					}
+				}
+			}
+			// 2. 如果获取不到，再用 classLoader 方式
+			if (root.isEmpty() || inf.isEmpty()) {
+				File classPath = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("")).getFile());
+				File tempClassPathFile = classPath;
+				while (tempClassPathFile != null && !tempClassPathFile.getName().equalsIgnoreCase("WEB-INF") && !tempClassPathFile.getName().equalsIgnoreCase("target")) {
+					tempClassPathFile = tempClassPathFile.getParentFile();
+				}
+				if (tempClassPathFile != null) {
+					if (tempClassPathFile.getName().equalsIgnoreCase("WEB-INF")) {
+						inf = tempClassPathFile.getAbsolutePath();
+						root = tempClassPathFile.getParentFile().getAbsolutePath();
+					} else if (tempClassPathFile.getName().equalsIgnoreCase("target")) {
+						root = tempClassPathFile.getAbsolutePath();
+						inf = new File(tempClassPathFile, "WEB-INF").getAbsolutePath();
+					}
+				}
+			}
+			// 3. MacOS 特殊处理（兼容原有逻辑）
+			if ((root.isEmpty() || inf.isEmpty()) && context != null) {
+				try {
+					org.springframework.core.io.Resource resource = context.getResource("classpath:wldos");
+					File webINF = resource.getFile().getParentFile().getParentFile();
+					root = webINF.getParentFile().getAbsolutePath();
+					inf = webINF.getAbsolutePath();
+				} catch (Exception ignored) {}
+			}
 		} catch (Exception e) {
 			try { // for macOs
 				Resource resource = context.getResource("classpath:wldos");
@@ -71,6 +112,13 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 				inf = "";
 			}
 		}
+
+		ConfigurableEnvironment env = context.getEnvironment();
+		env.getPropertySources().addFirst(
+			new MapPropertySource("wldos-platform-root",
+				Collections.singletonMap("wldos.platform.root", root))
+		);
+
 		System.setProperty("wldos.platform.root", root);
 		System.setProperty("wldos.platform.web-inf", inf);
 		pluginManager.register(context);

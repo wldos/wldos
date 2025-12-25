@@ -26,6 +26,7 @@ public enum TemplateTypeEnum {
 	ADMIN("系统管理", "admin"),
 	URL("指定url", "url"),
 	STATIC("静态", "static"),
+	COMPONENT("绑定组件", "component"),
 	UNKNOWN("未知", "unknown");
 
 	private final String label;

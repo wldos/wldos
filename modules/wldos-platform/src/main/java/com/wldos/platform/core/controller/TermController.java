@@ -51,7 +51,10 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 */
 	@GetMapping("/admin/cms/category")
 	public PageableResult<TermTree> listCategory(@RequestParam Map<String, Object> params) {
-		params.put("classType", TermTypeEnum.CATEGORY.toString());
+		// 如果参数中没有 classType，则默认为 category
+		if (!params.containsKey("classType") || ObjectUtils.isBlank(params.get("classType"))) {
+			params.put("classType", TermTypeEnum.CATEGORY.toString());
+		}
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		return this.service.queryTermForTree(new KTerms(), pageQuery, false);
@@ -102,6 +105,29 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@GetMapping("category/treeSelect")
 	public List<TreeSelectOption> categoryLayerTree() {
 		return this.service.queryLayerCategoryTree();
+	}
+
+	/**
+	 * 获取插件分类树状列表
+	 * (常规分层, [{title: '', value: '', key: '', children: [{...}...]},])
+	 *
+	 * @return 插件分类树状列表
+	 */
+	@GetMapping("plugin/category/treeSelect")
+	public List<TreeSelectOption> pluginCategoryLayerTree() {
+		return this.service.queryLayerCategoryTreeByType(TermTypeEnum.PLUGIN.toString());
+	}
+
+	/**
+	 * 通用分类树查询接口，支持所有类型
+	 * (常规分层, [{title: '', value: '', key: '', children: [{...}...]},])
+	 *
+	 * @param classType 分类类型（如：category, plugin, nav_menu 等）
+	 * @return 分类树状列表
+	 */
+	@GetMapping("term/category/treeSelect")
+	public List<TreeSelectOption> termCategoryLayerTree(@RequestParam String classType) {
+		return this.service.queryLayerCategoryTreeByType(classType);
 	}
 
 	/**
@@ -188,6 +214,91 @@ public class TermController extends EntityController<TermService, KTerms> {
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
 		this.service.appendCacheTag(term); // 新增标签追加缓存
 		return this.resJson.ok(res);
+	}
+
+	/**
+	 * 通用分类项列表，支持所有类型的查询、排序的分页查询
+	 * 通过 classType 参数指定类型（category, tag, plugin 等）
+	 *
+	 * @param params 分页参数，必须包含 classType
+	 * @return 分类项树形列表
+	 */
+	@GetMapping("/admin/term-type/term")
+	public PageableResult<TermTree> listTerm(@RequestParam Map<String, Object> params) {
+		// classType 是必填参数
+		if (!params.containsKey("classType") || ObjectUtils.isBlank(params.get("classType"))) {
+			return new PageableResult<>(0L, 1, 15, new java.util.ArrayList<>());
+		}
+		// 判断是否为扁平结构（tag 类型）
+		boolean isFlat = TermTypeEnum.TAG.toString().equals(params.get("classType"));
+		//查询列表数据
+		PageQuery pageQuery = new PageQuery(params);
+		return this.service.queryTermForTree(new KTerms(), pageQuery, isFlat);
+	}
+
+	/**
+	 * 通用分类项新增，支持所有类型
+	 * 通过请求体中的 classType 字段指定类型
+	 *
+	 * @param term 分类项信息，必须包含 classType
+	 * @return 操作结果
+	 */
+	@PostMapping("/admin/term-type/term/add")
+	public String addTerm(@RequestBody Term term) {
+		// classType 是必填字段
+		if (ObjectUtils.isBlank(term.getClassType())) {
+			return this.resJson.ok("classType 是必填字段");
+		}
+		this.handleDisplayOrder(term);
+		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
+		// 如果是标签类型，追加缓存
+		if (TermTypeEnum.TAG.toString().equals(term.getClassType())) {
+			this.service.appendCacheTag(term);
+		}
+		this.service.refreshTerm();
+		return this.resJson.ok(res);
+	}
+
+	/**
+	 * 通用分类项更新，支持所有类型
+	 *
+	 * @param term 分类项信息
+	 * @return 操作结果
+	 */
+	@PostMapping("/admin/term-type/term/update")
+	public String updateTerm(@RequestBody Term term) {
+		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
+		this.service.refreshTerm();
+		return this.resJson.ok(res);
+	}
+
+	/**
+	 * 通用分类项删除，支持所有类型
+	 *
+	 * @param term 分类项信息
+	 * @return 操作结果
+	 */
+	@DeleteMapping("/admin/term-type/term/delete")
+	public String deleteTerm(@RequestBody Term term) {
+		this.service.deleteTerm(term);
+		this.service.refreshTerm();
+		return this.resJson.ok("ok");
+	}
+
+	/**
+	 * 通用分类项批量删除，支持所有类型
+	 *
+	 * @param terms 分类项列表
+	 * @return 操作结果
+	 */
+	@SuppressWarnings("unchecked")
+	@DeleteMapping("/admin/term-type/term/deletes")
+	public Boolean removeTerms(@RequestBody List<Term> terms) {
+		if (!ObjectUtils.isBlank(terms)) {
+			this.service.deleteTerms(terms);
+			this.service.refreshTerm();
+		}
+		return Boolean.TRUE;
 	}
 
 	/**

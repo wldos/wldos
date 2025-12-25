@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
+package com.wldos.framework.support.hook;
+
+import java.util.Objects;
+
+import com.wldos.framework.support.plugins.Handler;
+
+/**
+ * 一个Handler是指有返回值的hook。
+ *
+ */
+public class HandlerVO extends Hook {
+
+	public HandlerVO(String extName, Handler clazz, int priority, int numArgs) {
+        super(HookType.HANDLER, extName, priority, numArgs, clazz);
+    }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || this.getClass() != o.getClass())
+			return false;
+		HandlerVO invoke = (HandlerVO) o;
+		return (invoke.extName.equals(this.extName) && this.inst.equals(invoke.inst) && this.priority == invoke.priority && this.numArgs == invoke.numArgs);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(extName, inst, priority, numArgs);
+	}
+
+	public Handler getInst() {
+		return (Handler) inst;
+	}
+
+	public int getNumArgs() {
+		return numArgs;
+	}
+
+	@Override
+	public String toString() {
+		return "{extName: " + this.extName + ", inst: " + this.inst + ", priority: " + priority + ", numArgs: " + numArgs+ "}";
+	}
+}

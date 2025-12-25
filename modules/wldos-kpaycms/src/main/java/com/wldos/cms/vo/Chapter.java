@@ -25,6 +25,8 @@ public class Chapter {
 
 	private String pubContent;
 
+	private String pubMimeType;
+
 	private Long parentId;
 
 	private String pubStatus;
@@ -34,17 +36,18 @@ public class Chapter {
 
 	public static Chapter of(KPubs single) {
 		return of(single.getId(), ObjectUtils.string(single.getPubTitle()), ObjectUtils.string(single.getPubContent())/* 过滤null值，防止前端不刷新*/,
-				single.getParentId(), single.getPubStatus());
+				single.getPubMimeType(), single.getParentId(), single.getPubStatus());
 	}
 
-	public static Chapter of(Long id, String pubTitle, String pubContent, Long parentId, String pubStatus) {
-		return new Chapter(id, pubTitle, pubContent, parentId, pubStatus);
+	public static Chapter of(Long id, String pubTitle, String pubContent, String pubMimeType, Long parentId, String pubStatus) {
+		return new Chapter(id, pubTitle, pubContent, pubMimeType, parentId, pubStatus);
 	}
 
-	private Chapter(Long id, String pubTitle, String pubContent, Long parentId, String pubStatus) {
+	private Chapter(Long id, String pubTitle, String pubContent, String pubMimeType, Long parentId, String pubStatus) {
 		this.id = id;
 		this.pubTitle = pubTitle;
 		this.pubContent = pubContent;
+		this.pubMimeType = pubMimeType;
 		this.parentId = parentId;
 		this.pubStatus = pubStatus;
 	}
@@ -71,6 +74,14 @@ public class Chapter {
 
 	public void setPubContent(String pubContent) {
 		this.pubContent = pubContent;
+	}
+
+	public String getPubMimeType() {
+		return pubMimeType;
+	}
+
+	public void setPubMimeType(String pubMimeType) {
+		this.pubMimeType = pubMimeType;
 	}
 
 	public Long getParentId() {

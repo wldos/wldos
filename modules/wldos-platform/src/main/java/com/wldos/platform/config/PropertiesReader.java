@@ -48,6 +48,7 @@ public class PropertiesReader {
 
 	private final ContextRefresher contextRefresher;
 
+	@SuppressWarnings("all")
 	public PropertiesReader(ConfigurableEnvironment env, OptionsNoRepoService service, ContextRefresher contextRefresher) {
 		this.env = env;
 		this.service = service;
@@ -62,7 +63,7 @@ public class PropertiesReader {
 			this.propsDyn.initialDBProps(this.env, this.propertyName, this.contextRefresher, this.service);
 		}
 		catch (Exception e) {
-			System.out.println("Error during database properties load" + ObjectUtils.string(e.getMessage()));
+			log.error("Error during database properties load {}", ObjectUtils.string(e.getMessage()));
 			throw new RuntimeException(e);
 		}
 	}
@@ -80,7 +81,7 @@ public class PropertiesReader {
 			log.debug("Database properties reloaded: {}", propertyMap);
 		}
 		catch (Exception e) {
-			System.out.println("Error during database properties load" + ObjectUtils.string(e.getMessage()));
+			log.error("Error during database properties load {}", ObjectUtils.string(e.getMessage()));
 			throw new RuntimeException(e);
 		}
 	}
@@ -94,7 +95,7 @@ public class PropertiesReader {
 			this.propsDyn.reLoadDBPropsSrc(this.env, propertyMap, this.propertyName, this.contextRefresher);
 		}
 		catch (Exception e) {
-			System.out.println("Error during dyn properties set" + ObjectUtils.string(e.getMessage()));
+			log.error("Error during dyn properties set {}", ObjectUtils.string(e.getMessage()));
 			throw new RuntimeException(e);
 		}
 	}

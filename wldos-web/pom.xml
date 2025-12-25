@@ -36,15 +36,84 @@
 			<artifactId>wldos-kpaycms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- wldos OAuth2
+		<!-- wldos OAuth2 -->
 		<dependency>
 			<groupId>com.wldos</groupId>
 			<artifactId>wldos-oauth2</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<!-- ===== wldos-plugins下的模块依赖 ===== -->
+		<!-- 插件通过动态加载方式工作，不在编译时依赖 -->
+		<!-- 插件JAR文件通过maven-antrun-plugin复制到target/plugins目录 -->
+		<!-- ===== wldos-plugins下的模块依赖结束 ===== -->
+		<!-- wldos应用市场
+		<dependency>
+			<groupId>com.wldos</groupId>
+			<artifactId>wldos-store</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency> -->
+		<!-- wldos collector // 将以插件方式提供
+		<dependency>
+			<groupId>com.wldos</groupId>
+			<artifactId>wldos-collector</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency> -->
 	</dependencies>
 	<build><!-- 构建不带版本号的包 -->
 		<finalName>${projectName}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>application.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<!-- 配置资源过滤插件，使用 @property@ 格式 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<delimiters>
+						<delimiter>@</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+			
+			<!-- 保留现有的 assembly 插件 -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assembly/release.xml</descriptor>
+					</descriptors>
+					<finalName>${projectName}</finalName>
+					<appendAssemblyId>false</appendAssemblyId> <!-- 关键：不加 -release 后缀 -->
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-release</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<repositories>
 		<repository>
@@ -62,4 +131,5 @@
 			<snapshots><enabled>false</enabled></snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
 </project>

@@ -12,6 +12,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+/**
+ * 资源(菜单、管理菜单、接口服务、插件菜单、数据服务、静态资源、其他可访问资源@ResourceEnum)
+ */
 @Table("wo_resource")
 public class WoResource {
 	@Id
@@ -22,6 +25,8 @@ public class WoResource {
 	private String resourceName;
 
 	private String resourcePath;
+
+	private String componentPath;
 
 	private String icon;
 
@@ -116,6 +121,14 @@ public class WoResource {
 
 	public void setResourcePath(String resourcePath) {
 		this.resourcePath = resourcePath;
+	}
+
+	public String getComponentPath() {
+		return componentPath;
+	}
+
+	public void setComponentPath(String componentPath) {
+		this.componentPath = componentPath;
 	}
 
 	public String getIcon() {

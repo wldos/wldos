@@ -27,6 +27,10 @@ public class CMeta {
 	/** 查看数 */
 	protected String views;
 
+	protected String watermarkText;
+
+	protected String watermarkEnabled;
+
 	protected List<PubTypeExt> pubTypeExt;
 
 	public String getCover() {
@@ -51,5 +55,21 @@ public class CMeta {
 
 	public void setPubTypeExt(List<PubTypeExt> pubTypeExt) {
 		this.pubTypeExt = pubTypeExt;
+	}
+
+	public String getWatermarkText() {
+		return watermarkText;
+	}
+
+	public void setWatermarkText(String watermarkText) {
+		this.watermarkText = watermarkText;
+	}
+
+	public String getWatermarkEnabled() {
+		return watermarkEnabled;
+	}
+
+	public void setWatermarkEnabled(String watermarkEnabled) {
+		this.watermarkEnabled = watermarkEnabled;
 	}
 }

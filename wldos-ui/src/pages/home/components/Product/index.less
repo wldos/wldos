@@ -1,0 +1,214 @@
+@import '~antd/es/style/themes/default.less';
+@import '../../utils/utils.less';
+
+.coverCardList {
+  .card {
+    height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    
+    :global {
+      .ant-card-meta-title {
+        margin-bottom: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        & > a {
+          display: inline-block;
+          max-width: 100%;
+          color: @heading-color;
+          text-decoration: none;
+          transition: color 0.3s ease;
+          &:hover {
+            color: @primary-color;
+          }
+        }
+      }
+      .ant-card-body {
+        padding: 16px; // 统一内边距
+      }
+      .ant-card-meta-description {
+        height: 44px;
+        overflow: hidden;
+        line-height: 22px;
+      }
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      
+      :global {
+        .ant-card-meta-title > a {
+          color: @primary-color;
+        }
+      }
+    }
+  }
+
+  .cardCover {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    aspect-ratio: 1/1; // 改为正方形，与侧边栏保持一致
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover img {
+      transform: scale(1.05);
+    }
+    
+    // 小红书风格的占位图
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    &:hover::before {
+      opacity: 0.1;
+    }
+  }
+  
+  // 小红书风格的占位图样式
+  .placeholderImage {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    
+    &::before {
+      content: '📷';
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    &::after {
+      content: '图片加载失败';
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      opacity: 0.9;
+    }
+  }
+
+  .cardItemContent {
+    display: flex;
+    height: 32px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    line-height: 20px;
+    align-items: center;
+    & > span {
+      flex: 1;
+      color: @text-color-secondary;
+      font-size: 11px;
+      font-weight: 400;
+    }
+    .avatarList {
+      flex: 0 1 auto;
+      margin-left: 8px;
+    }
+  }
+  .cardList {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px; // 统一外边距
+  }
+
+  :global {
+    .ant-list .ant-list-item-content-single {
+      max-width: 100%;
+    }
+    
+    // 统一 List Grid 的水平/垂直间距，仅使用列 padding 控制
+    .ant-list-grid .ant-row {
+      margin-left: -12px;
+      margin-right: -12px;
+    }
+    .ant-list-grid .ant-row > [class^='ant-col'],
+    .ant-list-grid .ant-row > [class*=' ant-col'] {
+      padding-left: 12px;
+      padding-right: 12px;
+      margin-bottom: 24px; // 行间距 = 24
+    }
+    // 去除 antd 默认的 16px 行间距，避免与上面相加
+    .ant-list-grid .ant-list-item {
+      margin-bottom: 0;
+    }
+
+    .ant-list-item {
+      display: flex;
+      align-items: stretch;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    
+    .ant-list-item-content {
+      width: 100%;
+    }
+  }
+
+  // 移动端优化
+  @media screen and (max-width: 768px) {
+    .cardList {
+      padding: 0 12px;
+    }
+    
+    :global {
+      .ant-list-grid .ant-row {
+        margin-left: -8px;
+        margin-right: -8px;
+      }
+      .ant-list-grid .ant-row > [class^='ant-col'],
+      .ant-list-grid .ant-row > [class*=' ant-col'] {
+        padding-left: 8px;
+        padding-right: 8px;
+        margin-bottom: 16px; // 行间距 = 16
+      }
+      .ant-list-grid .ant-list-item { margin-bottom: 0; }
+    }
+
+    .card {
+      border-radius: 8px;
+      
+      :global {
+        .ant-card-body { padding: 12px; }
+        .ant-card-meta-title {
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .cardCover {
+      border-radius: 8px 8px 0 0;
+      aspect-ratio: 1/1; // 移动端也改为正方形
+    }
+  }
+}

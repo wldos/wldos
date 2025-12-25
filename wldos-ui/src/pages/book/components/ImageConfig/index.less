@@ -1,0 +1,52 @@
+@import '~antd/es/style/themes/default.less';
+
+.imageConfigContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+// 区域标签
+.sectionLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 12px;
+  
+  span:first-child {
+    font-size: 16px;
+  }
+}
+
+// 封面区域
+.coverSection {
+  width: 100%;
+}
+
+// 主图区域
+.mainImagesSection {
+  width: 100%;
+  
+  .mainImagesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    
+    // 移动端单列布局
+    @media screen and (max-width: @screen-md) {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+}
+
+// 响应式优化
+@media screen and (max-width: @screen-md) {
+  .imageConfigContainer {
+    gap: 20px;
+  }
+}

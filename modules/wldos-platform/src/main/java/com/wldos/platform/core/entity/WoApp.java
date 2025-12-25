@@ -22,13 +22,16 @@ public class WoApp {
 
 	private String appName;
 
-	private String appType;
+    // 可见范围/管理边界（AppScope），沿用 AppTypeEnum
+    private String appType;
 
 	private String appCode;
 
 	private String appSecret;
 
-	private String appDesc;
+    private String appDesc;
+    // 应用来源（AppOriginEnum）：internal/plugin/external
+    private String appOrigin;
 
 	private Long comId;
 
@@ -97,6 +100,12 @@ public class WoApp {
 
 	public void setAppDesc(String appDesc) {
 		this.appDesc = appDesc;
+	}
+	public String getAppOrigin() {
+		return appOrigin;
+	}
+	public void setAppOrigin(String appOrigin) {
+		this.appOrigin = appOrigin;
 	}
 
 	public Long getComId() {

@@ -33,7 +33,7 @@ public class LoginAuthParams implements Serializable {
 	private String captcha;
 
 	/** 自动登录 */
-	private String autoLogin;
+	private boolean autoLogin;
 
 	/** 登录方式：账号密码、手机 */
 	private String type;
@@ -78,11 +78,11 @@ public class LoginAuthParams implements Serializable {
 		this.captcha = captcha;
 	}
 
-	public String getAutoLogin() {
+	public boolean getAutoLogin() {
 		return autoLogin;
 	}
 
-	public void setAutoLogin(String autoLogin) {
+	public void setAutoLogin(boolean autoLogin) {
 		this.autoLogin = autoLogin;
 	}
 

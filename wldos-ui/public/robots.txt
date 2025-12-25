@@ -1,0 +1,24 @@
+User-agent: *
+Disallow: /tiny*
+Disallow: /adm*
+Disallow: /spa*
+Disallow: /use*
+Disallow: /sea*
+Disallow: /acc*
+Disallow: /404
+Disallow: /*.css$
+Disallow: /*.js$
+Disallow: /api/com*
+User-agent: Googlebot
+Allow: .js
+Allow: .css
+User-agent: Bingbot
+Allow: .js
+Allow: .css
+User-agent: msnbot
+Allow: .js
+Allow: .css
+# for google
+# Sitemap: http://domain.com/sitemap.xml
+# for baidu
+# Sitemap: http://domain.com/sitemap.html

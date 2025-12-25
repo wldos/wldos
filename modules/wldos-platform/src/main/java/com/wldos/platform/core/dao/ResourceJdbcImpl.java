@@ -48,6 +48,11 @@ public class ResourceJdbcImpl implements ResourceJdbc {
 	}
 
 	@Override
+	public List<WoResource> queryResource(Long domainId, Long comId, String[] types, Long userId) {
+		return this.resourceOpener.queryResource(domainId, comId, types, userId);
+	}
+
+	@Override
 	public List<WoResource> queryResourceByRoleId(Long roleId) {
 		return this.resourceOpener.queryResourceByRoleId(roleId);
 	}
@@ -65,5 +70,10 @@ public class ResourceJdbcImpl implements ResourceJdbc {
 	@Override
 	public List<WoResource> queryResourceForGuest(Long domainId, String type) {
 		return this.resourceOpener.queryResourceForGuest(domainId, type);
+	}
+
+	@Override
+	public List<WoResource> queryResourceForGuest(Long domainId, String[] types) {
+		return this.resourceOpener.queryResourceForGuest(domainId, types);
 	}
 }

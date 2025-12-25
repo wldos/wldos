@@ -27,8 +27,11 @@ import com.wldos.common.vo.TreeSelectOption;
 import com.wldos.platform.core.dao.DomainResourceDao;
 import com.wldos.platform.core.dao.ResourceDao;
 import com.wldos.platform.core.dao.TermDao;
+import com.wldos.platform.core.dao.AppDao;
 import com.wldos.platform.core.entity.WoDomain;
 import com.wldos.platform.core.entity.WoDomainResource;
+import com.wldos.platform.core.entity.WoApp;
+import com.wldos.platform.core.enums.AppOriginEnum;
 import com.wldos.platform.core.vo.DomRes;
 import com.wldos.platform.core.vo.ResSimple;
 import com.wldos.platform.support.resource.entity.WoResource;
@@ -37,6 +40,9 @@ import com.wldos.platform.support.resource.vo.AuthInfo;
 import com.wldos.platform.support.term.dto.Term;
 import com.wldos.platform.support.web.enums.TemplateTypeEnum;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021/4/28
  * @version 1.0
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ResourceService extends EntityService<ResourceDao, WoResource, Long> {
@@ -57,6 +64,12 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 	private final DomainResourceDao domainResourceRepo;
 
 	private final TermDao termRepo;
+
+	@Autowired(required = false)
+	private AppDao appDao;
+
+	@Value("${wldos.plugins.debug:false}")
+	private boolean wldosPluginsDebug;
 
 	public ResourceService(DomainService domainService, DomainAppService domainAppService, DomainResourceDao domainResourceRepo, TermDao termRepo) {
 		this.domainService = domainService;
@@ -134,11 +147,33 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 
 		List<DomRes> allRes = domRes.getData().getRows();
 
-		allRes = allRes.parallelStream().peek(r -> r.setSelected(bookedIds.contains(r.getId()))).collect(Collectors.toList());
+		// 递归设置所有节点（包括子节点）的选中状态：只有真正被添加到域的资源才显示为已选中
+		this.setSelectedRecursively(allRes, bookedIds);
 
 		domRes.setDataRows(allRes);
 
 		return domRes;
+	}
+
+	/**
+	 * 递归设置所有节点（包括子节点）的选中状态
+	 * 只有真正被添加到域的资源才显示为已选中，父节点选中不影响子节点
+	 *
+	 * @param nodes 节点列表
+	 * @param bookedIds 已预订的资源ID列表
+	 */
+	private void setSelectedRecursively(List<DomRes> nodes, List<Long> bookedIds) {
+		if (ObjectUtils.isBlank(nodes)) {
+			return;
+		}
+		for (DomRes node : nodes) {
+			// 只设置当前节点是否已选中（根据是否在 bookedIds 中）
+			node.setSelected(bookedIds.contains(node.getId()));
+			// 递归处理子节点
+			if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+				this.setSelectedRecursively(node.getChildren(), bookedIds);
+			}
+		}
 	}
 
 	/**
@@ -240,5 +275,55 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 
 	public Long queryMaxOrder(Long parentId) {
 		return this.entityRepo.queryMaxOrder(parentId);
+	}
+
+	/**
+	 * 删除资源前的预处理（检查是否是插件资源，如果是则阻止删除）
+	 */
+	@Override
+	protected void preDelete(WoResource entity) {
+		if (entity == null || entity.getId() == null) {
+			return;
+		}
+
+		// 检查资源的 appId 对应的应用是否是插件应用
+		if (entity.getAppId() != null && appDao != null) {
+			WoApp app = this.appDao.findById(entity.getAppId()).get();
+			if (app != null && AppOriginEnum.PLUGIN.getValue().equals(app.getAppOrigin())) {
+				if (wldosPluginsDebug) {
+					log.info("检测到插件资源删除请求: " + entity.getResourceName() + " (resourceId: " + entity.getId() + ", appId: " + entity.getAppId() + ")");
+				}
+				throw new RuntimeException("不能直接删除插件资源。插件资源是插件的一部分，必须通过卸载插件来移除。请前往插件管理页面卸载对应的插件（" + app.getAppName() + "）。");
+			}
+		}
+	}
+
+	/**
+	 * 批量删除资源前的预处理（检查是否包含插件资源，如果是则阻止删除）
+	 */
+	@Override
+	protected void preDeletes(List<Object> ids) {
+		if (ids == null || ids.isEmpty()) {
+			return;
+		}
+
+		// 检查要删除的资源是否包含插件资源
+		if (appDao != null) {
+			for (Object id : ids) {
+				if (id == null) {
+					continue;
+				}
+				WoResource resource = this.entityRepo.findById(Long.parseLong(id.toString())).get();
+				if (resource != null && resource.getAppId() != null) {
+					WoApp app = this.appDao.findById(resource.getAppId()).get();
+					if (app != null && AppOriginEnum.PLUGIN.getValue().equals(app.getAppOrigin())) {
+						if (wldosPluginsDebug) {
+							log.info("检测到批量删除中包含插件资源: " + resource.getResourceName() + " (resourceId: " + resource.getId() + ", appId: " + resource.getAppId() + ")");
+						}
+						throw new RuntimeException("不能直接删除插件资源。插件资源是插件的一部分，必须通过卸载插件来移除。资源「" + resource.getResourceName() + "」属于插件「" + app.getAppName() + "」，请前往插件管理页面卸载对应的插件。");
+					}
+				}
+			}
+		}
 	}
 }

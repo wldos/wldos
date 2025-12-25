@@ -9,24 +9,25 @@
 package com.wldos.platform.core.controller;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
 import com.wldos.platform.auth.model.AccSecurity;
 import com.wldos.platform.auth.vo.AccountInfo;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.vo.Domain;
+import com.wldos.platform.core.vo.UserAuth;
 import com.wldos.platform.support.resource.vo.DynSet;
 import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.vo.User;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * 用户相关controller。
@@ -39,11 +40,19 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class UserController extends EntityController<UserService, WoUser> {
 
+
+
+	/** 路由守护，检查路由是否可访问 */
 	@GetMapping("route")
 	public String checkRoute(@RequestParam String route) {
 		return this.resJson.ok(this.service.checkRoute(route, this.getUserId(), this.getDomainId(), this.getTenantId(), this.request));
 	}
 
+	/**
+	 * 获取首页以及其他多模板页面的动态模板配置
+	 * 
+	 * @return 动态模板配置
+	 */
 	@GetMapping("dynamite")
 	public Map<String, DynSet> fetchDynRoute() {
 		return this.service.queryDynRoute(this.getDomainId());
@@ -58,6 +67,17 @@ public class UserController extends EntityController<UserService, WoUser> {
 	public User currentUser() {
 
 		return this.service.queryUser(this.getDomainId(), this.request, this.getTenantId(), this.getUserId());
+	}
+
+	/**
+	 * 通过指定用户访问token获取用户信息、权限和菜单
+	 *
+	 * @return 用户信息
+	 */
+	@GetMapping("menu/{userId}")
+	public UserAuth fetchUserAuth(@PathVariable Long userId) {
+
+		return this.service.queryUserAuth(this.getDomainId(), this.request, this.getTenantId(), userId);
 	}
 
 	/**
@@ -147,4 +167,6 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 		return this.resJson.ok("slogan", slogan);
 	}
+
+
 }

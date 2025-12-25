@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Licensed under the Apache License, Version 2.0 or a commercial license.
+  ~ For Apache License Version 2.0 see License in the project root for license information.
+  ~ For commercial licenses see term.md or contact 306991142@qq.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>wldos-plugins</artifactId>
+        <groupId>com.wldos</groupId>
+        <version>2.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>plugin-demo</artifactId>
+    <name>插件开发演示</name>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <!-- Node.js 和 Yarn 版本从父模块继承，无需重复定义 -->
+        <frontend.src.dir>src/main/ui</frontend.src.dir>
+        <node.version>v20.19.4</node.version>
+        <yarn.version>v1.22.19</yarn.version>
+    </properties>
+
+    <dependencies>
+        <!-- 依赖框架的插件接口 -->
+        <dependency>
+            <groupId>com.wldos</groupId>
+            <artifactId>wldos-framework</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- 依赖业务模块的扩展点定义：示例为系统模块扩展，其他业务模块类同 -->
+        <dependency>
+            <groupId>com.wldos</groupId>
+            <artifactId>wldos-platform</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Frontend Maven Plugin - 自动构建UI -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.1</version>
+                <configuration>
+                    <workingDirectory>${frontend.src.dir}</workingDirectory>
+                    <!-- 统一使用父模块的 Node.js 和 Yarn（使用绝对路径确保正确解析） -->
+                    <installDirectory>${project.parent.parent.basedir}/wldos-ui</installDirectory>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <yarnVersion>${yarn.version}</yarnVersion>
+                </configuration>
+                <executions>
+                    <!-- 安装依赖 -->
+                    <execution>
+                        <id>yarn-install</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 使用绝对路径，确保使用父模块的 Node.js 和 Yarn -->
+                            <installDirectory>${project.parent.parent.basedir}/wldos-ui</installDirectory>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- 构建UI（仅 ESM 格式） -->
+                    <execution>
+                        <id>yarn-build-esm</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 使用绝对路径，确保使用父模块的 Node.js 和 Yarn -->
+                            <installDirectory>${project.parent.parent.basedir}/wldos-ui</installDirectory>
+                            <!-- 
+                                只执行 ESM 构建：npm run build:esm
+                                使用 Rollup 构建 ESM 格式（输出到 dist/esm/）
+                                生成的文件：
+                                - dist/esm/*.js (ESM 组件文件，如 home.js, example.js 等)
+                            -->
+                            <arguments>run build:esm</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- Maven Assembly Plugin - 打包插件 -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/package.xml</descriptor>
+                    </descriptors>
+                    <finalName>${project.artifactId}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId> <!-- 关键：不加 -版本号 后缀 -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 输出 ZIP 到 wldos-web/plugins 目录 -->
+                            <outputDirectory>${project.parent.parent.basedir}/wldos-web/plugins</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+

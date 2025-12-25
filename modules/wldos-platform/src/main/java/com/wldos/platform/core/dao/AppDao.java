@@ -9,6 +9,7 @@
 package com.wldos.platform.core.dao;
 
 import com.wldos.framework.mvc.dao.BaseDao;
+import org.springframework.data.jdbc.repository.query.Query;
 import com.wldos.platform.core.entity.WoApp;
 import org.springframework.data.repository.query.Param;
 
@@ -24,4 +25,7 @@ import java.util.List;
 public interface AppDao extends BaseDao<WoApp, Long> {
 
 	List<WoApp> findAllByDeleteFlagEqualsAndIsValidEquals(@Param("deleteFlag") String deleteFlag, @Param("isValid") String isValid);
+
+    @Query("select * from wo_app where app_code=:appCode and delete_flag='normal' limit 1")
+    WoApp findByAppCode(@Param("appCode") String appCode);
 }

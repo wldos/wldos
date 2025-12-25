@@ -52,6 +52,8 @@ public interface ResourceOpener {
 	 */
 	List<WoResource> queryResource(Long domainId, Long comId, String type, Long userId);
 
+	List<WoResource> queryResource(Long domainId, Long comId, String[] types, Long userId);
+
 	/**
 	 * 查询SaaS平台某个角色自有资源。
 	 *
@@ -85,4 +87,6 @@ public interface ResourceOpener {
 	 * @return 游客资源
 	 */
 	List<WoResource> queryResourceForGuest(Long domainId, String type);
+
+	List<WoResource> queryResourceForGuest(Long domainId, String[] types);
 }

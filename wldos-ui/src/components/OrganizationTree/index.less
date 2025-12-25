@@ -1,0 +1,72 @@
+.organization-tree {
+  .ant-tree {
+    .ant-tree-node-content-wrapper {
+      padding: 4px 8px;
+      border-radius: 4px;
+      
+      &:hover {
+        background-color: #f5f5f5;
+      }
+      
+      &.ant-tree-node-selected {
+        background-color: #e6f7ff;
+        border-color: #91d5ff;
+      }
+    }
+    
+    .ant-tree-title {
+      display: flex;
+      align-items: center;
+      
+      .node-icon {
+        margin-right: 8px;
+        font-size: 16px;
+      }
+      
+      .user-badge {
+        margin-left: 8px;
+      }
+    }
+  }
+}
+
+.organization-detail {
+  .detail-actions {
+    margin-top: 16px;
+    
+    .ant-btn {
+      margin-right: 8px;
+    }
+  }
+  
+  .user-list {
+    margin-top: 16px;
+    
+    .user-count {
+      margin-left: 16px;
+      color: #666;
+      font-size: 14px;
+    }
+  }
+}
+
+.organization-architecture {
+  .ant-card {
+    height: 100%;
+    
+    .ant-card-body {
+      height: calc(100% - 40px);
+      overflow: hidden;
+    }
+  }
+  
+  .tree-container {
+    height: 100%;
+    overflow: auto;
+  }
+  
+  .detail-container {
+    height: 100%;
+    overflow: auto;
+  }
+}

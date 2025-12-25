@@ -34,7 +34,7 @@ import com.wldos.platform.support.auth.LoginUtils;
 import com.wldos.framework.support.auth.vo.JWT;
 import com.wldos.framework.support.auth.vo.Token;
 import com.wldos.platform.support.auth.vo.UserInfo;
-import com.wldos.platform.support.plugin.extension.ExtensionPoint;
+import com.wldos.platform.support.plugins.extension.ExtensionPoint;
 import com.wldos.platform.core.enums.SysOptionEnum;
 import com.wldos.platform.core.enums.UserStatusEnum;
 import com.wldos.platform.core.entity.WoOrg;
@@ -163,10 +163,9 @@ public class LoginAuthService extends NonEntityService {
 
 		user.setStatus("ok");
 
-		JWT jwt = new JWT(userInfo.getId(), userInfo.getTenantId(), domainId);
-		String accessToken = this.jwtTool.genToken(jwt);
-
-		Token token = new Token(accessToken, this.jwtTool.getRefreshTime());
+		// 使用统一的Token生成方法
+		int tokenTimeoutMinutes = loginAuthParams.getAutoLogin() ? 60 * 24 * 15 : this.jwtTool.getTokenTimeout();
+		Token token = this.jwtTool.genToken(userInfo.getId(), userInfo.getTenantId(), domainId, tokenTimeoutMinutes);
 		//token.setRefreshToken(refreshToken); // 不再使用刷新token，使用访问token加超时机制就可以实现刷新机制
 		user.setToken(token);
 
@@ -184,10 +183,9 @@ public class LoginAuthService extends NonEntityService {
 		user.setCurrentAuthority(currentAuthority);
 
 		// 登录用户信息审计、token记录
-		this.jwtTool.recLog(domain, jwt, request);
+		this.jwtTool.recLog(domain, token, request);
 		// todo 1.预埋hook测试
-		if (getLog().isDebugEnabled())
-			this.wsHook.doInvoke(ExtensionPoint.USER_LOGIN.getCode(), userInfo.getUsername());
+		this.wsHook.doInvoke(ExtensionPoint.USER_LOGIN.getCode(), userInfo.getUsername());
 
 		return user;
 	}
@@ -305,9 +303,8 @@ public class LoginAuthService extends NonEntityService {
 
 		login.setStatus("ok");
 
-		JWT jwt = new JWT(user.getId(), Constants.TOP_COM_ID/* 新用户默认平台为主企业 */, domainId);
-		String accessToken = this.jwtTool.genToken(jwt);
-		Token token = new Token(accessToken);
+		// 使用统一的Token生成方法，新用户默认平台为主企业
+		Token token = this.jwtTool.genToken(user.getId(), Constants.TOP_COM_ID, domainId, this.jwtTool.getTokenTimeout());
 
 		login.setToken(token);
 
@@ -327,7 +324,7 @@ public class LoginAuthService extends NonEntityService {
 		}
 
 		// 登录用户信息审计、token记录
-		this.jwtTool.recLog(domain, jwt, request);
+		this.jwtTool.recLog(domain, token, request);
 
 		return login;
 	}

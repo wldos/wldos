@@ -39,4 +39,12 @@ public interface TermTypeDao extends BaseDao<KTermType, Long> {
 
 	@Query("select t.id from k_term_type t where t.parent_id=:termTypeId and t.class_type=:termType")
 	List<Long> queryIdsByParentId(@Param("termTypeId") Long termTypeId, @Param("termType") String termType);
+
+	/**
+	 * 查询所有不同的分类类型编码
+	 *
+	 * @return 分类类型编码列表
+	 */
+	@Query("select distinct class_type from k_term_type order by class_type")
+	List<String> findAllDistinctClassTypes();
 }

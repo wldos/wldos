@@ -10,8 +10,17 @@ package com.wldos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
+@ComponentScan(
+    basePackages = "com.wldos",
+    excludeFilters = @ComponentScan.Filter(
+        type = FilterType.REGEX,
+        pattern = "com\\.wldos\\.plugin\\..*"
+    )
+)
 public class WldosApplication {
 
 	public static void main(String[] args) {

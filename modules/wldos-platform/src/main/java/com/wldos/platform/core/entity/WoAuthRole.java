@@ -12,6 +12,9 @@ import com.wldos.framework.mvc.entity.BaseEntity;
 
 import org.springframework.data.relational.core.mapping.Table;
 
+/**
+ * 角色资源授权
+ */
 @Table
 public class WoAuthRole extends BaseEntity {
 
@@ -42,6 +45,19 @@ public class WoAuthRole extends BaseEntity {
 	}
 
 	public void setAppId(Long appId) {
+		this.appId = appId;
+	}
+
+	public WoAuthRole() {
+	}
+
+	public static WoAuthRole of(Long roleId, Long resourceId, Long appId) {
+		return new WoAuthRole(roleId, resourceId, appId);
+	}
+
+	private WoAuthRole(Long roleId, Long resourceId, Long appId) {
+		this.roleId = roleId;
+		this.resourceId = resourceId;
 		this.appId = appId;
 	}
 }

@@ -1,0 +1,71 @@
+@import '~antd/es/style/themes/default.less';
+
+// 文章封面图片移动端优化
+.article-cover-image {
+  // 桌面端默认样式（包括iPad Mini 768px）- 使用4:3矩形
+  width: 160px;
+  height: 120px; // 4:3矩形，更适合文章封面
+  display: block;
+  object-fit: cover;
+  background: #f5f5f5;
+  border-radius: 6px;
+  
+  // 移动端优化（只针对小屏幕）
+  @media screen and (max-width: 480px) {
+    width: 100% !important;
+    height: 180px !important; // 小屏幕适中高度
+    max-width: 100%;
+    border-radius: 6px;
+  }
+}
+
+// 文章列表项移动端优化
+:global {
+  .ant-list-item {
+    // 小屏幕移动端（只针对480px以下）
+    @media screen and (max-width: 480px) {
+      padding: 16px 0;
+      margin-bottom: 12px;
+      
+      .ant-list-item-extra {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 12px;
+        
+        .article-cover-image {
+          width: 100% !important;
+          height: 180px !important;
+        }
+      }
+    }
+  }
+  
+  // 小屏幕移动端布局优化
+  @media screen and (max-width: 480px) {
+    .ant-list-item-meta {
+      .ant-list-item-meta-title {
+        font-size: 16px;
+        line-height: 1.4;
+        margin-bottom: 8px;
+      }
+      
+      .ant-list-item-meta-description {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+    }
+    
+    .ant-list-item-action {
+      margin-top: 12px;
+      
+      li {
+        margin-right: 16px;
+        
+        .anticon {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

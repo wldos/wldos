@@ -1,0 +1,22 @@
+@import '~antd/es/style/themes/default.less';
+
+.main {
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  .desc {
+    position: relative;
+    top: calc(50% - 150px);
+    margin: 0 auto;
+    height: 300px;
+    width: 400px;
+    color: @text-color-secondary;
+    font-size: @font-size-base;
+    & > ul > li > label {
+      display: inline-block;
+      width: 60px;
+      text-align: justify;
+      text-align-last: justify;
+    }
+  }
+}

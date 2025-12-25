@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <!-- Import Map: 为插件ESM模块提供依赖映射 -->
+    <script type="importmap">
+    {
+      "imports": {
+        "React": "/react-esm.js",
+        "ReactDOM": "/react-dom-esm.js"
+      }
+    }
+    </script>
+    <!-- 在主应用加载后，确保React和ReactDOM已暴露到全局，供ESM包装器使用 -->
+    <!-- 注意：app.js 会在主应用加载时将 React 和 ReactDOM 暴露到全局 -->
+    <!-- 这个脚本作为兜底机制，确保在主应用加载后再次检查 -->
+    <script>
+      // 插件构建时使用 import React from "React" 会通过 import map 映射到 /react-esm.js
+      // 插件构建时使用 import ReactDOM from "ReactDOM" 会通过 import map 映射到 /react-dom-esm.js
+      // /react-esm.js 和 /react-dom-esm.js 会从全局对象 window.React 和 window.ReactDOM 获取并导出
+      (function() {
+        // 等待主应用加载完成（umi.js 加载后，app.js 会执行并暴露 React）
+        function ensureReactExposed() {
+          // app.js 已经将 React 暴露到全局，这里只是作为兜底检查
+          // 如果 app.js 执行失败，这里可以尝试从其他地方获取
+          if (typeof window.React === 'undefined') {
+            // 尝试从 webpack 的全局变量获取（如果存在）
+            if (typeof React !== 'undefined') {
+              window.React = React;
+            }
+          }
+          if (typeof window.ReactDOM === 'undefined') {
+            if (typeof ReactDOM !== 'undefined') {
+              window.ReactDOM = ReactDOM;
+            }
+          }
+        }
+        
+        // 等待主应用加载完成后再执行
+        // 使用 window.addEventListener('load') 确保所有脚本（包括 umi.js）都已加载
+        if (document.readyState === 'complete') {
+          // 如果文档已经加载完成，延迟执行以确保主应用已初始化
+          setTimeout(ensureReactExposed, 200);
+        } else {
+          window.addEventListener('load', function() {
+            setTimeout(ensureReactExposed, 100);
+          });
+        }
+      })();
+    </script>
+  </head>
+  <body>
+  	<!-- script>
+	  (function(){
+		  var bp = document.createElement('script');
+		  var curProtocol = window.location.protocol.split(':')[0];
+		  if (curProtocol === 'https'){
+			  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		  }
+		  else{
+			  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		  }
+		  var s = document.getElementsByTagName("script")[0];
+		  s.parentNode.insertBefore(bp, s);
+	  })();
+    </script -->
+    <noscript>您的浏览器不支持js，无法使用服务，请开启JavaScript支持!</noscript>
+    <div id="root">
+      <style>
+        html,
+        body,
+        #root {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+        #root {
+          background-image: url('<%= context.config.publicPath +"home_bg.png"%>');
+          background-repeat: no-repeat;
+          background-size: 100% auto;
+        }
+        .page-loading-warp {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 98px;
+        }
+        .ant-spin {
+          position: absolute;
+          display: none;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          color: rgba(0, 0, 0, 0.65);
+          color: #1890ff;
+          font-size: 14px;
+          font-variant: tabular-nums;
+          line-height: 1.5;
+          text-align: center;
+          list-style: none;
+          opacity: 0;
+          -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+          transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+          transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+          transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
+            -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+          -webkit-font-feature-settings: 'tnum';
+          font-feature-settings: 'tnum';
+        }
+
+        .ant-spin-spinning {
+          position: static;
+          display: inline-block;
+          opacity: 1;
+        }
+
+        .ant-spin-dot {
+          position: relative;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          font-size: 20px;
+        }
+
+        .ant-spin-dot-item {
+          position: absolute;
+          display: block;
+          width: 9px;
+          height: 9px;
+          background-color: #1890ff;
+          border-radius: 100%;
+          -webkit-transform: scale(0.75);
+          -ms-transform: scale(0.75);
+          transform: scale(0.75);
+          -webkit-transform-origin: 50% 50%;
+          -ms-transform-origin: 50% 50%;
+          transform-origin: 50% 50%;
+          opacity: 0.3;
+          -webkit-animation: antspinmove 1s infinite linear alternate;
+          animation: antSpinMove 1s infinite linear alternate;
+        }
+
+        .ant-spin-dot-item:nth-child(1) {
+          top: 0;
+          left: 0;
+        }
+
+        .ant-spin-dot-item:nth-child(2) {
+          top: 0;
+          right: 0;
+          -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+        }
+
+        .ant-spin-dot-item:nth-child(3) {
+          right: 0;
+          bottom: 0;
+          -webkit-animation-delay: 0.8s;
+          animation-delay: 0.8s;
+        }
+
+        .ant-spin-dot-item:nth-child(4) {
+          bottom: 0;
+          left: 0;
+          -webkit-animation-delay: 1.2s;
+          animation-delay: 1.2s;
+        }
+
+        .ant-spin-dot-spin {
+          -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+          -webkit-animation: antrotate 1.2s infinite linear;
+          animation: antRotate 1.2s infinite linear;
+        }
+
+        .ant-spin-lg .ant-spin-dot {
+          width: 32px;
+          height: 32px;
+          font-size: 32px;
+        }
+
+        .ant-spin-lg .ant-spin-dot i {
+          width: 14px;
+          height: 14px;
+        }
+
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+          .ant-spin-blur {
+            background: #fff;
+            opacity: 0.5;
+          }
+        }
+
+        @-webkit-keyframes antSpinMove {
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes antSpinMove {
+          to {
+            opacity: 1;
+          }
+        }
+
+        @-webkit-keyframes antRotate {
+          to {
+            -webkit-transform: rotate(405deg);
+            transform: rotate(405deg);
+          }
+        }
+
+        @keyframes antRotate {
+          to {
+            -webkit-transform: rotate(405deg);
+            transform: rotate(405deg);
+          }
+        }
+      </style>
+
+    </div>
+    <script src="<%= context.config.publicPath + 'tinymce/tinymce.min.js'%>"></script>
+  </body>
+</html>

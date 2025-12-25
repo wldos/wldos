@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "wldos.framework",
+      "type": "com.wldos.framework.autoconfigure.WldosFrameworkProperties",
+      "sourceType": "com.wldos.framework.autoconfigure.WldosFrameworkProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "wldos.framework.auto-config.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用WLDOS框架自动配置",
+      "defaultValue": true
+    }
+  ]
+}

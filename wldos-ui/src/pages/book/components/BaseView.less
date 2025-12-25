@@ -1,0 +1,181 @@
+@import '~antd/es/style/themes/default.less';
+
+.editor-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  :global {
+    // TinyMCE 编辑器样式优化
+    .tox-tinymce {
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      
+      // 工具栏吸顶样式
+      .tox-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
+        border-bottom: 1px solid #f0f0f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+      }
+      
+      // 编辑器内容区域
+      .tox-edit-area {
+        flex: 1;
+        overflow-y: auto;
+      }
+      
+      // 内容区域图片样式
+      .mce-content-body {
+        padding: 20px;
+        line-height: 1.6;
+        
+        p {
+          margin-bottom: 16px;
+          
+          img {
+            max-width: 80%;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            
+            &:hover {
+              transform: scale(1.02);
+            }
+          }
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+          margin-top: 24px;
+          margin-bottom: 16px;
+          color: @heading-color;
+          font-weight: 600;
+        }
+        
+        blockquote {
+          border-left: 4px solid @primary-color;
+          padding-left: 16px;
+          margin: 16px 0;
+          color: @text-color-secondary;
+          background: #fafafa;
+          border-radius: 0 4px 4px 0;
+        }
+        
+        code {
+          background: #f5f5f5;
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          font-size: 13px;
+        }
+        
+        pre {
+          background: #f8f8f8;
+          padding: 16px;
+          border-radius: 6px;
+          overflow-x: auto;
+          border: 1px solid #e8e8e8;
+          
+          code {
+            background: none;
+            padding: 0;
+          }
+        }
+      }
+    }
+    
+    // 移动端优化
+    @media screen and (max-width: @screen-md) {
+      .tox-tinymce {
+        .tox-toolbar {
+          padding: 8px;
+          flex-wrap: wrap;
+          
+          .tox-toolbar__group {
+            margin-bottom: 4px;
+          }
+        }
+        
+        .mce-content-body {
+          padding: 16px;
+          font-size: 16px; // 移动端增大字体
+          
+          p img {
+            max-width: 100%;
+            height: auto;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            font-size: 1.2em; // 移动端标题字体调整
+            line-height: 1.3;
+          }
+        }
+      }
+    }
+    
+    // 小屏幕移动端进一步优化
+    @media screen and (max-width: 480px) {
+      .tox-tinymce {
+        .tox-toolbar {
+          padding: 6px;
+          
+          .tox-toolbar__group {
+            margin: 2px;
+          }
+        }
+        
+        .mce-content-body {
+          padding: 12px;
+          font-size: 16px;
+          line-height: 1.6;
+          
+          p {
+            margin-bottom: 12px;
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+          }
+          
+          blockquote {
+            margin: 12px 0;
+            padding: 12px;
+            font-size: 14px;
+          }
+          
+          pre {
+            padding: 12px;
+            font-size: 13px;
+            overflow-x: auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 全局编辑器样式
+.mce-content-body p img{
+  max-width: 80%;
+  width: auto;
+  height: auto;
+}
+
+// 编辑器工具栏吸顶动画
+:global {
+  .tox-tinymce .tox-toolbar {
+    transition: all 0.3s ease;
+  }
+  
+  // 滚动时工具栏样式
+  .tox-tinymce.scrolled .tox-toolbar {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}

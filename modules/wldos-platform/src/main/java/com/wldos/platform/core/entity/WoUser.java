@@ -14,6 +14,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+/**
+ * 用户
+ */
 @Table
 public class WoUser {
 	@Id

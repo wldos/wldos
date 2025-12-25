@@ -116,8 +116,13 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 					field = ReflectionUtils.findField(KTermType.class, key);
 					if (field == null)
 						return;
+					// classType 使用精确匹配，其他字符串字段使用模糊匹配
 					if (field.getType().equals(String.class)) {
-						finalSql1.append(" and instr(o.").append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
+						if ("classType".equals(key)) {
+							finalSql1.append(" and o.").append(NameConvert.humpToUnderLine(key)).append(" = ? ");
+						} else {
+							finalSql1.append(" and instr(o.").append(NameConvert.humpToUnderLine(key)).append(", ?) > 0 ");
+						}
 					}
 					else if (field.getType().equals(Timestamp.class)) { // 日期默认匹配当天
 						finalSql1.append(" and date_format(o.").append(NameConvert.humpToUnderLine(key)).append(", '%Y-%m-%d') = date_format(?, '%Y-%m-%d') ");
@@ -322,6 +327,62 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 
 				if (infoCats.isEmpty())
 					return infoCats;
+
+				value = om.writeValueAsString(infoCats);
+
+				this.cache.set(key, value, 12, TimeUnit.HOURS);
+
+				return infoCats;
+			}
+
+			return om.readValue(value, new TypeReference<List<TreeSelectOption>>() {});
+		}
+		catch (JsonProcessingException e) {
+			getLog().error("从缓存获取分层分类树异常: {}", e.getMessage());
+		}
+
+		return new ArrayList<>();
+	}
+
+	/**
+	 * 按类型查询分层分类树
+	 *
+	 * @param classType 分类类型（如：category, tag, plugin）
+	 * @return 分类树
+	 */
+	public List<TreeSelectOption> queryLayerCategoryTreeByType(String classType) {
+		String key = RedisKeyEnum.WLDOS_TERM_TREE_LAYER.toString() + ":" + classType;
+		String value = ObjectUtils.string(this.cache.get(key));
+
+		try {
+			ObjectMapper om = new ObjectMapper();
+			if (ObjectUtils.isBlank(value)) {
+
+			// 按类型查询所有分类项
+			List<Term> allTerms = this.entityRepo.findAllByClassType(classType);
+
+			// 构建分类树
+			List<TreeSelectOption> infoCats = new ArrayList<>();
+			if (!ObjectUtils.isBlank(allTerms)) {
+				infoCats = allTerms.parallelStream().map(term -> {
+					Long termTypeId = term.getTermTypeId();
+					return TreeSelectOption.of(termTypeId, term.getParentId(), term.getName(), termTypeId.toString(), termTypeId.toString(), term.getDisplayOrder());
+				}).collect(Collectors.toList());
+			}
+
+			String topTermId = String.valueOf(Constants.TOP_TERM_ID);
+			// 新增根分类（即使没有分类项，也要返回根分类）
+			TreeSelectOption infoCate = TreeSelectOption.of(Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根分类", topTermId, topTermId, 0L);
+
+			infoCats.add(0, infoCate);
+
+			infoCats = TreeUtils.build(infoCats, Constants.TOP_VIR_ID);
+
+			// 即使构建后为空，也要确保至少返回根分类
+			if (infoCats.isEmpty()) {
+				infoCats = new ArrayList<>();
+				infoCats.add(infoCate);
+			}
 
 				value = om.writeValueAsString(infoCats);
 

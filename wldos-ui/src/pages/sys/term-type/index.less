@@ -1,0 +1,118 @@
+.container {
+  display: flex;
+  gap: 16px;
+  min-height: 600px;
+  padding: 0;
+
+  .typeList {
+    width: 320px;
+    flex-shrink: 0;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    :global {
+      .ant-card {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        border-radius: 0;
+        overflow: hidden;
+
+        .ant-card-head {
+          overflow-x: hidden;
+        }
+
+        .ant-card-body {
+          padding: 16px;
+          overflow-x: hidden;
+        }
+      }
+
+      .ant-list {
+        margin: 0;
+      }
+
+      .ant-list-item {
+        padding: 12px;
+        margin-bottom: 8px;
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 4px;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        .ant-list-item-meta {
+          flex: 1;
+          min-width: 0;
+          overflow: hidden;
+        }
+
+        .ant-list-item-action {
+          flex-shrink: 0;
+          margin-left: 16px;
+        }
+
+        .ant-typography {
+          word-break: break-word;
+          overflow-wrap: break-word;
+        }
+
+        // 选中状态的左侧边框，使用伪元素避免影响布局
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          background-color: transparent;
+          transition: background-color 0.3s;
+        }
+      }
+
+      // 选中状态的样式
+      .ant-list-item-selected,
+      .ant-list-item[style*="background-color: rgb(230, 247, 255)"] {
+        &::before {
+          background-color: #1890ff;
+        }
+      }
+    }
+  }
+
+  .categoryManagement {
+    flex: 1;
+    min-width: 0;
+    overflow: visible;
+
+    :global {
+      .ant-card {
+        margin: 0;
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+
+    .typeList {
+      width: 100%;
+      max-height: 300px;
+    }
+
+    .categoryManagement {
+      width: 100%;
+    }
+  }
+}
+

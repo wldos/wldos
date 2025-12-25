@@ -1,0 +1,19 @@
+# Node.js 和 Yarn（共享安装目录）
+/node/
+
+# 各插件的构建输出
+**/target/
+**/dist/
+
+# Node modules（各插件独立）
+**/node_modules/
+
+# IDE 配置
+.idea/
+.vscode/
+*.iml
+
+# 系统文件
+.DS_Store
+Thumbs.db
+

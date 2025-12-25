@@ -58,4 +58,13 @@ public interface TermObjectDao extends BaseDao<KTermObject, Long> {
 	@Modifying
 	@Query("delete from k_term_object where term_type_id in (:termTypeId) and object_id=:pId")
 	void deleteAllByTermTypeIdAndObjectId(@Param("termTypeId") List<Long> termTypeId, @Param("pId") Long pId);
+	
+	/**
+	 * 根据多个分类ID查询关联的对象ID列表
+	 *
+	 * @param termTypeIds 分类类型id列表
+	 * @return 对象ID列表
+	 */
+	@Query("select distinct o.object_id from k_term_object o where o.term_type_id in (:termTypeIds)")
+	List<Long> findObjectIdsByTermTypeIds(@Param("termTypeIds") List<Long> termTypeIds);
 }

@@ -40,6 +40,7 @@ import com.wldos.platform.support.resource.vo.AuthInfo;
 import com.wldos.framework.support.storage.utils.StoreUtils;
 import com.wldos.framework.support.web.EdgeHandler;
 import com.wldos.framework.support.web.FilterRequestWrapper;
+import com.wldos.gateway.plugins.IPluginApiGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 
@@ -74,6 +75,9 @@ public class EdgeGateWayFilter implements Filter {
 
 	private EdgeHandler edgeHandler;
 
+	/** 插件API网关 */
+	private IPluginApiGateway pluginApiGateway;
+
 	/** jwt全家桶工具 */
 	protected JWTTool jwtTool;
 
@@ -96,8 +100,7 @@ public class EdgeGateWayFilter implements Filter {
 	public void init(FilterConfig filterConfig) {
 		ServletContext ctx = filterConfig.getServletContext();
 		ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext(ctx);
-		if (ac == null)
-			return;
+		if (ac == null)	return;
 
 		Environment env = ac.getEnvironment();
 
@@ -118,6 +121,7 @@ public class EdgeGateWayFilter implements Filter {
 		this.domainService = ac.getBean(DomainService.class);
 		this.authService = ac.getBean(AuthService.class);
 		this.edgeHandler = ac.getBean(EdgeHandler.class);
+		this.pluginApiGateway = ac.getBean(IPluginApiGateway.class);
 		this.jwtTool = ac.getBean(JWTTool.class);
 		this.resJson = ac.getBean(ResultJson.class);
 	}
@@ -147,6 +151,14 @@ public class EdgeGateWayFilter implements Filter {
 				chain.doFilter(request, res);
 				return;
 			}
+
+			// 检查是否为插件API请求
+			String pluginCode = this.pluginApiGateway.isPluginApiRequest(reqUri);
+			if (pluginCode != null) {
+				// 处理插件API请求
+				handlePluginApiRequest(request, response, reqUri, pluginCode, userIP);
+				return;
+			}			
 
 			String domain = this.edgeHandler.getDomain(request, this.domainHeader);
 			boolean isExcludeUri = GateWayHelper.isMatchUri(reqUri, this.excludeUris);
@@ -240,6 +252,68 @@ public class EdgeGateWayFilter implements Filter {
 			log.error("异常处理时异常：{}", e.getClass().getName());
 		}
 	}
+
+	/**
+	 * 处理插件API请求
+	 * 
+	 * @param request HTTP请求
+	 * @param response HTTP响应
+	 * @param reqUri 请求URI
+	 * @param pluginCode 插件代码
+	 * @param userIP 用户IP
+	 */
+	private void handlePluginApiRequest(HttpServletRequest request, HttpServletResponse response, 
+	                                  String reqUri, String pluginCode, String userIP) {
+		try {
+			// 获取域名信息
+			String domain = this.edgeHandler.getDomain(request, this.domainHeader);
+			WoDomain reqDomain = this.domainService.queryDomainByName(domain, false);
+			if (reqDomain == null) {
+				log.error("插件API请求使用了非法域名：{}", domain);
+				throw new IllegalDomainException("使用了非法域名，禁止访问！" + domain);
+			}
+
+			// 获取JWT令牌
+			String token = request.getHeader(this.tokenHeader);
+			if (ObjectUtils.isBlank(token)) {
+				throw new TokenInvalidException("token is blank");
+			}
+
+			// 验证JWT令牌
+			JWT jwt = jwtTool.popJwt(token, userIP, reqUri, reqDomain.getSiteDomain(), reqDomain.getId());
+			if (this.jwtTool.isExpired(jwt)) {
+				throw new TokenInvalidException("user token is expired");
+			}
+
+			// 验证插件API权限
+			if (!this.pluginApiGateway.verifyPluginApiAuth(request, pluginCode, jwt, reqDomain.getId())) {
+				throw new TokenForbiddenException("Forbidden, no plugin API auth!");
+			}
+
+			// 转发到插件Controller
+			boolean forwarded = this.pluginApiGateway.forwardPluginApi(request, response, pluginCode, jwt, reqDomain.getId());
+			if (!forwarded) {
+				throw new BaseException("插件API转发失败！");
+			}
+
+		} catch (Exception e) {
+			String userId = "";
+			try {
+				JWT jwt = jwtTool.popJwt(request.getHeader(this.tokenHeader), userIP, reqUri, "", 0L);
+				userId = jwt != null ? jwt.getUserId().toString() : "";
+			} catch (Exception ignored) {
+				// 忽略JWT解析错误
+			}
+
+			if (e instanceof BaseException) {
+				this.throwException(response, (BaseException) e, userIP, reqUri, userId);
+			} else {
+				this.throwException(response, new BaseException("插件API请求异常，请重试！"), userIP, reqUri, userId);
+				log.error("插件API请求处理异常: {}", e.getMessage(), e);
+			}
+		}
+	}
+
 
 	@Override
 	public void destroy() {

@@ -1,0 +1,32 @@
+# 基本信息（必选）约定插件id必须和插件打包文件一致，所以插件项目的名称默认就是插件id
+id: wldos-plugin-demo
+name: WLDOS演示插件
+version: 1.0.0
+description: 这是一个WLDOS框架的演示插件，展示了插件的基本功能和使用方法
+author: WLDOS Team
+mainClass: com.wldos.plugin.demo.login.UserOperationPlugin
+main: com.wldos.plugin.demo.login.UserOperationPlugin   # <--- 新增，兼容IDEA校验
+autoStart: true
+
+depends:
+  wldos-core: ">=2.0.0"
+# 分类 (必选，固定值)
+category: DEVELOPMENT
+
+icon:
+  small: icons/demo-16x16.png
+  medium: icons/demo-32x32.png
+  large: icons/demo-64x64.png
+
+tags:
+  - 演示
+  - 开发
+  - 教程
+
+screenshots:
+  - images/screenshot1.png
+  - images/screenshot2.png
+banner: images/banner.png
+
+documentation: docs/index.md
+changelog: CHANGELOG.md

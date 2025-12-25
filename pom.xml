@@ -27,14 +27,15 @@
 	</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<javacv.version>1.5.5</javacv.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
 	<url>http://www.wldos.com</url>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
 			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
-			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	<developers>
@@ -44,18 +45,14 @@
 			<roles>
 				<role>leader</role>
 			</roles>
-            <organization>WLDOS</organization>
-            <organizationUrl>https://github.com/wldos</organizationUrl>
-        </developer>
+		</developer>
 	</developers>
-	<scm>
-        <connection>scm:git:git://github.com/wldos/wldos.git</connection>
-        <developerConnection>scm:git:ssh://github.com:wldos/wldos.git</developerConnection>
-        <url>https://github.com/wldos/wldos/tree/master</url>
-    </scm>
 	<modules>
+		<module>wldos-common</module>
+		<module>wldos-framework</module>
 		<module>modules/wldos-platform</module>
 		<module>modules/wldos-kpaycms</module>
+		<module>wldos-plugins</module>
 		<module>wldos-web</module>
 	</modules>
 	<dependencies>
@@ -215,16 +212,6 @@
 			<artifactId>spring-cloud-context</artifactId>
 			<version>3.0.3</version><!-- 3.1.5 初始化加载数据库资源配置时 application空指针异常-->
 		</dependency>
-		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>javacv</artifactId>
-			<version>${javacv.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>ffmpeg-platform</artifactId>
-			<version>4.3.2-${javacv.version}</version>
-		</dependency>
 	</dependencies>
 	<dependencyManagement>
 	</dependencyManagement>
@@ -275,64 +262,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.5.0</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<charset>UTF-8</charset>
-					<additionalJOption>-Xdoclint:none</additionalJOption>
-					<tags>
-						<tag>
-							<name>date</name>
-							<placement>a</placement>
-							<head>创建日期:</head>
-						</tag>
-					</tags>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-					<altDeploymentRepository>ossrh::https://central.sonatype.com/api/v1/publisher/upload</altDeploymentRepository>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.13</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -361,11 +290,4 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<distributionManagement>
-		<repository>
-			<id>ossrh</id>
-			<name>Central Portal</name>
-			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
 </project>

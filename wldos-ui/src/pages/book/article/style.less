@@ -1,0 +1,268 @@
+@import '~antd/es/style/themes/default.less';
+@import '../../../utils/utils.less';
+
+.avatarHolder {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  border: 1px solid #d9d9d9;
+
+  & > img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .name {
+    margin-bottom: 4px;
+    color: @heading-color;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+.pubMeta {
+  padding-bottom: 8px;
+  font-style: normal;
+  color: @disabled-color;
+  & > em {
+    margin-left: 16px;
+    color: @disabled-color;
+    font-style: normal;
+  }
+}
+.entry {
+  padding-top: 16px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 28px;
+  color: #222;
+  position: relative;
+  
+  // 水印支持
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--watermark-bg, none);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    pointer-events: none;
+    z-index: 0; // 改为0，在背景层但可见
+    opacity: 0.15; // 降低透明度，更淡一些
+  }
+  
+  // 确保内容在水印之上
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+.share {
+  float: inherit;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  & > img {
+    margin-right: 10px;
+  }
+}
+.pubMetaBottom {
+  margin: 35px auto 60px;
+  color: #999;
+  border-bottom: 1px solid #eee;
+  overflow: hidden;
+  clear: both;
+
+  .tags {
+    float: left;
+    padding-bottom: 10px;
+    text-indent: 18px;
+    overflow: hidden;
+  }
+}
+.pubPrevNext {
+  margin-bottom: 40px;
+}
+.relatedPost h2 {
+  margin-bottom: 25px;
+  padding: 10px 0;
+  font-size: 20px;
+  font-weight: 500;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.comment h3 {
+  margin-bottom: 35px;
+  padding: 10px 0;
+  font-size: 20px;
+  font-weight: 500;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.clearfix {
+  clear: both;
+  font-size: 1px;
+  width: 1px;
+  height: 0;
+  visibility: hidden;
+  margin-top: 0 !important;
+  *margin-top: -1px;
+  line-height: 0;
+}
+
+
+@media screen and (max-width: 375px) {
+  .avatarHolder {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+
+  .hotRec {
+    display: none;
+  }
+
+  .cardListRight {
+    display: none;
+  }
+}
+
+.proButton {
+  display: flex;
+  float: right;
+  & > button {
+    margin-right: 24px;
+  }
+}
+
+.cardListRight {
+  height: 450px;
+  overflow: hidden;
+}
+
+.detail {
+  p {
+    position: relative;
+    margin-bottom: 8px;
+    padding-left: 26px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  i {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.tagsTitle,
+.teamTitle {
+  margin-bottom: 12px;
+  color: @heading-color;
+  font-weight: 500;
+}
+
+.tags {
+  :global {
+    .ant-tag {
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.team {
+  margin-top: 24px;
+  a {
+    display: block;
+    overflow: hidden;
+    color: @text-color;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    transition: color 0.3s;
+
+    &:hover {
+      color: @primary-color;
+    }
+    & > img {
+      width: calc(100% - 2px);
+      height: calc(100% - 2px);
+    }
+  }
+}
+
+.tabsCard {
+  :global {
+    .ant-card-head {
+      padding: 0 16px;
+    }
+  }
+}
+
+
+.title {
+  margin-bottom: 16px;
+  color: @heading-color;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+// 用于图片在移动端自适应宽度
+.entry img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto !important;
+}
+
+.card {
+  :global {
+    .ant-card-meta-title {
+      margin-bottom: 4px;
+      & > a {
+        display: inline-block;
+        max-width: 100%;
+        color: @heading-color;
+      }
+    }
+    .ant-card-meta-description {
+      height: 44px;
+      overflow: hidden;
+      line-height: 22px;
+    }
+  }
+
+  &:hover {
+    :global {
+      .ant-card-meta-title > a {
+        color: @primary-color;
+      }
+    }
+  }
+}
+
+.cardItemContent {
+  display: flex;
+  height: 20px;
+  margin-top: 16px;
+  margin-bottom: -4px;
+  line-height: 20px;
+  & > span {
+    flex: 1;
+    color: @text-color-secondary;
+    font-size: 12px;
+  }
+  .avatarList {
+    flex: 0 1 auto;
+  }
+}

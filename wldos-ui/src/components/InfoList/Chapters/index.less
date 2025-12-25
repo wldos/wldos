@@ -1,0 +1,157 @@
+@import '~antd/es/style/themes/default.less';
+
+.listContainer {
+  position: relative;
+}
+
+.articleList {
+  :global {
+    .ant-list-item:first-child {
+      padding-top: 0;
+    }
+    
+    // 筛选条吸顶样式
+    .ant-pro-list-search {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: white;
+      border-bottom: 1px solid #f0f0f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      margin-bottom: 16px;
+      padding: 16px 0;
+      
+      .ant-form-item {
+        margin-bottom: 12px;
+      }
+      
+      .ant-form-item-label {
+        font-weight: 500;
+        color: @heading-color;
+      }
+    }
+    
+    // 列表项优化（去除位移以避免抖动）
+    .ant-list-item {
+      border-bottom: 1px solid #f5f5f5;
+      padding: 20px 0;
+      transition: background-color 0.3s ease;
+      
+      &:hover {
+        background-color: #fafafa;
+      }
+    }
+    
+    // 分页样式
+    .ant-pagination {
+      margin-top: 24px;
+      text-align: center;
+      
+      .ant-pagination-item {
+        border-radius: 6px;
+      }
+      
+      .ant-pagination-item-active {
+        background: @primary-color;
+        border-color: @primary-color;
+        
+        a {
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+a.listItemMetaTitle {
+  color: @heading-color;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: @primary-color;
+  }
+}
+
+.itemList {
+  white-space: nowrap;
+}
+
+.radioButton {
+  :global {
+    .ant-radio-button-wrapper:not(:first-child)::before {
+      width: 0!important;
+    }
+    .ant-radio-button-wrapper {
+      padding: 0 9px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}
+
+// 骨架屏样式已移除
+
+// 分页样式
+.pagination {
+  :global {
+    .ant-pagination {
+      .ant-pagination-item {
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+      
+      .ant-pagination-item-active {
+        background: @primary-color;
+        border-color: @primary-color;
+        
+        a {
+          color: white;
+        }
+      }
+      
+      .ant-pagination-prev,
+      .ant-pagination-next {
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
+// 移动端优化
+@media screen and (max-width: @screen-md) {
+  .articleList {
+    :global {
+      .ant-pro-list-search {
+        padding: 12px 0;
+        
+        .ant-form-item {
+          margin-bottom: 8px;
+        }
+      }
+      
+      .ant-list-item {
+        padding: 16px 0;
+        
+        &:hover {
+          margin: 0 -8px;
+          padding: 16px 8px;
+        }
+      }
+    }
+  }
+  
+  // 骨架屏样式已移除
+}

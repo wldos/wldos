@@ -117,6 +117,19 @@ public class AuthService implements AuthOpener {
 	}
 
 	/**
+	 * 查询某域内用户的可见菜单，授权菜单来源：1.组织权限，2.平台权限。
+	 *
+	 * @param domainId 域id
+	 * @param comId 用户主企业id，用于判定用户的组织权限
+	 * @param menuTypes 菜单类型：普通菜单(含插件类型)、管理菜单（含插件类型）
+	 * @param id 用户id
+	 * @return 菜单列表
+	 */
+	public List<Menu> queryMenuByUserId(Long domainId, Long comId, String[] menuTypes, Long id) {
+		return this.authOpener.queryMenuByUserId(domainId, comId, menuTypes, id, this.resourceRepo);
+	}
+
+	/**
 	 * 游客专门处理，用于满足互联网应用需求
 	 *
 	 * @param userId 用户id

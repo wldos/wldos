@@ -1,0 +1,169 @@
+@import '~antd/es/style/themes/default.less';
+
+.card {
+  margin-bottom: 24px;
+}
+
+.heading {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.steps:global(.ant-steps) {
+  max-width: 900px;
+  margin: 16px auto;
+  
+  .ant-steps-item {
+    .ant-steps-item-icon {
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      border: 2px solid #d9d9d9;
+      transition: all 0.3s ease;
+      
+      .ant-steps-icon {
+        font-size: 16px;
+      }
+    }
+    
+    &.ant-steps-item-active {
+      .ant-steps-item-icon {
+        background: @primary-color;
+        border-color: @primary-color;
+        color: white;
+      }
+    }
+    
+    &.ant-steps-item-finish {
+      .ant-steps-item-icon {
+        background: @success-color;
+        border-color: @success-color;
+        color: white;
+      }
+    }
+    
+    .ant-steps-item-title {
+      font-weight: 500;
+      color: @heading-color;
+    }
+    
+    .ant-steps-item-description {
+      color: @text-color-secondary;
+      font-size: 12px;
+    }
+  }
+}
+
+.errorIcon {
+  margin-right: 24px;
+  color: @error-color;
+  cursor: pointer;
+  span.anticon {
+    margin-right: 4px;
+  }
+}
+
+.errorPopover {
+  :global {
+    .ant-popover-inner-content {
+      min-width: 256px;
+      max-height: 290px;
+      padding: 0;
+      overflow: auto;
+    }
+  }
+}
+
+.errorListItem {
+  padding: 8px 16px;
+  list-style: none;
+  border-bottom: 1px solid @border-color-split;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    background: @item-active-bg;
+  }
+  &:last-child {
+    border: 0;
+  }
+  .errorIcon {
+    float: left;
+    margin-top: 4px;
+    margin-right: 12px;
+    padding-bottom: 22px;
+    color: @error-color;
+  }
+  .errorField {
+    margin-top: 2px;
+    color: @text-color-secondary;
+    font-size: 12px;
+  }
+}
+
+.editable {
+  td {
+    padding-top: 13px !important;
+    padding-bottom: 12.5px !important;
+  }
+}
+
+// custom footer for fixed footer toolbar
+.advancedForm + div {
+  padding-bottom: 64px;
+}
+
+.advancedForm {
+  :global {
+    .ant-form .ant-row:last-child .ant-form-item {
+      margin-bottom: 24px;
+    }
+    .ant-table td {
+      transition: none !important;
+    }
+  }
+}
+
+.optional {
+  color: @text-color-secondary;
+  font-style: normal;
+}
+
+// 步骤提示样式
+.stepAlert {
+  :global {
+    .ant-alert-message {
+      padding: 16px 0;
+    }
+  }
+}
+
+// 移动端优化
+@media screen and (max-width: @screen-md) {
+  .steps:global(.ant-steps) {
+    max-width: 100%;
+    margin: 12px 0;
+    
+    .ant-steps-item {
+      .ant-steps-item-icon {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        
+        .ant-steps-icon {
+          font-size: 14px;
+        }
+      }
+      
+      .ant-steps-item-title {
+        font-size: 14px;
+      }
+      
+      .ant-steps-item-description {
+        font-size: 11px;
+      }
+    }
+  }
+}

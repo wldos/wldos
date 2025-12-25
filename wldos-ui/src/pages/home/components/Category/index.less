@@ -1,0 +1,38 @@
+@import '~antd/es/style/themes/default.less';
+@import '../../utils/utils.less';
+
+.coverCardList {
+  margin-top: -19px;
+
+  .card {
+    &:hover {
+      :global {
+        .ant-card-meta-title > a {
+          color: @primary-color;
+        }
+      }
+    }
+  }
+
+  .cardList {
+    max-width: 1200px;
+    margin: 0 auto!important;
+  }
+
+  :global {
+    .ant-list .ant-list-item-content-single {
+      max-width: 100%;
+    }
+    .ant-card {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.itemList {
+  white-space: nowrap;
+}
+
+.header {
+  color: #ff552e;
+}

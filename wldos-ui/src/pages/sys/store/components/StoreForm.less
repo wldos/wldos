@@ -1,0 +1,34 @@
+// 插件表单样式
+.plugin-form {
+  // 图标上传预览样式 - 匹配市场展示比例
+  .ant-upload-picture-card-wrapper {
+    .ant-upload-select-picture-card {
+      // 调整上传卡片尺寸，匹配市场展示比例（高度 180px）
+      // 市场展示：高度 180px，宽度 100%（卡片宽度）
+      // 这里使用固定高度，宽度自适应
+      height: 180px !important;
+      width: 100% !important;
+      aspect-ratio: auto; // 不强制宽高比
+      
+      // 图标预览容器
+      .icon-preview-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fafafa;
+        padding: 20px; // 匹配市场展示的 padding
+        
+        img {
+          max-width: calc(100% - 40px); // 减去左右 padding
+          max-height: calc(100% - 40px); // 减去上下 padding
+          width: auto;
+          height: auto;
+          object-fit: contain; // 匹配市场展示的 object-fit
+        }
+      }
+    }
+  }
+}
+

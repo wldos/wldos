@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.wldos.common.vo.SelectOption;
+import com.wldos.framework.support.plugins.core.AutoStartEnum;
+import com.wldos.framework.support.plugins.core.PluginStatus;
 import com.wldos.platform.support.resource.enums.ResourceEnum;
 import com.wldos.platform.support.web.enums.TemplateTypeEnum;
 
@@ -49,5 +51,25 @@ public class EnumController {
 	@GetMapping("select/resource")
 	public List<SelectOption> fetchEnumResType() {
 		return Arrays.stream(ResourceEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	/**
+	 * 插件状态枚举
+	 *
+	 * @return 枚举列表
+	 */
+	@GetMapping("select/pluginStatus")
+	public List<SelectOption> fetchEnumPluginStatus() {
+		return Arrays.stream(PluginStatus.values()).map(item -> SelectOption.of(item.getDescription(), item.name())).collect(Collectors.toList());
+	}
+
+	/**
+	 * AutoStartEnum枚举
+	 *
+	 * @return 枚举列表
+	 */
+	@GetMapping("select/autoStart")
+	public List<SelectOption> fetchEnumAutoStart() {
+		return Arrays.stream(AutoStartEnum.values()).map(item -> SelectOption.of(item.getDescription(), item.getEnumName())).collect(Collectors.toList());
 	}
 }

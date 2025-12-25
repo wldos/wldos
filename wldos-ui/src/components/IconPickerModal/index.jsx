@@ -1,0 +1,56 @@
+import React, { useState } from 'react';
+import { Button, Space } from 'antd';
+import FullscreenModal from '@/components/FullscreenModal';
+import IconSelector from '@/components/IconSelector';
+
+const IconPickerModal = ({ visible, onCancel, onOk, value }) => {
+  const [selectedIcon, setSelectedIcon] = useState(value || {});
+
+  // 当 visible 变化时，更新选中状态
+  React.useEffect(() => {
+    if (visible) {
+      setSelectedIcon(value || {});
+    }
+  }, [visible, value]);
+
+  const handleOk = () => {
+    onOk(selectedIcon);
+    onCancel();
+  };
+
+  const handleCancel = () => {
+    setSelectedIcon(value || {}); // 重置为原值
+    onCancel();
+  };
+
+  const renderFooter = () => (
+    <Space>
+      <Button onClick={handleCancel}>
+        取消
+      </Button>
+      <Button type="primary" onClick={handleOk}>
+        确定
+      </Button>
+    </Space>
+  );
+
+  return (
+    <FullscreenModal
+      title="选择图标"
+      visible={visible}
+      onCancel={handleCancel}
+      footer={renderFooter()}
+      width={600}
+      bodyStyle={{
+        padding: '24px',
+      }}
+    >
+      <IconSelector
+        value={selectedIcon}
+        onChange={setSelectedIcon}
+      />
+    </FullscreenModal>
+  );
+};
+
+export default IconPickerModal;

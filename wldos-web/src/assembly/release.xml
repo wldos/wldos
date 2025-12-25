@@ -1,0 +1,37 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3
+          https://maven.apache.org/xsd/assembly-1.1.3.xsd">
+    <id>${project.parent.version}</id> <!-- 必须有 -->
+    <formats>
+        <format>dir</format>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <!-- 打包 war 包 -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <!-- 只打包 plugins 目录下的 *.zip，要发行的插件在web主应用pom中依赖，然后执行全工程clean打包 -->
+        <fileSet>
+            <directory>plugins</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <outputDirectory>plugins</outputDirectory>
+        </fileSet>
+        <!-- 打包 store 目录下所有内容 -->
+        <fileSet>
+            <directory>store</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <outputDirectory>store</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

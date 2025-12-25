@@ -85,6 +85,17 @@ public interface AuthOpener {
 	default List<Menu> queryMenuByUserId(Long domainId, Long comId, String menuType, Long id, ResourceOpener resourceRep) {return null;}
 
 	/**
+	 * 查询某域内用户的可见菜单，授权菜单来源：1.组织权限，2.平台权限。
+	 *
+	 * @param domainId 域id
+	 * @param comId 用户主企业id，用于判定用户的组织权限
+	 * @param menuTypes 菜单类型：普通菜单(含插件)、管理菜单（含插件）
+	 * @param id 用户id
+	 * @return 菜单列表
+	 */
+	default List<Menu> queryMenuByUserId(Long domainId, Long comId, String[] menuTypes, Long id, ResourceOpener resourceRep) {return null;}
+
+	/**
 	 * 获取页面操作权限。
 	 *
 	 * @param domainId 域id

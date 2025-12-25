@@ -1,0 +1,73 @@
+@import '~antd/es/style/themes/default.less';
+
+/* Footer */
+.footer{ padding:40px 0; width:100%; color:#666; background:#f3f3f3; border-top:1px solid #e5e5e5; -moz-box-shadow:0 0 8px rgba(0,0,0,.1); -webkit-box-shadow:0 0 8px rgba(0,0,0,.1); box-shadow:0 0 8px rgba(0,0,0,.1);}
+.footer a:link, .footer a:visited{ color:#666;}
+.footer a:hover{ color:#333;}
+.inner {
+  width: 1200px;
+  margin: 0 auto;
+}
+
+/* footBar */
+.footBar{ overflow:hidden;}
+.footBar h3{ margin-bottom:15px; font-size:14px; font-weight:bold; color:#333;}
+.footBar h3 a{ color:#333;}
+.footBar {
+  & > div {
+    float:left; width:18%;
+    & > ul {
+      overflow:hidden;
+      & > li {font-size: small; margin-bottom:3px; overflow:hidden;}
+    }
+    & > p {font-size: small; margin-bottom:3px; overflow:hidden;}
+    &> span {font-size: 24px; color: #367ac5;}
+  }
+}
+
+/* FriendLink */
+.friendLink{ margin-top:35px; padding-top:15px; width:100%; font-size: smaller; color:#888; border-top:1px solid #e2e2e2; overflow:hidden;}
+.friendLink a:link, .friendLink a:visited{ margin-left:10px; color:#888;}
+.friendLink a:hover{ color:#333;}
+
+/* Copyright */
+.copyright{ background: #000c17; padding:14px 0; text-align:center; font-size: smaller; color:#bbb; overflow:hidden;}
+.copyright a:link, .copyright a:visited{ padding:0 3px; color:#bbb; }
+.copyright a:hover{ color:#fff; color:rgba(255,255,255,1);}
+.copyright a {display: inline-block; text-decoration: none; height: 20px; line-height: 20px; font-size: smaller; }
+
+.clearfix {
+  clear: both;
+  font-size: 1px;
+  width: 1px;
+  height: 0;
+  visibility: hidden;
+  margin-top: 0px!important;
+  *margin-top: -1px;
+  line-height: 0;
+}
+
+@media only screen and (min-width:1440px){
+  .inner{ width:1200px;}
+}
+@media only screen and (min-width:1025px) and (max-width:1439px){
+  .inner{ width:1000px;}
+}
+@media only screen and (min-width: 960px) and (max-width: 1024px) {
+  .inner {
+    width: 96%;
+  }
+}
+
+@media only screen and (max-width:959px) {
+  .inner {
+    width: 94%;
+  }
+  .footBar h3{ margin-bottom:15px; font-size:18px;}
+  .footBar { & > div {padding:0 2% 30px; width:46%;} }
+  .copyright{ padding:20px 0 70px;}
+}
+
+@media only screen and (max-width:480px){
+  .footBar { & > div {padding:0 2% 30px!important; width:96%!important;}}
+}
