@@ -1,6 +1,6 @@
 [中文版 README](README.md)
 <p align="center">
- <img alt="WLDOS" src="http://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px; ">
+ <img alt="WLDOS" src="http://gitee.com/wldos/wldos/raw/master/modules/wldos-platform/src/main/resources/resources/store/logo.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px; ">
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">Cloud Application Support Platform - IoT Driver</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">Develop IoT applications based on WLDOS, focusing on, opening up, and managing your ecosystem</h5>

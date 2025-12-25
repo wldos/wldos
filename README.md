@@ -1,6 +1,6 @@
 [English Version README](README.EN.md)
 <p align="center">
- <img alt="WLDOS" src="http://www.wldos.com/store/wldos.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px;">
+ <img alt="WLDOS" src="http://gitee.com/wldos/wldos/raw/master/modules/wldos-platform/src/main/resources/resources/store/logo.svg" width="120" height="120" style="margin-bottom: 10px; background: deepskyblue; border-radius: 60px;">
 </p>
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">基于 WLDOS 开发 云物互联应用 聚焦、开放、管控你的生态</h5>
@@ -49,8 +49,10 @@ QQ群：群一：792559964(已满) 群二：830355512
 
 WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三大板块构成，其中框架和支撑平台是通用支撑，内容付费是基于通用支撑展开的最佳实践。<br/>  
 输出两个项目：WLDOS云应用支撑平台（管理端）和WLDOS内容付费系统（业务端）。应用功能结构如下：
+#### 1.0前后端分离架构
 ![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
 ![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
+#### 2.0动态单体架构
 ![WLDOS2.0动态单体](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos2.0.jpeg)
 
 ### 技术说明
