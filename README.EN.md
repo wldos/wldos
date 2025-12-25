@@ -172,7 +172,7 @@ wldos root directory
 │       └── src
 ├── wldos-ui--------------------------------Frontend (Dynamic Monolithic)
 │   ├── config
-│   ├── node--------------------------------Built-in Node (Development Stage)
+│   ├── node--------------------------------Built-in Node (Development Dependency)
 │   ├── package.json
 │   ├── src
 ├── wldos-web-------------------------------Project Web Entry Module
