@@ -51,6 +51,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 输出两个项目：WLDOS云应用支撑平台（管理端）和WLDOS内容付费系统（业务端）。应用功能结构如下：
 ![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
 ![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
+![WLDOS2.0动态单体](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos2.0.jpeg)
 
 ### 技术说明
 **语言：** Java8、ReactJs17。  
