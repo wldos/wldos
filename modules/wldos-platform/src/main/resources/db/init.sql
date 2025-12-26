@@ -3417,9 +3417,9 @@ INSERT INTO `wo_options` VALUES (268507090779815937, 'wldos_system_multitenancy_
 INSERT INTO `wo_options` VALUES (268507090792398857, 'wldos_system_multidomain_switch', NULL, 'true', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268507343822176260, 'wldos_platform_user_register_emailaction', NULL, 'true', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268507343834759168, 'spring_mail_host', NULL, 'smtp.88.com', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343847342087, 'spring_mail_username', NULL, 'wldos.com', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343859924993, 'spring_mail_password', NULL, 'wiVQA8hEUhYX432E', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343876702209, 'wldos_mail_fromMail_addr', NULL, 'wldos.com@88.com', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343847342087, 'spring_mail_username', NULL, 'wldos', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343859924993, 'spring_mail_password', NULL, 'wiVQsdfsf2E', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343876702209, 'wldos_mail_fromMail_addr', NULL, 'wldos@88.com', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268563415123542023, 'wldos_cms_comment_audit', NULL, 'false', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268993001648996359, 'wldos_file_store_path', NULL, '', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (269981894250774529, 'wldos_platform_adminEmail', NULL, '306991142@qq.com', NULL, 'auto_reload', 'sys_option');
