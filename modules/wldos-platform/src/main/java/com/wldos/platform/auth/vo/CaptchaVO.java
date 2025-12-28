@@ -9,6 +9,12 @@
 package com.wldos.platform.auth.vo;
 
 import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 验证码验证参数。
@@ -17,34 +23,18 @@ import java.io.Serializable;
  * @date 2021/5/4
  * @version 1.0
  */
+@ApiModel(description = "验证码验证参数")
+@Getter
+@Setter
 public class CaptchaVO implements Serializable {
+	@ApiModelProperty(value = "验证码", required = true, example = "1234")
+	@NotBlank(message = "验证码不能为空")
 	private String captcha;
 
+	@ApiModelProperty(value = "验证码UUID", required = true, example = "550e8400-e29b-41d4-a716-446655440000")
+	@NotBlank(message = "验证码UUID不能为空")
 	private String uuid;
 
+	@ApiModelProperty(value = "状态", hidden = true)
 	private String status;
-
-	public String getCaptcha() {
-		return captcha;
-	}
-
-	public void setCaptcha(String captcha) {
-		this.captcha = captcha;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
 }

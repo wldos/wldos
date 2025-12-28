@@ -14,6 +14,12 @@ import java.util.List;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.platform.support.cms.dto.PubTypeExt;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 不能匹配的属性进入map以扩展字段处理
  * 凡是不能被Pub直接解析的字段统一存入metadata。
@@ -24,245 +30,80 @@ import com.wldos.platform.support.cms.dto.PubTypeExt;
  * 输出扩展：确定展现视图，适当的视图嵌入动态展现块。
  *
  */
+@ApiModel(description = "发布内容信息")
+@Getter
+@Setter
 public class Pub {
 
+	@ApiModelProperty(value = "内容ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "内容正文", example = "内容正文内容...")
 	private String pubContent;
 
+	@ApiModelProperty(value = "标题", example = "标题内容")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "摘要", example = "摘要内容")
 	private String pubExcerpt;
 
+	@ApiModelProperty(value = "发布状态", example = "PUBLISH")
 	private String pubStatus;
 
+	@ApiModelProperty(value = "评论状态", example = "OPEN")
 	private String commentStatus;
 
+	@ApiModelProperty(value = "访问密码", hidden = true)
 	private String pubPassword;
 
+	@ApiModelProperty(value = "内容别名", example = "content-alias")
 	private String pubName;
 
+	@ApiModelProperty(value = "父级ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "发布类型", example = "POST")
 	private String pubType;
 
+	@ApiModelProperty(value = "域ID", example = "1")
 	private Long domainId;
 
+	@ApiModelProperty(value = "租户ID", example = "1")
 	private Long comId;
 
+	@ApiModelProperty(value = "MIME类型", example = "text/html")
 	private String pubMimeType;
 
+	@ApiModelProperty(value = "创建人ID", example = "1")
 	private Long createBy;
 
+	@ApiModelProperty(value = "创建时间", example = "2023-01-01 00:00:00")
 	private Timestamp createTime;
 
+	@ApiModelProperty(value = "创建IP", example = "127.0.0.1")
 	private String createIp;
 
+	@ApiModelProperty(value = "更新人ID", example = "1")
 	private Long updateBy;
 
+	@ApiModelProperty(value = "更新时间", example = "2023-01-01 00:00:00")
 	private Timestamp updateTime;
 
+	@ApiModelProperty(value = "更新IP", example = "127.0.0.1")
 	private String updateIp;
 
+	@ApiModelProperty(value = "删除标志", example = "NORMAL")
 	private String deleteFlag;
 
+	@ApiModelProperty(value = "版本号", example = "1")
 	private Integer versions;
 
+	@ApiModelProperty(value = "分类ID列表")
 	private List<SelectOption> termTypeIds;
 
+	@ApiModelProperty(value = "标签ID列表")
 	private List<String> tagIds;
 
+	@ApiModelProperty(value = "扩展属性列表")
 	private List<PubTypeExt> pubTypeExt;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubContent() {
-		return pubContent;
-	}
-
-	public void setPubContent(String pubContent) {
-		this.pubContent = pubContent;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public String getPubExcerpt() {
-		return pubExcerpt;
-	}
-
-	public void setPubExcerpt(String pubExcerpt) {
-		this.pubExcerpt = pubExcerpt;
-	}
-
-	public String getPubStatus() {
-		return pubStatus;
-	}
-
-	public void setPubStatus(String pubStatus) {
-		this.pubStatus = pubStatus;
-	}
-
-	public String getCommentStatus() {
-		return commentStatus;
-	}
-
-	public void setCommentStatus(String commentStatus) {
-		this.commentStatus = commentStatus;
-	}
-
-	public String getPubPassword() {
-		return pubPassword;
-	}
-
-	public void setPubPassword(String pubPassword) {
-		this.pubPassword = pubPassword;
-	}
-
-	public String getPubName() {
-		return pubName;
-	}
-
-	public void setPubName(String pubName) {
-		this.pubName = pubName;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getPubType() {
-		return pubType;
-	}
-
-	public void setPubType(String pubType) {
-		this.pubType = pubType;
-	}
-
-	public Long getDomainId() {
-		return domainId;
-	}
-
-	public void setDomainId(Long domainId) {
-		this.domainId = domainId;
-	}
-
-	public Long getComId() {
-		return comId;
-	}
-
-	public void setComId(Long comId) {
-		this.comId = comId;
-	}
-
-	public String getPubMimeType() {
-		return pubMimeType;
-	}
-
-	public void setPubMimeType(String pubMimeType) {
-		this.pubMimeType = pubMimeType;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(Long updateBy) {
-		this.updateBy = updateBy;
-	}
-
-	public Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
-	public Integer getVersions() {
-		return versions;
-	}
-
-	public void setVersions(Integer versions) {
-		this.versions = versions;
-	}
-
-	public List<SelectOption> getTermTypeIds() {
-		return termTypeIds;
-	}
-
-	public void setTermTypeIds(List<SelectOption> termTypeIds) {
-		this.termTypeIds = termTypeIds;
-	}
-
-	public List<String> getTagIds() {
-		return tagIds;
-	}
-
-	public void setTagIds(List<String> tagIds) {
-		this.tagIds = tagIds;
-	}
-
-	public List<PubTypeExt> getPubTypeExt() {
-		return pubTypeExt;
-	}
-
-	public void setPubTypeExt(List<PubTypeExt> pubTypeExt) {
-		this.pubTypeExt = pubTypeExt;
-	}
 }

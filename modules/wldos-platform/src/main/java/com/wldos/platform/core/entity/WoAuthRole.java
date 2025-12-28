@@ -12,10 +12,15 @@ import com.wldos.framework.mvc.entity.BaseEntity;
 
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 角色资源授权
  */
 @Table
+@Getter
+@Setter
 public class WoAuthRole extends BaseEntity {
 
 	private Long roleId;
@@ -23,30 +28,6 @@ public class WoAuthRole extends BaseEntity {
 	private Long resourceId;
 
 	private Long appId;
-
-	public Long getRoleId() {
-		return roleId;
-	}
-
-	public void setRoleId(Long ownerId) {
-		this.roleId = ownerId;
-	}
-
-	public Long getResourceId() {
-		return resourceId;
-	}
-
-	public void setResourceId(Long resourceId) {
-		this.resourceId = resourceId;
-	}
-
-	public Long getAppId() {
-		return appId;
-	}
-
-	public void setAppId(Long appId) {
-		this.appId = appId;
-	}
 
 	public WoAuthRole() {
 	}

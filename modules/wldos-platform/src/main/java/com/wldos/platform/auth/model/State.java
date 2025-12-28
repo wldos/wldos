@@ -8,6 +8,12 @@
 
 package com.wldos.platform.auth.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 状态码。
  *
@@ -15,11 +21,14 @@ package com.wldos.platform.auth.model;
  * @date 2022/10/17
  * @version 1.0
  */
+@ApiModel(description = "状态码")
+@Getter
+@Setter
 public class State {
-	/** 唯一随机码 */
+	@ApiModelProperty(value = "唯一随机码", example = "550e8400-e29b-41d4-a716-446655440000")
 	private String uuid;
 
-	/** 字面随机数 */
+	@ApiModelProperty(value = "字面随机数", example = "abc123")
 	private String text;
 
 	public State() {
@@ -31,22 +40,6 @@ public class State {
 
 	private State(String uid, String text) {
 		this.uuid = uid;
-		this.text = text;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
 		this.text = text;
 	}
 }

@@ -8,6 +8,13 @@
 
 package com.wldos.platform.auth.vo;
 
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 激活参数。
  *
@@ -15,15 +22,12 @@ package com.wldos.platform.auth.vo;
  * @date 2022/9/14
  * @version 1.0
  */
+@ApiModel(description = "账号激活参数")
+@Getter
+@Setter
 public class ActiveParams {
 
+	@ApiModelProperty(value = "激活验证码", required = true, example = "abc123def456")
+	@NotBlank(message = "激活验证码不能为空")
 	private String verify;
-
-	public String getVerify() {
-		return verify;
-	}
-
-	public void setVerify(String verify) {
-		this.verify = verify;
-	}
 }

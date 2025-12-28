@@ -8,6 +8,9 @@
 
 package com.wldos.framework.support.storage.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 文件信息。
  *
@@ -15,6 +18,8 @@ package com.wldos.framework.support.storage.vo;
  * @date 2021/5/30
  * @version 1.0
  */
+@Getter
+@Setter
 public class FileInfo {
 	private Long id;
 
@@ -31,46 +36,6 @@ public class FileInfo {
 		this.name = name;
 		this.path = path;
 		this.url = url;
-		this.mimeType = mimeType;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getMimeType() {
-		return mimeType;
-	}
-
-	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
 	}
 }

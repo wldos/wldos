@@ -11,6 +11,12 @@ package com.wldos.cms.vo;
 import java.sql.Timestamp;
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 作品列表单元信息。
  *
@@ -18,74 +24,29 @@ import java.util.List;
  * @date 2021/6/13
  * @version 1.0
  */
+@ApiModel(description = "作品列表单元信息")
+@Getter
+@Setter
 public class BookUnit {
+	@ApiModelProperty(value = "作品ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "作品标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "副标题", example = "作品副标题")
 	private String subTitle; // 扩展属性：副标题
 
+	@ApiModelProperty(value = "封面URL", example = "https://example.com/cover.jpg")
 	private String cover; // 扩展属性：封面url
 
+	@ApiModelProperty(value = "创建时间", example = "2023-01-01 00:00:00")
 	private Timestamp createTime;
 
+	@ApiModelProperty(value = "创建人ID", example = "1")
 	private Long createBy;
 
+	@ApiModelProperty(value = "成员列表")
 	private List<PubMember> members;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public String getSubTitle() {
-		return subTitle;
-	}
-
-	public void setSubTitle(String subTitle) {
-		this.subTitle = subTitle;
-	}
-
-	public String getCover() {
-		return cover;
-	}
-
-	public void setCover(String cover) {
-		this.cover = cover;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public List<PubMember> getMembers() {
-		return members;
-	}
-
-	public void setMembers(List<PubMember> members) {
-		this.members = members;
-	}
 }

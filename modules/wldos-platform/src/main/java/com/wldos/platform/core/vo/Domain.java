@@ -8,127 +8,51 @@
 
 package com.wldos.platform.core.vo;
 
+import com.wldos.common.Constants;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@ApiModel(description = "域名信息")
+@Getter
+@Setter
 public class Domain {
 
+	@ApiModelProperty(value = "站点域名", example = "example.com")
 	private String siteDomain;
 
+	@ApiModelProperty(value = "站点名称", example = "示例站点")
 	private String siteName;
 
+	@ApiModelProperty(value = "站点URL", example = "https://example.com")
 	private String siteUrl;
 
+	@ApiModelProperty(value = "站点Logo", example = "/logo.png")
 	private String siteLogo;
 
+	@ApiModelProperty(value = "网站图标", example = "/favicon.ico")
 	private String favicon;
 
+	@ApiModelProperty(value = "站点标题", example = "示例站点 - 标题")
 	private String siteTitle;
 
+	@ApiModelProperty(value = "站点关键词", example = "示例,站点,关键词")
 	private String siteKeyword;
 
+	@ApiModelProperty(value = "站点描述", example = "这是一个示例站点")
 	private String siteDescription;
 
+	@ApiModelProperty(value = "页脚信息", example = "© 2024 示例站点")
 	private String foot;
 
+	@ApiModelProperty(value = "友情链接", example = "链接信息")
 	private String flink;
 
+	@ApiModelProperty(value = "版权信息", example = "版权所有")
 	private String copy;
 
-	// 平台版本号
+	@ApiModelProperty(value = "平台版本号", example = Constants.WLDOS_VERSION)
 	private String version;
-
-	public String getSiteDomain() {
-		return siteDomain;
-	}
-
-	public void setSiteDomain(String siteDomain) {
-		this.siteDomain = siteDomain;
-	}
-
-	public String getSiteName() {
-		return siteName;
-	}
-
-	public void setSiteName(String siteName) {
-		this.siteName = siteName;
-	}
-
-	public String getSiteTitle() {
-		return siteTitle;
-	}
-
-	public void setSiteTitle(String siteTitle) {
-		this.siteTitle = siteTitle;
-	}
-
-	public String getSiteKeyword() {
-		return siteKeyword;
-	}
-
-	public void setSiteKeyword(String siteKeyword) {
-		this.siteKeyword = siteKeyword;
-	}
-
-	public String getSiteDescription() {
-		return siteDescription;
-	}
-
-	public void setSiteDescription(String siteDescription) {
-		this.siteDescription = siteDescription;
-	}
-
-	public String getSiteUrl() {
-		return siteUrl;
-	}
-
-	public void setSiteUrl(String siteUrl) {
-		this.siteUrl = siteUrl;
-	}
-
-	public String getSiteLogo() {
-		return siteLogo;
-	}
-
-	public void setSiteLogo(String siteLogo) {
-		this.siteLogo = siteLogo;
-	}
-
-	public String getFavicon() {
-		return favicon;
-	}
-
-	public void setFavicon(String favicon) {
-		this.favicon = favicon;
-	}
-
-	public String getFoot() {
-		return foot;
-	}
-
-	public void setFoot(String foot) {
-		this.foot = foot;
-	}
-
-	public String getFlink() {
-		return flink;
-	}
-
-	public void setFlink(String flink) {
-		this.flink = flink;
-	}
-
-	public String getCopy() {
-		return copy;
-	}
-
-	public void setCopy(String copy) {
-		this.copy = copy;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
 }

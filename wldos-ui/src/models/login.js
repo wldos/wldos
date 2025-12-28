@@ -42,7 +42,7 @@ const Model = {
             status: 'error',
             type: response?.data?.type,
             currentAuthority: 'guest',
-            news: response?.data?.news?? '未知原因登录失败，请重试！'
+            news: response?.message?? response?.data?.news?? '未知原因登录失败，请重试！'
           },
         });
       }
@@ -50,7 +50,7 @@ const Model = {
 
     * loginOAuth({payload}, {call, put}) {
       const response = yield call(auth2Login, payload);
-      if (response && response.data && response.data.status === 'ok') {
+      if (response?.success) {
         const news = response.data.news || '🎉 🎉 🎉  登录成功！';
         yield put({
           type: 'changeLoginStatus',
@@ -69,7 +69,7 @@ const Model = {
             status: 'error',
             type: response?.data?.type,
             currentAuthority: 'guest',
-            news: response?.data?.news?? '未知原因登录失败，请重试！'
+            news: response?.message || response?.data?.news || '未知原因登录失败，请重试！'
           },
         });
       }

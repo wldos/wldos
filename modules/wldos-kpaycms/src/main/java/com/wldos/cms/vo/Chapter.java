@@ -11,6 +11,12 @@ package com.wldos.cms.vo;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.common.utils.ObjectUtils;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 作品的章节元素，可以派生出剧集。
  *
@@ -18,17 +24,26 @@ import com.wldos.common.utils.ObjectUtils;
  * @date 2021/6/22
  * @version 1.0
  */
+@ApiModel(description = "作品章节信息")
+@Getter
+@Setter
 public class Chapter {
+	@ApiModelProperty(value = "章节ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "章节标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "内容正文", example = "章节内容...")
 	private String pubContent;
 
+	@ApiModelProperty(value = "MIME类型", example = "text/html")
 	private String pubMimeType;
 
+	@ApiModelProperty(value = "父级ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "发布状态", example = "PUBLISH")
 	private String pubStatus;
 
 	public Chapter() {
@@ -49,54 +64,6 @@ public class Chapter {
 		this.pubContent = pubContent;
 		this.pubMimeType = pubMimeType;
 		this.parentId = parentId;
-		this.pubStatus = pubStatus;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public String getPubContent() {
-		return pubContent;
-	}
-
-	public void setPubContent(String pubContent) {
-		this.pubContent = pubContent;
-	}
-
-	public String getPubMimeType() {
-		return pubMimeType;
-	}
-
-	public void setPubMimeType(String pubMimeType) {
-		this.pubMimeType = pubMimeType;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getPubStatus() {
-		return pubStatus;
-	}
-
-	public void setPubStatus(String pubStatus) {
 		this.pubStatus = pubStatus;
 	}
 }

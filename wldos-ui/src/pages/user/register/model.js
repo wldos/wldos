@@ -10,12 +10,13 @@ const Model = {
         * submit({payload}, {call, put}) {
             const response = yield call(fakeRegister, payload);
 
-            if (typeof response !== 'undefined' && response.data !== undefined && response.data.status === 'ok') {
+            // 新的响应格式：response.data已经是业务数据
+            if (response.success) {
                 yield put({
                     type: 'registerHandle',
                     payload: {
                       ...response.data,
-                      news: response.news || '注册成功！'
+                      news: response.data.news || '注册成功！'
                     },
                 });
             } else {
@@ -23,7 +24,7 @@ const Model = {
                     type: 'registerHandle',
                     payload: {
                         status: 'error',
-                        news: response?.data?.news || '未知原因注册失败，请重试！'
+                        news: response.message || response?.data?.news || '未知原因注册失败，请重试！'
                     },
                 });
             }

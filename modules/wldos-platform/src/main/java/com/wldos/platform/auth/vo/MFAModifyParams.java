@@ -9,6 +9,14 @@
 package com.wldos.platform.auth.vo;
 
 import com.wldos.platform.auth.model.ModifyParams;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * MFA设备修改参数。
@@ -17,37 +25,21 @@ import com.wldos.platform.auth.model.ModifyParams;
  * @date 2022/5/21
  * @version 1.0
  */
+@ApiModel(description = "MFA设备修改参数")
+@Getter
+@Setter
 public class MFAModifyParams implements ModifyParams {
-	/** 登录用户id */
+	@ApiModelProperty(value = "用户ID", required = true, example = "1")
+	@NotNull(message = "用户ID不能为空")
 	private Long id;
 
+	@ApiModelProperty(value = "原MFA设备", example = "old-device-id")
 	private String oldMFA;
 
+	@ApiModelProperty(value = "新MFA设备", required = true, example = "new-device-id")
+	@NotBlank(message = "新MFA设备不能为空")
+	@Size(min = 1, max = 100, message = "MFA设备长度必须在1-100之间")
 	private String mfa;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getOldMFA() {
-		return oldMFA;
-	}
-
-	public void setOldMFA(String oldMFA) {
-		this.oldMFA = oldMFA;
-	}
-
-	public String getMfa() {
-		return mfa;
-	}
-
-	public void setMfa(String mfa) {
-		this.mfa = mfa;
-	}
 
 	@Override
 	public String getOld() {

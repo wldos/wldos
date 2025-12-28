@@ -8,14 +8,20 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
+@ApiModel(description = "角色ID和编码")
 @Getter
 @Setter
 public class RoleIdCode {
 
+	@ApiModelProperty(value = "角色ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "角色编码", example = "admin")
 	private String roleCode;
 }

@@ -10,63 +10,29 @@ package com.wldos.platform.core.vo;
 
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@ApiModel(description = "域资源信息")
+@Getter
+@Setter
 public class DomRes extends TreeNode<DomRes> {
 
+	@ApiModelProperty(value = "资源ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "资源名称", example = "用户管理")
 	private String resourceName;
 
+	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;
 
+	@ApiModelProperty(value = "备注", example = "用户管理资源")
 	private String remark;
 
+	@ApiModelProperty(value = "是否已选择", example = "true")
 	private boolean selected;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getResourceName() {
-		return resourceName;
-	}
-
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getIsValid() {
-		return isValid;
-	}
-
-	public void setIsValid(String isValid) {
-		this.isValid = isValid;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
 }

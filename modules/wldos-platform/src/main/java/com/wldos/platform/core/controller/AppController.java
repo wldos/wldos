@@ -28,6 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * 应用相关controller。
  * @todo 租户的小程序是应用管理的衍生，相当于开放平台，暂不支持。
@@ -36,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
+@Api(tags = "应用管理")
 @RestController
 @RequestMapping("admin/sys/app")
 public class AppController extends EntityController<AppService, WoApp> {
@@ -45,6 +51,15 @@ public class AppController extends EntityController<AppService, WoApp> {
 	 * @param params 查询参数
 	 * @return 应用分页数据
 	 */
+	@ApiOperation(value = "应用列表", notes = "查询可管理的应用列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "appName", value = "应用名称（模糊查询）", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "appType", value = "应用类型", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("")
 	public PageableResult<WoApp> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -60,6 +75,14 @@ public class AppController extends EntityController<AppService, WoApp> {
 	 * @param params 查询参数
 	 * @return 应用分页数据
 	 */
+	@ApiOperation(value = "域应用列表", notes = "查询域关联的应用列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "query", required = true)
+	})
 	@GetMapping("domain")
 	public PageableResult<WoApp> listDomainApp(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -74,6 +97,14 @@ public class AppController extends EntityController<AppService, WoApp> {
 	 * @param params 查询参数
 	 * @return 分页数据
 	 */
+	@ApiOperation(value = "可选应用列表", notes = "可共选择的列表，用于给域预订应用")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "appName", value = "应用名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("select")
 	public PageableResult<WoApp> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -90,6 +121,7 @@ public class AppController extends EntityController<AppService, WoApp> {
 	 *
 	 * @return 枚举列表
 	 */
+	@ApiOperation(value = "应用类型枚举", notes = "获取应用类型枚举列表")
 	@GetMapping("type")
 	public List<Map<String, Object>> fetchEnumAppType() {
 
@@ -106,6 +138,7 @@ public class AppController extends EntityController<AppService, WoApp> {
 	/**
      * 获取应用来源枚举列表（下拉列表）
      */
+	@ApiOperation(value = "应用来源枚举", notes = "获取应用来源枚举列表")
     @GetMapping("/origins")
     public List<Map<String, String>> getAppOrigins() {
 		return Arrays.stream(AppOriginEnum.values()).map(item -> {

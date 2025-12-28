@@ -12,6 +12,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wldos.platform.support.resource.vo.RouteNode;
 
+import io.swagger.annotations.ApiModel;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 路由。
  *
@@ -19,7 +24,10 @@ import com.wldos.platform.support.resource.vo.RouteNode;
  * @date 2023/4/6
  * @version 1.0
  */
+@ApiModel(description = "路由信息")
 @JsonInclude(Include.NON_NULL)
+@Getter
+@Setter
 public class Router extends RouteNode<Router> {
 
 }

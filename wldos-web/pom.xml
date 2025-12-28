@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.0.0</version>
+		<version>2.0.1</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>
@@ -36,12 +36,12 @@
 			<artifactId>wldos-kpaycms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- wldos OAuth2 -->
+		<!-- wldos OAuth2
 		<dependency>
 			<groupId>com.wldos</groupId>
 			<artifactId>wldos-oauth2</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency>-->
 		<!-- ===== wldos-plugins下的模块依赖 ===== -->
 		<!-- 插件通过动态加载方式工作，不在编译时依赖 -->
 		<!-- 插件JAR文件通过maven-antrun-plugin复制到target/plugins目录 -->

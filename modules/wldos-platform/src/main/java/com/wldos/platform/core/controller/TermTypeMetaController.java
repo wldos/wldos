@@ -8,6 +8,7 @@
 package com.wldos.platform.core.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.service.TermTypeMetaService;
@@ -15,6 +16,10 @@ import com.wldos.platform.core.vo.TermTypeMeta;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +33,7 @@ import java.util.Map;
  * @date 2025/12/07
  * @version 1.0
  */
+@Api(tags = "分类类型元数据管理")
 @Slf4j
 @RestController
 @RequestMapping("/admin/system/term-type-meta")
@@ -41,10 +47,11 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 	 *
 	 * @return 分类类型元数据列表
 	 */
+	@ApiOperation(value = "分类类型元数据列表", notes = "从 k_term_type 表查询所有不同的 class_type，结合枚举中的元数据")
 	@GetMapping("")
-	public String listTermTypeMeta() {
+	public Result listTermTypeMeta() {
 		List<TermTypeMeta> list = this.service.findAllTermTypes();
-		return this.resJson.ok(list);
+		return Result.ok(list);
 	}
 
 	/**
@@ -53,13 +60,14 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 	 * @param code 类型编码
 	 * @return 分类类型元数据
 	 */
+	@ApiOperation(value = "根据编码获取分类类型元数据", notes = "根据编码获取分类类型元数据")
 	@GetMapping("/code/{code}")
-	public String getTermTypeMetaByCode(@PathVariable String code) {
+	public Result getTermTypeMetaByCode(@ApiParam(value = "类型编码", required = true) @PathVariable String code) {
 		TermTypeMeta meta = this.service.findByCode(code);
 		if (meta == null) {
-			return this.resJson.ok("分类类型不存在");
+			return Result.error(404, "分类类型不存在");
 		}
-		return this.resJson.ok(meta);
+		return Result.ok(meta);
 	}
 
 	/**
@@ -69,8 +77,9 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 	 * @param data 分类类型元数据（VO 或 Map）
 	 * @return 操作结果
 	 */
+	@ApiOperation(value = "保存分类类型元数据", notes = "保存分类类型元数据（新增或更新）")
 	@PostMapping("")
-	public String saveTermTypeMeta(@RequestBody Object data) {
+	public Result saveTermTypeMeta(@ApiParam(value = "分类类型元数据", required = true) @RequestBody Object data) {
 		TermTypeMeta meta;
 		if (data instanceof TermTypeMeta) {
 			meta = (TermTypeMeta) data;
@@ -80,17 +89,17 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 				meta = objectMapper.convertValue(data, TermTypeMeta.class);
 			} catch (Exception e) {
 				this.getLog().error("转换分类类型元数据失败: {}", e.getMessage(), e);
-				return this.resJson.ok("数据格式错误: " + e.getMessage());
+				return Result.error(400, "数据格式错误: " + e.getMessage());
 			}
 		} else {
-			return this.resJson.ok("不支持的数据类型");
+			return Result.error(400, "不支持的数据类型");
 		}
 
 		String result = this.service.saveTermTypeMeta(meta);
 		if ("ok".equals(result)) {
-			return this.resJson.ok("ok");
+			return Result.ok("ok");
 		} else {
-			return this.resJson.ok(result);
+			return Result.error(500, result);
 		}
 	}
 
@@ -100,13 +109,14 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 	 * @param code 类型编码
 	 * @return 操作结果
 	 */
+	@ApiOperation(value = "删除分类类型", notes = "删除分类类型（仅限自定义类型）")
 	@DeleteMapping("/code/{code}")
-	public String deleteTermTypeMeta(@PathVariable String code) {
+	public Result deleteTermTypeMeta(@ApiParam(value = "类型编码", required = true) @PathVariable String code) {
 		String result = this.service.deleteTermTypeMeta(code);
 		if ("ok".equals(result)) {
-			return this.resJson.ok("ok");
+			return Result.ok("ok");
 		} else {
-			return this.resJson.ok(result);
+			return Result.error(500, result);
 		}
 	}
 }

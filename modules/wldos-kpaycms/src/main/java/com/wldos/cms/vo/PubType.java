@@ -8,6 +8,12 @@
 
 package com.wldos.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 发布类型参数。
  *
@@ -15,23 +21,13 @@ package com.wldos.cms.vo;
  * @date 2023/8/13
  * @version 1.0
  */
+@ApiModel(description = "发布类型参数")
+@Getter
+@Setter
 public class PubType {
+	@ApiModelProperty(value = "ID", example = "1")
 	private Long id;
+	
+	@ApiModelProperty(value = "发布类型", example = "POST")
 	private String pubType;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubType() {
-		return pubType;
-	}
-
-	public void setPubType(String pubType) {
-		this.pubType = pubType;
-	}
 }

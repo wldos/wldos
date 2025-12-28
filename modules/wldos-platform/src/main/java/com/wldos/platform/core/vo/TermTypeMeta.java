@@ -7,6 +7,12 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 分类类型元数据 VO
  *
@@ -14,96 +20,38 @@ package com.wldos.platform.core.vo;
  * @date 2025/12/07
  * @version 1.0
  */
+@ApiModel(description = "分类类型元数据")
+@Getter
+@Setter
 public class TermTypeMeta {
+	@ApiModelProperty(value = "分类类型编码", example = "category")
 	private String code;
+	
+	@ApiModelProperty(value = "分类类型名称", example = "分类")
 	private String name;
+	
+	@ApiModelProperty(value = "描述", example = "内容分类")
 	private String description;
-	private String structureType; // tree: 树形, flat: 扁平
-	private String supportSort; // 1: 支持, 0: 不支持
-	private String supportHierarchy; // 1: 支持, 0: 不支持
+	
+	@ApiModelProperty(value = "结构类型：tree=树形, flat=扁平", example = "tree")
+	private String structureType;
+	
+	@ApiModelProperty(value = "是否支持排序：1=支持, 0=不支持", example = "1")
+	private String supportSort;
+	
+	@ApiModelProperty(value = "是否支持层级：1=支持, 0=不支持", example = "1")
+	private String supportHierarchy;
+	
+	@ApiModelProperty(value = "图标", example = "folder")
 	private String icon;
+	
+	@ApiModelProperty(value = "排序顺序", example = "1")
 	private Integer sortOrder;
-	private Boolean isSystem; // 是否系统类型（不可删除）
-	private Boolean existsInDb; // 是否在数据库中存在
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getStructureType() {
-		return structureType;
-	}
-
-	public void setStructureType(String structureType) {
-		this.structureType = structureType;
-	}
-
-	public String getSupportSort() {
-		return supportSort;
-	}
-
-	public void setSupportSort(String supportSort) {
-		this.supportSort = supportSort;
-	}
-
-	public String getSupportHierarchy() {
-		return supportHierarchy;
-	}
-
-	public void setSupportHierarchy(String supportHierarchy) {
-		this.supportHierarchy = supportHierarchy;
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
-
-	public Integer getSortOrder() {
-		return sortOrder;
-	}
-
-	public void setSortOrder(Integer sortOrder) {
-		this.sortOrder = sortOrder;
-	}
-
-	public Boolean getIsSystem() {
-		return isSystem;
-	}
-
-	public void setIsSystem(Boolean isSystem) {
-		this.isSystem = isSystem;
-	}
-
-	public Boolean getExistsInDb() {
-		return existsInDb;
-	}
-
-	public void setExistsInDb(Boolean existsInDb) {
-		this.existsInDb = existsInDb;
-	}
+	
+	@ApiModelProperty(value = "是否系统类型（不可删除）", example = "true")
+	private Boolean isSystem;
+	
+	@ApiModelProperty(value = "是否在数据库中存在", example = "true")
+	private Boolean existsInDb;
 }
 

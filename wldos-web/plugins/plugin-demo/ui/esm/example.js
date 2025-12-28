@@ -4793,6 +4793,29 @@ request$1({});
  */
 var PLUGIN_CODE = 'plugin-demo';
 
+/**
+ * request 网络请求工具
+ * 
+ * 运行时优先使用主应用的 request 实例（如果存在），确保插件和主应用使用同一个 application
+ * 开发时使用插件自己的 request 工具，保持完全独立
+ */
+
+var codeMessage = {
+  200: '服务器成功返回请求的数据。',
+  201: '新建或修改数据成功。',
+  202: '一个请求已经进入后台排队（异步任务）。',
+  204: '删除数据成功。',
+  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
+  401: '用户没有权限（令牌、用户名、密码错误）。',
+  403: '权限不足，访问被禁止。',
+  404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
+  406: '请求的格式不可得。',
+  422: '当创建一个对象时，发生一个验证错误。',
+  500: '服务器发生错误，请检查服务器。',
+  502: '网关错误。',
+  503: '服务不可用，服务器暂时过载或维护。',
+  504: '网关超时。'
+};
 var errorHandler = function errorHandler(error) {
   var response = error.response;
   if (response && response.status) {
@@ -4816,6 +4839,70 @@ var errorHandler = function errorHandler(error) {
 };
 var req = extend({
   errorHandler: errorHandler
+});
+
+// 响应拦截器（处理新的统一响应格式：code, message, data, success）
+req.interceptors.response.use(function (response) {
+  // 处理业务响应（新格式：code, message, data, success）
+  // 注意：如果返回的是String（JSON字符串），需要先解析
+  var res = response.data;
+  if (typeof res === 'string') {
+    try {
+      res = JSON.parse(res);
+    } catch (e) {
+      // 如果不是JSON字符串，直接返回原始数据
+      return response;
+    }
+  }
+
+  // 检查是否是新的响应格式
+  if (res && (res.code !== undefined || res.success !== undefined)) {
+    var _res$code, _res$success;
+    var code = (_res$code = res.code) !== null && _res$code !== void 0 ? _res$code : 200;
+    var message = res.message || '操作成功';
+    var success = (_res$success = res.success) !== null && _res$success !== void 0 ? _res$success : code === 200;
+    var data = res.data;
+
+    // 业务成功
+    if (success && code === 200) {
+      // 直接返回data，便于前端使用
+      response.data = data;
+      return response;
+    }
+
+    // 业务失败
+    var errorMessage = codeMessage[code] || message;
+
+    // 401/403 特殊处理
+    if (code === 401) {
+      notification.warn({
+        message: '未授权',
+        description: '请重新登录'
+      });
+    } else if (code === 403) {
+      notification.warn({
+        message: '权限不足',
+        description: errorMessage
+      });
+    } else {
+      notification.error({
+        message: '操作失败',
+        description: errorMessage
+      });
+    }
+
+    // 抛出错误
+    var error = new Error(errorMessage);
+    error.response = response;
+    error.code = code;
+    return Promise.reject(error);
+  }
+
+  // 如果不是新格式，直接返回（兼容处理）
+  return response;
+}, function (error) {
+  // HTTP错误处理（网络错误、超时等）由errorHandler处理
+  return Promise.reject(error);
 });
 var pluginRequestLocal = function pluginRequestLocal(url, params) {
   var _ref = params || {},

@@ -22,6 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * 前端内容controller。
  *
@@ -29,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/12/03
  * @version 1.0
  */
+@Api(tags = "前端内容管理")
 @RequestMapping("/cms/pub")
 @RestController
 public class FrontPubController extends EntityController<PubService, KPubs> {
@@ -37,6 +44,14 @@ public class FrontPubController extends EntityController<PubService, KPubs> {
 	 *
 	 * @return 内容列表
 	 */
+	@ApiOperation(value = "全文检索", notes = "搜索内容")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "wd", value = "搜索关键词", dataTypeClass = String.class, paramType = "query", required = true, example = "关键词"),
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@RequestMapping("search")
 	public PageableResult<SPub> searchPosts(@RequestParam Map<String, Object> params) {
 		// 检索关键字

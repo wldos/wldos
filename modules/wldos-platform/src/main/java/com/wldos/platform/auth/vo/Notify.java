@@ -8,6 +8,8 @@
 
 package com.wldos.platform.auth.vo;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 用户登录成功后返回的消息计数。
  *
@@ -15,6 +17,7 @@ package com.wldos.platform.auth.vo;
  * @date 2021/4/30
  * @version 1.0
  */
+@ApiModel(description = "用户登录成功后返回的消息计数")
 public class Notify {
 
 }

@@ -13,7 +13,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Table
+@Getter
+@Setter
 public class WoAccountAssociation {
 	@Id
 	private Long id;
@@ -43,98 +48,4 @@ public class WoAccountAssociation {
 	 */
 	@Version
 	private Integer versions;
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public String getBindAccount() {
-		return bindAccount;
-	}
-
-	public void setBindAccount(String bindAccount) {
-		this.bindAccount = bindAccount;
-	}
-
-	public String getThirdDomain() {
-		return thirdDomain;
-	}
-
-	public void setThirdDomain(String thirdDomain) {
-		this.thirdDomain = thirdDomain;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public java.sql.Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(java.sql.Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(Long updateBy) {
-		this.updateBy = updateBy;
-	}
-
-
-	public java.sql.Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(java.sql.Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
-
-	public Integer getVersions() {
-		return versions;
-	}
-
-	public void setVersions(Integer versions) {
-		this.versions = versions;
-	}
-
 }

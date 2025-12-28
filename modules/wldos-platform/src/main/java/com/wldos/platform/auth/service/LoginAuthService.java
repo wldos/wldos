@@ -164,7 +164,7 @@ public class LoginAuthService extends NonEntityService {
 		user.setStatus("ok");
 
 		// 使用统一的Token生成方法
-		int tokenTimeoutMinutes = loginAuthParams.getAutoLogin() ? 60 * 24 * 15 : this.jwtTool.getTokenTimeout();
+		int tokenTimeoutMinutes = loginAuthParams.isAutoLogin() ? 60 * 24 * 15 : this.jwtTool.getTokenTimeout();
 		Token token = this.jwtTool.genToken(userInfo.getId(), userInfo.getTenantId(), domainId, tokenTimeoutMinutes);
 		//token.setRefreshToken(refreshToken); // 不再使用刷新token，使用访问token加超时机制就可以实现刷新机制
 		user.setToken(token);

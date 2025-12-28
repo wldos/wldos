@@ -10,6 +10,8 @@ package com.wldos.common.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.Getter;
+
 /**
  * 树形下拉列表节点。用于生成TreeSelect控件数据。
  *
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @version 1.0
  */
 @JsonIgnoreProperties({ "id", "parentId", "displayOrder" })
+@Getter
 public class TreeSelectOption extends TreeNode<TreeSelectOption> {
 	private String title;
 
@@ -37,18 +40,6 @@ public class TreeSelectOption extends TreeNode<TreeSelectOption> {
 
 	public static TreeSelectOption of(Long id, Long parentId, String title, String value, String key, Long displayOrder) {
 		return new TreeSelectOption(id, parentId, title, value, key, displayOrder);
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public String getKey() {
-		return key;
 	}
 
 	public String toString() {

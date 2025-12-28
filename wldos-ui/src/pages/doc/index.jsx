@@ -44,7 +44,8 @@ const Doc = (props) => {
         sorter: {"createTime":"ascend"}
       },
       callback: async (res) => {
-        if (res?.message === 'ok' && res?.data?.rows?.length > 0) {
+        // 使用 success 判断 API 是否成功
+        if (res?.success && res?.data?.rows?.length > 0) {
           // 为每个文档加载章节信息，确保菜单能正确显示子级
           const docPromises = res.data.rows.map(doc => 
             dispatch({
@@ -89,7 +90,8 @@ const Doc = (props) => {
   };
 
   const callback4Chapter = (dispatch, resp) => {
-    if (resp?.message === 'ok') {
+    // 使用 success 判断 API 是否成功
+    if (resp?.success) {
       const {id: bookId, chapter} = resp.data;
       if (chapter?.length > 0) {
         const {id: chapterId} = chapter[0];

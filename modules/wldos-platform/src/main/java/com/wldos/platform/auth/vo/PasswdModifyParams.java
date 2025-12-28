@@ -8,6 +8,15 @@
 
 package com.wldos.platform.auth.vo;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 密码修改参数。
  *
@@ -15,46 +24,24 @@ package com.wldos.platform.auth.vo;
  * @date 2021/4/29
  * @version 1.0
  */
+@ApiModel(description = "密码修改参数")
+@Getter
+@Setter
 public class PasswdModifyParams {
-	/** 登录用户id */
+	@ApiModelProperty(value = "用户ID", required = true, example = "1")
+	@NotNull(message = "用户ID不能为空")
 	private Long id;
 
+	@ApiModelProperty(value = "原密码", required = true, example = "oldPassword123")
+	@NotBlank(message = "原密码不能为空")
 	private String oldPasswd;
 
+	@ApiModelProperty(value = "新密码", required = true, example = "newPassword123")
+	@NotBlank(message = "新密码不能为空")
+	@Size(min = 6, max = 100, message = "密码长度必须在6-100之间")
 	private String password;
 
-	/** 确认密码 */
+	@ApiModelProperty(value = "确认密码", required = true, example = "newPassword123")
+	@NotBlank(message = "确认密码不能为空")
 	private String confirm;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getOldPasswd() {
-		return oldPasswd;
-	}
-
-	public void setOldPasswd(String oldPasswd) {
-		this.oldPasswd = oldPasswd;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getConfirm() {
-		return confirm;
-	}
-
-	public void setConfirm(String confirm) {
-		this.confirm = confirm;
-	}
 }

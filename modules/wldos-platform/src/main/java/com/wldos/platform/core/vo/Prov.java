@@ -8,6 +8,12 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 省分。
  *
@@ -15,24 +21,13 @@ package com.wldos.platform.core.vo;
  * @date 2021/6/7
  * @version 1.0
  */
+@ApiModel(description = "省份信息")
+@Getter
+@Setter
 public class Prov {
+	@ApiModelProperty(value = "省份ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "省份名称", example = "北京市")
 	private String name;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 }

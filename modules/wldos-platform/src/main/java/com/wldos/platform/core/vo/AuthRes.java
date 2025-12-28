@@ -10,6 +10,12 @@ package com.wldos.platform.core.vo;
 
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 授权资源树节点。
  *
@@ -17,11 +23,17 @@ import com.wldos.common.vo.TreeNode;
  * @date 2021/5/21
  * @version 1.0
  */
+@ApiModel(description = "授权资源树节点")
+@Getter
+@Setter
 public class AuthRes extends TreeNode<AuthRes> {
+	@ApiModelProperty(value = "资源标题", example = "用户管理")
 	private String title;
 
+	@ApiModelProperty(value = "资源键值", example = "1")
 	private String key;
 
+	@ApiModelProperty(value = "是否禁用", example = "false")
 	private boolean disabled;
 
 	public AuthRes() {
@@ -38,30 +50,7 @@ public class AuthRes extends TreeNode<AuthRes> {
 		return new AuthRes(title, key, id, parentId);
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
-
+	@Override
 	public String toString() {
 		return "{title: " + title + ", key: " + key + ", children: " + this.children + ", disabled: " + disabled + "}";
 	}

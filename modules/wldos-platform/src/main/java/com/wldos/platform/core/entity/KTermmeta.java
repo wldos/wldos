@@ -12,7 +12,12 @@ package com.wldos.platform.core.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Table
+@Getter
+@Setter
 public class KTermmeta {
 	@Id
 	private Long id;
@@ -22,36 +27,4 @@ public class KTermmeta {
 	private String metaKey;
 
 	private String metaValue;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getTermId() {
-		return termId;
-	}
-
-	public void setTermId(Long termId) {
-		this.termId = termId;
-	}
-
-	public String getMetaKey() {
-		return metaKey;
-	}
-
-	public void setMetaKey(String metaKey) {
-		this.metaKey = metaKey;
-	}
-
-	public String getMetaValue() {
-		return metaValue;
-	}
-
-	public void setMetaValue(String metaValue) {
-		this.metaValue = metaValue;
-	}
 }

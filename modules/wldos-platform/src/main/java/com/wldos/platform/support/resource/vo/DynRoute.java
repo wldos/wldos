@@ -8,6 +8,12 @@
 
 package com.wldos.platform.support.resource.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 动态路由绑定。
  *
@@ -15,13 +21,17 @@ package com.wldos.platform.support.resource.vo;
  * @date 2023/4/8
  * @version 1.0
  */
+@ApiModel(description = "动态路由绑定")
+@Getter
+@Setter
 public class DynRoute {
-	/** 路由path */
+	@ApiModelProperty(value = "路由路径", example = "/product/tech")
 	private String path;
 
+	@ApiModelProperty(value = "模块名称", example = "ProductList")
 	private String module;
 
-	/** 绑定的分类别名 */
+	@ApiModelProperty(value = "动态路由配置")
 	private DynSet conf;
 
 	public DynRoute() {
@@ -30,29 +40,5 @@ public class DynRoute {
 	public DynRoute(String module, DynSet dynSet) {
 		this.module = module;
 		this.conf = dynSet;
-	}
-
-	public String getModule() {
-		return module;
-	}
-
-	public void setModule(String module) {
-		this.module = module;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public DynSet getConf() {
-		return conf;
-	}
-
-	public void setConf(DynSet conf) {
-		this.conf = conf;
 	}
 }

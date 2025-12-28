@@ -77,7 +77,7 @@ class Book extends Component {
   }
 
   callback4Chapter = (dispatch, resp) => {
-    if (resp.message === 'ok') {
+    if (resp.success) {
       const {id: bookId, isSingle, chapter} = resp.data;
       if (chapter?.length > 0) {
         const {id: chapterId} = chapter[0];

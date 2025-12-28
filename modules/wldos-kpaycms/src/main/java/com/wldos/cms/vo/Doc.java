@@ -10,6 +10,12 @@ package com.wldos.cms.vo;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 文档，一个文档可以有章节。
  *
@@ -17,11 +23,17 @@ import java.util.List;
  * @date 2023/5/14
  * @version 1.0
  */
+@ApiModel(description = "文档信息")
+@Getter
+@Setter
 public class Doc {
+	@ApiModelProperty(value = "文档ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "文档标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "章节列表")
 	private List<DocItem> chapter;
 
 	public Doc() {
@@ -34,30 +46,6 @@ public class Doc {
 	private Doc(Long id, String pubTitle, List<DocItem> chapter) {
 		this.id = id;
 		this.pubTitle = pubTitle;
-		this.chapter = chapter;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public List<DocItem> getChapter() {
-		return chapter;
-	}
-
-	public void setChapter(List<DocItem> chapter) {
 		this.chapter = chapter;
 	}
 }

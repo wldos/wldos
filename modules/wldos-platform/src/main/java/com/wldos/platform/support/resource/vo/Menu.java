@@ -13,6 +13,12 @@ import java.io.Serializable;
 
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 符合父子结构的菜单。遵循ProLayout菜单数据模板。
  *
@@ -20,25 +26,29 @@ import com.wldos.common.vo.TreeNode;
  * @date 2021/4/30
  * @version 1.0
  */
+@ApiModel(description = "菜单信息，符合父子结构，遵循ProLayout菜单数据模板")
+@Getter
+@Setter
 public class Menu extends TreeNode<Menu> implements Serializable {
-	/** 菜单类型：@see com.wldos.platform.support.resource.enums.ResourceEnum */
+	@ApiModelProperty(value = "菜单类型，参考ResourceEnum枚举", example = "menu")
 	private String type;
 
-	/** 菜单URI */
+	@ApiModelProperty(value = "菜单URI路径", example = "/admin/sys/user")
 	private String path;
 
-	/** 组件路径 */
+	@ApiModelProperty(value = "组件路径", example = "/admin/sys/user/index")
 	private String component;
 
-	/** 菜单icon */
+	@ApiModelProperty(value = "菜单图标", example = "user")
 	private String icon;
 
-	/** 菜单显示名称 */
+	@ApiModelProperty(value = "菜单显示名称", example = "用户管理")
 	private String name;
 
-	/** 菜单打开方式 */
+	@ApiModelProperty(value = "菜单打开方式", example = "_self")
 	private String target;
 
+	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
 	/* 在菜单中隐藏子节点
@@ -78,62 +88,6 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 
 	public static Menu of(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
 		return new Menu(type, path, comPath, icon, name, target, id, parentId, displayOrder);
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getComponent() {
-		return component;
-	}
-
-	public void setComponent(String component) {
-		this.component = component;
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getTarget() {
-		return target;
-	}
-
-	public void setTarget(String target) {
-		this.target = target;
-	}
-
-	public Long getDisplayOrder() {
-		return displayOrder;
-	}
-
-	public void setDisplayOrder(Long displayOrder) {
-		this.displayOrder = displayOrder;
 	}
 
 	public String toString() {

@@ -8,6 +8,12 @@
 
 package com.wldos.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 地理信息。
  *
@@ -15,9 +21,14 @@ package com.wldos.cms.vo;
  * @date 2021/12/12
  * @version 1.0
  */
+@ApiModel(description = "地理信息")
+@Getter
+@Setter
 public class Geographic {
+	@ApiModelProperty(value = "省份信息")
 	private Province province;
 
+	@ApiModelProperty(value = "城市信息")
 	private City city;
 
 	public Geographic() {
@@ -39,22 +50,6 @@ public class Geographic {
 	private Geographic(com.wldos.platform.support.region.vo.City region) {
 		this.province = Province.of(region.getParentId().toString(), region.getProvName());
 		this.city = City.of(region.getId().toString(), region.getName());
-	}
-
-	public Province getProvince() {
-		return province;
-	}
-
-	public void setProvince(Province province) {
-		this.province = province;
-	}
-
-	public City getCity() {
-		return city;
-	}
-
-	public void setCity(City city) {
-		this.city = city;
 	}
 }
 

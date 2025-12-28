@@ -12,6 +12,9 @@ import java.util.List;
 
 import com.wldos.framework.support.storage.dto.Thumbnail;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 发布内容图片元数据结构。用于创建发布内容图片的元数据，保存用户设置的图片格式，适配多终端的缩略图元信息。
  * 是创建带格式的发布内容对象的图片格式存储器和格式化筛。
@@ -20,6 +23,8 @@ import com.wldos.framework.support.storage.dto.Thumbnail;
  * @date 2021/7/5
  * @version 1.0
  */
+@Getter
+@Setter
 public class PubPicture {
 	private int width;
 
@@ -29,36 +34,4 @@ public class PubPicture {
 
 	// 缩略图密度集
 	private List<Thumbnail> srcset;
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public List<Thumbnail> getSrcset() {
-		return srcset;
-	}
-
-	public void setSrcset(List<Thumbnail> srcset) {
-		this.srcset = srcset;
-	}
 }

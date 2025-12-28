@@ -28,6 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * 文档库controller。
  *
@@ -35,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2023/5/10
  * @version 1.0
  */
+@Api(tags = "文档库管理")
 @RequestMapping("/doc")
 @RestController
 public class DocController extends NonEntityController<DocService> {
@@ -44,6 +51,13 @@ public class DocController extends NonEntityController<DocService> {
 		this.kcmsService = kcmsService;
 	}
 
+	@ApiOperation(value = "文档列表", notes = "查询文档列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("")
 	public PageableResult<DocItem> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -56,13 +70,16 @@ public class DocController extends NonEntityController<DocService> {
 		return this.service.queryDocList(pageQuery);
 	}
 
+	@ApiOperation(value = "文档详情", notes = "根据ID查询文档详情")
 	@GetMapping("book/{bookId:\\d+}.html")
-	public Doc curDocById(@PathVariable Long bookId) {
+	public Doc curDocById(@ApiParam(value = "文档ID", required = true) @PathVariable Long bookId) {
 		return this.service.queryDoc(bookId, this.getDomainId());
 	}
 
+	@ApiOperation(value = "章节详情", notes = "根据ID查询章节详情")
 	@GetMapping("book/{bookId:\\d+}/chapter/{chapterId:\\d+}.html")
-	public Article curChapterByChapId(@PathVariable Long bookId, @PathVariable Long chapterId) {
+	public Article curChapterByChapId(@ApiParam(value = "文档ID", required = true) @PathVariable Long bookId, 
+			@ApiParam(value = "章节ID", required = true) @PathVariable Long chapterId) {
 		return this.kcmsService.queryArticle(chapterId, false, this.getDomainId());
 	}
 }

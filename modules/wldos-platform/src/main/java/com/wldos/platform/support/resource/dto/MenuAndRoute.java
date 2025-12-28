@@ -14,6 +14,12 @@ import java.util.Map;
 import com.wldos.platform.support.resource.vo.Menu;
 import com.wldos.platform.support.resource.vo.Route;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 菜单和路由。
  *
@@ -21,9 +27,14 @@ import com.wldos.platform.support.resource.vo.Route;
  * @date 2021/9/8
  * @version 1.0
  */
+@ApiModel(description = "菜单和路由")
+@Getter
+@Setter
 public class MenuAndRoute {
+	@ApiModelProperty(value = "菜单列表")
 	private List<Menu> menu;
 
+	@ApiModelProperty(value = "路由信息，键为路由路径，值为路由配置")
 	private Map<String, Route> route;
 
 	public MenuAndRoute() {
@@ -31,22 +42,6 @@ public class MenuAndRoute {
 
 	public MenuAndRoute(List<Menu> menu, Map<String, Route> route) {
 		this.menu = menu;
-		this.route = route;
-	}
-
-	public List<Menu> getMenu() {
-		return menu;
-	}
-
-	public void setMenu(List<Menu> menu) {
-		this.menu = menu;
-	}
-
-	public Map<String, Route> getRoute() {
-		return route;
-	}
-
-	public void setRoute(Map<String, Route> route) {
 		this.route = route;
 	}
 }

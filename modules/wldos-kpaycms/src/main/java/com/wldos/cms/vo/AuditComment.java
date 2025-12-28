@@ -13,126 +13,51 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@ApiModel(description = "管理列表评论信息")
 @JsonIgnoreProperties({ "authorUrl" })
+@Getter
+@Setter
 public class AuditComment extends TreeNode<AuditComment> {
 
+	@ApiModelProperty(value = "作者名称", example = "用户名")
 	private String author;
 
+	@ApiModelProperty(value = "头像URL", example = "https://example.com/avatar.jpg")
 	private String avatar;
 
+	@ApiModelProperty(value = "评论内容", example = "评论内容...")
 	private String content;
 
+	@ApiModelProperty(value = "创建时间", example = "2023-01-01 00:00:00")
 	private Timestamp createTime;
 
+	@ApiModelProperty(value = "作者邮箱", example = "user@example.com")
 	private String authorEmail;
 
+	@ApiModelProperty(value = "作者URL", hidden = true)
 	private String authorUrl;
 
+	@ApiModelProperty(value = "更新IP", example = "127.0.0.1")
 	private String updateIp;
 
+	@ApiModelProperty(value = "内容ID", example = "1")
 	private Long pubId;
 
+	@ApiModelProperty(value = "创建人ID", example = "1")
 	private Long createBy;
 
+	@ApiModelProperty(value = "内容标题", example = "内容标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "评论数", example = "10")
 	private Integer commentCount;
 
+	@ApiModelProperty(value = "审核状态", example = "APPROVED")
 	private String approved;
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getAuthorEmail() {
-		return authorEmail;
-	}
-
-	public void setAuthorEmail(String authorEmail) {
-		this.authorEmail = authorEmail;
-	}
-
-	public String getAuthorUrl() {
-		return authorUrl;
-	}
-
-	public void setAuthorUrl(String authorUrl) {
-		this.authorUrl = authorUrl;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-	public Long getPubId() {
-		return pubId;
-	}
-
-	public void setPubId(Long pubId) {
-		this.pubId = pubId;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public Integer getCommentCount() {
-		return commentCount;
-	}
-
-	public void setCommentCount(Integer commentCount) {
-		this.commentCount = commentCount;
-	}
-
-	public String getApproved() {
-		return approved;
-	}
-
-	public void setApproved(String approved) {
-		this.approved = approved;
-	}
 }

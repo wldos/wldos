@@ -9,6 +9,14 @@
 package com.wldos.platform.auth.vo;
 
 import com.wldos.platform.auth.model.ModifyParams;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 密保手机修改参数。
@@ -17,37 +25,21 @@ import com.wldos.platform.auth.model.ModifyParams;
  * @date 2021/4/29
  * @version 1.0
  */
+@ApiModel(description = "密保手机修改参数")
+@Getter
+@Setter
 public class MobileModifyParams implements ModifyParams {
-	/** 登录用户id */
+	@ApiModelProperty(value = "用户ID", required = true, example = "1")
+	@NotNull(message = "用户ID不能为空")
 	private Long id;
 
+	@ApiModelProperty(value = "原手机号", example = "13800138000")
 	private String oldMobile;
 
+	@ApiModelProperty(value = "新手机号", required = true, example = "13800138001")
+	@NotBlank(message = "新手机号不能为空")
+	@Pattern(regexp = "^1\\d{10}$", message = "手机号格式不正确")
 	private String mobile;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getOldMobile() {
-		return oldMobile;
-	}
-
-	public void setOldMobile(String oldMobile) {
-		this.oldMobile = oldMobile;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
 
 	@Override
 	public String getOld() {

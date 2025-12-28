@@ -8,44 +8,25 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@ApiModel(description = "域应用信息")
+@Getter
+@Setter
 public class DomainApp {
+	@ApiModelProperty(value = "应用ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "应用名称", example = "内容管理")
 	private String appName;
 
+	@ApiModelProperty(value = "应用描述", example = "内容管理系统")
 	private String appDesc;
 
+	@ApiModelProperty(value = "书籍状态", example = "1")
 	private int bookStatus;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
-
-	public String getAppDesc() {
-		return appDesc;
-	}
-
-	public void setAppDesc(String appDesc) {
-		this.appDesc = appDesc;
-	}
-
-	public int getBookStatus() {
-		return bookStatus;
-	}
-
-	public void setBookStatus(int bookStatus) {
-		this.bookStatus = bookStatus;
-	}
 }

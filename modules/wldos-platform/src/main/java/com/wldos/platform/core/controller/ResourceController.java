@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
@@ -34,6 +35,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.validation.Valid;
+
 /**
  * 资源相关controller。
  *
@@ -41,6 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
+@Api(tags = "资源管理")
 @RestController
 @RequestMapping("admin/sys/res")
 public class ResourceController extends EntityController<ResourceService, WoResource> {
@@ -50,6 +60,14 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	 * @param params 参数
 	 * @return 分页
 	 */
+	@ApiOperation(value = "资源列表", notes = "支持查询、排序的分页查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "resourceName", value = "资源名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("")
 	public PageableResult<Resource> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -62,6 +80,7 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	 *
 	 * @return 系统资源树
 	 */
+	@ApiOperation(value = "资源树", notes = "获取所有资源树")
 	@GetMapping("tree")
 	public List<AuthRes> allResTree() {
 		List<WoResource> resources = this.service.findAll();
@@ -78,6 +97,7 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	 *
 	 * @return 菜单树状列表
 	 */
+	@ApiOperation(value = "菜单树状列表", notes = "获取菜单树状列表")
 	@GetMapping("treeSelect")
 	public List<TreeSelectOption> resMenuLayerTree() {
 		return this.service.queryLayerMenuTree();
@@ -89,6 +109,14 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	 * @param params 查询参数
 	 * @return 分页数据
 	 */
+	@ApiOperation(value = "可选资源列表", notes = "可供选择的资源，用于给域预订资源")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "query", required = true)
+	})
 	@GetMapping("select")
 	public PageableResult<DomRes> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -160,10 +188,11 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	 * @param resSimple 资源模板
 	 * @return 是否
 	 */
+	@ApiOperation(value = "按模板新建菜单", notes = "按模板新建菜单")
 	@PostMapping("addSimple")
-	public String addSimpleMenu(@RequestBody ResSimple resSimple) {
+	public Result addSimpleMenu(@ApiParam(value = "资源模板", required = true) @Valid @RequestBody ResSimple resSimple) {
 		this.service.addSimpleMenu(resSimple, this.getUserId(), this.getUserIp());
 		this.refreshAuth();
-		return resJson.ok(Boolean.TRUE);
+		return Result.ok(Boolean.TRUE);
 	}
 }

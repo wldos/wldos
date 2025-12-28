@@ -9,13 +9,16 @@
 package com.wldos.platform.core.entity;
 
 
-import java.sql.Timestamp;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Table
+@Getter
+@Setter
 public class WoApp {
 	@Id
 	private Long id;
@@ -53,138 +56,4 @@ public class WoApp {
 
 	@Version
 	private Integer versions;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
-
-	public String getAppType() {
-		return appType;
-	}
-
-	public void setAppType(String appType) {
-		this.appType = appType;
-	}
-
-	public String getAppCode() {
-		return appCode;
-	}
-
-	public void setAppCode(String appCode) {
-		this.appCode = appCode;
-	}
-
-	public String getAppSecret() {
-		return appSecret;
-	}
-
-	public void setAppSecret(String appSecret) {
-		this.appSecret = appSecret;
-	}
-
-	public String getAppDesc() {
-		return appDesc;
-	}
-
-	public void setAppDesc(String appDesc) {
-		this.appDesc = appDesc;
-	}
-	public String getAppOrigin() {
-		return appOrigin;
-	}
-	public void setAppOrigin(String appOrigin) {
-		this.appOrigin = appOrigin;
-	}
-
-	public Long getComId() {
-		return comId;
-	}
-
-	public void setComId(Long comId) {
-		this.comId = comId;
-	}
-
-	public String getIsValid() {
-		return isValid;
-	}
-
-	public void setIsValid(String isValid) {
-		this.isValid = isValid;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(Long updateBy) {
-		this.updateBy = updateBy;
-	}
-
-	public Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
-	public Integer getVersions() {
-		return versions;
-	}
-
-	public void setVersions(Integer versions) {
-		this.versions = versions;
-	}
 }

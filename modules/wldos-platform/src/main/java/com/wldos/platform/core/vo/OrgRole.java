@@ -8,6 +8,12 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 组织授予的角色。
  *
@@ -15,18 +21,14 @@ package com.wldos.platform.core.vo;
  * @date 2021/5/21
  * @version 1.0
  */
+@ApiModel(description = "组织授予的角色")
+@Getter
+@Setter
 public class OrgRole {
-	// 角色id
+	@ApiModelProperty(value = "角色ID", example = "1")
 	private Long id;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+	@Override
 	public String toString() {
 		return "{id: " + id.toString() + "}";
 	}

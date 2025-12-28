@@ -11,6 +11,9 @@ package com.wldos.platform.support.system.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 系统配置选项。
  *
@@ -19,6 +22,8 @@ import org.springframework.data.relational.core.mapping.Table;
  * @version 1.0
  */
 @Table
+@Getter
+@Setter
 public class WoOptions {
 	@Id
 	private Long id;
@@ -56,62 +61,6 @@ public class WoOptions {
 		this.optionKey = optionKey;
 		this.optionValue = optionValue;
 		this.optionType = optionType;
-		this.appCode = appCode;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getOptionName() {
-		return optionName;
-	}
-
-	public void setOptionName(String optionName) {
-		this.optionName = optionName;
-	}
-
-	public String getOptionKey() {
-		return optionKey;
-	}
-
-	public void setOptionKey(String optionKey) {
-		this.optionKey = optionKey;
-	}
-
-	public String getOptionValue() {
-		return optionValue;
-	}
-
-	public void setOptionValue(String optionValue) {
-		this.optionValue = optionValue;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getOptionType() {
-		return optionType;
-	}
-
-	public void setOptionType(String optionType) {
-		this.optionType = optionType;
-	}
-
-	public String getAppCode() {
-		return appCode;
-	}
-
-	public void setAppCode(String appCode) {
 		this.appCode = appCode;
 	}
 }

@@ -8,6 +8,9 @@
 
 package com.wldos.platform.auth.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 群组/团队/圈子。
  *
@@ -15,16 +18,16 @@ package com.wldos.platform.auth.vo;
  * @date 2022/5/18
  * @version 1.0
  */
+@ApiModel(description = "群组/团队/圈子")
 public class Group {
-	// id
+	@ApiModelProperty(value = "群组ID", example = "1")
 	private Long id;
 
-	// orgName
+	@ApiModelProperty(value = "组织名称", example = "技术部")
 	private String orgName;
 
-	// logo
+	@ApiModelProperty(value = "组织Logo", example = "/logo/org.jpg")
 	private String orgLogo;
-	// href: 固定模板直拼
 
 	public Long getId() {
 		return id;

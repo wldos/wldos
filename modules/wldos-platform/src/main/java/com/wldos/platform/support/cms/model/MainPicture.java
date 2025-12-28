@@ -10,6 +10,9 @@ package com.wldos.platform.support.cms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 作品详情主图。
  *
@@ -17,10 +20,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @date 2021/7/7
  * @version 1.0
  */
+@ApiModel(description = "作品详情主图")
 @JsonIgnoreProperties({ "noMainPicPath" })
 public class MainPicture {
+	@ApiModelProperty(value = "主图键值", example = "mainPic1")
 	private String key;
 
+	@ApiModelProperty(value = "主图URL", example = "https://example.com/images/main.jpg")
 	private String url;
 
 	/** 无主图占位图路径 */

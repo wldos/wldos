@@ -10,6 +10,12 @@ package com.wldos.platform.core.vo;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 角色资源授权树。
  *
@@ -17,29 +23,17 @@ import java.util.List;
  * @date 2021/5/22
  * @version 1.0
  */
+@ApiModel(description = "角色资源授权树")
+@Getter
+@Setter
 public class RoleResTree {
-	// 已授权资源
+	@ApiModelProperty(value = "已授权资源列表")
 	private List<RoleRes> roleRes;
 
-	// 当前角色资源授权树镜像
+	@ApiModelProperty(value = "当前角色资源授权树镜像")
 	private List<AuthRes> authRes;
 
-	public List<RoleRes> getRoleRes() {
-		return roleRes;
-	}
-
-	public void setRoleRes(List<RoleRes> roleRes) {
-		this.roleRes = roleRes;
-	}
-
-	public List<AuthRes> getAuthRes() {
-		return authRes;
-	}
-
-	public void setAuthRes(List<AuthRes> authRes) {
-		this.authRes = authRes;
-	}
-
+	@Override
 	public String toString() {
 		return "{roleRes: " + roleRes.toString() + ", authRes: " + authRes.toString() + "}";
 	}

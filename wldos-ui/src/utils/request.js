@@ -33,29 +33,27 @@ const codeMessage = {
 const errorHandler = (error) => {
   const {response} = error;
 
-  if (response && response.status) {
-    const {status} = response;
-    if (status === 401) {
-      // 刷新token失败则重新登录
+  if (response && response.data) {
+    const { code, message } = response.data;
+    if (code === 401) {
       clearAuthority();
       const {redirect} = getPageQuery();
       if (typeof window !== 'undefined' && window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
+          search: stringify({redirect: window.location.href}),
         });
       }
-    } else if (status === 403) {
-      notification.warn({
-        message: '未授权操作',
-        //description: '您当前未取得此操作权限',
+    } else if (code !== 200) {
+      notification.error({
+        message: '请求异常',
+        description: message || codeMessage[code] || '未知异常',
       });
-    }
+    } 
   } else if (!response) {
-    notification.warn({
-      message: 'hold on! 您的请求未及响应！',
+    notification.error({
+      message: '系统异常',
+      description: 'hold on! 您的请求未及响应！',
     });
   }
   return response;

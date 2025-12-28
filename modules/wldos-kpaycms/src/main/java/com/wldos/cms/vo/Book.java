@@ -12,6 +12,12 @@ import java.util.List;
 
 import com.wldos.platform.core.enums.PubTypeEnum;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 作品，以电子书为蓝本代表所有类型的作品，必要的时候再细化。
  *
@@ -19,18 +25,27 @@ import com.wldos.platform.core.enums.PubTypeEnum;
  * @date 2021/6/22
  * @version 1.0
  */
+@ApiModel(description = "作品信息")
+@Getter
+@Setter
 public class Book {
+	@ApiModelProperty(value = "作品ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "作品标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "发布类型", example = "BOOK")
 	private String pubType;
 
 	/** 是否单体类型：'1'是，'0'否*/
+	@ApiModelProperty(value = "是否单体类型：true=是，false=否", example = "false")
 	private Boolean isSingle;
 
+	@ApiModelProperty(value = "发布状态", example = "PUBLISH")
 	private String pubStatus;
 
+	@ApiModelProperty(value = "章节列表")
 	private List<Chapter> chapter;
 
 	public Book() {
@@ -46,54 +61,6 @@ public class Book {
 		this.pubType = pubType;
 		this.isSingle = isSingle;
 		this.pubStatus = pubStatus;
-		this.chapter = chapter;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public String getPubType() {
-		return pubType;
-	}
-
-	public void setPubType(String pubType) {
-		this.pubType = pubType;
-	}
-
-	public Boolean getIsSingle() {
-		return isSingle;
-	}
-
-	public void setIsSingle(Boolean isSingle) {
-		this.isSingle = isSingle;
-	}
-
-	public String getPubStatus() {
-		return pubStatus;
-	}
-
-	public void setPubStatus(String pubStatus) {
-		this.pubStatus = pubStatus;
-	}
-
-	public List<Chapter> getChapter() {
-		return chapter;
-	}
-
-	public void setChapter(List<Chapter> chapter) {
 		this.chapter = chapter;
 	}
 }

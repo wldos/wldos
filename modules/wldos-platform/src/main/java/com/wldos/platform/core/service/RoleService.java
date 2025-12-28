@@ -48,7 +48,6 @@ public class RoleService extends EntityService<RoleDao, WoRole, Long> {
 
 	private final RoleOrgDao roleOrgRepo;
 
-	@Autowired
 	public RoleService(ResourceService resourceService, AuthRoleDao authRoleRepo, RoleOrgDao roleOrgRepo) {
 		this.resourceService = resourceService;
 		this.authRoleRepo = authRoleRepo;

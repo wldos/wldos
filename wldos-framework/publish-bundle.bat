@@ -2,7 +2,7 @@
 setlocal EnableDelayedExpansion
 
 REM 设置固定版本号和模块名
-set VERSION=2.0.0
+set VERSION=2.0.1
 set MODULE=wldos-framework
 
 echo Version: %VERSION%
@@ -11,10 +11,10 @@ set BASE_NAME=%MODULE%-%VERSION%
 
 REM 从Maven配置目录的settings.xml读取Sonatype认证信息
 echo Getting Sonatype credentials from settings.xml...
-for /f "tokens=*" %%a in ('powershell -Command "$settings = [xml](Get-Content 'C:\java\apache-maven-3.5.3\conf\settings.xml'); $server = $settings.settings.servers.server | Where-Object { $_.id -eq 'ossrh' }; Write-Host $server.username"') do (
+for /f "tokens=*" %%a in ('powershell -Command "$settings = [xml](Get-Content 'C:\java\apache-maven-3.6.3\conf\settings.xml'); $server = $settings.settings.servers.server | Where-Object { $_.id -eq 'ossrh' }; Write-Host $server.username"') do (
     set SONATYPE_USER=%%a
 )
-for /f "tokens=*" %%a in ('powershell -Command "$settings = [xml](Get-Content 'C:\java\apache-maven-3.5.3\conf\settings.xml'); $server = $settings.settings.servers.server | Where-Object { $_.id -eq 'ossrh' }; Write-Host $server.password"') do (
+for /f "tokens=*" %%a in ('powershell -Command "$settings = [xml](Get-Content 'C:\java\apache-maven-3.6.3\conf\settings.xml'); $server = $settings.settings.servers.server | Where-Object { $_.id -eq 'ossrh' }; Write-Host $server.password"') do (
     set SONATYPE_TOKEN=%%a
 )
 

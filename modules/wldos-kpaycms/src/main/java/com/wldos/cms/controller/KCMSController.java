@@ -33,6 +33,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * 知识内容管理系统前端响应controller。
  * 默认用户端不按多租隔离查询内容，只按分站（业务分类绑定分站，如果分类是区域，则是地区分站）查询。
@@ -41,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/6/12
  * @version 1.0
  */
+@Api(tags = "知识内容管理系统")
 @RestController
 public class KCMSController extends NonEntityController<KCMSService> {
 
@@ -50,6 +57,16 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param params 请求参数
 	 * @return 分页数据
 	 */
+	@ApiOperation(value = "首页跨行业查询", notes = "查询首页内容列表，支持分页、排序、筛选等")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubType", value = "发布类型", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "termTypeId", value = "分类ID", dataTypeClass = Long.class, paramType = "query"),
+		@ApiImplicitParam(name = "tagId", value = "标签ID", dataTypeClass = Long.class, paramType = "query")
+	})
 	@GetMapping("")
 	public PageableResult<PubUnit> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -85,6 +102,15 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param pubType 发布类型
 	 * @return 按分类目录索引的存档列表页
 	 */
+	@ApiOperation(value = "发布类型存档列表", notes = "查询指定发布类型的内容列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "termTypeId", value = "分类ID", dataTypeClass = Long.class, paramType = "query"),
+		@ApiImplicitParam(name = "tagId", value = "标签ID", dataTypeClass = Long.class, paramType = "query")
+	})
 	@GetMapping("archives-all/{pubType}")
 	public PageableResult<PubUnit> archivesPubType(@PathVariable String pubType, @RequestParam Map<String, Object> params) {
 
@@ -103,6 +129,15 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 *
 	 * @return 按分类目录索引的存档列表页
 	 */
+	@ApiOperation(value = "存档列表", notes = "查询当前域下的内容存档列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubType", value = "发布类型", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "termTypeId", value = "分类ID", dataTypeClass = Long.class, paramType = "query")
+	})
 	@GetMapping("archives")
 	public PageableResult<PubUnit> archivesIndustry(@RequestParam Map<String, Object> params) {
 
@@ -122,6 +157,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
+	@ApiOperation(value = "分类存档列表", notes = "查询指定分类下的内容列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("archives/category/{slugCategory}")
 	public PageableResult<PubUnit> archivesCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -140,6 +182,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param slugTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */
+	@ApiOperation(value = "标签存档列表", notes = "查询指定标签下的内容列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("archives/tag/{slugTag}")
 	public PageableResult<PubUnit> archivesTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -158,6 +207,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
 	 */
+	@ApiOperation(value = "作者作品存档", notes = "查询指定作者的作品列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("archives-author/{userId:[0-9]+}.html")
 	public PageableResult<PubUnit> archivesAuthor(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -176,8 +232,9 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param id 内容id
 	 * @return 当前内容
 	 */
+	@ApiOperation(value = "内容详情", notes = "根据ID查询内容详情")
 	@GetMapping("archives-{id:[0-9]+}.html")
-	public Article archivesId(@PathVariable Long id) {
+	public Article archivesId(@ApiParam(value = "内容ID", required = true) @PathVariable Long id) {
 		return this.service.queryArticle(id, false, this.getDomainId());
 	}
 
@@ -187,8 +244,9 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param id 内容id
 	 * @return 当前内容
 	 */
+	@ApiOperation(value = "预览内容", notes = "预览模式查看内容")
 	@GetMapping("archives-{id:[0-9]+}/preview")
-	public Article previewArchive(@PathVariable Long id) {
+	public Article previewArchive(@ApiParam(value = "内容ID", required = true) @PathVariable Long id) {
 		return this.service.queryArticle(id, true, null);
 	}
 
@@ -197,8 +255,9 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 *
 	 * @param contAlias 内容别名
 	 */
+	@ApiOperation(value = "内容详情（别名）", notes = "根据别名查询内容详情")
 	@GetMapping("/archive-{contAlias}")
-	public Article archivesId(@PathVariable String contAlias) {
+	public Article archivesId(@ApiParam(value = "内容别名", required = true) @PathVariable String contAlias) {
 		return this.service.queryContentByPubName(contAlias, this.getDomainId());
 	}
 
@@ -208,6 +267,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
 	 */
+	@ApiOperation(value = "用户喜欢的内容列表", notes = "查询用户喜欢的内容列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("archives-like/{userId:[0-9]+}.html")
 	public PageableResult<PubUnit> archivesLike(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -227,6 +293,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param userId 作者用户id
 	 * @return 作者的内容存档页
 	 */
+	@ApiOperation(value = "用户收藏的内容列表", notes = "查询用户收藏的内容列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("archives-star/{userId:[0-9]+}.html")
 	public PageableResult<PubUnit> archivesStar(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -248,8 +321,8 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @return 分类项列表
 	 */
 	@GetMapping("category/{cteType}/{parentId:\\d+}")
-	public String categoryList(@PathVariable String cteType, @PathVariable Long parentId) {
-		return this.resJson.ok("");
+	public Result categoryList(@PathVariable String cteType, @PathVariable Long parentId) {
+		return Result.ok("");
 	}
 
 	/**
@@ -258,6 +331,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param bookId 作品id
 	 * @return 按作品id索引的存档列表页
 	 */
+	@ApiOperation(value = "作品章节列表", notes = "查询作品下的章节列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("book-{bookId:[0-9]+}.html")
 	public PageableResult<PubUnit> queryBookChapter(@PathVariable Long bookId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -276,8 +356,9 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param id 元素内容id
 	 * @return 作品片段
 	 */
+	@ApiOperation(value = "元素详情", notes = "根据ID查询作品元素详情")
 	@GetMapping("element-{id:[0-9]+}.html")
-	public Article elementRead(@PathVariable Long id) {
+	public Article elementRead(@ApiParam(value = "元素ID", required = true) @PathVariable Long id) {
 		return this.service.readElement(id, false);
 	}
 
@@ -286,8 +367,9 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 *
 	 * @param id 内容id
 	 */
+	@ApiOperation(value = "预览元素", notes = "预览模式查看作品元素")
 	@GetMapping("element-{id:[0-9]+}/preview")
-	public Article previewElement(@PathVariable Long id) {
+	public Article previewElement(@ApiParam(value = "元素ID", required = true) @PathVariable Long id) {
 		return this.service.readElement(id, true);
 	}
 
@@ -298,8 +380,8 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @return 文件
 	 */
 	@GetMapping("cms/down/{fid}")
-	public String fileDownload(@PathVariable Long fid) {
-		return this.resJson.ok("");
+	public Result fileDownload(@PathVariable Long fid) {
+		return Result.ok("");
 	}
 
 	/**
@@ -309,8 +391,8 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @return 多媒体视频流
 	 */
 	@GetMapping("cms/multi/{mid}")
-	public String multimedia(@PathVariable Long mid) {
-		return this.resJson.ok("");
+	public Result multimedia(@PathVariable Long mid) {
+		return Result.ok("");
 	}
 
 	/**
@@ -319,6 +401,11 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @param params 领域分类参数
 	 * @return tdk和面包屑数据
 	 */
+	@ApiOperation(value = "SEO面包屑", notes = "获取SEO和面包屑数据")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "tempType", value = "模板类型", dataTypeClass = String.class, paramType = "query", required = true),
+		@ApiImplicitParam(name = "slugTerm", value = "分类或标签别名", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("cms/seoCrumbs")
 	public SeoCrumbs genSeoCrumbs(@RequestParam Map<String, String> params) {
 		RouteParams routeParams = RouteParams.of(params.get("tempType"), params.get("slugTerm"));
@@ -331,16 +418,19 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 *
 	 * @return 枚举列表
 	 */
+	@ApiOperation(value = "发布状态枚举", notes = "获取发布状态枚举列表")
 	@GetMapping("enum/select/pubStatus")
 	public Result fetchEnumPubStatus() {
-		return this.resJson.format(PubStatusEnum.values());
+		return Result.ok(PubStatusEnum.values());
 	}
 
 	/**
 	 * 发布类型枚举
 	 */
+	@ApiOperation(value = "发布类型枚举", notes = "获取发布类型枚举列表")
 	@GetMapping("enum/select/pubType")
 	public List<SelectOption> fetchEnumPubType() {
-		return Arrays.stream(PubTypeEnum.values()).filter(PubTypeEnum::isMainType).map(item -> SelectOption.of(item.getLabel(), item.getName())).collect(Collectors.toList());
+		return Arrays.stream(PubTypeEnum.values()).filter(PubTypeEnum::isMainType)
+		.map(item -> SelectOption.of(item.getLabel(), item.getName())).collect(Collectors.toList());
 	}
 }

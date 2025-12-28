@@ -8,6 +8,9 @@
 
 package com.wldos.common.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 下拉列表option。用于生成简单的下拉列表数据。
  *
@@ -15,6 +18,8 @@ package com.wldos.common.vo;
  * @date 2021/12/18
  * @version 1.0
  */
+@Getter
+@Setter
 public class SelectOption {
 	private String label;
 
@@ -29,22 +34,6 @@ public class SelectOption {
 
 	private SelectOption(String label, String value) {
 		this.label = label;
-		this.value = value;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
 		this.value = value;
 	}
 }

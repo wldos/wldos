@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.wldos.common.res.ResultCode;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
@@ -49,6 +50,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * 内容创作工作台controller。
  *
@@ -56,6 +63,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2022/01/05
  * @version 1.0
  */
+@Api(tags = "内容创作工作台")
 @RefreshScope
 @RestController
 public class SpaceController extends NonEntityController<SpaceService> {
@@ -77,6 +85,14 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @param params {contType}
 	 * @return 作品列表
 	 */
+	@ApiOperation(value = "作者作品列表", notes = "查询作者的作品列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "contType", value = "内容类型", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("space/book")
 	public PageableResult<PubUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -95,8 +111,9 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @param bookId 作品id
 	 * @return 作品实体
 	 */
+	@ApiOperation(value = "作品详情", notes = "根据ID查询作品详情")
 	@GetMapping("space/book/{bookId:\\d+}")
-	public Book curBookByAuthorAndBkId(@PathVariable Long bookId) {
+	public Book curBookByAuthorAndBkId(@ApiParam(value = "作品ID", required = true) @PathVariable Long bookId) {
 		return this.kcmsService.queryBook(bookId);
 	}
 
@@ -107,8 +124,9 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @param chapterId 章节id
 	 * @return 章节实体
 	 */
+	@ApiOperation(value = "章节详情", notes = "根据ID查询章节详情")
 	@GetMapping("space/book/{bookId:\\d+}/chapter/{chapterId:\\d+}")
-	public Chapter curChapterByAuthorAndBkIdAndChapId(@PathVariable Long bookId, @PathVariable Long chapterId) {
+	public Chapter curChapterByAuthorAndBkIdAndChapId(@ApiParam(value = "作品ID", required = true) @PathVariable Long bookId, @ApiParam(value = "章节ID", required = true) @PathVariable Long chapterId) {
 		return this.service.queryChapter(chapterId);
 	}
 
@@ -123,26 +141,26 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @throws JsonProcessingException 处理异常
 	 */
 	@PostMapping("space/book/add")
-	public String addContent(@RequestBody String json) throws JsonProcessingException {
+	public String addContent(@ApiParam(value = "作品JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub pub = InfoUtil.extractPubInfo(json);
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
-			return this.resJson.ok("error", "内容超过一万字");
+			return this.resJson.ok(ResultCode.VALIDATION_ERROR.getCode(), "内容超过一万字");
 		// 检查分类是否归属同一个类型
 		List<SelectOption> typeIds = pub.getTermTypeIds();
 		if (typeIds != null) {
 			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
 			if (!this.kcmsService.isValidTerm(termTypeIds))
-				return this.resJson.ok("error", "使用了不可识别的分类数据");
+				return this.resJson.ok(ResultCode.VALIDATION_ERROR.getCode(), "使用了不可识别的分类数据");
 		}
 		// 检查标签
 		List<String> tags = pub.getTagIds();
 		if (tags != null) {
 			if (pub.getTagIds().size() > this.maxTagNum) {
-				return this.resJson.ok("error", "标签数超过限制：" + this.maxTagNum);
+				return this.resJson.ok(ResultCode.VALIDATION_ERROR.getCode(), "标签数超过限制：" + this.maxTagNum);
 			}
 			if (tags.stream().anyMatch(n -> ObjectUtils.isOutBounds(n, this.tagLength))) {
 
-				return this.resJson.ok("error", "标签超长");
+				return this.resJson.ok(ResultCode.VALIDATION_ERROR.getCode(), "标签超长");
 			}
 		}
 
@@ -159,8 +177,9 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @param json 章节信息
 	 * @return 章节实体
 	 */
+	@ApiOperation(value = "新增章节", notes = "创建新的章节")
 	@PostMapping("space/book/newChapter")
-	public Chapter createChapter(@RequestBody String json) throws JsonProcessingException {
+	public Chapter createChapter(@ApiParam(value = "章节JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub chapter = InfoUtil.extractPubInfo(json);
 		if (chapter.getParentId() == null)
 			return null;
@@ -176,16 +195,17 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @param json 章节信息
 	 * @return 结果
 	 */
+	@ApiOperation(value = "保存章节", notes = "更新章节内容")
 	@PostMapping("space/book/saveChapter")
-	public String saveChapter(@RequestBody String json) throws JsonProcessingException {
+	public Result saveChapter(@ApiParam(value = "章节JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub chapter = InfoUtil.extractPubInfo(json);
 		if (chapter.getId() == null)
-			return this.resJson.ok("error", "保存数据为空忽略");
+			return Result.error(ResultCode.VALIDATION_ERROR, "保存数据为空忽略");
 		if (ObjectUtils.isOutBoundsClearHtml(chapter.getPubContent(), this.maxLength))
-			return this.resJson.ok("error", "内容超过一万字");
+			return Result.error(ResultCode.VALIDATION_ERROR, "内容超过一万字");
 		this.service.saveChapter(chapter, this.getUserId(), this.getUserIp(), this.getDomainId());
 
-		return this.resJson.ok("ok");
+		return Result.ok("ok");
 	}
 
 	/**
@@ -195,8 +215,9 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @return 附件信息
 	 * @throws IOException IO异常
 	 */
+	@ApiOperation(value = "上传文章图片", notes = "文章编辑时上传图片")
 	@PostMapping("space/upload/chapter")
-	public Result uploadArticle(@RequestParam("file") MultipartFile file) throws IOException {
+	public Result uploadArticle(@ApiParam(value = "图片文件", required = true) @RequestParam("file") MultipartFile file) throws IOException {
 		Long id = Long.parseLong(this.request.getParameter("id"));
 		String type = ObjectUtils.string(file.getContentType()).split("/")[0];
 		Map<String, Object> res = new HashMap<>();
@@ -246,7 +267,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 			res.put("url", fileInfo.getUrl());
 		}
 
-		return this.resJson.format(res);
+		return Result.ok(res);
 	}
 
 }

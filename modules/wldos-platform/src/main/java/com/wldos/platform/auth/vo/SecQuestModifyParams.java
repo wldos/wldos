@@ -9,6 +9,14 @@
 package com.wldos.platform.auth.vo;
 
 import com.wldos.platform.auth.model.ModifyParams;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 密保问题修改参数。
@@ -17,37 +25,21 @@ import com.wldos.platform.auth.model.ModifyParams;
  * @date 2022/5/21
  * @version 1.0
  */
+@ApiModel(description = "密保问题修改参数")
+@Getter
+@Setter
 public class SecQuestModifyParams implements ModifyParams {
-	/** 登录用户id */
+	@ApiModelProperty(value = "用户ID", required = true, example = "1")
+	@NotNull(message = "用户ID不能为空")
 	private Long id;
 
+	@ApiModelProperty(value = "原密保问题", example = "我的出生地是哪里？")
 	private String oldSecQuest;
 
+	@ApiModelProperty(value = "新密保问题", required = true, example = "我的小学名称是什么？")
+	@NotBlank(message = "新密保问题不能为空")
+	@Size(min = 1, max = 200, message = "密保问题长度必须在1-200之间")
 	private String secQuest;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getOldSecQuest() {
-		return oldSecQuest;
-	}
-
-	public void setOldSecQuest(String oldSecQuest) {
-		this.oldSecQuest = oldSecQuest;
-	}
-
-	public String getSecQuest() {
-		return secQuest;
-	}
-
-	public void setSecQuest(String secQuest) {
-		this.secQuest = secQuest;
-	}
 
 	@Override
 	public String getOld() {

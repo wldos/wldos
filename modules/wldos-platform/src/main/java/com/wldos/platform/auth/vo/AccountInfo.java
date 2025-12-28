@@ -16,6 +16,12 @@ import com.wldos.platform.auth.model.AccBind;
 import com.wldos.platform.auth.model.AccMes;
 import com.wldos.platform.auth.model.AccSecurity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 用户账户信息。
  *
@@ -23,304 +29,94 @@ import com.wldos.platform.auth.model.AccSecurity;
  * @date 2021/4/30
  * @version 1.0
  */
+@ApiModel(description = "用户账户信息")
+@Getter
+@Setter
 public class AccountInfo {
+	@ApiModelProperty(value = "用户ID", example = "1")
 	private long id;
 
+	@ApiModelProperty(value = "用户名", example = "admin")
 	private String username;
 
+	@ApiModelProperty(value = "昵称", example = "管理员")
 	private String nickname;
 
-	/** 个人简介、个性签名 */
+	@ApiModelProperty(value = "个人简介、个性签名", example = "这是我的个人简介")
 	private String remark;
 
+	@ApiModelProperty(value = "头像URL", example = "/avatar/user.jpg")
 	private String avatar;
 
+	@ApiModelProperty(value = "用户状态", example = "active")
 	private String status;
 
+	@ApiModelProperty(value = "域名ID", example = "1")
 	private Long domainId;
 
+	@ApiModelProperty(value = "身份证号", example = "110101199001011234")
 	private String idCard;
 
+	@ApiModelProperty(value = "性别", example = "男")
 	private String sex;
 
+	@ApiModelProperty(value = "生日", example = "1990-01-01")
 	private Timestamp birthday;
 
+	@ApiModelProperty(value = "手机号", example = "13800138000")
 	private String mobile;
 
+	@ApiModelProperty(value = "电话", example = "010-12345678")
 	private String telephone;
 
+	@ApiModelProperty(value = "地址", example = "北京市朝阳区")
 	private String address;
 
+	@ApiModelProperty(value = "QQ号", example = "123456789")
 	private String qq;
 
+	@ApiModelProperty(value = "邮箱", example = "user@example.com")
 	private String email;
 
+	@ApiModelProperty(value = "是否实名：1=是, 0=否", example = "1")
 	private String isReal;
 
+	@ApiModelProperty(value = "国家", example = "中国")
 	private String country;
 
+	@ApiModelProperty(value = "省份", example = "北京市")
 	private String province;
 
+	@ApiModelProperty(value = "城市", example = "北京市")
 	private String city;
 
+	@ApiModelProperty(value = "区县", example = "朝阳区")
 	private String area;
 
-	/** 邀请码 */
+	@ApiModelProperty(value = "邀请码", example = "INV001")
 	private String inviteCode;
 
-	/** 推荐码 */
+	@ApiModelProperty(value = "推荐码", example = "REF001")
 	private String recommendCode;
 
-	/** 安全设置 */
+	@ApiModelProperty(value = "安全设置")
 	private AccSecurity sec;
 
-	/** 账号绑定 */
+	@ApiModelProperty(value = "账号绑定")
 	private AccBind bind;
 
-	/** 消息通知设置 */
+	@ApiModelProperty(value = "消息通知设置")
 	private AccMes accMes;
 
-	/** 头衔 */
+	@ApiModelProperty(value = "头衔", example = "高级工程师")
 	private String title;
 
-	/** 组织，主企业，根据用户设置获取，@todo 后期统一关联公司表 */
+	@ApiModelProperty(value = "组织，主企业，根据用户设置获取", example = "示例公司")
 	private String company;
 
-	/** 标签 */
+	@ApiModelProperty(value = "标签列表")
 	private List<Map<String, String>> tags;
 
-	/** 群组，根据用户所属系统会员组获取，@todo 后期改成群组/团队/圈子 */
+	@ApiModelProperty(value = "群组，根据用户所属系统会员组获取")
 	private List<Group> group;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String headImg) {
-		this.avatar = headImg;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Long getDomainId() {
-		return domainId;
-	}
-
-	public void setDomainId(Long domainId) {
-		this.domainId = domainId;
-	}
-
-	public String getIdCard() {
-		return idCard;
-	}
-
-	public void setIdCard(String idCard) {
-		this.idCard = idCard;
-	}
-
-	public String getSex() {
-		return sex;
-	}
-
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
-
-	public Timestamp getBirthday() {
-		return birthday;
-	}
-
-	public void setBirthday(Timestamp birthday) {
-		this.birthday = birthday;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getQq() {
-		return qq;
-	}
-
-	public void setQq(String qq) {
-		this.qq = qq;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getIsReal() {
-		return isReal;
-	}
-
-	public void setIsReal(String isReal) {
-		this.isReal = isReal;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getProvince() {
-		return province;
-	}
-
-	public void setProvince(String province) {
-		this.province = province;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getArea() {
-		return area;
-	}
-
-	public void setArea(String area) {
-		this.area = area;
-	}
-
-	public String getInviteCode() {
-		return inviteCode;
-	}
-
-	public void setInviteCode(String inviteCode) {
-		this.inviteCode = inviteCode;
-	}
-
-	public String getRecommendCode() {
-		return recommendCode;
-	}
-
-	public void setRecommendCode(String recommendCode) {
-		this.recommendCode = recommendCode;
-	}
-
-	public AccSecurity getSec() {
-		return sec;
-	}
-
-	public void setSec(AccSecurity sec) {
-		this.sec = sec;
-	}
-
-	public AccBind getBind() {
-		return bind;
-	}
-
-	public void setBind(AccBind bind) {
-		this.bind = bind;
-	}
-
-	public AccMes getAccMes() {
-		return accMes;
-	}
-
-	public void setAccMes(AccMes accMes) {
-		this.accMes = accMes;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getCompany() {
-		return company;
-	}
-
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	public List<Map<String, String>> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<Map<String, String>> tags) {
-		this.tags = tags;
-	}
-
-	public List<Group> getGroup() {
-		return group;
-	}
-
-	public void setGroup(List<Group> group) {
-		this.group = group;
-	}
 }

@@ -572,9 +572,9 @@ const StoreReview = ({ dispatch }) => {
     setUploading(true);
     try {
       const response = await uploadPluginFile(file);
-      // WLDOS 统一返回格式：{ status: 200, message: "ok" 或 "错误消息", data: "..." }
+      // WLDOS 统一返回格式：{ code: 200, message: "ok" 或 "错误消息", data: "...", success: true }
       // 如果 message 不是 "ok"，说明有错误消息
-      if (response?.message && response.message !== 'ok') {
+      if (response?.success) {
         message.error(response.message);
       } else {
         message.success('插件上传成功，等待审核');

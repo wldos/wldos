@@ -25,6 +25,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.validation.Valid;
+
 /**
  * 内容管理controller。
  *
@@ -32,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/6/12
  * @version 1.0
  */
+@Api(tags = "内容管理")
 @RequestMapping("/admin/cms/pub")
 @RestController
 public class PubController extends EntityController<PubService, KPubs> {
@@ -41,6 +50,15 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 *
 	 * @return 内容列表
 	 */
+	@ApiOperation(value = "作品元素列表", notes = "查询作品内的章节、剧集或附件等")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubType", value = "发布类型", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubStatus", value = "发布状态", dataTypeClass = String.class, paramType = "query")
+	})
 	@RequestMapping("chapter")
 	public PageableResult<AuditPub> adminPosts(@RequestParam Map<String, Object> params) {
 
@@ -58,6 +76,15 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 *
 	 * @return 作品列表
 	 */
+	@ApiOperation(value = "作品管理列表", notes = "查询作品列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubType", value = "发布类型", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubStatus", value = "发布状态", dataTypeClass = String.class, paramType = "query")
+	})
 	@RequestMapping("book")
 	public PageableResult<AuditPub> adminBooks(@RequestParam Map<String, Object> params) {
 
@@ -75,6 +102,14 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 *
 	 * @return 信息列表
 	 */
+	@ApiOperation(value = "信息管理列表", notes = "查询信息列表")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "pubStatus", value = "发布状态", dataTypeClass = String.class, paramType = "query")
+	})
 	@RequestMapping("info")
 	public PageableResult<AuditPub> adminInfo(@RequestParam Map<String, Object> params) {
 
@@ -93,8 +128,9 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 * @param pub 待发布审核内容
 	 * @return 是否
 	 */
+	@ApiOperation(value = "内容发布", notes = "发布审核通过的内容")
 	@PostMapping("publish")
-	public Boolean publishPost(@RequestBody AuditPub pub) {
+	public Boolean publishPost(@ApiParam(value = "待发布审核内容", required = true) @Valid @RequestBody AuditPub pub) {
 		this.service.publishPub(pub.getId(), pub.getPubType());
 		return Boolean.TRUE;
 	}
@@ -105,8 +141,9 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 * @param pub 待发布审核内容
 	 * @return 是否
 	 */
+	@ApiOperation(value = "内容下线", notes = "将已发布的内容下线")
 	@PostMapping("offline")
-	public Boolean offlinePost(@RequestBody AuditPub pub) {
+	public Boolean offlinePost(@ApiParam(value = "待下线内容", required = true) @Valid @RequestBody AuditPub pub) {
 		this.service.offlinePub(pub);
 		return Boolean.TRUE;
 	}

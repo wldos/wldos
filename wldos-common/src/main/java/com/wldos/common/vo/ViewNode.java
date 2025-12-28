@@ -8,6 +8,9 @@
 
 package com.wldos.common.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 视图树节点(树形独立组件的节点数据，不用于表单)。
  *
@@ -15,36 +18,14 @@ package com.wldos.common.vo;
  * @date 2021/6/17
  * @version 1.0
  */
+@Getter
+@Setter
 public class ViewNode extends TreeNode<ViewNode> {
 	private String title;
 
 	private String key;
 
 	private boolean disabled;
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
 
 	public String toString() {
 		return "{title: " + title.toString() + ", key: " + key.toString() + ", children: " + this.children + ", disabled: " + disabled + "}";

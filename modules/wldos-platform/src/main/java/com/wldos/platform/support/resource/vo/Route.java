@@ -8,6 +8,12 @@
 
 package com.wldos.platform.support.resource.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 动态组件路由。
  *
@@ -15,11 +21,14 @@ package com.wldos.platform.support.resource.vo;
  * @date 2021/9/8
  * @version 1.0
  */
+@ApiModel(description = "动态组件路由")
+@Getter
+@Setter
 public class Route {
-	/** 对应组件的包装对象名称，js实现类的类名 */
+	@ApiModelProperty(value = "对应组件的包装对象名称，js实现类的类名", example = "ProductList")
 	private String module;
 
-	/** 绑定的分类别名 */
+	@ApiModelProperty(value = "绑定的分类别名", example = "tech")
 	private String category;
 
 	public Route() {
@@ -27,22 +36,6 @@ public class Route {
 
 	public Route(String module, String category) {
 		this.module = module;
-		this.category = category;
-	}
-
-	public String getModule() {
-		return module;
-	}
-
-	public void setModule(String module) {
-		this.module = module;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
 		this.category = category;
 	}
 }

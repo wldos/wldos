@@ -13,7 +13,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * WLDOS框架配置属性
  * 
- * @author WLDOS Team
+ * @author 元悉宇宙
+ * @date 2025-12-26
+ * @version 2.0
  */
 @ConfigurationProperties(prefix = "wldos.framework")
 public class WldosFrameworkProperties {
@@ -23,6 +25,13 @@ public class WldosFrameworkProperties {
      */
     private boolean enabled = true;
     
+    /**
+     * 基础包路径（用于组件扫描和异常处理）
+     * 第三方应用可以配置自己的包路径，例如：com.example.myapp
+     * 如果不配置，默认使用 com.wldos
+     */
+    private String basePackage = "com.wldos";
+    
     // Getters and Setters
     public boolean isEnabled() {
         return enabled;
@@ -30,5 +39,13 @@ public class WldosFrameworkProperties {
     
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public String getBasePackage() {
+        return basePackage;
+    }
+    
+    public void setBasePackage(String basePackage) {
+        this.basePackage = basePackage;
     }
 }

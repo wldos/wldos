@@ -8,14 +8,20 @@
 
 package com.wldos.platform.core.controller;
 
+import java.util.Map;
+
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.framework.mvc.service.impl.NullService;
 import com.wldos.common.enums.FileAccessPolicyEnum;
+import com.wldos.common.res.Result;
 import com.wldos.framework.support.storage.IStore;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 常量controller。
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2022/3/7
  * @version 1.0
  */
+@Api(tags = "常量管理")
 @RequestMapping("constant")
 @RestController
 public class ConstantController extends NonEntityController<NullService> {
@@ -32,9 +39,12 @@ public class ConstantController extends NonEntityController<NullService> {
 	 *
 	 * @return 文件服务前缀
 	 */
+	@ApiOperation(value = "文件服务前缀", notes = "获取文件服务前缀")
 	@GetMapping("ossUrl")
-	public String fetchOssUrl() {
+	public Result fetchOssUrl() {
 		// 设置ossUrl，用于前端拼装文件类完整url
-		return this.resJson.ok(IStore.KEY_OSS_URL, this.store.genOssUrl(FileAccessPolicyEnum.PUBLIC));
+		Map<String, Object> data = new java.util.HashMap<>();
+		data.put(IStore.KEY_OSS_URL, this.store.genOssUrl(FileAccessPolicyEnum.PUBLIC));
+		return Result.ok(data);
 	}
 }

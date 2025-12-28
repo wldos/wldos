@@ -26,7 +26,7 @@ const OrganizationArchitecture = () => {
 
   // 统一判断本系统 API 成功规则（兼容历史字段）
   const isOk = (resp) => !!(resp && (
-    resp.status === 200 || resp.code === 200 || resp.success === true || resp.message === 'ok' || resp.data === true
+    resp.success || resp.code === 200
   ));
 
   const handleSelect = (keys, { node }) => {
@@ -53,7 +53,7 @@ const OrganizationArchitecture = () => {
       if (!isOk(response)) {
         message.error((response && (response.message || response.msg)) || '公司信息更新失败');
         return;
-      }      
+      }
 
       // 1) 回查公司详情，刷新右侧详情
       const latest = await getCompanyById(payload.id);
@@ -87,7 +87,7 @@ const OrganizationArchitecture = () => {
       });
       if (isOk(response)) {
         message.success('体系添加成功');
-        
+
         // 清空数据触发树形组件重新加载
         setTreeData([]);
       } else {
@@ -128,10 +128,10 @@ const OrganizationArchitecture = () => {
           if (!prev || prev.id !== systemId) return prev;
           return { ...prev, ...values };
         });
-        
+
         // 2) 刷新树形数据
         setTreeData([]); // 清空数据触发重新加载
-        
+
         // 统一在此处提示一次
         message.success('体系信息更新成功');
       } else {

@@ -8,6 +8,12 @@
 
 package com.wldos.platform.support.cms.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 内容附件：图片、文件、音频、视频等。
  *
@@ -15,17 +21,21 @@ package com.wldos.platform.support.cms.model;
  * @date 2021/6/19
  * @version 1.0
  */
+@ApiModel(description = "内容附件：图片、文件、音频、视频等")
+@Getter
+@Setter
 public class Attachment {
-	/** 在图片服务器上的物理存储路径 */
+	@ApiModelProperty(value = "在图片服务器上的物理存储路径", example = "/2024/12/image.jpg")
 	protected String attachPath;
 
-	/** 缩略图渲染样式、图片元信息等用户设置 */
+	@ApiModelProperty(value = "缩略图渲染样式、图片元信息等用户设置", example = "{\"width\":800,\"height\":600}")
 	protected String attachMetadata;
 
-	/** 附件alt */
+	@ApiModelProperty(value = "附件alt文本", example = "示例图片")
 	protected String attachFileAlt;
 
-	private String url; // 用户访问附件的web url
+	@ApiModelProperty(value = "用户访问附件的Web URL", example = "https://example.com/images/image.jpg")
+	private String url;
 
 	public Attachment() {
 	}
@@ -38,37 +48,5 @@ public class Attachment {
 		this.attachPath = attachPath;
 		this.attachMetadata = attachMetadata;
 		this.attachFileAlt = attachFileAlt;
-	}
-
-	public String getAttachPath() {
-		return attachPath;
-	}
-
-	public void setAttachPath(String attachPath) {
-		this.attachPath = attachPath;
-	}
-
-	public String getAttachMetadata() {
-		return attachMetadata;
-	}
-
-	public void setAttachMetadata(String attachMetadata) {
-		this.attachMetadata = attachMetadata;
-	}
-
-	public String getAttachFileAlt() {
-		return attachFileAlt;
-	}
-
-	public void setAttachFileAlt(String attachFileAlt) {
-		this.attachFileAlt = attachFileAlt;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
 	}
 }

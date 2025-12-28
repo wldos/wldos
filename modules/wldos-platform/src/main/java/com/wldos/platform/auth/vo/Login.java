@@ -12,6 +12,12 @@ import java.util.List;
 
 import com.wldos.framework.support.auth.vo.Token;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 登录后返回用户认证和权限信息。
  *
@@ -19,59 +25,22 @@ import com.wldos.framework.support.auth.vo.Token;
  * @date 2021-04-30
  * @version V1.0
  */
+@ApiModel(description = "登录后返回用户认证和权限信息")
+@Getter
+@Setter
 public class Login {
-	/** 登录状态 */
+	@ApiModelProperty(value = "登录状态：ok=成功, error=失败", example = "ok")
 	private String status;
 
-	/** 错误信息 */
+	@ApiModelProperty(value = "错误信息或提示信息", example = "登录成功")
 	private String news;
 
-	/** 访问token和刷新token */
+	@ApiModelProperty(value = "访问token和刷新token")
 	private Token token;
 
-	/** 用户的权限：默认排除菜单权限 */
+	@ApiModelProperty(value = "用户的权限列表，默认排除菜单权限")
 	private List<String> currentAuthority;
 
-	/** 登录类型：account、mobile */
+	@ApiModelProperty(value = "登录类型：account=账号密码, mobile=手机验证码", example = "account")
 	private String type;
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getNews() {
-		return news;
-	}
-
-	public void setNews(String news) {
-		this.news = news;
-	}
-
-	public Token getToken() {
-		return token;
-	}
-
-	public void setToken(Token token) {
-		this.token = token;
-	}
-
-	public List<String> getCurrentAuthority() {
-		return currentAuthority;
-	}
-
-	public void setCurrentAuthority(List<String> currentAuthority) {
-		this.currentAuthority = currentAuthority;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 }

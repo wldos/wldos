@@ -10,6 +10,12 @@ package com.wldos.platform.support.cms.vo;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 面包屑数据，tdk数据。
  *
@@ -17,16 +23,24 @@ import java.util.List;
  * @date 2021/8/29
  * @version 1.0
  */
+@ApiModel(description = "面包屑数据，TDK数据（Title、Description、Keywords）")
+@Getter
+@Setter
 public class SeoCrumbs {
+	@ApiModelProperty(value = "页面标题", example = "示例页面标题")
 	private String title;
 
+	@ApiModelProperty(value = "页面描述", example = "这是一个示例页面")
 	private String description;
 
+	@ApiModelProperty(value = "页面关键词", example = "示例,关键词,SEO")
 	private String keywords;
 
+	@ApiModelProperty(value = "面包屑列表")
 	private List<Breadcrumb> crumbs;
 
-	private String pubType; // 用于框架级分类处理
+	@ApiModelProperty(value = "发布类型，用于框架级分类处理", example = "product")
+	private String pubType;
 
 	public SeoCrumbs() {
 	}
@@ -50,46 +64,6 @@ public class SeoCrumbs {
 		this.title = title;
 		this.description = description;
 		this.keywords = keywords;
-		this.pubType = pubType;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getKeywords() {
-		return keywords;
-	}
-
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
-
-	public List<Breadcrumb> getCrumbs() {
-		return crumbs;
-	}
-
-	public void setCrumbs(List<Breadcrumb> crumbs) {
-		this.crumbs = crumbs;
-	}
-
-	public String getPubType() {
-		return pubType;
-	}
-
-	public void setPubType(String pubType) {
 		this.pubType = pubType;
 	}
 }

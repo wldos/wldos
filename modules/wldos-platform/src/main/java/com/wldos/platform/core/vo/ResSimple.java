@@ -8,6 +8,12 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 按模板新建菜单。
  *
@@ -15,95 +21,35 @@ package com.wldos.platform.core.vo;
  * @date 2022/3/8
  * @version 1.0
  */
+@ApiModel(description = "资源模板信息")
+@Getter
+@Setter
 public class ResSimple {
 
+	@ApiModelProperty(value = "资源名称", example = "用户管理", required = true)
 	private String resName;
 
+	@ApiModelProperty(value = "模板类型", example = "info")
 	private String tempType;
 
+	@ApiModelProperty(value = "分类类型ID", example = "1")
 	private Long termTypeId;
 
+	@ApiModelProperty(value = "图标", example = "user")
 	private String icon;
 
+	@ApiModelProperty(value = "请求方法", example = "GET")
 	private String reqMethod;
 
+	@ApiModelProperty(value = "打开方式", example = "_self")
 	private String target;
 
+	@ApiModelProperty(value = "应用ID", example = "1")
 	private Long appId;
 
+	@ApiModelProperty(value = "父资源ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "备注", example = "用户管理菜单")
 	private String remark;
-
-	public String getResName() {
-		return resName;
-	}
-
-	public void setResName(String resName) {
-		this.resName = resName;
-	}
-
-	public String getTempType() {
-		return tempType;
-	}
-
-	public void setTempType(String tempType) {
-		this.tempType = tempType;
-	}
-
-	public Long getTermTypeId() {
-		return termTypeId;
-	}
-
-	public void setTermTypeId(Long termTypeId) {
-		this.termTypeId = termTypeId;
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
-
-	public String getReqMethod() {
-		return reqMethod;
-	}
-
-	public void setReqMethod(String reqMethod) {
-		this.reqMethod = reqMethod;
-	}
-
-	public String getTarget() {
-		return target;
-	}
-
-	public void setTarget(String target) {
-		this.target = target;
-	}
-
-	public Long getAppId() {
-		return appId;
-	}
-
-	public void setAppId(Long appId) {
-		this.appId = appId;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
 }

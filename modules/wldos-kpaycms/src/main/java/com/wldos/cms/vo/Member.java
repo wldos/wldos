@@ -8,6 +8,12 @@
 
 package com.wldos.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 成员。
  *
@@ -15,34 +21,16 @@ package com.wldos.cms.vo;
  * @date 2021/6/20
  * @version 1.0
  */
+@ApiModel(description = "成员信息")
+@Getter
+@Setter
 public class Member {
+	@ApiModelProperty(value = "用户ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "昵称", example = "用户名")
 	private String nickname;
 
+	@ApiModelProperty(value = "头像URL", example = "https://example.com/avatar.jpg")
 	private String avatar;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
 }

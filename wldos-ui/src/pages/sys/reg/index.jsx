@@ -131,7 +131,7 @@ const License = () => {
                 <Text strong>版本号</Text>
                 <div style={{ marginTop: '8px' }}>
                   <Tag color="blue" style={{ fontSize: '16px', padding: '4px 12px' }}>
-                    {licInfo.version || 'V2.0.0'}
+                    {licInfo.version || 'V2.0.1'}
                   </Tag>
                 </div>
               </div>
@@ -315,7 +315,7 @@ const License = () => {
           description={
             <div>
               <Text type="secondary">
-                © 2025 WLDOS 云管端解决方案 {licInfo.version || 'V2.0.0'} | 
+                © 2025 WLDOS 云管端解决方案 {licInfo.version || 'V2.0.1'} | 
                 开源社区 | 
                 <a href="https://github.com/wldos/wldos" target="_blank" rel="noopener noreferrer">
                   GitHub

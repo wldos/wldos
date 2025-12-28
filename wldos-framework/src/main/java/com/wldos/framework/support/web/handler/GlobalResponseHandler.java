@@ -8,6 +8,7 @@
 
 package com.wldos.framework.support.web.handler;
 
+import com.wldos.framework.autoconfigure.WldosFrameworkProperties;
 import com.wldos.framework.support.web.EdgeHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,26 +22,46 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * api响应处理。
+ * api响应处理（支持可配置的包路径）
  *
  * @author 元悉宇宙
- * @date 2021/9/16
- * @version 1.0
+ * @date 2025-12-26
+ * @version 2.0
  */
 @Slf4j
-@RestControllerAdvice("com.wldos")
+@RestControllerAdvice
 public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
+	
 	@Autowired
-	EdgeHandler edgeHandler;
+	private EdgeHandler edgeHandler;
+	
+	@Autowired
+	private WldosFrameworkProperties properties;
 
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		return true; // 保证每一调都能命中token续签处理
+		// 检查Controller是否在配置的包路径下
+		String controllerPackage = returnType.getContainingClass().getPackage().getName();
+		String basePackage = properties.getBasePackage();
+		
+		// 始终处理com.wldos包下的Controller（框架和platform）
+		if (controllerPackage.startsWith("com.wldos")) {
+			return true;
+		}
+		
+		// 如果配置了basePackage，同时处理第三方应用的包路径
+		if (basePackage != null && !basePackage.isEmpty() && !basePackage.equals("com.wldos")) {
+			return controllerPackage.startsWith(basePackage);
+		}
+		
+		// 默认只处理com.wldos包下的Controller
+		return false;
 	}
 
 	@Override
 	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
 			Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+		// 使用EdgeHandler处理响应（EdgeHandlerImpl已实现全部转换，包括自动包装为Result）
 		return this.edgeHandler.handleBody(body, returnType, selectedContentType, selectedConverterType, request, response);
 	}
 }

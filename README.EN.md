@@ -5,7 +5,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">Cloud Application Support Platform - IoT Driver</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">Develop IoT applications based on WLDOS, focusing on, opening up, and managing your ecosystem</h5>
 <p align="center">
- <a href="http://wldos.com/" target="__blank"><img alt="WLDOS-V2.0" src="https://img.shields.io/badge/WLDOS-V2.0-deepskyblue.svg"></a>
+ <a href="http://wldos.com/" target="__blank"><img alt="WLDOS-V2.0.1" src="https://img.shields.io/badge/WLDOS-V2.0.1-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -13,17 +13,25 @@
 
 ### Project Introduction
 
-WLDOS (pronounced: ['wou'da'si], World Operating System) is developed in Java and is dedicated to providing a foundational support framework and extension system for cloud, management, and terminal applications in IoT scenarios. It is suitable for localized tools, building websites, developing SaaS services, and developing business middle platforms.
+WLDOS (pronounced: ['wou'da'si], World Operating System) is developed in Java and is dedicated to providing a foundational support framework and extension system for cloud, management, edge and terminal applications in IoT scenarios. It is suitable for localized tools, building websites, developing SaaS services, and developing business middle platforms.
 
-Pain Points Solved: If you want to expand your business using online technology but are confused about how to implement and land it, you need a sustainable and expandable platform that does not require expensive infrastructure.
+**Pain Points Solved**:  
+- Limited development team resources;  
+- You want to expand your business using online technology but are confused about how to implement and land it,You need a sustainable and expandable platform that does not require expensive infrastructure;  
+- You cannot afford expensive infrastructure and cannot face complex operations.
 
-**Suitable for plugin tools, personal websites, enterprise websites, business middle platforms, R&D platforms, and comprehensive support systems. Ideal for teams starting in technology or looking to develop projects in the IoT field.**
+**Problems Solved**:  
+- Eliminate the defects caused by rigid microservice practices, such as system fragmentation and division;  
+- Eliminate the defects caused by rigid resource separation management under the practice of front-end and back-end separation, such as the inability to coordinate the front and back ends, communication不畅, and the lack of depth in business understanding;  
+- Give everyone a powerful digital development tool.
+
+**Suitable for tool development, personal website building, enterprise website building, business middle platforms, R&D platforms, and comprehensive support systems. Ideal for teams starting in technology or looking to develop projects in the IoT field.**
 
 If you find it valuable, please <a href="https://gitee.com/wldos/wldos" style="color: red">star us</a>!
 
 ### Project Features
 
-1. **Easy to Use**:  
+1. **Friendly**:  
    Low cost, low threshold, only requires traditional infrastructure. Top architects have encapsulated steep technology libraries into traditional technology styles for developers, requiring minimal learning costs and ready to use.
 
    The framework only uses open-source libraries like Spring Boot, forming a sustainable framework called wldos-framework, on which the wldos support platform is built, allowing for self-research and growth from scratch.

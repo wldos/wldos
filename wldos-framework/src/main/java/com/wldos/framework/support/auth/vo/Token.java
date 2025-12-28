@@ -10,6 +10,8 @@ package com.wldos.framework.support.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+
 /**
  * 认证通过后返回的token。
  *
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @date 2021/4/30
  * @version 1.0
  */
+@Getter
 public class Token {
 	private String accessToken;
 
@@ -45,24 +48,12 @@ public class Token {
 		this.jwt = jwt;
 	}
 
-	public String getAccessToken() {
-		return accessToken;
-	}
-
 	void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
 
-	public int getRefresh() {
-		return refresh;
-	}
-
 	void setRefresh(int refresh) {
 		this.refresh = refresh;
-	}
-
-	public JWT getJwt() {
-		return jwt;
 	}
 
 	public void setJwt(JWT jwt) {

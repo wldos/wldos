@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Upload, message, Card, Space, Alert, Divider, Typography, Tooltip } from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
-import { 
-  UploadOutlined, 
-  FileZipOutlined, 
-  InfoCircleOutlined, 
+import {
+  UploadOutlined,
+  FileZipOutlined,
+  InfoCircleOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   CloudUploadOutlined
@@ -30,8 +30,8 @@ const UploadPlugin = ({ visible, onCancel, onSuccess }) => {
         file: selectedFile
       });
 
-      // 检查响应状态，后端返回格式为 {status: 200, message: "ok", data: "插件安装成功"}
-      if (response?.data === 'ok') {
+      // 检查响应状态，后端返回格式为 {code: 200, message: "ok", data: "插件安装成功", success: true}
+      if (response?.success) {
         message.success('插件安装成功');
 
         // 关闭上传界面
@@ -135,8 +135,8 @@ const UploadPlugin = ({ visible, onCancel, onSuccess }) => {
         >
           <Space direction="vertical" style={{ width: '100%' }}>
             <Upload {...uploadProps}>
-              <Button 
-                icon={<UploadOutlined />} 
+              <Button
+                icon={<UploadOutlined />}
                 size="large"
                 style={{ width: '100%', height: '60px' }}
               >
@@ -145,10 +145,10 @@ const UploadPlugin = ({ visible, onCancel, onSuccess }) => {
             </Upload>
 
             {/* 文件要求说明 */}
-            <div style={{ 
-              padding: '12px', 
-              background: '#f6ffed', 
-              border: '1px solid #b7eb8f', 
+            <div style={{
+              padding: '12px',
+              background: '#f6ffed',
+              border: '1px solid #b7eb8f',
               borderRadius: '6px',
               fontSize: '12px',
               color: '#666'
@@ -181,8 +181,8 @@ const UploadPlugin = ({ visible, onCancel, onSuccess }) => {
               </Space>
             }
             size="small"
-            style={{ 
-              background: '#f6ffed', 
+            style={{
+              background: '#f6ffed',
               border: '1px solid #b7eb8f'
             }}
           >
@@ -193,9 +193,9 @@ const UploadPlugin = ({ visible, onCancel, onSuccess }) => {
                   {selectedFile.name}
                 </Typography.Text>
               </div>
-              
+
               <Divider style={{ margin: '8px 0' }} />
-              
+
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#666' }}>
                   文件大小: {(() => {

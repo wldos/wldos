@@ -8,6 +8,12 @@
 
 package com.wldos.platform.auth.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 账户消息设置。
  *
@@ -15,34 +21,16 @@ package com.wldos.platform.auth.model;
  * @date 2021/9/22
  * @version 1.0
  */
+@ApiModel(description = "账户消息设置")
+@Getter
+@Setter
 public class AccMes {
+	@ApiModelProperty(value = "用户消息状态：1=启用, 0=禁用", example = "1")
 	private String userMesStatus;
 
+	@ApiModelProperty(value = "系统消息状态：1=启用, 0=禁用", example = "1")
 	private String sysMesStatus;
 
+	@ApiModelProperty(value = "待办消息状态：1=启用, 0=禁用", example = "1")
 	private String todoMesStatus;
-
-	public String getUserMesStatus() {
-		return userMesStatus;
-	}
-
-	public void setUserMesStatus(String userMesStatus) {
-		this.userMesStatus = userMesStatus;
-	}
-
-	public String getSysMesStatus() {
-		return sysMesStatus;
-	}
-
-	public void setSysMesStatus(String sysMesStatus) {
-		this.sysMesStatus = sysMesStatus;
-	}
-
-	public String getTodoMesStatus() {
-		return todoMesStatus;
-	}
-
-	public void setTodoMesStatus(String todoMesStatus) {
-		this.todoMesStatus = todoMesStatus;
-	}
 }

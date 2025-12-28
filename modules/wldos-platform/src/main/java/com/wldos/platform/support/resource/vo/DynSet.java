@@ -8,6 +8,12 @@
 
 package com.wldos.platform.support.resource.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 动态路由设置。
  *
@@ -15,17 +21,20 @@ package com.wldos.platform.support.resource.vo;
  * @date 2023/4/8
  * @version 1.0
  */
+@ApiModel(description = "动态路由设置")
+@Getter
+@Setter
 public class DynSet {
-	/** 对应组件的包装对象名称，js实现类的类名，或者模板类型（static、url、component、other） */
+	@ApiModelProperty(value = "对应组件的包装对象名称，js实现类的类名，或者模板类型（static、url、component、other）", example = "ProductList")
 	private String module;
 
-	/** 绑定的分类别名 */
+	@ApiModelProperty(value = "绑定的分类别名", example = "tech")
 	private String category;
 
-	/** 指定url 或 组件路径 */
+	@ApiModelProperty(value = "指定URL或组件路径", example = "/product/list")
 	private String url;
 
-	/** 扩展属性（JSON格式，用于传递额外参数） */
+	@ApiModelProperty(value = "扩展属性（JSON格式，用于传递额外参数）", example = "{\"key\":\"value\"}")
 	private String extraProps;
 
 	public DynSet() {
@@ -44,37 +53,5 @@ public class DynSet {
 		this.module = module;
 		this.category = category;
 		this.url = url;
-	}
-
-	public String getModule() {
-		return module;
-	}
-
-	public void setModule(String module) {
-		this.module = module;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getExtraProps() {
-		return extraProps;
-	}
-
-	public void setExtraProps(String extraProps) {
-		this.extraProps = extraProps;
 	}
 }

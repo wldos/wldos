@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * 系统配置相关controller。
  *
@@ -25,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
+@Api(tags = "系统配置管理（后台）")
 @RestController
 @RequestMapping("admin/sys/options")
 public class OptionsAdminController extends EntityController<OptionsService, WoOptions> {
+	@ApiOperation(value = "所有系统配置", notes = "获取所有系统配置")
 	@GetMapping("")
 	public List<WoOptions> fetchAllOptions() {
 		return this.service.findAll();

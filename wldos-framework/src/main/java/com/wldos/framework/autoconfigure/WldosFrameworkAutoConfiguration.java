@@ -21,7 +21,14 @@ import org.springframework.context.annotation.FilterType;
  * WLDOS框架自动配置类
  * 为第三方项目提供WLDOS框架核心组件的自动配置
  * 
- * @author WLDOS Team
+ * 注意：
+ * - 此类的ComponentScan固定扫描com.wldos.framework包，用于加载框架自身的组件
+ * - 第三方应用的包路径通过wldos.framework.base-package配置，由GlobalResponseHandler和GlobalExceptionHandler使用
+ * - 第三方应用需要在自己的配置类中配置ComponentScan来扫描自己的包路径
+ * 
+ * @author 元悉宇宙
+ * @date 2025-12-26
+ * @version 2.0
  */
 @Configuration
 @ConditionalOnClass(name = "com.wldos.framework.support.internal.MyJdbcRepository")

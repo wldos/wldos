@@ -8,6 +8,12 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 当前请求路由是否有权限。约定菜单权限就是路由权限，权限
  *
@@ -15,15 +21,11 @@ package com.wldos.platform.core.vo;
  * @date 2023-04-6
  * @version V1.0
  */
+@ApiModel(description = "权限检查结果")
+@Getter
+@Setter
 public class IsAuth {
 
+	@ApiModelProperty(value = "是否有权限", example = "true")
 	private boolean isAuth;
-
-	public boolean isAuth() {
-		return isAuth;
-	}
-
-	public void setAuth(boolean auth) {
-		isAuth = auth;
-	}
 }

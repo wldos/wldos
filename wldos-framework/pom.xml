@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.0.0</version>
+		<version>2.0.1</version>
 	</parent>
 	<artifactId>wldos-framework</artifactId>
 	<packaging>jar</packaging>
@@ -44,9 +44,73 @@
 			<artifactId>truelicense-core</artifactId>
 			<version>1.33</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<!-- Knife4j 增强 Swagger UI，提供更美观的界面和更强大的功能 -->
+		<!-- 完全兼容 Swagger 注解，无需修改现有代码 -->
+		<!-- 注意：knife4j-openapi2-spring-boot-starter 4.4.0 内部已依赖 Springfox 2.10.5 -->
+		<!-- 根据 Knife4j 官方文档：https://doc.xiaominfo.com/docs/quick-start#spring-boot-2 -->
+		<!-- Springfox版本选择的依然是2.10.5版本，而并非springfox最新3.0.0版本 -->
+		<!-- 因此不需要手动添加 Springfox 依赖，避免版本冲突 -->
+		<dependency>
+			<groupId>com.github.xiaoymin</groupId>
+			<artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+			<version>4.4.0</version>
+			<exclusions>
+				<!-- 排除有 bug 的 swagger-models 1.5.20，升级到 1.5.21 修复空字符串 defaultValue 的问题 -->
+				<exclusion>
+					<groupId>io.swagger</groupId>
+					<artifactId>swagger-models</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 升级 swagger-models 到 1.5.21，修复 Integer/Long 类型参数 defaultValue 为空字符串导致的 NumberFormatException -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>1.5.21</version>
+		</dependency>
+
 	</dependencies>
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.properties</include>
+					<include>banner.txt</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>application.properties</exclude>
+					<exclude>banner.txt</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<!-- 配置资源过滤插件，使用 @property@ 格式 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<delimiters>
+						<delimiter>@</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

@@ -10,146 +10,58 @@ package com.wldos.platform.core.vo;
 
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.sql.Timestamp;
+
+@ApiModel(description = "体系结构信息")
+@Getter
+@Setter
 public class Architecture extends TreeNode<Architecture> {
 
+	@ApiModelProperty(value = "体系编码", example = "ARCH001")
 	private String archCode;
 
+	@ApiModelProperty(value = "体系名称", example = "技术部")
 	private String archName;
 
+	@ApiModelProperty(value = "体系描述", example = "技术部门体系结构")
 	private String archDesc;
 
+	@ApiModelProperty(value = "公司ID", example = "1")
 	private Long comId;
 
+	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
+	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;
 
+	@ApiModelProperty(value = "创建人ID", hidden = true)
 	private Long createBy;
 
-	private java.sql.Timestamp createTime;
+	@ApiModelProperty(value = "创建时间", hidden = true)
+	private Timestamp createTime;
 
+	@ApiModelProperty(value = "创建IP", hidden = true)
 	private String createIp;
 
+	@ApiModelProperty(value = "更新人ID", hidden = true)
 	private Long updateBy;
 
+	@ApiModelProperty(value = "更新IP", hidden = true)
 	private String updateIp;
 
-	private java.sql.Timestamp updateTime;
+	@ApiModelProperty(value = "更新时间", hidden = true)
+	private Timestamp updateTime;
 
+	@ApiModelProperty(value = "删除标志", hidden = true)
 	private String deleteFlag;
 
+	@ApiModelProperty(value = "版本号", hidden = true)
 	private Integer versions;
-
-	public String getArchCode() {
-		return archCode;
-	}
-
-	public void setArchCode(String archCode) {
-		this.archCode = archCode;
-	}
-
-	public String getArchName() {
-		return archName;
-	}
-
-	public void setArchName(String archName) {
-		this.archName = archName;
-	}
-
-	public String getArchDesc() {
-		return archDesc;
-	}
-
-	public void setArchDesc(String archDesc) {
-		this.archDesc = archDesc;
-	}
-
-	public Long getComId() {
-		return comId;
-	}
-
-	public void setComId(Long comId) {
-		this.comId = comId;
-	}
-
-	public Long getDisplayOrder() {
-		return displayOrder;
-	}
-
-	public void setDisplayOrder(Long displayOrder) {
-		this.displayOrder = displayOrder;
-	}
-
-	public String getIsValid() {
-		return isValid;
-	}
-
-	public void setIsValid(String isValid) {
-		this.isValid = isValid;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public java.sql.Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(java.sql.Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(Long updateBy) {
-		this.updateBy = updateBy;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-	public java.sql.Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(java.sql.Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
-	public Integer getVersions() {
-		return versions;
-	}
-
-	public void setVersions(Integer versions) {
-		this.versions = versions;
-	}
-
 }

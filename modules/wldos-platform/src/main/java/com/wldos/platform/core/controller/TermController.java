@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.common.vo.TreeSelectOption;
@@ -32,6 +33,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.validation.Valid;
+
 /**
  * 分类管理controller。
  * 租户共享平台分类、标签设置，不具备管理权限。
@@ -40,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
+@Api(tags = "分类管理")
 @RestController
 public class TermController extends EntityController<TermService, KTerms> {
 
@@ -49,6 +59,15 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param params 分页
 	 * @return 分类项树形列表
 	 */
+	@ApiOperation(value = "分类列表", notes = "支持查询、排序的分页查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "classType", value = "分类类型，默认为category", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "name", value = "分类名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("/admin/cms/category")
 	public PageableResult<TermTree> listCategory(@RequestParam Map<String, Object> params) {
 		// 如果参数中没有 classType，则默认为 category
@@ -66,6 +85,14 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param params 请求参数
 	 * @return 标签列表
 	 */
+	@ApiOperation(value = "标签列表", notes = "支持查询、排序的分页查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "name", value = "标签名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("/admin/cms/tag")
 	public PageableResult<TermTree> listTag(@RequestParam Map<String, Object> params) {
 		params.put("classType", TermTypeEnum.TAG.toString());
@@ -80,6 +107,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 两级分类树列表
 	 */
+	@ApiOperation(value = "分类扁平树", notes = "获取分类树，用于信息发布")
 	@GetMapping("category/flatTree")
 	public List<Category> categoryFlatTree() {
 		return this.service.queryFlatCategoryTree();
@@ -91,6 +119,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 两级分类树列表
 	 */
+	@ApiOperation(value = "信息分类扁平树", notes = "信息发布获取分类树")
 	@GetMapping("info/flatTree")
 	public List<Category> infoFlatTree() {
 		return this.service.queryFlatCategoryTree();
@@ -102,6 +131,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 分类树状列表
 	 */
+	@ApiOperation(value = "分类树状列表", notes = "获取分类树状列表")
 	@GetMapping("category/treeSelect")
 	public List<TreeSelectOption> categoryLayerTree() {
 		return this.service.queryLayerCategoryTree();
@@ -113,6 +143,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 插件分类树状列表
 	 */
+	@ApiOperation(value = "插件分类树状列表", notes = "获取插件分类树状列表")
 	@GetMapping("plugin/category/treeSelect")
 	public List<TreeSelectOption> pluginCategoryLayerTree() {
 		return this.service.queryLayerCategoryTreeByType(TermTypeEnum.PLUGIN.toString());
@@ -125,8 +156,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param classType 分类类型（如：category, plugin, nav_menu 等）
 	 * @return 分类树状列表
 	 */
+	@ApiOperation(value = "通用分类树", notes = "通用分类树查询接口，支持所有类型")
 	@GetMapping("term/category/treeSelect")
-	public List<TreeSelectOption> termCategoryLayerTree(@RequestParam String classType) {
+	public List<TreeSelectOption> termCategoryLayerTree(@ApiParam(value = "分类类型", required = true) @RequestParam String classType) {
 		return this.service.queryLayerCategoryTreeByType(classType);
 	}
 
@@ -136,8 +168,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 两级分类树列表
 	 */
+	@ApiOperation(value = "根据父ID获取分类", notes = "根据父分类id获取所有子分类（包含自身）")
 	@GetMapping("category/fromPid/{parentId:\\d+}")
-	public List<Category> categoryFromPid(@PathVariable Long parentId) {
+	public List<Category> categoryFromPid(@ApiParam(value = "父分类ID", required = true) @PathVariable Long parentId) {
 		return this.service.queryCategoriesFromPid(parentId);
 	}
 
@@ -147,8 +180,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 两级分类树列表
 	 */
+	@ApiOperation(value = "根据别名获取分类", notes = "根据父分类别名获取所有子分类（包含自身）")
 	@GetMapping("category/fromPlug/{slugTerm}")
-	public List<Category> categoryFromPlug(@PathVariable String slugTerm) {
+	public List<Category> categoryFromPlug(@ApiParam(value = "分类别名", required = true) @PathVariable String slugTerm) {
 		return this.service.queryCategoriesFromPlug(slugTerm);
 	}
 
@@ -157,6 +191,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 顶级分类下拉列表
 	 */
+	@ApiOperation(value = "顶级分类下拉列表", notes = "获取平顶级分类下拉列表")
 	@GetMapping("category/select")
 	public List<SelectOption> queryTopCategories() {
 		return this.service.queryTopCategories();
@@ -167,37 +202,42 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 *
 	 * @return 标签下拉列表
 	 */
+	@ApiOperation(value = "标签下拉列表", notes = "获取平台标签下拉列表")
 	@GetMapping("tag/select")
 	public List<SelectOption> queryFlatTags() {
 		return this.service.queryFlatTags();
 	}
 
+	@ApiOperation(value = "添加分类", notes = "添加新的分类")
 	@PostMapping("/admin/cms/category/add")
-	public String addCategory(@RequestBody Term term) {
+	public Result addCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		term.setClassType(TermTypeEnum.CATEGORY.toString());
 		this.handleDisplayOrder(term);
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
-		return this.resJson.ok(res);
+		return Result.ok(res);
 	}
 
+	@ApiOperation(value = "更新分类", notes = "更新分类信息")
 	@PostMapping("/admin/cms/category/update")
-	public String updateCategory(@RequestBody Term term) {
+	public Result updateCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
-		return this.resJson.ok(res);
+		return Result.ok(res);
 	}
 
+	@ApiOperation(value = "删除分类", notes = "删除指定的分类")
 	@DeleteMapping("/admin/cms/category/delete")
-	public String deleteCategory(@RequestBody Term term) {
+	public Result deleteCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		this.service.deleteTerm(term);
 		this.service.refreshTerm();
-		return this.resJson.ok("ok");
+		return Result.ok("ok");
 	}
 
+	@ApiOperation(value = "批量删除分类", notes = "批量删除分类")
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("/admin/cms/category/deletes")
-	public Boolean removeIds(@RequestBody List<Term> terms) {
+	public Boolean removeIds(@ApiParam(value = "分类列表", required = true) @RequestBody List<Term> terms) {
 		if (!ObjectUtils.isBlank(terms)) {
 			this.service.deleteTerms(terms);
 
@@ -207,13 +247,14 @@ public class TermController extends EntityController<TermService, KTerms> {
 		return Boolean.TRUE;
 	}
 
+	@ApiOperation(value = "添加标签", notes = "添加新的标签")
 	@PostMapping("/admin/cms/tag/add")
-	public String addTag(@RequestBody Term term) {
+	public Result addTag(@ApiParam(value = "标签信息", required = true) @Valid @RequestBody Term term) {
 		term.setClassType(TermTypeEnum.TAG.toString());
 		this.handleDisplayOrder(term);
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
 		this.service.appendCacheTag(term); // 新增标签追加缓存
-		return this.resJson.ok(res);
+		return Result.ok(res);
 	}
 
 	/**
@@ -223,6 +264,15 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param params 分页参数，必须包含 classType
 	 * @return 分类项树形列表
 	 */
+	@ApiOperation(value = "通用分类项列表", notes = "通用分类项列表，支持所有类型的查询、排序的分页查询，必须包含 classType 参数")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "classType", value = "分类类型（必填），如：category, tag, plugin, nav_menu 等", dataTypeClass = String.class, paramType = "query", required = true),
+		@ApiImplicitParam(name = "name", value = "分类项名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("/admin/term-type/term")
 	public PageableResult<TermTree> listTerm(@RequestParam Map<String, Object> params) {
 		// classType 是必填参数
@@ -243,11 +293,12 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param term 分类项信息，必须包含 classType
 	 * @return 操作结果
 	 */
+	@ApiOperation(value = "通用分类项新增", notes = "通用分类项新增，支持所有类型")
 	@PostMapping("/admin/term-type/term/add")
-	public String addTerm(@RequestBody Term term) {
+	public Result addTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		// classType 是必填字段
 		if (ObjectUtils.isBlank(term.getClassType())) {
-			return this.resJson.ok("classType 是必填字段");
+			return Result.error(400, "classType 是必填字段");
 		}
 		this.handleDisplayOrder(term);
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
@@ -256,7 +307,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 			this.service.appendCacheTag(term);
 		}
 		this.service.refreshTerm();
-		return this.resJson.ok(res);
+		return Result.ok(res);
 	}
 
 	/**
@@ -265,11 +316,12 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param term 分类项信息
 	 * @return 操作结果
 	 */
+	@ApiOperation(value = "通用分类项更新", notes = "通用分类项更新，支持所有类型")
 	@PostMapping("/admin/term-type/term/update")
-	public String updateTerm(@RequestBody Term term) {
+	public Result updateTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
-		return this.resJson.ok(res);
+		return Result.ok(res);
 	}
 
 	/**
@@ -278,11 +330,12 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param term 分类项信息
 	 * @return 操作结果
 	 */
+	@ApiOperation(value = "通用分类项删除", notes = "通用分类项删除，支持所有类型")
 	@DeleteMapping("/admin/term-type/term/delete")
-	public String deleteTerm(@RequestBody Term term) {
+	public Result deleteTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		this.service.deleteTerm(term);
 		this.service.refreshTerm();
-		return this.resJson.ok("ok");
+		return Result.ok("ok");
 	}
 
 	/**
@@ -291,9 +344,10 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param terms 分类项列表
 	 * @return 操作结果
 	 */
+	@ApiOperation(value = "通用分类项批量删除", notes = "通用分类项批量删除，支持所有类型")
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("/admin/term-type/term/deletes")
-	public Boolean removeTerms(@RequestBody List<Term> terms) {
+	public Boolean removeTerms(@ApiParam(value = "分类项列表", required = true) @RequestBody List<Term> terms) {
 		if (!ObjectUtils.isBlank(terms)) {
 			this.service.deleteTerms(terms);
 			this.service.refreshTerm();
@@ -307,9 +361,10 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 * @param termIds 分类项ids
 	 * @return 设置结果，设置为开的分类项可以在信息发布门户展示和发布该类信息
 	 */
+	@ApiOperation(value = "设置信息发布状态", notes = "批量给分类项设置信息发布状态")
 	@SuppressWarnings("unchecked")
 	@PostMapping("/admin/cms/term/infoFlags")
-	public Boolean infoFlag(@RequestBody List<Long> termIds) {
+	public Boolean infoFlag(@ApiParam(value = "分类项IDs", required = true) @RequestBody List<Long> termIds) {
 		if (!ObjectUtils.isBlank(termIds)) {
 			this.service.infoFlagByIds(termIds);
 

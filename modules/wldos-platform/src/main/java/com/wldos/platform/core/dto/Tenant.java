@@ -10,34 +10,57 @@ package com.wldos.platform.core.dto;
 
 import java.sql.Timestamp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@ApiModel(description = "租户信息")
+@Getter
+@Setter
 public class Tenant {
 
+	@ApiModelProperty(value = "租户ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "公司编码", example = "COM001")
 	private String comCode;
 
+	@ApiModelProperty(value = "公司名称", example = "示例公司")
 	private String comName;
 
+	@ApiModelProperty(value = "公司描述", example = "公司简介")
 	private String comDesc;
 
+	@ApiModelProperty(value = "父公司ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
+	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;
 
+	@ApiModelProperty(value = "创建人ID", hidden = true)
 	private Long createBy;
 
+	@ApiModelProperty(value = "创建时间", hidden = true)
 	private Timestamp createTime;
 
+	@ApiModelProperty(value = "创建IP", hidden = true)
 	private String createIp;
 
+	@ApiModelProperty(value = "更新人ID", hidden = true)
 	private Long updateBy;
 
+	@ApiModelProperty(value = "更新时间", hidden = true)
 	private Timestamp updateTime;
 
+	@ApiModelProperty(value = "更新IP", hidden = true)
 	private String updateIp;
 
+	@ApiModelProperty(value = "删除标志", hidden = true)
 	private String deleteFlag;
 
 	public Tenant() {
@@ -59,119 +82,6 @@ public class Tenant {
 		this.updateBy = updateBy;
 		this.updateTime = updateTime;
 		this.updateIp = updateIp;
-		this.deleteFlag = deleteFlag;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getComCode() {
-		return comCode;
-	}
-
-	public void setComCode(String comCode) {
-		this.comCode = comCode;
-	}
-
-	public String getComName() {
-		return comName;
-	}
-
-	public void setComName(String comName) {
-		this.comName = comName;
-	}
-
-	public String getComDesc() {
-		return comDesc;
-	}
-
-	public void setComDesc(String comDesc) {
-		this.comDesc = comDesc;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public Long getDisplayOrder() {
-		return displayOrder;
-	}
-
-	public void setDisplayOrder(Long displayOrder) {
-		this.displayOrder = displayOrder;
-	}
-
-	public String getIsValid() {
-		return isValid;
-	}
-
-	public void setIsValid(String isValid) {
-		this.isValid = isValid;
-	}
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-	public java.sql.Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(java.sql.Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(Long updateBy) {
-		this.updateBy = updateBy;
-	}
-
-	public java.sql.Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(java.sql.Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
-
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
 	}
 }

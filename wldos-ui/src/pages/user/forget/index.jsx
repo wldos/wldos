@@ -139,34 +139,37 @@ const ResetPasswd = ({submitting, userRegister}) => {
     if (value === undefined || value.length < 4) {
       return Promise.reject();
     }
-    const res = await checkCaptcha({captcha: value, uuid});
-    if (res === undefined || res.data === undefined || res.data.status === undefined) {
-      return Promise.reject(new Error('校验超时请重试!'));
-    }
-    if (res.data.status === 'error') {
+    try {
+      const res = await checkCaptcha({captcha: value, uuid});
+      // 新的响应格式：response.data已经是业务数据（Map对象，包含status字段）
+      if (res && res.data && res.data.status === 'ok') {
+        setVerify('ok');
+        return Promise.resolve();
+      } else {
+        setVerify('error');
+        return Promise.reject(new Error('验证码错误或过期，请重新输入或获取!'));
+      }
+    } catch (error) {
       setVerify('error');
-      return Promise.reject(new Error('验证码错误或过期，请重新输入或获取!'));
+      return Promise.reject(new Error('验证码校验失败，请重试!'));
     }
-
-    if (res.data.status === 'ok') {
-      setVerify('ok');
-    }
-    return Promise.resolve();
   };
 
   const validateEmail = async (rule, value) => {
     if (value === undefined || value.length < 4) {
       return Promise.reject();
     }
-    const res = await checkEmail({email: value});
-    if (res === undefined || res.data === undefined || res.data.status === undefined) {
-      return Promise.reject(new Error('邮箱校验超时请重试!'));
+    try {
+      const res = await checkEmail({email: value});
+      // 新的响应格式：response.data已经是业务数据（Map对象，包含status字段）
+      if (res && res.data && res.data.status === 'ok') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(new Error('邮箱不存在!'));
+      }
+    } catch (error) {
+      return Promise.reject(new Error('邮箱校验失败，请重试!'));
     }
-    if (res.data.status === 'error') {
-      return Promise.reject(new Error('邮箱不存在!'));
-    }
-
-    return Promise.resolve();
   };
 
   const renderPasswordProgress = () => {

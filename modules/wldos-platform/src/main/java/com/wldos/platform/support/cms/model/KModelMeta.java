@@ -11,6 +11,12 @@ package com.wldos.platform.support.cms.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 在CMS-Pub基础上的知识元模型定义。知识内容模型包括两部分：数据和行为。数据定义了结构，行为定义了流程、逻辑和展现，本系统以相对固定的行为和数据模板实现一种模式，
  * 基于数据和行为的扩展同样遵循这个模式。
@@ -19,115 +25,38 @@ import java.util.List;
  * @date 2021/6/19
  * @version 1.0
  */
+@ApiModel(description = "知识元模型定义，在CMS-Pub基础上的扩展")
+@Getter
+@Setter
 public class KModelMeta extends CMeta {
 
-	/** 副标题 */
+	@ApiModelProperty(value = "副标题", example = "示例副标题")
 	protected String subTitle = "未设置";
 
-	/** 原价 */
+	@ApiModelProperty(value = "原价", example = "100.00")
 	protected BigDecimal ornPrice = BigDecimal.valueOf(0);
 
-	/** 现价 */
+	@ApiModelProperty(value = "现价", example = "80.00")
 	protected BigDecimal pstPrice = BigDecimal.valueOf(0);
 
-	/** 联系人 */
+	@ApiModelProperty(value = "联系人", example = "张三")
 	protected String contact = "未设置";
 
-	/** 联系电话 */
+	@ApiModelProperty(value = "联系电话", example = "13800138000")
 	protected String telephone = "未设置";
 
-	/** 所在省 */
+	@ApiModelProperty(value = "所在省", example = "北京市")
 	protected String prov = "未知";
 
-	/** 所在市 */
+	@ApiModelProperty(value = "所在市", example = "北京市")
 	protected String city = "未知";
 
-	/** 所在区县 */
+	@ApiModelProperty(value = "所在区县", example = "朝阳区")
 	protected String county = "未知";
 
-	/** 主图 */
+	@ApiModelProperty(value = "主图列表")
 	protected List<MainPicture> mainPic;
 
-	/** 附件图片等 */
+	@ApiModelProperty(value = "附件列表（图片、文件、音频、视频等）")
 	protected List<Attachment> attachment;
-
-	public String getSubTitle() {
-		return subTitle;
-	}
-
-	public void setSubTitle(String subTitle) {
-		this.subTitle = subTitle;
-	}
-
-	public BigDecimal getOrnPrice() {
-		return ornPrice;
-	}
-
-	public void setOrnPrice(BigDecimal ornPrice) {
-		this.ornPrice = ornPrice;
-	}
-
-	public BigDecimal getPstPrice() {
-		return pstPrice;
-	}
-
-	public void setPstPrice(BigDecimal pstPrice) {
-		this.pstPrice = pstPrice;
-	}
-
-	public String getContact() {
-		return contact;
-	}
-
-	public void setContact(String contact) {
-		this.contact = contact;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
-	public String getProv() {
-		return prov;
-	}
-
-	public void setProv(String prov) {
-		this.prov = prov;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getCounty() {
-		return county;
-	}
-
-	public void setCounty(String county) {
-		this.county = county;
-	}
-
-	public List<MainPicture> getMainPic() {
-		return mainPic;
-	}
-
-	public void setMainPic(List<MainPicture> mainPic) {
-		this.mainPic = mainPic;
-	}
-
-	public List<Attachment> getAttachment() {
-		return attachment;
-	}
-
-	public void setAttachment(List<Attachment> attachment) {
-		this.attachment = attachment;
-	}
 }

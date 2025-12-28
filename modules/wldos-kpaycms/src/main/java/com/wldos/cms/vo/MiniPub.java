@@ -8,6 +8,12 @@
 
 package com.wldos.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 发布内容链接相关信息。
  *
@@ -15,24 +21,13 @@ package com.wldos.cms.vo;
  * @date 2021/8/23
  * @version 1.0
  */
+@ApiModel(description = "发布内容链接相关信息")
+@Getter
+@Setter
 public class MiniPub {
+	@ApiModelProperty(value = "内容ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "内容标题")
 	private String pubTitle;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
 }

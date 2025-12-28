@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { 
-  Card, 
-  Input, 
+import {
+  Card,
+  Input,
   TreeSelect,
-  Button, 
-  Tag, 
-  Space, 
-  Modal, 
-  message, 
-  Tooltip, 
-  Badge, 
-  Row, 
-  Col, 
+  Button,
+  Tag,
+  Space,
+  Modal,
+  message,
+  Tooltip,
+  Badge,
+  Row,
+  Col,
   Empty,
   Spin,
   Typography,
   Divider,
   Pagination
 } from 'antd';
-import { 
-  SearchOutlined, 
-  EyeOutlined, 
-  DownloadOutlined, 
-  StarOutlined, 
+import {
+  SearchOutlined,
+  EyeOutlined,
+  DownloadOutlined,
+  StarOutlined,
   LikeOutlined,
   CheckCircleOutlined,
   AppstoreOutlined,
@@ -54,7 +54,7 @@ const StoreList = ({ dispatch }) => {
   const [installing, setInstalling] = useState({});
   const [categoryTree, setCategoryTree] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
-  
+
   const mobile = isMobile();
 
   // 获取已安装的插件列表
@@ -95,7 +95,7 @@ const StoreList = ({ dispatch }) => {
               return treeNode;
             });
           };
-          
+
           const treeData = convertToTreeData(Array.isArray(res.data) ? res.data : []);
           setCategoryTree(treeData);
         }
@@ -115,13 +115,13 @@ const StoreList = ({ dispatch }) => {
     setLoading(true);
     try {
       const res = await queryStorePlugins({
-        page: currentPage,
+        current: currentPage,
         pageSize: pageSize,
         keyword: searchKeyword,
         termTypeId: selectedCategory ? selectedCategory : undefined,
         ...params
       });
-      
+
       if (res?.data) {
         // 映射后端返回的数据，统一字段名
         const mappedPlugins = (res.data.rows || []).map(plugin => ({
@@ -152,7 +152,7 @@ const StoreList = ({ dispatch }) => {
   // 分类筛选
   const handleCategoryChange = (value) => {
     // TreeSelect 可能返回数组或单个值，统一处理为字符串或 undefined
-    const categoryValue = Array.isArray(value) 
+    const categoryValue = Array.isArray(value)
       ? (value.length > 0 ? value[0] : undefined)
       : value;
     setSelectedCategory(categoryValue);
@@ -168,13 +168,13 @@ const StoreList = ({ dispatch }) => {
   // 安装插件
   const handleInstall = async (plugin) => {
     if (installing[plugin.pluginCode]) return;
-    
+
     setInstalling(prev => ({ ...prev, [plugin.pluginCode]: true }));
-    
+
     try {
       const response = await installPlugin({ pluginCode: plugin.pluginCode });
-      
-      if (response?.data === 'ok') {
+
+      if (response?.success) {
         message.success(`插件 "${plugin.name || plugin.pluginCode}" 安装成功`);
         // 更新已安装列表
         setInstalledPlugins(prev => [...prev, plugin.pluginCode]);
@@ -236,8 +236,8 @@ const StoreList = ({ dispatch }) => {
       }}
     >
       {/* 搜索和筛选栏 */}
-      <Card 
-        size="small" 
+      <Card
+        size="small"
         style={{ marginBottom: '24px' }}
         bodyStyle={{ padding: '16px' }}
       >
@@ -279,8 +279,8 @@ const StoreList = ({ dispatch }) => {
       {/* 插件卡片列表 */}
       <Spin spinning={loading}>
         {plugins.length === 0 ? (
-          <Empty 
-            description="暂无插件" 
+          <Empty
+            description="暂无插件"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             style={{ margin: '60px 0' }}
           />
@@ -293,11 +293,11 @@ const StoreList = ({ dispatch }) => {
                 const tags = parseTags(plugin.tags);
 
                 return (
-                  <Col 
-                    key={plugin.id || plugin.pluginCode} 
-                    xs={24} 
-                    sm={12} 
-                    md={8} 
+                  <Col
+                    key={plugin.id || plugin.pluginCode}
+                    xs={24}
+                    sm={12}
+                    md={8}
                     lg={6}
                   >
                     <Card
@@ -306,8 +306,8 @@ const StoreList = ({ dispatch }) => {
                       cover={
                         <div className="plugin-card-cover">
                           {plugin.icon ? (
-                            <img 
-                              src={plugin.icon} 
+                            <img
+                              src={plugin.icon}
                               alt={plugin.name}
                               onError={(e) => {
                                 e.target.style.display = 'none';
@@ -320,10 +320,10 @@ const StoreList = ({ dispatch }) => {
                           )}
                           {installed && (
                             <div className="plugin-card-badge">
-                              <Badge 
-                                status="success" 
+                              <Badge
+                                status="success"
                                 text="已安装"
-                                style={{ 
+                                style={{
                                   backgroundColor: 'rgba(82, 196, 26, 0.1)',
                                   padding: '4px 8px',
                                   borderRadius: '4px'
@@ -335,23 +335,23 @@ const StoreList = ({ dispatch }) => {
                       }
                       actions={[
                         <Tooltip title="查看详情">
-                          <EyeOutlined 
-                            key="view" 
+                          <EyeOutlined
+                            key="view"
                             onClick={() => handleView(plugin)}
                             style={{ fontSize: '18px' }}
                           />
                         </Tooltip>,
                         <Tooltip title={installed ? '已安装' : '安装插件'}>
                           {installed ? (
-                            <CheckCircleOutlined 
-                              key="installed" 
+                            <CheckCircleOutlined
+                              key="installed"
                               style={{ fontSize: '18px', color: '#52c41a' }}
                             />
                           ) : (
-                            <DownloadOutlined 
-                              key="install" 
+                            <DownloadOutlined
+                              key="install"
                               onClick={() => handleInstall(plugin)}
-                              style={{ 
+                              style={{
                                 fontSize: '18px',
                                 color: installingPlugin ? '#1890ff' : undefined
                               }}
@@ -373,9 +373,9 @@ const StoreList = ({ dispatch }) => {
                         }
                         description={
                           <div>
-                            <Paragraph 
-                              ellipsis={{ rows: 2 }} 
-                              style={{ 
+                            <Paragraph
+                              ellipsis={{ rows: 2 }}
+                              style={{
                                 marginBottom: '8px',
                                 minHeight: '40px',
                                 fontSize: '13px',
@@ -418,11 +418,11 @@ const StoreList = ({ dispatch }) => {
                         }
                       />
                       {installingPlugin && (
-                        <div style={{ 
-                          position: 'absolute', 
-                          top: 0, 
-                          left: 0, 
-                          right: 0, 
+                        <div style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
                           bottom: 0,
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           display: 'flex',

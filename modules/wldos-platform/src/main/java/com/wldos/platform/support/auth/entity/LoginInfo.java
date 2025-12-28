@@ -8,6 +8,9 @@
 
 package com.wldos.platform.support.auth.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 在线用户信息。
  *
@@ -15,6 +18,8 @@ package com.wldos.platform.support.auth.entity;
  * @date 2021/5/2
  * @version 1.0
  */
+@Getter
+@Setter
 public class LoginInfo {
 	/** token ID */
 	private String id;
@@ -44,78 +49,6 @@ public class LoginInfo {
 		this.netLocation = netLocation;
 		this.userAgent = userAgent;
 		this.os = os;
-		this.loginTime = loginTime;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
-
-	public String getLoginName() {
-		return loginName;
-	}
-
-	public void setLoginName(String loginName) {
-		this.loginName = loginName;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
-	public String getLoginIP() {
-		return loginIP;
-	}
-
-	public void setLoginIP(String loginIP) {
-		this.loginIP = loginIP;
-	}
-
-	public String getNetLocation() {
-		return netLocation;
-	}
-
-	public void setNetLocation(String netLocation) {
-		this.netLocation = netLocation;
-	}
-
-	public String getUserAgent() {
-		return userAgent;
-	}
-
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
-
-	public String getOs() {
-		return os;
-	}
-
-	public void setOs(String os) {
-		this.os = os;
-	}
-
-	public long getLoginTime() {
-		return loginTime;
-	}
-
-	public void setLoginTime(long loginTime) {
 		this.loginTime = loginTime;
 	}
 }

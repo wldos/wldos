@@ -8,6 +8,12 @@
 
 package com.wldos.platform.auth.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 账号绑定信息。数据保存到第三方账号关联表。
  *
@@ -15,74 +21,28 @@ package com.wldos.platform.auth.model;
  * @date 2021/9/22
  * @version 1.0
  */
+@ApiModel(description = "账号绑定信息，数据保存到第三方账号关联表")
+@Getter
+@Setter
 public class AccBind {
+	@ApiModelProperty(value = "淘宝账号", example = "tb_account")
 	private String tb;
 
+	@ApiModelProperty(value = "支付宝账号", example = "zfb_account")
 	private String zfb;
 
+	@ApiModelProperty(value = "钉钉账号", example = "dd_account")
 	private String dd;
 
+	@ApiModelProperty(value = "微信账号", example = "wx_account")
 	private String wx;
 
+	@ApiModelProperty(value = "抖音账号", example = "dy_account")
 	private String dy;
 
+	@ApiModelProperty(value = "QQ账号", example = "qq_account")
 	private String qq;
 
+	@ApiModelProperty(value = "微博账号", example = "wb_account")
 	private String wb;
-
-	public String getTb() {
-		return tb;
-	}
-
-	public void setTb(String tb) {
-		this.tb = tb;
-	}
-
-	public String getZfb() {
-		return zfb;
-	}
-
-	public void setZfb(String zfb) {
-		this.zfb = zfb;
-	}
-
-	public String getDd() {
-		return dd;
-	}
-
-	public void setDd(String dd) {
-		this.dd = dd;
-	}
-
-	public String getWx() {
-		return wx;
-	}
-
-	public void setWx(String wx) {
-		this.wx = wx;
-	}
-
-	public String getDy() {
-		return dy;
-	}
-
-	public void setDy(String dy) {
-		this.dy = dy;
-	}
-
-	public String getQq() {
-		return qq;
-	}
-
-	public void setQq(String qq) {
-		this.qq = qq;
-	}
-
-	public String getWb() {
-		return wb;
-	}
-
-	public void setWb(String wb) {
-		this.wb = wb;
-	}
 }

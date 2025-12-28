@@ -11,7 +11,12 @@ package com.wldos.platform.support.cms.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Table
+@Getter
+@Setter
 public class KPubmeta {
 	@Id
 	private Long id;
@@ -33,38 +38,6 @@ public class KPubmeta {
 		this.id = id;
 		this.pubId = pubId;
 		this.metaKey = metaKey;
-		this.metaValue = metaValue;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getPubId() {
-		return pubId;
-	}
-
-	public void setPubId(Long pubId) {
-		this.pubId = pubId;
-	}
-
-	public String getMetaKey() {
-		return metaKey;
-	}
-
-	public void setMetaKey(String metaKey) {
-		this.metaKey = metaKey;
-	}
-
-	public String getMetaValue() {
-		return metaValue;
-	}
-
-	public void setMetaValue(String metaValue) {
 		this.metaValue = metaValue;
 	}
 }

@@ -11,6 +11,11 @@ package com.wldos.platform.core.vo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+
 /**
  * 分类目录信息。
  *
@@ -18,13 +23,18 @@ import com.wldos.common.vo.TreeNode;
  * @date 2022/1/1
  * @version 1.0
  */
+@ApiModel(description = "分类目录信息")
 @JsonIgnoreProperties({ "id", "parentId", "displayOrder" })
+@Getter
 public class Category extends TreeNode<Category> {
 
+	@ApiModelProperty(value = "分类标题", example = "技术分类")
 	private String title;
 
+	@ApiModelProperty(value = "分类键值", example = "tech")
 	private String key;
 
+	@ApiModelProperty(value = "分类别名", example = "technology")
 	private String slug;
 
 	public Category() {
@@ -39,17 +49,5 @@ public class Category extends TreeNode<Category> {
 		this.title = title;
 		this.key = key;
 		this.slug = slug;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public String getSlug() {
-		return slug;
 	}
 }

@@ -10,6 +10,12 @@ package com.wldos.platform.support.resource.vo;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 授权的资源信息。
  *
@@ -17,54 +23,22 @@ import java.io.Serializable;
  * @date 2021/4/26
  * @version 1.0
  */
+@ApiModel(description = "授权的资源信息")
+@Getter
+@Setter
 public class AuthInfo implements Serializable {
+	@ApiModelProperty(value = "资源编码", example = "RES001")
 	private String resourceCode;
 
+	@ApiModelProperty(value = "资源名称", example = "用户管理")
 	private String resourceName;
 
+	@ApiModelProperty(value = "资源路径", example = "/admin/sys/user")
 	private String resourcePath;
 
+	@ApiModelProperty(value = "资源类型", example = "menu")
 	private String resourceType;
 
+	@ApiModelProperty(value = "请求方法", example = "GET")
 	private String requestMethod;
-
-	public String getResourceCode() {
-		return resourceCode;
-	}
-
-	public void setResourceCode(String resourceCode) {
-		this.resourceCode = resourceCode;
-	}
-
-	public String getResourceName() {
-		return resourceName;
-	}
-
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
-
-	public String getResourcePath() {
-		return resourcePath;
-	}
-
-	public void setResourcePath(String resourcePath) {
-		this.resourcePath = resourcePath;
-	}
-
-	public String getResourceType() {
-		return resourceType;
-	}
-
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
-	}
-
-	public String getRequestMethod() {
-		return requestMethod;
-	}
-
-	public void setRequestMethod(String requestMethod) {
-		this.requestMethod = requestMethod;
-	}
 }

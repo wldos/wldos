@@ -10,6 +10,9 @@ package com.wldos.platform.support.auth.vo;
 
 import com.wldos.framework.support.auth.vo.JWT;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 登录成功返回的用户基础信息。
  *
@@ -17,6 +20,8 @@ import com.wldos.framework.support.auth.vo.JWT;
  * @date 2021/4/30
  * @version 1.0
  */
+@Getter
+@Setter
 public class UserInfo {
 	private Long id;
 
@@ -41,69 +46,5 @@ public class UserInfo {
 		this.id = jwt.getUserId();
 		this.tenantId = jwt.getTenantId();
 		this.domainId = jwt.getDomainId();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String headImg) {
-		this.avatar = headImg;
-	}
-
-	public Long getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(Long tenantId) {
-		this.tenantId = tenantId;
-	}
-
-	public Long getDomainId() {
-		return domainId;
-	}
-
-	public void setDomainId(Long domainId) {
-		this.domainId = domainId;
 	}
 }

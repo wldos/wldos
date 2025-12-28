@@ -8,6 +8,12 @@
 
 package com.wldos.platform.core.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 角色授予的资源。
  *
@@ -15,28 +21,17 @@ package com.wldos.platform.core.vo;
  * @date 2021/5/21
  * @version 1.0
  */
+@ApiModel(description = "角色授予的资源")
+@Getter
+@Setter
 public class RoleRes {
-	// 资源id
+	@ApiModelProperty(value = "资源ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "是否继承", example = "true")
 	private boolean inherit;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public boolean isInherit() {
-		return inherit;
-	}
-
-	public void setInherit(boolean inherit) {
-		this.inherit = inherit;
-	}
-
+	@Override
 	public String toString() {
 		return "{id: " + id.toString() + ", inherit: " + inherit + "}";
 	}

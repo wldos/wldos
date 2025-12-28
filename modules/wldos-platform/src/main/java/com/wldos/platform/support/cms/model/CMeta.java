@@ -12,6 +12,12 @@ import java.util.List;
 
 import com.wldos.platform.support.cms.dto.PubTypeExt;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Pub元模型定义。
  *
@@ -19,57 +25,23 @@ import com.wldos.platform.support.cms.dto.PubTypeExt;
  * @date 2021/6/19
  * @version 1.0
  */
+@ApiModel(description = "Pub元模型定义")
+@Getter
+@Setter
 public class CMeta {
 
-	/** 封面特色图path */
+	@ApiModelProperty(value = "封面特色图路径", example = "/images/cover.jpg")
 	protected String cover;
 
-	/** 查看数 */
+	@ApiModelProperty(value = "查看数", example = "1000")
 	protected String views;
 
+	@ApiModelProperty(value = "水印文本", example = "WLDOS")
 	protected String watermarkText;
 
+	@ApiModelProperty(value = "是否启用水印：1=启用, 0=禁用", example = "1")
 	protected String watermarkEnabled;
 
+	@ApiModelProperty(value = "发布类型扩展属性列表")
 	protected List<PubTypeExt> pubTypeExt;
-
-	public String getCover() {
-		return cover;
-	}
-
-	public void setCover(String cover) {
-		this.cover = cover;
-	}
-
-	public String getViews() {
-		return views;
-	}
-
-	public void setViews(String views) {
-		this.views = views;
-	}
-
-	public List<PubTypeExt> getPubTypeExt() {
-		return pubTypeExt;
-	}
-
-	public void setPubTypeExt(List<PubTypeExt> pubTypeExt) {
-		this.pubTypeExt = pubTypeExt;
-	}
-
-	public String getWatermarkText() {
-		return watermarkText;
-	}
-
-	public void setWatermarkText(String watermarkText) {
-		this.watermarkText = watermarkText;
-	}
-
-	public String getWatermarkEnabled() {
-		return watermarkEnabled;
-	}
-
-	public void setWatermarkEnabled(String watermarkEnabled) {
-		this.watermarkEnabled = watermarkEnabled;
-	}
 }

@@ -17,6 +17,12 @@ import com.wldos.platform.support.cms.model.IMeta;
 import com.wldos.platform.support.cms.vo.SeoCrumbs;
 import com.wldos.platform.support.term.dto.Term;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 一个页面的数据，前端提供某种定制页面模板，然后用此数据去填充。
  *
@@ -24,251 +30,138 @@ import com.wldos.platform.support.term.dto.Term;
  * @date 2021/8/20
  * @version 1.0
  */
+@ApiModel(description = "页面数据")
+@Getter
+@Setter
 public class Page extends CMeta implements IMeta {
 
+	@ApiModelProperty(value = "内容ID", example = "1")
 	// 内容pub id
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "页面标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "内容正文", example = "页面内容...")
 	private String pubContent;
 
+	@ApiModelProperty(value = "页面别名", example = "page-alias")
 	private String pubName;
 
+	@ApiModelProperty(value = "发布类型", example = "PAGE")
 	private String pubType;
 
+	@ApiModelProperty(value = "父级ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "作者信息")
 	private PubMember member;
 
+	@ApiModelProperty(value = "评论数", example = "10")
 	private Long commentCount;
 
+	@ApiModelProperty(value = "收藏数", example = "5")
 	private Long starCount;
 
+	@ApiModelProperty(value = "点赞数", example = "20")
 	private Long likeCount;
 
+	@ApiModelProperty(value = "创建时间", example = "2023-01-01 00:00:00")
 	private Timestamp createTime;
 
+	@ApiModelProperty(value = "域ID", example = "1")
 	private Long domainId;
 
+	@ApiModelProperty(value = "租户ID", example = "1")
 	private Long comId;
 
+	@ApiModelProperty(value = "评论列表")
 	private List<Comment> comments;
 
 	/** 标签列表 */
+	@ApiModelProperty(value = "标签列表")
 	private List<Term> tags;
 
+	@ApiModelProperty(value = "分类ID列表")
 	private List<Long> termTypeIds; // 一个帖子可以属于多个分类
 
 	/** 上一篇 */
+	@ApiModelProperty(value = "上一页")
 	private MiniPub prev;
 
 	/** 下一篇 */
+	@ApiModelProperty(value = "下一页")
 	private MiniPub next;
 
 	/** 相关文章 */
+	@ApiModelProperty(value = "相关页面列表")
 	private List<MiniPub> relPubs;
 
 	/** seo和面包屑数据 */
+	@ApiModelProperty(value = "SEO和面包屑数据")
 	private SeoCrumbs seoCrumbs;
 
-	public Long getId() {
-		return id;
-	}
+	@ApiModelProperty(value = "副标题", example = "页面副标题")
+	private String subTitle;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	@ApiModelProperty(value = "价格", example = "100.00")
+	private BigDecimal ornPrice;
 
-	public String getPubTitle() {
-		return pubTitle;
-	}
+	@ApiModelProperty(value = "联系人", example = "联系人姓名")
+	private String contact;
 
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
+	@ApiModelProperty(value = "电话", example = "13800138000")
+	private String telephone;
 
-	public String getPubContent() {
-		return pubContent;
-	}
+	@ApiModelProperty(value = "真实号码", example = "13800138000")
+	private String realNo;
 
-	public void setPubContent(String pubContent) {
-		this.pubContent = pubContent;
-	}
+	@ApiModelProperty(value = "城市", example = "北京市")
+	private String city;
 
-	public String getPubName() {
-		return pubName;
-	}
+	@ApiModelProperty(value = "省份", example = "北京市")
+	private String prov;
 
-	public void setPubName(String pubName) {
-		this.pubName = pubName;
-	}
-
-	public String getPubType() {
-		return pubType;
-	}
-
-	public void setPubType(String pubType) {
-		this.pubType = pubType;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public PubMember getMember() {
-		return member;
-	}
-
-	public void setMember(PubMember member) {
-		this.member = member;
-	}
-
-	public Long getCommentCount() {
-		return commentCount;
-	}
-
-	public void setCommentCount(Long commentCount) {
-		this.commentCount = commentCount;
-	}
-
-	public Long getStarCount() {
-		return starCount;
-	}
-
-	public void setStarCount(Long starCount) {
-		this.starCount = starCount;
-	}
-
-	public Long getLikeCount() {
-		return likeCount;
-	}
-
-	public void setLikeCount(Long likeCount) {
-		this.likeCount = likeCount;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-	public Long getDomainId() {
-		return domainId;
-	}
-
-	public void setDomainId(Long domainId) {
-		this.domainId = domainId;
-	}
-
-	public Long getComId() {
-		return comId;
-	}
-
-	public void setComId(Long comId) {
-		this.comId = comId;
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
-
-	public List<Term> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<Term> tags) {
-		this.tags = tags;
-	}
+	@ApiModelProperty(value = "县区", example = "朝阳区")
+	private String county;
 
 	@Override
 	public void setSubTitle(String subTitle) {
-
+		this.subTitle = subTitle;
 	}
 
 	@Override
 	public void setOrnPrice(BigDecimal bigDecimal) {
-
+		this.ornPrice = bigDecimal;
 	}
 
 	@Override
 	public void setContact(String hideName) {
-
+		this.contact = hideName;
 	}
 
 	@Override
 	public void setTelephone(String hidePhone) {
-
+		this.telephone = hidePhone;
 	}
 
 	@Override
 	public void setRealNo(String telephone) {
-
+		this.realNo = telephone;
 	}
 
 	@Override
 	public void setCity(String name) {
-
+		this.city = name;
 	}
 
 	@Override
 	public void setProv(String provName) {
-
+		this.prov = provName;
 	}
 
 	@Override
 	public void setCounty(String county) {
-
-	}
-
-	public List<Long> getTermTypeIds() {
-		return termTypeIds;
-	}
-
-	public void setTermTypeIds(List<Long> termTypeIds) {
-		this.termTypeIds = termTypeIds;
-	}
-
-	public MiniPub getPrev() {
-		return prev;
-	}
-
-	public void setPrev(MiniPub prev) {
-		this.prev = prev;
-	}
-
-	public MiniPub getNext() {
-		return next;
-	}
-
-	public void setNext(MiniPub next) {
-		this.next = next;
-	}
-
-	public List<MiniPub> getRelPubs() {
-		return relPubs;
-	}
-
-	public void setRelPubs(List<MiniPub> relPubs) {
-		this.relPubs = relPubs;
-	}
-
-	public SeoCrumbs getSeoCrumbs() {
-		return seoCrumbs;
-	}
-
-	public void setSeoCrumbs(SeoCrumbs seoCrumbs) {
-		this.seoCrumbs = seoCrumbs;
+		this.county = county;
 	}
 }

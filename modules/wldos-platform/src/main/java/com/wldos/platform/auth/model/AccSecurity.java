@@ -8,6 +8,12 @@
 
 package com.wldos.platform.auth.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 账户安全设置。
  *
@@ -15,59 +21,22 @@ package com.wldos.platform.auth.model;
  * @date 2021/9/22
  * @version 1.0
  */
+@ApiModel(description = "账户安全设置")
+@Getter
+@Setter
 public class AccSecurity {
-	/** 密码强度 */
+	@ApiModelProperty(value = "密码强度", example = "strong")
 	private String passStatus;
 
-	/** 密保手机 */
+	@ApiModelProperty(value = "密保手机", example = "13800138000")
 	private String mobile;
 
-	/** 密保问题 */
+	@ApiModelProperty(value = "密保问题", example = "我的出生地是哪里？")
 	private String secQuest;
 
-	/** 备用邮箱 */
+	@ApiModelProperty(value = "备用邮箱", example = "backup@example.com")
 	private String bakEmail;
 
-	/** mfa设备 */
+	@ApiModelProperty(value = "MFA设备", example = "device-id-123")
 	private String mfa;
-
-	public String getPassStatus() {
-		return passStatus;
-	}
-
-	public void setPassStatus(String passStatus) {
-		this.passStatus = passStatus;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-
-	public String getSecQuest() {
-		return secQuest;
-	}
-
-	public void setSecQuest(String secQuest) {
-		this.secQuest = secQuest;
-	}
-
-	public String getBakEmail() {
-		return bakEmail;
-	}
-
-	public void setBakEmail(String bakEmail) {
-		this.bakEmail = bakEmail;
-	}
-
-	public String getMfa() {
-		return mfa;
-	}
-
-	public void setMfa(String mfa) {
-		this.mfa = mfa;
-	}
 }

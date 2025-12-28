@@ -5,7 +5,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">基于 WLDOS 开发 云物互联应用 聚焦、开放、管控你的生态</h5>
 <p align="center">
- <a href="http://wldos.com/" target="__blank"><img alt="WLDOS-V2.0" src="https://img.shields.io/badge/WLDOS-V2.0-deepskyblue.svg"></a>
+ <a href="http://wldos.com/" target="__blank"><img alt="WLDOS-V2.0.1" src="https://img.shields.io/badge/WLDOS-V2.0.1-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -13,25 +13,33 @@
 
 ### 项目介绍
 
-WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力于为云物互联场景下的云、管、端应用提供基础支撑框架和扩展系统，适用于本地化工具、搭建网站、开发SaaS服务、研发业务中台等。<br/>
+WLDOS（音：汉['wou'da'si]，World Operating System），Java开发，致力于为云物互联场景下的云、管、边、端应用提供基础支撑框架和扩展系统，适用于本地化工具、搭建网站、开发SaaS服务、研发业务中台等。<br/>
 
-解决痛点：想利用线上技术拓展业务，对如何实现、落地有困惑，需要一个可落地的支撑底座搭建可持续扩展的平台，同时不需要昂贵的基础设施。
+**解决痛点**：  
+- 研发团队有限，资源不足；  
+- 对如何实现、落地有困惑，需要快速落地的支撑底座搭建可持续扩展的平台；  
+- 买不起昂贵的基础设施，没能力面对复杂的运维。
 
-**适合插件工具、个人建站、企业建站、业务中台、研发平台和综合支撑系统，适合技术在起步阶段或想在云物互联领域开发项目的团队。**
+**解决问题**：  
+- 摒弃生硬的微服务实践造成的系统分崩离析和割裂的缺陷；  
+- 摒弃前后端分离实践下资源生硬分离管理造成的系统首尾不能呼应、沟通不畅、业务理解缺乏纵深的缺陷；  
+- 赋予每个人一个强大的数字化研发工具。
+
+**适合工具开发、个人建站、企业建站、业务中台、研发平台和综合支撑系统，适合技术在起步阶段或想在云物互联领域开发应用的团队。**
 
 如果您觉得有价值，请<a href="https://gitee.com/wldos/wldos" style="color: red">star支持</a>我们！
 
 ### 项目特点
 
-1.深入浅出：  
+1.**友好**：  
 低成本，低门槛，仅需要传统基础设施，一线顶级架构师数十年磨一剑，封装陡峭的技术库以传统的技术风格面向开发人员，无需太多学习成本，开箱即用。
 
 <br/>框架底层仅引用了springboot为主的开源库，形成了可持续优化的框架wldos-framework，基础上实现了wldos支撑平台，按需自研、从零开始有利于积累和成长。
 
-2.灵活：   
+2.**灵活**：   
 不迷信业内各种高大上的轮子，崇尚自主研发，屏蔽深奥实现细节降低技术门槛，以大家熟悉的技术范式实现高级的功能扩展能力，深度定制的接口支持灵活扩展。<br/>  
 基于springboot搭建，你可以随时定制自己的技术栈，比如引入mybatis作为orm框架 或者引入flowable作为你的业务流程引擎。<br/>  
-3.务实：  
+3.**务实**：  
 自主研发、自主运营，理论与实践相结合、研发与运营相结合，问题导向，以务实拥抱未来。
 
 更多特点，请阅读代码。
@@ -48,7 +56,7 @@ QQ群：群一：792559964(已满) 群二：830355512
 ### 功能说明
 
 WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三大板块构成，其中框架和支撑平台是通用支撑，内容付费是基于通用支撑展开的最佳实践。<br/>  
-输出两个项目：WLDOS云应用支撑平台（管理端）和WLDOS内容付费系统（业务端）。应用功能结构如下：
+输出两个项目：WLDOS云应用支撑平台（管理端）和WLDOS内容付费系统（业务端），2.0版本推出动态单体架构融合了前后端分离架构和微服务架构。应用功能结构如下：
 #### 1.0前后端分离架构
 ![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
 ![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
@@ -57,7 +65,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 
 ### 技术说明
 **语言：** Java8、ReactJs17。  
-**框架：** springboot2.7.18（理论支持Java17）。  
+**框架：** springboot2.7.18（后期版本支持Java21）。  
 **ORM：** spring-data-jdbc2.4.17，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
 **前端：** ReactJs17，AntD ProV4.5。  
 **中间件：** tomcat9（支持换成其他），apache2或nginx。  

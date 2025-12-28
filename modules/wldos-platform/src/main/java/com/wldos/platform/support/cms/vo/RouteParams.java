@@ -8,6 +8,12 @@
 
 package com.wldos.platform.support.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 路由参数，生成路由的依据，一般用模板类型和分类法构成。
  *
@@ -15,11 +21,14 @@ package com.wldos.platform.support.cms.vo;
  * @date 2021/8/31
  * @version 1.0
  */
+@ApiModel(description = "路由参数，生成路由的依据，一般用模板类型和分类法构成")
+@Getter
+@Setter
 public class RouteParams {
-	/** 模板类型：product、archives、info等 */
+	@ApiModelProperty(value = "模板类型：product、archives、info等", example = "product")
 	private String tempType;
 
-	/** 分类项别名，分类项可能是分类法任一 */
+	@ApiModelProperty(value = "分类项别名，分类项可能是分类法任一", example = "tech")
 	private String slugTerm;
 
 	public RouteParams() {
@@ -31,22 +40,6 @@ public class RouteParams {
 
 	private RouteParams(String tempType, String slugTerm) {
 		this.tempType = tempType;
-		this.slugTerm = slugTerm;
-	}
-
-	public String getTempType() {
-		return tempType;
-	}
-
-	public void setTempType(String tempType) {
-		this.tempType = tempType;
-	}
-
-	public String getSlugTerm() {
-		return slugTerm;
-	}
-
-	public void setSlugTerm(String slugTerm) {
 		this.slugTerm = slugTerm;
 	}
 }

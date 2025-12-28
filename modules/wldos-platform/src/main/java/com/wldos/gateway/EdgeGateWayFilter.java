@@ -242,8 +242,8 @@ public class EdgeGateWayFilter implements Filter {
 			int status = ex.getStatus();
 			String message = status == 500 ? "Sorry, the server is abnormal, please try again, or contact the administrator: " + this.adminEmail
 					: ObjectUtils.string(ex.getMessage());
-			response.setStatus(status == 500 ? 200 : status);
-			response.setContentType("text/plain;charset=utf-8");
+			response.setStatus(200); // HTTP状态码始终为200
+			response.setContentType("application/json;charset=utf-8");
 			log.error("userIP: {}, reqUri: {}, userId: {}, exception: {}", userIP, reqUri, userId, message);
 			String json = this.resJson.ok(new Result(status, message));
 			response.getOutputStream().write(json.getBytes(StandardCharsets.UTF_8));

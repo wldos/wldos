@@ -8,6 +8,12 @@
 
 package com.wldos.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 剧集。
  *
@@ -15,15 +21,23 @@ package com.wldos.cms.vo;
  * @date 2021/6/22
  * @version 1.0
  */
+@ApiModel(description = "剧集信息")
+@Getter
+@Setter
 public class Series extends Chapter {
+	@ApiModelProperty(value = "剧集ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "标题", example = "剧集标题")
 	private String pubTitle;
 
+	@ApiModelProperty(value = "内容正文", example = "剧集内容...")
 	private String pubContent;
 
+	@ApiModelProperty(value = "父级ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "发布状态", example = "PUBLISH")
 	private String pubStatus;
 
 	public Series() {
@@ -36,45 +50,4 @@ public class Series extends Chapter {
 		this.parentId = parentId;
 		this.pubStatus = pubStatus;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getPubTitle() {
-		return pubTitle;
-	}
-
-	public void setPubTitle(String pubTitle) {
-		this.pubTitle = pubTitle;
-	}
-
-	public String getPubContent() {
-		return pubContent;
-	}
-
-	public void setPubContent(String pubContent) {
-		this.pubContent = pubContent;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getPubStatus() {
-		return pubStatus;
-	}
-
-	public void setPubStatus(String pubStatus) {
-		this.pubStatus = pubStatus;
-	}
-
 }

@@ -48,3 +48,5 @@ build/
 /wldos-plugins/airdrop/node/
 /wldos-ui/node_modules/.yarn-integrity
 /.specstory/
+/wldos-ui/node/
+/wldos-ui/node/yarn/

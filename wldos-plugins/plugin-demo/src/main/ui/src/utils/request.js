@@ -51,6 +51,72 @@ const errorHandler = (error) => {
 
 const req = extend({errorHandler});
 
+// 响应拦截器（处理新的统一响应格式：code, message, data, success）
+req.interceptors.response.use(
+  (response) => {
+    // 处理业务响应（新格式：code, message, data, success）
+    // 注意：如果返回的是String（JSON字符串），需要先解析
+    let res = response.data;
+    if (typeof res === 'string') {
+      try {
+        res = JSON.parse(res);
+      } catch (e) {
+        // 如果不是JSON字符串，直接返回原始数据
+        return response;
+      }
+    }
+    
+    // 检查是否是新的响应格式
+    if (res && (res.code !== undefined || res.success !== undefined)) {
+      const code = res.code ?? 200;
+      const message = res.message || '操作成功';
+      const success = res.success ?? (code === 200);
+      const data = res.data;
+      
+      // 业务成功
+      if (success && code === 200) {
+        // 直接返回data，便于前端使用
+        response.data = data;
+        return response;
+      }
+      
+      // 业务失败
+      const errorMessage = codeMessage[code] || message;
+      
+      // 401/403 特殊处理
+      if (code === 401) {
+        notification.warn({
+          message: '未授权',
+          description: '请重新登录',
+        });
+      } else if (code === 403) {
+        notification.warn({
+          message: '权限不足',
+          description: errorMessage,
+        });
+      } else {
+        notification.error({
+          message: '操作失败',
+          description: errorMessage,
+        });
+      }
+      
+      // 抛出错误
+      const error = new Error(errorMessage);
+      error.response = response;
+      error.code = code;
+      return Promise.reject(error);
+    }
+    
+    // 如果不是新格式，直接返回（兼容处理）
+    return response;
+  },
+  (error) => {
+    // HTTP错误处理（网络错误、超时等）由errorHandler处理
+    return Promise.reject(error);
+  }
+);
+
 const pluginRequestLocal = (url, params) => {
   const {method = 'GET'} = params || {};
   const options = {

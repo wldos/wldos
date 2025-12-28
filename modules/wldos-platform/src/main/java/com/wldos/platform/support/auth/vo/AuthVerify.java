@@ -10,6 +10,9 @@ package com.wldos.platform.support.auth.vo;
 
 import com.wldos.platform.support.resource.vo.AuthInfo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 资源请求权限检查器。
  *
@@ -17,27 +20,13 @@ import com.wldos.platform.support.resource.vo.AuthInfo;
  * @date 2021/4/26
  * @version 1.0
  */
+@Getter
+@Setter
 public class AuthVerify {
 	private AuthInfo authInfo;
-
-	private boolean auth;
-
-	public AuthInfo getAuthInfo() {
-		return authInfo;
-	}
-
-	public void setAuthInfo(AuthInfo authInfo) {
-		this.authInfo = authInfo;
-	}
 
 	/**
 	 * 是否有权限
 	 */
-	public boolean isAuth() {
-		return auth;
-	}
-
-	public void setAuth(boolean auth) {
-		this.auth = auth;
-	}
+	private boolean auth;
 }

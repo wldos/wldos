@@ -11,6 +11,12 @@ package com.wldos.platform.support.resource.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 路由节点。
  *
@@ -18,13 +24,20 @@ import java.util.List;
  * @date 2023/4/5
  * @version 1.0
  */
+@ApiModel(description = "路由节点")
+@Getter
+@Setter
 public class RouteNode<T> {
+	@ApiModelProperty(value = "路由路径", example = "/admin/sys/user")
 	protected String path;
 
+	@ApiModelProperty(value = "组件路径", example = "/admin/sys/user/index")
 	protected String component;
 
+	@ApiModelProperty(value = "重定向路径", example = "/admin/sys/user/list")
 	protected String redirect;
 
+	@ApiModelProperty(value = "子路由列表")
 	protected List<T> routes = null;
 
 	public RouteNode() {
@@ -46,38 +59,6 @@ public class RouteNode<T> {
 
 	public RouteNode(String path, String component, String redirect, List<T> routes) {
 		this(path, component, redirect);
-		this.routes = routes;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getComponent() {
-		return component;
-	}
-
-	public void setComponent(String component) {
-		this.component = component;
-	}
-
-	public String getRedirect() {
-		return redirect;
-	}
-
-	public void setRedirect(String redirect) {
-		this.redirect = redirect;
-	}
-
-	public List<T> getRoutes() {
-		return routes;
-	}
-
-	public void setRoutes(List<T> routes) {
 		this.routes = routes;
 	}
 

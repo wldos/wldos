@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.framework.mvc.controller.EntityController;
@@ -31,6 +32,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * 公司相关controller。
  *
@@ -38,6 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
+@Api(tags = "公司管理")
 @SuppressWarnings({ "unchecked" })
 @RestController
 @RequestMapping("admin/sys/com")
@@ -48,6 +56,14 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	 * @param params 查询条件
 	 * @return 公司列表
 	 */
+	@ApiOperation(value = "公司列表", notes = "支持查询、排序的分页查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "comName", value = "公司名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("")
 	public PageableResult<Company> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -58,6 +74,7 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	/**
 	 * 支持多租户查询的公司下拉选项列表
 	 */
+	@ApiOperation(value = "公司下拉选项", notes = "支持多租户查询的公司下拉选项列表")
 	@GetMapping("select")
 	public List<SelectOption> queryComSelectOption() {
 		return this.all().stream().map(com -> SelectOption.of(com.getComName(), com.getId().toString())).collect(Collectors.toList());
@@ -69,8 +86,9 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	 * @param orgUser 添加人员参数
 	 * @return 添加结果
 	 */
+	@ApiOperation(value = "添加租户管理员", notes = "超级管理员后台给租户添加管理员")
 	@PostMapping("admin")
-	public String addTenantAdmin(@RequestBody Map<String, Object> orgUser) {
+	public Result addTenantAdmin(@ApiParam(value = "添加人员参数", required = true) @RequestBody Map<String, Object> orgUser) {
 		Long userComId = Long.parseLong(orgUser.get("userComId").toString());
 		List<String> userIds = (List<String>) orgUser.get("userIds");
 		Long curUserId = this.getUserId();
@@ -78,9 +96,14 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 
 		String message = this.service.addTenantAdmin(userIds, userComId, curUserId, uip);
 
-		return this.resJson.ok(message);
+		return Result.ok(message);
 	}
 
+	@ApiOperation(value = "移除租户管理员", notes = "移除租户管理员")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "ids", value = "用户ID列表", dataTypeClass = List.class, paramType = "body", required = true),
+		@ApiImplicitParam(name = "userComId", value = "用户公司ID", dataTypeClass = Long.class, paramType = "body", required = true)
+	})
 	@DeleteMapping("rmAdmin")
 	public Boolean removeTenantAdmin(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<String>) params.get("ids")).stream().map(Long::parseLong).collect(Collectors.toList());

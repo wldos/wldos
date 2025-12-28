@@ -8,6 +8,12 @@
 
 package com.wldos.platform.support.cms.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 面包屑模型。
  *
@@ -15,9 +21,14 @@ package com.wldos.platform.support.cms.vo;
  * @date 2021/8/30
  * @version 1.0
  */
+@ApiModel(description = "面包屑模型")
+@Getter
+@Setter
 public class Breadcrumb {
+	@ApiModelProperty(value = "路径", example = "/category/product")
 	private String path;
 
+	@ApiModelProperty(value = "面包屑名称", example = "产品分类")
 	private String breadcrumbName;
 
 	public Breadcrumb() {
@@ -29,22 +40,6 @@ public class Breadcrumb {
 
 	private Breadcrumb(String path, String breadcrumbName) {
 		this.path = path;
-		this.breadcrumbName = breadcrumbName;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getBreadcrumbName() {
-		return breadcrumbName;
-	}
-
-	public void setBreadcrumbName(String breadcrumbName) {
 		this.breadcrumbName = breadcrumbName;
 	}
 }

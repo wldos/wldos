@@ -12,8 +12,14 @@ import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.support.resource.vo.Menu;
 import com.wldos.platform.support.resource.vo.Route;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 import java.util.Map;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 登录后返回用户信息。
@@ -22,55 +28,23 @@ import java.util.Map;
  * @date 2021-04-30
  * @version V1.0
  */
+@ApiModel(description = "用户认证信息")
 @SuppressWarnings("unused")
+@Getter
+@Setter
 public class UserAuth {
+	@ApiModelProperty(value = "用户基本信息")
 	private WoUser userInfo;
 
+	@ApiModelProperty(value = "用户菜单列表")
 	private List<Menu> menu;
 
+	@ApiModelProperty(value = "路由信息，键为路由路径，值为路由配置")
 	private Map<String, Route> route;
 
+	@ApiModelProperty(value = "当前用户权限列表")
 	private List<String> currentAuthority;
 
+	@ApiModelProperty(value = "是否为管理端，0=否，1=是", example = "0")
 	private int isManageSide = 0;
-
-	public WoUser getUserInfo() {
-		return userInfo;
-	}
-
-	public void setUserInfo(WoUser userInfo) {
-		this.userInfo = userInfo;
-	}
-
-	public List<Menu> getMenu() {
-		return menu;
-	}
-
-	public void setMenu(List<Menu> menu) {
-		this.menu = menu;
-	}
-
-	public Map<String, Route> getRoute() {
-		return route;
-	}
-
-	public void setRoute(Map<String, Route> route) {
-		this.route = route;
-	}
-
-	public List<String> getCurrentAuthority() {
-		return currentAuthority;
-	}
-
-	public void setCurrentAuthority(List<String> currentAuthority) {
-		this.currentAuthority = currentAuthority;
-	}
-
-	public int getIsManageSide() {
-		return isManageSide;
-	}
-
-	public void setIsManageSide(int isManageSide) {
-		this.isManageSide = isManageSide;
-	}
 }

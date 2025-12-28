@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
+import com.wldos.common.res.Result;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.enums.OrgTypeEnum;
@@ -34,6 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * 公司相关controller。
  *
@@ -41,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/2
  * @version 1.0
  */
+@Api(tags = "组织管理")
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("admin/sys/org")
@@ -51,6 +59,14 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 * @param params 分页参数
 	 * @return 组织列表
 	 */
+	@ApiOperation(value = "组织列表", notes = "支持查询、排序的分页查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
+		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "orgName", value = "组织名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("")
 	public PageableResult<Org> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
@@ -76,6 +92,10 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 * @param authOrg 授权组织参数
 	 * @return 组织关联的角色列表和总角色列表
 	 */
+	@ApiOperation(value = "组织角色权限", notes = "查询某个组织授予的角色（不继承）")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "orgId", value = "组织ID", dataTypeClass = String.class, paramType = "query", required = true)
+	})
 	@GetMapping("role")
 	public OrgRoleTree queryAuthRole(@RequestParam Map<String, String> authOrg) {
 
@@ -88,8 +108,9 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 *
 	 * @param roleOrg 角色授权参数
 	 */
+	@ApiOperation(value = "组织授权", notes = "给组织关联系统角色")
 	@PostMapping("auth")
-	public String authOrg(@RequestBody Map<String, Object> roleOrg) {
+	public Result authOrg(@ApiParam(value = "角色授权参数", required = true) @RequestBody Map<String, Object> roleOrg) {
 		Long orgId = Long.parseLong(roleOrg.get("orgId").toString());
 		Long archId = Long.parseLong(roleOrg.get("archId").toString());
 		Long comId = Long.parseLong(roleOrg.get("comId").toString());
@@ -99,7 +120,7 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 
 		this.service.authOrg(roleIds, orgId, archId, comId, curUserId, uip);
 
-		return this.resJson.ok("ok");
+		return Result.ok("ok");
 	}
 
 	/**
@@ -108,8 +129,9 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 * @param orgUser 添加人员参数
 	 * @return 添加结果
 	 */
+	@ApiOperation(value = "组织添加成员", notes = "给组织添加成员")
 	@PostMapping("user")
-	public String userOrg(@RequestBody Map<String, Object> orgUser) {
+	public Result userOrg(@ApiParam(value = "添加人员参数", required = true) @RequestBody Map<String, Object> orgUser) {
 		Long orgId = Long.parseLong(orgUser.get("orgId").toString());
 		Long archId = Long.parseLong(orgUser.get("archId").toString());
 		Long comId = Long.parseLong(orgUser.get("comId").toString());
@@ -119,9 +141,14 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 
 		String message = this.service.userOrg(userIds, orgId, archId, comId, curUserId, uip);
 
-		return this.resJson.ok(message);
+		return Result.ok(message);
 	}
 
+	@ApiOperation(value = "移除组织成员", notes = "移除组织成员")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "ids", value = "组织成员ID列表", dataTypeClass = List.class, paramType = "body", required = true),
+		@ApiImplicitParam(name = "orgId", value = "组织ID", dataTypeClass = Long.class, paramType = "body", required = true)
+	})
 	@DeleteMapping("staffDel")
 	public Boolean removeOrgStaff(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<String>) params.get("ids")).stream().map(Long::parseLong).collect(Collectors.toList());
@@ -178,6 +205,7 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 *
 	 * @return 枚举列表
 	 */
+	@ApiOperation(value = "组织类型枚举", notes = "获取组织类型枚举列表")
 	@GetMapping("type")
 	public List<Map<String, Object>> fetchEnumAppType() {
 		return (this.isPlatformAdmin(this.getTenantId()) ?

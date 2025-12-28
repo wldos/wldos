@@ -8,20 +8,33 @@
 
 package com.wldos.platform.support.region.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
- * 省分。
+ * 城市信息。
  *
  * @author 元悉宇宙
  * @date 2021/6/7
  * @version 1.0
  */
+@ApiModel(description = "城市信息")
+@Getter
+@Setter
 public class City {
+	@ApiModelProperty(value = "城市ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "城市名称", example = "北京市")
 	private String name;
 
+	@ApiModelProperty(value = "省份ID", example = "1")
 	private Long parentId;
 
+	@ApiModelProperty(value = "省份名称", example = "北京市")
 	private String provName;
 
 	public City() {
@@ -31,38 +44,6 @@ public class City {
 		this.id = id;
 		this.name = name;
 		this.parentId = parentId;
-		this.provName = provName;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getProvName() {
-		return provName;
-	}
-
-	public void setProvName(String provName) {
 		this.provName = provName;
 	}
 }

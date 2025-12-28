@@ -11,6 +11,9 @@ package com.wldos.common.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 树结构节点。
  *
@@ -18,6 +21,8 @@ import java.util.List;
  * @date 2021/4/30
  * @version 1.0
  */
+@Getter
+@Setter
 public class TreeNode<T> {
 	protected Long id;
 
@@ -49,38 +54,6 @@ public class TreeNode<T> {
 	public TreeNode(Long id, Long parentId, List<T> child) {
 		this(id, parentId);
 		this.children = child;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public Long getDisplayOrder() {
-		return displayOrder;
-	}
-
-	public void setDisplayOrder(Long displayOrder) {
-		this.displayOrder = displayOrder;
-	}
-
-	public List<T> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<T> children) {
-		this.children = children;
 	}
 
 	public void add(T node) {

@@ -80,7 +80,7 @@ popd
 
 REM 生成GPG签名
 echo Getting GPG password...
-for /f "tokens=*" %%a in ('powershell -Command "$settings = [xml](Get-Content 'C:\java\apache-maven-3.5.3\conf\settings.xml'); $profile = $settings.settings.profiles.profile | Where-Object { $_.id -eq 'gpg' }; $profile.properties.'gpg.passphrase'"') do (
+for /f "tokens=*" %%a in ('powershell -Command "$settings = [xml](Get-Content 'C:\java\apache-maven-3.6.3\conf\settings.xml'); $profile = $settings.settings.profiles.profile | Where-Object { $_.id -eq 'gpg' }; $profile.properties.'gpg.passphrase'"') do (
     set GPG_PASS=%%a
 )
 

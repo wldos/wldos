@@ -10,176 +10,64 @@ package com.wldos.platform.core.vo;
 
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.sql.Timestamp;
+
+@ApiModel(description = "角色信息")
+@Getter
+@Setter
 public class Role extends TreeNode<Role> {
 
+	@ApiModelProperty(value = "角色ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "角色编码", example = "admin")
 	private String roleCode;
 
+	@ApiModelProperty(value = "角色名称", example = "管理员")
 	private String roleName;
 
+	@ApiModelProperty(value = "角色描述", example = "系统管理员")
 	private String roleDesc;
 
+	@ApiModelProperty(value = "角色类型", example = "system")
 	private String roleType;
 
+	@ApiModelProperty(value = "父角色ID", example = "0")
 	private Long parentId;
 
+	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
+	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;
 
+	@ApiModelProperty(value = "创建人ID", hidden = true)
 	private Long createBy;
 
+	@ApiModelProperty(value = "创建IP", hidden = true)
 	private String createIp;
 
-	private java.sql.Timestamp createTime;
+	@ApiModelProperty(value = "创建时间", hidden = true)
+	private Timestamp createTime;
 
+	@ApiModelProperty(value = "更新人ID", hidden = true)
 	private Long updateBy;
 
+	@ApiModelProperty(value = "更新IP", hidden = true)
 	private String updateIp;
 
-	private java.sql.Timestamp updateTime;
+	@ApiModelProperty(value = "更新时间", hidden = true)
+	private Timestamp updateTime;
 
+	@ApiModelProperty(value = "删除标志", hidden = true)
 	private String deleteFlag;
 
+	@ApiModelProperty(value = "版本号", hidden = true)
 	private Long versions;
-
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getRoleCode() {
-		return roleCode;
-	}
-
-	public void setRoleCode(String roleCode) {
-		this.roleCode = roleCode;
-	}
-
-	public String getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
-
-	public String getRoleDesc() {
-		return roleDesc;
-	}
-
-	public void setRoleDesc(String roleDesc) {
-		this.roleDesc = roleDesc;
-	}
-
-
-	public String getRoleType() {
-		return roleType;
-	}
-
-	public void setRoleType(String roleType) {
-		this.roleType = roleType;
-	}
-
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	public Long getDisplayOrder() {
-		return displayOrder;
-	}
-
-	public void setDisplayOrder(Long displayOrder) {
-		this.displayOrder = displayOrder;
-	}
-
-
-	public String getIsValid() {
-		return isValid;
-	}
-
-	public void setIsValid(String isValid) {
-		this.isValid = isValid;
-	}
-
-
-	public Long getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(Long createBy) {
-		this.createBy = createBy;
-	}
-
-
-	public java.sql.Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(java.sql.Timestamp createTime) {
-		this.createTime = createTime;
-	}
-
-
-	public Long getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(Long updateBy) {
-		this.updateBy = updateBy;
-	}
-
-
-	public java.sql.Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(java.sql.Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
-
-	public Long getVersions() {
-		return versions;
-	}
-
-	public void setVersions(Long versions) {
-		this.versions = versions;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-	public String getUpdateIp() {
-		return updateIp;
-	}
-
-	public void setUpdateIp(String updateIp) {
-		this.updateIp = updateIp;
-	}
 }

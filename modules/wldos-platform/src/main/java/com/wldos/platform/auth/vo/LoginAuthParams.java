@@ -9,6 +9,13 @@
 package com.wldos.platform.auth.vo;
 
 import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 基于登录参数封装的对象。
@@ -17,80 +24,32 @@ import java.io.Serializable;
  * @date 2021/4/29
  * @version 1.0
  */
+@ApiModel(description = "登录认证参数")
+@Getter
+@Setter
 public class LoginAuthParams implements Serializable {
-	/** 登录用户名 */
+	@ApiModelProperty(value = "登录用户名", required = true, example = "admin")
+	@NotBlank(message = "用户名不能为空")
+	@Size(min = 3, max = 50, message = "用户名长度必须在3-50之间")
 	private String username;
 
+	@ApiModelProperty(value = "密码", required = true, example = "123456")
+	@NotBlank(message = "密码不能为空")
 	private String password;
 
-	/** 验证码: 图形验证码+uuid */
+	@ApiModelProperty(value = "验证码（图形验证码+uuid）", example = "1234abc-def-1234")
 	private String verifyCode;
 
-	/** 手机号 */
+	@ApiModelProperty(value = "手机号（手机登录时必填）", example = "13800138000")
+	@Size(min = 11, max = 11, message = "手机号必须是11位数字")
 	private String mobile;
 
-	/** 手机验证码 */
+	@ApiModelProperty(value = "手机验证码（手机登录时必填）", example = "123456")
 	private String captcha;
 
-	/** 自动登录 */
+	@ApiModelProperty(value = "是否自动登录", example = "false")
 	private boolean autoLogin;
 
-	/** 登录方式：账号密码、手机 */
+	@ApiModelProperty(value = "登录方式：account（账号密码）、mobile（手机验证码）", example = "account")
 	private String type;
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getVerifyCode() {
-		return verifyCode;
-	}
-
-	public void setVerifyCode(String verifyCode) {
-		this.verifyCode = verifyCode;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-
-	public String getCaptcha() {
-		return captcha;
-	}
-
-	public void setCaptcha(String captcha) {
-		this.captcha = captcha;
-	}
-
-	public boolean getAutoLogin() {
-		return autoLogin;
-	}
-
-	public void setAutoLogin(boolean autoLogin) {
-		this.autoLogin = autoLogin;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 }

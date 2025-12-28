@@ -12,7 +12,12 @@ package com.wldos.platform.core.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Table
+@Getter
+@Setter
 public class KTermObject {
 	@Id
 	private Long id;
@@ -34,38 +39,6 @@ public class KTermObject {
 		this.id = id;
 		this.termTypeId = termTypeId;
 		this.objectId = objectId;
-		this.termOrder = termOrder;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getObjectId() {
-		return objectId;
-	}
-
-	public void setObjectId(Long objectId) {
-		this.objectId = objectId;
-	}
-
-	public Long getTermTypeId() {
-		return termTypeId;
-	}
-
-	public void setTermTypeId(Long termTypeId) {
-		this.termTypeId = termTypeId;
-	}
-
-	public Long getTermOrder() {
-		return termOrder;
-	}
-
-	public void setTermOrder(Long termOrder) {
 		this.termOrder = termOrder;
 	}
 }

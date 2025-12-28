@@ -70,9 +70,7 @@ public class ResultJson {
 	 */
 	public Result ok() {
 		DomainResult result = new DomainResult();
-		result.setMessage("ok");
-		Result res = result.data("ok");
-		return res;
+		return result.data("ok");
 	}
 
 	/**
@@ -125,6 +123,17 @@ public class ResultJson {
 		Map<String, Object> obj = new HashMap<>();
 		obj.put(key, value);
 		Result res = this.format(obj);
+		try {
+			return this.objectMapper.writeValueAsString(res);
+		}
+		catch (JsonProcessingException e) {
+			log.error("转换json异常，转换对象res={}", res);
+		}
+		return "";
+	}
+
+	public String ok(int code, String message) {
+		Result res = new Result(code, message, null);
 		try {
 			return this.objectMapper.writeValueAsString(res);
 		}

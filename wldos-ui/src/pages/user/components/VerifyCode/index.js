@@ -40,22 +40,23 @@ const VerifyCode = (props) => {
     if (value === undefined || value.length < 4) {
       return Promise.reject();
     }
-    const res = await checkCaptcha({captcha: value, uuid});
-    if (res === undefined || res.data === undefined || res.data.status === undefined) {
-      await updateCaptcha();
-      return Promise.reject(new Error('校验超时请重试!'));
-    }
-    if (res.data.status === 'error') {
+    try {
+      const res = await checkCaptcha({captcha: value, uuid});
+      // 新的响应格式：response.data已经是业务数据（Map对象，包含status字段）
+      if (res && res.data && res.data.status === 'ok') {
+        setCode(uuid);
+        setVerify('ok');
+        return Promise.resolve();
+      } else {
+        setVerify('error');
+        await updateCaptcha();
+        return Promise.reject(new Error('验证码错误!'));
+      }
+    } catch (error) {
       setVerify('error');
       await updateCaptcha();
-      return Promise.reject(new Error('验证码错误!'));
+      return Promise.reject(new Error('验证码校验失败，请重试!'));
     }
-
-    if (res.data.status === 'ok') {
-      setCode(uuid);
-      setVerify('ok');
-    }
-    return Promise.resolve();
   };
 
   return (

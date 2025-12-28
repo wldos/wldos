@@ -13,66 +13,33 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wldos.common.vo.TreeNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@ApiModel(description = "评论信息")
 @JsonIgnoreProperties({ "authorEmail", "authorUrl" })
+@Getter
+@Setter
 public class Comment extends TreeNode<Comment> {
 
+	@ApiModelProperty(value = "作者名称", example = "用户名")
 	private String author;
 
+	@ApiModelProperty(value = "头像URL", example = "https://example.com/avatar.jpg")
 	private String avatar;
 
+	@ApiModelProperty(value = "评论内容", example = "评论内容...")
 	private String content;
 
+	@ApiModelProperty(value = "评论时间", example = "2023-01-01 00:00:00")
 	private Timestamp datetime;
 
+	@ApiModelProperty(value = "作者邮箱", hidden = true)
 	private String authorEmail;
 
+	@ApiModelProperty(value = "作者URL", hidden = true)
 	private String authorUrl;
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public Timestamp getDatetime() {
-		return datetime;
-	}
-
-	public void setDatetime(Timestamp datetime) {
-		this.datetime = datetime;
-	}
-
-	public String getAuthorEmail() {
-		return authorEmail;
-	}
-
-	public void setAuthorEmail(String authorEmail) {
-		this.authorEmail = authorEmail;
-	}
-
-	public String getAuthorUrl() {
-		return authorUrl;
-	}
-
-	public void setAuthorUrl(String authorUrl) {
-		this.authorUrl = authorUrl;
-	}
 }
