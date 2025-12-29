@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: wldos-integration-demo
+
+# WLDOS 框架配置
+wldos:
+  framework:
+    # 配置第三方应用的基础包路径
+    base-package: com.example.myapp
+    enabled: true
+    swagger:
+      enabled: true  # 默认启用 Swagger API 文档
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.example.myapp: DEBUG
+    com.wldos: INFO
+

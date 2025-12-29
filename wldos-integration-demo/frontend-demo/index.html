@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WLDOS 第三方集成前端 Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #1890ff;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #1890ff;
+            padding-bottom: 10px;
+        }
+        
+        .section h3 {
+            color: #666;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #40a9ff;
+        }
+        
+        .btn-success {
+            background: #52c41a;
+        }
+        
+        .btn-success:hover {
+            background: #73d13d;
+        }
+        
+        .btn-danger {
+            background: #ff4d4f;
+        }
+        
+        .btn-danger:hover {
+            background: #ff7875;
+        }
+        
+        .result {
+            background: #f5f5f5;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result.success {
+            border-color: #52c41a;
+            background: #f6ffed;
+        }
+        
+        .result.error {
+            border-color: #ff4d4f;
+            background: #fff2f0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+        
+        .info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+            color: #0050b3;
+            font-size: 13px;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 WLDOS 第三方集成前端 Demo</h1>
+        
+        <!-- 普通 Controller 示例 -->
+        <div class="section">
+            <h2>1. 普通 Controller 示例（UserController）</h2>
+            <div class="info">
+                <strong>说明：</strong>演示普通 Controller 的 API 调用，框架会自动包装响应为统一格式。
+            </div>
+            
+            <h3>获取用户列表</h3>
+            <button class="btn" onclick="getUserList()">获取用户列表</button>
+            <div id="userListResult" class="result" style="display:none;"></div>
+            
+            <h3>获取用户详情</h3>
+            <div class="form-group">
+                <label>用户ID:</label>
+                <input type="number" id="userId" value="1" placeholder="请输入用户ID">
+            </div>
+            <button class="btn" onclick="getUserById()">获取用户详情</button>
+            <div id="userDetailResult" class="result" style="display:none;"></div>
+            
+            <h3>创建用户</h3>
+            <div class="form-group">
+                <label>用户名:</label>
+                <input type="text" id="username" value="testuser" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>邮箱:</label>
+                <input type="email" id="email" value="test@example.com" placeholder="请输入邮箱">
+            </div>
+            <div class="form-group">
+                <label>昵称:</label>
+                <input type="text" id="nickname" value="测试用户" placeholder="请输入昵称">
+            </div>
+            <button class="btn btn-success" onclick="createUser()">创建用户</button>
+            <div id="createUserResult" class="result" style="display:none;"></div>
+        </div>
+        
+        <!-- EntityController 示例 -->
+        <div class="section">
+            <h2>2. EntityController 示例（ProductController）</h2>
+            <div class="info">
+                <strong>说明：</strong>演示 EntityController 基类提供的标准 CRUD 接口调用。
+            </div>
+            
+            <h3>查询所有产品</h3>
+            <button class="btn" onclick="getAllProducts()">查询所有产品</button>
+            <div id="allProductsResult" class="result" style="display:none;"></div>
+            
+            <h3>根据ID查询产品</h3>
+            <div class="form-group">
+                <label>产品ID:</label>
+                <input type="number" id="productId" value="1" placeholder="请输入产品ID">
+            </div>
+            <button class="btn" onclick="getProductById()">查询产品</button>
+            <div id="productDetailResult" class="result" style="display:none;"></div>
+            
+            <h3>新增产品</h3>
+            <div class="form-group">
+                <label>产品名称:</label>
+                <input type="text" id="productName" value="iPhone 15" placeholder="请输入产品名称">
+            </div>
+            <div class="form-group">
+                <label>产品描述:</label>
+                <input type="text" id="productDesc" value="苹果最新款手机" placeholder="请输入产品描述">
+            </div>
+            <div class="form-group">
+                <label>价格:</label>
+                <input type="number" id="productPrice" value="5999" step="0.01" placeholder="请输入价格">
+            </div>
+            <div class="form-group">
+                <label>库存:</label>
+                <input type="number" id="productStock" value="100" placeholder="请输入库存">
+            </div>
+            <button class="btn btn-success" onclick="addProduct()">新增产品</button>
+            <div id="addProductResult" class="result" style="display:none;"></div>
+        </div>
+        
+        <!-- NonEntityController 示例 -->
+        <div class="section">
+            <h2>3. NonEntityController 示例（OrderController）</h2>
+            <div class="info">
+                <strong>说明：</strong>演示 NonEntityController 基类提供的业务接口调用。
+            </div>
+            
+            <h3>创建订单</h3>
+            <div class="form-group">
+                <label>产品ID:</label>
+                <input type="number" id="orderProductId" value="1" placeholder="请输入产品ID">
+            </div>
+            <div class="form-group">
+                <label>数量:</label>
+                <input type="number" id="orderQuantity" value="2" placeholder="请输入数量">
+            </div>
+            <button class="btn btn-success" onclick="createOrder()">创建订单</button>
+            <div id="createOrderResult" class="result" style="display:none;"></div>
+            
+            <h3>查询订单列表</h3>
+            <button class="btn" onclick="getOrderList()">查询订单列表</button>
+            <div id="orderListResult" class="result" style="display:none;"></div>
+            
+            <h3>获取当前用户信息</h3>
+            <button class="btn" onclick="getUserInfo()">获取用户信息</button>
+            <div id="userInfoResult" class="result" style="display:none;"></div>
+        </div>
+        
+        <!-- 响应格式说明 -->
+        <div class="section">
+            <h2>📋 统一响应格式说明</h2>
+            <div class="info">
+                <strong>WLDOS 框架统一响应格式：</strong>
+            </div>
+            <div class="code-block">
+{
+  "code": 200,           // 业务状态码：200=成功，非200=失败
+  "message": "",         // 响应消息：成功时为空字符串，失败时为错误信息
+  "data": { ... },       // 响应数据：业务数据
+  "success": true        // 操作是否成功：true=成功，false=失败
+}
+            </div>
+            <div class="info" style="margin-top: 15px;">
+                <strong>前端处理方式：</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>使用 <code>res.code === 200</code> 或 <code>res.success === true</code> 判断业务是否成功</li>
+                    <li>使用 <code>res.data</code> 获取业务数据</li>
+                    <li>使用 <code>res.message</code> 获取错误信息（失败时）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="request.js"></script>
+    <script src="demo.js"></script>
+</body>
+</html>
+

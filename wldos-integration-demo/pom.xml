@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>com.wldos</groupId>
+        <artifactId>wldos-parent</artifactId>
+        <version>2.0.1</version>
+    </parent>
+    
+    <groupId>com.example</groupId>
+    <artifactId>wldos-integration-demo</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    
+    <name>WLDOS Integration Demo</name>
+    <description>
+        WLDOS 第三方集成示例项目
+        演示如何使用 wldos-framework 集成到第三方应用中
+    </description>
+    
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
+    <dependencies>
+        <!-- WLDOS 框架核心（已包含 wldos-common 依赖） -->
+        <dependency>
+            <groupId>com.wldos</groupId>
+            <artifactId>wldos-framework</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        
+        <!-- Spring Boot Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
