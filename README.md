@@ -197,6 +197,10 @@ wldos根目录
 ├── wldos-installer-------------------------桌面版（未开放）
 │   ├── pom.xml
 │   ├── src
+├── wldos-integration-demo------------------框架集成demo
+│   ├── frontend-demo-----------------------前端集成demo
+│   ├── pom.xml
+│   ├── src
 ├── wldos-plugins---------------------------插件模块
 │   ├── plugin-config-template.yml----------插件配置模板
 │   ├── plugin-demo-------------------------全栈插件demo

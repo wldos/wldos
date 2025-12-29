@@ -162,6 +162,10 @@ wldos root directory
 ├── wldos-installer-------------------------Desktop Version (Not Open)
 │   ├── pom.xml
 │   ├── src
+├── wldos-integration-demo------------------框架集成demo
+│   ├── frontend-demo-----------------------前端集成demo
+│   ├── pom.xml
+│   ├── src
 ├── wldos-plugins---------------------------Plugin Module
 │   ├── plugin-config-template.yml----------Plugin Configuration Template
 │   ├── plugin-demo-------------------------Full Stack Plugin Demo
