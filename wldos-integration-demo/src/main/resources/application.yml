@@ -7,10 +7,10 @@ spring:
   application:
     name: wldos-integration-demo
 
-# WLDOS 框架配置
+# 依赖WLDOS框架的配置
 wldos:
   framework:
-    # 配置第三方应用的基础包路径
+    # 配置你的项目应用的基础包路径
     base-package: com.example.myapp
     enabled: true
     swagger:

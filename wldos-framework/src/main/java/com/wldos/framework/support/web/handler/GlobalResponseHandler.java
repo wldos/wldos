@@ -10,7 +10,6 @@ package com.wldos.framework.support.web.handler;
 
 import com.wldos.framework.autoconfigure.WldosFrameworkProperties;
 import com.wldos.framework.support.web.EdgeHandler;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -28,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @date 2025-12-26
  * @version 2.0
  */
-@Slf4j
 @RestControllerAdvice
 public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 	

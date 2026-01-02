@@ -239,13 +239,15 @@ public class EdgeGateWayFilter implements Filter {
 	private void throwException(HttpServletResponse response, BaseException ex, String userIP, String reqUri, String userId) {
 
 		try {
-			int status = ex.getStatus();
-			String message = status == 500 ? "Sorry, the server is abnormal, please try again, or contact the administrator: " + this.adminEmail
+			int code = ex.getCode();
+			String message = code == 500 ? "Sorry, the server is abnormal, please try again, or contact the administrator: " + this.adminEmail
 					: ObjectUtils.string(ex.getMessage());
 			response.setStatus(200); // HTTP状态码始终为200
 			response.setContentType("application/json;charset=utf-8");
 			log.error("userIP: {}, reqUri: {}, userId: {}, exception: {}", userIP, reqUri, userId, message);
-			String json = this.resJson.ok(new Result(status, message));
+		
+			Result result = new Result(code, message);
+			String json = this.resJson.ok(result);
 			response.getOutputStream().write(json.getBytes(StandardCharsets.UTF_8));
 		}
 		catch (IOException e) {

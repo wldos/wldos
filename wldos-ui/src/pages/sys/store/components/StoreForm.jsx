@@ -582,7 +582,7 @@ const StoreForm = ({ visible, onCancel, onSubmit, initialValues, dispatch }) => 
             >
               <Input 
                 prefix={<LinkOutlined />}
-                placeholder="请输入下载地址" 
+                placeholder="下载地址，如：https://github.com/wldos/plugins/raw/main/plugins/airdrop/airdrop-2.0.0.zip" 
               />
             </Form.Item>
           </Card>

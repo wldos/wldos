@@ -3,10 +3,7 @@ import {archiveSlug} from "@/pages/book/article/service";
 import {Redirect} from "react-router";
 import Page from "@/pages/book/page/Page";
 import {typeUrl} from "@/utils/utils";
-import {GridContent} from "@ant-design/pro-layout";
-import {Card} from "antd";
-import styles from "@/pages/book/page/style.less";
-import DynamicRouter from "@/pages/DynamicRouter";
+import DynamicRouter from "@/pages/dynamicrouter";
 
 const Slug = (props) => {
   const { match, dispatch} = props;

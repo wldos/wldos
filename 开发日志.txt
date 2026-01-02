@@ -1,3 +1,15 @@
+2026-01-02
+
+完善插件开发标准文档和配置模板。
+解决首页token过期不自动跳转到登录页问题。
+开源社区插件安装闭环，新增插件可配置的zip发行包下载支持。
+
+2025-12-28
+
+实现api返回参数统一为{code,message,data,success}
+新增swagger-api文档，基于Knife4j实现支持openapi2的友好ui的api文档能力
+controller增加api注解，vo、实体bean实现getter、setter
+
 2025-12-25
 
 插件市场与应用商店模块分离，作为用户端封装存在。

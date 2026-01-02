@@ -33,9 +33,10 @@ const codeMessage = {
 const errorHandler = (error) => {
   const {response} = error;
 
-  if (response && response.data) {
-    const { code, message } = response.data;
-    if (code === 401) {
+  if (response && response.code) {
+    const { code, message, status } = response;
+    console.log('response====', response, code);
+    if (code === 401 || status === 401) {
       clearAuthority();
       const {redirect} = getPageQuery();
       if (typeof window !== 'undefined' && window.location.pathname !== '/user/login' && !redirect) {
@@ -49,13 +50,14 @@ const errorHandler = (error) => {
         message: '请求异常',
         description: message || codeMessage[code] || '未知异常',
       });
-    } 
+    }
   } else if (!response) {
     notification.error({
       message: '系统异常',
       description: 'hold on! 您的请求未及响应！',
     });
   }
+
   return response;
 };
 
@@ -64,7 +66,7 @@ const errorHandler = (error) => {
  */
 const req = extend({errorHandler});
 // 拦截请求后响应
-req.interceptors.response.use((res, ) => {
+req.interceptors.response.use(async (res) => {
   const { headers } = res;
   if (headers.get("token") && headers.get("refresh")) {
     setAuthority(
@@ -74,7 +76,37 @@ req.interceptors.response.use((res, ) => {
       },
     });
   }
+
+  // 检查业务状态码（优化性能：只在 JSON 响应时解析）
+  // 注意：umi-request 的响应拦截器接收的是原始 Response 对象
+  const contentType = headers.get('content-type') || '';
+  const isJsonResponse = contentType.includes('application/json');
+  
+  // 只在 JSON 响应时检查业务状态码，避免不必要的解析
+  if (isJsonResponse) {
+    try {
+      // 克隆响应以便多次读取（避免消耗原始响应流）
+      const clonedRes = res.clone();
+      const data = await clonedRes.json();
+      
+      // 检查业务状态码，如果不是 200 则触发错误处理
+      if (data && data.code !== 200) {
+        // 抛出错误，让 errorHandler 也能处理
+        return Promise.reject({
+          response: data,
+          message: data.message || codeMessage[data.code] || '未知异常'
+        });
+      }
+    } catch (e) {
+      // 如果解析失败（非 JSON 响应或解析错误），忽略错误，继续返回原始响应
+      // 不打印警告，因为可能是正常的非 JSON 响应（如文件下载）
+    }
+  }
+
   return res;
+}, (error) => {
+  // 错误拦截器：处理 HTTP 错误和业务错误
+  return Promise.reject(error);
 });
 
 const request = (url, params) => {

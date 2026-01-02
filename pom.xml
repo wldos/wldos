@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>2.0.1</version>
+	<version>2.3.0</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<!-- WLDOS 版本号 - 统一管理，修改此处即可更新所有地方的版本号 -->
-		<wldos.version>2.0.1</wldos.version>
+		<wldos.version>2.3.0</wldos.version>
 	</properties>
 	<url>http://www.wldos.com</url>
 	<licenses>
@@ -260,6 +260,26 @@
 						<!--在生命周期后执行绑定的source插件的goals -->
 						<goals>
 							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<charset>UTF-8</charset>
+					<docencoding>UTF-8</docencoding>
+					<failOnError>false</failOnError>
+					<additionalJOption>-Xdoclint:none</additionalJOption>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>

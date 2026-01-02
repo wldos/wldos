@@ -39,10 +39,10 @@ const routes = [
             path: '/user/forget',
             component: './user/forget',
           },
-          // 动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 DynamicRouter 渲染）
+          // 动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 dynamicrouter 渲染）
           {
             path: '/*',
-            component: './DynamicRouter',
+            component: './dynamicrouter',
             hideInMenu: true,
           },
           {
@@ -304,7 +304,7 @@ const routes = [
           // 管理端动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 AdminDynamicRouter 渲染）
           {
             path: '/*',
-            component: './AdminDynamicRouter',
+            component: './admindynamicrouter',
             hideInMenu: true,
           },
           {
@@ -473,10 +473,10 @@ const routes = [
             path: '/:slug',
             component: './book/page',
           },
-          // 动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 DynamicRouter 渲染）
+          // 动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 dynamicrouter 渲染）
           {
             path: '/*',
-            component: './DynamicRouter',
+            component: './dynamicrouter',
             hideInMenu: true,
           },
           {

@@ -49,6 +49,7 @@ public class ResultJson {
 		this.objectMapper = objectMapper;
 	}
 
+	private static final String RESULT_CLASS_NAME = Result.class.getName();
 	/**
 	 * 封装方法返回的数据到统一的数据结构中，以形成统一格式的json。
 	 *
@@ -58,6 +59,14 @@ public class ResultJson {
 	public Result format(Object res) {
 		if (ObjectUtils.isBlank(res)) {
 			return new DomainResult().data("");
+		}
+
+		if (res.getClass().getName() == RESULT_CLASS_NAME) {
+			return (Result) res;
+		}
+
+		if (res instanceof Result) {
+			return (Result) res;
 		}
 
 		return new DomainResult().data(res);

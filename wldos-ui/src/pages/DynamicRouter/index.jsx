@@ -1,8 +1,7 @@
 import React, { Suspense, useMemo, useEffect, useState, useRef } from 'react';
-import { connect, history } from 'umi';
+import { connect } from 'umi';
 import { GridContent } from '@ant-design/pro-layout';
 import { Card, Spin, Alert, ConfigProvider } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
 import NoFoundPage from "@/pages/404";
 import { injectPluginStyles } from '@/utils/pluginCoLocatedLoader';
 import { getComponentPath } from '@/utils/getComponentPath';

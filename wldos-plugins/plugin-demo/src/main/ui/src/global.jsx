@@ -17,7 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
-import { PLUGIN_CODE } from '../config/plugin';
+import { PLUGIN_CODE } from './config/plugin';
 
 // 将React和antd暴露到全局作用域，供插件使用
 if (typeof window !== 'undefined') {

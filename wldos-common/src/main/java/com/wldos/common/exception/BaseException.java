@@ -16,36 +16,52 @@ package com.wldos.common.exception;
  * @since 1.0
  */
 public class BaseException extends RuntimeException {
-	private static final int DEFAULT_STATUS = 200;
+	private static final int DEFAULT_CODE = 200;
 
-	private final int status;
+	/**
+	 * 业务状态码：200=成功，非200=失败（如401=未授权，403=禁止访问，500=服务器错误）
+	 * 注意：这是业务状态码，不是HTTP状态码。HTTP状态码始终为200。
+	 */
+	private final int code;
 
 	public BaseException(String message) {
 		super(message);
-		this.status = DEFAULT_STATUS;
+		this.code = DEFAULT_CODE;
 	}
 
-	public BaseException(String message, int status) {
+	public BaseException(String message, int code) {
 		super(message);
-		this.status = status;
+		this.code = code;
 	}
 
 	public BaseException(String message, Throwable cause) {
 		super(message, cause);
-		this.status = DEFAULT_STATUS;
+		this.code = DEFAULT_CODE;
 	}
 
 	public BaseException(Throwable cause) {
 		super(cause);
-		this.status = DEFAULT_STATUS;
+		this.code = DEFAULT_CODE;
 	}
 
 	public BaseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-		this.status = DEFAULT_STATUS;
+		this.code = DEFAULT_CODE;
 	}
 
+	/**
+	 * 获取业务状态码
+	 * @return 业务状态码
+	 */
+	public int getCode() {
+		return code;
+	}
+
+	/**
+	 * @deprecated 使用 {@link #getCode()} 代替。此方法保留仅为向后兼容。
+	 */
+	@Deprecated
 	public int getStatus() {
-		return status;
+		return code;
 	}
 }

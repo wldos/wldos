@@ -41,7 +41,8 @@ build/
 
 ### VS Code ###
 .vscode/
-/.mvn/wrapper/
+/.mvn/wrapper/maven-wrapper.jar
+# 注意：.mvn/wrapper/maven-wrapper.properties 应该提交到 Git
 /src/main/resources/static/
 /wldos-web/temp/
 /wldos-ui/src/main/frontend/node/

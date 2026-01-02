@@ -36,13 +36,18 @@ const AdminLayout = (props) => {
    */
 
   // 为侧边菜单渲染图标，同时保留原始图标值到 tabIcon，供标签栏使用
-  const menuHandle = (menus) =>
-    menus.map((item) => ({
+  const menuHandle = (menus) => {
+    // 空值检查：如果 menus 为空或不是数组，返回空数组
+    if (!menus || !Array.isArray(menus)) {
+      return [];
+    }
+    return menus.map((item) => ({
         ...item,
         tabIcon: item.icon, // 保留原始图标值
         icon: renderIcon(item.icon),
         children: item.children && menuHandle(item.children),
     }));
+  };
 
 
   const menuDataRef = useRef([]);
@@ -110,9 +115,13 @@ const AdminLayout = (props) => {
   useEffect(() => {
     const flat = {};
     const walk = (list) => {
-      (list || []).forEach((it) => {
-        if (it.path) flat[it.path] = it;
-        if (it.children) walk(it.children);
+      // 空值检查：确保 list 是数组
+      if (!list || !Array.isArray(list)) {
+        return;
+      }
+      list.forEach((it) => {
+        if (it && it.path) flat[it.path] = it;
+        if (it && it.children) walk(it.children);
       });
     };
     walk(menuDataRef.current);
@@ -196,7 +205,11 @@ const AdminLayout = (props) => {
     const list = (menuDataRef.current && menuDataRef.current.length > 0) ? menuDataRef.current : (menuData || []);
     const flat = {};
     const walk = (arr) => {
-      (arr || []).forEach((it) => {
+      // 空值检查：确保 arr 是数组
+      if (!arr || !Array.isArray(arr)) {
+        return;
+      }
+      arr.forEach((it) => {
         if (it && it.path) flat[it.path] = it;
         if (it && it.children) walk(it.children);
       });
@@ -327,7 +340,15 @@ const AdminLayout = (props) => {
         title={site.title || ''}
         formatMessage={formatMessage}
         contentStyle={{ background: '#f5f7fa' }}
-        menuDataRender={(md) => menuHandle(md && md.length>0 ? [...menuData, ...md] : menuData)}
+        menuDataRender={(md) => {
+          // 确保 menuData 是数组，如果为空则使用空数组
+          const baseMenu = Array.isArray(menuData) ? menuData : [];
+          // 如果 md 存在且是数组且有数据，则合并；否则使用 baseMenu
+          const finalMenu = (md && Array.isArray(md) && md.length > 0) 
+            ? [...baseMenu, ...md] 
+            : baseMenu;
+          return menuHandle(finalMenu);
+        }}
         {...settings}
         openKeys={false}
         menu={{loading, locale: false, ignoreFlatMenu: true}}
@@ -411,14 +432,19 @@ const AdminLayout = (props) => {
         footerRender={() => wldosFooterDom(site.version)}
         rightContentRender={() => <RightContent/>}
         postMenuData={(menu) => { // 在显示前对菜单数据进行查看
-          const list = menu || [];
+          // 确保 menu 是数组
+          const list = Array.isArray(menu) ? menu : [];
           menuDataRef.current = list;
           // 同步构建 path->menu 索引，供标签标题/图标渲染
           const flat = {};
           const walk = (arr) => {
-            (arr || []).forEach((it) => {
-              if (it.path) flat[it.path] = it;
-              if (it.children) walk(it.children);
+            // 空值检查：确保 arr 是数组
+            if (!arr || !Array.isArray(arr)) {
+              return;
+            }
+            arr.forEach((it) => {
+              if (it && it.path) flat[it.path] = it;
+              if (it && it.children) walk(it.children);
             });
           };
           walk(list);
