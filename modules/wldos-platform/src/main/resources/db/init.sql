@@ -6,10 +6,9 @@
  * For commercial licenses see term.md or contact 306991142@qq.com
  */
 
-
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
 -- ----------------------------
 -- Table structure for k_commentmeta
 -- ----------------------------
@@ -73,6 +72,7 @@ INSERT INTO `k_comments` VALUES (1724804344978649089, 318562305192935430, '龙�
 INSERT INTO `k_comments` VALUES (1724806110289899521, 318566675166969857, '龙神', NULL, NULL, NULL, '12132', 0, '1', NULL, NULL, 0, 1, '2023-11-15 23:06:37', '127.0.0.1', 1, '2023-11-15 23:06:37', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_comments` VALUES (1724806130133151746, 318566675166969857, '龙神', NULL, NULL, NULL, '12312', 0, '1', NULL, NULL, 1724806110289899521, 1, '2023-11-15 23:06:41', '127.0.0.1', 1, '2023-11-15 23:06:41', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_comments` VALUES (1982350197279264769, 285654035864403968, '龙神', NULL, NULL, NULL, '评论', 0, '1', NULL, NULL, 0, 1, '2025-10-26 15:34:52', '0:0:0:0:0:0:0:1', 1, '2025-10-26 15:34:52', '0:0:0:0:0:0:0:1', 'normal', 1);
+INSERT INTO `k_comments` VALUES (2005189092941307905, 1982460775779897345, '龙神', NULL, NULL, NULL, '1111', 0, '1', NULL, NULL, 0, 1, '2025-12-28 16:08:29', '0:0:0:0:0:0:0:1', 1, '2025-12-28 16:08:29', '0:0:0:0:0:0:0:1', 'normal', 1);
 
 -- ----------------------------
 -- Table structure for k_links
@@ -238,7 +238,7 @@ INSERT INTO `k_pubmeta` VALUES (279440376708382724, 279440376687411200, 'attachP
 INSERT INTO `k_pubmeta` VALUES (279440443200684039, 279440443175518218, 'attachMetadata', '{\"width\":374,\"height\":226,\"path\":\"/2023/04/27211423UmumWhEH.jpg\",\"srcset\":[{\"type\":null,\"width\":374,\"height\":226,\"path\":\"/2023/04/27211423UmumWhEH.jpg\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":90,\"path\":\"/2023/04/27211423UmumWhEH-150x90.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":300,\"height\":181,\"path\":\"/2023/04/27211423UmumWhEH-300x181.jpg\",\"mimeType\":\"image/jpeg\"}]}');
 INSERT INTO `k_pubmeta` VALUES (279440443204878343, 279440443175518218, 'attachPath', '/2023/04/27211423UmumWhEH.jpg');
 INSERT INTO `k_pubmeta` VALUES (279440647530397701, 279440244893990923, 'views', '24');
-INSERT INTO `k_pubmeta` VALUES (279474604267454475, 279439799488266251, 'views', '38');
+INSERT INTO `k_pubmeta` VALUES (279474604267454475, 279439799488266251, 'views', '39');
 INSERT INTO `k_pubmeta` VALUES (279475363029630978, 279475362996076552, 'attachMetadata', '{\"width\":733,\"height\":529,\"path\":\"/2023/04/27233308HB8BrDRc.jpg\",\"srcset\":[{\"type\":null,\"width\":733,\"height\":529,\"path\":\"/2023/04/27233308HB8BrDRc.jpg\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":108,\"path\":\"/2023/04/27233308HB8BrDRc-150x108.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":300,\"height\":216,\"path\":\"/2023/04/27233308HB8BrDRc-300x216.jpg\",\"mimeType\":\"image/jpeg\"}]}');
 INSERT INTO `k_pubmeta` VALUES (279475363029630979, 279475362996076552, 'attachPath', '/2023/04/27233308HB8BrDRc.jpg');
 INSERT INTO `k_pubmeta` VALUES (279491771436285954, 279491771406925828, 'attachMetadata', '{\"width\":395,\"height\":424,\"path\":\"/2023/04/28003820karQeT8V.jpg\",\"srcset\":[{\"type\":null,\"width\":395,\"height\":424,\"path\":\"/2023/04/28003820karQeT8V.jpg\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":161,\"path\":\"/2023/04/28003820karQeT8V-150x161.jpg\",\"mimeType\":\"image/jpeg\"},{\"type\":\"medium\",\"width\":300,\"height\":322,\"path\":\"/2023/04/28003820karQeT8V-300x322.jpg\",\"mimeType\":\"image/jpeg\"}]}');
@@ -269,7 +269,7 @@ INSERT INTO `k_pubmeta` VALUES (282359796946616324, 282359795562496004, 'cover',
 INSERT INTO `k_pubmeta` VALUES (282359796946616325, 282359795562496004, 'subTitle', '个人IP');
 INSERT INTO `k_pubmeta` VALUES (282359796946616326, 282359795562496004, 'privacyLevel', 'reward');
 INSERT INTO `k_pubmeta` VALUES (282359821953056770, 282359821609123842, 'views', '110');
-INSERT INTO `k_pubmeta` VALUES (282373684559790091, 282359795562496004, 'views', '79');
+INSERT INTO `k_pubmeta` VALUES (282373684559790091, 282359795562496004, 'views', '80');
 INSERT INTO `k_pubmeta` VALUES (285186268132458497, 285186265536184330, 'city', '310100');
 INSERT INTO `k_pubmeta` VALUES (285186268136652805, 285186265536184330, 'ornPrice', '10');
 INSERT INTO `k_pubmeta` VALUES (285186268140847110, 285186265536184330, 'province', '310000');
@@ -277,12 +277,12 @@ INSERT INTO `k_pubmeta` VALUES (285186268145041408, 285186265536184330, 'telepho
 INSERT INTO `k_pubmeta` VALUES (285186268145041409, 285186265536184330, 'privacyLevel', 'public');
 INSERT INTO `k_pubmeta` VALUES (285186268145041410, 285186265536184330, 'contact', 'wldos');
 INSERT INTO `k_pubmeta` VALUES (285186268145041411, 285186265536184330, 'subTitle', '文档模板');
-INSERT INTO `k_pubmeta` VALUES (285186287518531594, 285186287178792967, 'views', '396');
-INSERT INTO `k_pubmeta` VALUES (285652602901413892, 285652601550848001, 'views', '85');
+INSERT INTO `k_pubmeta` VALUES (285186287518531594, 285186287178792967, 'views', '397');
+INSERT INTO `k_pubmeta` VALUES (285652602901413892, 285652601550848001, 'views', '86');
 INSERT INTO `k_pubmeta` VALUES (285652607817138181, 285652607687114757, 'views', '0');
 INSERT INTO `k_pubmeta` VALUES (285652611445211143, 285652611428433923, 'views', '0');
 INSERT INTO `k_pubmeta` VALUES (285652612590256131, 285652612510564358, 'views', '0');
-INSERT INTO `k_pubmeta` VALUES (285652613571723269, 285652613542363138, 'views', '39');
+INSERT INTO `k_pubmeta` VALUES (285652613571723269, 285652613542363138, 'views', '40');
 INSERT INTO `k_pubmeta` VALUES (285652614368641024, 285652614351863818, 'views', '30');
 INSERT INTO `k_pubmeta` VALUES (285652616532901890, 285652616516124678, 'views', '19');
 INSERT INTO `k_pubmeta` VALUES (285652617417900041, 285652617401122822, 'views', '20');
@@ -291,16 +291,16 @@ INSERT INTO `k_pubmeta` VALUES (285652618428727301, 285652618411950086, 'views',
 INSERT INTO `k_pubmeta` VALUES (285652619120787457, 285652619104010247, 'views', '12');
 INSERT INTO `k_pubmeta` VALUES (285653741420068874, 285186265536184330, 'cover', '/noPic.jpg');
 INSERT INTO `k_pubmeta` VALUES (285653951105908736, 285653950942330888, 'privacyLevel', 'public');
-INSERT INTO `k_pubmeta` VALUES (285653967610494980, 285653967593717760, 'views', '363');
-INSERT INTO `k_pubmeta` VALUES (285654035881181188, 285654035864403968, 'views', '483');
+INSERT INTO `k_pubmeta` VALUES (285653967610494980, 285653967593717760, 'views', '375');
+INSERT INTO `k_pubmeta` VALUES (285654035881181188, 285654035864403968, 'views', '484');
 INSERT INTO `k_pubmeta` VALUES (285654042051002374, 285654042034225159, 'views', '27');
-INSERT INTO `k_pubmeta` VALUES (285654044836020224, 285654044802465795, 'views', '20');
+INSERT INTO `k_pubmeta` VALUES (285654044836020224, 285654044802465795, 'views', '21');
 INSERT INTO `k_pubmeta` VALUES (285654248939241481, 285654247840333831, 'privacyLevel', 'public');
 INSERT INTO `k_pubmeta` VALUES (285654362760069130, 285654361615024139, 'privacyLevel', 'public');
-INSERT INTO `k_pubmeta` VALUES (285654378673258500, 285654377582739462, 'views', '52');
-INSERT INTO `k_pubmeta` VALUES (285654461099720713, 285654461099720712, 'views', '27');
-INSERT INTO `k_pubmeta` VALUES (285654567463075844, 285654567429521411, 'views', '26');
-INSERT INTO `k_pubmeta` VALUES (285654996620066824, 285654996620066823, 'views', '60');
+INSERT INTO `k_pubmeta` VALUES (285654378673258500, 285654377582739462, 'views', '53');
+INSERT INTO `k_pubmeta` VALUES (285654461099720713, 285654461099720712, 'views', '28');
+INSERT INTO `k_pubmeta` VALUES (285654567463075844, 285654567429521411, 'views', '27');
+INSERT INTO `k_pubmeta` VALUES (285654996620066824, 285654996620066823, 'views', '61');
 INSERT INTO `k_pubmeta` VALUES (285934318316601353, 285186265536184330, 'views', '0');
 INSERT INTO `k_pubmeta` VALUES (290616220747218951, 290616219128217608, 'subTitle', '11');
 INSERT INTO `k_pubmeta` VALUES (305170961745494017, 305170961611276297, 'city', '140200');
@@ -376,7 +376,7 @@ INSERT INTO `k_pubmeta` VALUES (1977381934786961415, 1977381934581440514, 'cover
 INSERT INTO `k_pubmeta` VALUES (1977381934786961416, 1977381934581440514, 'privacyLevel', 'public');
 INSERT INTO `k_pubmeta` VALUES (1977381934786961417, 1977381934581440514, 'province', '110000');
 INSERT INTO `k_pubmeta` VALUES (1977381934786961418, 1977381934581440514, 'mainPic1', '/2025/10/122231434p14DfMP.png');
-INSERT INTO `k_pubmeta` VALUES (1977382344146837505, 1977381934581440514, 'views', '163');
+INSERT INTO `k_pubmeta` VALUES (1977382344146837505, 1977381934581440514, 'views', '166');
 INSERT INTO `k_pubmeta` VALUES (1977418018216501250, 0, 'attachMetadata', '{\"width\":1328,\"height\":1328,\"path\":\"/2025/10/13005607sMEg43y2.png\",\"srcset\":[{\"type\":null,\"width\":1328,\"height\":1328,\"path\":\"/2025/10/13005607sMEg43y2.png\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":150,\"path\":\"/2025/10/13005607sMEg43y2-150x150.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":300,\"path\":\"/2025/10/13005607sMEg43y2-300x300.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":1024,\"path\":\"/2025/10/13005607sMEg43y2-1024x1024.png\",\"mimeType\":\"image/png\"},{\"type\":\"mediumLarge\",\"width\":768,\"height\":768,\"path\":\"/2025/10/13005607sMEg43y2-768x768.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_pubmeta` VALUES (1977418018216501251, 0, 'attachPath', '/2025/10/13005607sMEg43y2.png');
 INSERT INTO `k_pubmeta` VALUES (1977418358596853762, 0, 'attachMetadata', '{\"width\":832,\"height\":1216,\"path\":\"/2025/10/13005729q37o0Ti6.png\",\"srcset\":[{\"type\":null,\"width\":832,\"height\":1216,\"path\":\"/2025/10/13005729q37o0Ti6.png\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":219,\"path\":\"/2025/10/13005729q37o0Ti6-150x219.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":438,\"path\":\"/2025/10/13005729q37o0Ti6-300x438.png\",\"mimeType\":\"image/png\"},{\"type\":\"mediumLarge\",\"width\":768,\"height\":1122,\"path\":\"/2025/10/13005729q37o0Ti6-768x1122.png\",\"mimeType\":\"image/png\"}]}');
@@ -385,7 +385,7 @@ INSERT INTO `k_pubmeta` VALUES (1978478250086719490, 0, 'attachMetadata', '{\"wi
 INSERT INTO `k_pubmeta` VALUES (1978478250086719491, 0, 'attachPath', '/2025/10/152309063Cx8E7yG.png');
 INSERT INTO `k_pubmeta` VALUES (1979923488579891202, 0, 'attachMetadata', '{\"width\":1940,\"height\":1965,\"path\":\"/2025/10/19225158w6T98hbv.png\",\"srcset\":[{\"type\":null,\"width\":1940,\"height\":1965,\"path\":\"/2025/10/19225158w6T98hbv.png\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":151,\"path\":\"/2025/10/19225158w6T98hbv-150x151.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":303,\"path\":\"/2025/10/19225158w6T98hbv-300x303.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":1037,\"path\":\"/2025/10/19225158w6T98hbv-1024x1037.png\",\"mimeType\":\"image/png\"},{\"type\":\"huge\",\"width\":1536,\"height\":1555,\"path\":\"/2025/10/19225158w6T98hbv-1536x1555.png\",\"mimeType\":\"image/png\"},{\"type\":\"mediumLarge\",\"width\":768,\"height\":777,\"path\":\"/2025/10/19225158w6T98hbv-768x777.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_pubmeta` VALUES (1979923488579891203, 0, 'attachPath', '/2025/10/19225158w6T98hbv.png');
-INSERT INTO `k_pubmeta` VALUES (1979950902752088066, 1979950902752088065, 'views', '15');
+INSERT INTO `k_pubmeta` VALUES (1979950902752088066, 1979950902752088065, 'views', '16');
 INSERT INTO `k_pubmeta` VALUES (1979956443964542977, 0, 'attachMetadata', '{\"width\":1024,\"height\":1536,\"path\":\"/2025/10/20010254b2aiQytj.png\",\"srcset\":[{\"type\":null,\"width\":1024,\"height\":1536,\"path\":\"/2025/10/20010254b2aiQytj.png\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":225,\"path\":\"/2025/10/20010254b2aiQytj-150x225.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":450,\"path\":\"/2025/10/20010254b2aiQytj-300x450.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":1536,\"path\":\"/2025/10/20010254b2aiQytj-1024x1536.png\",\"mimeType\":\"image/png\"},{\"type\":\"mediumLarge\",\"width\":768,\"height\":1152,\"path\":\"/2025/10/20010254b2aiQytj-768x1152.png\",\"mimeType\":\"image/png\"}]}');
 INSERT INTO `k_pubmeta` VALUES (1979956443964542978, 0, 'attachPath', '/2025/10/20010254b2aiQytj.png');
 INSERT INTO `k_pubmeta` VALUES (1979956523022979073, 0, 'attachMetadata', '{\"width\":1024,\"height\":1536,\"path\":\"/2025/10/200103138IMpZRmm.png\",\"srcset\":[{\"type\":null,\"width\":1024,\"height\":1536,\"path\":\"/2025/10/200103138IMpZRmm.png\",\"mimeType\":null},{\"type\":\"thumbnail\",\"width\":150,\"height\":225,\"path\":\"/2025/10/200103138IMpZRmm-150x225.png\",\"mimeType\":\"image/png\"},{\"type\":\"medium\",\"width\":300,\"height\":450,\"path\":\"/2025/10/200103138IMpZRmm-300x450.png\",\"mimeType\":\"image/png\"},{\"type\":\"large\",\"width\":1024,\"height\":1536,\"path\":\"/2025/10/200103138IMpZRmm-1024x1536.png\",\"mimeType\":\"image/png\"},{\"type\":\"mediumLarge\",\"width\":768,\"height\":1152,\"path\":\"/2025/10/200103138IMpZRmm-768x1152.png\",\"mimeType\":\"image/png\"}]}');
@@ -437,9 +437,9 @@ INSERT INTO `k_pubmeta` VALUES (1982453239748071428, 305206724797317123, 'waterm
 INSERT INTO `k_pubmeta` VALUES (1982454453139247107, 1982454453139247105, 'privacyLevel', 'public');
 INSERT INTO `k_pubmeta` VALUES (1982456032059822081, 1982454453139247105, 'views', '46');
 INSERT INTO `k_pubmeta` VALUES (1982459581938372612, 1982459581812543489, 'privacyLevel', 'public');
-INSERT INTO `k_pubmeta` VALUES (1982460311399141377, 1982459581812543489, 'views', '8');
+INSERT INTO `k_pubmeta` VALUES (1982460311399141377, 1982459581812543489, 'views', '10');
 INSERT INTO `k_pubmeta` VALUES (1982460775851200517, 1982460775779897345, 'privacyLevel', 'public');
-INSERT INTO `k_pubmeta` VALUES (1982461258535899138, 1982460775779897345, 'views', '17');
+INSERT INTO `k_pubmeta` VALUES (1982461258535899138, 1982460775779897345, 'views', '20');
 INSERT INTO `k_pubmeta` VALUES (1982461899027091458, 1982460775779897345, 'cover', '/noPic.jpg');
 INSERT INTO `k_pubmeta` VALUES (1982461899027091459, 1982460775779897345, 'watermarkEnabled', 'true');
 INSERT INTO `k_pubmeta` VALUES (1982461899027091460, 1982460775779897345, 'watermarkText', '元悉宇宙');
@@ -450,13 +450,16 @@ INSERT INTO `k_pubmeta` VALUES (1982468159784980482, 1982454453139247105, 'water
 INSERT INTO `k_pubmeta` VALUES (1982468159784980483, 1982454453139247105, 'watermarkText', '元悉宇宙');
 INSERT INTO `k_pubmeta` VALUES (1984546838572818437, 1984546838375686145, 'privacyLevel', 'public');
 INSERT INTO `k_pubmeta` VALUES (1984546854012051457, 1984546853949136898, 'views', '0');
-INSERT INTO `k_pubmeta` VALUES (1984548357951053826, 1984548357951053825, 'views', '22');
+INSERT INTO `k_pubmeta` VALUES (1984548357951053826, 1984548357951053825, 'views', '24');
 INSERT INTO `k_pubmeta` VALUES (1984549356249931777, 1984549356182822913, 'views', '5');
 INSERT INTO `k_pubmeta` VALUES (1984552985010757634, 1984552985010757633, 'views', '0');
 INSERT INTO `k_pubmeta` VALUES (1984553074093580291, 1984553074093580290, 'views', '3');
 INSERT INTO `k_pubmeta` VALUES (1984944544885579777, 1984546838375686145, 'cover', '/2025/11/02192346Dsuvq6SA.png');
 INSERT INTO `k_pubmeta` VALUES (1984944544885579778, 1984546838375686145, 'watermarkEnabled', 'true');
 INSERT INTO `k_pubmeta` VALUES (1984944544885579779, 1984546838375686145, 'watermarkText', '元悉宇宙');
+INSERT INTO `k_pubmeta` VALUES (2005195649120759809, 1982459581812543489, 'cover', '/noPic.jpg');
+INSERT INTO `k_pubmeta` VALUES (2005195649120759810, 1982459581812543489, 'watermarkEnabled', 'true');
+INSERT INTO `k_pubmeta` VALUES (2005195649120759811, 1982459581812543489, 'watermarkText', '元悉宇宙');
 
 -- ----------------------------
 -- Table structure for k_pubs
@@ -465,30 +468,30 @@ DROP TABLE IF EXISTS `k_pubs`;
 CREATE TABLE `k_pubs`  (
                            `id` bigint(20) UNSIGNED NOT NULL,
                            `pub_content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
-                           `pub_title` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '标题',
-                           `pub_excerpt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '摘要',
-                           `pub_status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '发布状态：publish已发表、draft草稿、private私密、static静态化、object对象化、inherit继承帖子(附件图片类)',
-                           `comment_status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '评论状态，open允许评论、closed禁止评论、user_only注册用户可评',
-                           `pub_password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '设置后修改发布需要输入密码',
-                           `pub_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '别名，用于生成超链接',
-                           `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '上级帖子id，0表示没有上级，附件的上级是帖子，篇章的上级是文集',
-                           `pub_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '发布类型：页面page、post帖子、图片pic、视频video、音频voice、系列视频seriesvideo、系列音频seriesvoice、电子书book、附件attachment、篇章chapter、剧集series',
-                           `domain_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '域id，内容从哪个域创建的',
-                           `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '公司id(租户id)',
-                           `pub_mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '发布内容mime类型：图片image/xxx、音频audio/xxx、视频video/xxx、应用文件application/xxx、文本类text/xxx',
-                           `comment_count` int(10) NOT NULL DEFAULT 0 COMMENT '评论数',
-                           `star_count` int(10) NULL DEFAULT 0 COMMENT '关注数、收藏数',
-                           `like_count` int(10) NULL DEFAULT 0 COMMENT '点赞数、喜欢数',
-                           `views` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '查看数：每满一定次数更新一次，并非实时更新，实时记录见postmeta',
+                           `pub_title` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `pub_excerpt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL ,
+                           `pub_status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `comment_status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `pub_password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `pub_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0 ,
+                           `pub_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `domain_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `pub_mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `comment_count` int(10) NOT NULL DEFAULT 0 ,
+                           `star_count` int(10) NULL DEFAULT 0 ,
+                           `like_count` int(10) NULL DEFAULT 0 ,
+                           `views` int(10) UNSIGNED NULL DEFAULT NULL ,
                            `display_order` int(10) UNSIGNED NULL DEFAULT NULL,
-                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `create_time` datetime NULL DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `update_time` datetime NULL DEFAULT NULL ,
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `versions` int(10) UNSIGNED NULL DEFAULT NULL ,
                            PRIMARY KEY (`id`) USING BTREE,
                            INDEX `post_name`(`pub_name`(191)) USING BTREE,
                            INDEX `post_parent`(`parent_id`) USING BTREE,
@@ -555,7 +558,7 @@ INSERT INTO `k_pubs` VALUES (279521307418869765, NULL, '2023-04-28 02:35:42', NU
 INSERT INTO `k_pubs` VALUES (279532165675008001, NULL, 'test', NULL, 'publish', NULL, NULL, NULL, 0, 'info', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-04-28 03:18:52', '127.0.0.1', 1, '2023-04-28 03:18:52', '127.0.0.1', 'deleted', 1);
 INSERT INTO `k_pubs` VALUES (280910649282445320, NULL, 'file', NULL, 'inherit', NULL, NULL, NULL, 279496821072117767, 'attachment', 1533544727530094592, 0, 'image', 0, 0, 0, NULL, NULL, 1, '2023-05-01 22:36:28', '127.0.0.1', 1, '2023-05-01 22:36:28', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (282358522935164930, NULL, 'file', NULL, 'inherit', NULL, NULL, NULL, 279496821072117767, 'attachment', 1533544727530094592, 0, 'image', 0, 0, 0, NULL, NULL, 1, '2023-05-05 22:29:48', '127.0.0.1', 1, '2023-05-05 22:29:48', '127.0.0.1', 'normal', 1);
-INSERT INTO `k_pubs` VALUES (282359795562496004, NULL, '在数字时代每个人都是独特的IP', '数字经济的本质是什么，我想现在还不好下定论。社会在发展，随着技术的进步，场景的创新，世界在发生着奇妙的变化，而这种变化往往是遵循着人们的某种需求发展的。社会需要发展，现在的市场经济更喜欢多样化需求，只有需求足够多，机会才足够多。人，是社会的产物，也是社会的基本成员。先知先觉者总在不遗余力地刻画这个世界，道阻且长，冥冥中自有一股力量在推动，帮助人们达成目标，这股力量是对理想不屈的追逐', 'publish', NULL, NULL, 'zaishuzishidaimeigerendoushidutedeIP', 0, 'book', 1533544727530094592, 0, NULL, 0, 1, 0, 70, NULL, 1, '2023-05-05 22:34:51', '127.0.0.1', 1, '2025-10-26 23:07:36', '0:0:0:0:0:0:0:1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (282359795562496004, NULL, '在数字时代每个人都是独特的IP', '数字经济的本质是什么，我想现在还不好下定论。社会在发展，随着技术的进步，场景的创新，世界在发生着奇妙的变化，而这种变化往往是遵循着人们的某种需求发展的。社会需要发展，现在的市场经济更喜欢多样化需求，只有需求足够多，机会才足够多。人，是社会的产物，也是社会的基本成员。先知先觉者总在不遗余力地刻画这个世界，道阻且长，冥冥中自有一股力量在推动，帮助人们达成目标，这股力量是对理想不屈的追逐', 'publish', NULL, NULL, 'zaishuzishidaimeigerendoushidutedeIP', 0, 'book', 1533544727530094592, 0, NULL, 0, 1, 0, 80, NULL, 1, '2023-05-05 22:34:51', '127.0.0.1', 1, '2025-10-26 23:07:36', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (282359821609123842, '<p>在数字时代，个人独特性显得尤为重要，主要体现在以下方面：</p>\n<h2 id=\"数字身份的多重性\">数字身份的多重性</h2>\n<p><br />个体通过不同平台（如社交软件、游戏、元宇宙）构建差异化&ldquo;数字分身&rdquo;，这些分身可能反映现实自我的某一面（如职场社交中的专业形象）或延伸出全新特质（如虚拟社区中的创意达人），形成&ldquo;一人多面&rdquo;的人格图谱。 &zwnj;<br />1</p>\n<h2 id=\"虚拟与现实的深度融合\">虚拟与现实的深度融合</h2>\n<p><br />数字人格与现实人格不再是简单镜像关系，而是通过算法推荐、虚拟协作等方式实现动态融合。例如，用户在元宇宙中参与协作项目时，需调动现实中的团队合作能力，同时通过虚拟角色的互动反哺现实社交技巧。 &zwnj;<br />1</p>\n<h2 id=\"算法依赖与个性化需求\">算法依赖与个性化需求</h2>\n<p><br />推荐算法通过用户行为数据塑造偏好，个体对新技术、虚拟文化的接纳度（如元宇宙场景）成为人格特质的重要组成部分。这种算法依赖性既带来个性化体验，也强化了个人在数字环境中的独特存在感。 &zwnj;<br />1<br />2</p>\n<h2 id=\"隐私保护与权利主张\">隐私保护与权利主张</h2>\n<p><br />数字法理学强调对代码生产合法性的审查，要求对个人隐私、数据权利进行多维保护。例如，滴滴等企业通过设立个人信息保护监督委员会，确保用户信息合规使用，凸显数字时代个人权利的独特价值。 &zwnj;<br />3<br />4</p>\n<h2 id=\"心理健康的挑战与机遇\">心理健康的挑战与机遇</h2>\n<p><br />数字心理健康服务通过智能设备改善心理健康，但同时也面临青少年群体心理健康水平下降的挑战。这要求在享受数字技术便利的同时，更需关注个体差异与独特需求。</p>\n<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" src=\"http://localhost:8000/store/2025/10/26214432gVnqPd14.png\" alt=\"\" width=\"300\" height=\"325\" /></p>', '为什么说数字时代个人独特更重要', NULL, 'inherit', NULL, NULL, 'weishenme', 282359795562496004, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, 110, NULL, 1, '2023-05-05 22:34:57', '127.0.0.1', 1, '2025-10-26 22:21:34', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285186265536184330, NULL, '文档模板测试', '知识库文档，与普通合集不同在于支持在在线文档库中集中阅读，拥有条理清晰的导航栏，点击每个文档一级菜单，可以访问对应的文档片段，以锚点的形式展示下级菜单。', 'publish', NULL, NULL, 'wendangmobanceshi', 0, 'doc', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-06-13 17:46:14', '127.0.0.1', 1, '2025-10-25 21:36:27', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285186287178792967, '<p>一个文档可以有多篇章节组成，每篇章节可以以标题的形式创建锚点，目前支持markdown格式行文，后期扩大到整个xhtml。</p>\n<h2 id=\"二级标题\">二级标题</h2>\n<p>### 这是一个markdown标题 这是正文。 ### 这是第二个标题 这是正文。 #### 这是下一级标题 这是正文</p>\n<p>markdown标签未生效，是因为没有使用markdown专用的编辑器，富文本编辑器把他格式化为html了。</p>\n<p><span style=\"color: #3598db;\">由于明天要上班了</span>，暂时不实现markdown编辑器了，后期有时间再补上。</p>\n<h2 id=\"一级标题\">一级标题</h2>\n<p>内容内容内容。</p>\n<p>锚点<a id=\"maodian\"></a></p>\n<p>各种内容。。。。</p>\n<p>锚点2<a id=\"mdian2\"></a>示例</p>\n<p>内容内容。</p>\n<p>### 这是一个markdown标题 这是正文。 ### 这是第二个标题 这是正文。 #### 这是下一级标题 这是正文</p>', '这是文档的第一篇内容', NULL, 'inherit', NULL, NULL, '20', 285186265536184330, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, 390, NULL, 1, '2023-05-13 17:46:19', '127.0.0.1', 1, '2025-10-20 20:41:47', '0:0:0:0:0:0:0:1', 'normal', 1);
@@ -563,7 +566,7 @@ INSERT INTO `k_pubs` VALUES (285652601550848001, '<p>明天加上markdown的标�
 INSERT INTO `k_pubs` VALUES (285652607687114757, NULL, '2023-05-15 00:39:18', NULL, 'inherit', NULL, NULL, NULL, 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-05-15 00:39:19', '127.0.0.1', 1, '2023-05-15 00:39:19', '127.0.0.1', 'deleted', 1);
 INSERT INTO `k_pubs` VALUES (285652611428433923, NULL, '2023-05-15 00:39:19', NULL, 'inherit', NULL, NULL, NULL, 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-05-15 00:39:20', '127.0.0.1', 1, '2023-05-15 00:39:20', '127.0.0.1', 'deleted', 1);
 INSERT INTO `k_pubs` VALUES (285652612510564358, NULL, '2023-05-15 00:39:19', NULL, 'inherit', NULL, NULL, NULL, 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-05-15 00:39:20', '127.0.0.1', 1, '2023-05-15 00:39:20', '127.0.0.1', 'deleted', 1);
-INSERT INTO `k_pubs` VALUES (285652613542363138, '', '统一markdown和html渲染', NULL, 'inherit', NULL, NULL, 'tong\'yi', 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 30, NULL, 1, '2023-05-15 00:39:20', '127.0.0.1', 1, '2023-05-15 01:32:52', '127.0.0.1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (285652613542363138, '', '统一markdown和html渲染', NULL, 'inherit', NULL, NULL, 'tong\'yi', 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 40, NULL, 1, '2023-05-15 00:39:20', '127.0.0.1', 1, '2023-05-15 01:32:52', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285652614351863818, '', '文档知识库应用广泛', NULL, 'inherit', NULL, NULL, 'wendang', 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 30, NULL, 1, '2023-05-15 00:39:20', '127.0.0.1', 1, '2023-05-15 01:33:09', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285652616516124678, '', '最简单的往往被忽视', NULL, 'inherit', NULL, NULL, 'zuijiandan', 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 10, NULL, 1, '2023-05-15 00:39:21', '127.0.0.1', 1, '2023-05-15 01:33:27', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285652617401122822, '', '知识体系应该活学活用', NULL, 'inherit', NULL, NULL, 'zhi\'s', 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 20, NULL, 1, '2023-05-15 00:39:21', '127.0.0.1', 1, '2023-05-15 01:33:47', '127.0.0.1', 'normal', 1);
@@ -571,7 +574,7 @@ INSERT INTO `k_pubs` VALUES (285652617627615233, NULL, '2023-05-15 00:39:21', NU
 INSERT INTO `k_pubs` VALUES (285652618411950086, NULL, '2023-05-15 00:39:21', NULL, 'inherit', NULL, NULL, NULL, 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-05-15 00:39:21', '127.0.0.1', 1, '2023-05-15 00:39:21', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285652619104010247, '<p>你的智商123。</p>', '这是最后一章', NULL, 'inherit', NULL, NULL, 'zheishizui\'h', 285186265536184330, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 10, NULL, 1, '2023-05-15 00:39:22', '127.0.0.1', 1, '2024-10-03 16:31:49', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285653950942330888, NULL, '开发文档', NULL, 'publish', NULL, NULL, 'kaifawendang', 0, 'doc', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-05-15 00:44:39', '127.0.0.1', 1, '2025-10-25 20:36:24', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `k_pubs` VALUES (285653967593717760, '<p>在 WLDOS 系统中，应用管理和插件管理虽然有相似之处，但它们的功能和目的通常是不同的。以下是对这两者的分析：</p>\n<h3 id=\"应用管理\">应用管理</h3>\n<ol>\n<li><strong>定义</strong>： - 应用管理通常涉及对整个应用程序的管理，包括应用的安装、配置、更新和删除等。</li>\n<li><strong>功能</strong>： - 管理应用的基本信息，如名称、类型、状态、创建时间等。 - 可能包括对应用的权限管理、用户访问控制等。 - 监控应用的运行状态和性能。</li>\n<li><strong>目标</strong>： - 确保应用的正常运行和维护，提供用户所需的功能。</li>\n</ol>\n<h3 id=\"插件管理\">插件管理</h3>\n<ol>\n<li><strong>定义</strong>： - 插件管理专注于对应用程序的扩展功能进行管理。插件通常是独立的模块，可以为主应用添加新功能或增强现有功能。</li>\n<li><strong>功能</strong>： - 管理插件的安装、启用、禁用和卸载。 - 提供插件的版本控制和更新管理。 - 可能包括插件的配置选项和依赖管理。</li>\n<li><strong>目标</strong>： - 允许用户根据需要扩展应用的功能，提供灵活性和可定制性。</li>\n</ol>\n<h3 id=\"主要区别\">主要区别</h3>\n<ul>\n<li><strong>范围</strong>：</li>\n- 应用管理通常关注整个应用的生命周期，而插件管理则专注于扩展和增强应用的功能。\n<li><strong>功能</strong>：</li>\n- 应用管理涉及更广泛的管理任务，而插件管理则更专注于模块化和可扩展性。\n<li><strong>用户交互</strong>：</li>\n<li>用户可能会频繁与插件管理交互，以根据需求添加或移除功能，而应用管理则可能更关注整体的应用配置和维护。</li>\n</ul>\n<h3 id=\"结论\">结论</h3>\n<p>虽然应用管理和插件管理在某些方面可能会重叠（例如，插件可能被视为应用的一部分），但它们的目标和功能是不同的。在设计和实现时，您可以考虑将它们分开管理，以便更好地满足用户的需求和系统的灵活性。1234</p>\n<p><img src=\"http://localhost:8000/store/2025/10/20010400fY57LhXu.png\" width=\"306\" height=\"459\" /></p>\n<p><img src=\"http://localhost:8000/store/2025/10/26181727tmSjaiS3.png\" width=\"308\" height=\"312\" /></p>', '应用管理和插件管理', NULL, 'inherit', NULL, NULL, 'di\'y\'g\'i', 285653950942330888, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, 360, NULL, 1, '2023-05-15 00:44:43', '127.0.0.1', 1, '2025-10-26 19:06:47', '0:0:0:0:0:0:0:1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (285653967593717760, '<p>在 WLDOS 系统中，应用管理和插件管理虽然有相似之处，但它们的功能和目的通常是不同的。以下是对这两者的分析：</p>\n<h3 id=\"应用管理\">应用管理</h3>\n<ol>\n<li><strong>定义</strong>： - 应用管理通常涉及对整个应用程序的管理，包括应用的安装、配置、更新和删除等。</li>\n<li><strong>功能</strong>： - 管理应用的基本信息，如名称、类型、状态、创建时间等。 - 可能包括对应用的权限管理、用户访问控制等。 - 监控应用的运行状态和性能。</li>\n<li><strong>目标</strong>： - 确保应用的正常运行和维护，提供用户所需的功能。</li>\n</ol>\n<h3 id=\"插件管理\">插件管理</h3>\n<ol>\n<li><strong>定义</strong>： - 插件管理专注于对应用程序的扩展功能进行管理。插件通常是独立的模块，可以为主应用添加新功能或增强现有功能。</li>\n<li><strong>功能</strong>： - 管理插件的安装、启用、禁用和卸载。 - 提供插件的版本控制和更新管理。 - 可能包括插件的配置选项和依赖管理。</li>\n<li><strong>目标</strong>： - 允许用户根据需要扩展应用的功能，提供灵活性和可定制性。</li>\n</ol>\n<h3 id=\"主要区别\">主要区别</h3>\n<ul>\n<li><strong>范围</strong>：</li>\n- 应用管理通常关注整个应用的生命周期，而插件管理则专注于扩展和增强应用的功能。\n<li><strong>功能</strong>：</li>\n- 应用管理涉及更广泛的管理任务，而插件管理则更专注于模块化和可扩展性。\n<li><strong>用户交互</strong>：</li>\n<li>用户可能会频繁与插件管理交互，以根据需求添加或移除功能，而应用管理则可能更关注整体的应用配置和维护。</li>\n</ul>\n<h3 id=\"结论\">结论</h3>\n<p>虽然应用管理和插件管理在某些方面可能会重叠（例如，插件可能被视为应用的一部分），但它们的目标和功能是不同的。在设计和实现时，您可以考虑将它们分开管理，以便更好地满足用户的需求和系统的灵活性。1234</p>\n<p><img src=\"http://localhost:8000/store/2025/10/20010400fY57LhXu.png\" width=\"306\" height=\"459\" /></p>\n<p><img src=\"http://localhost:8000/store/2025/10/26181727tmSjaiS3.png\" width=\"308\" height=\"312\" /></p>', '应用管理和插件管理', NULL, 'inherit', NULL, NULL, 'di\'y\'g\'i', 285653950942330888, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, 370, NULL, 1, '2023-05-15 00:44:43', '127.0.0.1', 1, '2025-10-26 19:06:47', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285654035864403968, '## WLDOS Markdown编辑器使用指南\n\n### 概述\n\nWLDOS系统提供了强大的Markdown编辑器，支持实时预览、语法高亮、图片管理等功能。本编辑器采用所见即所得的编辑方式，让您能够专注于内容创作，而无需担心格式问题。\n\n### 编辑器模式\n\n#### 1. 富文本模式\n- **特点**：提供可视化编辑界面，类似Word文档编辑器\n- **适用场景**：适合不熟悉Markdown语法的用户\n- **功能**：支持拖拽、格式化工具栏、实时预览\n\n#### 2. Markdown模式\n- **特点**：直接编辑Markdown源码\n- **适用场景**：适合熟悉Markdown语法的用户\n- **功能**：语法高亮、实时预览、代码补全\n\n### 核心功能\n\n#### 文本格式化\n\n**标题**\n```markdown\n# 一级标题\n## 二级标题\n### 三级标题\n#### 四级标题\n##### 五级标题\n###### 六级标题\n```\n\n**文本样式**\n```markdown\n**粗体文本**\n*斜体文本*\n~~删除线文本~~\n`行内代码`\n```\n\n**列表**\n```markdown\n- 无序列表项1\n- 无序列表项2\n  - 嵌套列表项\n\n1. 有序列表项1\n2. 有序列表项2\n   1. 嵌套有序列表\n```\n\n#### 链接和图片\n\n**链接**\n```markdown\n[链接文本](https://example.com)\n[带标题的链接](https://example.com \"链接标题\")\n```\n\n**图片**\n```markdown\n![图片描述](图片URL)\n![图片描述](图片URL \"图片标题\")\n![图片描述](图片URL \"图片标题\") <!-- 尺寸: 300x200 -->\n```\n\n![敖闰](http://localhost:8000/store/2025/10/26201143NcXK4Zhy.png \"姑姑\") <!-- 尺寸: 300x502 -->\n\n#### 代码块\n\n**行内代码**\n```markdown\n使用 `console.log()` 输出信息\n```\n\n**代码块**\n````markdown\n```javascript\nfunction hello() {\n    console.log(\"Hello, World!\");\n}\n```\n````\n\n**支持的语言**：\n- JavaScript\n- Python\n- Java\n- CSS\n- HTML\n- SQL\n- 等等...\n\n#### 表格\n\n```markdown\n| 列1 | 列2 | 列3 |\n|-----|-----|-----|\n| 数据1 | 数据2 | 数据3 |\n| 数据4 | 数据5 | 数据6 |\n```\n\n#### 引用\n\n```markdown\n> 这是一个引用块\n> \n> 可以包含多行内容\n> \n> > 嵌套引用\n```\n\n#### 分割线\n\n```markdown\n---\n```\n\n### 图片管理功能\n\n#### 上传图片\n1. 点击编辑器工具栏中的图片按钮\n2. 选择\"上传\"标签页\n3. 选择本地图片文件\n4. 设置图片属性：\n   - **图片名称**：显示在图片标题中\n   - **Alt文本**：图片描述，用于无障碍访问\n   - **宽度/高度**：设置图片显示尺寸\n   - **锁定比例**：保持图片原始宽高比\n\n#### 插入网络图片\n1. 点击图片按钮\n2. 选择\"普通\"标签页\n3. 输入图片URL\n4. 设置图片属性\n\n#### 图片编辑\n- 在Markdown模式下，可以手动编辑图片语法\n- 支持HTML注释方式设置图片尺寸：`<!-- 尺寸: 300x200 -->`\n\n### 高级功能\n\n#### 实时预览\n- 在Markdown模式下，右侧会显示实时预览\n- 支持语法高亮和代码渲染\n- 图片自动居中显示\n\n#### 语法高亮\n- 代码块支持多种编程语言的语法高亮\n- 使用专业的代码高亮主题\n- 支持行号显示\n\n#### 历史记录\n- 自动保存编辑历史\n- 支持撤销/重做操作\n- 快捷键：`Ctrl+Z` / `Ctrl+Y`\n\n### 快捷键\n\n| 快捷键 | 功能 |\n|--------|------|\n| `Ctrl+B` | 粗体 |\n| `Ctrl+I` | 斜体 |\n| `Ctrl+K` | 插入链接 |\n| `Ctrl+Z` | 撤销 |\n| `Ctrl+Y` | 重做 |\n| `Ctrl+S` | 保存 |\n\n### 最佳实践\n\n#### 1. 内容结构\n- 使用清晰的标题层次结构\n- 合理使用列表和引用\n- 保持段落简洁明了\n\n#### 2. 图片优化\n- 为所有图片添加有意义的Alt文本\n- 使用合适的图片尺寸\n- 考虑图片加载性能\n\n#### 3. 代码规范\n- 为代码块指定正确的语言\n- 使用行内代码标记技术术语\n- 保持代码格式整洁\n\n#### 4. 链接管理\n- 使用描述性的链接文本\n- 为重要链接添加标题\n- 定期检查链接有效性\n\n### 常见问题\n\n#### Q: 如何插入表格？\nA: 使用Markdown表格语法，编辑器会自动渲染为表格格式。\n\n#### Q: 图片显示不正确怎么办？\nA: 检查图片URL是否正确，确保图片可以公开访问。\n\n#### Q: 代码高亮不工作？\nA: 确保代码块指定了正确的语言标识符。\n\n#### Q: 如何设置图片尺寸？\nA: 使用HTML注释方式：`<!-- 尺寸: 宽度x高度 -->`\n\n### 技术特性\n\n- **渲染引擎**：基于React Markdown\n- **语法高亮**：使用Prism.js\n- **图片处理**：支持本地上传和网络引用\n- **实时预览**：所见即所得编辑体验\n- **响应式设计**：适配各种屏幕尺寸\n\n### 总结\n\nWLDOS Markdown编辑器提供了完整的Markdown编辑解决方案，无论是初学者还是高级用户，都能找到适合自己的编辑方式。通过合理使用各种功能，您可以创建出专业、美观的文档内容。\n\n---\n\n*本文档展示了WLDOS Markdown编辑器的核心功能和用法，帮助用户更好地使用这一强大的内容创作工具。*\n`\n这篇文档涵盖了：\n\n1. **编辑器概述**：介绍了两种编辑模式的特点和适用场景\n2. **核心功能**：详细说明了Markdown的各种语法和用法\n3. **图片管理**：重点介绍了图片上传、编辑和管理功能\n4. **高级功能**：包括实时预览、语法高亮、历史记录等\n5. **快捷键**：列出了常用的编辑快捷键\n6. **最佳实践**：提供了内容创作的建议和规范\n7. **常见问题**：解答了用户可能遇到的问题\n8. **技术特性**：说明了编辑器的技术实现\n\n这篇文档可以作为用户使用WLDOS Markdown编辑器的完整指南，帮助用户充分利用编辑器的各种功能。', 'WLDOS Markdown编辑器使用指南', NULL, 'inherit', NULL, NULL, 'markd', 285653950942330888, 'chapter', 1533544727530094592, 0, 'text/markdown', 1, 0, 0, 480, NULL, 1, '2023-05-15 00:44:59', '127.0.0.1', 1, '2025-10-26 20:51:39', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (285654042034225159, '', '实时', NULL, 'inherit', NULL, NULL, '2023-05-15 00:45:00', 285653950942330888, 'chapter', 1533544727530094592, 0, 'text/markdown', 0, 0, 0, 20, NULL, 1, '2023-05-15 00:45:01', '127.0.0.1', 1, '2025-11-01 17:02:04', '0:0:0:0:0:0:0:1', 'deleted', 1);
 INSERT INTO `k_pubs` VALUES (285654044802465795, NULL, '2023-05-15 00:45:01', NULL, 'inherit', NULL, NULL, NULL, 285653950942330888, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, 20, NULL, 1, '2023-05-15 00:45:01', '127.0.0.1', 1, '2023-05-15 00:45:01', '127.0.0.1', 'normal', 1);
@@ -585,8 +588,8 @@ INSERT INTO `k_pubs` VALUES (290616219128217608, NULL, '11111', NULL, 'in_review
 INSERT INTO `k_pubs` VALUES (305170961611276297, '<p>这是测试信息发布。信息发布要求简捷，一般没有冗长的详情页，上传主图后，简单描述信息即可。关键信息要明确，主题、价格和联系方式、地址等。</p>\n<p>&nbsp;</p>\n<table style=\"border-collapse: collapse; width: 100%;\" border=\"1\">\n<tbody>\n<tr>\n<td style=\"width: 18.0948%;\">你好</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0962%;\">&nbsp;</td>\n</tr>\n<tr>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0962%;\">&nbsp;</td>\n</tr>\n<tr>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0962%;\">&nbsp;</td>\n</tr>\n<tr>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0948%;\">&nbsp;</td>\n<td style=\"width: 18.0962%;\">&nbsp;</td>\n</tr>\n</tbody>\n</table>', '测试信息发布', NULL, 'publish', NULL, NULL, 'ceshixinxifabu', 0, 'info', 1533544727530094592, 0, NULL, 0, 0, 0, 30, NULL, 1, '2023-07-07 21:18:17', '127.0.0.1', 1, '2025-07-19 19:21:50', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (305178220793872384, '<div class=\"dpu8C _2kCxD  \">\n<p>为进一步了解《报告》的出台背景和现实意义，记者专访了深兰科学院相关负责人。</p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p>问：你们为什么会想到做这样一份报告？为什么要提出&ldquo;个人数字化&rdquo;这个概念？</p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p>深兰科技：有几个原因促使我们深入思考&ldquo;个人数字化&rdquo;并把它形成一份报告和行业人士进行开放的交流。第一是我们对个人非物质需求的理解，就是如何发挥自己的脑力和知识生产力的需求，在当前的知识型社会，这部分需求应该给予非常高的重视，我们把对这部分的需求满足作为个人数字化的基本任务。第二是我们对数字化生存的重新理解，人类最大的资源浪费不是石油、不是水、不是电，而是生命和知识。年龄在增长，记忆和知识在消退，在数据与计算融合统一的数字化时代，如果不利用技术来解决人类爆炸式的知识传承问题，让个人知识随着肉体消亡而消逝，是无比遗憾的事情。第三是个人数字化理念的创新性，到目前为止，还没有把以个人为单位的数字化领域作为一个整体考虑，没有过这种描述，一方面是没有明确概念和边界的定义，另一方面是技术和商业没有找到一个明确的落脚点。第四是个人数字化潜在的产业规模，最大规模的数字化不是企业的数字化、产业的数字化，而是个人的数字化，任何社会组织的知识来源都是个人，把个人数字化的事情做好，能够反哺整个社会组织的发展。所以我们基于这些问题进行了一些抛砖引玉的分析。</p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p>问：个人数字化为什么能成为一个独立的产业？和其他产业是什么关系？</p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p>深兰科技：我们认为，如果个人数字化是一个项目，那么这一定不是我们自己的项目，而是全人类为之奋斗的项目，要投入大量的社会和产业资源，有多方能力协同才能够完成。例如，即便只考虑个人数字存储和服务，要把个人数据（我们说数字记忆）安全地收集存储起来并加以计算，这就是世界上规模最大的数据和算力中心，无论它是中心化的还是去中心化的。基于个人记忆知识的智能化应用又涉及千行百业，需要不同领域的合作等等。这个产业很大，需要国家、行业机构、企业、终端用户各方的共同努力，打造以发挥个人数字化生产力为核心向各领域渗透的新型数字经济形态，设计和观察发展指数，不停实践和改进，共享产业的红利。</p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p>问：报告提出了个人数字化发展三个阶段，您认为目前处于哪个阶段？</p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p>深兰科技：从个人记忆和心识的数字化视角来看，个人数字化有三个阶段，分别是数字化的内容、数字化的人和数字化的生命。我们深刻认识到，这三个阶段并不是简单的首尾连接，而是前者推动后者，并且是互相促进发展的关系。例如数字化的内容，正在向联网上云趋势发展，但在更加彻底地去中心化上还在探索中。再例如数字化的人，随着互联网数据的丰富，让算法有机会以人际型信息源的方式实时生成内容，例如ChatGPT。同时人类对于外形的执着，一定要把这方面和信息的交互结合起来，例如虚拟人数字人的应用。再例如数字化的生命，有很多机构长时间地探索脑机接口、具身智能等服务于数字生命融合的领域。总的来说，数字化的内容大家已经熟悉，数字化的人大家正在睁大眼睛看着，数字化的生命大家都在尽情畅想中。</p>\n</div>', '国内首份《个人数字化产业报告》：个人才是巨大的数字产业', NULL, 'inherit', NULL, NULL, '2023-07-07 21:47:07', 282359795562496004, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, 10, NULL, 1, '2023-07-07 21:47:08', '127.0.0.1', 1, '2025-10-26 21:46:28', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (305178237059383306, '<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"d89a38cfb3e4ac236fef12c8fc6eb6dc\">时代的变化越来越快了。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"5b0f59508f9493a10c5fed88cfa8258b\">80后、90后们回想童年，经历了电脑手机从无到有的过程，感受到技术对生活的逐步渗透；00、10后成长在智能手机普及的年代，已经不再如前者一样，用手在耳边比个&ldquo;六&rdquo;指代电话了。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"691426804b8b1d35d48f6a30fa12732c\">这些小小的细节，都令人深深感觉到：我们的一切已经被数字技术改变。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"bf3a167f5b60fe3beb86a0eb25038402\">北大教授陈春花在《价值共生》一书中，就探讨了一个迫在眉睫的问题：数字化时代，如何重估个体和组织的价值？</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<h3 id=\"个体价值崛起改变认知深度联结\" data-from-paste=\"1\" data-diagnose-id=\"21a98cbc85325569d36650ad9068d187\"><span data-diagnose-id=\"4b6c7a0819f0bf16585b4d7fecd332bd\">个体价值崛起：改变认知，深度联结</span></h3>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"0c29aedd2933ee42edb92c31aafbd49b\">在铺天盖地的智能网络之中，个体即使仅借助一个ID，其价值也会得到极大凸显：只要足够独特、足够抓人眼球，就可以让话语权占据一席之地，成为浪潮的中心。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"c6604110f5ec5fba9c708cbba5e76923\">而时代的急遽变化，也带来了许多价值感相关的困惑。信息变化万端，知识的迭代可以直接影响人们的生活。人们空前渴望知识，但信息爆炸的能量，又令人眼花缭乱。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"da14fbd2574d4d50f2eabbeaa810db02\">《价值共生》指出，人们感受到自己的求知过程呈现出与以往完全不同的状况：不确定性成为常态；迭代加快，不断涌现新知识；认知盈余，选择障碍；时间稀缺；对知识验证的要求越来越高。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"bb3527162e4b972a95e9bd9559612e5e\">其中&ldquo;认知盈余&rdquo;想必是许多人常常面对的问题：在信息干扰强、选项太多的情况下，容易出现&ldquo;选择恐惧症&rdquo;，迷失在认知的海洋里。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"a976ccb44c7430802ed1ed924435bd7a\">针对这些状况，作者提出了四个问题：是分别心还是辨别力？是自我设限还是认知的不足？是世界变化快还是自己不曾改变？是惯性使然还是无法应对？</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"5701451b1a76760c4589ddd84987c8cf\">在回答这四个问题的过程中，我们或许可以更好地改变认知习惯，破除路径依赖，与新的时代并驾齐驱，找到真正的个体价值。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"2b7848f375d936a8e0d0d38800715199\">不管这个价值是什么，按部就班的集体主义时代都已经过去。论坛小组、亚文化圈、电音趴体，人们有无限空间用于释放自我，而传统的工作、循规蹈矩的生活，越来越令人厌烦。即使在疫情肆虐的时候，人们也按捺不住自己想去看看世界的心，借助社交媒体表达对自由的渴望。</span></p>\n</div>\n<div class=\"dpu8C _2kCxD  \">\n<p data-from-paste=\"1\"><span data-diagnose-id=\"2a4b231da0c94268f0caa5a5d415cb13\">这样的趋势下，组织还有存在的必要吗？</span></p>\n</div>', '《价值共生》：数字化时代，个体真正的价值在何方', NULL, 'inherit', NULL, NULL, '《jiazhigongsheng》：shuzihuashidai，getizhenzhengdejiazhizaihefang', 282359795562496004, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, NULL, NULL, 1, '2023-07-07 21:47:12', '127.0.0.1', 1, '2025-10-26 21:46:59', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `k_pubs` VALUES (305178243195650053, NULL, '2023-07-07 21:47:13', NULL, 'inherit', NULL, NULL, NULL, 282359795562496004, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-07-07 21:47:13', '127.0.0.1', 1, '2023-07-07 21:47:13', '127.0.0.1', 'normal', 1);
-INSERT INTO `k_pubs` VALUES (305178246270074882, NULL, '2023-07-07 21:47:13', NULL, 'inherit', NULL, NULL, NULL, 282359795562496004, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-07-07 21:47:14', '127.0.0.1', 1, '2023-07-07 21:47:14', '127.0.0.1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (305178243195650053, '<p>123</p>', '2023-07-07 21:47:13', NULL, 'inherit', NULL, NULL, '2023-07-07 21:47:13', 282359795562496004, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, NULL, NULL, 1, '2023-07-07 21:47:13', '127.0.0.1', 1, '2025-12-28 16:35:26', '0:0:0:0:0:0:0:1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (305178246270074882, '33333', '2023-07-07 21:47:13', NULL, 'inherit', NULL, NULL, '2023-07-07 21:47:131', 282359795562496004, 'chapter', 1533544727530094592, 0, 'text/markdown', 0, 0, 0, NULL, NULL, 1, '2023-07-07 21:47:14', '127.0.0.1', 1, '2025-12-28 16:35:37', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (305178288284418053, NULL, '2023-07-07 21:47:23', NULL, 'inherit', NULL, NULL, NULL, 282359795562496004, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-07-07 21:47:24', '127.0.0.1', 1, '2023-07-07 21:47:24', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (305198663181451272, NULL, '2023-07-07 23:08:21', NULL, 'inherit', NULL, NULL, NULL, 282359795562496004, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-07-07 23:08:22', '127.0.0.1', 1, '2023-07-07 23:08:22', '127.0.0.1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (305200274121342982, NULL, '2023-07-07 23:14:45', NULL, 'inherit', NULL, NULL, NULL, 282359795562496004, 'chapter', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2023-07-07 23:14:46', '127.0.0.1', 1, '2023-07-07 23:14:46', '127.0.0.1', 'normal', 1);
@@ -646,8 +649,8 @@ INSERT INTO `k_pubs` VALUES (1982411811068153858, '<p>111111111111你会。</p>'
 INSERT INTO `k_pubs` VALUES (1982419875506786308, NULL, 'file', NULL, 'inherit', NULL, NULL, NULL, 285654035864403968, 'attachment', 1533544727530094592, 0, 'image', 0, 0, 0, NULL, NULL, 1, '2025-10-26 20:11:45', '0:0:0:0:0:0:0:1', 1, '2025-10-26 20:11:45', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (1982443231140483076, NULL, 'file', NULL, 'inherit', NULL, NULL, NULL, 282359821609123842, 'attachment', 1533544727530094592, 0, 'image', 0, 0, 0, NULL, NULL, 1, '2025-10-26 21:44:33', '0:0:0:0:0:0:0:1', 1, '2025-10-26 21:44:33', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (1982454453139247105, '# WLDOS：开启数字时代的云物互联新范式\n\n## 一、何为 WLDOS？—— 重新定义数字世界的底层支撑\n\n在数字化转型浪潮席卷全球的今天，技术已成为现代商业模式从构想走向落地的**核心基石**，而 WLDOS®（发音：汉 \\[\'wou\'da\'si]，全称为 World Operating System，开源项目，中文名为 “元悉宇宙”）正是为填补这一底层支撑空白而生。\n\n作为一款基于**多域多租云应用支撑平台**与**分布式一体化动态单体架构**的创新系统，WLDOS 始终以 “云、管、边、端一体化” 为核心目标，致力于为用户提供快速搭建可扩展云物互联应用的全流程解决方案。无论是企业想要加速数字化布局，还是个人想要实现创意落地，WLDOS 都能凭借其灵活的架构与强大的支撑能力，成为开启数字化转型快车道的 “钥匙”—— 它不仅是一个技术平台，更是连接数字需求与实际应用的桥梁，让每一个数字化构想都能高效落地。\n\n## 二、核心特性：打破边界，让数字应用触手可及\n\n### 1. 全场景跨平台：覆盖所有终端的 “无界系统”\n\nWLDOS 真正实现了 “运行在一切平台之上” 的愿景，其系统及客户端可流畅适配几乎所有终端设备，从传统 PC、服务器到移动终端、边缘设备，无需为不同平台重复开发。这一优势的背后，既依托于 Java 语言天然的跨平台特性，更得益于 WLDOS 自研的**类 SaaS 动态单体架构**—— 该架构既保留了单体应用部署简单、维护便捷的优势，又具备分布式系统的弹性扩展能力，让跨平台运行不仅 “可行”，更 “高效”。\n\n### 2. 业务自驱底座：人人皆可成为数字创客\n\n不同于传统系统仅服务于大型企业，WLDOS 将目光聚焦于个人用户与中小企业，打造了一套**业务自驱型底座系统**。它以 “兴趣” 为起点，无论你是不懂技术的普通用户，还是正在寻找底层框架的开发者，都能基于 WLDOS 快速搭建、研发云物互联场景下的业务应用：小到个人兴趣社群的管理工具，大到中小企业的生产监控系统，无需复杂的技术储备，只需依托平台提供的可视化工具与模板，就能实现从 “想法” 到 “应用” 的落地，真正让 “人人成为创客” 成为可能。\n\n### 3. 闭环自驱运营：官网即是最佳实践\n\nWLDOS 始终坚持 “理论→研发→落地” 的闭环运营模式，而其官网正是这一模式的**最佳实践载体**。用户在官网上不仅能了解系统的技术原理与功能特性，还能直接体验基于 WLDOS 搭建的各类应用场景，甚至可以一键获取源码、启动自己的项目 —— 这种 “所见即所得” 的自驱模式，让技术不再是抽象的概念，而是可触摸、可复用的工具，极大降低了用户的尝试成本与学习门槛。\n\n## 三、技术理念：以云为心，以物为体，驱动数字世界\n\nWLDOS 的技术理念可概括为 “**站在巨人之肩，以云为心，以物为体，云物互联，驱动世界**”。它不追求从零构建技术生态，而是通过与各大操作系统厂商、AI 大模型厂商深度合作，打通驱动用户业务的 “最后一公里”—— 无论是对接主流操作系统的底层能力，还是集成 AI 大模型的智能分析功能，WLDOS 都能实现无缝衔接，从系统支撑层面帮助用户更高效地完成数字化转型。\n\n同时，WLDOS 摒弃了传统系统对 “复杂大规模基础设施” 的依赖，转而拥抱 “传统、简捷、自实现” 的理念：系统自带核心功能模块，无需额外采购大量硬件或第三方服务；对于传统系统的 “劣势”（如部署复杂、扩展困难），WLDOS 通过技术创新将其转化为 “优势”—— 以云原生应用部署方式，支持在阿里云、腾讯云、华为云等各大云厂商无缝发布；同时具备分布式一体化的资源管理能力，可灵活支持混合云部署，让用户无需受限于单一环境，按需选择最适合的部署方案。\n\n此外，WLDOS 还打破了 “云端” 与 “终端” 的割裂：通过与头部企业合作实现边缘通信能力，让系统从 “云端” 走向 “边缘”，在应用层提供基础支撑，便于用户搭建各类场景化业务；再结合与智能硬件终端的深度融合，最终实现 “智能终端设备与云中心互联互通” 的云物互联网，帮助每一个用户构建属于自己的数字生态网络。\n\n## 四、技术发展：从 1.0 到 3.0，持续进化的数字底座\n\nWLDOS 的发展并非一蹴而就，其技术脉络清晰可见：\n\n\n\n* **2020 年**：项目正式起步，创始团队与核心助手搭建了 WLDOS 项目的首个分支，奠定了多域多租、云物互联的核心方向；\n\n* **如今**：WLDOS 已成长为一个开放、包容的平台，为所有人提供了 “通过技术实现自我兴趣、创造自我价值” 的机会 —— 无论是日常生活中的小工具开发，还是专业领域的创意创作，都能在 WLDOS 上找到落地路径。\n\n而在版本迭代中，WLDOS 的核心能力不断升级，每一个版本都紧扣用户需求：\n\n⭐⭐⭐⭐⭐ **WLDOS 1.0：夯实基础，构建定制化根基**\n\n率先实现基于 RBAC 模型的角色权限体系、多租户管理、多域隔离功能，这些能力至今仍是系统功能定制化的 “基石”—— 它确保了不同用户、不同组织在同一平台上既能共享资源，又能保障数据安全与权限隔离，为后续的功能扩展打下了坚实基础。\n\n⭐⭐⭐⭐⭐ **WLDOS 2.0：聚焦互联，强化中间件支撑**\n\n核心实现 “插件化、互联 sidecar、应用商店” 三大关键能力，重点强化中间件支撑能力，构建了基于 “系统思维” 的架构模式。其中，插件化让功能扩展更灵活，互联 sidecar 实现了不同应用间的无缝通信，应用商店则为用户提供了丰富的现成应用模板，极大提升了云物互联的效率与便捷性。\n\n⭐⭐⭐⭐⭐ **WLDOS 3.0：场景落地，赋能内容付费新生态**\n\n针对当前热门的 “内容付费” 场景，重点实现动态表单、动态流程与数据建模（含报表生成、数据大屏）能力，让用户无需代码开发，就能快速搭建付费课程平台、会员社群系统等内容付费应用 —— 从需求定义到应用上线，周期大幅缩短，真正实现 “场景化快速落地”。\n\n无论是技术经验有限的 “新手”，还是精通技术的 “专家”，都能在 WLDOS 中找到适合自己的使用方式：新手可 “开箱即用”，直接借助现成模板与工具启动项目；专家则可深度自定义，通过二次开发打造符合特定需求的专属应用 —— 这种 “低门槛 + 高灵活” 的特性，让 WLDOS 覆盖了更广泛的用户群体。\n\n## 五、技术使命与展望：给每个人打开世界的数字方式\n\n### 1. 使命：让数字世界更美好\n\nWLDOS 的技术使命简洁而有力：“**给每个人一个打开世界的方式，实现更美好的世界**”。它不局限于为企业提供技术支撑，更希望通过技术赋能个体 —— 让普通人也能借助数字工具表达创意、解决问题，让中小企业也能以低成本享受数字化红利，最终推动整个数字世界向更包容、更高效、更美好的方向发展。\n\n### 2. 展望：以敬畏之心，探索数字未来\n\n面对数字时代的无限可能，WLDOS 团队始终保持敬畏与探索之心：我们并不妄图精准预测未来的每一步，也不刻意定义 “最终会达到何种影响”，但我们清晰地知道 —— 当下，人们迫切需要一个 “能更迅捷、更优雅地打开数字化经济大门” 的工具。\n\nWLDOS 的诞生，正是源于对数字时代 “困惑与痛点” 的回应：我们将用户在数字化过程中遇到的难题（如门槛高、成本高、落地慢），转化为技术应用的突破方向，通过可演进的应用实践，为用户提供 “边走边优化” 的数字化路径。\n\n或许，目前我们还无法用最精准的语言定义 WLDOS 的全部价值，但它已然成为 “每个人应对数字时代的一种打开方式”—— 它不是僵化的 “成品”，而是持续生长的 “生态”，等待每一个有想法的人共同参与、共同创造。\n\n## 六、关注我们，解锁更多数字化干货\n\n想要深入了解 WLDOS 的技术细节、应用案例与数字化专题内容？欢迎关注作者公众号，获取第一手资讯 —— 在这里，你将看到数字技术如何落地为实际价值，也将找到属于自己的数字化转型路径。\n', '关于我们', NULL, 'publish', NULL, NULL, 'guanyuwomen', 0, 'page', 1533544727530094592, 0, 'text/markdown', 0, 0, 0, 40, NULL, 1, '2025-10-26 22:29:09', '0:0:0:0:0:0:0:1', 1, '2025-10-26 23:23:36', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `k_pubs` VALUES (1982459581812543489, '<div data-zone-id=\"0\" data-line-index=\"0\" data-line=\"true\">\n<h1 id=\"wldos开启数字时代的云物互联新范式\" class=\"heading-h1\">一、何为 WLDOS？&mdash;&mdash; 重新定义数字世界的底层支撑</h1>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"3\" data-line=\"true\">在数字化转型浪潮席卷全球的今天，技术已成为现代商业模式从构想走向落地的<strong>核心基石</strong>，而 WLDOS&reg;（发音：汉 [\'wou\'da\'si]，全称为 World Operating System，开源项目，中文名为 &ldquo;元悉宇宙&rdquo;）正是为填补这一底层支撑空白而生。</div>\n<div data-zone-id=\"0\" data-line-index=\"4\" data-line=\"true\">作为一款基于<strong>多域多租云应用支撑平台</strong>与<strong>分布式一体化动态单体架构</strong>的创新系统，WLDOS 始终以 &ldquo;云、管、边、端一体化&rdquo; 为核心目标，致力于为用户提供快速搭建可扩展云物互联应用的全流程解决方案。无论是企业想要加速数字化布局，还是个人想要实现创意落地，WLDOS 都能凭借其灵活的架构与强大的支撑能力，成为开启数字化转型快车道的 &ldquo;钥匙&rdquo;&mdash;&mdash; 它不仅是一个技术平台，更是连接数字需求与实际应用的桥梁，让每一个数字化构想都能高效落地。</div>\n<div data-zone-id=\"0\" data-line-index=\"5\" data-line=\"true\">\n<h2 id=\"二核心特性打破边界让数字应用触手可及\" class=\"heading-h2\">二、核心特性：打破边界，让数字应用触手可及</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"6\" data-line=\"true\">\n<h3 id=\"1-全场景跨平台覆盖所有终端的-无界系统\" class=\"heading-h3\">1. 全场景跨平台：覆盖所有终端的 &ldquo;无界系统&rdquo;</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"7\" data-line=\"true\">WLDOS 真正实现了 &ldquo;运行在一切平台之上&rdquo; 的愿景，其系统及客户端可流畅适配几乎所有终端设备，从传统 PC、服务器到移动终端、边缘设备，无需为不同平台重复开发。这一优势的背后，既依托于 Java 语言天然的跨平台特性，更得益于 WLDOS 自研的<strong>类 SaaS 动态单体架构</strong>&mdash;&mdash; 该架构既保留了单体应用部署简单、维护便捷的优势，又具备分布式系统的弹性扩展能力，让跨平台运行不仅 &ldquo;可行&rdquo;，更 &ldquo;高效&rdquo;。</div>\n<div data-zone-id=\"0\" data-line-index=\"8\" data-line=\"true\">\n<h3 id=\"2-业务自驱底座人人皆可成为数字创客\" class=\"heading-h3\">2. 业务自驱底座：人人皆可成为数字创客</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"9\" data-line=\"true\">不同于传统系统仅服务于大型企业，WLDOS 将目光聚焦于个人用户与中小企业，打造了一套<strong>业务自驱型底座系统</strong>。它以 &ldquo;兴趣&rdquo; 为起点，无论你是不懂技术的普通用户，还是正在寻找底层框架的开发者，都能基于 WLDOS 快速搭建、研发云物互联场景下的业务应用：小到个人兴趣社群的管理工具，大到中小企业的生产监控系统，无需复杂的技术储备，只需依托平台提供的可视化工具与模板，就能实现从 &ldquo;想法&rdquo; 到 &ldquo;应用&rdquo; 的落地，真正让 &ldquo;人人成为创客&rdquo; 成为可能。</div>\n<div data-zone-id=\"0\" data-line-index=\"10\" data-line=\"true\">\n<h3 id=\"3-闭环自驱运营官网即是最佳实践\" class=\"heading-h3\">3. 闭环自驱运营：官网即是最佳实践</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"11\" data-line=\"true\">WLDOS 始终坚持 &ldquo;理论&rarr;研发&rarr;落地&rdquo; 的闭环运营模式，而其官网正是这一模式的<strong>最佳实践载体</strong>。用户在官网上不仅能了解系统的技术原理与功能特性，还能直接体验基于 WLDOS 搭建的各类应用场景，甚至可以一键获取源码、启动自己的项目 &mdash;&mdash; 这种 &ldquo;所见即所得&rdquo; 的自驱模式，让技术不再是抽象的概念，而是可触摸、可复用的工具，极大降低了用户的尝试成本与学习门槛。</div>\n<div data-zone-id=\"0\" data-line-index=\"12\" data-line=\"true\">\n<h2 id=\"三技术理念以云为心以物为体驱动数字世界\" class=\"heading-h2\">三、技术理念：以云为心，以物为体，驱动数字世界</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"13\" data-line=\"true\">WLDOS 的技术理念可概括为 &ldquo;<strong>站在巨人之肩，以云为心，以物为体，云物互联，驱动世界</strong>&rdquo;。它不追求从零构建技术生态，而是通过与各大操作系统厂商、AI 大模型厂商深度合作，打通驱动用户业务的 &ldquo;最后一公里&rdquo;&mdash;&mdash; 无论是对接主流操作系统的底层能力，还是集成 AI 大模型的智能分析功能，WLDOS 都能实现无缝衔接，从系统支撑层面帮助用户更高效地完成数字化转型。</div>\n<div data-zone-id=\"0\" data-line-index=\"14\" data-line=\"true\">同时，WLDOS 摒弃了传统系统对 &ldquo;复杂大规模基础设施&rdquo; 的依赖，转而拥抱 &ldquo;传统、简捷、自实现&rdquo; 的理念：系统自带核心功能模块，无需额外采购大量硬件或第三方服务；对于传统系统的 &ldquo;劣势&rdquo;（如部署复杂、扩展困难），WLDOS 通过技术创新将其转化为 &ldquo;优势&rdquo;&mdash;&mdash; 以云原生应用部署方式，支持在阿里云、腾讯云、华为云等各大云厂商无缝发布；同时具备分布式一体化的资源管理能力，可灵活支持混合云部署，让用户无需受限于单一环境，按需选择最适合的部署方案。</div>\n<div data-zone-id=\"0\" data-line-index=\"15\" data-line=\"true\">此外，WLDOS 还打破了 &ldquo;云端&rdquo; 与 &ldquo;终端&rdquo; 的割裂：通过与头部企业合作实现边缘通信能力，让系统从 &ldquo;云端&rdquo; 走向 &ldquo;边缘&rdquo;，在应用层提供基础支撑，便于用户搭建各类场景化业务；再结合与智能硬件终端的深度融合，最终实现 &ldquo;智能终端设备与云中心互联互通&rdquo; 的云物互联网，帮助每一个用户构建属于自己的数字生态网络。</div>\n<div data-zone-id=\"0\" data-line-index=\"16\" data-line=\"true\">\n<h2 id=\"四技术发展从-10-到-30持续进化的数字底座\" class=\"heading-h2\">四、技术发展：从 1.0 到 3.0，持续进化的数字底座</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"17\" data-line=\"true\">WLDOS 的发展并非一蹴而就，其技术脉络清晰可见：</div>\n<ul>\n<li class=\"temp-li bullet1\" data-line=\"true\" data-list=\"bullet1\"><strong>2020 年</strong>：项目正式起步，创始团队与核心助手搭建了 WLDOS 项目的首个分支，奠定了多域多租、云物互联的核心方向；</li>\n</ul>\n<ul>\n<li class=\"temp-li bullet1\" data-line=\"true\" data-list=\"bullet1\"><strong>如今</strong>：WLDOS 已成长为一个开放、包容的平台，为所有人提供了 &ldquo;通过技术实现自我兴趣、创造自我价值&rdquo; 的机会 &mdash;&mdash; 无论是日常生活中的小工具开发，还是专业领域的创意创作，都能在 WLDOS 上找到落地路径。</li>\n</ul>\n<div data-zone-id=\"0\" data-line-index=\"20\" data-line=\"true\">而在版本迭代中，WLDOS 的核心能力不断升级，每一个版本都紧扣用户需求：</div>\n<div data-zone-id=\"0\" data-line-index=\"21\" data-line=\"true\">⭐⭐⭐⭐⭐ <strong>WLDOS 1.0：夯实基础，构建定制化根基</strong></div>\n<div data-zone-id=\"0\" data-line-index=\"22\" data-line=\"true\">率先实现基于 RBAC 模型的角色权限体系、多租户管理、多域隔离功能，这些能力至今仍是系统功能定制化的 &ldquo;基石&rdquo;&mdash;&mdash; 它确保了不同用户、不同组织在同一平台上既能共享资源，又能保障数据安全与权限隔离，为后续的功能扩展打下了坚实基础。</div>\n<div data-zone-id=\"0\" data-line-index=\"23\" data-line=\"true\">⭐⭐⭐⭐⭐ <strong>WLDOS 2.0：聚焦互联，强化中间件支撑</strong></div>\n<div data-zone-id=\"0\" data-line-index=\"24\" data-line=\"true\">核心实现 &ldquo;插件化、互联 sidecar、应用商店&rdquo; 三大关键能力，重点强化中间件支撑能力，构建了基于 &ldquo;系统思维&rdquo; 的架构模式。其中，插件化让功能扩展更灵活，互联 sidecar 实现了不同应用间的无缝通信，应用商店则为用户提供了丰富的现成应用模板，极大提升了云物互联的效率与便捷性。</div>\n<div data-zone-id=\"0\" data-line-index=\"25\" data-line=\"true\">⭐⭐⭐⭐⭐ <strong>WLDOS 3.0：场景落地，赋能内容付费新生态</strong></div>\n<div data-zone-id=\"0\" data-line-index=\"26\" data-line=\"true\">针对当前热门的 &ldquo;内容付费&rdquo; 场景，重点实现动态表单、动态流程与数据建模（含报表生成、数据大屏）能力，让用户无需代码开发，就能快速搭建付费课程平台、会员社群系统等内容付费应用 &mdash;&mdash; 从需求定义到应用上线，周期大幅缩短，真正实现 &ldquo;场景化快速落地&rdquo;。</div>\n<div data-zone-id=\"0\" data-line-index=\"27\" data-line=\"true\">无论是技术经验有限的 &ldquo;新手&rdquo;，还是精通技术的 &ldquo;专家&rdquo;，都能在 WLDOS 中找到适合自己的使用方式：新手可 &ldquo;开箱即用&rdquo;，直接借助现成模板与工具启动项目；专家则可深度自定义，通过二次开发打造符合特定需求的专属应用 &mdash;&mdash; 这种 &ldquo;低门槛 + 高灵活&rdquo; 的特性，让 WLDOS 覆盖了更广泛的用户群体。</div>\n<div data-zone-id=\"0\" data-line-index=\"28\" data-line=\"true\">\n<h2 id=\"五技术使命与展望给每个人打开世界的数字方式\" class=\"heading-h2\">五、技术使命与展望：给每个人打开世界的数字方式</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"29\" data-line=\"true\">\n<h3 id=\"1-使命让数字世界更美好\" class=\"heading-h3\">1. 使命：让数字世界更美好</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"30\" data-line=\"true\">WLDOS 的技术使命简洁而有力：&ldquo;<strong>给每个人一个打开世界的方式，实现更美好的世界</strong>&rdquo;。它不局限于为企业提供技术支撑，更希望通过技术赋能个体 &mdash;&mdash; 让普通人也能借助数字工具表达创意、解决问题，让中小企业也能以低成本享受数字化红利，最终推动整个数字世界向更包容、更高效、更美好的方向发展。</div>\n<div data-zone-id=\"0\" data-line-index=\"31\" data-line=\"true\">\n<h3 id=\"2-展望以敬畏之心探索数字未来\" class=\"heading-h3\">2. 展望：以敬畏之心，探索数字未来</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"32\" data-line=\"true\">面对数字时代的无限可能，WLDOS 团队始终保持敬畏与探索之心：我们并不妄图精准预测未来的每一步，也不刻意定义 &ldquo;最终会达到何种影响&rdquo;，但我们清晰地知道 &mdash;&mdash; 当下，人们迫切需要一个 &ldquo;能更迅捷、更优雅地打开数字化经济大门&rdquo; 的工具。</div>\n<div data-zone-id=\"0\" data-line-index=\"33\" data-line=\"true\">WLDOS 的诞生，正是源于对数字时代 &ldquo;困惑与痛点&rdquo; 的回应：我们将用户在数字化过程中遇到的难题（如门槛高、成本高、落地慢），转化为技术应用的突破方向，通过可演进的应用实践，为用户提供 &ldquo;边走边优化&rdquo; 的数字化路径。</div>\n<div data-zone-id=\"0\" data-line-index=\"34\" data-line=\"true\">或许，目前我们还无法用最精准的语言定义 WLDOS 的全部价值，但它已然成为 &ldquo;每个人应对数字时代的一种打开方式&rdquo;&mdash;&mdash; 它不是僵化的 &ldquo;成品&rdquo;，而是持续生长的 &ldquo;生态&rdquo;，等待每一个有想法的人共同参与、共同创造。</div>\n<div data-zone-id=\"0\" data-line-index=\"35\" data-line=\"true\">\n<h2 id=\"六关注我们解锁更多数字化干货\" class=\"heading-h2\">六、关注我们，解锁更多数字化干货</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"36\" data-line=\"true\">想要深入了解 WLDOS 的技术细节、应用案例与数字化专题内容？欢迎关注作者公众号，获取第一手资讯 &mdash;&mdash; 在这里，你将看到数字技术如何落地为实际价值，也将找到属于自己的数字化转型路径。</div>\n<div data-zone-id=\"0\" data-line-index=\"37\" data-line=\"true\">&nbsp;</div>', 'WLDOS：开启数字时代的云物互联新范式', NULL, 'publish', NULL, NULL, 'guanyuwomen1', 0, 'post', 1533544727530094592, 0, 'text/html', 0, 0, 0, NULL, NULL, 1, '2025-10-26 22:49:31', '0:0:0:0:0:0:0:1', 1, '2025-10-26 22:55:55', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `k_pubs` VALUES (1982460775779897345, '## WLDOS Markdown编辑器使用指南\n\n### 概述\n\nWLDOS系统提供了强大的Markdown编辑器，支持实时预览、语法高亮、图片管理等功能。本编辑器采用所见即所得的编辑方式，让您能够专注于内容创作，而无需担心格式问题。\n\n### 编辑器模式\n\n#### 1. 富文本模式\n- **特点**：提供可视化编辑界面，类似Word文档编辑器\n- **适用场景**：适合不熟悉Markdown语法的用户\n- **功能**：支持拖拽、格式化工具栏、实时预览\n\n#### 2. Markdown模式\n- **特点**：直接编辑Markdown源码\n- **适用场景**：适合熟悉Markdown语法的用户\n- **功能**：语法高亮、实时预览、代码补全\n\n### 核心功能\n\n#### 文本格式化\n\n**标题**\n```markdown\n# 一级标题\n## 二级标题\n### 三级标题\n#### 四级标题\n##### 五级标题\n###### 六级标题\n```\n\n**文本样式**\n```markdown\n**粗体文本**\n*斜体文本*\n~~删除线文本~~\n`行内代码`\n```\n\n**列表**\n```markdown\n- 无序列表项1\n- 无序列表项2\n  - 嵌套列表项\n\n1. 有序列表项1\n2. 有序列表项2\n   1. 嵌套有序列表\n```\n\n#### 链接和图片\n\n**链接**\n```markdown\n[链接文本](https://example.com)\n[带标题的链接](https://example.com \"链接标题\")\n```\n\n**图片**\n```markdown\n![图片描述](图片URL)\n![图片描述](图片URL \"图片标题\")\n![图片描述](图片URL \"图片标题\") <!-- 尺寸: 300x200 -->\n```\n\n![敖闰](http://localhost:8000/store/2025/10/26201143NcXK4Zhy.png \"姑姑\") <!-- 尺寸: 300x502 -->\n\n#### 代码块\n\n**行内代码**\n```markdown\n使用 `console.log()` 输出信息\n```\n\n**代码块**\n````markdown\n```javascript\nfunction hello() {\n    console.log(\"Hello, World!\");\n}\n```\n````\n\n**支持的语言**：\n- JavaScript\n- Python\n- Java\n- CSS\n- HTML\n- SQL\n- 等等...\n\n#### 表格\n\n```markdown\n| 列1 | 列2 | 列3 |\n|-----|-----|-----|\n| 数据1 | 数据2 | 数据3 |\n| 数据4 | 数据5 | 数据6 |\n```\n\n#### 引用\n\n```markdown\n> 这是一个引用块\n> \n> 可以包含多行内容\n> \n> > 嵌套引用\n```\n\n#### 分割线\n\n```markdown\n---\n```\n\n### 图片管理功能\n\n#### 上传图片\n1. 点击编辑器工具栏中的图片按钮\n2. 选择\"上传\"标签页\n3. 选择本地图片文件\n4. 设置图片属性：\n   - **图片名称**：显示在图片标题中\n   - **Alt文本**：图片描述，用于无障碍访问\n   - **宽度/高度**：设置图片显示尺寸\n   - **锁定比例**：保持图片原始宽高比\n\n#### 插入网络图片\n1. 点击图片按钮\n2. 选择\"普通\"标签页\n3. 输入图片URL\n4. 设置图片属性\n\n#### 图片编辑\n- 在Markdown模式下，可以手动编辑图片语法\n- 支持HTML注释方式设置图片尺寸：`<!-- 尺寸: 300x200 -->`\n\n### 高级功能\n\n#### 实时预览\n- 在Markdown模式下，右侧会显示实时预览\n- 支持语法高亮和代码渲染\n- 图片自动居中显示\n\n#### 语法高亮\n- 代码块支持多种编程语言的语法高亮\n- 使用专业的代码高亮主题\n- 支持行号显示\n\n#### 历史记录\n- 自动保存编辑历史\n- 支持撤销/重做操作\n- 快捷键：`Ctrl+Z` / `Ctrl+Y`\n\n### 快捷键\n\n| 快捷键 | 功能 |\n|--------|------|\n| `Ctrl+B` | 粗体 |\n| `Ctrl+I` | 斜体 |\n| `Ctrl+K` | 插入链接 |\n| `Ctrl+Z` | 撤销 |\n| `Ctrl+Y` | 重做 |\n| `Ctrl+S` | 保存 |\n\n### 最佳实践\n\n#### 1. 内容结构\n- 使用清晰的标题层次结构\n- 合理使用列表和引用\n- 保持段落简洁明了\n\n#### 2. 图片优化\n- 为所有图片添加有意义的Alt文本\n- 使用合适的图片尺寸\n- 考虑图片加载性能\n\n#### 3. 代码规范\n- 为代码块指定正确的语言\n- 使用行内代码标记技术术语\n- 保持代码格式整洁\n\n#### 4. 链接管理\n- 使用描述性的链接文本\n- 为重要链接添加标题\n- 定期检查链接有效性\n\n### 常见问题\n\n#### Q: 如何插入表格？\nA: 使用Markdown表格语法，编辑器会自动渲染为表格格式。\n\n#### Q: 图片显示不正确怎么办？\nA: 检查图片URL是否正确，确保图片可以公开访问。\n\n#### Q: 代码高亮不工作？\nA: 确保代码块指定了正确的语言标识符。\n\n#### Q: 如何设置图片尺寸？\nA: 使用HTML注释方式：`<!-- 尺寸: 宽度x高度 -->`\n\n### 技术特性\n\n- **渲染引擎**：基于React Markdown\n- **语法高亮**：使用Prism.js\n- **图片处理**：支持本地上传和网络引用\n- **实时预览**：所见即所得编辑体验\n- **响应式设计**：适配各种屏幕尺寸\n\n### 总结\n\nWLDOS Markdown编辑器提供了完整的Markdown编辑解决方案，无论是初学者还是高级用户，都能找到适合自己的编辑方式。通过合理使用各种功能，您可以创建出专业、美观的文档内容。\n\n---\n\n*本文档展示了WLDOS Markdown编辑器的核心功能和用法，帮助用户更好地使用这一强大的内容创作工具。*\n`\n这篇文档涵盖了：\n\n1. **编辑器概述**：介绍了两种编辑模式的特点和适用场景\n2. **核心功能**：详细说明了Markdown的各种语法和用法\n3. **图片管理**：重点介绍了图片上传、编辑和管理功能\n4. **高级功能**：包括实时预览、语法高亮、历史记录等\n5. **快捷键**：列出了常用的编辑快捷键\n6. **最佳实践**：提供了内容创作的建议和规范\n7. **常见问题**：解答了用户可能遇到的问题\n8. **技术特性**：说明了编辑器的技术实现\n\n这篇文档可以作为用户使用WLDOS Markdown编辑器的完整指南，帮助用户充分利用编辑器的各种功能。', '对markdown的支持', NULL, 'publish', NULL, NULL, 'duimarkdowndezhichi', 0, 'post', 1533544727530094592, 0, 'text/markdown', 0, 0, 0, 10, NULL, 1, '2025-10-26 22:54:16', '0:0:0:0:0:0:0:1', 1, '2025-10-26 22:58:44', '0:0:0:0:0:0:0:1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (1982459581812543489, '<div data-zone-id=\"0\" data-line-index=\"0\" data-line=\"true\">\n<h1 id=\"wldos开启数字时代的云物互联新范式\" class=\"heading-h1\">一、何为 WLDOS？&mdash;&mdash; 重新定义数字世界的底层支撑</h1>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"3\" data-line=\"true\">在数字化转型浪潮席卷全球的今天，技术已成为现代商业模式从构想走向落地的<strong>核心基石</strong>，而 WLDOS&reg;（发音：汉 [\'wou\'da\'si]，全称为 World Operating System，开源项目，中文名为 &ldquo;元悉宇宙&rdquo;）正是为填补这一底层支撑空白而生。</div>\n<div data-zone-id=\"0\" data-line-index=\"4\" data-line=\"true\">作为一款基于<strong>多域多租云应用支撑平台</strong>与<strong>分布式一体化动态单体架构</strong>的创新系统，WLDOS 始终以 &ldquo;云、管、边、端一体化&rdquo; 为核心目标，致力于为用户提供快速搭建可扩展云物互联应用的全流程解决方案。无论是企业想要加速数字化布局，还是个人想要实现创意落地，WLDOS 都能凭借其灵活的架构与强大的支撑能力，成为开启数字化转型快车道的 &ldquo;钥匙&rdquo;&mdash;&mdash; 它不仅是一个技术平台，更是连接数字需求与实际应用的桥梁，让每一个数字化构想都能高效落地。</div>\n<div data-zone-id=\"0\" data-line-index=\"5\" data-line=\"true\">\n<h2 id=\"二核心特性打破边界让数字应用触手可及\" class=\"heading-h2\">二、核心特性：打破边界，让数字应用触手可及</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"6\" data-line=\"true\">\n<h3 id=\"1-全场景跨平台覆盖所有终端的-无界系统\" class=\"heading-h3\">1. 全场景跨平台：覆盖所有终端的 &ldquo;无界系统&rdquo;</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"7\" data-line=\"true\">WLDOS 真正实现了 &ldquo;运行在一切平台之上&rdquo; 的愿景，其系统及客户端可流畅适配几乎所有终端设备，从传统 PC、服务器到移动终端、边缘设备，无需为不同平台重复开发。这一优势的背后，既依托于 Java 语言天然的跨平台特性，更得益于 WLDOS 自研的<strong>类 SaaS 动态单体架构</strong>&mdash;&mdash; 该架构既保留了单体应用部署简单、维护便捷的优势，又具备分布式系统的弹性扩展能力，让跨平台运行不仅 &ldquo;可行&rdquo;，更 &ldquo;高效&rdquo;。</div>\n<div data-zone-id=\"0\" data-line-index=\"8\" data-line=\"true\">\n<h3 id=\"2-业务自驱底座人人皆可成为数字创客\" class=\"heading-h3\">2. 业务自驱底座：人人皆可成为数字创客</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"9\" data-line=\"true\">不同于传统系统仅服务于大型企业，WLDOS 将目光聚焦于个人用户与中小企业，打造了一套<strong>业务自驱型底座系统</strong>。它以 &ldquo;兴趣&rdquo; 为起点，无论你是不懂技术的普通用户，还是正在寻找底层框架的开发者，都能基于 WLDOS 快速搭建、研发云物互联场景下的业务应用：小到个人兴趣社群的管理工具，大到中小企业的生产监控系统，无需复杂的技术储备，只需依托平台提供的可视化工具与模板，就能实现从 &ldquo;想法&rdquo; 到 &ldquo;应用&rdquo; 的落地，真正让 &ldquo;人人成为创客&rdquo; 成为可能。</div>\n<div data-zone-id=\"0\" data-line-index=\"10\" data-line=\"true\">\n<h3 id=\"3-闭环自驱运营官网即是最佳实践\" class=\"heading-h3\">3. 闭环自驱运营：官网即是最佳实践</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"11\" data-line=\"true\">WLDOS 始终坚持 &ldquo;理论&rarr;研发&rarr;落地&rdquo; 的闭环运营模式，而其官网正是这一模式的<strong>最佳实践载体</strong>。用户在官网上不仅能了解系统的技术原理与功能特性，还能直接体验基于 WLDOS 搭建的各类应用场景，甚至可以一键获取源码、启动自己的项目 &mdash;&mdash; 这种 &ldquo;所见即所得&rdquo; 的自驱模式，让技术不再是抽象的概念，而是可触摸、可复用的工具，极大降低了用户的尝试成本与学习门槛。</div>\n<div data-zone-id=\"0\" data-line-index=\"12\" data-line=\"true\">\n<h2 id=\"三技术理念以云为心以物为体驱动数字世界\" class=\"heading-h2\">三、技术理念：以云为心，以物为体，驱动数字世界</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"13\" data-line=\"true\">WLDOS 的技术理念可概括为 &ldquo;<strong>站在巨人之肩，以云为心，以物为体，云物互联，驱动世界</strong>&rdquo;。它不追求从零构建技术生态，而是通过与各大操作系统厂商、AI 大模型厂商深度合作，打通驱动用户业务的 &ldquo;最后一公里&rdquo;&mdash;&mdash; 无论是对接主流操作系统的底层能力，还是集成 AI 大模型的智能分析功能，WLDOS 都能实现无缝衔接，从系统支撑层面帮助用户更高效地完成数字化转型。</div>\n<div data-zone-id=\"0\" data-line-index=\"14\" data-line=\"true\">同时，WLDOS 摒弃了传统系统对 &ldquo;复杂大规模基础设施&rdquo; 的依赖，转而拥抱 &ldquo;传统、简捷、自实现&rdquo; 的理念：系统自带核心功能模块，无需额外采购大量硬件或第三方服务；对于传统系统的 &ldquo;劣势&rdquo;（如部署复杂、扩展困难），WLDOS 通过技术创新将其转化为 &ldquo;优势&rdquo;&mdash;&mdash; 以云原生应用部署方式，支持在阿里云、腾讯云、华为云等各大云厂商无缝发布；同时具备分布式一体化的资源管理能力，可灵活支持混合云部署，让用户无需受限于单一环境，按需选择最适合的部署方案。</div>\n<div data-zone-id=\"0\" data-line-index=\"15\" data-line=\"true\">此外，WLDOS 还打破了 &ldquo;云端&rdquo; 与 &ldquo;终端&rdquo; 的割裂：通过与头部企业合作实现边缘通信能力，让系统从 &ldquo;云端&rdquo; 走向 &ldquo;边缘&rdquo;，在应用层提供基础支撑，便于用户搭建各类场景化业务；再结合与智能硬件终端的深度融合，最终实现 &ldquo;智能终端设备与云中心互联互通&rdquo; 的云物互联网，帮助每一个用户构建属于自己的数字生态网络。</div>\n<div data-zone-id=\"0\" data-line-index=\"16\" data-line=\"true\">\n<h2 id=\"四技术发展从-10-到-30持续进化的数字底座\" class=\"heading-h2\">四、技术发展：从 1.0 到 3.0，持续进化的数字底座</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"17\" data-line=\"true\">WLDOS 的发展并非一蹴而就，其技术脉络清晰可见：</div>\n<ul>\n<li class=\"temp-li bullet1\" data-line=\"true\" data-list=\"bullet1\"><strong>2020 年</strong>：项目正式起步，创始团队与核心助手搭建了 WLDOS 项目的首个分支，奠定了多域多租、云物互联的核心方向；</li>\n</ul>\n<ul>\n<li class=\"temp-li bullet1\" data-line=\"true\" data-list=\"bullet1\"><strong>如今</strong>：WLDOS 已成长为一个开放、包容的平台，为所有人提供了 &ldquo;通过技术实现自我兴趣、创造自我价值&rdquo; 的机会 &mdash;&mdash; 无论是日常生活中的小工具开发，还是专业领域的创意创作，都能在 WLDOS 上找到落地路径。</li>\n</ul>\n<div data-zone-id=\"0\" data-line-index=\"20\" data-line=\"true\">而在版本迭代中，WLDOS 的核心能力不断升级，每一个版本都紧扣用户需求：</div>\n<div data-zone-id=\"0\" data-line-index=\"21\" data-line=\"true\">⭐⭐⭐⭐⭐ <strong>WLDOS 1.0：夯实基础，构建定制化根基</strong></div>\n<div data-zone-id=\"0\" data-line-index=\"22\" data-line=\"true\">率先实现基于 RBAC 模型的角色权限体系、多租户管理、多域隔离功能，这些能力至今仍是系统功能定制化的 &ldquo;基石&rdquo;&mdash;&mdash; 它确保了不同用户、不同组织在同一平台上既能共享资源，又能保障数据安全与权限隔离，为后续的功能扩展打下了坚实基础。</div>\n<div data-zone-id=\"0\" data-line-index=\"23\" data-line=\"true\">⭐⭐⭐⭐⭐ <strong>WLDOS 2.0：聚焦互联，强化中间件支撑</strong></div>\n<div data-zone-id=\"0\" data-line-index=\"24\" data-line=\"true\">核心实现 &ldquo;插件化、互联 sidecar、应用商店&rdquo; 三大关键能力，重点强化中间件支撑能力，构建了基于 &ldquo;系统思维&rdquo; 的架构模式。其中，插件化让功能扩展更灵活，互联 sidecar 实现了不同应用间的无缝通信，应用商店则为用户提供了丰富的现成应用模板，极大提升了云物互联的效率与便捷性。</div>\n<div data-zone-id=\"0\" data-line-index=\"25\" data-line=\"true\">⭐⭐⭐⭐⭐ <strong>WLDOS 3.0：场景落地，赋能内容付费新生态</strong></div>\n<div data-zone-id=\"0\" data-line-index=\"26\" data-line=\"true\">针对当前热门的 &ldquo;内容付费&rdquo; 场景，重点实现动态表单、动态流程与数据建模（含报表生成、数据大屏）能力，让用户无需代码开发，就能快速搭建付费课程平台、会员社群系统等内容付费应用 &mdash;&mdash; 从需求定义到应用上线，周期大幅缩短，真正实现 &ldquo;场景化快速落地&rdquo;。</div>\n<div data-zone-id=\"0\" data-line-index=\"27\" data-line=\"true\">无论是技术经验有限的 &ldquo;新手&rdquo;，还是精通技术的 &ldquo;专家&rdquo;，都能在 WLDOS 中找到适合自己的使用方式：新手可 &ldquo;开箱即用&rdquo;，直接借助现成模板与工具启动项目；专家则可深度自定义，通过二次开发打造符合特定需求的专属应用 &mdash;&mdash; 这种 &ldquo;低门槛 + 高灵活&rdquo; 的特性，让 WLDOS 覆盖了更广泛的用户群体。</div>\n<div data-zone-id=\"0\" data-line-index=\"28\" data-line=\"true\">\n<h2 id=\"五技术使命与展望给每个人打开世界的数字方式\" class=\"heading-h2\">五、技术使命与展望：给每个人打开世界的数字方式</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"29\" data-line=\"true\">\n<h3 id=\"1-使命让数字世界更美好\" class=\"heading-h3\">1. 使命：让数字世界更美好</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"30\" data-line=\"true\">WLDOS 的技术使命简洁而有力：&ldquo;<strong>给每个人一个打开世界的方式，实现更美好的世界</strong>&rdquo;。它不局限于为企业提供技术支撑，更希望通过技术赋能个体 &mdash;&mdash; 让普通人也能借助数字工具表达创意、解决问题，让中小企业也能以低成本享受数字化红利，最终推动整个数字世界向更包容、更高效、更美好的方向发展。</div>\n<div data-zone-id=\"0\" data-line-index=\"31\" data-line=\"true\">\n<h3 id=\"2-展望以敬畏之心探索数字未来\" class=\"heading-h3\">2. 展望：以敬畏之心，探索数字未来</h3>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"32\" data-line=\"true\">面对数字时代的无限可能，WLDOS 团队始终保持敬畏与探索之心：我们并不妄图精准预测未来的每一步，也不刻意定义 &ldquo;最终会达到何种影响&rdquo;，但我们清晰地知道 &mdash;&mdash; 当下，人们迫切需要一个 &ldquo;能更迅捷、更优雅地打开数字化经济大门&rdquo; 的工具。</div>\n<div data-zone-id=\"0\" data-line-index=\"33\" data-line=\"true\">WLDOS 的诞生，正是源于对数字时代 &ldquo;困惑与痛点&rdquo; 的回应：我们将用户在数字化过程中遇到的难题（如门槛高、成本高、落地慢），转化为技术应用的突破方向，通过可演进的应用实践，为用户提供 &ldquo;边走边优化&rdquo; 的数字化路径。</div>\n<div data-zone-id=\"0\" data-line-index=\"34\" data-line=\"true\">或许，目前我们还无法用最精准的语言定义 WLDOS 的全部价值，但它已然成为 &ldquo;每个人应对数字时代的一种打开方式&rdquo;&mdash;&mdash; 它不是僵化的 &ldquo;成品&rdquo;，而是持续生长的 &ldquo;生态&rdquo;，等待每一个有想法的人共同参与、共同创造。</div>\n<div data-zone-id=\"0\" data-line-index=\"35\" data-line=\"true\">\n<h2 id=\"六关注我们解锁更多数字化干货\" class=\"heading-h2\">六、关注我们，解锁更多数字化干货</h2>\n</div>\n<div data-zone-id=\"0\" data-line-index=\"36\" data-line=\"true\">想要深入了解 WLDOS 的技术细节、应用案例与数字化专题内容？欢迎关注作者公众号，获取第一手资讯 &mdash;&mdash; 在这里，你将看到数字技术如何落地为实际价值，也将找到属于自己的数字化转型路径。</div>\n<div data-zone-id=\"0\" data-line-index=\"37\" data-line=\"true\">&nbsp;</div>', 'WLDOS：开启数字时代的云物互联新范式', NULL, 'publish', NULL, NULL, 'guanyuwomen12', 0, 'post', 1533544727530094592, 0, 'text/html', 0, 0, 0, 10, NULL, 1, '2025-10-26 22:49:31', '0:0:0:0:0:0:0:1', 1, '2025-12-28 16:34:32', '0:0:0:0:0:0:0:1', 'normal', 1);
+INSERT INTO `k_pubs` VALUES (1982460775779897345, '## WLDOS Markdown编辑器使用指南\n\n### 概述\n\nWLDOS系统提供了强大的Markdown编辑器，支持实时预览、语法高亮、图片管理等功能。本编辑器采用所见即所得的编辑方式，让您能够专注于内容创作，而无需担心格式问题。\n\n### 编辑器模式\n\n#### 1. 富文本模式\n- **特点**：提供可视化编辑界面，类似Word文档编辑器\n- **适用场景**：适合不熟悉Markdown语法的用户\n- **功能**：支持拖拽、格式化工具栏、实时预览\n\n#### 2. Markdown模式\n- **特点**：直接编辑Markdown源码\n- **适用场景**：适合熟悉Markdown语法的用户\n- **功能**：语法高亮、实时预览、代码补全\n\n### 核心功能\n\n#### 文本格式化\n\n**标题**\n```markdown\n# 一级标题\n## 二级标题\n### 三级标题\n#### 四级标题\n##### 五级标题\n###### 六级标题\n```\n\n**文本样式**\n```markdown\n**粗体文本**\n*斜体文本*\n~~删除线文本~~\n`行内代码`\n```\n\n**列表**\n```markdown\n- 无序列表项1\n- 无序列表项2\n  - 嵌套列表项\n\n1. 有序列表项1\n2. 有序列表项2\n   1. 嵌套有序列表\n```\n\n#### 链接和图片\n\n**链接**\n```markdown\n[链接文本](https://example.com)\n[带标题的链接](https://example.com \"链接标题\")\n```\n\n**图片**\n```markdown\n![图片描述](图片URL)\n![图片描述](图片URL \"图片标题\")\n![图片描述](图片URL \"图片标题\") <!-- 尺寸: 300x200 -->\n```\n\n![敖闰](http://localhost:8000/store/2025/10/26201143NcXK4Zhy.png \"姑姑\") <!-- 尺寸: 300x502 -->\n\n#### 代码块\n\n**行内代码**\n```markdown\n使用 `console.log()` 输出信息\n```\n\n**代码块**\n````markdown\n```javascript\nfunction hello() {\n    console.log(\"Hello, World!\");\n}\n```\n````\n\n**支持的语言**：\n- JavaScript\n- Python\n- Java\n- CSS\n- HTML\n- SQL\n- 等等...\n\n#### 表格\n\n```markdown\n| 列1 | 列2 | 列3 |\n|-----|-----|-----|\n| 数据1 | 数据2 | 数据3 |\n| 数据4 | 数据5 | 数据6 |\n```\n\n#### 引用\n\n```markdown\n> 这是一个引用块\n> \n> 可以包含多行内容\n> \n> > 嵌套引用\n```\n\n#### 分割线\n\n```markdown\n---\n```\n\n### 图片管理功能\n\n#### 上传图片\n1. 点击编辑器工具栏中的图片按钮\n2. 选择\"上传\"标签页\n3. 选择本地图片文件\n4. 设置图片属性：\n   - **图片名称**：显示在图片标题中\n   - **Alt文本**：图片描述，用于无障碍访问\n   - **宽度/高度**：设置图片显示尺寸\n   - **锁定比例**：保持图片原始宽高比\n\n#### 插入网络图片\n1. 点击图片按钮\n2. 选择\"普通\"标签页\n3. 输入图片URL\n4. 设置图片属性\n\n#### 图片编辑\n- 在Markdown模式下，可以手动编辑图片语法\n- 支持HTML注释方式设置图片尺寸：`<!-- 尺寸: 300x200 -->`\n\n### 高级功能\n\n#### 实时预览\n- 在Markdown模式下，右侧会显示实时预览\n- 支持语法高亮和代码渲染\n- 图片自动居中显示\n\n#### 语法高亮\n- 代码块支持多种编程语言的语法高亮\n- 使用专业的代码高亮主题\n- 支持行号显示\n\n#### 历史记录\n- 自动保存编辑历史\n- 支持撤销/重做操作\n- 快捷键：`Ctrl+Z` / `Ctrl+Y`\n\n### 快捷键\n\n| 快捷键 | 功能 |\n|--------|------|\n| `Ctrl+B` | 粗体 |\n| `Ctrl+I` | 斜体 |\n| `Ctrl+K` | 插入链接 |\n| `Ctrl+Z` | 撤销 |\n| `Ctrl+Y` | 重做 |\n| `Ctrl+S` | 保存 |\n\n### 最佳实践\n\n#### 1. 内容结构\n- 使用清晰的标题层次结构\n- 合理使用列表和引用\n- 保持段落简洁明了\n\n#### 2. 图片优化\n- 为所有图片添加有意义的Alt文本\n- 使用合适的图片尺寸\n- 考虑图片加载性能\n\n#### 3. 代码规范\n- 为代码块指定正确的语言\n- 使用行内代码标记技术术语\n- 保持代码格式整洁\n\n#### 4. 链接管理\n- 使用描述性的链接文本\n- 为重要链接添加标题\n- 定期检查链接有效性\n\n### 常见问题\n\n#### Q: 如何插入表格？\nA: 使用Markdown表格语法，编辑器会自动渲染为表格格式。\n\n#### Q: 图片显示不正确怎么办？\nA: 检查图片URL是否正确，确保图片可以公开访问。\n\n#### Q: 代码高亮不工作？\nA: 确保代码块指定了正确的语言标识符。\n\n#### Q: 如何设置图片尺寸？\nA: 使用HTML注释方式：`<!-- 尺寸: 宽度x高度 -->`\n\n### 技术特性\n\n- **渲染引擎**：基于React Markdown\n- **语法高亮**：使用Prism.js\n- **图片处理**：支持本地上传和网络引用\n- **实时预览**：所见即所得编辑体验\n- **响应式设计**：适配各种屏幕尺寸\n\n### 总结\n\nWLDOS Markdown编辑器提供了完整的Markdown编辑解决方案，无论是初学者还是高级用户，都能找到适合自己的编辑方式。通过合理使用各种功能，您可以创建出专业、美观的文档内容。\n\n---\n\n*本文档展示了WLDOS Markdown编辑器的核心功能和用法，帮助用户更好地使用这一强大的内容创作工具。*\n`\n这篇文档涵盖了：\n\n1. **编辑器概述**：介绍了两种编辑模式的特点和适用场景\n2. **核心功能**：详细说明了Markdown的各种语法和用法\n3. **图片管理**：重点介绍了图片上传、编辑和管理功能\n4. **高级功能**：包括实时预览、语法高亮、历史记录等\n5. **快捷键**：列出了常用的编辑快捷键\n6. **最佳实践**：提供了内容创作的建议和规范\n7. **常见问题**：解答了用户可能遇到的问题\n8. **技术特性**：说明了编辑器的技术实现\n\n用户使用WLDOS Markdown编辑器的完整指南，帮助用户充分利用编辑器的各种功能。', '对markdown的支持', NULL, 'publish', NULL, NULL, 'duimarkdowndezhichi', 0, 'post', 1533544727530094592, 0, 'text/markdown', 1, 0, 0, 20, NULL, 1, '2025-10-26 22:54:16', '0:0:0:0:0:0:0:1', 1, '2025-12-28 16:32:48', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (1984546838375686145, NULL, '全栈插件开发', '本模块对应wldos平台的插件模块，官方插件默认在此模块下，第三方插件也可以参考demo独立创建项目，保证发行时插件的zip包放在wldos发行包的plugins目录下。', 'publish', NULL, NULL, 'quanzhanchajiankaifa', 0, 'doc', 1533544727530094592, 0, NULL, 0, 0, 0, NULL, NULL, 1, '2025-11-01 17:03:32', '0:0:0:0:0:0:0:1', 1, '2025-11-02 19:23:53', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `k_pubs` VALUES (1984546853949136898, '<pre>本模块对应wldos平台的插件模块，官方插件默认在此模块下，第三方插件也可以参考demo独立创建项目，保证发行时插件的zip包放在wldos发行包的plugins目录下。<br /><br />## 📋 快速导航<br /><br />- [插件API网关与前后端交互规范](#插件api网关与前后端交互规范) - 了解插件API路径映射和调用规范<br />- [插件配置约定](#插件配置约定) - 插件配置文件和权限设置<br />- [UI目录约定](#ui目录约定) - 前端UI开发和构建规范<br />- [数据库脚本管理](#数据库脚本管理) - 数据库脚本编写和管理<br />- [前端插件配置 (pluginConfig)](#前端插件配置-pluginconfig---2025-10-28-更新-) ⭐ - pluginConfig 和 providedDependencies 用法（2025-10-28 新增）<br />- [插件注册路径说明](#插件注册路径说明-) ⭐ - 新路径注册和旧路径兼容性（2025-10-28 新增）<br />- [最佳实践](#最佳实践) - 开发建议和最佳实践<br /><br />### 🔗 核心规范快速链接<br />- [前端API调用规范](#前端调用规范) - 基于统一路由前缀的API定义<br />- [权限配置格式](#权限配置) - API权限的配置方法<br />- [完整开发示例](#完整开发示例) - 端到端开发示例<br />- [插件注册路径说明](#插件注册路径说明-) ⭐ - 新路径 vs 旧路径（2025-10-28 新增）  <br />```plaintext<br />wldos主应用发行包结构<br />wldos.zip<br />├── wldos.war<br />├── plugins/<br />│   ├── xxx-plugin.zip<br />│   └── ...<br />└── store/<br />└── ...<br />```<br />插件结构：<br /><br />```plaintext<br /># 构建前的插件模块结构（开发时）<br />demo-plugin/<br />├── plugin.yml                       # 插件配置文件（与pom.xml平行）<br />├── pom.xml                          # Maven配置<br />├── build-ui.sh（或者build-ui.bat）   # 构建脚本<br />├── README.md                        # 说明文档<br />└── src/<br />    ├── main/<br />    │   ├── java/                    # Java源代码<br />    │   ├── resources/               # 资源文件目录<br />    │   │   ├── hooks.json           # Hook配置<br />    │   │   ├── icons/               # 图标文件<br />    │   │   ├── images/              # 展示图片<br />    │   │   └── docs/                # 文档文件<br />    │   ├── database/                # 数据库脚本目录<br />    │   │   ├── create-tables.sql    # 创建表脚本<br />    │   │   ├── drop-tables.sql      # 删除表脚本<br />    │   │   └── upgrade-*.sql        # 升级脚本（可选）<br />    │   └── ui/                      # UI源码目录<br />    │       ├── index.js             # UI入口文件<br />    │       ├── extensions.json      # 扩展配置文件<br />    │       ├── package.json         # 依赖管理<br />    │       ├── webpack.config.js    # 构建配置<br />    │       ├── README.md            # UI说明文档<br />    │       └── dist/                # 构建输出目录<br />    │           └── index.js         # 构建后的UI文件（UMD格式）<br />    └── assembly/<br />        └── package.xml              # 打包配置<br /><br /># 构建后的插件包结构（安装时）<br />demo-plugin.zip<br />├── plugin.yml                       # 插件配置文件<br />├── demo-plugin.jar                  # 插件主程序包<br />├── ui/                              # 插件UI目录（构建后的UMD文件）<br />│   └── index.js                     # UMD格式的UI模块文件<br />├── icons/                          # 图标目录<br />│   ├── demo-16x16.png             # 小图标<br />│   ├── demo-32x32.png             # 中图标<br />│   └── demo-64x64.png             # 大图标<br />├── images/                         # 展示图片目录<br />│   ├── screenshot1.png            # 功能截图1<br />│   ├── screenshot2.png            # 功能截图2<br />│   └── banner.png                 # 横幅图片<br />├── database/                      # 数据库脚本目录<br />│   ├── create-tables.sql         # 创建表脚本<br />│   ├── drop-tables.sql           # 删除表脚本<br />│   └── upgrade-*.sql             # 升级脚本（可选）<br />└── docs/                          # 文档目录<br />    ├── index.md                   # 主文档<br />    └── CHANGELOG.md               # 变更日志<br />```<br /><br />docs/index.md:<br />```markdown<br /># WLDOS演示插件<br /><br />## 简介<br />这是一个WLDOS框架的演示插件，用于展示插件的基本功能和使用方法。<br /><br />## 功能特性<br />- 功能1：XXX<br />- 功能2：XXX<br />- 功能3：XXX<br /><br />## 使用说明<br />1. 安装插件<br />2. 配置参数<br />3. 启用插件<br /><br />## API文档<br />...<br />```<br /><br />docs/CHANGELOG.md:<br />```markdown<br /># 更新日志<br /><br />## [1.0.0] - 2024-03-21<br />### 新增<br />- 初始版本发布<br />- 基础功能实现<br />- 完整文档支持<br /><br />### 修复<br />- 无<br /><br />### 变更<br />- 无<br />```<br /><br />图片资源建议：<br />1. icons/<br />   - demo-16x16.png: 浅色系简洁图标，适合菜单显示<br />   - demo-32x32.png: 中等大小，用于工具栏<br />   - demo-64x64.png: 大图标，用于插件市场展示<br /><br />2. images/<br />   - screenshot1.png: 主要功能界面截图 (建议 1280x720)<br />   - screenshot2.png: 配置界面截图 (建议 1280x720)<br />   - banner.png: 市场展示横幅 (建议 1920x320)<br /><br />## UI目录约定<br /><br />### 目录结构说明<br /><br />#### 构建前的UI源码目录（开发时）<br />插件的UI源码位于 `src/main/ui/` 目录下，包含所有开发相关的文件：<br /><br />#### 必需文件<br />- `index.js`: UI入口文件，必须导出所有组件<br />- `extensions.json`: 扩展配置文件，定义菜单和路由<br />- `package.json`: 依赖管理文件<br />- `webpack.config.js`: 构建配置文件<br /><br />#### 构建后的UI目录（安装时）<br />构建完成后，UI文件会被打包到插件的 `ui/` 目录下，只包含运行时的UMD模块文件。<br /><br />### UI构建方式<br /><br />系统支持两种UI构建方式：<br /><br />#### 1. JavaScript模块构建（推荐）<br />- **构建输出**: 单个JS模块文件（`dist/index.js`）<br />- **文件格式**: UMD (Universal Module Definition)<br />- **依赖管理**: 外部依赖注入（React、ReactDOM、Ant Design）<br />- **优势**: 文件小、加载快、依赖统一管理<br /><br />#### 2. 静态资源构建（传统方式）<br />- **构建输出**: 多个静态文件（HTML、CSS、JS等）<br />- **加载方式**: 静态文件服务<br />- **依赖管理**: 打包所有依赖<br /><br />### Webpack配置示例<br /><br />#### JavaScript模块构建配置 ⭐ 2025-10-28 更新<br />```javascript<br />// webpack.config.js<br />const path = require(\'path\');<br /><br />module.exports = {<br />  entry: \'./index.js\',<br />  output: {<br />    path: path.resolve(__dirname, \'dist\'),<br />    filename: \'index.js\',<br />    // 推荐：使用数组格式，支持多个全局变量名（兼容旧路径和新路径）<br />    library: {<br />      name: [\'pluginCode\', \'plugin_pluginCode\'],  // 插件编码，例如：[\'airdrop\', \'plugin_airdrop\']<br />      type: \'umd\',<br />      export: \'default\'<br />    },<br />    globalObject: \'this\',<br />    clean: true<br />  },<br />  externals: {                        // 外部依赖（由前端主系统提供，确保前端存在）<br />    \'react\': \'React\',<br />    \'react-dom\': \'ReactDOM\',<br />    \'antd\': \'antd\'<br />  },<br />  module: {<br />    rules: [<br />      {<br />        test: /\\.jsx?$/,<br />        exclude: /node_modules/,<br />        use: {<br />          loader: \'babel-loader\',<br />          options: {<br />            presets: [\'@babel/preset-env\', \'@babel/preset-react\']<br />          }<br />        }<br />      },<br />      {<br />        test: /\\.css$/,<br />        use: [\'style-loader\', \'css-loader\']<br />      }<br />    ]<br />  },<br />  resolve: {<br />    extensions: [\'.js\', \'.jsx\']<br />  }<br />};<br />```<br /><br />**配置说明（2025-10-28 更新）**：<br />- `library.name` 使用数组格式，自动挂载到 `window[\'pluginCode\']` 和 `window[\'plugin_pluginCode\']`（兼容旧路径）<br />- Webpack 会自动将 `default` 导出挂载到这两个全局变量，**无需在插件代码中手动挂载**<br />- 插件代码中只需要调用 `window.WLDOSPlugins.register()` 注册到注册表（新路径）<br />- 系统会自动兼容：优先从注册表获取，找不到则回退到 window 路径<br /><br />#### 静态资源构建配置<br />```javascript<br />// webpack.config.js<br />const path = require(\'path\');<br />const HtmlWebpackPlugin = require(\'html-webpack-plugin\');<br /><br />module.exports = {<br />  entry: \'./index.js\',<br />  output: {<br />    path: path.resolve(__dirname, \'dist\'),<br />    filename: \'bundle.js\',<br />    clean: true<br />  },<br />  plugins: [<br />    new HtmlWebpackPlugin({<br />      template: \'./index.html\'<br />    })<br />  ]<br />  // ... 其他配置<br />};<br />```<br /><br />### 扩展配置格式<br />`extensions.json` 文件定义插件的菜单和路由扩展：<br /><br />```json<br />{<br />  \"extensions\": [<br />    {<br />      \"id\": \"plugin-root\",<br />      \"name\": \"插件模块\",<br />      \"path\": \"/plugin\",<br />      \"icon\": \"PluginOutlined\",<br />      \"component\": \"PluginLayout\",<br />      \"sort\": 100,<br />      \"permissions\": [\"plugin:view\"],<br />      \"hideInMenu\": false,<br />      \"disabled\": false<br />    },<br />    {<br />      \"id\": \"plugin-page1\",<br />      \"name\": \"页面1\",<br />      \"path\": \"/plugin/page1\",<br />      \"icon\": \"FileOutlined\",<br />      \"component\": \"PluginPage1\",<br />      \"parentId\": \"plugin-root\",<br />      \"sort\": 1,<br />      \"permissions\": [\"plugin:page1:view\"]<br />    }<br />  ]<br />}<br />```<br /><br />### 构建输出<br /><br />#### 开发时的构建输出<br />- **JavaScript模块构建**: 构建后的文件输出到 `src/main/ui/dist/` 目录下，主文件名为 `index.js`（UMD格式）<br />- **静态资源构建**: 构建后的文件输出到 `src/main/ui/dist/` 目录下，包含HTML、CSS、JS等文件<br /><br />#### 安装时的UI目录<br />构建完成后，Maven会将 `dist/` 目录下的文件复制到插件的 `ui/` 目录中：<br />- **JavaScript模块构建**: 插件包中的 `ui/index.js` 文件（UMD格式）<br />- **静态资源构建**: 插件包中的 `ui/` 目录包含所有静态文件<br /><br />系统会自动检测构建类型并采用相应的加载策略。<br /><br />### 权限配置<br />插件扩展支持权限控制，权限标识必须与后端权限系统保持一致。<br /><br />### 开发建议<br /><br />#### 推荐使用JavaScript模块构建<br />1. **更好的性能**: 文件更小，加载更快<br />2. **统一依赖管理**: 避免版本冲突<br />3. **更好的缓存策略**: 模块级别缓存<br />4. **更简单的开发**: 无需管理复杂的依赖关系<br /><br />#### 构建脚本示例<br />```bash<br />#!/bin/bash<br /># build-ui.sh<br /><br />cd src/main/ui<br />yarn install<br />yarn build<br /><br />echo \"UI构建完成！\"<br />echo \"构建输出: src/main/ui/dist/index.js\"<br />```<br /><br />#### 插件打包配置<br />```xml<br />&lt;!-- src/assembly/package.xml --&gt;<br />&lt;fileSet&gt;<br />    &lt;directory&gt;${basedir}/src/main/ui/dist&lt;/directory&gt;<br />    &lt;outputDirectory&gt;ui&lt;/outputDirectory&gt;<br />    &lt;includes&gt;<br />        &lt;include&gt;**/*&lt;/include&gt;<br />    &lt;/includes&gt;<br />    &lt;useDefaultExcludes&gt;false&lt;/useDefaultExcludes&gt;<br />    &lt;fileMode&gt;0644&lt;/fileMode&gt;<br />    &lt;directoryMode&gt;0755&lt;/directoryMode&gt;<br />&lt;/fileSet&gt;<br />```<br /><br />## 构建方式选择指南<br /><br />### 何时使用JavaScript模块构建<br />- ✅ **新开发的插件**: 推荐使用JavaScript模块构建<br />- ✅ **需要高性能**: 文件小、加载快<br />- ✅ **依赖React生态**: 使用React、Ant Design等<br />- ✅ **团队协作**: 统一依赖管理，避免冲突<br />- ✅ **长期维护**: 更好的可维护性<br /><br />### 何时使用静态资源构建<br />- ✅ **现有插件迁移**: 如果已有静态资源构建的插件<br />- ✅ **特殊需求**: 需要完全独立的UI环境<br />- ✅ **非React技术栈**: 使用Vue、Angular等其他框架<br />- ✅ **复杂依赖**: 需要打包特定的第三方库<br /><br />### 迁移指南<br /><br />#### 从静态资源构建迁移到JavaScript模块构建<br />1. 更新Webpack配置，使用UMD格式输出<br />2. 设置外部依赖（React、ReactDOM、Ant Design）<br />3. 确保构建输出为 `dist/index.js`<br />4. 更新插件配置和文档<br />5. 测试UI正常加载和显示<br /><br />#### 兼容性说明<br />- 系统会自动检测构建类型<br />- 现有插件无需立即迁移<br />- 两种构建方式可以并存<br />- 新插件推荐使用JavaScript模块构建<br /><br />### 最佳实践<br /><br />#### 1. 项目结构<br />```<br />demo_plugin<br />├── plugin.yml      # 插件配置<br />├── pom.xml      # Maven配置<br />├── build-ui.sh（或者build-ui.bat）   # 构建脚本<br />docs/index.md      # 文档<br />src/main/<br />├── java/                # Java源代码<br />├── resources/           # 资源文件<br />│   ├── icons/          # 图标文件<br />│   ├── images/         # 展示图片<br />│   └── docs/           # 文档文件<br />├── database/            # 数据库脚本目录<br />│   ├── create-tables.sql<br />│   ├── drop-tables.sql<br />│   └── upgrade-*.sql<br />└── ui/                  # UI源码目录<br />    ├── index.js         # 入口文件<br />    ├── components/      # 组件目录<br />    ├── pages/          # 页面目录<br />    ├── utils/          # 工具函数<br />    ├── package.json    # 依赖配置<br />    ├── webpack.config.js # 构建配置<br />    ├── README.md       # UI说明文档<br />    └── dist/           # 构建输出目录<br />        └── index.js    # UMD格式的构建文件<br />```<br /><br />#### 2. 组件导出 ⭐ 2025-10-28 更新<br />```javascript<br />// index.js<br />import React from \'react\';<br />import { PluginLayout } from \'./components/PluginLayout\';<br />import { PluginPage1 } from \'./pages/PluginPage1\';<br /><br />// 插件配置<br />const pluginConfig = {<br />  name: \'演示插件\',<br />  version: \'1.0.0\',<br />  description: \'这是一个演示插件\',<br />  author: \'WLDOS Team\',<br />  components: {<br />    PluginLayout,<br />    PluginPage1,<br />  }<br />  // 如果插件打包了自己的依赖（未通过 externals 排除），在此声明<br />  // providedDependencies: {<br />  //   \'lodash\': { value: _, version: \'4.17.21\' }<br />  // }<br />};<br /><br />// 默认导出（webpack会自动挂载到window[\'pluginCode\']和window[\'plugin_pluginCode\']）<br />const defaultExport = {<br />  PluginLayout,<br />  PluginPage1,<br />  pluginConfig,<br />  Components: {<br />    PluginLayout,<br />    PluginPage1,<br />  }<br />};<br /><br />// 主动注册到插件注册表（新路径）⭐ 2025-10-28 新增<br />if (typeof window !== \'undefined\' &amp;&amp; window.WLDOSPlugins &amp;&amp; typeof window.WLDOSPlugins.register === \'function\') {<br />  window.WLDOSPlugins.register(\'pluginCode\', defaultExport);  // 替换为实际插件编码<br />}<br /><br />export default defaultExport;<br />```<br /><br />**导出说明（2025-10-28 更新）**：<br />1. **Webpack 自动挂载**：通过 `library.name` 数组配置，webpack 会自动将 `default` 导出挂载到 `window[\'pluginCode\']` 和 `window[\'plugin_pluginCode\']`（旧路径），**无需在代码中手动挂载**<br />2. **注册表注册（推荐）**：插件代码中主动调用 `window.WLDOSPlugins.register()` 注册到注册表（新路径）<br />3. **向后兼容**：系统会自动兼容旧路径，优先使用注册表，找不到则回退到 window 路径<br />4. **pluginConfig**：建议在默认导出中包含 `pluginConfig`，便于系统自动发现依赖<br /><br />#### 3. 扩展配置<br />```json<br />{<br />  \"extensions\": [<br />    {<br />      \"id\": \"plugin-root\",<br />      \"name\": \"插件模块\",<br />      \"path\": \"/plugin\",<br />      \"icon\": \"PluginOutlined\",<br />      \"component\": \"PluginLayout\",<br />      \"sort\": 100,<br />      \"permissions\": [\"plugin:view\"]<br />    }<br />  ]<br />}<br />```<br /><br />#### 4. 开发流程<br />1. 开发UI组件<br />2. 配置扩展菜单<br />3. 构建UI模块<br />4. 打包插件<br />5. 安装测试<br /><br />### 故障排除<br /><br />#### 常见问题<br />1. **模块加载失败**: 检查UMD格式和外部依赖配置<br />2. **组件未找到**: 确保组件名称与扩展配置一致<br />3. **依赖冲突**: 使用外部依赖配置，避免打包核心库<br />4. **构建失败**: 检查Node.js版本和依赖安装<br /><br />#### 调试技巧<br />- 使用浏览器开发者工具检查网络请求<br />- 查看控制台错误信息<br />- 验证构建输出文件格式<br />- 测试模块加载和组件渲染</pre>', 'WLDOS插件开发', NULL, 'inherit', NULL, NULL, 'WLDOSchajiankaifa', 1984546838375686145, 'chapter', 1533544727530094592, 0, 'text/html', 0, 0, 0, NULL, NULL, 1, '2025-11-01 17:03:36', '0:0:0:0:0:0:0:1', 1, '2025-11-01 17:05:09', '0:0:0:0:0:0:0:1', 'deleted', 1);
 INSERT INTO `k_pubs` VALUES (1984548357951053825, '本模块对应wldos平台的插件模块，官方插件默认在此模块下，第三方插件也可以参考demo独立创建项目，保证发行时插件的zip包放在wldos发行包的plugins目录下。\n\n## 📋 快速导航\n\n- [插件API网关与前后端交互规范](#插件api网关与前后端交互规范) - 了解插件API路径映射和调用规范\n- [插件配置约定](#插件配置约定) - 插件配置文件和权限设置\n- [UI目录约定](#ui目录约定) - 前端UI开发和构建规范\n- [数据库脚本管理](#数据库脚本管理) - 数据库脚本编写和管理\n- [前端插件配置 (pluginConfig)](#前端插件配置-pluginconfig---2025-10-28-更新-) ⭐ - pluginConfig 和 providedDependencies 用法（2025-10-28 新增）\n- [插件注册路径说明](#插件注册路径说明-) ⭐ - 新路径注册和旧路径兼容性（2025-10-28 新增）\n- [最佳实践](#最佳实践) - 开发建议和最佳实践\n\n### 🔗 核心规范快速链接\n- [前端API调用规范](#前端调用规范) - 基于统一路由前缀的API定义\n- [权限配置格式](#权限配置) - API权限的配置方法\n- [完整开发示例](#完整开发示例) - 端到端开发示例\n- [插件注册路径说明](#插件注册路径说明-) ⭐ - 新路径 vs 旧路径（2025-10-28 新增）  \n```plaintext\nwldos主应用发行包结构\nwldos.zip\n├── wldos.war\n├── plugins/\n│   ├── xxx-plugin.zip\n│   └── ...\n└── store/\n└── ...\n```\n插件结构：\n\n```plaintext\n# 构建前的插件模块结构（开发时）\ndemo-plugin/\n├── plugin.yml                       # 插件配置文件（与pom.xml平行）\n├── pom.xml                          # Maven配置\n├── build-ui.sh（或者build-ui.bat）   # 构建脚本\n├── README.md                        # 说明文档\n└── src/\n    ├── main/\n    │   ├── java/                    # Java源代码\n    │   ├── resources/               # 资源文件目录\n    │   │   ├── hooks.json           # Hook配置\n    │   │   ├── icons/               # 图标文件\n    │   │   ├── images/              # 展示图片\n    │   │   └── docs/                # 文档文件\n    │   ├── database/                # 数据库脚本目录\n    │   │   ├── create-tables.sql    # 创建表脚本\n    │   │   ├── drop-tables.sql      # 删除表脚本\n    │   │   └── upgrade-*.sql        # 升级脚本（可选）\n    │   └── ui/                      # UI源码目录\n    │       ├── index.js             # UI入口文件\n    │       ├── extensions.json      # 扩展配置文件\n    │       ├── package.json         # 依赖管理\n    │       ├── webpack.config.js    # 构建配置\n    │       ├── README.md            # UI说明文档\n    │       └── dist/                # 构建输出目录\n    │           └── index.js         # 构建后的UI文件（UMD格式）\n    └── assembly/\n        └── package.xml              # 打包配置\n\n# 构建后的插件包结构（安装时）\ndemo-plugin.zip\n├── plugin.yml                       # 插件配置文件\n├── demo-plugin.jar                  # 插件主程序包\n├── ui/                              # 插件UI目录（构建后的UMD文件）\n│   └── index.js                     # UMD格式的UI模块文件\n├── icons/                          # 图标目录\n│   ├── demo-16x16.png             # 小图标\n│   ├── demo-32x32.png             # 中图标\n│   └── demo-64x64.png             # 大图标\n├── images/                         # 展示图片目录\n│   ├── screenshot1.png            # 功能截图1\n│   ├── screenshot2.png            # 功能截图2\n│   └── banner.png                 # 横幅图片\n├── database/                      # 数据库脚本目录\n│   ├── create-tables.sql         # 创建表脚本\n│   ├── drop-tables.sql           # 删除表脚本\n│   └── upgrade-*.sql             # 升级脚本（可选）\n└── docs/                          # 文档目录\n    ├── index.md                   # 主文档\n    └── CHANGELOG.md               # 变更日志\n```\n\ndocs/index.md:\n```markdown\n# WLDOS演示插件\n\n## 简介\n这是一个WLDOS框架的演示插件，用于展示插件的基本功能和使用方法。\n\n## 功能特性\n- 功能1：XXX\n- 功能2：XXX\n- 功能3：XXX\n\n## 使用说明\n1. 安装插件\n2. 配置参数\n3. 启用插件\n\n## API文档\n...\n```\n\ndocs/CHANGELOG.md:\n```markdown\n# 更新日志\n\n## [1.0.0] - 2024-03-21\n### 新增\n- 初始版本发布\n- 基础功能实现\n- 完整文档支持\n\n### 修复\n- 无\n\n### 变更\n- 无\n```\n\n图片资源建议：\n1. icons/\n   - demo-16x16.png: 浅色系简洁图标，适合菜单显示\n   - demo-32x32.png: 中等大小，用于工具栏\n   - demo-64x64.png: 大图标，用于插件市场展示\n\n2. images/\n   - screenshot1.png: 主要功能界面截图 (建议 1280x720)\n   - screenshot2.png: 配置界面截图 (建议 1280x720)\n   - banner.png: 市场展示横幅 (建议 1920x320)\n\n## UI目录约定\n\n### 目录结构说明\n\n#### 构建前的UI源码目录（开发时）\n插件的UI源码位于 `src/main/ui/` 目录下，包含所有开发相关的文件：\n\n#### 必需文件\n- `index.js`: UI入口文件，必须导出所有组件\n- `extensions.json`: 扩展配置文件，定义菜单和路由\n- `package.json`: 依赖管理文件\n- `webpack.config.js`: 构建配置文件\n\n#### 构建后的UI目录（安装时）\n构建完成后，UI文件会被打包到插件的 `ui/` 目录下，只包含运行时的UMD模块文件。\n\n### UI构建方式\n\n系统支持两种UI构建方式：\n\n#### 1. JavaScript模块构建（推荐）\n- **构建输出**: 单个JS模块文件（`dist/index.js`）\n- **文件格式**: UMD (Universal Module Definition)\n- **依赖管理**: 外部依赖注入（React、ReactDOM、Ant Design）\n- **优势**: 文件小、加载快、依赖统一管理\n\n#### 2. 静态资源构建（传统方式）\n- **构建输出**: 多个静态文件（HTML、CSS、JS等）\n- **加载方式**: 静态文件服务\n- **依赖管理**: 打包所有依赖\n\n### Webpack配置示例\n\n#### JavaScript模块构建配置 ⭐ 2025-10-28 更新\n```javascript\n// webpack.config.js\nconst path = require(\'path\');\n\nmodule.exports = {\n  entry: \'./index.js\',\n  output: {\n    path: path.resolve(__dirname, \'dist\'),\n    filename: \'index.js\',\n    // 推荐：使用数组格式，支持多个全局变量名（兼容旧路径和新路径）\n    library: {\n      name: [\'pluginCode\', \'plugin_pluginCode\'],  // 插件编码，例如：[\'airdrop\', \'plugin_airdrop\']\n      type: \'umd\',\n      export: \'default\'\n    },\n    globalObject: \'this\',\n    clean: true\n  },\n  externals: {                        // 外部依赖（由前端主系统提供，确保前端存在）\n    \'react\': \'React\',\n    \'react-dom\': \'ReactDOM\',\n    \'antd\': \'antd\'\n  },\n  module: {\n    rules: [\n      {\n        test: /\\.jsx?$/,\n        exclude: /node_modules/,\n        use: {\n          loader: \'babel-loader\',\n          options: {\n            presets: [\'@babel/preset-env\', \'@babel/preset-react\']\n          }\n        }\n      },\n      {\n        test: /\\.css$/,\n        use: [\'style-loader\', \'css-loader\']\n      }\n    ]\n  },\n  resolve: {\n    extensions: [\'.js\', \'.jsx\']\n  }\n};\n```\n\n**配置说明（2025-10-28 更新）**：\n- `library.name` 使用数组格式，自动挂载到 `window[\'pluginCode\']` 和 `window[\'plugin_pluginCode\']`（兼容旧路径）\n- Webpack 会自动将 `default` 导出挂载到这两个全局变量，**无需在插件代码中手动挂载**\n- 插件代码中只需要调用 `window.WLDOSPlugins.register()` 注册到注册表（新路径）\n- 系统会自动兼容：优先从注册表获取，找不到则回退到 window 路径\n\n#### 静态资源构建配置\n```javascript\n// webpack.config.js\nconst path = require(\'path\');\nconst HtmlWebpackPlugin = require(\'html-webpack-plugin\');\n\nmodule.exports = {\n  entry: \'./index.js\',\n  output: {\n    path: path.resolve(__dirname, \'dist\'),\n    filename: \'bundle.js\',\n    clean: true\n  },\n  plugins: [\n    new HtmlWebpackPlugin({\n      template: \'./index.html\'\n    })\n  ]\n  // ... 其他配置\n};\n```\n\n### 扩展配置格式\n`extensions.json` 文件定义插件的菜单和路由扩展：\n\n```json\n{\n  \"extensions\": [\n    {\n      \"id\": \"plugin-root\",\n      \"name\": \"插件模块\",\n      \"path\": \"/plugin\",\n      \"icon\": \"PluginOutlined\",\n      \"component\": \"PluginLayout\",\n      \"sort\": 100,\n      \"permissions\": [\"plugin:view\"],\n      \"hideInMenu\": false,\n      \"disabled\": false\n    },\n    {\n      \"id\": \"plugin-page1\",\n      \"name\": \"页面1\",\n      \"path\": \"/plugin/page1\",\n      \"icon\": \"FileOutlined\",\n      \"component\": \"PluginPage1\",\n      \"parentId\": \"plugin-root\",\n      \"sort\": 1,\n      \"permissions\": [\"plugin:page1:view\"]\n    }\n  ]\n}\n```\n\n### 构建输出\n\n#### 开发时的构建输出\n- **JavaScript模块构建**: 构建后的文件输出到 `src/main/ui/dist/` 目录下，主文件名为 `index.js`（UMD格式）\n- **静态资源构建**: 构建后的文件输出到 `src/main/ui/dist/` 目录下，包含HTML、CSS、JS等文件\n\n#### 安装时的UI目录\n构建完成后，Maven会将 `dist/` 目录下的文件复制到插件的 `ui/` 目录中：\n- **JavaScript模块构建**: 插件包中的 `ui/index.js` 文件（UMD格式）\n- **静态资源构建**: 插件包中的 `ui/` 目录包含所有静态文件\n\n系统会自动检测构建类型并采用相应的加载策略。\n\n### 权限配置\n插件扩展支持权限控制，权限标识必须与后端权限系统保持一致。\n\n### 开发建议\n\n#### 推荐使用JavaScript模块构建\n1. **更好的性能**: 文件更小，加载更快\n2. **统一依赖管理**: 避免版本冲突\n3. **更好的缓存策略**: 模块级别缓存\n4. **更简单的开发**: 无需管理复杂的依赖关系\n\n#### 构建脚本示例\n```bash\n#!/bin/bash\n# build-ui.sh\n\ncd src/main/ui\nyarn install\nyarn build\n\necho \"UI构建完成！\"\necho \"构建输出: src/main/ui/dist/index.js\"\n```\n\n#### 插件打包配置\n```xml\n<!-- src/assembly/package.xml -->\n<fileSet>\n    <directory>${basedir}/src/main/ui/dist</directory>\n    <outputDirectory>ui</outputDirectory>\n    <includes>\n        <include>**/*</include>\n    </includes>\n    <useDefaultExcludes>false</useDefaultExcludes>\n    <fileMode>0644</fileMode>\n    <directoryMode>0755</directoryMode>\n</fileSet>\n```\n\n## 构建方式选择指南\n\n### 何时使用JavaScript模块构建\n- ✅ **新开发的插件**: 推荐使用JavaScript模块构建\n- ✅ **需要高性能**: 文件小、加载快\n- ✅ **依赖React生态**: 使用React、Ant Design等\n- ✅ **团队协作**: 统一依赖管理，避免冲突\n- ✅ **长期维护**: 更好的可维护性\n\n### 何时使用静态资源构建\n- ✅ **现有插件迁移**: 如果已有静态资源构建的插件\n- ✅ **特殊需求**: 需要完全独立的UI环境\n- ✅ **非React技术栈**: 使用Vue、Angular等其他框架\n- ✅ **复杂依赖**: 需要打包特定的第三方库\n\n### 迁移指南\n\n#### 从静态资源构建迁移到JavaScript模块构建\n1. 更新Webpack配置，使用UMD格式输出\n2. 设置外部依赖（React、ReactDOM、Ant Design）\n3. 确保构建输出为 `dist/index.js`\n4. 更新插件配置和文档\n5. 测试UI正常加载和显示\n\n#### 兼容性说明\n- 系统会自动检测构建类型\n- 现有插件无需立即迁移\n- 两种构建方式可以并存\n- 新插件推荐使用JavaScript模块构建\n\n### 最佳实践\n\n#### 1. 项目结构\n```\ndemo_plugin\n├── plugin.yml      # 插件配置\n├── pom.xml      # Maven配置\n├── build-ui.sh（或者build-ui.bat）   # 构建脚本\ndocs/index.md      # 文档\nsrc/main/\n├── java/                # Java源代码\n├── resources/           # 资源文件\n│   ├── icons/          # 图标文件\n│   ├── images/         # 展示图片\n│   └── docs/           # 文档文件\n├── database/            # 数据库脚本目录\n│   ├── create-tables.sql\n│   ├── drop-tables.sql\n│   └── upgrade-*.sql\n└── ui/                  # UI源码目录\n    ├── index.js         # 入口文件\n    ├── components/      # 组件目录\n    ├── pages/          # 页面目录\n    ├── utils/          # 工具函数\n    ├── package.json    # 依赖配置\n    ├── webpack.config.js # 构建配置\n    ├── README.md       # UI说明文档\n    └── dist/           # 构建输出目录\n        └── index.js    # UMD格式的构建文件\n```\n\n#### 2. 组件导出 ⭐ 2025-10-28 更新\n```javascript\n// index.js\nimport React from \'react\';\nimport { PluginLayout } from \'./components/PluginLayout\';\nimport { PluginPage1 } from \'./pages/PluginPage1\';\n\n// 插件配置\nconst pluginConfig = {\n  name: \'演示插件\',\n  version: \'1.0.0\',\n  description: \'这是一个演示插件\',\n  author: \'WLDOS Team\',\n  components: {\n    PluginLayout,\n    PluginPage1,\n  }\n  // 如果插件打包了自己的依赖（未通过 externals 排除），在此声明\n  // providedDependencies: {\n  //   \'lodash\': { value: _, version: \'4.17.21\' }\n  // }\n};\n\n// 默认导出（webpack会自动挂载到window[\'pluginCode\']和window[\'plugin_pluginCode\']）\nconst defaultExport = {\n  PluginLayout,\n  PluginPage1,\n  pluginConfig,\n  Components: {\n    PluginLayout,\n    PluginPage1,\n  }\n};\n\n// 主动注册到插件注册表（新路径）⭐ 2025-10-28 新增\nif (typeof window !== \'undefined\' && window.WLDOSPlugins && typeof window.WLDOSPlugins.register === \'function\') {\n  window.WLDOSPlugins.register(\'pluginCode\', defaultExport);  // 替换为实际插件编码\n}\n\nexport default defaultExport;\n```\n\n**导出说明（2025-10-28 更新）**：\n1. **Webpack 自动挂载**：通过 `library.name` 数组配置，webpack 会自动将 `default` 导出挂载到 `window[\'pluginCode\']` 和 `window[\'plugin_pluginCode\']`（旧路径），**无需在代码中手动挂载**\n2. **注册表注册（推荐）**：插件代码中主动调用 `window.WLDOSPlugins.register()` 注册到注册表（新路径）\n3. **向后兼容**：系统会自动兼容旧路径，优先使用注册表，找不到则回退到 window 路径\n4. **pluginConfig**：建议在默认导出中包含 `pluginConfig`，便于系统自动发现依赖\n\n#### 3. 扩展配置\n```json\n{\n  \"extensions\": [\n    {\n      \"id\": \"plugin-root\",\n      \"name\": \"插件模块\",\n      \"path\": \"/plugin\",\n      \"icon\": \"PluginOutlined\",\n      \"component\": \"PluginLayout\",\n      \"sort\": 100,\n      \"permissions\": [\"plugin:view\"]\n    }\n  ]\n}\n```\n\n#### 4. 开发流程\n1. 开发UI组件\n2. 配置扩展菜单\n3. 构建UI模块\n4. 打包插件\n5. 安装测试\n\n### 故障排除\n\n#### 常见问题\n1. **模块加载失败**: 检查UMD格式和外部依赖配置\n2. **组件未找到**: 确保组件名称与扩展配置一致\n3. **依赖冲突**: 使用外部依赖配置，避免打包核心库\n4. **构建失败**: 检查Node.js版本和依赖安装\n\n#### 调试技巧\n- 使用浏览器开发者工具检查网络请求\n- 查看控制台错误信息\n- 验证构建输出文件格式\n- 测试模块加载和组件渲染\n', 'wldos平台的插件模块', NULL, 'inherit', NULL, NULL, '2025-11-01 17:09:34', 1984546838375686145, 'chapter', 1533544727530094592, 0, 'text/markdown', 0, 0, 0, 20, NULL, 1, '2025-11-01 17:09:34', '0:0:0:0:0:0:0:1', 1, '2025-11-01 17:24:52', '0:0:0:0:0:0:0:1', 'normal', 1);
@@ -661,10 +664,10 @@ INSERT INTO `k_pubs` VALUES (1984553074093580290, '# 数据库脚本管理\n\n##
 DROP TABLE IF EXISTS `k_stars`;
 CREATE TABLE `k_stars`  (
                             `id` bigint(20) UNSIGNED NOT NULL,
-                            `object_id` bigint(20) UNSIGNED NOT NULL COMMENT '被点赞、关注对象id：帖子、产品或评论等等',
-                            `user_id` bigint(20) UNSIGNED NOT NULL COMMENT '操作人',
-                            `stars` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '是否关注、收藏：1真、0假',
-                            `likes` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '是否点赞、喜欢：1真、0假',
+                            `object_id` bigint(20) UNSIGNED NOT NULL ,
+                            `user_id` bigint(20) UNSIGNED NOT NULL ,
+                            `stars` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
+                            `likes` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' ,
                             PRIMARY KEY (`id`) USING BTREE,
                             UNIQUE INDEX `star_obj_user`(`object_id`, `user_id`) USING BTREE,
                             INDEX `star_obj_id`(`object_id`) USING BTREE,
@@ -1006,10 +1009,10 @@ DROP TABLE IF EXISTS `k_term_type`;
 CREATE TABLE `k_term_type`  (
                                 `id` bigint(20) UNSIGNED NOT NULL,
                                 `term_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
-                                `class_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类系统、类别，每个类别关联一组分类项，category目录、tag标签、route路由，与content_id组合表示某种内容格式的分类法',
+                                `class_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
                                 `description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
                                 `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
-                                `count` bigint(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '索引对象数',
+                                `count` bigint(20) UNSIGNED NOT NULL DEFAULT 0 ,
                                 PRIMARY KEY (`id`) USING BTREE,
                                 UNIQUE INDEX `term_id_class`(`term_id`, `class_type`) USING BTREE,
                                 INDEX `class_type`(`class_type`) USING BTREE,
@@ -1205,18 +1208,18 @@ DROP TABLE IF EXISTS `k_terms`;
 CREATE TABLE `k_terms`  (
                             `id` bigint(20) UNSIGNED NOT NULL,
                             `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `slug` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '别名，同一分类法下不允许重名',
-                            `info_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' COMMENT '是否推送信息发布门户',
-                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' COMMENT '是否有效：0无效、1有效',
-                            `display_order` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '排序',
-                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                            `slug` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `info_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' ,
+                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' ,
+                            `display_order` int(10) UNSIGNED NULL DEFAULT NULL ,
+                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `create_time` datetime NULL DEFAULT NULL ,
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `update_time` datetime NULL DEFAULT NULL ,
                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                            `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `versions` int(10) NULL DEFAULT NULL ,
                             PRIMARY KEY (`id`) USING BTREE,
                             UNIQUE INDEX `slug`(`slug`(191)) USING BTREE,
                             INDEX `name`(`name`(191)) USING BTREE
@@ -1380,245 +1383,44 @@ INSERT INTO `k_terms` VALUES (1999500658029412353, '测试插件', 'ceshichajian
 INSERT INTO `k_terms` VALUES (2000069801053118466, '演示插件', 'yanshichajian', '1', '1', NULL, 1, '2025-12-14 13:06:15', '0:0:0:0:0:0:0:1', 1, '2025-12-14 13:06:15', '0:0:0:0:0:0:0:1', 'normal', 1);
 
 -- ----------------------------
--- Table structure for plugin_airdrop_config
--- ----------------------------
-DROP TABLE IF EXISTS `plugin_airdrop_config`;
-CREATE TABLE `plugin_airdrop_config`  (
-                                          `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                          `config_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置类型',
-                                          `config_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置键',
-                                          `config_value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '配置值',
-                                          `config_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '配置描述',
-                                          `is_enabled` tinyint(4) NULL DEFAULT 1 COMMENT '是否启用',
-                                          `sort_order` int(11) NULL DEFAULT 0 COMMENT '排序',
-                                          `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人ID',
-                                          `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                          `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建IP',
-                                          `update_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人ID',
-                                          `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                          `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新IP',
-                                          `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '删除标志',
-                                          `is_valid` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'Y' COMMENT '是否有效',
-                                          `versions` int(11) NULL DEFAULT 1 COMMENT '乐观锁版本号',
-                                          PRIMARY KEY (`id`) USING BTREE,
-                                          UNIQUE INDEX `uk_type_key`(`config_type`, `config_key`) USING BTREE,
-                                          INDEX `idx_config_type`(`config_type`) USING BTREE,
-                                          INDEX `idx_config_key`(`config_key`) USING BTREE,
-                                          INDEX `idx_is_enabled`(`is_enabled`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2003102273168863235 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '脚本配置表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of plugin_airdrop_config
--- ----------------------------
-INSERT INTO `plugin_airdrop_config` VALUES (2003102272917204994, 'BITBROWSER', 'api.url', 'http://127.0.0.1:54345', '比特浏览器API地址', 1, 1, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102272959148033, 'BITBROWSER', 'api.key', '', '比特浏览器API密钥', 1, 2, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102272980119553, 'BITBROWSER', 'api.timeout', '30000', 'API超时时间(毫秒)', 1, 3, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102272992702465, 'BITBROWSER', 'api.retry.max-attempts', '3', 'API重试最大次数', 1, 4, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273009479681, 'BITBROWSER', 'api.retry.delay', '1000', 'API重试延迟(毫秒)', 1, 5, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273034645505, 'QUEUE', 'default-concurrency', '3', '默认并发数', 1, 6, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273051422721, 'QUEUE', 'default-task-interval', '2', '默认任务间隔(秒)', 1, 7, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273064005634, 'QUEUE', 'default-error-retry', '3', '默认错误重试次数', 1, 8, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273084977153, 'QUEUE', 'default-queue-repeat', '1', '默认队列重复次数', 1, 9, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273101754370, 'SCRIPT', 'timeout', '30000', '脚本执行超时时间(毫秒)', 1, 10, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273118531585, 'SCRIPT', 'max-execution-time', '300000', '脚本最大执行时间(毫秒)', 1, 11, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273135308801, 'BROWSER', 'default-user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', '默认User-Agent', 1, 12, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273152086017, 'BROWSER', 'window-size', '1920x1080', '浏览器窗口大小', 1, 13, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-INSERT INTO `plugin_airdrop_config` VALUES (2003102273168863234, 'BROWSER', 'headless', 'false', '是否无头模式', 1, 14, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', '1', 0);
-
--- ----------------------------
--- Table structure for plugin_airdrop_execution
--- ----------------------------
-DROP TABLE IF EXISTS `plugin_airdrop_execution`;
-CREATE TABLE `plugin_airdrop_execution`  (
-                                             `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                             `task_id` bigint(20) NOT NULL COMMENT '任务ID',
-                                             `execution_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '执行ID',
-                                             `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '执行状态',
-                                             `start_time` datetime NOT NULL COMMENT '开始时间',
-                                             `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
-                                             `duration` int(11) NULL DEFAULT NULL COMMENT '执行时长(秒)',
-                                             `result_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '执行结果数据',
-                                             `error_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '错误信息',
-                                             `retry_count` int(11) NULL DEFAULT 0 COMMENT '重试次数',
-                                             `log_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '日志内容',
-                                             `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人ID',
-                                             `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建IP',
-                                             `update_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人ID',
-                                             `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新IP',
-                                             `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '删除标志',
-                                             `is_valid` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'Y' COMMENT '是否有效',
-                                             `versions` int(11) NULL DEFAULT 1 COMMENT '乐观锁版本号',
-                                             PRIMARY KEY (`id`) USING BTREE,
-                                             INDEX `idx_task_id`(`task_id`) USING BTREE,
-                                             INDEX `idx_execution_id`(`execution_id`) USING BTREE,
-                                             INDEX `idx_status`(`status`) USING BTREE,
-                                             INDEX `idx_start_time`(`start_time`) USING BTREE,
-                                             INDEX `idx_task_status`(`task_id`, `status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '执行记录表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of plugin_airdrop_execution
--- ----------------------------
-
--- ----------------------------
--- Table structure for plugin_airdrop_queue
--- ----------------------------
-DROP TABLE IF EXISTS `plugin_airdrop_queue`;
-CREATE TABLE `plugin_airdrop_queue`  (
-                                         `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                         `queue_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '队列名称',
-                                         `max_concurrent` int(11) NULL DEFAULT 5 COMMENT '最大并发数',
-                                         `task_interval` int(11) NULL DEFAULT 10 COMMENT '任务间隔(秒)',
-                                         `retry_policy` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'fixed' COMMENT '重试策略',
-                                         `max_retries` int(11) NULL DEFAULT 3 COMMENT '最大重试次数',
-                                         `retry_interval` int(11) NULL DEFAULT 60 COMMENT '重试间隔(秒)',
-                                         `timeout_policy` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'abort' COMMENT '超时策略',
-                                         `execution_timeout` int(11) NULL DEFAULT 3600 COMMENT '执行超时时间(秒)',
-                                         `is_enabled` tinyint(4) NULL DEFAULT 1 COMMENT '是否启用',
-                                         `config_json` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '配置JSON',
-                                         `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '队列描述',
-                                         `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人ID',
-                                         `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                         `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建IP',
-                                         `update_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人ID',
-                                         `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                         `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新IP',
-                                         `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '删除标志',
-                                         `is_valid` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'Y' COMMENT '是否有效',
-                                         `versions` int(11) NULL DEFAULT 1 COMMENT '乐观锁版本号',
-                                         PRIMARY KEY (`id`) USING BTREE,
-                                         INDEX `idx_queue_name`(`queue_name`) USING BTREE,
-                                         INDEX `idx_is_enabled`(`is_enabled`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '队列配置表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of plugin_airdrop_queue
--- ----------------------------
-INSERT INTO `plugin_airdrop_queue` VALUES (1, 'default', 5, 10, 'fixed', 3, 60, 'abort', 3600, 1, NULL, '默认队列配置', NULL, '2025-12-22 21:55:53', NULL, NULL, '2025-12-22 21:55:53', NULL, 'normal', '1', 1);
-
--- ----------------------------
--- Table structure for plugin_airdrop_task
--- ----------------------------
-DROP TABLE IF EXISTS `plugin_airdrop_task`;
-CREATE TABLE `plugin_airdrop_task`  (
-                                        `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                        `task_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务名称',
-                                        `task_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务类型',
-                                        `script_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '脚本内容',
-                                        `script_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'javascript' COMMENT '脚本类型',
-                                        `template_id` bigint(20) NULL DEFAULT NULL COMMENT '模板ID',
-                                        `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'pending' COMMENT '任务状态',
-                                        `priority` int(11) NULL DEFAULT 0 COMMENT '优先级',
-                                        `max_retries` int(11) NULL DEFAULT 3 COMMENT '最大重试次数',
-                                        `retry_interval` int(11) NULL DEFAULT 60 COMMENT '重试间隔(秒)',
-                                        `concurrent_limit` int(11) NULL DEFAULT 1 COMMENT '并发限制',
-                                        `execution_timeout` int(11) NULL DEFAULT 3600 COMMENT '执行超时时间(秒)',
-                                        `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
-                                        `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
-                                        `last_execution_time` datetime NULL DEFAULT NULL COMMENT '最后执行时间',
-                                        `execution_count` int(11) NULL DEFAULT 0 COMMENT '执行次数',
-                                        `success_count` int(11) NULL DEFAULT 0 COMMENT '成功次数',
-                                        `failure_count` int(11) NULL DEFAULT 0 COMMENT '失败次数',
-                                        `config_json` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '配置JSON',
-                                        `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '任务描述',
-                                        `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人ID',
-                                        `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                        `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建IP',
-                                        `update_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人ID',
-                                        `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                        `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新IP',
-                                        `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '删除标志',
-                                        `is_valid` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'Y' COMMENT '是否有效',
-                                        `versions` int(11) NULL DEFAULT 1 COMMENT '乐观锁版本号',
-                                        PRIMARY KEY (`id`) USING BTREE,
-                                        INDEX `idx_task_name`(`task_name`) USING BTREE,
-                                        INDEX `idx_task_type`(`task_type`) USING BTREE,
-                                        INDEX `idx_status`(`status`) USING BTREE,
-                                        INDEX `idx_create_time`(`create_time`) USING BTREE,
-                                        INDEX `idx_template_id`(`template_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '脚本任务表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of plugin_airdrop_task
--- ----------------------------
-
--- ----------------------------
--- Table structure for plugin_airdrop_template
--- ----------------------------
-DROP TABLE IF EXISTS `plugin_airdrop_template`;
-CREATE TABLE `plugin_airdrop_template`  (
-                                            `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                            `template_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模板名称',
-                                            `template_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模板类型',
-                                            `script_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '脚本内容',
-                                            `script_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'javascript' COMMENT '脚本类型',
-                                            `config_json` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '配置JSON',
-                                            `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '模板描述',
-                                            `version` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '1.0.0' COMMENT '版本号',
-                                            `is_public` tinyint(4) NULL DEFAULT 0 COMMENT '是否公开',
-                                            `usage_count` int(11) NULL DEFAULT 0 COMMENT '使用次数',
-                                            `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人ID',
-                                            `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建IP',
-                                            `update_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人ID',
-                                            `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新IP',
-                                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '删除标志',
-                                            `is_valid` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'Y' COMMENT '是否有效',
-                                            `versions` int(11) NULL DEFAULT 1 COMMENT '乐观锁版本号',
-                                            PRIMARY KEY (`id`) USING BTREE,
-                                            INDEX `idx_template_name`(`template_name`) USING BTREE,
-                                            INDEX `idx_template_type`(`template_type`) USING BTREE,
-                                            INDEX `idx_is_public`(`is_public`) USING BTREE,
-                                            INDEX `idx_create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '脚本模板表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of plugin_airdrop_template
--- ----------------------------
-INSERT INTO `plugin_airdrop_template` VALUES (1, '标准脚本模板', 'standard', 'console.log(\"执行标准脚本任务\"); return { success: true, message: \"脚本任务执行成功\" };', 'javascript', NULL, '适用于大多数脚本场景的标准模板', '1.0.0', 1, 0, NULL, '2025-12-22 21:55:53', NULL, NULL, '2025-12-22 21:55:53', NULL, 'normal', '1', 1);
-
--- ----------------------------
 -- Table structure for store_plugin
 -- ----------------------------
 DROP TABLE IF EXISTS `store_plugin`;
 CREATE TABLE `store_plugin`  (
                                  `id` bigint(20) NOT NULL,
-                                 `plugin_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '插件编码，用于插件文件夹创建，全局唯一',
+                                 `plugin_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
                                  `plugin_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                 `version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '版本号',
-                                 `description` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '详情描述',
-                                 `install_info` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '安装信息富文本',
-                                 `version_history` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '修订历史富文本',
-                                 `preview_pic` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '截图预览富文本',
-                                 `plugin_url` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '下载地址（在开源社区或其他站点的下载地址，wldos默认不存储插件，只提供开源插件的管理）',
-                                 `down_count` bigint(20) NULL DEFAULT NULL COMMENT '下载数',
-                                 `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图标',
-                                 `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '作者',
-                                 `main_class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主类',
-                                 `star_count` bigint(20) NULL DEFAULT NULL COMMENT '关注数',
-                                 `like_count` bigint(20) NULL DEFAULT NULL COMMENT '点赞数',
-                                 `review_count` bigint(20) NULL DEFAULT NULL COMMENT '评论数',
-                                 `review_status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '审核状态',
-                                 `review_message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '审核信息',
-                                 `review_by` bigint(20) NULL DEFAULT NULL COMMENT '审核人',
-                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' COMMENT '是否有效：0无效、1有效',
-                                 `display_order` int(10) NULL DEFAULT NULL COMMENT '排序',
-                                 `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                 `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                 `version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `description` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `install_info` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `version_history` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `preview_pic` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `plugin_url` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `down_count` bigint(20) NULL DEFAULT NULL ,
+                                 `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `main_class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `star_count` bigint(20) NULL DEFAULT NULL ,
+                                 `like_count` bigint(20) NULL DEFAULT NULL ,
+                                 `review_count` bigint(20) NULL DEFAULT NULL ,
+                                 `review_status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `review_message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `review_by` bigint(20) NULL DEFAULT NULL ,
+                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' ,
+                                 `display_order` int(10) NULL DEFAULT NULL ,
+                                 `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `create_time` datetime NULL DEFAULT NULL ,
                                  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                 `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                 `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                 `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `update_time` datetime NULL DEFAULT NULL ,
                                  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                 `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
-                                 `repo_branch` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'Git 分支名（GitHub/Gitee）',
-                                 `repo_commit` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'Git 提交哈希（GitHub/Gitee）',
-                                 `repo_last_update` datetime NULL DEFAULT NULL COMMENT 'Git 仓库最后更新时间（GitHub/Gitee）',
-                                 `install_source` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'UPLOAD' COMMENT '安装来源：UPLOAD(上传), GITHUB(GitHub), GITEE(Gitee)',
-                                 `auto_update` tinyint(1) NULL DEFAULT 0 COMMENT '是否自动更新：0-否，1-是',
+                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `versions` int(10) NULL DEFAULT NULL ,
+                                 `repo_branch` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `repo_commit` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `repo_last_update` datetime NULL DEFAULT NULL ,
+                                 `install_source` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'UPLOAD' ,
+                                 `auto_update` tinyint(1) NULL DEFAULT 0 ,
                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -1636,17 +1438,17 @@ INSERT INTO `store_plugin` VALUES (2003846511661715457, 'test', '测试', '1.0.0
 DROP TABLE IF EXISTS `wo_account_association`;
 CREATE TABLE `wo_account_association`  (
                                            `id` bigint(20) UNSIGNED NOT NULL,
-                                           `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '关联后创建的账号id',
-                                           `bind_account` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '第三方关联账号,手机号也属于第三方账号',
-                                           `third_domain` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '三方域（比如QQ号的域：qq.com）,相同的域下与主账号的关联是一对一的，比如两个qq号不能绑定同一个账号',
-                                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                           `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                           `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                           `bind_account` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                           `third_domain` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                           `create_time` datetime NULL DEFAULT NULL ,
                                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                           `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                           `update_time` datetime NULL DEFAULT NULL ,
                                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                           `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                           `versions` int(10) NULL DEFAULT NULL ,
                                            PRIMARY KEY (`id`) USING BTREE,
                                            INDEX `idx_user_id`(`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账' ROW_FORMAT = Dynamic;
@@ -1660,23 +1462,23 @@ CREATE TABLE `wo_account_association`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_app`;
 CREATE TABLE `wo_app`  (
-                           `id` bigint(20) UNSIGNED NOT NULL COMMENT '应用id',
-                           `app_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '应用名称',
-                           `app_secret` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '应用秘钥',
-                           `app_code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '应用编码：必须支持URL解析，最长5位，将作为请求路径基础path',
-                           `app_desc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'APP说明',
-                           `app_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '管理类型：platform平台应用不允许租户预订，app应用级程序可以被租户选择',
-                           `app_origin` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'internal' COMMENT '应用来源',
-                           `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '归属公司',
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                           `id` bigint(20) UNSIGNED NOT NULL ,
+                           `app_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `app_secret` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `app_code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `app_desc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `app_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `app_origin` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'internal' ,
+                           `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `create_time` datetime NULL DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `update_time` datetime NULL DEFAULT NULL ,
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `versions` int(10) NULL DEFAULT NULL ,
                            PRIMARY KEY (`id`) USING BTREE,
                            UNIQUE INDEX `app_code`(`app_code`) USING BTREE,
                            INDEX `app_type`(`app_type`) USING BTREE,
@@ -1705,29 +1507,28 @@ INSERT INTO `wo_app` VALUES (1511494438434291716, '用户设置', 'abcdefgjdlfjs
 INSERT INTO `wo_app` VALUES (1533901932104171527, '文档', 'wldos-doc', 'doc', '文档库', 'platform', 'internal', 0, '1', 1, '2021-08-03 18:18:39', '192.168.1.23', 1, '2021-08-03 18:18:39', '192.168.1.23', 'normal', 1);
 INSERT INTO `wo_app` VALUES (1997322845079859202, '扩展管理', 'dfsdfghfgertsdfsadfsadf', 'extdy', '支持热插拔的动态扩展能力。', 'platform', 'internal', 0, '1', 1, '2025-12-06 23:10:49', '0:0:0:0:0:0:0:1', 1, '2025-12-06 23:11:14', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `wo_app` VALUES (2003091696702844930, '插件开发演示', NULL, 'zixsr', NULL, 'app', 'plugin', NULL, '1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:14:23', '0:0:0:0:0:0:0:1', 'normal', 2);
-INSERT INTO `wo_app` VALUES (2003102193556779010, '脚本神器', NULL, 'aoebn', NULL, 'app', 'plugin', NULL, '1', 1, '2025-12-22 21:55:53', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', 2);
 
 -- ----------------------------
 -- Table structure for wo_architecture
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_architecture`;
 CREATE TABLE `wo_architecture`  (
-                                    `id` bigint(20) UNSIGNED NOT NULL COMMENT '体系结构id',
-                                    `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '体系 结构编码',
-                                    `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '体系结构类型名称：组织架构、团队、群组、圈子',
-                                    `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
-                                    `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属公司id',
-                                    `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '上级体系结构',
-                                    `display_order` int(10) NULL DEFAULT NULL COMMENT '在上级公司下的展示顺序',
-                                    `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                    `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                    `id` bigint(20) UNSIGNED NOT NULL ,
+                                    `arch_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                    `arch_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                    `arch_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                    `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                    `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                    `display_order` int(10) NULL DEFAULT NULL ,
+                                    `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                    `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                    `create_time` datetime NULL DEFAULT NULL ,
                                     `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                    `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                    `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                     `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                    `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                    `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                    `update_time` datetime NULL DEFAULT NULL ,
+                                    `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                    `versions` int(10) NULL DEFAULT NULL ,
                                     PRIMARY KEY (`id`) USING BTREE,
                                     UNIQUE INDEX `un_com_arch`(`arch_code`, `com_id`) USING BTREE,
                                     INDEX `arch_code`(`arch_code`) USING BTREE,
@@ -1756,19 +1557,19 @@ INSERT INTO `wo_architecture` VALUES (1975776556798291969, 'addcom', '测试归�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_auth_role`;
 CREATE TABLE `wo_auth_role`  (
-                                 `id` bigint(20) UNSIGNED NOT NULL COMMENT '权限id',
-                                 `role_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '拥有者id：可以为角色、组织或用户',
-                                 `resource_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '涉及资源',
-                                 `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属应用',
-                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                 `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                 `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                 `id` bigint(20) UNSIGNED NOT NULL ,
+                                 `role_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `resource_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `create_time` datetime NULL DEFAULT NULL ,
                                  `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                 `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                 `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                 `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                 `update_time` datetime NULL DEFAULT NULL ,
                                  `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                 `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                 `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                 `versions` int(10) NULL DEFAULT NULL ,
                                  PRIMARY KEY (`id`) USING BTREE,
                                  INDEX `auth_role_id`(`role_id`) USING BTREE,
                                  INDEX `auth_res_id`(`resource_id`) USING BTREE,
@@ -2063,76 +1864,25 @@ INSERT INTO `wo_auth_role` VALUES (2003091697147441154, 1525946478916976648, 200
 INSERT INTO `wo_auth_role` VALUES (2003091697155829762, 91933147798355971, 2003091697130663938, 2003091696702844930, '1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `wo_auth_role` VALUES (2003091697189384194, 1525946478916976648, 2003091697164218370, 2003091696702844930, '1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `wo_auth_role` VALUES (2003091697197772801, 91933147798355971, 2003091697164218370, 2003091696702844930, '1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:14:11', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193846185985, 2, 2003102193829408770, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193854574593, 1509213016482824194, 2003102193829408770, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193867157506, 1525946478916976648, 2003102193829408770, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193875546114, 91933147798355971, 2003102193829408770, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193900711937, 2, 2003102193883934722, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193909100546, 1509213016482824194, 2003102193883934722, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193917489153, 1525946478916976648, 2003102193883934722, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193925877761, 91933147798355971, 2003102193883934722, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193946849281, 2, 2003102193934266369, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193955237889, 1509213016482824194, 2003102193934266369, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193972015106, 1525946478916976648, 2003102193934266369, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102193980403713, 91933147798355971, 2003102193934266369, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194013958145, 2, 2003102193997180930, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194022346754, 1509213016482824194, 2003102193997180930, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194030735361, 1525946478916976648, 2003102193997180930, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194039123970, 91933147798355971, 2003102193997180930, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194060095490, 1509213016482824194, 2003102194047512578, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194068484097, 1525946478916976648, 2003102194047512578, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194076872705, 91933147798355971, 2003102194047512578, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194102038529, 1525946478916976648, 2003102194085261313, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194110427137, 91933147798355971, 2003102194085261313, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194143981570, 2, 2003102194118815745, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194156564482, 1509213016482824194, 2003102194118815745, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194164953090, 1525946478916976648, 2003102194118815745, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194169147393, 91933147798355971, 2003102194118815745, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194198507521, 2, 2003102194185924609, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194206896129, 1509213016482824194, 2003102194185924609, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194215284738, 1525946478916976648, 2003102194185924609, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194223673346, 91933147798355971, 2003102194185924609, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194257227777, 2, 2003102194248839170, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194265616386, 1509213016482824194, 2003102194248839170, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194282393602, 1525946478916976648, 2003102194248839170, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194286587906, 91933147798355971, 2003102194248839170, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194311753730, 1509213016482824194, 2003102194294976514, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194320142338, 1525946478916976648, 2003102194294976514, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194328530946, 91933147798355971, 2003102194294976514, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194353696769, 1525946478916976648, 2003102194336919554, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194362085377, 91933147798355971, 2003102194336919554, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194383056898, 2, 2003102194370473986, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194391445506, 1509213016482824194, 2003102194370473986, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194399834114, 1525946478916976648, 2003102194370473986, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194408222722, 91933147798355971, 2003102194370473986, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194450165761, 2, 2003102194433388545, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194458554369, 1509213016482824194, 2003102194433388545, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194471137282, 1525946478916976648, 2003102194433388545, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194479525890, 91933147798355971, 2003102194433388545, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194508886017, 2, 2003102194487914497, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194517274625, 1509213016482824194, 2003102194487914497, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194521468929, 1525946478916976648, 2003102194487914497, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194529857538, 91933147798355971, 2003102194487914497, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_auth_role` VALUES (2003102194555023362, 91933147798355971, 2003102194538246146, 2003102193556779010, '1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:55:54', '0:0:0:0:0:0:0:1', 'normal', 1);
 
 -- ----------------------------
 -- Table structure for wo_com_user
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_com_user`;
 CREATE TABLE `wo_com_user`  (
-                                `id` bigint(20) UNSIGNED NOT NULL COMMENT '用户公司关系id',
-                                `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '用户id',
-                                `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属公司id',
-                                `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否主企业：1是0否',
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                `id` bigint(20) UNSIGNED NOT NULL ,
+                                `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `is_main` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `create_time` datetime NULL DEFAULT NULL ,
                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `update_time` datetime NULL DEFAULT NULL ,
                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `versions` int(10) NULL DEFAULT NULL ,
                                 PRIMARY KEY (`id`) USING BTREE,
                                 INDEX `com_user_id`(`user_id`) USING BTREE,
                                 INDEX `com_id`(`com_id`) USING BTREE,
@@ -2160,21 +1910,21 @@ INSERT INTO `wo_com_user` VALUES (1971940874585722881, 1971940409559044098, 1508
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_company`;
 CREATE TABLE `wo_company`  (
-                               `id` bigint(20) UNSIGNED NOT NULL COMMENT '公司id，顶级根节点为系统保留节点00000000，所有租户在其下设置',
-                               `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '公司编码',
-                               `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '公司名称',
-                               `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '公司描述',
-                               `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '上级公司',
-                               `display_order` int(10) NULL DEFAULT NULL COMMENT '在上级公司下的排序',
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                               `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                               `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                               `id` bigint(20) UNSIGNED NOT NULL ,
+                               `com_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                               `com_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                               `com_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                               `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                               `display_order` int(10) NULL DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                               `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                               `create_time` datetime NULL DEFAULT NULL ,
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                               `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                               `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                               `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                               `update_time` datetime NULL DEFAULT NULL ,
                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                               `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                               `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                               `versions` int(10) NULL DEFAULT NULL ,
                                PRIMARY KEY (`id`) USING BTREE,
                                UNIQUE INDEX `un_com_code`(`com_code`) USING BTREE,
                                INDEX `com_parent_id`(`parent_id`) USING BTREE,
@@ -2197,33 +1947,33 @@ INSERT INTO `wo_company` VALUES (1728726640311209986, 'test-parent', '测试公�
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_domain`;
 CREATE TABLE `wo_domain`  (
-                              `id` bigint(20) UNSIGNED NOT NULL COMMENT '站点id',
-                              `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '归属公司id',
-                              `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '站点域名: 如163.com',
-                              `second_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '个性域名，代表该虚拟域相对根域的二级域名，用来实现最简单的域名解析',
-                              `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '站点名称: 如网易',
-                              `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主页地址',
-                              `site_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '网站logo相对路径',
-                              `favicon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '网站favicon',
-                              `site_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '网站标题，用于seo',
-                              `site_keyword` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '网站关键词，用于seo',
-                              `site_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '网站描述，用于seo',
-                              `slogan` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '域名品牌口号，用于登陆窗口或其他比较醒目的地方',
-                              `foot` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '底部信息，支持自定义html',
-                              `flink` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '友情链接，支持html',
-                              `copy` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '底部版权信息',
-                              `parent_id` bigint(20) NULL DEFAULT NULL COMMENT '父级站点：顶级为0',
-                              `display_order` int(10) NULL DEFAULT NULL COMMENT '在父级站点下的排序',
-                              `cname_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'cname域名是通过cname解析到主域名的授权辅助域名，逗号间隔',
-                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                              `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                              `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                              `id` bigint(20) UNSIGNED NOT NULL ,
+                              `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                              `site_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `second_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `site_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `site_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `site_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `favicon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `site_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `site_keyword` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `site_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `slogan` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `foot` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL ,
+                              `flink` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL ,
+                              `copy` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL ,
+                              `parent_id` bigint(20) NULL DEFAULT NULL ,
+                              `display_order` int(10) NULL DEFAULT NULL ,
+                              `cname_domain` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                              `create_time` datetime NULL DEFAULT NULL ,
                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                              `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                              `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                              `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                              `update_time` datetime NULL DEFAULT NULL ,
                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                              `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `versions` int(10) NULL DEFAULT NULL ,
                               PRIMARY KEY (`id`) USING BTREE,
                               UNIQUE INDEX `uni_idx_site_domain`(`site_domain`) USING BTREE,
                               UNIQUE INDEX `uni_second_dom`(`second_domain`) USING BTREE,
@@ -2245,18 +1995,18 @@ INSERT INTO `wo_domain` VALUES (1732387417383628801, 1508132284859596808, 'xx.co
 DROP TABLE IF EXISTS `wo_domain_app`;
 CREATE TABLE `wo_domain_app`  (
                                   `id` bigint(21) UNSIGNED NOT NULL,
-                                  `app_id` bigint(21) UNSIGNED NULL DEFAULT NULL COMMENT '应用id',
-                                  `domain_id` bigint(21) NULL DEFAULT NULL COMMENT '域id，一个公司可以拥有多个域',
-                                  `com_id` bigint(21) UNSIGNED NULL DEFAULT NULL COMMENT '公司id',
-                                  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                  `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                  `app_id` bigint(21) UNSIGNED NULL DEFAULT NULL ,
+                                  `domain_id` bigint(21) NULL DEFAULT NULL ,
+                                  `com_id` bigint(21) UNSIGNED NULL DEFAULT NULL ,
+                                  `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                  `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                  `create_time` datetime NULL DEFAULT NULL ,
                                   `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                  `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                  `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                  `update_time` datetime NULL DEFAULT NULL ,
                                   `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                  `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                  `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                  `versions` int(10) NULL DEFAULT NULL ,
                                   PRIMARY KEY (`id`) USING BTREE,
                                   INDEX `dom_app_id`(`app_id`) USING BTREE,
                                   INDEX `domain_id`(`domain_id`) USING BTREE,
@@ -2333,7 +2083,6 @@ INSERT INTO `wo_domain_app` VALUES (1958171905009668098, 79317353314828295, 1533
 INSERT INTO `wo_domain_app` VALUES (1994760972031500289, 1994757825070374914, 1533544727530094592, 0, '1', 1, '2025-11-29 21:30:51', '0:0:0:0:0:0:0:1', 1, '2025-11-29 21:30:51', '0:0:0:0:0:0:0:1', 'normal', 0);
 INSERT INTO `wo_domain_app` VALUES (1997325189981007874, 1997322845079859202, 1533544727530094592, 0, '1', 1, '2025-12-06 23:20:08', '0:0:0:0:0:0:0:1', 1, '2025-12-06 23:20:08', '0:0:0:0:0:0:0:1', 'normal', 0);
 INSERT INTO `wo_domain_app` VALUES (2003091867851419649, 2003091696702844930, 1533544727530094592, 0, '1', 1, '2025-12-22 21:14:52', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:14:52', '0:0:0:0:0:0:0:1', 'normal', 0);
-INSERT INTO `wo_domain_app` VALUES (2003103003694985218, 2003102193556779010, 1533544727530094592, 0, '1', 1, '2025-12-22 21:59:07', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:59:07', '0:0:0:0:0:0:0:1', 'normal', 0);
 
 -- ----------------------------
 -- Table structure for wo_domain_resource
@@ -2341,22 +2090,22 @@ INSERT INTO `wo_domain_app` VALUES (2003103003694985218, 2003102193556779010, 15
 DROP TABLE IF EXISTS `wo_domain_resource`;
 CREATE TABLE `wo_domain_resource`  (
                                        `id` bigint(20) NOT NULL,
-                                       `module_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'static' COMMENT '组件名（模板名），作为多域环境下前端基于某路由定位组件的依据，静态模板路由默认为“static”仅作域下的资源项，比如首页，不同站点需要不同的模板展示不同的数据、业务和行为，用前端的定制解决多域业务的复杂性，从而降低后端系统的复杂性',
-                                       `resource_id` bigint(20) UNSIGNED NOT NULL COMMENT '资源id',
-                                       `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '应用id',
-                                       `term_type_id` bigint(20) NULL DEFAULT 0 COMMENT '该资源关联的分类法类型，一般是菜单类分类法类型，这种分类法父级是正常的业务分类，业务分类可能还包含子业务分类，关联后菜单的展示数据取决于关联的分类及其子分类，遵循分类法规则，有子不删',
-                                       `url` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '指定url，可以是三方url，用于动态路由运行时指定url',
-                                       `domain_id` bigint(20) UNSIGNED NOT NULL COMMENT '域id，用于确定路由、资源、组件的属主关联关系',
-                                       `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                       `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注说明',
-                                       `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                       `module_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'static' ,
+                                       `resource_id` bigint(20) UNSIGNED NOT NULL ,
+                                       `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                       `term_type_id` bigint(20) NULL DEFAULT 0 ,
+                                       `url` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `domain_id` bigint(20) UNSIGNED NOT NULL ,
+                                       `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                        `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                       `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                       `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                       `create_time` datetime NULL DEFAULT NULL ,
+                                       `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                        `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                       `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                       `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                       `versions` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '乐观锁',
+                                       `update_time` datetime NULL DEFAULT NULL ,
+                                       `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `versions` int(10) UNSIGNED NULL DEFAULT NULL ,
                                        PRIMARY KEY (`id`) USING BTREE,
                                        UNIQUE INDEX `dom_res_route`(`domain_id`, `resource_id`) USING BTREE,
                                        INDEX `dom_res_valid`(`is_valid`, `delete_flag`) USING BTREE,
@@ -2656,24 +2405,6 @@ INSERT INTO `wo_domain_resource` VALUES (2003092122915434498, 'static', 20030916
 INSERT INTO `wo_domain_resource` VALUES (2003092122923823105, 'static', 2003091697076137985, 2003091696702844930, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:15:52', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:15:52', 'normal', 0);
 INSERT INTO `wo_domain_resource` VALUES (2003092122940600321, 'static', 2003091697130663938, 2003091696702844930, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:15:52', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:15:52', 'normal', 0);
 INSERT INTO `wo_domain_resource` VALUES (2003092122953183234, 'static', 2003091697164218370, 2003091696702844930, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:15:52', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:15:52', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354909224962, 'static', 2003102193829408770, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354926002177, 'static', 2003102193883934722, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354934390785, 'static', 2003102193934266369, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354951168002, 'static', 2003102193988792322, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354963750914, 'static', 2003102193997180930, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354980528129, 'static', 2003102194047512578, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103354988916737, 'static', 2003102194085261313, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355014082562, 'static', 2003102194118815745, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355030859778, 'static', 2003102194185924609, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355043442690, 'static', 2003102194232061954, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355051831298, 'static', 2003102194248839170, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355060219905, 'static', 2003102194294976514, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355076997121, 'static', 2003102194336919554, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355081191426, 'static', 2003102194370473986, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355248963586, 'static', 2003102194416611329, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355265740801, 'static', 2003102194433388545, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355274129409, 'static', 2003102194487914497, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
-INSERT INTO `wo_domain_resource` VALUES (2003103355290906625, 'static', 2003102194538246146, 2003102193556779010, 0, NULL, 1533544727530094592, '1', NULL, 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 1, '0:0:0:0:0:0:0:1', '2025-12-22 22:00:30', 'normal', 0);
 
 -- ----------------------------
 -- Table structure for wo_file
@@ -2681,18 +2412,18 @@ INSERT INTO `wo_domain_resource` VALUES (2003103355290906625, 'static', 20031021
 DROP TABLE IF EXISTS `wo_file`;
 CREATE TABLE `wo_file`  (
                             `id` bigint(20) UNSIGNED NOT NULL,
-                            `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件名称',
-                            `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件物理存储路径名',
-                            `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件mime类型',
-                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                            `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `mime_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `create_time` datetime NULL DEFAULT NULL ,
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `update_time` datetime NULL DEFAULT NULL ,
                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                            `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `versions` int(10) NULL DEFAULT NULL ,
                             PRIMARY KEY (`id`) USING BTREE,
                             INDEX `file_is_valid_del`(`is_valid`, `delete_flag`) USING BTREE,
                             INDEX `file_mime_type`(`mime_type`) USING BTREE
@@ -2910,6 +2641,7 @@ INSERT INTO `wo_file` VALUES (2000069368528101377, 'f1e322d7-4a2b-4982-95a5-e5e7
 INSERT INTO `wo_file` VALUES (2003100730436743169, '5b7f32f91a2d9bfdae48d5a3c94f7bb89512cad2.jpg', '/2025/12/22215004K9hjodaK.jpg', 'image/jpeg', '1', 1, '2025-12-22 21:50:05', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:50:05', '0:0:0:0:0:0:0:1', 'normal', 0);
 INSERT INTO `wo_file` VALUES (2003100869444366338, '5b7f32f91a2d9bfdae48d5a3c94f7bb89512cad2.jpg', '/2025/12/22215037t1ILxbmR.jpg', 'image/jpeg', '1', 1, '2025-12-22 21:50:38', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:50:38', '0:0:0:0:0:0:0:1', 'normal', 0);
 INSERT INTO `wo_file` VALUES (2003846481890545666, 'QQ20250326-214108.png', '/2025/12/24231325OAvx8sRq.png', 'image/png', '1', 1, '2025-12-24 23:13:26', '0:0:0:0:0:0:0:1', 1, '2025-12-24 23:13:26', '0:0:0:0:0:0:0:1', 'normal', 0);
+INSERT INTO `wo_file` VALUES (2005266596007780354, '9c00716d-5ca4-43e2-929c-8ce49ee634d2_base_resized.jpg', '/2025/12/28211627cJBV06bQ.jpg', 'image/jpeg', '1', 100, '2025-12-28 21:16:27', '0:0:0:0:0:0:0:1', 100, '2025-12-28 21:16:27', '0:0:0:0:0:0:0:1', 'normal', 0);
 
 -- ----------------------------
 -- Table structure for wo_mail
@@ -2917,19 +2649,19 @@ INSERT INTO `wo_file` VALUES (2003846481890545666, 'QQ20250326-214108.png', '/20
 DROP TABLE IF EXISTS `wo_mail`;
 CREATE TABLE `wo_mail`  (
                             `id` bigint(20) NOT NULL,
-                            `from_addr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '发件邮箱',
-                            `to_addr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '收件邮箱',
-                            `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '内容',
-                            `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '发送状态：0失败，1成功',
-                            `result` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '返回结果信息',
-                            `create_by` bigint(20) UNSIGNED NULL DEFAULT 0 COMMENT '创建人',
-                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                            `from_addr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `to_addr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL ,
+                            `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `result` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL ,
+                            `create_by` bigint(20) UNSIGNED NULL DEFAULT 0 ,
+                            `create_time` datetime NULL DEFAULT NULL ,
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `update_time` datetime NULL DEFAULT NULL ,
                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                            `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `versions` int(10) NULL DEFAULT NULL ,
                             PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -2947,28 +2679,29 @@ INSERT INTO `wo_mail` VALUES (1999488299634270209, 'wldos.com@88.com', '30699114
 INSERT INTO `wo_mail` VALUES (1999500791039180802, 'wldos.com@88.com', '306991142@qq.com', '尊敬的开发者，\n\n您的插件已通过审核，现已上架到插件市场。\n\n插件信息：\n  插件名称：测试\n  插件编码：test\n  版本号：1.0.0\n  描述：测试\n\n感谢您对 WLDOS 插件市场的支持！\n\nWLDOS 团队', '1', NULL, 1, '2025-12-12 23:25:12', '0:0:0:0:0:0:0:1', 1, '2025-12-12 23:25:15', '0:0:0:0:0:0:0:1', 'normal', 0);
 INSERT INTO `wo_mail` VALUES (2000164435053785090, 'wldos.com@88.com', '306991142@qq.com', '尊敬的开发者，\n\n您的插件已通过审核，现已上架到插件市场。\n\n插件信息：\n  插件名称：插件开发演示\n  插件编码：plugin-demo\n  版本号：1.0.0\n  描述：WLDOS插件开发演示项目，作为插件开发者的基础框架和参考示例\n\n感谢您对 WLDOS 插件市场的支持！\n\nWLDOS 团队', '1', NULL, 1, '2025-12-14 19:22:17', '0:0:0:0:0:0:0:1', 1, '2025-12-14 19:22:19', '0:0:0:0:0:0:0:1', 'normal', 0);
 INSERT INTO `wo_mail` VALUES (2000174206980988930, 'wldos.com@88.com', '306991142@qq.com', '尊敬的开发者，\n\n您的插件已通过审核，现已上架到插件市场。\n\n插件信息：\n  插件名称：插件开发演示\n  插件编码：plugin-demo\n  版本号：1.0.0\n  描述：WLDOS插件开发演示项目，作为插件开发者的基础框架和参考示例\n\n感谢您对 WLDOS 插件市场的支持！\n\nWLDOS 团队', '1', NULL, 1, '2025-12-14 20:01:07', '0:0:0:0:0:0:0:1', 1, '2025-12-14 20:01:08', '0:0:0:0:0:0:0:1', 'normal', 0);
+INSERT INTO `wo_mail` VALUES (2005270492172271617, 'wldos.com@88.com', 'sdfsdf@163.com', '<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/><title>账户激活</title></head><body>您好，这是验证邮件，请点击下面的链接完成验证，</body></html><a href=\"http://localhost:8000/user/active/verify=2005270491576680450\" target=\"_blank\">激活账号http://localhost:8000/user/active/verify=2005270491576680450</a><br/>如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。', '1', NULL, 0, '2025-12-28 21:31:56', '0:0:0:0:0:0:0:1', 0, '2025-12-28 21:31:57', '0:0:0:0:0:0:0:1', 'normal', 0);
 
 -- ----------------------------
 -- Table structure for wo_metrics
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_metrics`;
 CREATE TABLE `wo_metrics`  (
-                               `id` bigint(20) NOT NULL COMMENT '主键ID 雪花算法',
-                               `plugin_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '插件编码',
-                               `metric_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '类型：success/error/uiInfo/script/firstPaint',
-                               `ui_info_time` decimal(10, 2) NULL DEFAULT NULL COMMENT 'UI信息获取耗时（毫秒）',
-                               `script_time` decimal(10, 2) NULL DEFAULT NULL COMMENT '脚本加载耗时（毫秒）',
-                               `total_time` decimal(10, 2) NULL DEFAULT NULL COMMENT '总耗时（毫秒）',
-                               `version` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '版本号或hash',
-                               `entry_point` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '入口文件名',
-                               `error` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '错误信息',
-                               `error_category` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '错误分类：timeout/http/dns/unknown',
-                               `script_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '脚本URL',
-                               `com_id` bigint(20) NULL DEFAULT NULL COMMENT '租户ID',
-                               `user_id` bigint(20) NULL DEFAULT NULL COMMENT '用户ID',
-                               `domain_id` bigint(20) NULL DEFAULT NULL COMMENT '域名ID',
-                               `timestamp` bigint(20) NULL DEFAULT NULL COMMENT '时间戳',
-                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
+                               `id` bigint(20) NOT NULL ,
+                               `plugin_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL ,
+                               `metric_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL ,
+                               `ui_info_time` decimal(10, 2) NULL DEFAULT NULL ,
+                               `script_time` decimal(10, 2) NULL DEFAULT NULL ,
+                               `total_time` decimal(10, 2) NULL DEFAULT NULL ,
+                               `version` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                               `entry_point` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                               `error` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL ,
+                               `error_category` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                               `script_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                               `com_id` bigint(20) NULL DEFAULT NULL ,
+                               `user_id` bigint(20) NULL DEFAULT NULL ,
+                               `domain_id` bigint(20) NULL DEFAULT NULL ,
+                               `timestamp` bigint(20) NULL DEFAULT NULL ,
+                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL,
                                `create_time` datetime NULL DEFAULT NULL,
                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -3361,18 +3094,18 @@ INSERT INTO `wo_metrics` VALUES (1990798151245754372, 'airdrop', 'error', NULL, 
 DROP TABLE IF EXISTS `wo_oauth_login_user`;
 CREATE TABLE `wo_oauth_login_user`  (
                                         `id` bigint(20) UNSIGNED NOT NULL,
-                                        `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '关联后创建的账号id',
-                                        `oauth_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '社会化服务商类型：比如微信、qq、微博等的类型编码',
+                                        `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                        `oauth_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
                                         `open_id` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
                                         `union_id` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                        `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                        `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                        `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                        `create_time` datetime NULL DEFAULT NULL ,
                                         `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                        `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                        `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                        `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                        `update_time` datetime NULL DEFAULT NULL ,
                                         `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                        `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                        `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                        `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                        `versions` int(10) NULL DEFAULT NULL ,
                                         PRIMARY KEY (`id`) USING BTREE,
                                         INDEX `idx_user_id`(`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '账号关联表：与账号表结合定义了账号关系链，保证第三方方式登录时可以通过链认证用户。用户登录后，还可以选择绑定多个第三方账' ROW_FORMAT = Dynamic;
@@ -3388,11 +3121,11 @@ DROP TABLE IF EXISTS `wo_options`;
 CREATE TABLE `wo_options`  (
                                `id` bigint(20) UNSIGNED NOT NULL,
                                `option_key` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                               `option_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '配置key',
+                               `option_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
                                `option_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
                                `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                               `option_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'no' COMMENT '选项类型：auto_reload、normal',
-                               `app_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '模块编码',
+                               `option_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'no' ,
+                               `app_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
                                PRIMARY KEY (`id`) USING BTREE,
                                UNIQUE INDEX `option_name`(`option_key`) USING BTREE,
                                INDEX `options_app_type`(`option_type`) USING BTREE,
@@ -3417,9 +3150,9 @@ INSERT INTO `wo_options` VALUES (268507090779815937, 'wldos_system_multitenancy_
 INSERT INTO `wo_options` VALUES (268507090792398857, 'wldos_system_multidomain_switch', NULL, 'true', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268507343822176260, 'wldos_platform_user_register_emailaction', NULL, 'true', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268507343834759168, 'spring_mail_host', NULL, 'smtp.88.com', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343847342087, 'spring_mail_username', NULL, 'wldos', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343859924993, 'spring_mail_password', NULL, 'wiVQsdfsf2E', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343876702209, 'wldos_mail_fromMail_addr', NULL, 'wldos@88.com', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343847342087, 'spring_mail_username', NULL, 'wldos.com', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343859924993, 'spring_mail_password', NULL, 'wiVQA8hEUhYX432E', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343876702209, 'wldos_mail_fromMail_addr', NULL, 'wldos.com@88.com', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268563415123542023, 'wldos_cms_comment_audit', NULL, 'false', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268993001648996359, 'wldos_file_store_path', NULL, '', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (269981894250774529, 'wldos_platform_adminEmail', NULL, '306991142@qq.com', NULL, 'auto_reload', 'sys_option');
@@ -3430,24 +3163,24 @@ INSERT INTO `wo_options` VALUES (1998031741499039745, 'term_type_meta_nav_menu',
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org`;
 CREATE TABLE `wo_org`  (
-                           `id` bigint(20) UNSIGNED NOT NULL COMMENT '组织机构id',
-                           `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '组织机构编码',
-                           `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '组织机构名称',
-                           `org_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '组织/群组/团队/圈子头像的实际存储相对路径',
-                           `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '组织类型：组织架构、团队、群组和圈子，不同于国标的组织机构类型，某种类型的组织具备什么构成，由体系结构对应的模型定义',
-                           `arch_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属体系结构id',
-                           `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属公司id',
-                           `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '上级体系结构',
-                           `display_order` int(10) NULL DEFAULT NULL COMMENT '在上级公司下的排序',
-                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                           `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                           `id` bigint(20) UNSIGNED NOT NULL ,
+                           `org_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `org_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `org_logo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `org_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `arch_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `display_order` int(10) NULL DEFAULT NULL ,
+                           `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `create_time` datetime NULL DEFAULT NULL ,
                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                           `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                           `update_time` datetime NULL DEFAULT NULL ,
                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                           `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                           `versions` int(10) NULL DEFAULT NULL ,
                            PRIMARY KEY (`id`) USING BTREE,
                            UNIQUE INDEX `un_com_arch_org`(`org_code`, `arch_id`, `com_id`) USING BTREE,
                            INDEX `org_type`(`org_type`) USING BTREE,
@@ -3484,21 +3217,21 @@ INSERT INTO `wo_org` VALUES (1732396987699032065, 'tenantOrg', '租户组织', N
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_org_user`;
 CREATE TABLE `wo_org_user`  (
-                                `id` bigint(20) UNSIGNED NOT NULL COMMENT '用户组织关系id',
-                                `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '用户id',
-                                `user_com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '用户实际归属公司，用于设置租户管理员等场景下绑定系统用户组，类似于借调',
-                                `org_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '组织机构id',
-                                `arch_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属体系结构id',
-                                `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属公司id',
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                `id` bigint(20) UNSIGNED NOT NULL ,
+                                `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `user_com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `org_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `arch_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                `create_time` datetime NULL DEFAULT NULL ,
+                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'normal' COMMENT '删除状态字典值：normal正常，deleted删除',
-                                `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                `update_time` datetime NULL DEFAULT NULL ,
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'normal' ,
+                                `versions` int(10) NULL DEFAULT NULL ,
                                 PRIMARY KEY (`id`) USING BTREE,
                                 INDEX `org_user_id`(`user_id`) USING BTREE,
                                 INDEX `org_id`(`org_id`) USING BTREE,
@@ -3574,6 +3307,7 @@ INSERT INTO `wo_org_user` VALUES (1858011700750454786, 1858011308440424449, NULL
 INSERT INTO `wo_org_user` VALUES (1858017559912124418, 1858017362972774401, NULL, 300, 0, 0, '1', 1858011634795024386, '127.0.0.1', '2024-11-17 13:21:21', 1858011634795024386, '127.0.0.1', '2024-11-17 13:21:21', 'normal', 0);
 INSERT INTO `wo_org_user` VALUES (1971940409626152963, 1971940409559044098, NULL, 300, 0, 0, '1', 1, '0:0:0:0:0:0:0:1', '2025-09-27 22:10:05', 1, '0:0:0:0:0:0:0:1', '2025-09-27 22:10:05', 'normal', 0);
 INSERT INTO `wo_org_user` VALUES (1971940874518614017, 1971940409559044098, 1508132284859596808, 1732396987699032065, 1728749073013469185, 1508132284859596808, '1', 1, '0:0:0:0:0:0:0:1', '2025-09-27 22:11:56', 1, '0:0:0:0:0:0:0:1', '2025-09-27 22:11:56', 'normal', 0);
+INSERT INTO `wo_org_user` VALUES (2005270491920613377, 2005270491576680450, NULL, 300, 0, 0, '1', 0, '0:0:0:0:0:0:0:1', '2025-12-28 21:31:56', 0, '0:0:0:0:0:0:0:1', '2025-12-28 21:31:56', 'normal', 0);
 
 -- ----------------------------
 -- Table structure for wo_plugin_registry
@@ -3581,28 +3315,28 @@ INSERT INTO `wo_org_user` VALUES (1971940874518614017, 1971940409559044098, 1508
 DROP TABLE IF EXISTS `wo_plugin_registry`;
 CREATE TABLE `wo_plugin_registry`  (
                                        `id` bigint(20) UNSIGNED NOT NULL,
-                                       `plugin_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '插件编码，用于插件文件夹创建，全局唯一',
-                                       `plugin_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
-                                       `version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '版本号',
-                                       `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
-                                       `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '作者',
-                                       `main_class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主类',
-                                       `plugin_status` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '状态：INSTALLED/ENABLED/DISABLED',
-                                       `metadata` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'JSON格式存储插件元数据',
-                                       `auto_start` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否自动启动：1是0否',
-                                       `error_message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '调试信息',
-                                       `depends` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'JSON格式存储依赖信息',
-                                       `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '注册的应用id',
-                                       `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' COMMENT '是否有效：0无效、1有效',
-                                       `display_order` int(10) NULL DEFAULT NULL COMMENT '排序',
-                                       `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                       `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                       `plugin_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `plugin_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                                       `version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `main_class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `plugin_status` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `metadata` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL ,
+                                       `auto_start` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `error_message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `depends` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                       `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' ,
+                                       `display_order` int(10) NULL DEFAULT NULL ,
+                                       `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                       `create_time` datetime NULL DEFAULT NULL ,
                                        `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                       `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                       `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                       `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                       `update_time` datetime NULL DEFAULT NULL ,
                                        `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                       `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                       `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                       `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                       `versions` int(10) NULL DEFAULT NULL ,
                                        PRIMARY KEY (`id`) USING BTREE,
                                        INDEX `idx_plugin_app_id`(`app_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
@@ -3611,7 +3345,6 @@ CREATE TABLE `wo_plugin_registry`  (
 -- Records of wo_plugin_registry
 -- ----------------------------
 INSERT INTO `wo_plugin_registry` VALUES (2003091695687823361, 'plugin-demo', '插件开发演示', '1.0.0', 'WLDOS插件开发演示项目，作为插件开发者的基础框架和参考示例', 'WLDOS Team', 'com.wldos.plugin.demo.DemoPlugin', 'ENABLED', NULL, '0', NULL, NULL, 2003091696702844930, '1', NULL, 1, '2025-12-22 21:14:23', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:14:23', '0:0:0:0:0:0:0:1', 'normal', 2);
-INSERT INTO `wo_plugin_registry` VALUES (2003102191665147906, 'airdrop', '脚本神器', '1.0.0', '自动化脚本任务管理插件，支持批量任务执行、模板管理、队列调度等功能', 'admin', 'com.wldos.plugin.airdrop.AirdropPlugin', 'ENABLED', NULL, '0', NULL, NULL, 2003102193556779010, '1', NULL, 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 1, '2025-12-22 21:56:12', '0:0:0:0:0:0:0:1', 'normal', 2);
 
 -- ----------------------------
 -- Table structure for wo_region
@@ -3619,20 +3352,20 @@ INSERT INTO `wo_plugin_registry` VALUES (2003102191665147906, 'airdrop', '脚本
 DROP TABLE IF EXISTS `wo_region`;
 CREATE TABLE `wo_region`  (
                               `id` bigint(20) UNSIGNED NOT NULL,
-                              `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '国标区域编码',
-                              `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '地区名称',
-                              `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '地区级别：1 省级，2市级，3区县级',
-                              `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '父级地区',
-                              `display_order` int(10) NULL DEFAULT NULL COMMENT '排序',
-                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                              `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                              `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                              `region_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `level` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                              `display_order` int(10) NULL DEFAULT NULL ,
+                              `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                              `create_time` datetime NULL DEFAULT NULL ,
                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                              `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                              `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                              `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                              `update_time` datetime NULL DEFAULT NULL ,
                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                              `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                              `versions` int(10) NULL DEFAULT NULL ,
                               PRIMARY KEY (`id`) USING BTREE,
                               UNIQUE INDEX `region_code`(`region_code`) USING BTREE,
                               INDEX `region_level`(`level`) USING BTREE,
@@ -4027,28 +3760,28 @@ INSERT INTO `wo_region` VALUES (820000, '820000', '澳门特别行政区', '1', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_resource`;
 CREATE TABLE `wo_resource`  (
-                                `id` bigint(20) UNSIGNED NOT NULL COMMENT '资源id',
-                                `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源编码，可作为权限字用',
-                                `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源名称',
-                                `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源请求url',
-                                `component_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组件路径：格式pathX/xxx/xxx，相对于src/pages/目录',
-                                `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'icon声明，全局定义icon库，这里设置的是库中的icon英文名',
-                                `resource_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源类型：菜单、接口服务、插件、数据服务、静态资源、其他',
-                                `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源操作方法：get、post、put、delete等',
-                                `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '打开方式：_self,_blank,_parent,_top',
-                                `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属应用',
-                                `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '上级资源',
-                                `display_order` int(10) NULL DEFAULT NULL COMMENT '上级资源路径下的排序',
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                                `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注说明',
-                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '创建人ip',
-                                `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '更新人IP',
+                                `id` bigint(20) UNSIGNED NOT NULL ,
+                                `resource_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `resource_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `resource_path` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `component_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
+                                `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `resource_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `request_method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `target` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `app_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `display_order` int(10) NULL DEFAULT NULL ,
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `create_time` datetime NULL DEFAULT NULL ,
+                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
                                 `update_time` datetime NULL DEFAULT NULL,
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `versions` int(10) NULL DEFAULT NULL ,
                                 PRIMARY KEY (`id`) USING BTREE,
                                 UNIQUE INDEX `un_app_res_code`(`resource_code`, `app_id`) USING BTREE,
                                 INDEX `res_type`(`resource_type`) USING BTREE,
@@ -4176,46 +3909,28 @@ INSERT INTO `wo_resource` VALUES (2003091697059360769, 'demo:example:view', '查
 INSERT INTO `wo_resource` VALUES (2003091697076137985, 'demo:example:create', '创建示例', '/admin/demo/example/create', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003091696702844930, 2003091697000640513, 2, '1', 'plugin-demo', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:14:11', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:14:11', 'normal', 1);
 INSERT INTO `wo_resource` VALUES (2003091697130663938, 'demo:example:edit', '编辑示例', '/admin/demo/example/edit', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003091696702844930, 2003091697000640513, 3, '1', 'plugin-demo', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:14:11', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:14:11', 'normal', 1);
 INSERT INTO `wo_resource` VALUES (2003091697164218370, 'demo:example:delete', '删除示例', '/admin/demo/example/delete', NULL, NULL, 'admin_plugin_button', 'DELETE', '_self', 2003091696702844930, 2003091697000640513, 4, '1', 'plugin-demo', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:14:11', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:14:11', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102193829408770, 'airdrop-scheduler', '脚本神器', '/admin/airdrop', NULL, 'thunderbolt-filled', 'admin_plugin_menu', 'GET', '_self', 2003102193556779010, 0, 100, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:58:36', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102193883934722, 'airdrop-home', '首页', '/admin/airdrop/scheduler', '/scheduler', NULL, 'admin_plugin_menu', 'GET', '_self', 2003102193556779010, 2003102193829408770, 0, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102193934266369, 'airdrop-tasks', '任务管理', '/admin/airdrop/tasks', '/tasks', 'TaskOutlined', 'admin_plugin_menu', 'GET', '_self', 2003102193556779010, 2003102193829408770, 1, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102193988792322, 'airdrop:tasks:view', '查看任务', '/admin/airdrop/tasks/view', NULL, NULL, 'admin_plugin_button', 'GET', '_self', 2003102193556779010, 2003102193934266369, 1, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102193997180930, 'airdrop:tasks:create', '创建任务', '/admin/airdrop/tasks/create', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102193934266369, 2, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194047512578, 'airdrop:tasks:edit', '编辑任务', '/admin/airdrop/tasks/edit', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102193934266369, 3, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194085261313, 'airdrop:tasks:delete', '删除任务', '/admin/airdrop/tasks/delete', NULL, NULL, 'admin_plugin_button', 'DELETE', '_self', 2003102193556779010, 2003102193934266369, 4, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194118815745, 'airdrop:tasks:execute', '执行任务', '/admin/airdrop/tasks/execute', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102193934266369, 5, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194185924609, 'airdrop-templates', '模板管理', '/admin/airdrop/templates', '/templates', 'FileTextOutlined', 'admin_plugin_menu', 'GET', '_self', 2003102193556779010, 2003102193829408770, 2, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194232061954, 'airdrop:templates:view', '查看模板', '/admin/airdrop/templates/view', NULL, NULL, 'admin_plugin_button', 'GET', '_self', 2003102193556779010, 2003102194185924609, 1, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194248839170, 'airdrop:templates:create', '创建模板', '/admin/airdrop/templates/create', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102194185924609, 2, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194294976514, 'airdrop:templates:edit', '编辑模板', '/admin/airdrop/templates/edit', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102194185924609, 3, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194336919554, 'airdrop:templates:delete', '删除模板', '/admin/airdrop/templates/delete', NULL, NULL, 'admin_plugin_button', 'DELETE', '_self', 2003102193556779010, 2003102194185924609, 4, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194370473986, 'airdrop-execution', '执行记录', '/admin/airdrop/execution', '/execution', 'PlayCircleOutlined', 'admin_plugin_menu', 'GET', '_self', 2003102193556779010, 2003102193829408770, 3, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194416611329, 'airdrop:execution:view', '查看记录', '/admin/airdrop/execution/view', NULL, NULL, 'admin_plugin_button', 'GET', '_self', 2003102193556779010, 2003102194370473986, 1, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194433388545, 'airdrop:execution:rerun', '重新执行', '/admin/airdrop/execution/rerun', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102194370473986, 2, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194487914497, 'airdrop-system', '系统管理', '/admin/airdrop/system', '/system', 'SettingOutlined', 'admin_plugin_menu', 'GET', '_self', 2003102193556779010, 2003102193829408770, 4, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
-INSERT INTO `wo_resource` VALUES (2003102194538246146, 'airdrop:system:admin', '系统配置', '/admin/airdrop/system/admin', NULL, NULL, 'admin_plugin_button', 'POST', '_self', 2003102193556779010, 2003102194487914497, 1, '1', 'airdrop', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 1, '0:0:0:0:0:0:0:1', '2025-12-22 21:55:54', 'normal', 1);
 
 -- ----------------------------
 -- Table structure for wo_role
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role`;
 CREATE TABLE `wo_role`  (
-                            `id` bigint(20) UNSIGNED NOT NULL COMMENT '角色id',
-                            `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '角色编码',
-                            `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '角色名称',
-                            `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '角色描述',
-                            `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '角色类型：系统角色(管理员、游客、普通用户、商户、政府、中介)、业务角色(岗位、职务、功能)',
-                            `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '上级体系结构',
-                            `display_order` int(10) NULL DEFAULT NULL COMMENT '在上级公司下的排序',
-                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效，1有效',
-                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                            `id` bigint(20) UNSIGNED NOT NULL ,
+                            `role_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `role_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `role_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `parent_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `display_order` int(10) NULL DEFAULT NULL ,
+                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                            `create_time` datetime NULL DEFAULT NULL ,
+                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                            `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                            `update_time` datetime NULL DEFAULT NULL ,
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `versions` int(10) NULL DEFAULT NULL ,
                             PRIMARY KEY (`id`) USING BTREE,
                             UNIQUE INDEX `uni_role_code`(`role_code`) USING BTREE,
                             INDEX `role_type`(`role_type`) USING BTREE,
@@ -4246,20 +3961,20 @@ INSERT INTO `wo_role` VALUES (1526213891793272839, 'badmin', '二级管理员', 
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_role_org`;
 CREATE TABLE `wo_role_org`  (
-                                `id` bigint(20) UNSIGNED NOT NULL COMMENT '角色用户id',
-                                `role_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '角色id',
-                                `org_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '组织机构id',
-                                `arch_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属体系结构id',
-                                `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '所属公司id',
-                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效，1有效，0无效，当需要暂时设置某个关系为无效时使用，当要置某个用户或角色无效时用主表的isvalid',
-                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                `id` bigint(20) UNSIGNED NOT NULL ,
+                                `role_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `org_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `arch_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `com_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                 `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                `create_time` datetime NULL DEFAULT NULL ,
+                                `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                 `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                `update_time` datetime NULL DEFAULT NULL ,
+                                `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `versions` int(10) NULL DEFAULT NULL ,
                                 PRIMARY KEY (`id`) USING BTREE,
                                 INDEX `org_role_id`(`role_id`) USING BTREE,
                                 INDEX `org_role_org_id`(`org_id`) USING BTREE,
@@ -4284,18 +3999,18 @@ INSERT INTO `wo_role_org` VALUES (1525968743872249860, 1525946478916976648, 1525
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_association`;
 CREATE TABLE `wo_subject_association`  (
-                                           `id` bigint(20) UNSIGNED NOT NULL COMMENT '角色主体关系id',
-                                           `subject_type_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '主体类型id',
-                                           `role_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '角色id，此角色应该为顶级公司顶级组织下的全局角色(系统保留角色)',
+                                           `id` bigint(20) UNSIGNED NOT NULL ,
+                                           `subject_type_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                           `role_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                           `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                            `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                           `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                           `create_time` datetime NULL DEFAULT NULL ,
+                                           `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                           `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                           `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                           `update_time` datetime NULL DEFAULT NULL ,
+                                           `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                           `versions` int(10) NULL DEFAULT NULL ,
                                            PRIMARY KEY (`id`) USING BTREE,
                                            INDEX `sub_type_id`(`subject_type_id`) USING BTREE,
                                            INDEX `sub_role_id`(`role_id`) USING BTREE,
@@ -4311,20 +4026,20 @@ CREATE TABLE `wo_subject_association`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_authentication`;
 CREATE TABLE `wo_subject_authentication`  (
-                                              `id` bigint(20) UNSIGNED NOT NULL COMMENT '认证主体id',
-                                              `subject_type_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '主体类型id',
-                                              `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主体社会信用统一编码或身份证号',
-                                              `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主体名称，可能是法人名称、自然人姓名，前者不能重复，后者可以重复',
-                                              `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '认证账号',
+                                              `id` bigint(20) UNSIGNED NOT NULL ,
+                                              `subject_type_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                              `subject_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                              `subject_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                              `user_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                               `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                              `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                              `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                               `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                              `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                              `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                              `create_time` datetime NULL DEFAULT NULL ,
+                                              `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                               `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                              `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                              `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                              `update_time` datetime NULL DEFAULT NULL ,
+                                              `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                              `versions` int(10) NULL DEFAULT NULL ,
                                               PRIMARY KEY (`id`) USING BTREE,
                                               INDEX `sub_type_id`(`subject_type_id`) USING BTREE,
                                               INDEX `sub_user_id`(`user_id`) USING BTREE,
@@ -4341,19 +4056,19 @@ CREATE TABLE `wo_subject_authentication`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_define`;
 CREATE TABLE `wo_subject_define`  (
-                                      `id` bigint(20) UNSIGNED NOT NULL COMMENT '主体类型id',
-                                      `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主体类型编码，可以继承国标的组织机构类型，并根据实际业务衍生',
-                                      `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主体类型名称',
-                                      `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '主体类型描述',
-                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                                      `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                      `id` bigint(20) UNSIGNED NOT NULL ,
+                                      `subject_type_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                      `subject_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                      `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                      `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                      `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                       `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                      `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                      `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                      `create_time` datetime NULL DEFAULT NULL ,
+                                      `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                       `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                      `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                      `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                      `update_time` datetime NULL DEFAULT NULL ,
+                                      `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                      `versions` int(10) NULL DEFAULT NULL ,
                                       PRIMARY KEY (`id`) USING BTREE,
                                       UNIQUE INDEX `uni_subject_type_code`(`subject_type_code`) USING BTREE,
                                       INDEX `sub_def_is_valid_del`(`is_valid`, `delete_flag`) USING BTREE
@@ -4368,19 +4083,19 @@ CREATE TABLE `wo_subject_define`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_subject_model_define`;
 CREATE TABLE `wo_subject_model_define`  (
-                                            `id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '主体模板id',
-                                            `subject_type_id` bigint(20) UNSIGNED NOT NULL COMMENT '主体类型id',
-                                            `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '模板名称',
-                                            `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '模板描述',
-                                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否有效：0无效、1有效',
-                                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
+                                            `id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                                            `subject_type_id` bigint(20) UNSIGNED NOT NULL ,
+                                            `subject_model_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                            `subject_type_desc` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                            `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
+                                            `create_time` datetime NULL DEFAULT NULL ,
+                                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
                                             `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                                            `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                                            `update_time` datetime NULL DEFAULT NULL ,
+                                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                            `versions` int(10) NULL DEFAULT NULL ,
                                             PRIMARY KEY (`subject_type_id`) USING BTREE,
                                             INDEX `sub_model_type_id`(`subject_type_id`) USING BTREE,
                                             INDEX `sub_is_valid_del`(`is_valid`, `delete_flag`) USING BTREE
@@ -4395,42 +4110,42 @@ CREATE TABLE `wo_subject_model_define`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `wo_user`;
 CREATE TABLE `wo_user`  (
-                            `id` bigint(20) UNSIGNED NOT NULL COMMENT '用户id',
-                            `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '平台用户登录名，又叫账号，可以修改，全局唯一（比如抖音认证后可以全局唯一）',
-                            `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '账号显示名称，昵称',
-                            `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '登录密码，可以为空，设置后可以以账号密码登录',
-                            `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '账号状态：notActive待激活, locked已锁定、cancelled已注销、normal正常',
-                            `domain_id` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '账号归属的二方域id（二方域指本平台上设置的域）用户注册时设定',
-                            `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '身份证号或法人身份证',
-                            `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户实名认证后的真实名称，可以是自然人、法人',
-                            `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '性别',
-                            `birthday` datetime NULL DEFAULT NULL COMMENT '生日',
-                            `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '手机号',
-                            `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '固定电话',
-                            `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '注册会员' COMMENT '头衔',
-                            `company` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '网络用户' COMMENT '组织、单位名称',
-                            `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '通信地址',
-                            `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'QQ号',
-                            `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电子邮箱',
-                            `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '头像在文件服务器存储的真实相对路径',
-                            `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-                            `display_order` bigint(20) NULL DEFAULT NULL COMMENT '排序',
-                            `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否实名认证：默认0，实名认证后：1',
-                            `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '国家',
-                            `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '省',
-                            `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '市',
-                            `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '区',
-                            `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邀请码',
-                            `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '推荐码：推荐人的邀请码',
-                            `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '注册IP，首次注册IP',
-                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                            `id` bigint(20) UNSIGNED NOT NULL ,
+                            `login_name` varchar(240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
+                            `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `passwd` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `domain_id` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `id_card` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `birthday` datetime NULL DEFAULT NULL ,
+                            `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '注册会员' ,
+                            `company` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '网络用户' ,
+                            `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `qq` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `avatar` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `remark` varchar(230) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `display_order` bigint(20) NULL DEFAULT NULL ,
+                            `is_real` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `area` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `invite_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `recommend_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `register_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `create_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `create_time` datetime NULL DEFAULT NULL ,
                             `create_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '信息更新操作者的IP',
-                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '删除状态字典值：normal正常，deleted删除',
-                            `versions` int(10) NULL DEFAULT NULL COMMENT '乐观锁',
+                            `update_by` bigint(20) UNSIGNED NULL DEFAULT NULL ,
+                            `update_time` datetime NULL DEFAULT NULL ,
+                            `update_ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `delete_flag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                            `versions` int(10) NULL DEFAULT NULL ,
                             PRIMARY KEY (`id`) USING BTREE,
                             UNIQUE INDEX `uni_login`(`login_name`) USING BTREE,
                             INDEX `user_status`(`status`) USING BTREE,
@@ -4443,7 +4158,7 @@ CREATE TABLE `wo_user`  (
 -- Records of wo_user
 -- ----------------------------
 INSERT INTO `wo_user` VALUES (1, 'admin', '龙神', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=', 'normal', 0, NULL, 'admin', 'man', NULL, '12665730355', '0531-268888888', '注册会员', '网络用户', '长清区崮云湖街道', NULL, '306991142@qq.com', '/2025/10/12200900tA0yqmKE.png', 'WLDOS之父，独立研发了WLDOS云应用支撑平台。', 0, '0', 'China', '370000', '370100', NULL, '0', NULL, '192.168.1.23', 0, '2021-05-08 12:15:05', '192.168.1.23', 1, '2025-10-12 20:09:00', '0:0:0:0:0:0:0:1', 'normal', 1);
-INSERT INTO `wo_user` VALUES (100, 'wldos', '演示管理员', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', 100, NULL, 'wldos', 'man', NULL, '15665730355', '0531-8868823', '注册会员', '网络用户', '朝阳区西祠胡同', NULL, 'wldos.com@88.com', '/202110/201945151nGiy6hd.png', 'wldos管家。', 1, '0', 'China', '370000', '370100', NULL, '100', NULL, '192.168.1.23', 0, '2021-05-08 12:15:09', '192.168.1.23', 1, '2021-11-28 22:30:27', '192.168.1.23', 'normal', 1);
+INSERT INTO `wo_user` VALUES (100, 'wldos', '演示管理员', 'iYd4ehqGOz/arZ/gX71njz/QV0+eb60uS1NuT0yvtzg=', 'normal', 100, NULL, 'wldos', 'man', NULL, '15662342342', '0531-8868823', '注册会员', '网络用户', '朝阳区西祠胡同', NULL, 'wldos.com@88.com', '/2025/12/28211627cJBV06bQ.jpg', 'wldos管家。', 1, '0', 'China', '370000', '370100', NULL, '100', NULL, '192.168.1.23', 0, '2021-05-08 12:15:09', '192.168.1.23', 100, '2025-12-28 21:16:42', '0:0:0:0:0:0:0:1', 'normal', 1);
 INSERT INTO `wo_user` VALUES (79070766156136451, 'wldos001@163.com', 'wldos新用户', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', 1533544727530094592, NULL, NULL, NULL, NULL, '15665730355', '0531-15665730355', '注册会员', '网络用户', '天桥区', NULL, 'wldos001@163.com', '/202110/21231756DhqmsZdL.png', '新用户测试', NULL, NULL, 'China', '130000', '130300', NULL, NULL, NULL, '192.168.1.23', 79070766156136451, '2021-10-21 23:16:50', '192.168.1.23', 1, '2021-10-28 17:06:50', '192.168.1.23', 'normal', 0);
 INSERT INTO `wo_user` VALUES (81514195872038918, 'newer@163.com', '小怪兽', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'normal', 1533544727530094592, NULL, NULL, NULL, NULL, NULL, NULL, '注册会员', '网络用户', NULL, NULL, 'newer@163.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '192.168.1.23', 81514195872038918, '2021-10-28 17:06:09', '192.168.1.23', 81514195872038918, '2021-10-28 17:06:09', '192.168.1.23', 'normal', 0);
 INSERT INTO `wo_user` VALUES (81836118845865995, 'test@zhiletu.com', 'test1', 'n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=', 'normal', 1533544727530094592, NULL, NULL, NULL, NULL, NULL, NULL, '注册会员', '网络用户', NULL, NULL, 'test@zhiletu.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '192.168.1.23', 81836118845865995, '2021-10-29 14:25:21', '192.168.1.23', 81836118845865995, '2021-10-29 14:25:21', '192.168.1.23', 'normal', 0);
@@ -4489,6 +4204,7 @@ INSERT INTO `wo_user` VALUES (1547698179520774144, 'test7@163.com', 'test7', 'jZ
 INSERT INTO `wo_user` VALUES (1732388142020947970, 'zuhu@zhiletu.com', 'zuhu', 'IWfVvrbKCMrmr8G5HC0UbkomZCZU1mP11CaYYUTDWWE=', 'notActive', 1533544727530094592, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'zuhu@zhiletu.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '127.0.0.1', 92829405966680072, '2023-12-06 21:14:54', '127.0.0.1', 92829405966680072, '2023-12-06 21:14:54', '127.0.0.1', 'normal', 0);
 INSERT INTO `wo_user` VALUES (1858017363002134530, 'support@xiupu.net', '嗅谱网', '0oPwdNKQ8oStJmDtksruynG9y0GH0/6CRBamaMhd26E=', 'notActive', 1533544727530094592, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'support@xiupu.net', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '127.0.0.1', 1858011634795024386, '2024-11-17 13:21:20', '127.0.0.1', 1858011634795024386, '2024-11-17 13:21:20', '127.0.0.1', 'normal', 0);
 INSERT INTO `wo_user` VALUES (1971940409559044098, '3559754328@qq.com', '测试租户组织', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', 'notActive', 1533544727530094592, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3559754328@qq.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0:0:0:0:0:0:0:1', 1, '2025-09-27 22:10:05', '0:0:0:0:0:0:0:1', 1, '2025-09-27 22:10:05', '0:0:0:0:0:0:0:1', 'normal', 0);
+INSERT INTO `wo_user` VALUES (2005270491576680450, 'sdfsdf@163.com', 'hillsdl', 'eyG3n+OqKYaPUszn+F8iQMTXG8jYpWf9YmNo6pcVfLg=', 'notActive', 1533544727530094592, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sdfsdf@163.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0:0:0:0:0:0:0:1', 0, '2025-12-28 21:31:56', '0:0:0:0:0:0:0:1', 0, '2025-12-28 21:31:56', '0:0:0:0:0:0:0:1', 'normal', 0);
 
 -- ----------------------------
 -- Table structure for wo_usermeta
@@ -4497,8 +4213,8 @@ DROP TABLE IF EXISTS `wo_usermeta`;
 CREATE TABLE `wo_usermeta`  (
                                 `id` bigint(20) UNSIGNED NOT NULL,
                                 `user_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
-                                `meta_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '元数据key',
-                                `meta_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '元数据值',
+                                `meta_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL ,
+                                `meta_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL ,
                                 PRIMARY KEY (`id`) USING BTREE,
                                 INDEX `user_id`(`user_id`) USING BTREE,
                                 INDEX `meta_key`(`meta_key`(191)) USING BTREE
@@ -4562,5 +4278,7 @@ INSERT INTO `wo_usermeta` VALUES (1858009867797663746, 1858009867202072578, 'pas
 INSERT INTO `wo_usermeta` VALUES (1858012258500612098, 1858011634795024386, 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES (1858017565578629122, 1858017363002134530, 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES (1971940409689067522, 1971940409559044098, 'passStatus', 'weak');
+INSERT INTO `wo_usermeta` VALUES (2005266788928987137, 100, 'tags', '[{\"key\":\"tag-0\",\"label\":\"111\"}]');
+INSERT INTO `wo_usermeta` VALUES (2005270491962556417, 2005270491576680450, 'passStatus', 'medium');
 
 SET FOREIGN_KEY_CHECKS = 1;
