@@ -40,6 +40,7 @@ import com.wldos.platform.core.entity.WoDomainResource;
 import com.wldos.platform.support.domain.vo.DomainResource;
 import com.wldos.platform.support.resource.entity.WoResource;
 import com.wldos.platform.support.term.dto.Term;
+import com.wldos.framework.common.SaveOptions;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -106,7 +107,7 @@ public class DomainService extends EntityService<DomainDao, WoDomain, Long> {
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
 		if (!domainAppList.isEmpty())
-			this.domainAppService.saveAll(domainAppList, true);
+			this.domainAppService.saveAll(domainAppList);
 
 		return mes.toString();
 	}
@@ -177,7 +178,7 @@ public class DomainService extends EntityService<DomainDao, WoDomain, Long> {
 					domain.setSiteDescription("平台主站");
 					domain.setSiteUrl("http://" + this.getPlatDomain());
 					EntityAssists.beforeInsert(domain, this.nextId(), Constants.SYSTEM_USER_ID, "127.0.0.1", false);
-					this.insertSelective(domain, false); // 特殊情况，需要手动设置公共字段
+					this.saveOrUpdate(domain, SaveOptions.forImport()); // 特殊情况，需要手动设置公共字段
 					domains = new ArrayList<>();
 					domains.add(domain);
 				}

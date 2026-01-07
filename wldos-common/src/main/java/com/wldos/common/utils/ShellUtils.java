@@ -43,7 +43,7 @@ public class ShellUtils {
 			String line;
 			while ((line = input.readLine()) != null) {
 				if (isConsole)
-					System.out.println(line);
+					log.info(line);
 				else
 					log.info(line);
 			}

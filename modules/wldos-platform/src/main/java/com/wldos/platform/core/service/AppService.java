@@ -101,9 +101,8 @@ public class AppService extends EntityService<AppDao, WoApp, Long> {
         app.setAppOrigin(AppOriginEnum.PLUGIN.getValue());
         app.setIsValid(ValidStatusEnum.VALID.toString());
         app.setDeleteFlag(DeleteFlagEnum.NORMAL.toString());
-        Long id = this.insertSelective(app, true);
-        app.setId(id);
-        return app;
+        // saveOrUpdate 会自动填充 ID，直接返回保存后的实体
+        return this.saveOrUpdate(app);
     }
 
     /**
@@ -113,7 +112,7 @@ public class AppService extends EntityService<AppDao, WoApp, Long> {
         WoApp app = getOrCreatePluginApp(pluginCode, pluginName);
         if (origin != null && (app.getAppOrigin() == null || !app.getAppOrigin().equals(origin.getValue()))) {
             app.setAppOrigin(origin.getValue());
-            this.update(app, true);
+            this.saveOrUpdate(app);
         }
         return app;
     }

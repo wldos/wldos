@@ -185,7 +185,8 @@ public class KCMSService extends NonEntityService {
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
-		Long id = this.pubService.insertSelective(pubs, true);
+		this.pubService.saveOrUpdate(pubs);
+		Long id = pubs.getId();
 
 		// 批量关联发布内容分类并计数
 		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
@@ -243,9 +244,9 @@ public class KCMSService extends NonEntityService {
 			List<KPubmeta> pubMetasN = pubMetas.parallelStream().filter(p -> p.getId() == null).collect(Collectors.toList());
 			if (!pubMetasN.isEmpty())
 				pubMetasN.forEach(pm -> pm.setId(this.nextId()));
-			this.pubmetaService.insertSelectiveAll(pubMetasN, false);
+			this.pubmetaService.saveOrUpdateAll(pubMetasN, com.wldos.framework.common.SaveOptions.forImport());
 			if (!pubMetasU.isEmpty())
-				this.pubmetaService.updateAll(pubMetasU, false);
+				this.pubmetaService.saveOrUpdateAll(pubMetasU, com.wldos.framework.common.SaveOptions.forImport());
 		}
 
 		// 处理分类和标签
@@ -270,7 +271,7 @@ public class KCMSService extends NonEntityService {
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
 			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
 
-		this.pubService.update(pubs, true);
+		this.pubService.saveOrUpdate(pubs);
 	}
 
 	/**
@@ -400,7 +401,7 @@ public class KCMSService extends NonEntityService {
 			return pubMeta;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
-		this.pubmetaService.insertSelectiveAll(pubMetas, false);
+		this.pubmetaService.saveOrUpdateAll(pubMetas, com.wldos.framework.common.SaveOptions.forImport());
 	}
 
 	/**
@@ -434,9 +435,9 @@ public class KCMSService extends NonEntityService {
 				objectMap.entrySet().parallelStream().map(entry ->
 						KPubmeta.of(this.nextId(), pub.getId(), entry.getKey(), entry.getValue().toString())).collect(Collectors.toList());
 
-		this.pubService.insertSelective(pub, true);
+		this.pubService.saveOrUpdate(pub);
 
-		this.pubmetaService.insertSelectiveAll(pubMetas, false);
+		this.pubmetaService.saveOrUpdateAll(pubMetas, com.wldos.framework.common.SaveOptions.forImport());
 	}
 
 	/**

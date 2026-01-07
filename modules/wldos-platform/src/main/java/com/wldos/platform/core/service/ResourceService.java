@@ -221,7 +221,7 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 
 		WoResource resource = new WoResource(resCode, resName, resPath, icon, resType, reqMethod, target, appId, parentId, displayOrder, remark);
 
-		this.insertSelective(resource, true);
+		this.saveOrUpdate(resource);
 	}
 
 	/**

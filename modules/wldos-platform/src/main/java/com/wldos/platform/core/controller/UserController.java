@@ -118,7 +118,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 	public Result userConfig(@ApiParam(value = "用户信息", required = true) @Valid @RequestBody WoUser user) {
 		Long userId = this.getUserId();
 		user.setId(userId);
-		this.service.update(user, true);
+		this.service.saveOrUpdate(user);
 
 		return Result.ok("ok");
 	}
@@ -144,7 +144,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 	public Result bindConfig(@ApiParam(value = "用户信息", required = true) @Valid @RequestBody WoUser user) {
 		Long userId = this.getUserId();
 		user.setId(userId);
-		this.service.update(user, true);
+		this.service.saveOrUpdate(user);
 
 		return Result.ok("ok");
 	}
@@ -154,7 +154,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 	public Result noticeConfig(@ApiParam(value = "用户信息", required = true) @Valid @RequestBody WoUser user) {
 		Long userId = this.getUserId();
 		user.setId(userId);
-		this.service.update(user, true);
+		this.service.saveOrUpdate(user);
 
 		return Result.ok("ok");
 	}

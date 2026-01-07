@@ -54,7 +54,7 @@ public class StarService extends EntityService<StarDao, KStars, Long> {
 		if (stars == null) {
 			// 生成点赞记录
 			stars = KStars.of(this.nextId(), objId, userId, ValidStatusEnum.VALID.toString(), null);
-			this.insertSelective(stars, false);
+			this.saveOrUpdate(stars, com.wldos.framework.common.SaveOptions.forImport());
 			return 1;
 		}
 		else {
@@ -80,7 +80,7 @@ public class StarService extends EntityService<StarDao, KStars, Long> {
 		if (stars == null) {
 			// 生成关注记录
 			stars = KStars.of(this.nextId(), objId, userId, null, ValidStatusEnum.VALID.toString());
-			this.insertSelective(stars, false);
+			this.saveOrUpdate(stars, com.wldos.framework.common.SaveOptions.forImport());
 			return 1;
 		}
 		else {

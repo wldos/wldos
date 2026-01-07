@@ -42,6 +42,7 @@ import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.MailService;
 import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.vo.User;
+import com.wldos.framework.common.SaveOptions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -350,7 +351,7 @@ public class LoginAuthService extends NonEntityService {
 				WoUser user = new WoUser();
 				user.setId(uId);
 				user.setStatus(UserStatusEnum.normal.getValue());
-				this.userService.update(user, false);
+				this.userService.saveOrUpdate(user, SaveOptions.forImport());
 
 				WoOrg orgUnActive = this.userService.queryUserOrg(SysOptionEnum.UN_ACTIVE_GROUP.getKey());
 				WoOrg orgActive = this.userService.queryUserOrg(SysOptionEnum.DEFAULT_GROUP.getKey());

@@ -11,6 +11,7 @@ import com.example.myapp.service.ProductService;
 import com.wldos.framework.mvc.controller.EntityController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  * - 域隔离（如果启用）
  */
 @Api(tags = "产品管理（EntityController示例）")
+@Slf4j
 @RestController
 @RequestMapping("/api/products")
 public class ProductController extends EntityController<ProductService, Product> {
@@ -47,7 +49,7 @@ public class ProductController extends EntityController<ProductService, Product>
     protected void preAdd(Product entity) {
         // 示例：设置创建时间
         // entity.setCreateTime(new Date());
-        System.out.println("新增产品前处理: " + entity.getName());
+        log.info("新增产品前处理: {}", entity.getName());
     }
     
     /**
@@ -58,7 +60,7 @@ public class ProductController extends EntityController<ProductService, Product>
     protected void postAdd(Product entity) {
         // 示例：刷新缓存
         // cache.refresh("products");
-        System.out.println("新增产品后处理: " + entity.getName());
+        log.info("新增产品后处理: {}" + entity.getName());
     }
     
     /**
@@ -66,7 +68,7 @@ public class ProductController extends EntityController<ProductService, Product>
      */
     @Override
     protected void preUpdate(Product entity) {
-        System.out.println("更新产品前处理: " + entity.getName());
+        log.info("更新产品前处理: {}" + entity.getName());
     }
     
     /**
@@ -74,7 +76,7 @@ public class ProductController extends EntityController<ProductService, Product>
      */
     @Override
     protected void postUpdate(Product entity) {
-        System.out.println("更新产品后处理: " + entity.getName());
+        log.info("更新产品后处理: {}" + entity.getName());
     }
     
     /**
@@ -82,7 +84,7 @@ public class ProductController extends EntityController<ProductService, Product>
      */
     @Override
     protected void preDelete(Product entity) {
-        System.out.println("删除产品前处理: " + entity.getId());
+        log.info("删除产品前处理: {}" + entity.getId());
     }
     
     /**
@@ -90,7 +92,7 @@ public class ProductController extends EntityController<ProductService, Product>
      */
     @Override
     protected void postDelete(Product entity) {
-        System.out.println("删除产品后处理: " + entity.getId());
+        log.info("删除产品后处理: {}" + entity.getId());
     }
     
     /**

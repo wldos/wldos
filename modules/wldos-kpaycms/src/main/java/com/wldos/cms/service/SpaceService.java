@@ -133,7 +133,8 @@ public class SpaceService extends NonEntityService {
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
-		Long id = this.pubService.insertSelective(pubs, true);
+		this.pubService.saveOrUpdate(pubs);
+		Long id = pubs.getId();
 
 		List<PubTypeExt> pubTypeExt = pub.getPubTypeExt();
 

@@ -88,7 +88,7 @@ public class Base {
 	protected boolean isMultiDomain;
 
 	/** 平台url */
-	@Value("${wldos.platform.url:http://www.wldos.com}")
+	@Value("${wldos.platform.url:}")
 	protected String wldosUrl;
 
 	/** 平台前端请求协议，默认http */

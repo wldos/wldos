@@ -10,7 +10,6 @@ package com.wldos.platform.core.dao;
 
 
 import com.wldos.framework.mvc.dao.BaseDao;
-import com.wldos.framework.mvc.dao.RepoExt;
 
 import com.wldos.platform.core.entity.WoAuthRole;
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -24,7 +23,7 @@ import org.springframework.data.repository.query.Param;
  * @date 2021/4/27
  * @version 1.0
  */
-public interface AuthRoleDao extends BaseDao<WoAuthRole, Long>, RepoExt {
+public interface AuthRoleDao extends BaseDao<WoAuthRole, Long> {
 	@Modifying
 	@Query("delete from wo_auth_role where role_id=:roleId")
 	void deleteByRoleId(@Param("roleId") Long roleId);

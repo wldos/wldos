@@ -16,15 +16,25 @@ const pluginYmlPath = path.join(pluginRoot, 'plugin.yml');
 const pluginJsPath = path.join(__dirname, '../src/config/plugin.js');
 
 // 读取 plugin.yml
-function readPluginCode() {
+function readPluginYml() {
   try {
     const ymlContent = fs.readFileSync(pluginYmlPath, 'utf-8');
-    // 简单解析：查找 code: xxx 行
+    // 简单解析：查找 code: xxx 和 version: xxx 行
     const codeMatch = ymlContent.match(/^code:\s*(.+)$/m);
-    if (codeMatch && codeMatch[1]) {
-      return codeMatch[1].trim();
+    const versionMatch = ymlContent.match(/^version:\s*(.+)$/m);
+    
+    if (!codeMatch || !codeMatch[1]) {
+      throw new Error('无法从 plugin.yml 中找到 code 字段');
     }
-    throw new Error('无法从 plugin.yml 中找到 code 字段');
+    
+    if (!versionMatch || !versionMatch[1]) {
+      throw new Error('无法从 plugin.yml 中找到 version 字段');
+    }
+    
+    return {
+      code: codeMatch[1].trim(),
+      version: versionMatch[1].trim()
+    };
   } catch (error) {
     console.error(`读取 plugin.yml 失败: ${error.message}`);
     console.error(`文件路径: ${pluginYmlPath}`);
@@ -33,18 +43,20 @@ function readPluginCode() {
 }
 
 // 生成 plugin.js
-function generatePluginConfig(pluginCode) {
+function generatePluginConfig(pluginCode, pluginVersion) {
   const content = `/**
  * 插件配置
- * 插件编码配置，用于 API 请求自动添加前缀
+ * 插件编码和版本配置，用于 API 请求自动添加前缀和构建路径
  * 
  * 注意：此文件由 scripts/generate-plugin-config.js 自动生成
- * 请勿手动修改，插件编码请修改 plugin.yml 中的 code 字段
+ * 请勿手动修改，插件编码和版本请修改 plugin.yml 中的对应字段
  */
 export const PLUGIN_CODE = '${pluginCode}';
+export const PLUGIN_VERSION = '${pluginVersion}';
 
 export default {
   PLUGIN_CODE,
+  PLUGIN_VERSION,
 };
 `;
 
@@ -58,13 +70,17 @@ export default {
   fs.writeFileSync(pluginJsPath, content, 'utf-8');
   console.log(`✓ 已生成插件配置: ${pluginJsPath}`);
   console.log(`  插件编码: ${pluginCode}`);
+  console.log(`  插件版本: ${pluginVersion}`);
+  
+  // 同时设置环境变量，供构建时使用
+  process.env.PLUGIN_VERSION = pluginVersion;
 }
 
 // 主函数
 function main() {
   try {
-    const pluginCode = readPluginCode();
-    generatePluginConfig(pluginCode);
+    const { code, version } = readPluginYml();
+    generatePluginConfig(code, version);
   } catch (error) {
     console.error('生成插件配置失败:', error);
     process.exit(1);

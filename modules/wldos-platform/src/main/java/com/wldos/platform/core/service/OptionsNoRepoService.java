@@ -21,6 +21,8 @@ import com.wldos.platform.core.dao.OptionsDao;
 import com.wldos.platform.support.system.OptionsOpener;
 import com.wldos.platform.support.system.entity.WoOptions;
 import com.wldos.platform.support.system.enums.OptionTypeEnum;
+import com.wldos.framework.common.SaveOptions;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
@@ -74,7 +76,9 @@ public class OptionsNoRepoService extends NonEntityService implements OptionsOpe
 		}
 
 		if (!insertOptions.isEmpty()) {
-			this.insertOtherEntitySelective(insertOptions, false);
+			for (WoOptions option : insertOptions) {
+				this.saveOtherEntity(option, SaveOptions.forImport());
+			}
 		}
 
 		return this.optionsRepo.findAllByAppCode(this.APP_CODE_SYSTEM).stream().collect(Collectors.toMap(WoOptions::getOptionKey, WoOptions::getOptionValue, (k1, k2) -> k1));

@@ -191,12 +191,12 @@ public class MailService extends EntityService<MailDao, WoMail, Long> {
 		mail.setContent(content);
 		mail.setFromAddr(from);
 		mail.setToAddr(to);
-		this.save(mail, true);
+		this.saveOrUpdate(mail);
 		return mail;
 	}
 
 	private void updateEmail(WoMail mail, String status) {
 		mail.setStatus(status);
-		this.update(mail, true);
+		this.saveOrUpdate(mail);
 	}
 }

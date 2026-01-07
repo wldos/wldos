@@ -298,7 +298,7 @@ const PluginList = ({ dispatch }) => {
   const handleEnable = async (record) => {
     try {
       const response = await enablePlugin(record.pluginCode);
-      if (response?.data === 'ok') {
+      if (response?.success || response?.code === 200) {
         message.success('插件启用成功');
         // 刷新插件清单（启用/禁用不影响 manifest，但为了保持数据一致性，也刷新）
         if (dispatch) {
@@ -319,7 +319,7 @@ const PluginList = ({ dispatch }) => {
   const handleDisable = async (record) => {
     try {
       const response = await disablePlugin(record.pluginCode);
-      if (response?.data === 'ok') {
+      if (response?.success || response?.code === 200) {
         message.success('插件禁用成功');
         // 刷新插件清单（启用/禁用不影响 manifest，但为了保持数据一致性，也刷新）
         if (dispatch) {
@@ -340,7 +340,7 @@ const PluginList = ({ dispatch }) => {
   const handleUpdate = async (record) => {
     try {
       const response = await updatePlugin(record.pluginCode);
-      if (response?.data === 'ok') {
+      if (response?.success || response?.code === 200) {
         message.success('插件更新成功');
         // 刷新插件清单（更新会修改 manifest）
         if (dispatch) {
@@ -361,7 +361,7 @@ const PluginList = ({ dispatch }) => {
   const handleUninstall = async (record) => {
     try {
       const response = await uninstallPlugin(record.pluginCode);
-      if (response?.data === 'ok') {
+      if (response?.success || response?.code === 200) {
         message.success('插件卸载成功');
         // 刷新插件清单（卸载会修改 manifest）
         if (dispatch) {

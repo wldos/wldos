@@ -17,6 +17,8 @@ import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import com.wldos.common.res.ResultJson;
+import com.wldos.framework.common.SaveOptions;	
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,36 +72,52 @@ public abstract class NonEntityService extends Base {
 	}
 
 	/**
-	 * 有选择地insert辅助实体bean记录，空值不插入(采用数据库可能存在的默认值)。实现了mybatis mapper能力。
+	 * 统一的保存或更新辅助实体方法（推荐使用，对齐 MyBatis-Plus 设计）。
+	 * 
+	 * 功能特性：
+	 * 1. 自动判断 insert/update（通过 @Version 或 id 查询）
+	 * 2. 支持乐观锁（@Version 字段自动维护）
+	 * 3. 自动填充公共字段（createTime, updateTime, createBy, updateBy 等）
+	 * 4. 只写入非空字段（选择性插入/更新）
+	 * 
+	 * 注意：此方法统一了 (saveOtherEntity(entity, SaveOptions.forImport())) 和 (saveOtherEntity(entity, SaveOptions.includeAllFields())) 的功能，
+	 * 和 (saveOtherEntity(entity, SaveOptions.mergeNulls())) 的功能，
+	 * 提供统一的 API 门面，底层自动选择最优实现。
 	 *
 	 * @param entity 辅助系实体
 	 * @param <O> 其他实体，比如主表的子表对应的实体bean
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
 	 */
-	public <O> void insertOtherEntitySelective(O entity, boolean isAutoFill) {
-		this.commonOperate.dynamicInsertByEntity(entity, isAutoFill);
+	public <O> O saveOtherEntity(O entity) {
+		return this.commonOperate.saveOrUpdate(entity, true, false, false);
 	}
 
 	/**
-	 * 批量有选择地insert辅助实体bean记录，空值不插入(采用数据库可能存在的默认值)。实现了mybatis mapper能力。
-	 *
+	 * 统一的保存或更新辅助实体方法（使用配置对象，推荐使用）。
+	 * 
+	 * @param entity 辅助系实体
+	 * @param <O> 其他实体，比如主表的子表对应的实体bean
+	 * @param options 保存选项配置
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
+	 */
+	public <O> O saveOtherEntity(O entity, SaveOptions options) {
+		return this.commonOperate.saveOrUpdate(entity, options);
+	}
+
+	/**
+	 * 批量保存辅助实体（统一 API）。
+	 * 
 	 * @param entities 辅助系实体
 	 * @param <O> 其他实体，比如主表的子表对应的实体bean
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
+	 * @return 保存或更新后的实体集合（包含自动填充的字段、ID、版本号等）
 	 */
-	public <O> void insertOtherEntitySelective(Iterable<O> entities, boolean isAutoFill) {
-		this.commonOperate.dynamicBatchInsertByEntities((List<O>) entities, isAutoFill);
-	}
-
-	/**
-	 * 根据实体属性更新，属性为空值的Long类型不更新。
-	 *
-	 * @param entity 辅助系实体
-	 * @param <O> 其他实体，比如主表的子表对应的实体bean
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
-	 */
-	public <O> void updateOtherEntity(O entity, boolean isAutoFill) {
-		this.commonOperate.dynamicUpdateByEntity(entity, isAutoFill);
+	public <O> Iterable<O> saveOtherEntityAll(Iterable<O> entities) {
+		java.util.List<O> entityList = new java.util.ArrayList<>();
+		entities.forEach(entityList::add);
+		for (O entity : entityList) {
+			this.saveOtherEntity(entity);
+		}
+		return entityList;
 	}
 
 	/* ************************************** 分页查询API start************************************************/

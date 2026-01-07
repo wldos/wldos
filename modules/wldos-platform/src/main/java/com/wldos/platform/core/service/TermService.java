@@ -47,6 +47,7 @@ import com.wldos.platform.core.vo.TermTree;
 import com.wldos.platform.support.term.TermOpener;
 import com.wldos.platform.support.term.dto.Term;
 import com.wldos.platform.support.term.enums.TermTypeEnum;
+import com.wldos.framework.common.SaveOptions;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
@@ -637,13 +638,13 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 		// 新增term
 		KTerms kTerm = new KTerms();
 		this.termCopier.copy(term, kTerm, null);
-		this.insertSelective(kTerm, true);
+		this.saveOrUpdate(kTerm);
 		// 新增term type
 		KTermType termType = new KTermType();
 		this.termTypeCopier.copy(term, termType, null);
 		termType.setId(kTerm.getId());
 		termType.setTermId(kTerm.getId());
-		this.insertOtherEntitySelective(termType, false);
+		this.saveOtherEntity(termType, SaveOptions.forImport());
 		return "ok";
 	}
 
@@ -659,12 +660,12 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
 		KTerms kTerms = new KTerms();
 		this.termCopier.copy(term, kTerms, null);
-		this.update(kTerms, true);
+		this.saveOrUpdate(kTerms);
 
 		KTermType termType = new KTermType();
 		this.termTypeCopier.copy(term, termType, null);
 		termType.setId(term.getTermTypeId());
-		this.updateOtherEntity(termType, false);
+		this.saveOtherEntity(termType, SaveOptions.forImport());
 		return "ok";
 	}
 
@@ -688,9 +689,11 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 			kTermTypes.add(termType);
 		}
 		// 新增term
-		this.insertSelectiveAll(kTerms, true);
+		this.saveOrUpdateAll(kTerms);
 		// 新增term type
-		this.insertOtherEntitySelective(kTermTypes, false);
+		for (KTermType termType : kTermTypes) {
+			this.saveOtherEntity(termType, com.wldos.framework.common.SaveOptions.forImport());
+		}
 	}
 
 	/**
@@ -734,7 +737,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 */
 	public void relTermObject(KTermObject termObject) {
 		// 数据保存
-		this.insertOtherEntitySelective(termObject, false);
+		this.saveOtherEntity(termObject, com.wldos.framework.common.SaveOptions.forImport());
 		// 计数+1
 		this.termTypeRepo.countPlus(termObject.getTermTypeId());
 	}
@@ -816,7 +819,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 		}).collect(Collectors.toList());
 
 		// 数据保存
-		this.termObjectService.insertSelectiveAll(termObjects, false);
+		this.termObjectService.saveOrUpdateAll(termObjects, SaveOptions.forImport());
 		// 计数+1
 		this.termTypeRepo.countPlus(termTypeIds);
 	}
@@ -853,7 +856,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 				KTermObject.of(this.nextId(), tId, pId, 0L)).collect(Collectors.toList());
 
 		// 数据保存
-		this.termObjectService.insertSelectiveAll(tObjects, false);
+		this.termObjectService.saveOrUpdateAll(tObjects, SaveOptions.forImport());
 		// 计数+1
 		this.termTypeRepo.countPlus(termTypeIds);
 	}

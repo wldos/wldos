@@ -107,7 +107,7 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 
 		entity.setApproved("true".equals(this.auditFlag) /* 开启评论审核 */
 				? ApproveStatusEnum.APPROVING.getValue() : ApproveStatusEnum.APPROVED.getValue());
-		this.insertSelective(entity, true);
+		this.saveOrUpdate(entity);
 		Long id = entity.getId();
 		// 更新发布内容评论数
 		Long pId = entity.getPubId();

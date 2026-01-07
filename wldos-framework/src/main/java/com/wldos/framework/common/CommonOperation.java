@@ -167,6 +167,76 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	<P, C> PageableResult<P> execQueryForPage(Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pIdKey);
 
 	/**
+	 * 统一的保存或更新方法，自动判断 insert/update，支持乐观锁、写入空值、合并 null 值等特性。
+	 * 
+	 * 功能特性：
+	 * 1. 自动判断 insert/update（通过 @Version 或 id 查询）
+	 * 2. 支持乐观锁（@Version 字段自动维护）
+	 * 3. 可控制是否自动填充公共字段
+	 * 4. 可控制是否写入空值（默认只写入非空字段）
+	 * 5. 可控制是否合并 null 值（更新时从数据库读取旧值填充）
+	 *
+	 * @param entity 实体
+	 * @param isAutoFill 是否自动填充公共字段，默认 true
+	 * @param includeNullValues 是否写入空值，默认 false（只写入非空字段）
+	 * @param mergeNullValues 是否合并 null 值（更新时从数据库读取旧值填充），默认 false
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
+	 */
+	<E> E saveOrUpdate(E entity, boolean isAutoFill, boolean includeNullValues, boolean mergeNullValues);
+
+	/**
+	 * 统一的保存或更新方法（简化版本，默认参数）。
+	 * 
+	 * 默认行为：
+	 * - 自动填充公共字段（isAutoFill = true）
+	 * - 只写入非空字段（includeNullValues = false）
+	 * - 不合并 null 值（mergeNullValues = false）
+	 *
+	 * @param entity 实体
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
+	 */
+	<E> E saveOrUpdate(E entity);
+
+	/**
+	 * 统一的保存或更新方法（使用配置对象，推荐使用）。
+	 * 
+	 * @param entity 实体
+	 * @param options 保存选项配置
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
+	 */
+	<E> E saveOrUpdate(E entity, SaveOptions options);
+
+	/**
+	 * 批量保存或更新（统一 API，推荐使用）。
+	 * 
+	 * 功能特性：
+	 * 1. 自动判断 insert/update（通过 @Version 或 id 查询）
+	 * 2. 支持乐观锁（@Version 字段自动维护）
+	 * 3. 可控制是否自动填充公共字段
+	 * 4. 可控制是否写入空值（默认只写入非空字段）
+	 * 5. 可控制是否合并 null 值（更新时从数据库读取旧值填充）
+	 * 6. 支持批量操作（使用 JdbcTemplate.batchUpdate() 实现真正的批量 SQL）
+	 *
+	 * @param entities 实体集合
+	 * @param options 保存选项配置
+	 * @return 保存或更新后的实体集合（包含自动填充的字段、ID、版本号等）
+	 */
+	<E> Iterable<E> saveOrUpdateAll(Iterable<E> entities, SaveOptions options);
+
+	/**
+	 * 批量保存或更新（简化版本，默认参数）。
+	 * 
+	 * 默认行为：
+	 * - 自动填充公共字段（isAutoFill = true）
+	 * - 只写入非空字段（includeNullValues = false）
+	 * - 不合并 null 值（mergeNullValues = false）
+	 *
+	 * @param entities 实体集合
+	 * @return 保存或更新后的实体集合（包含自动填充的字段、ID、版本号等）
+	 */
+	<E> Iterable<E> saveOrUpdateAll(Iterable<E> entities);
+
+	/**
 	 * 根据实体bean运行时动态拼装更新sql并更新
 	 *
 	 * @param entity 实体

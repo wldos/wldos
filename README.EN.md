@@ -5,7 +5,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">Cloud Application Support Platform - IoT Driver</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">Develop IoT applications based on WLDOS, focusing on, opening up, and managing your ecosystem</h5>
 <p align="center">
- <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.0" src="https://img.shields.io/badge/WLDOS-V2.3.0-deepskyblue.svg"></a>
+ <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.1" src="https://img.shields.io/badge/WLDOS-V2.3.1-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>

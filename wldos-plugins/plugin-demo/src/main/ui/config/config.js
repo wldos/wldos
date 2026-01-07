@@ -4,12 +4,11 @@ import path from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+// 从自动生成的配置文件读取插件信息（单一数据源：plugin.yml）
+// 注意：使用相对路径，因为 config.js 在配置阶段路径别名可能未初始化
+import { PLUGIN_CODE, PLUGIN_VERSION } from '../src/config/plugin';
 
 const {REACT_APP_ENV} = process.env;
-
-// 插件信息（从环境变量或配置文件获取）
-const PLUGIN_CODE = 'plugin-demo'; // 插件编码
-const PLUGIN_VERSION = process.env.PLUGIN_VERSION || '1.0.0'; // 插件版本
 
 export default defineConfig({
  // mfsu: {},
@@ -53,41 +52,43 @@ export default defineConfig({
   // 插件的依赖（React、antd等）通过 externals 配置，使用主应用的模块
   // 这样插件的 chunk 中的依赖 ID 就是主应用的模块 ID，主应用的 webpack runtime 可以直接解析
   chainWebpack(config) {
-    // 插件不生成自己的 webpack runtime（不生成 umi.js）
-    // 只生成 chunk 文件，使用主应用的 webpack runtime
-    config.optimization.runtimeChunk(false);
+    // 只在生产构建时配置 externals（作为插件加载时）
+    // 开发模式下（独立运行）不配置 externals，让 webpack 打包所有依赖
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isPluginBuild = process.env.BUILD_AS_PLUGIN === 'true';
     
-    // 关键：配置模块 ID 生成策略为 hashed（哈希）
-    // 在 webpack 4 中，hashed 可以确保相同路径的模块总是得到相同的 ID
-    // 如果不配置，webpack 默认使用 natural（自然数），每次构建可能不同
-    // 注意：webpack 5 支持 'deterministic'，但 UmiJS 使用的是 webpack 4
-    config.optimization.set('moduleIds', 'hashed');
-    
-    // 配置 externals，让插件的依赖使用主应用的模块
-    // 这样插件的 chunk 中不会包含这些依赖的代码，而是直接引用主应用的模块
-    // 主应用的 webpack runtime 可以直接解析这些依赖
-    config.externals({
-      'react': {
-        root: 'React',
-        commonjs: 'react',
-        commonjs2: 'react',
-        amd: 'react',
-      },
-      'react-dom': {
-        root: 'ReactDOM',
-        commonjs: 'react-dom',
-        commonjs2: 'react-dom',
-        amd: 'react-dom',
-      },
-      'antd': {
-        root: 'antd',
-        commonjs: 'antd',
-        commonjs2: 'antd',
-        amd: 'antd',
-      },
-      // 其他依赖也可以配置 externals，使用主应用的模块
-      // 但需要注意：主应用必须已经暴露了这些模块到全局变量
-    });
+    if (isProduction && isPluginBuild) {
+      // 生产构建且作为插件：不生成自己的 webpack runtime，使用主应用的
+      config.optimization.runtimeChunk(false);
+      
+      // 配置模块 ID 生成策略为 hashed（哈希）
+      config.optimization.set('moduleIds', 'hashed');
+      
+      // 配置 externals，让插件的依赖使用主应用的模块
+      config.externals({
+        'react': {
+          root: 'React',
+          commonjs: 'react',
+          commonjs2: 'react',
+          amd: 'react',
+        },
+        'react-dom': {
+          root: 'ReactDOM',
+          commonjs: 'react-dom',
+          commonjs2: 'react-dom',
+          amd: 'react-dom',
+        },
+        'antd': {
+          root: 'antd',
+          commonjs: 'antd',
+          commonjs2: 'antd',
+          amd: 'antd',
+        },
+      });
+    } else {
+      // 开发模式或独立构建：正常打包所有依赖，不配置 externals
+      // 这样插件可以独立运行，不依赖主应用
+    }
   },
 });
 

@@ -26,6 +26,8 @@
         <frontend.src.dir>src/main/ui</frontend.src.dir>
         <node.version>v20.19.4</node.version>
         <yarn.version>v1.22.19</yarn.version>
+        <!-- 插件版本号从 plugin.yml 读取（在 initialize 阶段设置） -->
+        <plugin.version>1.0.0</plugin.version>
     </properties>
 
     <dependencies>
@@ -46,7 +48,31 @@
     </dependencies>
 
     <build>
+        <!-- JAR文件名使用版本号，ZIP文件名不使用版本号（在assembly插件中单独配置） -->
+        <finalName>${project.artifactId}-${plugin.version}</finalName>
         <plugins>
+            <!-- 读取 plugin.yml 中的版本号 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>read-plugin-version</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>node</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <commandlineArgs>scripts/read-plugin-version.js</commandlineArgs>
+                            <outputProperty>plugin.version</outputProperty>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <!-- Frontend Maven Plugin - 自动构建UI -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
@@ -96,6 +122,21 @@
                 </executions>
             </plugin>
             
+            <!-- Maven JAR Plugin - 设置 JAR Manifest 版本信息 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Version>${plugin.version}</Plugin-Version>
+                            <Implementation-Version>${plugin.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            
             <!-- Maven Assembly Plugin - 打包插件 -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -104,8 +145,9 @@
                     <descriptors>
                         <descriptor>src/assembly/package.xml</descriptor>
                     </descriptors>
+                    <!-- ZIP文件名不带版本号 -->
                     <finalName>${project.artifactId}</finalName>
-                    <appendAssemblyId>false</appendAssemblyId> <!-- 关键：不加 -版本号 后缀 -->
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

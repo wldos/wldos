@@ -12,6 +12,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,14 +24,26 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GetBeanHelper implements ApplicationContextAware {
+	private static GetBeanHelper instance;
+	
 	private ApplicationContext applicationContext;
 
 	private AutowireCapableBeanFactory beanFactory;
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 		this.beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
+		instance = this; // 保存静态引用
+	}
+	
+	/**
+	 * 获取 GetBeanHelper 实例（静态方法，用于接口默认方法中获取 Bean）
+	 * 
+	 * @return GetBeanHelper 实例，如果未初始化则返回 null
+	 */
+	public static GetBeanHelper getInstance() {
+		return instance;
 	}
 
 	public AutowireCapableBeanFactory getBeanFactory() {

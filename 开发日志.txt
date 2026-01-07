@@ -1,14 +1,21 @@
-2026-01-02
+2026-01-07
 
-完善插件开发标准文档和配置模板。
-解决首页token过期不自动跳转到登录页问题。
-开源社区插件安装闭环，新增插件可配置的zip发行包下载支持。
+重构、优化wldos-orm框架，比mybatis plus、jdbc、data-jdbc都好用的数据库操作api。
+BaseDao (接口)
+  ├── saveOrUpdate() - 统一的保存/更新方法（推荐使用，返回实体对象）
+  ├── saveOrUpdate(entity, SaveOptions) - 使用配置对象（推荐使用，返回实体对象）
+  ├── saveOrUpdateAll() - 批量保存（推荐使用，返回实体集合）
+  └── saveOrUpdateAll(entities, SaveOptions) - 使用配置对象（推荐使用，返回实体集合）
 
-2025-12-28
+SaveOptions (配置对象)
+  ├── defaults() - 默认选项
+  ├── forImport() - 数据导入选项
+  ├── includeAllFields() - 写入所有字段选项
+  ├── mergeNulls() - 合并 null 值选项
+  └── custom() - 自定义选项（Builder 模式）
+修正orm api表名获取异常
+修正插件不支持独立版本管理和独立开发测试的问题
 
-实现api返回参数统一为{code,message,data,success}
-新增swagger-api文档，基于Knife4j实现支持openapi2的友好ui的api文档能力
-controller增加api注解，vo、实体bean实现getter、setter
 
 2025-12-25
 

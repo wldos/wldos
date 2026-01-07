@@ -136,11 +136,11 @@ public final class Constants {
 	public static final String WLDOS_DOMAIN_HEADER = "domain-wldos";
 	
 	/** WLDOS 版本号 - 统一管理版本号，与 pom.xml 中的 wldos.version 保持一致 */
-	public static final String WLDOS_VERSION = "2.3.0";
+	public static final String WLDOS_VERSION = "2.3.1";
 	
 	/** WLDOS 版本号（带 V 前缀，用于显示） */
-	public static final String WLDOS_VERSION_DISPLAY = "V2.3.0";
+	public static final String WLDOS_VERSION_DISPLAY = "V2.3.1";
 	
 	/** WLDOS 版本号（小写 v 前缀，用于 banner 等） */
-	public static final String WLDOS_VERSION_LOWER = "v2.3.0";
+	public static final String WLDOS_VERSION_LOWER = "v2.3.1";
 }

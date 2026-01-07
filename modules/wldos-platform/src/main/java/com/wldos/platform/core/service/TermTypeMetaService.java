@@ -17,6 +17,8 @@ import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.vo.TermTypeMeta;
 import com.wldos.platform.support.system.entity.WoOptions;
 import com.wldos.platform.support.term.enums.TermTypeEnum;
+import com.wldos.framework.common.SaveOptions;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
@@ -163,7 +165,7 @@ public class TermTypeMetaService extends EntityService<TermTypeDao, KTermType, L
 				option.setOptionValue(optionValue);
 				option.setOptionType("AUTO_RELOAD");
 				option.setAppCode("sys_option");
-				this.insertOtherEntitySelective(option, false);
+				this.saveOtherEntity(option, SaveOptions.forImport());
 			} else {
 				// 更新
 				option.setOptionValue(optionValue);

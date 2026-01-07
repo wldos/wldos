@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.wldos.framework.common.EntityAssists;
 import com.wldos.framework.mvc.dao.BaseDao;
+import com.wldos.framework.common.SaveOptions;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.PageableResult;
 import lombok.extern.slf4j.Slf4j;
@@ -93,39 +93,33 @@ public abstract class EntityService<R extends BaseDao<E, PK>, E, PK> extends Non
 		return (Class) type.getActualTypeArguments()[index];
 	}
 
-	/**
-	 * 获取表名
-	 *
-	 * @param clazz 实体类的class
-	 * @return 实体bean对应的数据库表名
-	 */
-	public String getTableNameByEntity(Class<E> clazz) {
-		return this.commonOperate.getTableNameByEntity(clazz);
-	}
 
 	/**
-	 * 添加
+	 * 统一的保存或更新方法（推荐使用，对齐 CommonOperation API）。
+	 * 
+	 * 功能特性：
+	 * 1. 自动判断 insert/update（通过 @Version 或 id 查询）
+	 * 2. 支持乐观锁（@Version 字段自动维护）
+	 * 3. 自动填充公共字段（createTime, updateTime, createBy, updateBy 等）
+	 * 4. 只写入非空字段（选择性插入/更新）
+	 * 5. 支持合并 null 值（更新时从数据库读取旧值填充）
 	 *
 	 * @param entity 实体bean
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
 	 */
-	public void save(E entity, boolean isAutoFill) {
-		if (isAutoFill)
-			EntityAssists.beforeInsert(entity, this.nextId(), this.commonOperate.getUserId(), this.commonOperate.getUserIp(), true);
-		entityRepo.save(entity);
+	public E saveOrUpdate(E entity) {
+		return this.entityRepo.saveOrUpdate(entity);
 	}
 
 	/**
-	 * 批量保存
-	 *
-	 * @param entities 实体bean迭代器
+	 * 统一的保存或更新方法（使用配置对象，推荐使用）。
+	 * 
+	 * @param entity 实体bean
+	 * @param options 保存选项配置
+	 * @return 保存或更新后的实体对象（包含自动填充的字段、ID、版本号等）
 	 */
-	public void saveAll(Iterable<E> entities, boolean isAutoFill) {
-		if (isAutoFill) {
-			Long uId = this.commonOperate.getUserId();
-			String uip = this.commonOperate.getUserIp();
-			entities.forEach(entity -> EntityAssists.beforeInsert(entity, this.nextId(), uId, uip, true));
-		}
-		this.entityRepo.saveAll(entities);
+	public E saveOrUpdate(E entity, SaveOptions options) {
+		return this.entityRepo.saveOrUpdate(entity, options);
 	}
 
 	/**
@@ -184,53 +178,38 @@ public abstract class EntityService<R extends BaseDao<E, PK>, E, PK> extends Non
 	}
 
 	/**
-	 * 有选择地insert记录，空值不插入(采用数据库可能存在的默认值)。实现了mybatis mapper能力。
-	 *
-	 * @param entity 实体
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
-	 */
-	public Long insertSelective(E entity, boolean isAutoFill) {
-		return this.commonOperate.dynamicInsertByEntity(entity, isAutoFill);
-	}
-
-	/**
-	 * 批量有选择地insert记录，空值不插入(采用数据库可能存在的默认值)。实现了mybatis mapper能力。
-	 *
-	 * @param entities 多个实体
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
-	 */
-	public void insertSelectiveAll(Iterable<E> entities, boolean isAutoFill) {
-		this.commonOperate.dynamicBatchInsertByEntities((List<E>) entities, isAutoFill);
-	}
-
-	/**
-	 * 根据实体属性更新，属性为空值的Long类型不更新。
-	 *
-	 * @param entity 实体bean
-	 */
-	public void update(E entity) {
-		this.commonOperate.dynamicUpdateByEntity(entity, false);
-	}
-
-	/**
-	 * 根据实体属性更新，属性为空值的Long类型不更新。
-	 *
-	 * @param entity 实体bean
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
-	 */
-	public void update(E entity, boolean isAutoFill) {
-		this.commonOperate.dynamicUpdateByEntity(entity, isAutoFill);
-	}
-
-	/**
-	 * 批量更新
-	 *
+	 * 批量保存或更新（统一 API，推荐使用，对齐 CommonOperation API）。
+	 * 
 	 * @param entities 实体bean迭代器
-	 * @param isAutoFill 是否自动填充公共字段，不存在或需要手动设置公共字段时设置为false，比mybatis-plus更快捷
+	 * @return 保存或更新后的实体集合（包含自动填充的字段、ID、版本号等）
 	 */
-	public void updateAll(Iterable<E> entities, boolean isAutoFill) {
-		this.commonOperate.dynamicBatchUpdateByEntities((List<E>) entities, isAutoFill);
+	public Iterable<E> saveOrUpdateAll(Iterable<E> entities) {
+		return this.entityRepo.saveOrUpdateAll(entities);
 	}
+
+	/**
+	 * 批量保存或更新（使用配置对象，推荐使用）。
+	 * 
+	 * @param entities 实体bean迭代器
+	 * @param options 保存选项配置
+	 * @return 保存或更新后的实体集合（包含自动填充的字段、ID、版本号等）
+	 */
+	public Iterable<E> saveOrUpdateAll(Iterable<E> entities, SaveOptions options) {
+		return this.entityRepo.saveOrUpdateAll(entities, options);
+	}
+
+	/**
+	 * 批量保存（统一 API，参考 MyBatis-Plus 设计）。
+	 * 
+	 * @deprecated 推荐使用 saveOrUpdateAll() 方法（统一 API），此方法保留用于向后兼容
+	 * @param entities 实体bean迭代器
+	 * @return 保存或更新后的实体集合（包含自动填充的字段、ID、版本号等）
+	 */
+	@Deprecated
+	public Iterable<E> saveAll(Iterable<E> entities) {
+		return saveOrUpdateAll(entities);
+	}
+
 
 	/**
 	 * 分页查询，符合spring data jdbc domain聚合根规范

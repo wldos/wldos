@@ -58,6 +58,7 @@ import com.wldos.platform.support.resource.vo.Menu;
 import com.wldos.framework.support.storage.vo.FileInfo;
 import com.wldos.platform.core.dao.OrgUserDao;
 import com.wldos.platform.core.vo.User;
+import com.wldos.framework.common.SaveOptions;
 
 
 import org.apache.tomcat.util.bcel.Const;
@@ -397,7 +398,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 				: SysOptionEnum.DEFAULT_GROUP.getKey());
 		woOrgUser.setOrgId(org.getId());
 
-		this.save(woUser, true);
+		this.saveOrUpdate(woUser);
 		this.orgUserRepo.save(woOrgUser);
 
 		return woUser;
@@ -413,7 +414,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		woUser.setId(passwdModifyParams.getId());
 		woUser.setPasswd(passwdModifyParams.getPassword());
 
-		this.update(woUser, true);
+		this.saveOrUpdate(woUser);
 	}
 
 	/**
@@ -645,13 +646,13 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		usermeta.setMetaKey(metaKey);
 		usermeta.setMetaValue(metaValue);
 
-		this.userMetaService.insertSelective(usermeta, false);
+		this.userMetaService.saveOrUpdate(usermeta, SaveOptions.forImport());
 	}
 
 	private void userMetaModify(WoUsermeta usermeta, String metaValue) {
 
 		usermeta.setMetaValue(metaValue);
-		this.userMetaService.update(usermeta, false);
+		this.userMetaService.saveOrUpdate(usermeta, SaveOptions.forImport());
 	}
 
 	/**
@@ -683,7 +684,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		WoUser user = new WoUser();
 		user.setId(userId);
 		user.setAvatar(fileInfo.getPath());
-		this.update(user, true);
+		this.saveOrUpdate(user);
 	}
 
 	/**
@@ -705,7 +706,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		WoUser user = new WoUser();
 		user.setId(userId);
 		user.setAvatar(fileInfo.getPath());
-		this.update(user, true);
+		this.saveOrUpdate(user);
 	}
 
 	public String checkRoute(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request) {

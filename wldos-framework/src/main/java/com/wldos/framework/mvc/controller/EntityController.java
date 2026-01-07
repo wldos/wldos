@@ -42,7 +42,7 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	@PostMapping("add")
 	public String add(@RequestBody E entity) {
 		this.preAdd(entity);
-		service.insertSelective(entity, true);
+		service.saveOrUpdate(entity);  // 统一使用 saveOrUpdate() 方法，自动判断 insert/update
 		this.postAdd(entity);
 		return resJson.ok(Boolean.TRUE);
 	}
@@ -64,7 +64,7 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	@PostMapping("update")
 	public String update(@RequestBody E entity) {
 		this.preUpdate(entity);
-		service.update(entity, true);
+		service.saveOrUpdate(entity);  // 统一使用 saveOrUpdate() 方法，自动判断 insert/update
 		this.postUpdate(entity);
 		return resJson.ok(Boolean.TRUE);
 	}
