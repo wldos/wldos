@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import {
   disable as darkreaderDisable,
   enable as darkreaderEnable,
@@ -80,9 +88,9 @@ const updateDarkTheme = async (dark = false) => {
         }
       `,
       ignoreInlineStyle: [
-        '.react-switch-handle', 
-        '.ant-pro-global-header-logo img', 
-        '.ant-pro-top-nav-header-logo img', 
+        '.react-switch-handle',
+        '.ant-pro-global-header-logo img',
+        '.ant-pro-top-nav-header-logo img',
         '.ant-pro-sider-logo img',
         '.ant-layout-sider .ant-pro-sider-logo img',
         '.ant-pro-layout .ant-pro-sider-logo img',
@@ -91,7 +99,7 @@ const updateDarkTheme = async (dark = false) => {
         'img[alt*="logo"]',
         'img[src*="wldos.svg"]',
         'img[src*="logo.svg"]',
-        '.flow img[alt="WLDOS"]', 
+        '.flow img[alt="WLDOS"]',
         '.flow img[src*="wldos.svg"]'
       ],
       ignoreImageAnalysis: [],

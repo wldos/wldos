@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useCallback } from 'react';
 
 /**
@@ -38,9 +46,9 @@ const ImageWithFallback = ({
       large: { width: '240', height: '180', fontSize: '16' },
       custom: { width: width || '100%', height: height || '120', fontSize: '14' }
     };
-    
+
     const config = sizeMap[size] || sizeMap.medium;
-    
+
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" width="${config.width}" height="${config.height}">
         <defs>

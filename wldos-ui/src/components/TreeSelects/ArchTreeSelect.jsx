@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { TreeSelect } from 'antd';
 import { queryPage as queryArchPage } from '@/pages/sys/arch/service';
@@ -42,7 +50,7 @@ export default function ArchTreeSelect({
 
   const treeData = useMemo(() => {
     let src = rawTree;
-    
+
     // 如果指定了公司ID，过滤出属于同一公司的体系树
     if (companyId) {
       const filterByCom = (nodes) => {
@@ -58,7 +66,7 @@ export default function ArchTreeSelect({
       };
       src = filterByCom(rawTree);
     }
-    
+
     const mapped = mapTree(src);
     if (includeTop) {
       return [{ title: '顶级体系', value: 0, key: 0, isLeaf: true }, ...mapped];

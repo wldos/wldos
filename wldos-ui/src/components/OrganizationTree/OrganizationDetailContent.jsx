@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState } from 'react';
 import { Descriptions, Tag, Button, Space, Modal, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
@@ -86,8 +94,8 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
         <Descriptions.Item label="机构名称">{organization.orgName || '-'}</Descriptions.Item>
         <Descriptions.Item label="机构编码">{organization.orgCode || '-'}</Descriptions.Item>
         <Descriptions.Item label="组织类型">
-          {organization.orgType === 'org' ? '组织' : 
-           organization.orgType === 'dept' ? '部门' : 
+          {organization.orgType === 'org' ? '组织' :
+           organization.orgType === 'dept' ? '部门' :
            organization.orgType || organization.type || '-'}
         </Descriptions.Item>
         <Descriptions.Item label="归属公司">{companyName || '-'}</Descriptions.Item>
@@ -114,7 +122,7 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
           )}
         </Descriptions.Item>
       </Descriptions>
-      
+
       <div style={{ marginTop: 16 }}>
         <Space>
           <Button type="primary" icon={<EditOutlined />} onClick={handleEditOrganization}>

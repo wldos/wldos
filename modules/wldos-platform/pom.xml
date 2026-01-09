@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
   ~ Created by 元悉宇宙 (306991142@qq.com)
   ~ Licensed under the Apache License, Version 2.0 or a commercial license.
   ~ For Apache License Version 2.0 see License in the project root for license information.
@@ -14,16 +14,17 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.1</version>
+		<version>2.3.6</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>wldos-platform</artifactId>
 	<packaging>jar</packaging>
 	<name>WLDOS云应用支撑平台</name>
 	<description>
-		WLDOS®平台，也叫wldos-X，基于wldos-framework实现的企业级云物互联支撑平台，云物互联解决方案，SaaS应用架构的自驱演化系统。
+		WLDOS®平台，也叫wldos-X，基于wldos-framework实现的企业级云物互联支撑平台，云物互联解决方案，SaaS动态单体应用架构的自驱演化系统。
 		默认支持多租户运行模式，同时支持以单租户模式运行。
 		WLDOS®寓意：面向世界的系统，面向未来的系统，我的系统。
+		WLDOS理念：每个人组成全世界。
 		读音：汉['wou'da'si] 拼音[wou da si]。
 	</description>
 	<licenses>
@@ -34,7 +35,7 @@
 		</license>
 	</licenses>
 	<properties>
-        <wldos.version>2.3.1</wldos.version>
+        <wldos.version>2.3.6</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<!--<javacv.version>1.5.8</javacv.version>

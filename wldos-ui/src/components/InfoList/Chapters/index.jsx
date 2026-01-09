@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {Tag, Radio, Select, Space, Divider} from 'antd';
 import ProList from '@ant-design/pro-list';
@@ -82,17 +90,17 @@ const Chapters = (props) => {
   const rendItem = useCallback((term, tId) => term?.length && (
       term.map((t, i) => <Button key={t.key} value={t.key} style={tId === t.key ? checked : {border: 0}}>{i === 0 ? '不限' : t.title}</Button>)
   ), [checked]);
-  
+
   const rendProv = useCallback((p) => p?.length && (
     p.map(t => {
       return <Option key={t.id} value={t.id}>{t.name}</Option>;
     })
   ), []);
-  
+
   const rendCity = useCallback((c, cId) => c?.length && cId && (
     c.map(t => <Button key={t.id} value={t.id} style={cId === t.id ? checked : {border: 0}}>{t.name}</Button>)
   ), [checked]);
-  
+
   const rendPrice = useCallback((c, cId) => c?.length && (
     c.map(t => <Button key={t.value} value={t.value} style={cId === t.value ? checked : {border: 0}}>{t.label}</Button>)
   ), [checked]);
@@ -149,12 +157,12 @@ const Chapters = (props) => {
           }
         }}
         pagination={{
-          current: cur, 
-          onChange: onPageChange, 
-          itemRender, 
-          total: data.total, 
-          pageSize: data.pageSize, 
-          showQuickJumper: true, 
+          current: cur,
+          onChange: onPageChange,
+          itemRender,
+          total: data.total,
+          pageSize: data.pageSize,
+          showQuickJumper: true,
           showSizeChanger: false,
           showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
           className: styles.pagination

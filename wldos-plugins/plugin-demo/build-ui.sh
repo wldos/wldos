@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # 插件演示 UI 构建脚本 (Linux/Mac)
 
 cd "$(dirname "$0")/src/main/ui"

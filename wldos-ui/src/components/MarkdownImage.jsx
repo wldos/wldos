@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React from 'react';
 
 /**
@@ -8,7 +16,7 @@ import React from 'react';
 const MarkdownImage = ({ src, alt, title, content, ...props }) => {
   // 检查是否有HTML注释中的尺寸信息
   const markdownContent = content || '';
-  
+
   // 更宽松的正则表达式，支持多种格式
   const patterns = [
     // 格式1: ![alt](url "title") <!-- 尺寸: 300x408 -->
@@ -18,12 +26,12 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
     // 格式3: 查找包含该URL的所有行，然后检查是否有尺寸注释
     new RegExp(`.*${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*<!--\\s*尺寸:\\s*(\\d+)x(\\d+)\\s*-->.*`, 'g')
   ];
-  
+
   let match = null;
   let extractedTitle = title;
   let width = null;
   let height = null;
-  
+
   // 尝试匹配各种格式
   for (const pattern of patterns) {
     match = markdownContent.match(pattern);
@@ -32,7 +40,7 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
       break;
     }
   }
-  
+
   // 如果没匹配到，尝试更简单的方法：查找包含该URL的行
   if (!match) {
     const lines = markdownContent.split('\n');
@@ -66,13 +74,13 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
       }
     }
   }
-  
+
   let imgStyle = {
     maxWidth: '100%',
     height: 'auto',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
   };
-  
+
   if (width && height) {
     imgStyle = {
       width: `${width}px`,
@@ -80,12 +88,12 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
       boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     };
   }
-  
+
   return (
     <div style={{ textAlign: 'center', margin: '16px 0' }}>
-      <img 
-        src={src} 
-        alt={alt || ''} 
+      <img
+        src={src}
+        alt={alt || ''}
         title={extractedTitle}
         style={imgStyle}
         onError={(e) => {

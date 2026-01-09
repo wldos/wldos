@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 @import '~antd/es/style/themes/default.less';
 
 // 文章封面图片移动端优化
@@ -9,7 +17,7 @@
   object-fit: cover;
   background: #f5f5f5;
   border-radius: 6px;
-  
+
   // 移动端优化（只针对小屏幕）
   @media screen and (max-width: 480px) {
     width: 100% !important;
@@ -26,12 +34,12 @@
     @media screen and (max-width: 480px) {
       padding: 16px 0;
       margin-bottom: 12px;
-      
+
       .ant-list-item-extra {
         width: 100% !important;
         margin-left: 0 !important;
         margin-top: 12px;
-        
+
         .article-cover-image {
           width: 100% !important;
           height: 180px !important;
@@ -39,7 +47,7 @@
       }
     }
   }
-  
+
   // 小屏幕移动端布局优化
   @media screen and (max-width: 480px) {
     .ant-list-item-meta {
@@ -48,20 +56,20 @@
         line-height: 1.4;
         margin-bottom: 8px;
       }
-      
+
       .ant-list-item-meta-description {
         font-size: 14px;
         line-height: 1.5;
         margin-bottom: 12px;
       }
     }
-    
+
     .ant-list-item-action {
       margin-top: 12px;
-      
+
       li {
         margin-right: 16px;
-        
+
         .anticon {
           font-size: 16px;
         }

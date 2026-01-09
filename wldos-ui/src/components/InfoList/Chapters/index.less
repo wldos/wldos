@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 @import '~antd/es/style/themes/default.less';
 
 .listContainer {
@@ -9,7 +17,7 @@
     .ant-list-item:first-child {
       padding-top: 0;
     }
-    
+
     // 筛选条吸顶样式
     .ant-pro-list-search {
       position: sticky;
@@ -20,41 +28,41 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       margin-bottom: 16px;
       padding: 16px 0;
-      
+
       .ant-form-item {
         margin-bottom: 12px;
       }
-      
+
       .ant-form-item-label {
         font-weight: 500;
         color: @heading-color;
       }
     }
-    
+
     // 列表项优化（去除位移以避免抖动）
     .ant-list-item {
       border-bottom: 1px solid #f5f5f5;
       padding: 20px 0;
       transition: background-color 0.3s ease;
-      
+
       &:hover {
         background-color: #fafafa;
       }
     }
-    
+
     // 分页样式
     .ant-pagination {
       margin-top: 24px;
       text-align: center;
-      
+
       .ant-pagination-item {
         border-radius: 6px;
       }
-      
+
       .ant-pagination-item-active {
         background: @primary-color;
         border-color: @primary-color;
-        
+
         a {
           color: white;
         }
@@ -69,7 +77,7 @@ a.listItemMetaTitle {
   font-weight: bold;
   text-decoration: none;
   transition: color 0.3s ease;
-  
+
   &:hover {
     color: @primary-color;
   }
@@ -88,7 +96,7 @@ a.listItemMetaTitle {
       padding: 0 9px;
       border-radius: 4px;
       transition: all 0.3s ease;
-      
+
       &:hover {
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -106,22 +114,22 @@ a.listItemMetaTitle {
       .ant-pagination-item {
         border-radius: 6px;
         transition: all 0.3s ease;
-        
+
         &:hover {
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
       }
-      
+
       .ant-pagination-item-active {
         background: @primary-color;
         border-color: @primary-color;
-        
+
         a {
           color: white;
         }
       }
-      
+
       .ant-pagination-prev,
       .ant-pagination-next {
         border-radius: 6px;
@@ -136,15 +144,15 @@ a.listItemMetaTitle {
     :global {
       .ant-pro-list-search {
         padding: 12px 0;
-        
+
         .ant-form-item {
           margin-bottom: 8px;
         }
       }
-      
+
       .ant-list-item {
         padding: 16px 0;
-        
+
         &:hover {
           margin: 0 -8px;
           padding: 16px 8px;
@@ -152,6 +160,6 @@ a.listItemMetaTitle {
       }
     }
   }
-  
+
   // 骨架屏样式已移除
 }

@@ -1,3 +1,10 @@
+2026-01-08
+
+wldos-framework 数据库操作api底层实现开源
+站点资源添加支持勾选部分资源
+前端ui框架新增更多antd组件暴露给插件ui使用，支持检查插件ui的esm是否正确导出
+升级到2.3.6
+
 2026-01-07
 
 重构、优化wldos-orm框架，比mybatis plus、jdbc、data-jdbc都好用的数据库操作api。
@@ -15,7 +22,7 @@ SaveOptions (配置对象)
   └── custom() - 自定义选项（Builder 模式）
 修正orm api表名获取异常
 修正插件不支持独立版本管理和独立开发测试的问题
-升级到版本2.3.1
+
 
 2025-12-25
 

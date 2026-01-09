@@ -1,3 +1,27 @@
 {
-  "plugins" : { }
+  "plugins" : {
+    "plugin-demo" : {
+      "routes" : [ {
+        "path" : "/admin/demo/home",
+        "component" : "/home",
+        "name" : "首页",
+        "sort" : 0
+      }, {
+        "path" : "/admin/demo/example",
+        "component" : "/example",
+        "name" : "示例页面",
+        "icon" : "FileTextOutlined",
+        "sort" : 1
+      } ],
+      "entry" : "index.html",
+      "code" : "plugin-demo",
+      "assets" : {
+        "css" : [ "umi.5a6c5a7c.css" ]
+      },
+      "name" : "插件开发演示",
+      "description" : "WLDOS插件开发演示项目，作为插件开发者的基础框架和参考示例",
+      "version" : "1.0.0",
+      "moduleFormat" : "static"
+    }
+  }
 }

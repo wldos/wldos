@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Tree, Spin, Badge, message } from 'antd';
 import { fetchOrganizationData, fetchUsersByOrganization, loadSystemsByCompany, loadOrganizationsBySystem } from '@/services/organization';
@@ -87,7 +95,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
         return node;
       });
     };
-    
+
     updateTreeData(updateNode(treeData));
   };
 
@@ -103,7 +111,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
 
   const renderTreeNode = (node) => {
     const icon = getNodeIcon(node.type);
-    
+
     // 根据节点类型获取正确的名称字段
     const getNodeName = (node) => {
       switch (node.type) {
@@ -119,7 +127,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
           return node.name || '未知';
       }
     };
-    
+
     const title = (
       <span>
         {icon} {getNodeName(node)}
@@ -140,13 +148,13 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
 
   const handleExpand = async (expandedKeys, { node }) => {
     setExpandedKeys(expandedKeys);
-    
+
     console.log('展开节点:', node);
-    
+
     // 获取实际的节点数据
     const nodeData = node.node || node;
     console.log('节点数据:', nodeData);
-    
+
     // 按需加载子级数据
     if (nodeData.type === 'company' && !nodeData.children?.length) {
       console.log('加载公司的体系数据:', nodeData.id);
@@ -193,7 +201,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
   const updateTreeWithChildren = (parentId, children) => {
     console.log('更新树形数据，父节点ID:', parentId, '子节点数据:', children);
     console.log('当前树形数据:', treeData);
-    
+
     const updateNode = (nodes) => {
       return nodes.map(node => {
         console.log('检查节点:', node.id, '是否匹配父节点ID:', parentId);
@@ -213,7 +221,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
         return node;
       });
     };
-    
+
     const newTreeData = updateNode(treeData);
     console.log('更新后的树形数据:', newTreeData);
     console.log('更新后的树形数据长度:', newTreeData.length);

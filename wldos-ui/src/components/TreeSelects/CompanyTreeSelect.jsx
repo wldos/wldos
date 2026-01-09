@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { TreeSelect } from 'antd';
 import { getComSelectOption, queryPage as queryComPage } from '@/pages/sys/com/service';
@@ -31,7 +39,7 @@ export default function CompanyTreeSelect({
     try {
       const res = await queryComPage({ current: 1, pageSize: 1000 });
       const list = res?.data?.rows || [];
-      
+
       // 添加顶级平台公司选项
       const platformCompany = {
         id: '0',
@@ -42,7 +50,7 @@ export default function CompanyTreeSelect({
         isValid: '1',
         children: null
       };
-      
+
       const dataWithPlatform = [platformCompany, ...list];
       setTreeData(mapTree(dataWithPlatform));
     } finally {

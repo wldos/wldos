@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React from 'react';
 import ProTable from '@ant-design/pro-table';
 import isMobile from '@/hooks/isMobile';
@@ -33,9 +41,9 @@ export default function ProTableX(props) {
     <ProTable
       {...rest}
       columns={processedColumns}
-      options={{ 
-        ...options, 
-        fullScreen: !mobile && options.fullScreen !== false 
+      options={{
+        ...options,
+        fullScreen: !mobile && options.fullScreen !== false
       }}
       tableLayout={mobile ? undefined : (tableLayout ?? 'fixed')}
       scroll={mobile ? undefined : (scroll ?? { x: 1500 })}

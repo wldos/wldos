@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React from 'react';
 import {defineConfig} from 'umi';
 import defaultSettings from './defaultSettings';
@@ -46,23 +54,23 @@ export default defineConfig({
       .set('exprContextCritical', false)
       .set('unknownContextCritical', false)
       .set('wrappedContextCritical', false);
-    
+
     // 注意：对于动态变量路径，webpack 无法在构建时静态分析
     // - 本地组件路径 `@/pages/xxx/index`：webpack 可以静态分析（@/ 是别名），构建时打包
     // - 插件路径 `/plugins/...`：webpack 无法静态分析，运行时通过浏览器原生 import() 加载
     // 两者都使用相同的代码，webpack 会根据路径类型自动处理
-    
+
     // 开发模式：动态配置插件别名（生产环境完全规避）
     if (env === 'development') {
       try {
         const pluginConfig = require('./pluginConfig');
         const aliases = pluginConfig.getPluginAliases();
-        
+
         // 动态添加插件别名
         for (const [alias, pluginPath] of Object.entries(aliases)) {
           config.resolve.alias.set(alias, pluginPath);
         }
-        
+
         // 添加插件源码目录到模块解析路径
         config.resolve.modules
           .add(require('path').resolve(__dirname, '../../../wldos-plugins'));

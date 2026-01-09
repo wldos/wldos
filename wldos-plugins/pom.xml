@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
   ~ Created by 元悉宇宙 (306991142@qq.com)
   ~ Licensed under the Apache License, Version 2.0 or a commercial license.
   ~ For Apache License Version 2.0 see License in the project root for license information.
@@ -13,7 +13,7 @@
     <parent>
         <artifactId>wldos-parent</artifactId>
         <groupId>com.wldos</groupId>
-        <version>2.3.1</version>
+        <version>2.3.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

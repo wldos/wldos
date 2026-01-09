@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+  ~ Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
   ~ Created by 元悉宇宙 (306991142@qq.com)
   ~ Licensed under the Apache License, Version 2.0 or a commercial license.
   ~ For Apache License Version 2.0 see License in the project root for license information.
@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>2.3.1</version>
+	<version>2.3.6</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<!-- WLDOS 版本号 - 统一管理，修改此处即可更新所有地方的版本号 -->
-		<wldos.version>2.3.1</wldos.version>
+		<wldos.version>2.3.6</wldos.version>
 	</properties>
 	<url>http://www.wldos.com</url>
 	<licenses>
@@ -264,25 +264,30 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Maven Javadoc Plugin - 配置自定义标签（所有子模块共享） -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.4.1</version>
 				<configuration>
+					<!-- 注册 @date 为自定义标签 -->
+					<tags>
+						<tag>
+							<name>date</name>
+							<placement>a</placement>
+							<head>Date:</head>
+						</tag>
+					</tags>
+					<!-- 编码设置 -->
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
+					<!-- 忽略警告 -->
 					<failOnError>false</failOnError>
-					<additionalJOption>-Xdoclint:none</additionalJOption>
+					<additionalOptions>
+						<additionalOption>-Xdoclint:none</additionalOption>
+					</additionalOptions>
 				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

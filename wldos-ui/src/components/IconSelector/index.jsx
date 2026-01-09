@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useMemo, useState } from 'react';
 import { Input, Row, Col, Tooltip, Tabs, Badge } from 'antd';
 import { iconMap, getAvailableIcons } from '@/utils/iconLibrary';
@@ -49,7 +57,7 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
       'exclamation': 'basic',
       'eye': 'basic',
       'tool': 'basic',
-      
+
       // 导航图标
       'menu': 'navigation',
       'appstore': 'navigation',
@@ -59,7 +67,7 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
       'upload': 'navigation',
       'dashboard': 'navigation',
       'desktop': 'navigation',
-      
+
       // 媒体图标
       'picture': 'media',
       'file': 'media',
@@ -80,7 +88,7 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
       'file-zip': 'media',
       'folder': 'media',
       'folder-open': 'media',
-      
+
       // 系统图标
       'api': 'system',
       'bug': 'system',
@@ -99,7 +107,7 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
       'key': 'system',
       'safety': 'system',
       'security-scan': 'system',
-      
+
       // 业务图标
       'shopping-cart': 'business',
       'dollar': 'business',
@@ -111,7 +119,7 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
       'gift': 'business',
       'trophy': 'business',
       'crown': 'business',
-      
+
       // 状态图标
       'check-circle': 'status',
       'close-circle': 'status',
@@ -126,14 +134,14 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
       'thunderbolt': 'status',
       'fire': 'status'
     };
-    
+
     return categoryMap[iconName] || 'basic';
   };
 
   // 从统一图标库获取图标列表
   const getIconList = (category = 'all') => {
     const availableIcons = getAvailableIcons();
-    
+
     // 图标中文标签映射
     const iconLabels = {
       'home': '首页',
@@ -226,10 +234,10 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
     };
 
     let iconsToProcess = availableIcons;
-    
+
     // 如果指定了分类，只处理该分类的图标
     if (category !== 'all') {
-      iconsToProcess = availableIcons.filter(iconName => 
+      iconsToProcess = availableIcons.filter(iconName =>
         getIconCategory(iconName) === category
       );
     }
@@ -244,12 +252,12 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
 
   const allIcons = getIconList(activeTab);
   const [keyword, setKeyword] = useState('');
-  
+
   const filtered = useMemo(() => {
     if (!keyword) return allIcons;
     const lower = keyword.toLowerCase();
-    return allIcons.filter(i => 
-      i.name.toLowerCase().includes(lower) || 
+    return allIcons.filter(i =>
+      i.name.toLowerCase().includes(lower) ||
       (i.label || '').toLowerCase().includes(lower)
     );
   }, [allIcons, keyword]);
@@ -322,9 +330,9 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
               }}
               onClick={() => handleIconSelect(item.name, 'antd')}
             >
-              <div style={{ 
-                fontSize: '18px', 
-                color: initialValue?.name === item.name ? '#1890ff' : '#666' 
+              <div style={{
+                fontSize: '18px',
+                color: initialValue?.name === item.name ? '#1890ff' : '#666'
               }}>
                 {item.icon}
               </div>
@@ -351,18 +359,18 @@ const IconSelector = ({ value, onChange, placeholder = "选择图标" }) => {
     const tabItems = Object.keys(iconCategories).map(categoryKey => {
       const category = iconCategories[categoryKey];
       const categoryIcons = getIconList(categoryKey);
-      const filteredCategoryIcons = keyword ? 
-        categoryIcons.filter(i => 
-          i.name.toLowerCase().includes(keyword.toLowerCase()) || 
+      const filteredCategoryIcons = keyword ?
+        categoryIcons.filter(i =>
+          i.name.toLowerCase().includes(keyword.toLowerCase()) ||
           (i.label || '').toLowerCase().includes(keyword.toLowerCase())
         ) : categoryIcons;
 
       return {
         key: categoryKey,
         label: (
-          <Badge 
-            count={filteredCategoryIcons.length} 
-            size="small" 
+          <Badge
+            count={filteredCategoryIcons.length}
+            size="small"
             style={{ backgroundColor: category.color }}
           >
             <span style={{ color: category.color, fontWeight: 500 }}>

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React from 'react';
 import { Form, Input, InputNumber, Switch, Button, Space, Select } from 'antd';
 
@@ -75,9 +83,9 @@ const OrganizationEditForm = ({ organization, onSubmit, loading }) => {
           { max: 500, message: '机构描述不能超过500个字符' }
         ]}
       >
-        <TextArea 
-          rows={4} 
-          placeholder="请输入机构描述" 
+        <TextArea
+          rows={4}
+          placeholder="请输入机构描述"
         />
       </Form.Item>
 
@@ -88,10 +96,10 @@ const OrganizationEditForm = ({ organization, onSubmit, loading }) => {
           { required: true, message: '请输入展示顺序' }
         ]}
       >
-        <InputNumber 
-          min={0} 
-          max={9999} 
-          placeholder="请输入展示顺序" 
+        <InputNumber
+          min={0}
+          max={9999}
+          placeholder="请输入展示顺序"
           style={{ width: '100%' }}
         />
       </Form.Item>
@@ -101,9 +109,9 @@ const OrganizationEditForm = ({ organization, onSubmit, loading }) => {
         label="状态"
         valuePropName="checked"
       >
-        <Switch 
-          checkedChildren="有效" 
-          unCheckedChildren="无效" 
+        <Switch
+          checkedChildren="有效"
+          unCheckedChildren="无效"
         />
       </Form.Item>
 

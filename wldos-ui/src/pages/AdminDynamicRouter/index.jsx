@@ -544,31 +544,77 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 					}
 
 					const esmModule = await import(/* webpackIgnore: true */ esmUrl);
+
+					// 调试信息：查看 ESM 模块的导出内容
+					console.log(`[AdminDynamicRouter] ESM模块加载成功，检查导出: ${pluginCode}`, {
+						esmUrl,
+						componentPath,
+						esmModule,
+						hasDefault: 'default' in esmModule,
+						defaultValue: esmModule.default,
+						moduleKeys: Object.keys(esmModule)
+					});
+
 					// ESM 文件直接导出 default，直接使用
 					const comp = esmModule.default || esmModule;
 
-					if (comp) {
+					if (comp && typeof comp !== 'undefined') {
 						if (process.env.NODE_ENV === 'development') {
 							console.log(`[AdminDynamicRouter] ESM插件加载成功: ${pluginCode}`, {
 								version: pluginInfo.version,
 								esmUrl: esmUrl,
-								component: componentPath
+								component: componentPath,
+								componentType: typeof comp
 							});
 						}
 						return { default: comp };
 					} else {
-						throw new Error(`ESM模块加载成功，但找不到组件 ${componentPath}`);
+						throw new Error(
+							`ESM模块加载成功，但找不到组件 ${componentPath}\n` +
+							`ESM URL: ${esmUrl}\n` +
+							`模块导出: ${JSON.stringify(Object.keys(esmModule))}\n` +
+							`default 值: ${esmModule.default}\n` +
+							`模块内容: ${JSON.stringify(esmModule, null, 2)}`
+						);
 					}
 				} catch (esmError) {
-					// ESM 加载失败，回退到 JSONP 格式
-					if (process.env.NODE_ENV === 'development') {
-						console.warn(`[AdminDynamicRouter] ESM格式加载失败，回退到JSONP: ${pluginCode}`, {
-							esmUrl,
-							error: esmError.message,
-							stack: esmError.stack
-						});
+					// ESM 加载失败
+					console.error(`[AdminDynamicRouter] ESM格式加载失败: ${pluginCode}`, {
+						esmUrl,
+						error: esmError.message,
+						stack: esmError.stack,
+						componentPath
+					});
+
+					// 检查是否有 JSONP 文件作为后备（通过检查 asset-manifest.json）
+					let hasJsonpFallback = false;
+					try {
+						const manifestUrl = `${pluginPublicPath}asset-manifest.json`;
+						const manifestRes = await fetch(manifestUrl);
+						if (manifestRes.ok) {
+							const assetManifest = await manifestRes.json();
+							const umiChunkName = `p__${componentPath}`;
+							const manifestKey = `/${umiChunkName}.js`;
+							hasJsonpFallback = !!assetManifest[manifestKey];
+						}
+					} catch (e) {
+						// asset-manifest.json 不存在，说明没有构建 UmiJS JSONP
 					}
 
+					// 如果没有 JSONP 后备，直接抛出错误
+					if (!hasJsonpFallback) {
+						throw new Error(
+							`插件组件加载失败: ${pluginCode}/${componentPath}\n` +
+							`ESM URL: ${esmUrl}\n` +
+							`错误: ${esmError.message}\n` +
+							`请检查：\n` +
+							`1. ESM 文件是否存在: ${esmUrl}\n` +
+							`2. ESM 文件语法是否正确\n` +
+							`3. 服务器是否正确配置了 ESM 文件的 MIME 类型`
+						);
+					}
+
+					// 如果有 JSONP 后备，继续回退到 JSONP 格式
 					// 回退到 JSONP 格式（使用 UmiJS 构建的 chunk）
 					// componentPath 格式：规范化路径（如 "scheduler", "tasks"）
 					// UmiJS 会根据 component 路径生成 chunk 名称：p__{componentPath}

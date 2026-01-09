@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import ProLayout from '@ant-design/pro-layout';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {connect, history, Link, useIntl} from 'umi';
@@ -147,11 +155,11 @@ const AdminLayout = (props) => {
       }
       // 新增标签
       const title = findTitleFromMenu(menuData, path) || '';
-      const newTab = { 
-        key: path, 
-        path, 
-        title, 
-        closable: path !== adminHomePath 
+      const newTab = {
+        key: path,
+        path,
+        title,
+        closable: path !== adminHomePath
       };
       return [...prev, newTab];
     });
@@ -183,10 +191,10 @@ const AdminLayout = (props) => {
   // 菜单数据就绪后，强制更新所有标签标题
   useEffect(() => {
     if (!menuReady) return;
-   
+
     setTabs((prev) => prev.map((t) => {
       const fixedTitle = findTitleFromMenu(menuData, t.path || t.key) || t.title || '';
-      
+
       return { ...t, title: fixedTitle };
     }));
   }, [menuReady, menuData, findTitleFromMenu]);
@@ -344,8 +352,8 @@ const AdminLayout = (props) => {
           // 确保 menuData 是数组，如果为空则使用空数组
           const baseMenu = Array.isArray(menuData) ? menuData : [];
           // 如果 md 存在且是数组且有数据，则合并；否则使用 baseMenu
-          const finalMenu = (md && Array.isArray(md) && md.length > 0) 
-            ? [...baseMenu, ...md] 
+          const finalMenu = (md && Array.isArray(md) && md.length > 0)
+            ? [...baseMenu, ...md]
             : baseMenu;
           return menuHandle(finalMenu);
         }}
@@ -369,7 +377,7 @@ const AdminLayout = (props) => {
           const isExactMatch = location.pathname === menuItemProps.path;
 
           return (
-            <Link 
+            <Link
               to={menuItemProps.path}
               data-is-parent-path={isParentPath ? 'true' : 'false'}
               data-is-exact-match={isExactMatch ? 'true' : 'false'}
@@ -396,30 +404,30 @@ const AdminLayout = (props) => {
             <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
               {collapsed ? (
                 // 菜单栏回收时显示favicon小图标
-                <img 
-                  src={site.favicon || site.logo} 
-                  alt="favicon" 
-                  style={{ 
-                    height: '24px', 
+                <img
+                  src={site.favicon || site.logo}
+                  alt="favicon"
+                  style={{
+                    height: '24px',
                     width: '24px',
                     objectFit: 'contain',
                     display: 'block'
-                  }} 
+                  }}
                   onError={(e) => {
                     e.target.style.display = 'none';
                   }}
                 />
               ) : (
                 // 菜单栏展开时显示完整logo
-                <img 
-                  src={site.logo} 
-                  alt="logo" 
-                  style={{ 
-                    height: '32px', 
+                <img
+                  src={site.logo}
+                  alt="logo"
+                  style={{
+                    height: '32px',
                     width: 'auto',
                     objectFit: 'contain',
                     display: 'block'
-                  }} 
+                  }}
                   onError={(e) => {
                     e.target.style.display = 'none';
                   }}
@@ -505,7 +513,7 @@ const AdminLayout = (props) => {
                 </div>
               );
             })()}
-            
+
             {/* 可滚动的其他标签 */}
             <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
               <Tabs
@@ -568,7 +576,7 @@ const AdminLayout = (props) => {
           </div>
         </div>
         {/* 内容容器：全宽布局，消除所有间隙 */}
-        <div style={{ 
+        <div style={{
           padding: '0',
           background: '#f5f7fa',
           minHeight: 'calc(100vh - 200px)'

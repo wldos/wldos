@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - 2025 yuanxiyuzhou. All rights reserved.
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
  * Created by 元悉宇宙 (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
@@ -136,11 +136,11 @@ public final class Constants {
 	public static final String WLDOS_DOMAIN_HEADER = "domain-wldos";
 	
 	/** WLDOS 版本号 - 统一管理版本号，与 pom.xml 中的 wldos.version 保持一致 */
-	public static final String WLDOS_VERSION = "2.3.1";
+	public static final String WLDOS_VERSION = "2.3.6";
 	
 	/** WLDOS 版本号（带 V 前缀，用于显示） */
-	public static final String WLDOS_VERSION_DISPLAY = "V2.3.1";
+	public static final String WLDOS_VERSION_DISPLAY = "V2.3.6";
 	
 	/** WLDOS 版本号（小写 v 前缀，用于 banner 等） */
-	public static final String WLDOS_VERSION_LOWER = "v2.3.1";
+	public static final String WLDOS_VERSION_LOWER = "v2.3.6";
 }

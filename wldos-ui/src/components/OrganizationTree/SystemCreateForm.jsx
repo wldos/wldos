@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Form, Input, InputNumber, Select, Button, Space } from 'antd';
 import { loadSystemsByCompany } from '@/services/organization';
@@ -14,7 +22,7 @@ const SystemCreateForm = ({ companyId, onSubmit, loading, parentSystems = [] }) 
   useEffect(() => {
     const loadCompanySystems = async () => {
       if (!companyId) return;
-      
+
       setLoadingSystems(true);
       try {
         const systems = await loadSystemsByCompany(companyId);
@@ -82,9 +90,9 @@ const SystemCreateForm = ({ companyId, onSubmit, loading, parentSystems = [] }) 
           { max: 150, message: '最多150个字！' }
         ]}
       >
-        <TextArea 
-          rows={3} 
-          placeholder="请输入体系描述，最多150个字" 
+        <TextArea
+          rows={3}
+          placeholder="请输入体系描述，最多150个字"
           style={{ resize: 'vertical' }}
         />
       </Form.Item>
@@ -97,10 +105,10 @@ const SystemCreateForm = ({ companyId, onSubmit, loading, parentSystems = [] }) 
           { required: true, message: '请选择父体系' }
         ]}
       >
-        <Select 
-          placeholder="请选择父体系" 
+        <Select
+          placeholder="请选择父体系"
           loading={loadingSystems}
-        >          
+        >
           {companySystems.map(system => (
             <Option key={system.id} value={system.id}>
               {system.archName}
@@ -117,10 +125,10 @@ const SystemCreateForm = ({ companyId, onSubmit, loading, parentSystems = [] }) 
           { type: 'number', min: 1, max: 100, message: '请输入1到100之间的数字！' }
         ]}
       >
-        <InputNumber 
-          min={1} 
-          max={100} 
-          placeholder="请输入数字，1-100" 
+        <InputNumber
+          min={1}
+          max={100}
+          placeholder="请输入数字，1-100"
           style={{ width: '100%' }}
         />
       </Form.Item>

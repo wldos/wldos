@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Space, Tooltip, Modal, Card, Row, Col, Statistic, Progress, Tag, Badge } from 'antd';
 import {
@@ -132,15 +140,15 @@ const FullscreenView = () => {
         </div>
         <Space>
           <Tooltip title="刷新数据">
-            <Button 
-              type="text" 
-              icon={<ReloadOutlined />} 
+            <Button
+              type="text"
+              icon={<ReloadOutlined />}
               style={{ color: 'white' }}
               onClick={() => window.location.reload()}
             />
           </Tooltip>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
             onClick={toggleFullscreen}
           >
@@ -154,14 +162,14 @@ const FullscreenView = () => {
         <Row gutter={[24, 24]}>
           {/* 系统概览 */}
           <Col xs={24} lg={8}>
-            <Card 
+            <Card
               title={
                 <Space>
                   <MonitorOutlined style={{ color: '#1890ff' }} />
                   系统概览
                 </Space>
               }
-              style={{ 
+              style={{
                 background: 'rgba(255,255,255,0.95)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
@@ -171,8 +179,8 @@ const FullscreenView = () => {
               <Space direction="vertical" size="large" style={{ width: '100%' }}>
                 <div>
                   <div style={{ marginBottom: '8px', color: '#666' }}>CPU使用率</div>
-                  <Progress 
-                    percent={Math.round(systemStats.cpu)} 
+                  <Progress
+                    percent={Math.round(systemStats.cpu)}
                     strokeColor={{
                       '0%': '#108ee9',
                       '100%': '#87d068',
@@ -183,11 +191,11 @@ const FullscreenView = () => {
                     {Math.round(systemStats.cpu)}%
                   </div>
                 </div>
-                
+
                 <div>
                   <div style={{ marginBottom: '8px', color: '#666' }}>内存使用率</div>
-                  <Progress 
-                    percent={Math.round(systemStats.memory)} 
+                  <Progress
+                    percent={Math.round(systemStats.memory)}
                     strokeColor={{
                       '0%': '#87d068',
                       '100%': '#ff7875',
@@ -201,8 +209,8 @@ const FullscreenView = () => {
 
                 <div>
                   <div style={{ marginBottom: '8px', color: '#666' }}>磁盘使用率</div>
-                  <Progress 
-                    percent={systemStats.disk} 
+                  <Progress
+                    percent={systemStats.disk}
                     strokeColor="#52c41a"
                     showInfo={false}
                   />
@@ -216,14 +224,14 @@ const FullscreenView = () => {
 
           {/* 网络状态 */}
           <Col xs={24} lg={8}>
-            <Card 
+            <Card
               title={
                 <Space>
                   <CloudOutlined style={{ color: '#52c41a' }} />
                   网络状态
                 </Space>
               }
-              style={{ 
+              style={{
                 background: 'rgba(255,255,255,0.95)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
@@ -233,8 +241,8 @@ const FullscreenView = () => {
               <Space direction="vertical" size="large" style={{ width: '100%' }}>
                 <div>
                   <div style={{ marginBottom: '8px', color: '#666' }}>网络负载</div>
-                  <Progress 
-                    percent={Math.round(systemStats.network)} 
+                  <Progress
+                    percent={Math.round(systemStats.network)}
                     strokeColor={{
                       '0%': '#52c41a',
                       '100%': '#ff4d4f',
@@ -248,16 +256,16 @@ const FullscreenView = () => {
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Statistic 
-                      title="在线用户" 
-                      value={systemStats.users} 
+                    <Statistic
+                      title="在线用户"
+                      value={systemStats.users}
                       valueStyle={{ color: '#1890ff' }}
                     />
                   </Col>
                   <Col span={12}>
-                    <Statistic 
-                      title="今日请求" 
-                      value={systemStats.requests} 
+                    <Statistic
+                      title="今日请求"
+                      value={systemStats.requests}
                       valueStyle={{ color: '#52c41a' }}
                     />
                   </Col>
@@ -265,9 +273,9 @@ const FullscreenView = () => {
 
                 <div>
                   <div style={{ marginBottom: '8px', color: '#666' }}>系统运行时间</div>
-                  <div style={{ 
-                    background: '#f0f0f0', 
-                    padding: '8px 12px', 
+                  <div style={{
+                    background: '#f0f0f0',
+                    padding: '8px 12px',
                     borderRadius: '6px',
                     textAlign: 'center',
                     fontSize: '16px',
@@ -283,14 +291,14 @@ const FullscreenView = () => {
 
           {/* 安全状态 */}
           <Col xs={24} lg={8}>
-            <Card 
+            <Card
               title={
                 <Space>
                   <SecurityScanOutlined style={{ color: '#fa8c16' }} />
                   安全状态
                 </Space>
               }
-              style={{ 
+              style={{
                 background: 'rgba(255,255,255,0.95)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
@@ -308,13 +316,13 @@ const FullscreenView = () => {
 
                 <div>
                   <div style={{ marginBottom: '8px', color: '#666' }}>错误日志</div>
-                  <Badge 
-                    count={systemStats.errors} 
+                  <Badge
+                    count={systemStats.errors}
                     style={{ backgroundColor: systemStats.errors > 10 ? '#ff4d4f' : '#52c41a' }}
                   >
-                    <div style={{ 
-                      background: '#f0f0f0', 
-                      padding: '8px 12px', 
+                    <div style={{
+                      background: '#f0f0f0',
+                      padding: '8px 12px',
                       borderRadius: '6px',
                       textAlign: 'center',
                       fontSize: '14px'
@@ -326,16 +334,16 @@ const FullscreenView = () => {
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Statistic 
-                      title="数据库连接" 
-                      value="正常" 
+                    <Statistic
+                      title="数据库连接"
+                      value="正常"
                       valueStyle={{ color: '#52c41a', fontSize: '16px' }}
                     />
                   </Col>
                   <Col span={12}>
-                    <Statistic 
-                      title="API状态" 
-                      value="正常" 
+                    <Statistic
+                      title="API状态"
+                      value="正常"
                       valueStyle={{ color: '#52c41a', fontSize: '16px' }}
                     />
                   </Col>
@@ -346,14 +354,14 @@ const FullscreenView = () => {
 
           {/* 快速操作 */}
           <Col xs={24}>
-            <Card 
+            <Card
               title={
                 <Space>
                   <SettingOutlined style={{ color: '#722ed1' }} />
                   快速操作
                 </Space>
               }
-              style={{ 
+              style={{
                 background: 'rgba(255,255,255,0.95)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
@@ -362,8 +370,8 @@ const FullscreenView = () => {
             >
               <Row gutter={[16, 16]}>
                 <Col xs={12} sm={6} md={4}>
-                  <Button 
-                    type="primary" 
+                  <Button
+                    type="primary"
                     icon={<DatabaseOutlined />}
                     block
                     style={{ height: '60px', fontSize: '16px' }}
@@ -372,7 +380,7 @@ const FullscreenView = () => {
                   </Button>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
-                  <Button 
+                  <Button
                     icon={<UserOutlined />}
                     block
                     style={{ height: '60px', fontSize: '16px' }}
@@ -381,7 +389,7 @@ const FullscreenView = () => {
                   </Button>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
-                  <Button 
+                  <Button
                     icon={<FileTextOutlined />}
                     block
                     style={{ height: '60px', fontSize: '16px' }}
@@ -390,7 +398,7 @@ const FullscreenView = () => {
                   </Button>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
-                  <Button 
+                  <Button
                     icon={<SecurityScanOutlined />}
                     block
                     style={{ height: '60px', fontSize: '16px' }}
@@ -399,7 +407,7 @@ const FullscreenView = () => {
                   </Button>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
-                  <Button 
+                  <Button
                     icon={<MonitorOutlined />}
                     block
                     style={{ height: '60px', fontSize: '16px' }}
@@ -408,7 +416,7 @@ const FullscreenView = () => {
                   </Button>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
-                  <Button 
+                  <Button
                     icon={<SettingOutlined />}
                     block
                     style={{ height: '60px', fontSize: '16px' }}

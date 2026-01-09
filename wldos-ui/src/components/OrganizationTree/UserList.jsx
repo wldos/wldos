@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState } from 'react';
 import { Table, Spin, Button, Space, Tag, Avatar, Input, Select, Row, Col } from 'antd';
 import { EditOutlined, DeleteOutlined, UserOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
@@ -17,13 +25,13 @@ const UserList = ({ users, loading, organizationId }) => {
 
   // 过滤用户数据
   const filteredUsers = users.filter(user => {
-    const matchesSearch = !searchText || 
+    const matchesSearch = !searchText ||
       user.nickname?.toLowerCase().includes(searchText.toLowerCase()) ||
       user.login_name?.toLowerCase().includes(searchText.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchText.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -44,9 +52,9 @@ const UserList = ({ users, loading, organizationId }) => {
       key: 'avatar',
       width: 60,
       render: (avatar) => (
-        <Avatar 
-          src={avatar} 
-          icon={<UserOutlined />} 
+        <Avatar
+          src={avatar}
+          icon={<UserOutlined />}
           size="small"
         />
       ),
@@ -92,24 +100,24 @@ const UserList = ({ users, loading, organizationId }) => {
       key: 'action',
       render: (_, record) => (
         <Space size="small">
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             icon={<EditOutlined />}
             size="small"
           >
             编辑
           </Button>
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             icon={<EyeOutlined />}
             size="small"
             onClick={() => handleViewPermission(record)}
           >
             权限查看
           </Button>
-          <Button 
-            type="link" 
-            danger 
+          <Button
+            type="link"
+            danger
             icon={<DeleteOutlined />}
             size="small"
           >
@@ -127,7 +135,7 @@ const UserList = ({ users, loading, organizationId }) => {
           <UserOutlined /> 组织成员
         </h3>
       </div>
-      
+
       {/* 查询条件 */}
       <div style={{ marginBottom: 16 }}>
         <Row gutter={16}>
@@ -155,7 +163,7 @@ const UserList = ({ users, loading, organizationId }) => {
           </Col>
         </Row>
       </div>
-      
+
       <Spin spinning={loading}>
         <Table
           columns={columns}

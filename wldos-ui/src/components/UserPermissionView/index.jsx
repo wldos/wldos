@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Modal, Table, Tabs, Card, Tag, Space, Spin, message } from 'antd';
 import { EyeOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
@@ -29,10 +37,10 @@ const UserPermissionView = ({ visible, onCancel, userId, userName }) => {
       const userResponse = await queryUserMenu(userId);
       // 获取指定用户的管理端权限
       const adminResponse = await queryUserAdminMenu(userId);
-      
+
       console.log('用户端权限数据:', userResponse);
       console.log('管理端权限数据:', adminResponse);
-      
+
       setUserPermissions(userResponse.data || {});
       setAdminPermissions(adminResponse.data || []);
     } catch (error) {
@@ -143,9 +151,9 @@ const UserPermissionView = ({ visible, onCancel, userId, userName }) => {
           <div>
             <strong>头像：</strong>
             {userInfo.avatar ? (
-              <img 
-                src={userInfo.avatar} 
-                alt="头像" 
+              <img
+                src={userInfo.avatar}
+                alt="头像"
                 style={{ width: 24, height: 24, borderRadius: '50%', verticalAlign: 'middle' }}
               />
             ) : '-'}
@@ -153,7 +161,7 @@ const UserPermissionView = ({ visible, onCancel, userId, userName }) => {
           <div>
             <strong>状态：</strong>
             <Tag color={userInfo.status === 'normal' ? 'green' : 'red'}>
-              {userInfo.status === 'normal' ? '正常' : 
+              {userInfo.status === 'normal' ? '正常' :
                userInfo.status === 'notActive' ? '待激活' :
                userInfo.status === 'locked' ? '已锁定' :
                userInfo.status === 'cancelled' ? '已注销' :
@@ -206,7 +214,7 @@ const UserPermissionView = ({ visible, onCancel, userId, userName }) => {
             key="user"
           >
             {renderUserInfo(userPermissions.userInfo)}
-            
+
             {/* 权限级别展示 */}
             {userPermissions.currentAuthority && (
               <div style={{ marginTop: 16 }}>
@@ -219,14 +227,14 @@ const UserPermissionView = ({ visible, onCancel, userId, userName }) => {
                 </Card>
               </div>
             )}
-            
+
             <div style={{ marginTop: 16 }}>
               <Card size="small" title="用户端菜单权限">
                 {renderMenuPermissions(userPermissions.menu || [])}
               </Card>
             </div>
           </TabPane>
-          
+
           <TabPane
             tab={
               <Space>

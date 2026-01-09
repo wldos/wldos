@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+ * Created by 元悉宇宙 (306991142@qq.com)
+ * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Switch, Spin, message } from 'antd';
 import { fetchUsersByOrganization } from '@/services/organization';
@@ -6,11 +14,11 @@ import SystemDetail from './SystemDetail';
 import OrganizationDetailContent from './OrganizationDetailContent';
 import UserList from './UserList';
 
-const OrganizationDetail = ({ 
-  selectedNode, 
-  treeData, 
-  onCompanyUpdate, 
-  onSystemAdd, 
+const OrganizationDetail = ({
+  selectedNode,
+  treeData,
+  onCompanyUpdate,
+  onSystemAdd,
   onCompanyDelete,
   onSystemUpdate,
   onOrganizationAdd,
@@ -48,7 +56,7 @@ const OrganizationDetail = ({
       console.log('开始加载用户数据，组织ID:', selectedNode.id, '组织名称:', selectedNode.orgName || selectedNode.name);
       const response = await fetchUsersByOrganization(selectedNode.id);
       console.log('用户数据响应:', response);
-      
+
       // 确保数据是数组格式
       let userData = [];
       if (response && response.data) {
@@ -58,10 +66,10 @@ const OrganizationDetail = ({
           userData = response.data.rows;
         }
       }
-      
+
       console.log('处理后的用户数据:', userData);
       console.log('用户数据数量:', userData.length);
-      
+
       // 检查用户数据是否属于当前组织
       if (userData.length > 0) {
         console.log('第一个用户的组织信息:', {
@@ -71,7 +79,7 @@ const OrganizationDetail = ({
           currentOrgId: selectedNode.id
         });
       }
-      
+
       setUsers(userData);
       setUsersLoaded(true);
     } catch (error) {
@@ -99,7 +107,7 @@ const OrganizationDetail = ({
   // 根据ID查找公司名称
   const findCompanyName = (comId) => {
     if (!treeData || !comId) return '-';
-    
+
     for (const company of treeData) {
       if (company.id === comId) {
         return company.comName || company.name || '-';
@@ -112,7 +120,7 @@ const OrganizationDetail = ({
   const findSystemName = (archId) => {
     console.log('查找体系名称，archId:', archId, 'treeData:', treeData);
     if (!treeData || !archId) return '-';
-    
+
     for (const company of treeData) {
       console.log('检查公司:', company.comName, 'children:', company.children);
       if (company.children) {
@@ -133,7 +141,7 @@ const OrganizationDetail = ({
     switch (selectedNode.type) {
       case 'company':
         return (
-          <CompanyDetail 
+          <CompanyDetail
             company={selectedNode}
             onCompanyUpdate={onCompanyUpdate}
             onSystemAdd={onSystemAdd}
@@ -146,8 +154,8 @@ const OrganizationDetail = ({
         const systemCompanyName = findCompanyName(selectedNode.comId);
         console.log('体系解析结果 - 公司名称:', systemCompanyName);
         return (
-          <SystemDetail 
-            system={selectedNode} 
+          <SystemDetail
+            system={selectedNode}
             companyName={systemCompanyName}
             onSystemUpdate={onSystemUpdate}
             onOrganizationAdd={onOrganizationAdd}
@@ -162,8 +170,8 @@ const OrganizationDetail = ({
         console.log('解析结果 - 公司名称:', companyName, '体系名称:', systemName);
         return (
           <div>
-            <OrganizationDetailContent 
-              organization={selectedNode} 
+            <OrganizationDetailContent
+              organization={selectedNode}
               onAddUser={handleShowUsers}
               companyName={companyName}
               systemName={systemName}
@@ -177,8 +185,8 @@ const OrganizationDetail = ({
             />
             {showUsers && (
               <div style={{ marginTop: 16 }}>
-                <UserList 
-                  users={users} 
+                <UserList
+                  users={users}
                   loading={loading}
                   organizationId={selectedNode.id}
                 />
@@ -210,12 +218,12 @@ const OrganizationDetail = ({
   };
 
   return (
-    <Card 
+    <Card
       title={`${getNodeDisplayName(selectedNode)} - 详情管理`}
       extra={
         selectedNode.type === 'organization' && (
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             onClick={() => setShowUsers(!showUsers)}
           >
             {showUsers ? '隐藏用户' : '显示用户'}
