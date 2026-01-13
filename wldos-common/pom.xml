@@ -14,13 +14,13 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.6</version>
+		<version>2.3.7</version>
 	</parent>
 	<artifactId>wldos-common</artifactId>
 	<name>wldos-common</name>
 	<description>WLDOS通用工具类库</description>
 	<properties>
-        <wldos.version>2.3.6</wldos.version>
+        <wldos.version>2.3.7</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
@@ -39,6 +39,17 @@
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
 			<version>1.10.12</version>
+		</dependency>
+		<!-- 国密算法支持 -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.70</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>1.70</version>
 		</dependency>
 	</dependencies>
 </project>

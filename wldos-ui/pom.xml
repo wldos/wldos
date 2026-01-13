@@ -15,7 +15,7 @@
     <artifactId>wldos-ui</artifactId>
     <name>WLDOS UI</name>
     <description>WLDOS UI</description>
-    <version>2.3.6</version>
+    <version>2.3.7</version>
 
     <properties>
         <node.version>v20.19.4</node.version>

@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.DecoderException;
@@ -47,6 +48,9 @@ public class AesEncryptUtils {
 	private static final String ECB_PKCS_7_PADDING = "AES/ECB/PKCS7Padding";
 
 	public static final String ECB_NO_PADDING = "AES/ECB/NoPadding";
+
+	/** CBC模式 */
+	private static final String CBC_PKCS_5_PADDING = "AES/CBC/PKCS5Padding";
 
 	public static String base64Encode(byte[] bytes) {
 		return Base64.encodeBase64String(bytes);
@@ -234,5 +238,117 @@ public class AesEncryptUtils {
 			return outputData;
 		}
 		return data;
+	}
+
+	/**
+	 * AES CBC模式加密
+	 * 
+	 * @param plaintext 明文
+	 * @param hexKey 密钥（Hex格式）
+	 * @param iv IV（16字节）
+	 * @param keySize 密钥长度（128、192或256）
+	 * @return 加密后的字节数组
+	 */
+	public static byte[] encryptCBC(String plaintext, String hexKey, byte[] iv, int keySize) {
+		try {
+			byte[] key = Hex.decodeHex(hexKey.toCharArray());
+			// 验证密钥长度
+			int expectedKeyLength = keySize / 8;
+			if (key.length != expectedKeyLength) {
+				throw new AesEncException("密钥长度错误，期望: " + expectedKeyLength + " 字节，实际: " + key.length);
+			}
+
+			SecretKeySpec keySpec = new SecretKeySpec(key, KEY_ALGORITHM);
+			IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+			Cipher cipher = Cipher.getInstance(CBC_PKCS_5_PADDING);
+			cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+
+			return cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
+		}
+		catch (Exception e) {
+			throw new AesEncException("AES CBC加密失败", e);
+		}
+	}
+
+	/**
+	 * AES CBC模式解密
+	 * 
+	 * @param encryptedData 密文数据
+	 * @param hexKey 密钥（Hex格式）
+	 * @param iv IV（16字节）
+	 * @param keySize 密钥长度（128、192或256）
+	 * @return 解密后的明文
+	 */
+	public static String decryptCBC(byte[] encryptedData, String hexKey, byte[] iv, int keySize) {
+		try {
+			byte[] key = Hex.decodeHex(hexKey.toCharArray());
+			// 验证密钥长度
+			int expectedKeyLength = keySize / 8;
+			if (key.length != expectedKeyLength) {
+				throw new AesEncException("密钥长度错误，期望: " + expectedKeyLength + " 字节，实际: " + key.length);
+			}
+
+			SecretKeySpec keySpec = new SecretKeySpec(key, KEY_ALGORITHM);
+			IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+			Cipher cipher = Cipher.getInstance(CBC_PKCS_5_PADDING);
+			cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+
+			byte[] decrypted = cipher.doFinal(encryptedData);
+			return new String(decrypted, StandardCharsets.UTF_8);
+		}
+		catch (Exception e) {
+			throw new AesEncException("AES CBC解密失败", e);
+		}
+	}
+
+	/**
+	 * AES ECB模式加密（支持指定密钥长度）
+	 * 
+	 * @param plaintext 明文
+	 * @param hexKey 密钥（Hex格式）
+	 * @param keySize 密钥长度（128、192或256）
+	 * @return 加密后的字节数组
+	 */
+	public static byte[] encryptECB(String plaintext, String hexKey, int keySize) {
+		try {
+			byte[] key = Hex.decodeHex(hexKey.toCharArray());
+			// 验证密钥长度
+			int expectedKeyLength = keySize / 8;
+			if (key.length != expectedKeyLength) {
+				throw new AesEncException("密钥长度错误，期望: " + expectedKeyLength + " 字节，实际: " + key.length);
+			}
+
+			return encrypt(plaintext.getBytes(StandardCharsets.UTF_8), key, ECB_PKCS_5_PADDING);
+		}
+		catch (Exception e) {
+			throw new AesEncException("AES ECB加密失败", e);
+		}
+	}
+
+	/**
+	 * AES ECB模式解密（支持指定密钥长度）
+	 * 
+	 * @param encryptedData 密文数据
+	 * @param hexKey 密钥（Hex格式）
+	 * @param keySize 密钥长度（128、192或256）
+	 * @return 解密后的明文
+	 */
+	public static String decryptECB(byte[] encryptedData, String hexKey, int keySize) {
+		try {
+			byte[] key = Hex.decodeHex(hexKey.toCharArray());
+			// 验证密钥长度
+			int expectedKeyLength = keySize / 8;
+			if (key.length != expectedKeyLength) {
+				throw new AesEncException("密钥长度错误，期望: " + expectedKeyLength + " 字节，实际: " + key.length);
+			}
+
+			byte[] decrypted = decrypt(encryptedData, key, ECB_PKCS_5_PADDING);
+			return new String(decrypted, StandardCharsets.UTF_8);
+		}
+		catch (Exception e) {
+			throw new AesEncException("AES ECB解密失败", e);
+		}
 	}
 }

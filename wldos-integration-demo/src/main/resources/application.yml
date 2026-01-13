@@ -7,16 +7,52 @@ spring:
   application:
     name: wldos-integration-demo
 
-# 依赖WLDOS框架的配置
+# ========== WLDOS 框架配置 ==========
 wldos:
   framework:
-    # 配置你的项目应用的基础包路径
+    # 配置你的项目应用的基础包路径（用于组件扫描和异常处理）
     base-package: com.example.myapp
+    # 是否启用 WLDOS 框架
     enabled: true
+    # 是否启用自动配置
+    auto-config:
+      enabled: true
+    # Swagger API 文档配置
     swagger:
       enabled: true  # 默认启用 Swagger API 文档
 
-# 日志配置
+  # ========== 加密算法配置 ==========
+  encryption:
+    # 默认加密算法类型（可选值：AES、SM4）
+    default-algorithm: SM4
+    
+    # 密码加密算法（短文本，使用CBC模式）
+    # 可选值：AES、SM4
+    password-algorithm: SM4
+    
+    # 长文本加密算法（使用GCM模式）
+    # 可选值：AES、SM4
+    long-text-algorithm: SM4
+    
+    # AES 密钥配置
+    aes:
+      # AES密钥长度（可选值：128、192、256）
+      # 仅当使用AES算法时有效
+      key-size: 256
+    
+    # 短文本加密模式（可选值：ECB、CBC、GCM）
+    short-text-mode: CBC
+    
+    # 长文本加密模式（可选值：ECB、CBC、GCM）
+    long-text-mode: GCM
+    
+    # 短文本阈值（小于等于此长度使用短文本模式，单位：字符）
+    short-text-threshold: 32
+
+    # 加密key（必须是16进制数字0-9-a-f）
+    encode-key: 1234567890
+
+# ========== 日志配置 ==========
 logging:
   level:
     root: INFO

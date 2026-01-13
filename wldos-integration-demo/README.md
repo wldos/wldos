@@ -229,7 +229,7 @@ GET /api/orders/user-info
     "isMultiDomain": false,
     "domain": "localhost",
     "domainId": null,
-    "platDomain": "wldos.com",
+    "platDomain": "gitee.com/wldos/wldos",
     "tokenExpTime": 3600000
   },
   "success": true

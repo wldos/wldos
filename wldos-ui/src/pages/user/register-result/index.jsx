@@ -7,7 +7,7 @@ import {mailist} from "@/pages/user/register-result/maillist";
 const actions = (location) => {
     const account = location.state?.account?? '306991142@qq.com';
     const mail = account.indexOf('@') > -1 ? account.substring(account.indexOf('@') + 1) : '88.com';
-    const target = mailist[mail] || 'http://www.wldos.com';
+    const target = mailist[mail] || 'http://www.gitee.com/wldos/wldos';
     return (
         <div className={styles.actions}>
             <a href={target} target="_blank" rel="noreferrer">

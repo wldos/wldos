@@ -38,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("file")
 public class FileController extends EntityController<FileService, WoFile> {
-	@Value("${wldos.file.store.url:http://www.wldos.com}")
+	@Value("${wldos.file.store.url:http://www.gitee.com/wldos/wldos}")
 	private String storeUrl;
 
 	@Value("${wldos_file_store_path:}")

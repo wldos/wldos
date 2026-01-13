@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
+  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Licensed under the Apache License, Version 2.0 or a commercial license.
+  ~ For Apache License Version 2.0 see License in the project root for license information.
+  ~ For commercial licenses see term.md or contact 306991142@qq.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>wldos-plugins</artifactId>
+        <groupId>com.wldos</groupId>
+        <version>2.3.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>wldos-plugin-demo</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <!-- 插件版本号从 plugin.yml 读取（在 initialize 阶段设置） -->
+        <plugin.version>1.0.0</plugin.version>
+    </properties>
+
+    <dependencies>
+        <!-- 依赖框架的插件接口 -->
+        <dependency>
+            <groupId>com.wldos</groupId>
+            <artifactId>wldos-framework</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- 依赖业务模块的扩展点定义：示例为系统模块扩展，其他业务模块类同 -->
+        <dependency>
+            <groupId>com.wldos</groupId>
+            <artifactId>wldos-platform</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- JAR文件名使用版本号，ZIP文件名不使用版本号（在assembly插件中单独配置） -->
+        <finalName>${project.artifactId}-${plugin.version}</finalName>
+        <plugins>
+            <!-- 读取 plugin.yml 中的版本号 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>read-plugin-version</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>node</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <commandlineArgs>scripts/read-plugin-version.js</commandlineArgs>
+                            <!-- 
+                                outputProperty: 将命令输出捕获为 Maven 属性
+                                注意：某些 IDE 可能显示错误，但这是正常的，实际构建时可以正常工作
+                                这是 exec-maven-plugin 3.1.0 的标准配置项
+                            -->
+                            <outputProperty>plugin.version</outputProperty>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- Maven JAR Plugin - 设置 JAR Manifest 版本信息 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Version>${plugin.version}</Plugin-Version>
+                            <Implementation-Version>${plugin.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+            <!-- Maven Assembly Plugin - 打包插件 -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/package.xml</descriptor>
+                    </descriptors>
+                    <!-- ZIP文件名不带版本号 -->
+                    <finalName>${project.artifactId}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 输出 ZIP 到 wldos-web/plugin-packages 目录 -->
+                            <outputDirectory>${project.parent.parent.basedir}/wldos-web/plugin-packages</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

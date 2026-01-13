@@ -5,7 +5,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">云应用支撑平台 - 云物互联驱动</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">基于 WLDOS 开发 云物互联应用 聚焦、开放、管控你的生态</h5>
 <p align="center">
- <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.6" src="https://img.shields.io/badge/WLDOS-V2.3.6-deepskyblue.svg"></a>
+ <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.7" src="https://img.shields.io/badge/WLDOS-V2.3.7-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -65,9 +65,9 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 
 ### 技术说明
 **语言：** Java8、ReactJs17。  
-**框架：** springboot2.7.18（后期版本支持Java21）。  
+**框架：** springboot2.7.18（支持Java17，后期版本支持Java21）。  
 **ORM：** spring-data-jdbc2.4.17，spring-data是介于spring-data-jpa与jdbc之间的一个友好框架，兼有二者优点，连接池采用boot自带hikari。  
-**前端：** ReactJs17，AntD ProV4.5。  
+**前端：** ReactJs17，AntD ProV4.5。（后期版本支持React18，antd pro v5）  
 **中间件：** tomcat9（支持换成其他），apache2或nginx。  
 **辅助：** 自带cache、自带JWT、自带文件服务。  
 **兼容性：** 后端jdk1.8，前端IE11+、Google Chrome、Edge等。

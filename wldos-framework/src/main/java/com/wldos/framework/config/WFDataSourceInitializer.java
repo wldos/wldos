@@ -32,6 +32,7 @@ public class WFDataSourceInitializer {
     @Value("classpath:db/framework-init.sql")
     private Resource frameworkSql;
 
+    @SuppressWarnings("all")
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource dataSource,
                                                        ObjectProvider<DatabaseInitializationCustomizer> customizers) {

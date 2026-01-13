@@ -62,7 +62,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class FileStore implements IStore {
 
-	@Value("${wldos.file.store.url:http://www.wldos.com}")
+	@Value("${wldos.file.store.url:http://www.gitee.com/wldos/wldos}")
 	private String storeUrl;
 
 	@Value("${gateway.proxy.prefix:/wldos}")

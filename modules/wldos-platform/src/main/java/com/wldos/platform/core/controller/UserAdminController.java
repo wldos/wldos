@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wldos.platform.auth.service.LoginAuthService;
+import com.wldos.platform.auth.vo.AdminPasswdModifyParams;
 import com.wldos.platform.auth.vo.Login;
 import com.wldos.platform.auth.vo.PasswdModifyParams;
 import com.wldos.platform.auth.vo.Register;
@@ -174,17 +175,23 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 	/**
 	 * 管理员后台设置新密码，直接覆盖原密码
 	 *
-	 * @param passwdModifyParams 密码修改参数
+	 * @param adminPasswdModifyParams 管理员密码修改参数（不需要原密码）
 	 * @return 密码修改结果
 	 */
 	@ApiOperation(value = "管理员修改密码", notes = "管理员后台设置新密码，直接覆盖原密码")
 	@PostMapping("passwd4admin")
-	public Login changePasswd4admin(@ApiParam(value = "密码修改参数", required = true) @Valid @RequestBody PasswdModifyParams passwdModifyParams) {
+	public Login changePasswd4admin(@ApiParam(value = "管理员密码修改参数", required = true) @Valid @RequestBody AdminPasswdModifyParams adminPasswdModifyParams) {
 
-		getLog().info("用户id: {} 密码修改, 修改人id：{}", passwdModifyParams.getId(), this.getUserId());
+		getLog().info("用户id: {} 密码修改, 修改人id：{}", adminPasswdModifyParams.getId(), this.getUserId());
+		// 转换为 PasswdModifyParams（不包含 oldPasswd）
+		PasswdModifyParams passwdModifyParams = new PasswdModifyParams();
+		passwdModifyParams.setId(adminPasswdModifyParams.getId());
+		passwdModifyParams.setPassword(adminPasswdModifyParams.getPassword());
+		passwdModifyParams.setConfirm(adminPasswdModifyParams.getConfirm());
+		
 		Login user = this.loginAuthService.changePasswd4admin(passwdModifyParams);
 		if (user == null) {
-			getLog().warn("{} 密码修改失败", passwdModifyParams.getId());
+			getLog().warn("{} 密码修改失败", adminPasswdModifyParams.getId());
 			user = new Login();
 			user.setStatus("error");
 			user.setNews("密码修改失败，请重试！");

@@ -73,7 +73,7 @@ const UpdateForm = (props) => {
             max: 256,
           },
         ]}>
-          <Input placeholder="完整url: http://www.wldos.com" />
+          <Input placeholder="完整url: http://www.gitee.com/wldos/wldos" />
         </FormItem>)}
       </>
     );

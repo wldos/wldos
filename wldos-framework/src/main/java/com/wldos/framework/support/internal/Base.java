@@ -76,7 +76,7 @@ public class Base {
 	protected String webRoot;
 
 	/** 平台域名 */
-	@Value("${wldos_platform_domain:wldos.com}")
+	@Value("${wldos_platform_domain:gitee.com/wldos/wldos}")
 	protected String wldosDomain;
 
 	/** 判断当前系统是否多租户模式 */

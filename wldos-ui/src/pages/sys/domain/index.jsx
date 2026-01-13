@@ -203,14 +203,14 @@ const DomainList = () => {
   const [ossUrl, setOssUrl] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
   const [logoPath, setPath] = useState('');
-  
+
   // 移动端检测
   const mobile = isMobile();
-  
+
   // 容器宽度监听
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
-  
+
   // 使用桌面端粘性布局
   useDesktopSticky(actionRef);
 
@@ -257,31 +257,31 @@ const DomainList = () => {
   // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateWidth = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
-    
+
     updateWidth();
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
   const foot = "<div>\n" +
     "<h3>关于本站</h3>\n" +
     "<div>\n" +
-    "<p><a href=\"http://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\n" +
-    "<p><a href=\"http://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/#\" target=\"_blank\" rel=\"noopener noreferrer\">关于我们</a></p>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/#\" target=\"_blank\" rel=\"noopener noreferrer\">联系我们</a>\n" +
     "</p>\n" +
-    "<p><a href=\"http://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/#\" target=\"_blank\" rel=\"noopener noreferrer\">加入我们</a>\n" +
     "</p>\n" +
-    "<p><a href=\"http://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/#\" target=\"_blank\" rel=\"noopener noreferrer\">隐私协议</a>\n" +
     "</p>\n" +
-    "<p><a href=\"http://www.wldos.com/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/#\" target=\"_blank\" rel=\"noopener noreferrer\">售后服务</a>\n" +
     "</p>\n" +
     "</div>\n" +
     "</div>\n" +
@@ -289,33 +289,33 @@ const DomainList = () => {
     "<h3>会员通道</h3>\n" +
     "<div>\n" +
     "<p>\n" +
-    "<a href=\"http://www.wldos.com/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.wldos.com/register-2\" rel=\"nofollow\">注册</a>\n" +
+    "<a href=\"http://www.gitee.com/wldos/wldos/user/login\" rel=\"nofollow\">登录</a>/<a href=\"https://www.gitee.com/wldos/wldos/register-2\" rel=\"nofollow\">注册</a>\n" +
     "</p>\n" +
-    "<p><a href=\"http://www.wldos.com/account\" rel=\"nofollow\">个人中心</a></p>\n" +
-    "<p><a href=\"http://www.wldos.com/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/account\" rel=\"nofollow\">个人中心</a></p>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/ucenter?pd=ref\" rel=\"nofollow\">代理推广</a>\n" +
     "</p>\n" +
-    "<p><a href=\"http://www.wldos.com/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/ucenter?pd=money\" rel=\"nofollow\">在线充值</a>\n" +
     "</p>\n" +
-    "<p><a href=\"http://www.wldos.com/archives-category/blog\">技术博客</a></p>\n" +
-    "<p><a href=\"http://www.wldos.com/help\">会员帮助</a></p>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/archives-category/blog\">技术博客</a></p>\n" +
+    "<p><a href=\"http://www.gitee.com/wldos/wldos/help\">会员帮助</a></p>\n" +
     "</div>\n" +
     "</div>\n" +
     "<div><h3>服务领域</h3>\n" +
     "<div>\n" +
     "<p>\n" +
-    "  <a href=\"http://www.wldos.com/archives-category/shopproduct/prosite\">网站建设</a>\n" +
+    "  <a href=\"http://www.gitee.com/wldos/wldos/archives-category/shopproduct/prosite\">网站建设</a>\n" +
     "</p>\n" +
     "<p>\n" +
-    "  <a href=\"http://www.wldos.com/archives-category/shopproduct/protools\">软件工具</a>\n" +
+    "  <a href=\"http://www.gitee.com/wldos/wldos/archives-category/shopproduct/protools\">软件工具</a>\n" +
     "</p>\n" +
     "<p>\n" +
-    "  <a href=\"http://www.wldos.com/archives-category/shopproduct/prodev\">开发框架</a>\n" +
+    "  <a href=\"http://www.gitee.com/wldos/wldos/archives-category/shopproduct/prodev\">开发框架</a>\n" +
     "</p>\n" +
     "<p><a\n" +
-    "  href=\"http://www.wldos.com/archives-category/shopproduct/proengine\">应用引擎</a>\n" +
+    "  href=\"http://www.gitee.com/wldos/wldos/archives-category/shopproduct/proengine\">应用引擎</a>\n" +
     "</p>\n" +
     "<p><a\n" +
-    "  href=\"http://www.wldos.com/archives-category/shopproduct/resolution\">解决方案</a>\n" +
+    "  href=\"http://www.gitee.com/wldos/wldos/archives-category/shopproduct/resolution\">解决方案</a>\n" +
     "</p>\n" +
     "</div>\n" +
     "</div>\n" +
@@ -359,15 +359,15 @@ const DomainList = () => {
     "</div>";
 
   const flink = "<strong>友情链接：</strong>\n" +
-    "<a href=\"https://www.xiupu.net\" target=\"_blank\" rel=\"noopener noreferrer\">嗅谱网</a>\n" +
-    "<a href=\"http://www.wldos.com\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>";
+    "<a href=\"https://www.github.com\" target=\"_blank\" rel=\"noopener noreferrer\">github</a>\n" +
+    "<a href=\"http://www.gitee.com/wldos/wldos\" target=\"_blank\" rel=\"noopener noreferrer\">WLDOS</a>";
 
   const copy = "<p>\n" +
     "<a href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=37xxxx20xxxxx\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\n" +
-    "<img src=\"http://www.wldos.com/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> X公网安备 3701xxx20xxxxx号</a>&nbsp;\n" +
+    "<img src=\"http://www.gitee.com/wldos/wldos/store/ba.png\" alt=\"beiAn\" width=\"18\" height=\"18\"/> X公网安备 3701xxx20xxxxx号</a>&nbsp;\n" +
     "<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">XICP备2xx1xxxx号</a>\n" +
-    "<a href=\"http://www.wldos.com/privacy\">法律声明</a> | <a href=\"https://www.wldos.com/privacy\">隐私协议</a> | Copyright © 2022\n" +
-    "<a href=\"http://www.wldos.com/\" rel=\"nofollow\">WLDOS</a> 版权所有\n" +
+    "<a href=\"http://www.gitee.com/wldos/wldos/privacy\">法律声明</a> | <a href=\"https://www.gitee.com/wldos/wldos/privacy\">隐私协议</a> | Copyright © 2022\n" +
+    "<a href=\"http://www.gitee.com/wldos/wldos/\" rel=\"nofollow\">WLDOS</a> 版权所有\n" +
     "</p>";
 
   // 计算列总宽度
@@ -793,7 +793,7 @@ const DomainList = () => {
           <Button type="primary">批量导出</Button>
         </FooterToolbar>
       )}
-      <CreateForm 
+      <CreateForm
         onCancel={() => {
           handleModalVisible(false);
           setPath('');
