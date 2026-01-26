@@ -215,14 +215,48 @@ public class LoginAuthService extends NonEntityService {
 			return null;
 		}
 
-		if (loginUtils.verifyRSA(loginAuthParams.getPassword(), woUser.getPasswd())) {
+		// 使用带迁移检查的RSA验证方法，支持旧密码格式自动迁移
+		LoginUtils.PasswordVerifyResult verifyResult = loginUtils.verifyRSAWithMigrationCheck(
+				loginAuthParams.getPassword(), woUser.getPasswd());
+		
+		if (verifyResult.isVerified()) {
 			this.userCopier.copy(woUser, userInfo, null);
 			userInfo.setUsername(woUser.getLoginName());
 			Tenant tenant = this.userService.queryTenantInfoByTAdminId(userInfo.getId());
 			userInfo.setTenantId(tenant.getId());
+			
+			// 如果是旧格式密码，自动迁移到新格式（静默迁移，用户无感知）
+			if (verifyResult.needsMigration() && verifyResult.getPlaintextPasswd() != null) {
+				migratePasswordToNewFormat(woUser.getId(), verifyResult.getPlaintextPasswd());
+			}
+			
 			return userInfo;
 		}
 		return null;
+	}
+
+	/**
+	 * 将旧格式密码迁移到新格式（静默迁移，用户无感知）
+	 * 
+	 * @param userId 用户ID
+	 * @param plaintextPasswd 明文密码
+	 */
+	private void migratePasswordToNewFormat(Long userId, String plaintextPasswd) {
+		try {
+			// 使用新算法重新编码密码
+			String newEncodedPassword = loginUtils.encode(plaintextPasswd);
+			
+			// 更新数据库中的密码
+			PasswdModifyParams modifyParams = new PasswdModifyParams();
+			modifyParams.setId(userId);
+			modifyParams.setPassword(newEncodedPassword);
+			this.userService.updateUser(modifyParams);
+			
+			getLog().info("用户密码已从旧格式迁移到新格式: userId={}", userId);
+		} catch (Exception e) {
+			// 迁移失败不影响登录，只记录日志
+			getLog().warn("用户密码迁移失败: userId={}, error={}", userId, e.getMessage());
+		}
 	}
 
 	public User logout(String token, Long domainId) {

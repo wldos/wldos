@@ -8,6 +8,7 @@
 
 package com.wldos.platform.support.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.wldos.platform.support.domain.vo.DomainResource;
@@ -24,9 +25,12 @@ public interface DomainResourceOpener {
 	 * 查询某域的动态路由资源，获取指定域的动态路由资源，路由共享，组件专有，业务分类专有。
 	 * 不共享组件是为了多域应用隔离，应用包括视图、API两个层面，1.0仅考虑视图层面。
 	 *
+	 * @param domainId 域id
 	 * @return 域的动态路由资源
 	 */
-	List<DomainResource> queryDomainDynamicRoutes(Long domainId);
+	default List<DomainResource> queryDomainDynamicRoutes(Long domainId) {
+		return Collections.emptyList();
+	}
 
 	/**
 	 * 查询域关联的所有资源
@@ -34,5 +38,7 @@ public interface DomainResourceOpener {
 	 * @param domainId 域id
 	 * @return 域资源列表
 	 */
-	List<DomainResource> queryDomainResources(Long domainId);
+	default List<DomainResource> queryDomainResources(Long domainId) {
+		return Collections.emptyList();
+	}
 }

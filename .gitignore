@@ -51,3 +51,13 @@ build/
 /.specstory/
 /wldos-ui/node/
 /wldos-ui/node/yarn/
+/modules/wldos-license/
+/wldos-plugins/proxy-gateway/
+/wldos-plugins/airdrop/
+/.cursor/
+/modules/wldos-oauth2/
+/modules/wldos-store/
+/wldos-agent/
+/wldos-agent/
+/docs/
+!**/node/

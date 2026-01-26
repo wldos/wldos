@@ -27,27 +27,59 @@ import org.springframework.core.env.MapPropertySource;
 import java.util.Collections;
 
 /**
- * 不要修改此类，否则系统可能无法启动！
+ * 动态加载插件管理器监听器
+ * 支持自动降级：如果 Agent 模块存在，使用 Agent 的高级实现；否则使用默认实现（开源版本）
+ * 
+ * @author 元悉宇宙
+ * @version 2.0
+ * @date 2026-01-10
  */
 @SuppressWarnings("unused")
 public class DynLoadPluginListener implements SpringApplicationRunListener {
 
 	private final IPlugin pluginManager;
+	private final boolean agentAvailable;
 
 	public DynLoadPluginListener(SpringApplication application, String[] args) {
+		IPlugin loadedManager = null;
+		boolean agentFound = false;
+		
 		try {
+			// 1. 尝试通过二进制编码解密类名
 			StringBuilder _type_src = new StringBuilder();
 			Arrays.stream("1100011l1101111l1101101l101110l1110111l1101100l1100100l1101111l1110011l101110l1110000l1101100l1100001l1110100l1100110l1101111l1110010l1101101l101110l1110011l1110101l1110000l1110000l1101111l1110010l1110100l101110l1110011l1111001l1110011l1110100l1100101l1101101l101110l1101001l1101110l1110100l1100101l1110010l1101110l1100001l1101100l101110l1010000l1101100l1110101l1100111l1101001l1101110l1001101l1100001l1101110l1100001l1100111l1100101l1110010l".split(String.valueOf((char)
 					Integer.parseInt("1101100", 2)))).map(s -> (char) Integer.parseInt(s + "", 2) + "").collect(Collectors.toList()).forEach(_type_src::append);
-			pluginManager = (IPlugin) WFClassLoader.getInstance().loadClass(_type_src.toString()).newInstance();
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("系统初始化失败，请确保没有修改系统内部类");
+			
+			// 2. 尝试通过 WFClassLoader 加载加密的 PluginManager 类
+			Class<?> pluginManagerClass = WFClassLoader.getInstance().loadClass(_type_src.toString());
+			if (pluginManagerClass != null) {
+				loadedManager = (IPlugin) pluginManagerClass.newInstance();
+				agentFound = true;
+			}
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | RuntimeException e) {
+			// Agent 模块不存在或加载失败，静默降级到默认实现
+			// 不输出异常信息，避免干扰用户
 		}
+		
+		// 3. 如果 Agent 不存在，使用默认实现（开源版本）
+		if (loadedManager == null) {
+			loadedManager = new DefaultPluginManager();
+			agentFound = false;
+		}
+		
+		this.pluginManager = loadedManager;
+		this.agentAvailable = agentFound;
 	}
 
 	@Override
 	public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment env) {
-		pluginManager.setClassLoader((URLClassLoader) env.getClass().getClassLoader(), env);
+		if (pluginManager != null) {
+			try {
+				pluginManager.setClassLoader((URLClassLoader) env.getClass().getClassLoader(), env);
+			} catch (Exception e) {
+				// 静默处理异常，避免影响应用启动
+			}
+		}
 	}
 
 	@Override
@@ -121,12 +153,25 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 
 		System.setProperty("wldos.platform.root", root);
 		System.setProperty("wldos.platform.web-inf", inf);
-		pluginManager.register(context);
+		
+		if (pluginManager != null) {
+			try {
+				pluginManager.register(context);
+			} catch (Exception e) {
+				// 静默处理异常，避免影响应用启动
+			}
+		}
 	}
 
 	@Override
 	public void started(ConfigurableApplicationContext context, Duration timeTaken) {
-		pluginManager.boot(context);
+		if (pluginManager != null) {
+			try {
+				pluginManager.boot(context);
+			} catch (Exception e) {
+				// 静默处理异常，避免影响应用启动
+			}
+		}
 	}
 
 	@Override

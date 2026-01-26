@@ -5,7 +5,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">Cloud Application Support Platform - IoT Driver</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">Develop IoT applications based on WLDOS, focusing on, opening up, and managing your ecosystem</h5>
 <p align="center">
- <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.7" src="https://img.shields.io/badge/WLDOS-V2.3.7-deepskyblue.svg"></a>
+ <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.7.1" src="https://img.shields.io/badge/WLDOS-V2.3.7.1-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -57,17 +57,19 @@ Demo Address: <a href="http://www.wldos.com/user/login?redirect=http%3A%2F%2Fwld
 
 ### Function Description
 
-WLDOS is a software family currently consisting of three main sections: development framework, support platform, and content payment. The framework and support platform are general support, and content payment is a best practice based on general support.
-
-Outputs two projects: WLDOS Cloud Application Support Platform (Management End) and WLDOS Content Payment System (Business End). The application function structure is as follows:
+WLDOS is a software family currently consisting of three main sections: development framework, support platform, and content payment. The framework and support platform are general support, and content payment is a best practice based on general support.  
+Outputs two projects: WLDOS Cloud Application Support Platform (Management End) and WLDOS Content Payment System (Business End). Version 2.0 introduces a dynamic monolithic architecture that combines frontend-backend separation and microservice architectures. The application function structure is as follows:
+#### 1.0 Frontend-Backend Separation Architecture
 ![WLDOS Support Platform](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
 ![WLDOS Content Payment](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
+#### 2.0 Dynamic Monolithic Architecture
+![WLDOS 2.0 Dynamic Monolithic](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos2.0.jpeg)
 
 ### Technical Description
 **Language:** Java8, ReactJs17.  
-**Framework:** Spring Boot 2.7.18 (Theoretically supports Java17).  
+**Framework:** Spring Boot 2.7.18 (supports Java17, later versions will support Java21).  
 **ORM:** Spring Data JDBC 2.4.17, a friendly framework between Spring Data JPA and JDBC, combining the advantages of both. The connection pool uses Boot's built-in Hikari.  
-**Frontend:** ReactJs17, AntD ProV4.5.  
+**Frontend:** ReactJs17, AntD ProV4.5. (Later versions will support React18, antd pro v5)  
 **Middleware:** Tomcat9 (supports replacement with others), Apache2 or Nginx.  
 **Auxiliary:** Built-in cache, built-in JWT, built-in file service.  
 **Compatibility:** Backend JDK1.8, frontend IE11+, Google Chrome, Edge, etc.
@@ -128,15 +130,94 @@ wldos-web: Project entry module, resource configuration, start from here to pack
 
 ### Open Source License and Commercial License
 
-The WLDOS platform has applied for software copyright, and the source code and software have been open-sourced and can be used commercially (no need for major modifications ^0^), consistent with the commercial version code.   
-Modules that have not been open-sourced follow internal agreements, what you see is what you get, and do not affect personal use. Distribution requires commercial authorization.
-Commercial cooperation: 306991142@qq.com.
+This project adopts a **dual-licensing model**:
 
-Official website: http://gitee.com/wldos/ or 306991142@qq.com
+#### Open Source Part (Apache 2.0)
+
+- ✅ Source code is open and can be used commercially (no need for major modifications)
+- ✅ Code is consistent with the commercial version
+- ✅ Full functionality (currently unlimited, same as commercial version)
+
+**License**: Apache License 2.0
+
+#### Non-Pure Open Source Part (Commercial License)
+
+- ⚠️ Non-pure open source parts in the wldos-platform module
+- ⚠️ Other commercial components
+
+**License**: WLDOS® Commercial License Agreement
+
+**Note**: The platform module has explicitly declared that it contains non-pure open source modules. Free for personal use, commercial use requires authorization. What you see is open source, what you don't see is closed source.
+
+#### Version Description
+
+**Community Open Source Version**:
+- ✅ Full functionality (currently unlimited, same as commercial version)
+- ✅ Includes non-pure open source modules
+- ⚠️ Lacks commercial support (community support only)
+
+**Commercial Version**:
+- ✅ Full functionality (same as community open source version)
+- ✅ Includes complete non-pure open source modules
+- ✅ Commercial support (provides commercial technical support, custom development)
+
+#### How to Choose a License
+
+**Use Open Source License (Apache 2.0)**:
+- ✅ Personal learning and research
+- ✅ Open source project use
+- ✅ Use community open source version
+
+**Use Commercial License**:
+- ✅ Commercial project use
+- ✅ Need commercial support
+
+#### Contact Information
+
+- Commercial authorization: 306991142@qq.com
+- Open source community: GitHub/Gitee
+- Official website: http://gitee.com/wldos or 306991142@qq.com
+
+For detailed terms, please refer to [LICENSE](LICENSE) and [term.md](term.md)
 
 *Appendix:*
 #### Project Backend Structure (subject to actual conditions)
 
+````
+wldos root directory
+├─wldos-common----------------------------------------wldos-common general module
+||——wldos-framework----------------------------------wldos framework
+├─modules---------------------------------------Functional module directory
+│  ├─wldos-kpaycms------------------------------------wldos Content Payment Management System
+│  └─wldos-platform-----------------------------------wldos Cloud Application Support Platform
+├─wldos-web-------------------------------------Project web entry module
+````
+
+#### Project Frontend Structure (subject to actual conditions)
+
+````
+wldos-pro root directory
+├─config--------------------------------------------Configuration directory
+├─src
+│  ├─assets-----------------------------------------Static resources
+│  ├─components-------------------------------------Global components
+│  ├─layouts----------------------------------------Layout components
+│  ├─locales----------------------------------------Internationalization resources
+│  ├─models-----------------------------------------Models components
+│  ├─pages------------------------------------------Page components
+│  │  ├─account-------------------------------------User center
+│  │  ├─book----------------------------------------Content payment
+│  │  ├─doc-----------------------------------------Document center
+│  │  ├─exception-----------------------------------Exception handling
+│  │  ├─home----------------------------------------Portal components
+│  │  ├─search--------------------------------------Full-text search
+│  │  ├─sys-----------------------------------------System management
+│  │  └─user----------------------------------------User login
+│  ├─services---------------------------------------Global API
+│  └─utils------------------------------------------Utility classes
+└─zone----------------------------------------------README images
+
+````
 #### 2.0 Dynamic Monolithic Project Structure
 ````
 wldos root directory
@@ -162,8 +243,8 @@ wldos root directory
 ├── wldos-installer-------------------------Desktop Version (Not Open)
 │   ├── pom.xml
 │   ├── src
-├── wldos-integration-demo------------------框架集成demo
-│   ├── frontend-demo-----------------------前端集成demo
+├── wldos-integration-demo------------------Framework Integration Demo
+│   ├── frontend-demo-----------------------Frontend Integration Demo
 │   ├── pom.xml
 │   ├── src
 ├── wldos-plugins---------------------------Plugin Module

@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AuthService implements AuthOpener {
+	@SuppressWarnings("all")
 	@Autowired
 	@Lazy
 	private AuthOpener authOpener;

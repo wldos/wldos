@@ -65,7 +65,9 @@ const SimpleForm = (props) => {
       iconString = customUrl || '';
     }
 
-    const processedFields = { ...fieldsValue, icon: iconString };
+    // 删除辅助字段，只保留后端需要的字段
+    const { iconName, customIcon: ci, customUrl: cu, ...restFields } = fieldsValue;
+    const processedFields = { ...restFields, icon: iconString };
 
     handleSimpleAdd(processedFields);
   };

@@ -47,4 +47,60 @@ public interface LoginUtils extends PasswordEncoder {
 	boolean verify(String loginName, String passwdInput, String passwdEnc, String hexKeyCode);
 
 	boolean verifyRSA(String passwdInput, String passwdEnc);
+
+	/**
+	 * 验证密码并返回是否需要迁移（用于兼容旧密码格式）
+	 * 
+	 * @param plaintextPasswd 明文密码
+	 * @param encryptedPassword 数据库中的加密密码
+	 * @return 0-验证失败，1-新格式验证成功，2-旧格式验证成功（需要迁移）
+	 */
+	default int matchesWithMigrationCheck(CharSequence plaintextPasswd, String encryptedPassword) {
+		// 默认实现：只调用 matches，不支持迁移检查
+		return matches(plaintextPasswd, encryptedPassword) ? 1 : 0;
+	}
+
+	/**
+	 * RSA密码验证并返回迁移检查结果（用于兼容旧密码格式）
+	 * 
+	 * @param passwdInput 前端RSA加密的密码
+	 * @param passwdEnc 数据库中的加密密码
+	 * @return PasswordVerifyResult 包含验证结果和明文密码（用于迁移）
+	 */
+	default PasswordVerifyResult verifyRSAWithMigrationCheck(String passwdInput, String passwdEnc) {
+		// 默认实现：只调用 verifyRSA，不支持迁移检查
+		boolean verified = verifyRSA(passwdInput, passwdEnc);
+		return new PasswordVerifyResult(verified ? 1 : 0, null);
+	}
+
+	/**
+	 * 密码验证结果（包含迁移信息）
+	 */
+	class PasswordVerifyResult {
+		/** 验证结果：0-失败，1-新格式成功，2-旧格式成功（需迁移） */
+		private final int result;
+		/** 明文密码（用于迁移，仅在需要迁移时提供） */
+		private final String plaintextPasswd;
+
+		public PasswordVerifyResult(int result, String plaintextPasswd) {
+			this.result = result;
+			this.plaintextPasswd = plaintextPasswd;
+		}
+
+		public int getResult() {
+			return result;
+		}
+
+		public String getPlaintextPasswd() {
+			return plaintextPasswd;
+		}
+
+		public boolean isVerified() {
+			return result > 0;
+		}
+
+		public boolean needsMigration() {
+			return result == 2;
+		}
+	}
 }

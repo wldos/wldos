@@ -8,6 +8,7 @@
 
 package com.wldos.platform.core.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.wldos.platform.support.domain.DomainResourceOpener;
@@ -27,18 +28,26 @@ import org.springframework.context.annotation.Lazy;
 @SuppressWarnings("unused")
 public class DomainResourceJdbcImpl implements DomainResourceJdbc {
 
-	@Autowired
+	@Autowired(required = false)
 	@Lazy
 	@Qualifier("domainResourceOpener")
 	private DomainResourceOpener domainResourceOpener;
 
 	@Override
 	public List<DomainResource> queryDomainDynamicRoutes(Long domainId) {
-		return this.domainResourceOpener.queryDomainDynamicRoutes(domainId);
+		if (this.domainResourceOpener != null) {
+			return this.domainResourceOpener.queryDomainDynamicRoutes(domainId);
+		}
+		// 开源版本：使用接口默认实现（返回空集合）
+		return Collections.emptyList();
 	}
 
 	@Override
 	public List<DomainResource> queryDomainResources(Long domainId) {
-		return this.domainResourceOpener.queryDomainResources(domainId);
+		if (this.domainResourceOpener != null) {
+			return this.domainResourceOpener.queryDomainResources(domainId);
+		}
+		// 开源版本：使用接口默认实现（返回空集合）
+		return Collections.emptyList();
 	}
 }

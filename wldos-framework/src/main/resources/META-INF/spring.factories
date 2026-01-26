@@ -1,3 +1,4 @@
 # WLDOS Framework Auto Configuration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wldos.framework.autoconfigure.WldosFrameworkPropertiesConfiguration,\
 com.wldos.framework.autoconfigure.WldosFrameworkAutoConfiguration

@@ -8,9 +8,16 @@
 
 package com.wldos.platform.support.plugins;
 
+/**
+ * 插件数据管理服务接口
+ * 
+ * @author 元悉宇宙
+ * @date 2026-01-10
+ * @version 1.0
+ */
 public interface IPluginDataService {
     /**
-     * 安装插件（使用指定的app_id）
+     * 卸载插件（使用指定的app_id）
      *
      * @param appId 应用ID
      */

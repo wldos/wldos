@@ -60,11 +60,9 @@ public class WldosFrameworkAutoConfiguration {
      * 1. platform 模块不存在（通过 @ConditionalOnMissingClass 检测 IssueAuth，platform 模块的核心类）
      * 2. 未找到加密版实现（通过 @ConditionalOnMissingBean 确保）
      * 
-     * 注意：当 platform 模块存在时，加密 JAR 会通过 VerifierImpl.install() 运行时加载并注册 CommonOperation，
-     * 此时开源版实现会自动失效（因为 @ConditionalOnMissingClass 条件不满足）
+     *
      */
     @Bean
-    @ConditionalOnMissingClass("com.wldos.support.issue.verify.IssueAuth")
     @ConditionalOnMissingBean(name = "commonOperation")
     public com.wldos.framework.common.FreeJdbcTemplate freeJdbcTemplate(
             com.wldos.framework.support.internal.BaseWrap baseWrap) {
@@ -83,7 +81,6 @@ public class WldosFrameworkAutoConfiguration {
      * - 业务相关的 API（如 isAdmin、listSuperAdmin 等）返回默认值，不执行实际业务逻辑
      */
     @Bean(name = "commonOperation")
-    @ConditionalOnMissingClass("com.wldos.support.issue.verify.IssueAuth")
     @ConditionalOnMissingBean(name = "commonOperation")
     public com.wldos.framework.common.CommonOperation commonOperation(
             com.wldos.framework.common.FreeJdbcTemplate freeJdbcTemplate) {

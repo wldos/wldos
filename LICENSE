@@ -201,3 +201,10 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+NOTICE: This project contains non-open-source modules.
+- The open-source code is licensed under Apache License, Version 2.0.
+- The non-open-source modules are licensed under WLDOS® Commercial License.
+- For the community version published to open-source repositories:
+  Free for personal and commercial use; redistribution requires authorization.
+- See term.md for commercial licensing terms.
