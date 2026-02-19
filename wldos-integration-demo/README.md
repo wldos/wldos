@@ -10,6 +10,7 @@
 2. **统一异常处理**：自动捕获异常并返回统一格式
 3. **参数校验**：使用 Bean Validation 进行参数校验
 4. **Swagger API 文档**：自动生成 API 文档
+5. **分页标准用法**：Map + PageQuery + PageData，支持动态筛选、排序，适配 ProTable 等前端
 
 ### 📦 Demo 示例类型
 
@@ -60,8 +61,11 @@ mvn spring-boot:run
 - **Swagger API 文档**：http://localhost:8080/doc.html
 - **前端 Demo**：打开 `frontend-demo/index.html` 文件（或使用本地服务器）
 - **用户列表**（普通Controller）：http://localhost:8080/api/users/list
+- **用户分页**：http://localhost:8080/api/users/page-list?current=1&pageSize=10
 - **产品列表**（EntityController）：http://localhost:8080/api/products/all
+- **文章分页**：http://localhost:8080/api/articles/admin-list?current=1&pageSize=10
 - **订单列表**（NonEntityController）：http://localhost:8080/api/orders/list
+- **订单分页**：http://localhost:8080/api/orders/admin-list?current=1&pageSize=10
 
 ### 4. 前端 Demo 使用
 
@@ -389,6 +393,22 @@ public Result createUser(@RequestBody @Valid UserCreateDTO dto) {
 
 框架会自动生成 Swagger API 文档，访问 `http://localhost:8080/doc.html` 即可查看。
 
+### 5. 分页标准用法（PageQuery 自动解析）
+
+框架提供 `PageQueryMethodArgumentResolver`，Controller 可直接声明 `PageQuery` 参数，无需显式 `new PageQuery(params)`：
+
+```java
+@GetMapping("/admin-list")
+public Result<PageData<Article>> adminList(PageQuery pageQuery) {
+    return Result.ok(service.pageList(pageQuery));
+}
+```
+
+- **PageQuery 自动解析**：框架从请求参数（GET query 或 POST form）构建 PageQuery（current、pageSize、sorter、filter、condition）
+- **勿加 @RequestBody**：POST 才有 body，GET 用 requestParam（query）；若写成 `@RequestBody PageQuery`，GET 会报 "Required request body is missing"。仅写 `PageQuery pageQuery` 时由框架解析器从请求参数绑定
+- **@ApiImplicitParams**：可为 Swagger 补充参数文档
+- **PageData**：统一分页结构（total、current、pageSize、rows）
+
 ## 📚 更多文档
 
 - [WLDOS 第三方集成指南](../wldos-agent/docs/第三方开发/第三方集成指南.md)
@@ -403,6 +423,6 @@ public Result createUser(@RequestBody @Valid UserCreateDTO dto) {
 ---
 
 **项目版本**: 1.0.0  
-**WLDOS 版本**: 2.0.1  
+**WLDOS 版本**: 2.3.7.1  
 **创建日期**: 2025-12-28
 

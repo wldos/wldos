@@ -164,7 +164,7 @@ public class DefaultAuthOpenerImpl implements AuthOpener {
 	private List<Menu> getMenuByUserId(List<WoResource> resources) {
 		List<Menu> menus = resources.stream()
 				.map(res -> Menu.of(res.getResourceType(), res.getResourcePath(), res.getComponentPath(), res.getIcon(),
-						res.getResourceName(), res.getTarget(), res.getId(), res.getParentId(), res.getDisplayOrder()))
+						res.getResourceName(), res.getTarget(), res.getId(), res.getParentId(), res.getDisplayOrder(), res.getMenuRegion()))
 				.collect(Collectors.toList());
 
 		return TreeUtils.build(menus, Constants.MENU_ROOT_ID);

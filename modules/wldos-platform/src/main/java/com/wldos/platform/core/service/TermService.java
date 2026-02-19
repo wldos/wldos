@@ -27,7 +27,7 @@ import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.BoolEnum;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.NameConvert;
 import com.wldos.common.utils.ObjectUtils;
@@ -97,7 +97,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 * @param isPage 是否分页，分类树状表格暂不需要分页，也可以改成左树右表两个组件的组合联动，标签列表没有层次关系可以分页
 	 * @return 与sql列匹配的vo树
 	 */
-	public PageableResult<TermTree> queryTermForTree(KTerms term, PageQuery pageQuery, boolean isPage) {
+	public PageData<TermTree> queryTermForTree(KTerms term, PageQuery pageQuery, boolean isPage) {
 		int currentPage = pageQuery.getCurrent();
 		int pageSize = pageQuery.getPageSize();
 		Sort sort = pageQuery.getSorter();
@@ -188,7 +188,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 			list = TreeUtils.build(list, Constants.TOP_TERM_ID);
 		}
 
-		return new PageableResult<>(total, currentPage, pageSize, list);
+		return new PageData<>(total, currentPage, pageSize, list);
 	}
 
 	/**
@@ -832,11 +832,19 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 * @param pId 帖子id
 	 */
 	public void updateTermObject(List<Long> termTypeIds, Long pId, String termType) {
-		if (ObjectUtils.isBlank(termTypeIds))
+		if (termTypeIds == null)
 			return;
-		// 取出帖子已存在分类
+		// 取出对象已存在的关系
 		List<Term> termObjects = this.findAllByObjectAndClassType(pId, termType);
 		List<Long> oriIds = termObjects.stream().map(Term::getTermTypeId).collect(Collectors.toList());
+		// 明确传空列表表示清空该对象此类关系
+		if (termTypeIds.isEmpty()) {
+			if (!oriIds.isEmpty()) {
+				this.termObjectRepo.deleteAllByTermTypeIdAndObjectId(oriIds, pId);
+				this.termTypeRepo.countSubtract(oriIds);
+			}
+			return;
+		}
 		// 取本次取消的分类
 		List<Long> delIds = oriIds.stream().filter(termTypeId -> !termTypeIds.contains(termTypeId)).collect(Collectors.toList());
 		// 取新增的分类

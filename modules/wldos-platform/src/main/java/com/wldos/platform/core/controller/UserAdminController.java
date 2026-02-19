@@ -18,7 +18,7 @@ import com.wldos.platform.auth.vo.PasswdModifyParams;
 import com.wldos.platform.auth.vo.Register;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.platform.support.resource.vo.Menu;
 import com.wldos.platform.core.entity.WoOrg;
 import com.wldos.platform.core.entity.WoUser;
@@ -69,7 +69,7 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 		@ApiImplicitParam(name = "email", value = "邮箱（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<WoUser> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<WoUser> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -94,7 +94,7 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 		@ApiImplicitParam(name = "username", value = "用户名（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("org")
-	public PageableResult<WoUser> listOrgUser(@RequestParam Map<String, Object> params) {
+	public PageData<WoUser> listOrgUser(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -117,7 +117,7 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 		@ApiImplicitParam(name = "username", value = "用户名（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("com")
-	public PageableResult<WoUser> listComAdminUser(@RequestParam Map<String, Object> params) {
+	public PageData<WoUser> listComAdminUser(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		// 查询租户管理员组织id，并作为查询参数, 注意前端要传递的租户id是uComId（用户公司），而非comId（组织公司）
@@ -142,7 +142,7 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 		@ApiImplicitParam(name = "username", value = "用户名（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("select")
-	public PageableResult<WoUser> listSelect(@RequestParam Map<String, Object> params) {
+	public PageData<WoUser> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 

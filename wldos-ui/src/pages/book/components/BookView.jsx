@@ -1,69 +1,122 @@
 import React, {useEffect, useRef, useState, useCallback, useMemo} from 'react';
-import {Form, Input, message, Alert, Space, Typography, Button, Tabs, Modal} from "antd";
+import {Form, Input, message, Alert, Space, Typography, Button, Tabs, Modal, Spin} from "antd";
 import {SaveOutlined, CheckCircleOutlined, ClockCircleOutlined, EditOutlined, EyeOutlined, BoldOutlined, ItalicOutlined, LinkOutlined, PictureOutlined, UnorderedListOutlined, CodeOutlined, UndoOutlined, RedoOutlined, EyeOutlined as PreviewOutlined, QuestionCircleOutlined, SunOutlined, MoonOutlined, FullscreenOutlined, FullscreenExitOutlined} from '@ant-design/icons';
 import './BaseView.less';
-import {Editor} from "@tinymce/tinymce-react";
+import {loadTinyMCE} from "@/utils/loadTinyMCE";
 import {saveChapter, uploadFile} from "@/pages/book/service";
 import config from "@/utils/config";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { renderToString } from 'react-dom/server';
-import { EditorView } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
-import { markdown } from '@codemirror/lang-markdown';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
-import { tags } from '@lezer/highlight';
 import MarkdownImage from '@/components/MarkdownImage';
+
+// ========== 大库懒加载 ==========
+// CodeMirror 相关（只在 Markdown 模式下加载）
+let CodeMirrorModules = null;
+const loadCodeMirror = async () => {
+  if (CodeMirrorModules) return CodeMirrorModules;
+  const [
+    { EditorView },
+    { EditorState },
+    { markdown },
+    { oneDark },
+    { syntaxHighlighting, HighlightStyle },
+    { tags }
+  ] = await Promise.all([
+    import('@codemirror/view'),
+    import('@codemirror/state'),
+    import('@codemirror/lang-markdown'),
+    import('@codemirror/theme-one-dark'),
+    import('@codemirror/language'),
+    import('@lezer/highlight')
+  ]);
+  CodeMirrorModules = { EditorView, EditorState, markdown, oneDark, syntaxHighlighting, HighlightStyle, tags };
+  return CodeMirrorModules;
+};
+
+// react-markdown 相关（只在预览时加载）
+let MarkdownModules = null;
+const loadMarkdown = async () => {
+  if (MarkdownModules) return MarkdownModules;
+  const [
+    ReactMarkdown,
+    { default: remarkGfm },
+    { default: rehypeRaw },
+    { renderToString }
+  ] = await Promise.all([
+    import('react-markdown'),
+    import('remark-gfm'),
+    import('rehype-raw'),
+    import('react-dom/server')
+  ]);
+  MarkdownModules = { ReactMarkdown: ReactMarkdown.default || ReactMarkdown, remarkGfm, rehypeRaw, renderToString };
+  return MarkdownModules;
+};
+
+// react-syntax-highlighter（只在代码高亮时加载，保留所有语言支持）
+let SyntaxHighlighterModules = null;
+const loadSyntaxHighlighter = async () => {
+  if (SyntaxHighlighterModules) return SyntaxHighlighterModules;
+  const [
+    { Prism: SyntaxHighlighter },
+    vscDarkPlusModule,
+    vsModule
+  ] = await Promise.all([
+    import('react-syntax-highlighter'),
+    import('react-syntax-highlighter/dist/esm/styles/prism'),
+    import('react-syntax-highlighter/dist/esm/styles/prism')
+  ]);
+  const vscDarkPlus = vscDarkPlusModule.default || vscDarkPlusModule;
+  const vs = vsModule.default || vsModule;
+  SyntaxHighlighterModules = { SyntaxHighlighter, vscDarkPlus, vs };
+  return SyntaxHighlighterModules;
+};
 
 export const {prefix} = config;
 
-// 白色主题语法高亮样式
-const lightHighlightStyle = HighlightStyle.define([
-  { tag: tags.heading, color: "#0366d6", fontWeight: "bold" },
-  { tag: tags.strong, color: "#24292e", fontWeight: "bold" },
-  { tag: tags.emphasis, color: "#24292e", fontStyle: "italic" },
-  { tag: tags.link, color: "#0366d6" },
-  { tag: tags.quote, color: "#6a737d", fontStyle: "italic" },
-  { tag: tags.monospace, backgroundColor: "#f6f8fa", color: "#24292e" },
-  { tag: tags.list, color: "#24292e" },
-  { tag: tags.keyword, color: "#d73a49", fontWeight: "bold" },
-  { tag: tags.string, color: "#032f62" },
-  { tag: tags.comment, color: "#6a737d", fontStyle: "italic" },
-  { tag: tags.number, color: "#005cc5" },
-  { tag: tags.operator, color: "#d73a49" },
-  { tag: tags.punctuation, color: "#24292e" },
-  { tag: tags.bracket, color: "#24292e" },
-  { tag: tags.variableName, color: "#6f42c1" },
-  { tag: tags.function, color: "#6f42c1" },
-  { tag: tags.className, color: "#6f42c1" },
-  { tag: tags.typeName, color: "#6f42c1" }
-]);
+// 创建语法高亮样式（懒加载时调用）
+const createHighlightStyles = (HighlightStyle, tags) => {
+  const lightHighlightStyle = HighlightStyle.define([
+    { tag: tags.heading, color: "#0366d6", fontWeight: "bold" },
+    { tag: tags.strong, color: "#24292e", fontWeight: "bold" },
+    { tag: tags.emphasis, color: "#24292e", fontStyle: "italic" },
+    { tag: tags.link, color: "#0366d6" },
+    { tag: tags.quote, color: "#6a737d", fontStyle: "italic" },
+    { tag: tags.monospace, backgroundColor: "#f6f8fa", color: "#24292e" },
+    { tag: tags.list, color: "#24292e" },
+    { tag: tags.keyword, color: "#d73a49", fontWeight: "bold" },
+    { tag: tags.string, color: "#032f62" },
+    { tag: tags.comment, color: "#6a737d", fontStyle: "italic" },
+    { tag: tags.number, color: "#005cc5" },
+    { tag: tags.operator, color: "#d73a49" },
+    { tag: tags.punctuation, color: "#24292e" },
+    { tag: tags.bracket, color: "#24292e" },
+    { tag: tags.variableName, color: "#6f42c1" },
+    { tag: tags.function, color: "#6f42c1" },
+    { tag: tags.className, color: "#6f42c1" },
+    { tag: tags.typeName, color: "#6f42c1" }
+  ]);
 
-// 暗黑主题语法高亮样式
-const darkHighlightStyle = HighlightStyle.define([
-  { tag: tags.heading, color: "#79c0ff", fontWeight: "bold" },
-  { tag: tags.strong, color: "#f0f6fc", fontWeight: "bold" },
-  { tag: tags.emphasis, color: "#f0f6fc", fontStyle: "italic" },
-  { tag: tags.link, color: "#79c0ff" },
-  { tag: tags.quote, color: "#8b949e", fontStyle: "italic" },
-  { tag: tags.monospace, backgroundColor: "#21262d", color: "#f0f6fc" },
-  { tag: tags.list, color: "#f0f6fc" },
-  { tag: tags.keyword, color: "#ff7b72", fontWeight: "bold" },
-  { tag: tags.string, color: "#a5d6ff" },
-  { tag: tags.comment, color: "#8b949e", fontStyle: "italic" },
-  { tag: tags.number, color: "#79c0ff" },
-  { tag: tags.operator, color: "#ff7b72" },
-  { tag: tags.punctuation, color: "#f0f6fc" },
-  { tag: tags.bracket, color: "#f0f6fc" },
-  { tag: tags.variableName, color: "#d2a8ff" },
-  { tag: tags.function, color: "#d2a8ff" },
-  { tag: tags.className, color: "#d2a8ff" },
-  { tag: tags.typeName, color: "#d2a8ff" }
-]);
+  const darkHighlightStyle = HighlightStyle.define([
+    { tag: tags.heading, color: "#79c0ff", fontWeight: "bold" },
+    { tag: tags.strong, color: "#f0f6fc", fontWeight: "bold" },
+    { tag: tags.emphasis, color: "#f0f6fc", fontStyle: "italic" },
+    { tag: tags.link, color: "#79c0ff" },
+    { tag: tags.quote, color: "#8b949e", fontStyle: "italic" },
+    { tag: tags.monospace, backgroundColor: "#21262d", color: "#f0f6fc" },
+    { tag: tags.list, color: "#f0f6fc" },
+    { tag: tags.keyword, color: "#ff7b72", fontWeight: "bold" },
+    { tag: tags.string, color: "#a5d6ff" },
+    { tag: tags.comment, color: "#8b949e", fontStyle: "italic" },
+    { tag: tags.number, color: "#79c0ff" },
+    { tag: tags.operator, color: "#ff7b72" },
+    { tag: tags.punctuation, color: "#f0f6fc" },
+    { tag: tags.bracket, color: "#f0f6fc" },
+    { tag: tags.variableName, color: "#d2a8ff" },
+    { tag: tags.function, color: "#d2a8ff" },
+    { tag: tags.className, color: "#d2a8ff" },
+    { tag: tags.typeName, color: "#d2a8ff" }
+  ]);
+
+  return { lightHighlightStyle, darkHighlightStyle };
+};
 
 
 const handleSave = async (fields, chapter = {pubTitle: '', pubContent: '',}) => {
@@ -164,6 +217,31 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   const [isDarkTheme, setIsDarkTheme] = useState(false); // 主题状态：true为深色，false为浅色
   const [editorView, setEditorView] = useState(null); // CodeMirror编辑器实例
   const [isFullscreen, setIsFullscreen] = useState(false); // 全屏状态
+  // TinyMCE 按需加载状态
+  const [tinymceReady, setTinymceReady] = useState(false);
+  const [EditorComponent, setEditorComponent] = useState(null);
+
+  // TinyMCE 按需加载 - 仅在富文本模式下加载
+  useEffect(() => {
+    // 只有在富文本模式下才加载 TinyMCE
+    if (editorMode !== 'rich' || tinymceReady) return;
+    
+    let mounted = true;
+    const initTinyMCE = async () => {
+      try {
+        await loadTinyMCE();
+        const { Editor } = await import('@tinymce/tinymce-react');
+        if (mounted) {
+          setEditorComponent(() => Editor);
+          setTinymceReady(true);
+        }
+      } catch (error) {
+        console.error('TinyMCE 加载失败:', error);
+      }
+    };
+    initTinyMCE();
+    return () => { mounted = false; };
+  }, [editorMode, tinymceReady]);
 
   // 主题切换函数
   const toggleTheme = useCallback(() => {
@@ -191,11 +269,15 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
     }
   }, [isFullscreen]);
 
-  // 创建CodeMirror编辑器
-  const createCodeMirrorEditor = useCallback((container, initialValue) => {
+  // 创建CodeMirror编辑器（懒加载）
+  const createCodeMirrorEditor = useCallback(async (container, initialValue) => {
     if (editorView) {
       editorView.destroy();
     }
+
+    // 懒加载 CodeMirror 模块
+    const { EditorView, EditorState, markdown, oneDark, syntaxHighlighting, HighlightStyle, tags } = await loadCodeMirror();
+    const { lightHighlightStyle, darkHighlightStyle } = createHighlightStyles(HighlightStyle, tags);
 
     const extensions = [
       markdown(),
@@ -338,15 +420,30 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
     return view;
   }, [isDarkTheme, handleMarkdownChange]);
 
-  // 初始化CodeMirror编辑器
+  // CodeMirror 加载状态
+  const [codemirrorLoading, setCodemirrorLoading] = useState(false);
+  const codemirrorLoadingRef = useRef(false);
+
+  // 初始化CodeMirror编辑器（懒加载）
   useEffect(() => {
     if (editorMode === 'markdown') {
-      const container = document.getElementById('codemirror-editor');
-      if (container) {
-        if (!editorView) {
-          // 首次创建编辑器
-          createCodeMirrorEditor(container, markdownContent);
-        } else {
+      // 使用 setTimeout 确保 DOM 已渲染
+      const timer = setTimeout(() => {
+        const container = document.getElementById('codemirror-editor');
+        if (container && !editorView && !codemirrorLoadingRef.current) {
+          // 首次创建编辑器，先加载模块
+          codemirrorLoadingRef.current = true;
+          setCodemirrorLoading(true);
+          createCodeMirrorEditor(container, markdownContent).then(() => {
+            codemirrorLoadingRef.current = false;
+            setCodemirrorLoading(false);
+          }).catch(err => {
+            console.error('CodeMirror 加载失败:', err);
+            codemirrorLoadingRef.current = false;
+            setCodemirrorLoading(false);
+            message.error('Markdown 编辑器加载失败，请刷新页面重试');
+          });
+        } else if (editorView) {
           // 更新现有编辑器的内容
           const currentValue = editorView.state.doc.toString();
           if (currentValue !== markdownContent) {
@@ -359,7 +456,13 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
             });
           }
         }
-      }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // 切换到其他模式时，重置加载状态
+      codemirrorLoadingRef.current = false;
+      setCodemirrorLoading(false);
     }
   }, [editorMode, markdownContent, createCodeMirrorEditor, editorView]);
 
@@ -374,7 +477,9 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         setEditorView(null);
         // 延迟创建新编辑器，避免冲突
         setTimeout(() => {
-          createCodeMirrorEditor(container, currentValue);
+          createCodeMirrorEditor(container, currentValue).catch(err => {
+            console.error('CodeMirror 重新加载失败:', err);
+          });
         }, 100); // 增加延迟时间，确保DOM完全更新
       }
     }
@@ -519,11 +624,15 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       if (editorMode === 'markdown') {
         // 从Markdown模式切换到富文本模式
         if (isContentModified && markdownContent !== lastMarkdownContent) {
-          const htmlContent = markdownToHtml(markdownContent, isDarkTheme);
-          setData(htmlContent);
-          if (editorRef.current) {
-            editorRef.current.setContent(htmlContent);
-          }
+          markdownToHtml(markdownContent, isDarkTheme).then(htmlContent => {
+            setData(htmlContent);
+            if (editorRef.current) {
+              editorRef.current.setContent(htmlContent);
+            }
+          }).catch(err => {
+            console.error('Markdown 转换失败:', err);
+            message.error('转换失败，请重试');
+          });
         }
       }
       setEditorMode('rich');
@@ -601,14 +710,20 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
     }
   }, [historyIndex, markdownHistory, form]);
 
-  // 预览功能
-  const handlePreview = useCallback(() => {
+  // 预览功能（懒加载 Markdown 和语法高亮库）
+  const handlePreview = useCallback(async () => {
     let content = '';
     if (editorMode === 'markdown') {
       content = markdownContent;
     } else {
       content = editorRef.current?.getContent() || data;
     }
+    
+    // 懒加载预览所需的库
+    const [{ ReactMarkdown, remarkGfm, rehypeRaw, renderToString }, { SyntaxHighlighter, vscDarkPlus, vs }] = await Promise.all([
+      loadMarkdown(),
+      loadSyntaxHighlighter()
+    ]);
     
     // 使用类似 TinyMCE 的对话框预览
     const showDialog = () => {
@@ -1690,9 +1805,27 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               outline: 'none',
               overflow: 'hidden',
               minHeight: 0,
-                height: isFullscreen ? 'calc(100vh - 96px)' : 'calc(100% - 96px)' // 全屏模式下使用100vh
+              height: isFullscreen ? 'calc(100vh - 96px)' : 'calc(100% - 96px)', // 全屏模式下使用100vh
+              position: 'relative'
             }}
-          />
+          >
+            {codemirrorLoading && !editorView && (
+              <div style={{ 
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                zIndex: 10
+              }}>
+                <Spin tip="Markdown 编辑器加载中..." size="large" />
+              </div>
+            )}
+          </div>
           
           {/* Markdown状态栏 */}
           <div style={{
@@ -1720,8 +1853,25 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         </div>
       );
     } else {
+      // 富文本模式 - TinyMCE 按需加载
+      if (!tinymceReady || !EditorComponent) {
+        return (
+          <div style={{ 
+            height: 'calc(100vh - 41px - 32px)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            border: '1px solid #d9d9d9', 
+            borderRadius: '4px',
+            backgroundColor: '#fafafa'
+          }}>
+            <Spin tip="编辑器加载中..." size="large" />
+          </div>
+        );
+      }
+      
       return (
-        <Editor
+        <EditorComponent
           onInit={(evt, editor) => {
             editorRef.current = editor;
           }}
@@ -1975,33 +2125,35 @@ function htmlToMarkdown(html) {
   return markdown.trim();
 }
 
-// 生成语法高亮的HTML
-function generateSyntaxHighlightedHTML(code, language, isDarkMode) {
+// 生成语法高亮的HTML（懒加载）
+async function generateSyntaxHighlightedHTML(code, language, isDarkMode) {
   try {
+    // 懒加载语法高亮库
+    const { SyntaxHighlighter, vscDarkPlus, vs } = await loadSyntaxHighlighter();
+    const { renderToString } = await loadMarkdown();
+    
     const style = isDarkMode ? vscDarkPlus : vs;
     const highlightedHTML = renderToString(
-      <SyntaxHighlighter
-        style={style}
-        language={language}
-        PreTag="div"
-        showLineNumbers={false}
-        wrapLines={true}
-        wrapLongLines={true}
-        customStyle={{
+      React.createElement(SyntaxHighlighter, {
+        style: style,
+        language: language,
+        PreTag: "div",
+        showLineNumbers: false,
+        wrapLines: true,
+        wrapLongLines: true,
+        customStyle: {
           background: '#f6f8fa',
           margin: 0,
           padding: 0,
           border: 'none',
           borderRadius: 0
-        }}
-        codeTagProps={{
+        },
+        codeTagProps: {
           style: {
             background: 'transparent'
           }
-        }}
-      >
-        {code}
-      </SyntaxHighlighter>
+        }
+      }, code)
     );
     return highlightedHTML;
   } catch (error) {
@@ -2012,8 +2164,8 @@ function generateSyntaxHighlightedHTML(code, language, isDarkMode) {
   }
 }
 
-// Markdown转HTML的简单实现
-function markdownToHtml(markdown, isDarkMode = false) {
+// Markdown转HTML的简单实现（支持异步语法高亮）
+async function markdownToHtml(markdown, isDarkMode = false) {
   let html = markdown;
   
   // 标题
@@ -2059,10 +2211,28 @@ function markdownToHtml(markdown, isDarkMode = false) {
     }
   });
   
-  // 代码块处理（使用真正的语法高亮）
+  // 代码块处理（使用真正的语法高亮，异步处理）
+  const codeBlockMatches = [];
   html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
     const language = lang || 'text';
-    return generateSyntaxHighlightedHTML(code.trim(), language, isDarkMode);
+    const placeholder = `__CODE_BLOCK_${codeBlockMatches.length}__`;
+    codeBlockMatches.push({ placeholder, language, code: code.trim(), isDarkMode });
+    return placeholder;
+  });
+  
+  // 异步处理所有代码块
+  const codeBlockPromises = codeBlockMatches.map(({ language, code, isDarkMode }) => 
+    generateSyntaxHighlightedHTML(code, language, isDarkMode).catch(err => {
+      console.warn('代码块高亮失败:', err);
+      const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<pre style="background-color: #f6f8fa; border-radius: 6px; padding: 16px; overflow: auto;"><code>${escapedCode}</code></pre>`;
+    })
+  );
+  const highlightedBlocks = await Promise.all(codeBlockPromises);
+  
+  // 替换回代码块
+  codeBlockMatches.forEach(({ placeholder }, index) => {
+    html = html.replace(placeholder, highlightedBlocks[index]);
   });
   
   // 行内代码
@@ -2080,11 +2250,11 @@ function markdownToHtml(markdown, isDarkMode = false) {
 }
 
 // 切换Markdown模式
-function toggleMarkdownMode(editor) {
+async function toggleMarkdownMode(editor) {
   if (isMarkdownMode) {
     // 从Markdown模式切换到富文本模式
     const markdownContent = editor.getContent();
-    const htmlContent = markdownToHtml(markdownContent, isDarkTheme);
+    const htmlContent = await markdownToHtml(markdownContent, isDarkTheme);
     editor.setContent(htmlContent);
     isMarkdownMode = false;
     
@@ -2114,18 +2284,18 @@ function toggleMarkdownMode(editor) {
   }
 }
 
-// 显示Markdown预览
-function showMarkdownPreview(editor) {
+// 显示Markdown预览（懒加载）
+async function showMarkdownPreview(editor) {
   const content = editor.getContent();
   let htmlContent;
   
   if (isMarkdownMode) {
     // 如果是Markdown模式，直接转换
-    htmlContent = markdownToHtml(content, isDarkTheme);
+    htmlContent = await markdownToHtml(content, isDarkTheme);
   } else {
     // 如果是富文本模式，先转换为Markdown再转换回HTML
     const markdown = htmlToMarkdown(content);
-    htmlContent = markdownToHtml(markdown, isDarkTheme);
+    htmlContent = await markdownToHtml(markdown, isDarkTheme);
   }
   
   editor.windowManager.open({

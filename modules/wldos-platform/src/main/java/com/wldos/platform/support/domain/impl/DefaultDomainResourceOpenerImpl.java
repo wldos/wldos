@@ -55,6 +55,6 @@ public class DefaultDomainResourceOpenerImpl extends NonEntityService implements
 		params.put("domainId", domainId);
 
 		return this.namedParamJdbcTemplate.query(
-				sql + " order by s.resource_path, s.parent_id | s.display_order", params, new BeanPropertyRowMapper<>(DomainResource.class));
+				sql + " order by s.resource_path, coalesce(s.parent_id, 0), s.display_order", params, new BeanPropertyRowMapper<>(DomainResource.class));
 	}
 }

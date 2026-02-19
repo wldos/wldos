@@ -32,7 +32,7 @@ import com.wldos.cms.vo.SPub;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.AtomicUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.dto.TermObject;
@@ -119,10 +119,10 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 分页参数
 	 * @return 一页数据
 	 */
-	public PageableResult<PubUnit> queryPubWithExtList(PageQuery pageQuery) {
-		PageableResult<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+	public PageData<PubUnit> queryPubWithExtList(PageQuery pageQuery) {
+		PageData<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
 
-		List<PubUnit> pubUnits = pubUnitPage.getData().getRows();
+		List<PubUnit> pubUnits = pubUnitPage.getRows();
 
 		if (pubUnits == null || pubUnits.isEmpty())
 			return pubUnitPage;
@@ -162,7 +162,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			return pub;
 		}).collect(Collectors.toList());
 
-		pubUnitPage.setDataRows(pubUnits);
+		pubUnitPage.setRows(pubUnits);
 
 		return pubUnitPage;
 	}
@@ -173,8 +173,8 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 分页参数
 	 * @return 一页数据，仅关注概要信息：id、title、**count、cover、excerpt、tags等
 	 */
-	public PageableResult<PubUnit> queryArchives(PageQuery pageQuery) {
-		PageableResult<PubUnit> pubUnits = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+	public PageData<PubUnit> queryArchives(PageQuery pageQuery) {
+		PageData<PubUnit> pubUnits = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
 		return this.handlePubUnit(pubUnits, pageQuery);
 	}
 
@@ -184,7 +184,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 查询条件
 	 * @return 一页文档列表
 	 */
-	public PageableResult<DocItem> queryDocList(PageQuery pageQuery) {
+	public PageData<DocItem> queryDocList(PageQuery pageQuery) {
 		return this.execQueryForPage(DocItem.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
 	}
 
@@ -194,7 +194,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 分页参数
 	 * @return 分页信息列表
 	 */
-	public PageableResult<InfoUnit> queryInfos(PageQuery pageQuery) {
+	public PageData<InfoUnit> queryInfos(PageQuery pageQuery) {
 		String sqlNoWhere = "select p.* from k_pubs p where 1=1 ";
 		Map<String, Object> condition = pageQuery.getCondition();
 		Map<String, List<Object>> filter = pageQuery.getFilter();
@@ -229,24 +229,24 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			Object price = condition.get("price");
 			String[] prices = price.toString().split(",");
 			if (!prices[0].equals("0")) {
-				baseExistsSql += " and m.meta_value + 0 >= ?";
+				baseExistsSql += " and CAST(COALESCE(m.meta_value, '0') AS SIGNED) >= ?";
 				params.add(prices[0]);
 			}
 
 			if (!prices[1].equals("0")) {
-				baseExistsSql += " and m.meta_value + 0 <= ?";
+				baseExistsSql += " and CAST(COALESCE(m.meta_value, '0') AS SIGNED) <= ?";
 				params.add(prices[1]);
 			}
 			sqlNoWhere += baseExistsSql + ")";
 		}
 
 
-		PageableResult<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, params, pageQuery, SQLTable.of(KPubs.class, "p"));
+		PageData<InfoUnit> pubUnits = this.commonOperate.execQueryForPage(InfoUnit.class, sqlNoWhere, params, pageQuery, SQLTable.of(KPubs.class, "p"));
 		return this.handleInfoUnit(pubUnits, pageQuery);
 	}
 
-	private PageableResult<InfoUnit> handleInfoUnit(PageableResult<InfoUnit> pubUnitPage, PageQuery pageQuery) {
-		List<InfoUnit> pubUnits = pubUnitPage.getData().getRows();
+	private PageData<InfoUnit> handleInfoUnit(PageData<InfoUnit> pubUnitPage, PageQuery pageQuery) {
+		List<InfoUnit> pubUnits = pubUnitPage.getRows();
 
 		if (pubUnits == null || pubUnits.isEmpty())
 			return pubUnitPage;
@@ -306,13 +306,13 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			return pub;
 		}).collect(Collectors.toList());
 
-		pubUnitPage.setDataRows(pubUnits);
+		pubUnitPage.setRows(pubUnits);
 
 		return pubUnitPage;
 	}
 
-	private PageableResult<PubUnit> handlePubUnit(PageableResult<PubUnit> pubUnitPage, PageQuery pageQuery) {
-		List<PubUnit> pubUnits = pubUnitPage.getData().getRows();
+	private PageData<PubUnit> handlePubUnit(PageData<PubUnit> pubUnitPage, PageQuery pageQuery) {
+		List<PubUnit> pubUnits = pubUnitPage.getRows();
 
 		if (pubUnits == null || pubUnits.isEmpty())
 			return pubUnitPage;
@@ -363,7 +363,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			return pub;
 		}).collect(Collectors.toList());
 
-		pubUnitPage.setDataRows(pubUnits);
+		pubUnitPage.setRows(pubUnits);
 
 		return pubUnitPage;
 	}
@@ -375,14 +375,14 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 查询参数
 	 * @return 业务对象列表，仅关注概要信息：id、title、createBy、termTypeIds、tags、updateTime、**count等
 	 */
-	public PageableResult<AuditPub> queryAdminPubs(Long domainId, PageQuery pageQuery) {
+	public PageData<AuditPub> queryAdminPubs(Long domainId, PageQuery pageQuery) {
 
 		// 域隔离
 		pageQuery.appendParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
 
-		PageableResult<AuditPub> pubUnitPage = this.execQueryForPage(AuditPub.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+		PageData<AuditPub> pubUnitPage = this.execQueryForPage(AuditPub.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
 
-		List<AuditPub> pubUnits = pubUnitPage.getData().getRows();
+		List<AuditPub> pubUnits = pubUnitPage.getRows();
 
 		if (pubUnits == null || pubUnits.isEmpty())
 			return pubUnitPage;
@@ -413,7 +413,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			pub.setViews(viewsMap.get(id));
 		}).collect(Collectors.toList());
 
-		pubUnitPage.setDataRows(pubUnits);
+		pubUnitPage.setRows(pubUnits);
 
 		return pubUnitPage;
 	}
@@ -425,7 +425,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 查询参数
 	 * @return 检索结果集
 	 */
-	public PageableResult<SPub> searchPubs(Long domainId, PageQuery pageQuery, String keywords) {
+	public PageData<SPub> searchPubs(Long domainId, PageQuery pageQuery, String keywords) {
 
 		String sql = "select s.id, s.pub_title, s.pub_type from k_pubs s where s.delete_flag = 'normal' and s.pub_status in ('publish', 'inherit')  and (instr(s.pub_title, ?)>0 or instr(s.pub_content, ?) >0) and domain_id=?";
 
@@ -443,8 +443,8 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 		pageQuery.pushFilter("termTypeId", termTypeIds);
 	}
 
-	public PageableResult<PubUnit> queryArchivesUser(PageQuery pageQuery) {
-		PageableResult<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KStars.class, "k_pubs", "k_stars", "object_id", pageQuery);
+	public PageData<PubUnit> queryArchivesUser(PageQuery pageQuery) {
+		PageData<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KStars.class, "k_pubs", "k_stars", "object_id", pageQuery);
 
 		return this.handlePubUnit(pubUnitPage, pageQuery);
 	}

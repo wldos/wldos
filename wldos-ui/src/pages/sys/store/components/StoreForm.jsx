@@ -410,7 +410,7 @@ const StoreForm = ({ visible, onCancel, onSubmit, initialValues, dispatch }) => 
                     listType="picture-card"
                     showUploadList={false}
                     action={`${prefix}/file/store`}
-                    headers={headerFix}
+                    headers={headerFix()}
                     accept=".jpg,.png,.gif,.jpeg,.bmp,.x-icon,.ico,.svg"
                     beforeUpload={(file) => {
                       const isImage = file.type.startsWith('image/');

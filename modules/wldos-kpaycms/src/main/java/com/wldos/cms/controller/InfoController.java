@@ -28,7 +28,7 @@ import com.wldos.cms.vo.PubMeta;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.platform.support.cms.vo.Info;
 import com.wldos.common.utils.ObjectUtils;
@@ -115,7 +115,7 @@ public class InfoController extends NonEntityController<InfoService> {
 		@ApiImplicitParam(name = "tagId", value = "标签ID", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("info")
-	public PageableResult<InfoUnit> infoArchives(@RequestParam Map<String, Object> params) {
+	public PageData<InfoUnit> infoArchives(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
@@ -139,7 +139,7 @@ public class InfoController extends NonEntityController<InfoService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("info/category/{slugCategory}")
-	public PageableResult<InfoUnit> infoCategory(@ApiParam(value = "分类别名", required = true) @PathVariable String slugCategory, 
+	public PageData<InfoUnit> infoCategory(@ApiParam(value = "分类别名", required = true) @PathVariable String slugCategory, 
 			@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -165,7 +165,7 @@ public class InfoController extends NonEntityController<InfoService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("info/tag/{slugTag}")
-	public PageableResult<InfoUnit> infoTag(@ApiParam(value = "标签别名", required = true) @PathVariable String slugTag, 
+	public PageData<InfoUnit> infoTag(@ApiParam(value = "标签别名", required = true) @PathVariable String slugTag, 
 			@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -191,7 +191,7 @@ public class InfoController extends NonEntityController<InfoService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("info-author/{userId:[0-9]+}.html")
-	public PageableResult<InfoUnit> infoAuthor(@ApiParam(value = "用户ID", required = true) @PathVariable String userId, 
+	public PageData<InfoUnit> infoAuthor(@ApiParam(value = "用户ID", required = true) @PathVariable String userId, 
 			@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);

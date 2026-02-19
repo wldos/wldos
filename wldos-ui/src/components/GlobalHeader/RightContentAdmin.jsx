@@ -6,13 +6,15 @@
  * For commercial licenses see term.md or contact 306991142@qq.com
  */
 
-import {Tooltip, Button} from 'antd';
-import {QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined} from '@ant-design/icons';
-import React, {useState, useEffect} from 'react';
-import {connect, SelectLang} from 'umi';
+import { Tooltip, Button, Input } from 'antd';
+import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { connect, SelectLang, history } from 'umi';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
+
+const { Search } = Input;
 
 const GlobalHeaderRightAdmin = (props) => {
     const {theme, layout, currentUser = {
@@ -81,8 +83,22 @@ const GlobalHeaderRightAdmin = (props) => {
         };
     }, []);
 
+    const onFullTextSearch = (value) => {
+        if (value?.trim()) {
+            history.push({ pathname: '/search', state: { wd: value.trim() } });
+        }
+    };
+
     return (
-        <div className={className}>
+        <div className={className} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Search
+                placeholder="全文检索"
+                allowClear
+                onSearch={onFullTextSearch}
+                style={{ width: 220, flexShrink: 0 }}
+                size="middle"
+                className={styles.headerSearchInput}
+            />
             { <Tooltip title="使用文档">
                 <a
                     style={{

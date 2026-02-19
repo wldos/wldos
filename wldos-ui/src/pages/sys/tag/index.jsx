@@ -193,6 +193,11 @@ const CategoryList = () => {
         tableLayout={isMobile ? undefined : 'fixed'}
         scroll={isMobile ? undefined : { x: scrollX }}
         options={{ density: true, fullScreen: !isMobile, setting: true, reload: true }}
+        pagination={{
+          defaultPageSize: 15,
+          pageSizeOptions: ['10', '15', '20', '30', '50', '100'],
+          showSizeChanger: true,
+        }}
         search={{
           labelWidth: 120,
         }}

@@ -8,18 +8,27 @@
 
 package com.wldos.framework.config;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.wldos.framework.support.web.resolver.PageQueryMethodArgumentResolver;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
+import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
+import com.fasterxml.classmate.TypeResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -27,6 +36,9 @@ import springfox.documentation.RequestHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.wldos.common.Constants;
 import com.wldos.framework.autoconfigure.WldosFrameworkProperties;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
@@ -93,6 +105,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         // 组合条件：包路径 + Swagger 注解
         Predicate<RequestHandler> apiPredicate = packagePredicate.and(annotationPredicate);
         
+        TypeResolver typeResolver = new TypeResolver();
         return new Docket(DocumentationType.SWAGGER_2)
             .groupName("wldos-api") // 设置分组名称
             .apiInfo(apiInfo())
@@ -101,7 +114,12 @@ public class SwaggerConfig implements WebMvcConfigurer {
             .paths(PathSelectors.any())
             .build()
             .pathMapping(proxyPrefix) // 添加路径前缀，所有 API 路径自动加上 /wldos 前缀
-            .securitySchemes(securitySchemes()); // 添加安全方案（Token 认证）
+            .securitySchemes(securitySchemes()) // 添加安全方案（Token 认证）
+            // 避免 ModelContext.getGenericNamingStrategy 递归导致 StackOverflowError（Spring Data Page/Pageable 等泛型循环引用）
+            .alternateTypeRules(
+                AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(com.wldos.common.res.PageQuery.class)),
+                AlternateTypeRules.newRule(typeResolver.resolve(Page.class, Object.class), typeResolver.resolve(com.wldos.common.res.PageData.class, Object.class))
+            );
     }
     
     private ApiInfo apiInfo() {
@@ -136,5 +154,55 @@ public class SwaggerConfig implements WebMvcConfigurer {
         // Swagger UI 的资源已经由 SpringFox 自动处理
         // 这里可以添加自定义配置
     }
-}
 
+    /**
+     * 注册 PageQuery 参数解析器，Controller 可直接声明 PageQuery 参数
+     * （Swagger 禁用时由 WldosWebMvcConfiguration 注册）
+     */
+    @Override
+    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new PageQueryMethodArgumentResolver());
+    }
+
+    /**
+     * Spring Boot 2.6+ 与 SpringFox 兼容性修复
+     * Spring Boot 2.6 默认使用 PathPatternParser，而 SpringFox 需要 AntPathMatcher。
+     * 通过 BeanPostProcessor 过滤 handlerMappings，仅保留 AntPathMatcher 风格的映射，
+     * 避免 documentationPluginsBootstrapper 启动时的 StackOverflowError/NullPointerException。
+     * 参考：https://github.com/springfox/springfox/issues/3462
+     */
+    @Bean("wldosSpringfoxHandlerProviderBeanPostProcessor")
+    public BeanPostProcessor wldosSpringfoxHandlerProviderBeanPostProcessor() {
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+                if (bean instanceof WebMvcRequestHandlerProvider) {
+                    customizeSpringfoxHandlerMappings(getHandlerMappings(bean));
+                }
+                return bean;
+            }
+
+            private void customizeSpringfoxHandlerMappings(java.util.List<RequestMappingInfoHandlerMapping> mappings) {
+                java.util.List<RequestMappingInfoHandlerMapping> copy = mappings.stream()
+                    .filter(mapping -> mapping.getPatternParser() == null)
+                    .collect(java.util.stream.Collectors.toList());
+                mappings.clear();
+                mappings.addAll(copy);
+            }
+
+            @SuppressWarnings("unchecked")
+            private java.util.List<RequestMappingInfoHandlerMapping> getHandlerMappings(Object bean) {
+                try {
+                    java.lang.reflect.Field field = ReflectionUtils.findField(bean.getClass(), "handlerMappings");
+                    if (field == null) {
+                        return new java.util.ArrayList<>();
+                    }
+                    field.setAccessible(true);
+                    return (java.util.List<RequestMappingInfoHandlerMapping>) field.get(bean);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        };
+    }
+}

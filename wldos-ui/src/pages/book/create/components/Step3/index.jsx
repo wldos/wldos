@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Button, Form, Input, message,} from 'antd';
 import {connect} from 'umi';
 import '@/pages/book/components/BaseView.less';
-import {Editor} from "@tinymce/tinymce-react";
+// TinyMCE 已移除（此组件未使用）
 import styles from "@/pages/book/create/components/Step2/index.less";
 import {formItemLayout} from "@/pages/book/create/components/Step2";
 

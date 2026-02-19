@@ -21,6 +21,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /**
  * 框架默认的数据库初始化（允许依赖模块自定义追加初始化脚本）
+ * H2 使用 framework-init-h2.sql，MySQL 使用 framework-init.sql
  *
  * @author 元悉宇宙
  * @version 1.0
@@ -32,6 +33,9 @@ public class WFDataSourceInitializer {
     @Value("classpath:db/framework-init.sql")
     private Resource frameworkSql;
 
+    @Value("classpath:db/framework-init-h2.sql")
+    private Resource frameworkSqlH2;
+
     @SuppressWarnings("all")
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource dataSource,
@@ -39,16 +43,25 @@ public class WFDataSourceInitializer {
 
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(createDatabasePopulator(customizers));
+        initializer.setDatabasePopulator(createDatabasePopulator(dataSource, customizers));
         return initializer;
     }
 
-    private DatabasePopulator createDatabasePopulator(
+    private DatabasePopulator createDatabasePopulator(DataSource dataSource,
             ObjectProvider<DatabaseInitializationCustomizer> customizers) {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-
         populator.setSqlScriptEncoding("UTF-8");
-        populator.addScripts(frameworkSql);
+
+        try (java.sql.Connection conn = dataSource.getConnection()) {
+            String url = conn.getMetaData().getURL();
+            if (url != null && url.startsWith("jdbc:h2:")) {
+                populator.addScripts(frameworkSqlH2);
+            } else {
+                populator.addScripts(frameworkSql);
+            }
+        } catch (Exception e) {
+            populator.addScripts(frameworkSql);
+        }
 
         // 允许二开模块追加自定义初始化行为
         customizers.orderedStream().forEach(customizer ->

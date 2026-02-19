@@ -10,6 +10,7 @@ package com.wldos.platform.core.dao;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.WoOrg;
@@ -58,4 +59,13 @@ public interface UserDao extends BaseDao<WoUser, Long>, UserJdbc {
 	 */
 	@Query("SELECT u.id, u.username, u.nickname, u.remark, u.avatar FROM wo_user u WHERE u.delete_flag='normal' AND (u.status = 'normal' OR u.status = 'notActive') AND u.id in (:userIds)")
 	List<UserInfo> queryUsersInfo(List<Long> userIds);
+
+	/**
+	 * 按推荐码查询用户（用于推荐码校验，仅正常状态用户）
+	 *
+	 * @param recommendCode 推荐码
+	 * @return 用户信息，不存在或无效则 empty
+	 */
+	@Query("SELECT * FROM wo_user u WHERE u.delete_flag='normal' AND (u.status = 'normal' OR u.status = 'notActive') AND u.recommend_code = :recommendCode")
+	Optional<WoUser> findByRecommendCode(String recommendCode);
 }

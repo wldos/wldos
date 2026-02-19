@@ -49,6 +49,9 @@ public class WoResource {
 
 	private Long displayOrder;
 
+	/** 菜单展示区域：nav_main=主导航，nav_avatar=头像下拉；仅 menu/plugin_menu 有效，空或 null 默认主导航 */
+	private String menuRegion;
+
 	private String isValid;
 
 	private String remark;

@@ -9,7 +9,14 @@
 package com.wldos.platform.support.system.internal;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.net.URLClassLoader;
+
+import com.wldos.common.Constants;
+import com.wldos.framework.support.storage.utils.StoreUtils;
+import java.security.CodeSource;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
@@ -24,6 +31,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
 import java.util.Collections;
 
 /**
@@ -91,7 +100,7 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 		String root = "";
 		String inf = "";
 		try {
-			// 1. 优先用 ServletContext 获取 webroot
+			// 1. 优先用 ServletContext 获取 webroot（开发环境、WAR 部署有效；JAR 运行时返回 null）
 			ServletContext servletContext = null;
 			try {
 				servletContext = context.getBean(ServletContext.class);
@@ -107,41 +116,74 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 					}
 				}
 			}
-			// 2. 如果获取不到，再用 classLoader 方式
+			// 2. classLoader 方式（开发环境 target/classes 有效；JAR 运行时 URL.getFile() 含 jar:!/ 等，File 无效）
 			if (root.isEmpty() || inf.isEmpty()) {
-				File classPath = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("")).getFile());
-				File tempClassPathFile = classPath;
-				while (tempClassPathFile != null && !tempClassPathFile.getName().equalsIgnoreCase("WEB-INF") && !tempClassPathFile.getName().equalsIgnoreCase("target")) {
-					tempClassPathFile = tempClassPathFile.getParentFile();
-				}
-				if (tempClassPathFile != null) {
-					if (tempClassPathFile.getName().equalsIgnoreCase("WEB-INF")) {
-						inf = tempClassPathFile.getAbsolutePath();
-						root = tempClassPathFile.getParentFile().getAbsolutePath();
-					} else if (tempClassPathFile.getName().equalsIgnoreCase("target")) {
-						root = tempClassPathFile.getAbsolutePath();
-						inf = new File(tempClassPathFile, "WEB-INF").getAbsolutePath();
+				try {
+					URL resourceUrl = getClass().getClassLoader().getResource("");
+					if (resourceUrl != null) {
+						String path = resourceUrl.getFile();
+						// JAR 运行时 path 含 "!" 或 "file:"，new File() 无法正确解析，跳过
+						if (path != null && !path.contains("!") && !path.startsWith("file:")) {
+							File tempClassPathFile = new File(path);
+							while (tempClassPathFile != null && !tempClassPathFile.getName().equalsIgnoreCase("WEB-INF") && !tempClassPathFile.getName().equalsIgnoreCase("target")) {
+								tempClassPathFile = tempClassPathFile.getParentFile();
+							}
+							if (tempClassPathFile != null) {
+								if (tempClassPathFile.getName().equalsIgnoreCase("WEB-INF")) {
+									inf = tempClassPathFile.getAbsolutePath();
+									root = tempClassPathFile.getParentFile().getAbsolutePath();
+								} else if (tempClassPathFile.getName().equalsIgnoreCase("target")) {
+									root = tempClassPathFile.getAbsolutePath();
+									inf = new File(tempClassPathFile, "WEB-INF").getAbsolutePath();
+								}
+							}
+						}
 					}
-				}
+				} catch (Exception ignored) {}
 			}
-			// 3. MacOS 特殊处理（兼容原有逻辑）
+			// 3. classpath:wldos 方式（开发环境有效；JAR 运行时 getFile() 抛异常）
 			if ((root.isEmpty() || inf.isEmpty()) && context != null) {
 				try {
-					org.springframework.core.io.Resource resource = context.getResource("classpath:wldos");
+					Resource resource = context.getResource("classpath:wldos");
 					File webINF = resource.getFile().getParentFile().getParentFile();
 					root = webINF.getParentFile().getAbsolutePath();
 					inf = webINF.getAbsolutePath();
 				} catch (Exception ignored) {}
 			}
+			// 4. JAR 运行时兜底：使用 JAR 所在目录或 user.dir
+			if (root.isEmpty() || !isValidFileSystemPath(root)) {
+				String jarRoot = resolveJarWebRoot();
+				if (jarRoot != null && !jarRoot.isEmpty()) {
+					root = jarRoot;
+					File webInfDir = new File(root, "WEB-INF");
+					if (!webInfDir.exists()) {
+						webInfDir.mkdirs(); // 兼容 JAR：创建 WEB-INF 以与 WAR 结构对齐，root/inf 被多处引用
+					}
+					inf = webInfDir.getAbsolutePath();
+				}
+			}
 		} catch (Exception e) {
-			try { // for macOs
-				Resource resource = context.getResource("classpath:wldos");
-				File webINF = resource.getFile().getParentFile().getParentFile();
-				root = webINF.getParentFile().getAbsolutePath();
-				inf = webINF.getAbsolutePath();
-			} catch (Exception ignored) {
-				root = "";
-				inf = "";
+			if (context != null) {
+				try {
+					Resource resource = context.getResource("classpath:wldos");
+					File webINF = resource.getFile().getParentFile().getParentFile();
+					root = webINF.getParentFile().getAbsolutePath();
+					inf = webINF.getAbsolutePath();
+				} catch (Exception ignored) {}
+			}
+			if (root.isEmpty()) {
+				String jarRoot = resolveJarWebRoot();
+				if (jarRoot != null && !jarRoot.isEmpty()) {
+					root = jarRoot;
+					File webInfDir = new File(root, "WEB-INF");
+					if (!webInfDir.exists()) {
+						webInfDir.mkdirs();
+					}
+					inf = webInfDir.getAbsolutePath();
+				} else {
+					root = "";
+					inf = "";
+				}
 			}
 		}
 
@@ -180,5 +222,60 @@ public class DynLoadPluginListener implements SpringApplicationRunListener {
 
 	@Override
 	public void failed(ConfigurableApplicationContext context, Throwable exception) {
+	}
+
+	/**
+	 * 判断路径是否为有效的文件系统路径（JAR 内 URL.getFile() 可能含 "!", "file:" 等，File 无法使用）
+	 */
+	private static boolean isValidFileSystemPath(String path) {
+		if (path == null || path.isEmpty()) {
+			return false;
+		}
+		if (path.contains("!") || path.startsWith("file:")) {
+			return false;
+		}
+		File f = new File(path);
+		return f.exists() && f.isDirectory();
+	}
+
+	/**
+	 * JAR 运行时解析 webroot：使用 JAR 所在目录，或 user.dir
+	 * jar:file:/C:/path/wldos.jar!/BOOT-INF/classes/ 需提取 /C:/path/wldos.jar 部分
+	 */
+	private static String resolveJarWebRoot() {
+		try {
+			CodeSource codeSource = DynLoadPluginListener.class.getProtectionDomain().getCodeSource();
+			if (codeSource != null) {
+				URL location = codeSource.getLocation();
+				if (location != null) {
+					URI uri = location.toURI();
+					String path = uri.getRawPath();
+					if (path != null && path.contains("!")) {
+						path = path.substring(0, path.indexOf("!"));
+					}
+					// Windows: /C:/path/jar.jar -> C:/path/jar.jar
+					if (path != null && path.length() > 2 && path.startsWith("/") && path.charAt(2) == ':') {
+						path = path.substring(1);
+					}
+					if (path != null && !path.isEmpty()) {
+						File jarFile = new File(path);
+						if (jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
+							File parent = jarFile.getParentFile();
+							if (parent != null && parent.exists()) {
+								return parent.getAbsolutePath();
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception ignored) {}
+		String userDir = System.getProperty("user.dir");
+		if (userDir != null && !userDir.isEmpty()) {
+			File f = new File(userDir);
+			if (f.exists() && f.isDirectory()) {
+				return f.getAbsolutePath();
+			}
+		}
+		return null;
 	}
 }

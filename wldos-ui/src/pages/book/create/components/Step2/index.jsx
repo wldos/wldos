@@ -8,7 +8,7 @@ import {
   message,
   Modal,
   Radio,
-  Row, Select, Switch, TreeSelect,
+  Row, Select, Spin, Switch, TreeSelect,
   Upload
 } from 'antd';
 import {connect} from 'umi';
@@ -24,7 +24,7 @@ import 'cropperjs/dist/cropper.css';
 import {queryLayerCategory} from "@/pages/sys/category/service";
 import {queryTagSelect} from "@/pages/sys/tag/service";
 import {upParams} from "@/components/FileUpload";
-import {Editor} from "@tinymce/tinymce-react";
+import {loadTinyMCE} from "@/utils/loadTinyMCE";
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -360,6 +360,28 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   const [treeData, setTreeData] = useState([]);
   const [tagData, setTagData] = useState([]);
   const [content, setContent] = useState('');
+  // TinyMCE 按需加载状态
+  const [tinymceReady, setTinymceReady] = useState(false);
+  const [EditorComponent, setEditorComponent] = useState(null);
+
+  // TinyMCE 按需加载
+  useEffect(() => {
+    let mounted = true;
+    const initTinyMCE = async () => {
+      try {
+        await loadTinyMCE();
+        const { Editor } = await import('@tinymce/tinymce-react');
+        if (mounted) {
+          setEditorComponent(() => Editor);
+          setTinymceReady(true);
+        }
+      } catch (error) {
+        console.error('TinyMCE 加载失败:', error);
+      }
+    };
+    initTinyMCE();
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(async () => {
     const resData = await fetchEnumMap();
@@ -567,33 +589,39 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
             <Form.Item name="pubContent" noStyle>
               <textarea hidden
                     value={content} onChange={(e) => setContent(e.target.value)}/>
-              <Editor
-                onInit={(evt, editor) => {
-                  editorRef.current = editor;
-                }}
-                init={{
-                  height: '250px',
-                  width: '100%',
-                  menubar: false,
-                  language: 'zh_CN',
-                  branding: false,
-                  resize: true,
-                  convert_urls: false,
-                  mobile: {
-                    width: '100%',
+              {tinymceReady && EditorComponent ? (
+                <EditorComponent
+                  onInit={(evt, editor) => {
+                    editorRef.current = editor;
+                  }}
+                  init={{
                     height: '250px',
-                    resize: true,
+                    width: '100%',
                     menubar: false,
-                    toolbar: ['fullscreen bold italic | alignleft aligncenter alignright alignjustify undo redo | paste'],
-                  },
-                  plugins: [
-                    'fullscreen table paste wordcount importcss hr nonbreaking toc textpattern noneditable'
-                  ],
-                  toolbar: ['fullscreen bold italic | forecolor backcolor table | alignleft aligncenter alignright alignjustify undo redo | paste'],
-                }}
-                onEditorChange={(e) => setContent(e)}
-                value={content}
-              />
+                    language: 'zh_CN',
+                    branding: false,
+                    resize: true,
+                    convert_urls: false,
+                    mobile: {
+                      width: '100%',
+                      height: '250px',
+                      resize: true,
+                      menubar: false,
+                      toolbar: ['fullscreen bold italic | alignleft aligncenter alignright alignjustify undo redo | paste'],
+                    },
+                    plugins: [
+                      'fullscreen table paste wordcount importcss hr nonbreaking toc textpattern noneditable'
+                    ],
+                    toolbar: ['fullscreen bold italic | forecolor backcolor table | alignleft aligncenter alignright alignjustify undo redo | paste'],
+                  }}
+                  onEditorChange={(e) => setContent(e)}
+                  value={content}
+                />
+              ) : (
+                <div style={{ height: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
+                  <Spin tip="编辑器加载中..." />
+                </div>
+              )}
             </Form.Item>
             <Form.Item
               wrapperCol={{

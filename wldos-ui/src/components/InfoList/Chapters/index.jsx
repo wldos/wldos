@@ -173,7 +173,7 @@ const Chapters = (props) => {
             title: '标题',
             search: false,
             render: (dom, entity) => {
-              return <Link to={pubType === 'info' ? `/info-${entity.id}.html` : `/product-${entity.id}.html`} target="_blank" rel="noopener">{dom}</Link>;
+              return <Link to={pubType === 'info' ? `/info-${entity.id}.html` : `/content-${entity.id}.html`} target="_blank" rel="noopener">{dom}</Link>;
             }
           },
           description: {
@@ -204,7 +204,7 @@ const Chapters = (props) => {
                   </Space>
                 </div>
               <div dangerouslySetInnerHTML={{__html: pubType === 'info' ? `${item.pubExcerpt} ... <a href="/info-${item.id}.html" target="_blank">>>详情</a>` :
-                  `${item.pubExcerpt} ... <a href="/product-${item.id}.html" target="_blank">>>详情</a>`}} />
+                  `${item.pubExcerpt} ... <a href="/content-${item.id}.html" target="_blank">>>详情</a>`}} />
               </>;
             },
           },

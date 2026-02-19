@@ -15,9 +15,13 @@
 package com.example.myapp.controller;
 
 import com.example.myapp.service.OrderService;
+import com.wldos.common.res.PageData;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,19 +71,29 @@ public class OrderController extends NonEntityController<OrderService> {
     
     /**
      * 查询订单列表
-     * 
+     *
      * 访问：GET http://localhost:8080/api/orders/list
      */
     @ApiOperation(value = "查询订单列表", notes = "演示使用 NonEntityController 进行业务查询")
     @GetMapping("/list")
     public Result getOrderList() {
-        // 获取当前用户ID
         Long userId = this.getUserId();
-        
-        // 调用 Service 查询订单列表
-        java.util.List<String> orders = service.getOrderList();
-        
-        return Result.ok(orders);
+        return Result.ok(service.getOrderList());
+    }
+
+    /**
+     * 管理端订单分页列表（框架自动解析 PageQuery）
+     *
+     * 访问：GET /api/orders/admin-list?current=1&pageSize=10
+     */
+    @ApiOperation(value = "订单分页列表（管理端）", notes = "PageQuery 由框架自动解析")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页码", dataType = "int", paramType = "query", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页条数", dataType = "int", paramType = "query", example = "10")
+    })
+    @GetMapping("/admin-list")
+    public Result<PageData<String>> adminList(PageQuery pageQuery) {
+        return Result.ok(service.adminList(pageQuery));
     }
     
     /**

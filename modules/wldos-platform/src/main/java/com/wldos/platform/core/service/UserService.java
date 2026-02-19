@@ -40,7 +40,7 @@ import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.support.auth.vo.Token;
 import com.wldos.platform.core.dao.*;
@@ -344,6 +344,19 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 		return this.entityRepo.findByLoginName(username);
 	}
 
+	/**
+	 * 按推荐码查询用户（用于推荐码校验）
+	 *
+	 * @param recommendCode 推荐码
+	 * @return 用户，不存在或无效则 empty
+	 */
+	public java.util.Optional<WoUser> findByRecommendCode(String recommendCode) {
+		if (recommendCode == null || recommendCode.trim().isEmpty()) {
+			return java.util.Optional.empty();
+		}
+		return this.entityRepo.findByRecommendCode(recommendCode.trim());
+	}
+
 	public boolean existsByLoginName(String username) {
 		return this.entityRepo.existsByLoginName(username);
 	}
@@ -481,7 +494,7 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 	 * @param pageQuery 分页参数
 	 * @return 用户分页数据
 	 */
-	public PageableResult<WoUser> queryUserForPage(WoUser woUser, PageQuery pageQuery) {
+	public PageData<WoUser> queryUserForPage(WoUser woUser, PageQuery pageQuery) {
 		pageQuery.appendParam(AuditFields.DELETE_FLAG, DeleteFlagEnum.NORMAL.toString())
 				.appendParam(AuditFields.IS_VALID, ValidStatusEnum.VALID.toString()); // 注意枚举类型必须转换为String，否则jdbc模板无法自动转换，会导致查询结果为空
 

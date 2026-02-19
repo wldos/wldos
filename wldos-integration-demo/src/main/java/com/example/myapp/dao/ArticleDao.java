@@ -31,7 +31,7 @@ import com.example.myapp.entity.Article;
  * - deleteById(PK id): 根据ID删除
  * - getCommonOperation(): 获取 CommonOperation 实例，用于其他高级操作
  */
-public interface ArticleDao extends BaseDao<Article, Long> {
+public interface ArticleDao extends BaseDao<Article, Long>, MockArticleJdbc {
     // 可以添加自定义查询方法
     // 例如：List<Article> findByAuthor(String author);
 }

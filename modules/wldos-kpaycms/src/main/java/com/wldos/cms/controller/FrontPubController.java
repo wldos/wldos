@@ -15,7 +15,7 @@ import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.SPub;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ObjectUtils;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,12 +53,12 @@ public class FrontPubController extends EntityController<PubService, KPubs> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@RequestMapping("search")
-	public PageableResult<SPub> searchPosts(@RequestParam Map<String, Object> params) {
+	public PageData<SPub> searchPosts(@RequestParam Map<String, Object> params) {
 		// 检索关键字
 		String wd = ObjectUtils.string(params.get("wd"));
 		params.remove("wd");
 		if (wd.equals(""))
-			return new PageableResult<>();
+			return new PageData<>();
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 

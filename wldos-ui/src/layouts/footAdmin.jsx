@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
  * Created by 元悉宇宙 (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
@@ -12,7 +12,7 @@ import React from 'react';
 
 const wldosFooterDom = (version) => (
   <DefaultFooter
-    copyright={`${new Date().getFullYear()} WLDOS 云管端解决方案 ${version?? 'V1.9.1'}`}
+    copyright={`${new Date().getFullYear()} WLDOS - 本地化数字系统 ${version ?? 'V1.9.1'}`}
     links={[
       {
         key: 'wldos',

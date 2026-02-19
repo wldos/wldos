@@ -14,6 +14,7 @@ import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import {getPageQuery, redirectReq} from "@/utils/utils";
 import {stringify} from "querystring";
+import { renderIcon } from '@/utils/iconLibrary';
 
 class AvatarDropdown extends React.Component {
     onMenuClick = (event) => {
@@ -34,7 +35,12 @@ class AvatarDropdown extends React.Component {
             return;
         }
 
-        history.push(`/account/${key}`);
+        // key 可能是 path（如 /order/list）或 account 子路径（如 center）
+        if (key.startsWith('/')) {
+            history.push(key);
+        } else {
+            history.push(`/account/${key}`);
+        }
     };
 
     login = () => {
@@ -58,22 +64,42 @@ class AvatarDropdown extends React.Component {
                 isManageSide: 0,
             },
             menu,
+            avatarMenu = [],
         } = this.props;
+        const hasAvatarItems = avatarMenu && avatarMenu.length > 0;
+        const renderAvatarMenuItem = (item) => {
+            if (item.children && item.children.length > 0) {
+                return (
+                    <Menu.SubMenu key={item.path} title={<span>{item.icon ? renderIcon(item.icon) : <UserOutlined />}{item.name || item.path}</span>}>
+                        {item.children.map((child) => (
+                            <Menu.Item key={child.path}>
+                                {child.icon ? renderIcon(child.icon) : null}
+                                {child.name || child.path}
+                            </Menu.Item>
+                        ))}
+                    </Menu.SubMenu>
+                );
+            }
+            return (
+                <Menu.Item key={item.path}>
+                    {item.icon ? renderIcon(item.icon) : <UserOutlined />}
+                    {item.name || item.path}
+                </Menu.Item>
+            );
+        };
         const menuHeaderDropdown = (
             <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-                {menu && (
-                    <Menu.Item key="center">
-                        <UserOutlined/>
-                        个人中心
-                    </Menu.Item>
-                )}
-                {menu && (
-                    <Menu.Item key="settings">
-                        <SettingOutlined/>
-                        个人设置
-                    </Menu.Item>
-                )}
-                {menu && <Menu.Divider/>}
+                {hasAvatarItems && avatarMenu.map((item) => renderAvatarMenuItem(item))}
+                {/* 个人中心、个人设置始终保留（原写死项） */}
+                <Menu.Item key="center">
+                    <UserOutlined/>
+                    个人中心
+                </Menu.Item>
+                <Menu.Item key="settings">
+                    <SettingOutlined/>
+                    个人设置
+                </Menu.Item>
+                <Menu.Divider/>
 
                 <Menu.Item key="logout">
                     <LogoutOutlined/>

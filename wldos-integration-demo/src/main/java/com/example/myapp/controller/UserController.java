@@ -15,12 +15,16 @@
 package com.example.myapp.controller;
 
 import com.wldos.common.exception.BaseException;
+import com.wldos.common.res.PageData;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.Result;
 import com.wldos.common.res.ResultCode;
 import com.example.myapp.dto.UserCreateDTO;
 import com.example.myapp.service.UserService;
 import com.example.myapp.vo.UserVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,14 +58,30 @@ public class UserController {
     /**
      * 获取用户列表
      * 返回值可以是任意类型，框架会自动包装为 Result
-     * 
+     *
      * 访问：GET http://localhost:8080/api/users/list
      */
     @ApiOperation(value = "获取用户列表", notes = "返回所有用户列表，框架会自动包装为 Result 格式")
     @GetMapping("/list")
     public List<UserVO> getUserList() {
-        // 直接返回业务对象，框架会自动包装为 Result.ok(data)
         return userService.getUserList();
+    }
+
+    /**
+     * 用户分页列表（框架自动解析 PageQuery）
+     *
+     * 访问：GET /api/users/page-list?current=1&pageSize=10&username=zhang&nickname=张
+     */
+    @ApiOperation(value = "用户分页列表", notes = "PageQuery 由框架自动解析")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页码", dataType = "int", paramType = "query", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页条数", dataType = "int", paramType = "query", example = "10"),
+            @ApiImplicitParam(name = "username", value = "用户名筛选", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "nickname", value = "昵称筛选", dataType = "string", paramType = "query")
+    })
+    @GetMapping("/page-list")
+    public Result<PageData<UserVO>> pageList(PageQuery pageQuery) {
+        return Result.ok(userService.pageList(pageQuery));
     }
     
     /**

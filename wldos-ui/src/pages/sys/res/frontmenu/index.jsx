@@ -82,6 +82,7 @@ const handleUpdate = async (fields) => {
       parentId: fields.parentId,
       remark: fields.remark,
       displayOrder: fields.displayOrder,
+      menuRegion: fields.menuRegion,
     });
     hide();
     message.success('配置成功');
@@ -385,6 +386,19 @@ const ResourceList = () => {
       filters: true,
       onFilter: false,
       valueEnum: appList,
+    },
+    {
+      title: '展示区域',
+      dataIndex: 'menuRegion',
+      hideInForm: true,
+      valueEnum: {
+        nav_main: { text: '主导航' },
+        nav_avatar: { text: '头像下拉' },
+      },
+      render: (v, row) => {
+        if (row.resourceType !== 'menu' && row.resourceType !== 'plugin_menu') return '-';
+        return v === 'nav_avatar' ? '头像下拉' : '主导航';
+      },
     },
     {
       title: '资源描述',

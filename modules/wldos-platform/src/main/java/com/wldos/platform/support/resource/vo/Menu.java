@@ -51,6 +51,9 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
+	@ApiModelProperty(value = "菜单展示区域：nav_main=主导航，nav_avatar=头像下拉；空或 null 默认主导航", example = "nav_main")
+	private String menuRegion;
+
 	/* 在菜单中隐藏子节点
 	hideChildrenInMenu?: boolean;*/
 	/* 在菜单中隐藏自己和子节点
@@ -74,7 +77,7 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 		super();
 	}
 
-	private Menu(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
+	private Menu(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder, String menuRegion) {
 		this.type = type;
 		this.path = path;
 		this.component = comPath;
@@ -84,10 +87,15 @@ public class Menu extends TreeNode<Menu> implements Serializable {
 		this.id = id;
 		this.parentId = parentId;
 		this.displayOrder = displayOrder;
+		this.menuRegion = menuRegion;
 	}
 
 	public static Menu of(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder) {
-		return new Menu(type, path, comPath, icon, name, target, id, parentId, displayOrder);
+		return of(type, path, comPath, icon, name, target, id, parentId, displayOrder, null);
+	}
+
+	public static Menu of(String type, String path, String comPath, String icon, String name, String target, Long id, Long parentId, Long displayOrder, String menuRegion) {
+		return new Menu(type, path, comPath, icon, name, target, id, parentId, displayOrder, menuRegion);
 	}
 
 	public String toString() {

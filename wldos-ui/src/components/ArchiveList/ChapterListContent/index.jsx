@@ -16,7 +16,7 @@ const ChapterListContent = ({ data: { id, pubExcerpt, pubType, createBy, createT
   <div className={styles.listContent}>
     {/* eslint-disable-next-line no-nested-ternary */}
     <div className={styles.description} dangerouslySetInnerHTML={{__html: pubType === 'book' ?
-        `${pubExcerpt} ... <a href="/product-${id}.html" target="_blank">>>详情</a>`
+        `${pubExcerpt} ... <a href="/content-${id}.html" target="_blank">>>详情</a>`
     : (pubType === 'info' ? `${pubExcerpt} ... <a href="/info-${id}.html" target="_blank">>>详情</a>`:
           (pubType === 'doc' ? `${pubExcerpt} ... <a href="/doc/book/${id}.html" target="_blank">>>全文</a>` :
             `${pubExcerpt} ... <a href="/archives-${id}.html" target="_blank">>>全文</a>`))}}/>

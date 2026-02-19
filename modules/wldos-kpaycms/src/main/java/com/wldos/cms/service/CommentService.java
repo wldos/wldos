@@ -23,7 +23,7 @@ import com.wldos.cms.vo.AuditComment;
 import com.wldos.cms.vo.Comment;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.platform.support.auth.vo.UserInfo;
@@ -186,11 +186,11 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 	 * @param pageQuery 查询条件
 	 * @return 评论列表
 	 */
-	public PageableResult<AuditComment> queryAdminComments(PageQuery pageQuery) {
-		PageableResult<AuditComment> commentPage = this.execQueryForPage(AuditComment.class, "select c.* from k_comments c LEFT JOIN k_pubs p on c.pub_id=p.id", pageQuery,
+	public PageData<AuditComment> queryAdminComments(PageQuery pageQuery) {
+		PageData<AuditComment> commentPage = this.execQueryForPage(AuditComment.class, "select c.* from k_comments c LEFT JOIN k_pubs p on c.pub_id=p.id", pageQuery,
 				SQLTable.of(KComments.class, "c"), SQLTable.of(KPubs.class, "p"));
 
-		List<AuditComment> comments = commentPage.getData().getRows();
+		List<AuditComment> comments = commentPage.getRows();
 
 		if (comments == null || comments.isEmpty())
 			return commentPage;
@@ -222,7 +222,7 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 			return comment;
 		}).collect(Collectors.toList());
 
-		commentPage.setDataRows(comments);
+		commentPage.setRows(comments);
 
 		return commentPage;
 	}

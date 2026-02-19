@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.FileAccessPolicyEnum;
-import com.wldos.common.res.DomainResult;
+import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.http.IpUtils;
 import com.wldos.common.utils.img.ImageUtils;
@@ -205,6 +205,15 @@ public class FileStore implements IStore {
 				ImageIO.read(new File(outPath));
 				// 获取实际宽度 获取实际高度
 				thumbnails.add(new Thumbnail(tm.getType(), thumbWidth, scaleHeight, srcT.toString(), file.getContentType()));
+				
+				// 同时生成 WebP 版本的缩略图（异步，不阻塞主流程）
+				try {
+					String webpThumbPath = outPath.replace("." + extName, ".webp");
+					ImageUtils.convertToWebP(src, webpThumbPath, thumbWidth, scaleHeight);
+				} catch (Exception e) {
+					// WebP 转换失败不影响主流程，仅记录日志
+					log.warn("生成 WebP 缩略图失败: {}", outPath, e);
+				}
 			}
 		}
 		else { // 转发远程文件服务
@@ -244,7 +253,7 @@ public class FileStore implements IStore {
 
 			String res = (String) responseEntity.getBody();
 
-			DomainResult result = new ObjectMapper().readValue(res, DomainResult.class);
+			Result<?> result = new ObjectMapper().readValue(res, Result.class);
 			fileInfo = (FileInfo) result.getData();
 		}
 		catch (URISyntaxException | IOException e) {

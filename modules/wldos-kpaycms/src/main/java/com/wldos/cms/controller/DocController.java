@@ -19,7 +19,7 @@ import com.wldos.cms.vo.Doc;
 import com.wldos.cms.vo.DocItem;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,7 +59,7 @@ public class DocController extends NonEntityController<DocService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<DocItem> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<DocItem> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());

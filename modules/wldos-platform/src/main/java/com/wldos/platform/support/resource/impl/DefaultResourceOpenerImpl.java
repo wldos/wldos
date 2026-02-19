@@ -47,7 +47,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("and r.app_id=(select p.id from wo_app p where p.delete_flag='normal' and p.is_valid='1' and p.app_code=:appCode) ")
 				.append("and exists(select 1 from wo_domain_resource d where d.is_valid='1' ")
 				.append("and d.delete_flag='normal' and d.domain_id=:domainId and d.app_id=r.app_id and d.resource_id=r.id) ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("domainId", domainId);
@@ -78,7 +78,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("where r.delete_flag='normal' and r.is_valid='1' and r.resource_type=:type ")
 				.append("and exists(select 1 from wo_domain_resource d where d.is_valid='1' ")
 				.append("and d.delete_flag='normal' and d.domain_id=:domainId and d.app_id=r.app_id and d.resource_id=r.id) ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("domainId", domainId);
@@ -94,7 +94,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("where r.delete_flag='normal' and r.is_valid='1' and r.resource_type in (:types) ")
 				.append("and exists(select 1 from wo_domain_resource d where d.is_valid='1' ")
 				.append("and d.delete_flag='normal' and d.domain_id=:domainId and d.app_id=r.app_id and d.resource_id=r.id) ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("domainId", domainId);
@@ -108,7 +108,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 		StringBuilder sql = new StringBuilder("select r.* from wo_resource r ")
 				.append("join wo_auth_role a on r.id=a.resource_id and r.app_id=a.app_id ")
 				.append("where a.delete_flag='normal' and a.is_valid='1' and a.role_id=:roleId ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Long> params = new HashMap<>();
 		params.put("roleId", roleId);
@@ -126,7 +126,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("where m.delete_flag='normal' and m.is_valid='1' and n.delete_flag='normal' and n.is_valid='1' and m.id=:roleId) u ")
 				.append("on u.parent_id=a.role_id or u.grand_id=a.role_id ")
 				.append("where a.delete_flag='normal' and a.is_valid='1' ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Long> params = new HashMap<>();
 		params.put("roleId", roleId);
@@ -144,7 +144,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("and r.app_id=(select p.id from wo_app p where p.delete_flag='normal' and p.is_valid='1' and p.app_code=:appCode) ")
 				.append("and exists(select 1 from wo_domain_resource d where d.is_valid='1' ")
 				.append("and d.delete_flag='normal' and d.domain_id=:domainId and d.app_id=r.app_id and d.resource_id=r.id) ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("domainId", domainId);
@@ -165,7 +165,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("where r.delete_flag='normal' and r.is_valid='1' and a.delete_flag='normal' and a.is_valid='1' and r.resource_type=:type ")
 				.append("and exists(select 1 from wo_domain_resource d where d.is_valid='1' ")
 				.append("and d.delete_flag='normal' and d.domain_id=:domainId and d.app_id=r.app_id and d.resource_id=r.id) ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("type", type);
@@ -186,7 +186,7 @@ public class DefaultResourceOpenerImpl implements ResourceOpener {
 				.append("where r.delete_flag='normal' and r.is_valid='1' and a.delete_flag='normal' and a.is_valid='1' and r.resource_type in (:types) ")
 				.append("and exists(select 1 from wo_domain_resource d where d.is_valid='1' ")
 				.append("and d.delete_flag='normal' and d.domain_id=:domainId and d.app_id=r.app_id and d.resource_id=r.id) ")
-				.append("order by r.parent_id | r.display_order");
+				.append("order by coalesce(r.parent_id, 0), r.display_order");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("types", Arrays.asList(types));

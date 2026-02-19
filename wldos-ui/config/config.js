@@ -15,16 +15,15 @@ import routes from './routes';
 const {REACT_APP_ENV} = process.env;
 
 export default defineConfig({
- // mfsu: {},
+  // mfsu: {},
   hash: true,
   antd: {},
   dva: {
     hmr: true,
     immer: { enableES5: true }
   },
-  targets: {
-    ie: 11,
-  },
+  // 移除 IE11 支持可减少约 15% 体积，如需支持 IE11 请取消注释
+  // targets: { ie: 11 },
   history: {
     type: 'browser',
   },
@@ -46,19 +45,25 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
-  // 配置 webpack，让插件路径能够像本地组件一样被处理
+  // ========== 生产环境优化配置 ==========
+  // 启用 terser 压缩，移除 console 和注释
+  terserOptions: {
+    compress: {
+      drop_console: true,      // 移除 console
+      drop_debugger: true,     // 移除 debugger
+    },
+    output: {
+      comments: false,         // 移除注释
+    },
+  },
+  // 配置 webpack
   chainWebpack(config, { env }) {
+    // ========== 插件配置 ==========
     // 允许动态导入（插件路径是运行时才过来的，webpack 无法在构建时打包）
-    // 这样插件 UI 和主应用构建的 chunk 可以使用完全相同的加载逻辑
     config.module
       .set('exprContextCritical', false)
       .set('unknownContextCritical', false)
       .set('wrappedContextCritical', false);
-
-    // 注意：对于动态变量路径，webpack 无法在构建时静态分析
-    // - 本地组件路径 `@/pages/xxx/index`：webpack 可以静态分析（@/ 是别名），构建时打包
-    // - 插件路径 `/plugins/...`：webpack 无法静态分析，运行时通过浏览器原生 import() 加载
-    // 两者都使用相同的代码，webpack 会根据路径类型自动处理
 
     // 开发模式：动态配置插件别名（生产环境完全规避）
     if (env === 'development') {

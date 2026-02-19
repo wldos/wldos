@@ -35,7 +35,7 @@ public interface PubmetaDao extends BaseDao<KPubmeta, Long> {
 	List<KPubmeta> queryPubMetaByPubIds(List<Long> pids);
 
 	@Modifying
-	@Query("update k_pubmeta set meta_value = meta_value + (:count) where pub_id=:pid and meta_key=:viewsKey")
+	@Query("update k_pubmeta set meta_value = CAST(CAST(COALESCE(meta_value, '0') AS SIGNED) + :count AS CHAR(255)) where pub_id=:pid and meta_key=:viewsKey")
 	void increasePubViews(int count, Long pid, String viewsKey);
 
 	@Query("select count(1) from k_pubmeta s where s.pub_id=:pid and s.meta_key=:viewsKey")

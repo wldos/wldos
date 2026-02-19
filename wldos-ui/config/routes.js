@@ -91,6 +91,10 @@ const routes = [
             redirect: '/doc/book'
           },
           {
+            path: '/doc/',
+            redirect: '/doc/book'
+          },
+          {
             path: '/doc/book',
             component: './doc',
           },
@@ -127,12 +131,59 @@ const routes = [
                 component: './sys/config',
               },
               {
+                path: '/admin/sys/seo',
+                component: './commercial/sys/seo',
+                name: 'SEO',
+              },
+              /* 与 SEO 同组件，兼容菜单 path 配置为 robots 时打开白屏 */
+              {
+                path: '/admin/sys/robots',
+                component: './commercial/sys/seo',
+                name: 'robots管理',
+              },
+              {
                 path: '/admin/sys/reg',
                 component: './sys/reg',
               },
               {
                 path: '/admin/sys/oauth',
                 component: './sys/oauth'
+              },
+              // 商业模块（社区版不引用 commercial 目录）
+              {
+                path: '/admin/sys/agreement',
+                component: './commercial/sys/agreement', name: '服务协议'
+              },
+              {
+                path: '/admin/sys/product',
+                component: './commercial/sys/products', name: '产品展示'
+              },
+              {
+                path: '/admin/sys/order',
+                component: './commercial/sys/order', name: '订单管理'
+              },
+              {
+                path: '/admin/sys/license',
+                component: './commercial/sys/license', name: 'License 管理'
+              },
+              {
+                path: '/admin/sys/ticket',
+                component: './commercial/sys/ticket',
+                name: '工单管理'
+              },
+              {
+                path: '/admin/sys/ticket/detail/:id',
+                component: './commercial/sys/ticket/detail',
+                name: '工单详情',
+                hideInMenu: true,
+              },
+              {
+                path: '/admin/sys/commission',
+                component: './commercial/sys/commission', name: '佣金统计'
+              },
+              {
+                path: '/admin/sys/marketing-rule',
+                component: './commercial/sys/marketing-rule', name: '推荐营销规则'
               },
             ],
           },
@@ -345,15 +396,15 @@ const routes = [
             component: './home/category',
           },
           {
-            path: '/product',
+            path: '/content',
             component: './home/productCategory',
           },
-          { // 因umi框架前后两端的路由支持不够理想，采用小类的模式确定分类路由，slug为小类，小类之上的所有父级类别在url中不体现，仅体现在面包屑中
-            path: '/product/category/:slugCategory',
+          { // 因umi框架前后两端的路由支持不够理想，采用小类的模式确定分类路由，slug为小类；content 表示内容付费（原 product 合集）
+            path: '/content/category/:slugCategory',
             component: './home/productCategory',
           },
           {
-            path: '/product/tag/:slugTag',
+            path: '/content/tag/:slugTag',
             component: './home/productTag',
           },
           {
@@ -412,6 +463,56 @@ const routes = [
             path: '/info-author/:userId.html',
             component: './account/center/components/InfoAuthor'
           },
+          // 商业模块（社区版注释掉本段代码，不分发 commercial 目录）
+          {
+            path: '/product',
+            component: './commercial/products', name: '产品中心',
+          },
+          {
+            path: '/product-:id.html',
+            component: './commercial/products/detail',
+          },
+          {
+            path: '/product/trial',
+            component: './commercial/trial',
+            name: '试用申请',
+          },
+          {
+            path: '/agreement',
+            component: './commercial/agreement', name: '服务协议',
+          },
+          {
+            path: '/checkout',
+            component: './commercial/checkout', name: '结算页',
+          },
+          {
+            path: '/order/list',
+            component: './commercial/order', name: '我的订单',
+          },
+          {
+            path: '/order/:orderNo',
+            component: './commercial/order/detail'
+          },
+          {
+            path: '/license/list',
+            component: './commercial/license', name: '我的 License'
+          },
+          {
+            path: '/license/:id',
+            component: './commercial/license/detail'
+          },
+          {
+            path: '/ticket/list',
+            component: './commercial/ticket', name: '我的工单'
+          },
+          {
+            path: '/ticket/create',
+            component: './commercial/ticket/create'
+          },
+          {
+            path: '/ticket/:id',
+            component: './commercial/ticket/detail'
+          },
           {
             path: '/search',
             component: './search',
@@ -425,7 +526,7 @@ const routes = [
             component: './book/create/pub',
           },
           {
-            path: '/product-:bookId.html',
+            path: '/content-:bookId.html',
             component: './book/detail',
           },
           {
@@ -445,7 +546,7 @@ const routes = [
             component: './book/article',
           },
           {
-            path: '/product-:bookId/:preview',
+            path: '/content-:bookId/:preview',
             component: './book/detail',
           },
           {
@@ -474,6 +575,11 @@ const routes = [
               {
                 path: '/account/settings',
                 component: './account/settings',
+              },
+              {
+                path: '/account/referral',
+                component: './commercial/referral',
+                name: '个人推荐中心',
               },
             ],
           },

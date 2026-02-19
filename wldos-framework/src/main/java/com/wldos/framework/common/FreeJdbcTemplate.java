@@ -15,7 +15,7 @@ import com.wldos.framework.support.internal.BaseWrap;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.framework.support.internal.God;
 
 import org.springframework.data.domain.Sort;
@@ -121,7 +121,7 @@ public interface FreeJdbcTemplate extends God {
 	 * @param params 查询参数
 	 * @return 一页数据
 	 */
-	PageableResult<Map<String, Object>> execQueryForPageNoOrder(String sql, int currentPage, int pageSize, Object... params);
+	PageData<Map<String, Object>> execQueryForPageNoOrder(String sql, int currentPage, int pageSize, Object... params);
 
 	/**
 	 * 自定义分页查询，带参数和分页对象，返回对象级通用分页模板结构
@@ -131,7 +131,7 @@ public interface FreeJdbcTemplate extends God {
 	 * @param params sql对应的查询参数
 	 * @return 一页数据
 	 */
-	<E> PageableResult<E> execQueryForPageNoOrder(Class<E> clazz, String sql, int currentPage, int pageSize, Object... params);
+	<E> PageData<E> execQueryForPageNoOrder(Class<E> clazz, String sql, int currentPage, int pageSize, Object... params);
 
 	/**
 	 * 自定义分页查询支持排序，带参数和分页对象，返回通用分页模板结构
@@ -141,7 +141,7 @@ public interface FreeJdbcTemplate extends God {
 	 * @param params 查询参数
 	 * @return 结果集
 	 */
-	PageableResult<Map<String, Object>> execQueryForPage(String sql, String sqlOrder, int currentPage, int pageSize, Object[] params);
+	PageData<Map<String, Object>> execQueryForPage(String sql, String sqlOrder, int currentPage, int pageSize, Object[] params);
 
 	/**
 	 * 自定义分页查询，支持自定义排序，带参数和分页对象，返回对象级通用分页模板结构
@@ -153,7 +153,7 @@ public interface FreeJdbcTemplate extends God {
 	 * @param params 查询参数
 	 * @return 一页数据
 	 */
-	<E> PageableResult<E> execQueryForPage(Class<E> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object... params);
+	<E> PageData<E> execQueryForPage(Class<E> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object... params);
 
 	/* *******************************************分页基础API end ****************************************************/
 

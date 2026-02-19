@@ -221,9 +221,9 @@ const Product = (props) => {
       dataSource={listRight}
       renderItem={(item) => (
         <List.Item>
-            <Card className={styles.card} hoverable size="small" onClick={() => window.open(`/product-${item.id}.html`, '_blank')}
+            <Card className={styles.card} hoverable size="small" onClick={() => window.open(`/content-${item.id}.html`, '_blank')}
                   cover={<img alt={item.pubTitle} src={item.cover}/>}>
-              <Card.Meta title={<Link to={`/product-${item.id}.html`} target="_blank" rel="noopener">{item.pubTitle}</Link>}/>
+              <Card.Meta title={<Link to={`/content-${item.id}.html`} target="_blank" rel="noopener">{item.pubTitle}</Link>}/>
             </Card>
         </List.Item>
       )}
@@ -239,9 +239,9 @@ const Product = (props) => {
       dataSource={listRel}
       renderItem={(item) => (
         <List.Item>
-            <Card className={styles.card} hoverable size="small" onClick={() => window.open(`/product-${item.id}.html`, '_blank')}
+            <Card className={styles.card} hoverable size="small" onClick={() => window.open(`/content-${item.id}.html`, '_blank')}
                   cover={<img alt={item.pubTitle} src={item.cover}/>}>
-              <Card.Meta title={<Link to={`/product-${item.id}.html`} target="_blank" rel="noopener">{item.pubTitle}</Link>}/>
+              <Card.Meta title={<Link to={`/content-${item.id}.html`} target="_blank" rel="noopener">{item.pubTitle}</Link>}/>
             </Card>
         </List.Item>
       )}

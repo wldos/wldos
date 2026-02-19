@@ -11,9 +11,11 @@ package com.wldos.framework.common;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Sort;
+
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.vo.TreeNode;
 
 /**
@@ -35,7 +37,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <V> VO类,系父表子集
 	 * @return VO分页列表
 	 */
-	<V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables);
+	<V> PageData<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables);
 
 	/**
 	 * 自定义基础sql分页查询，查询条件、过滤条件、排序动态生成。
@@ -48,7 +50,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <V> VO类,系父表子集
 	 * @return VO分页列表
 	 */
-	<V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere,List<Object> params, PageQuery pageQuery, SQLTable... sqlTables);
+	<V> PageData<V> execQueryForPage(Class<V> vo, String sqlNoWhere,List<Object> params, PageQuery pageQuery, SQLTable... sqlTables);
 
 	/**
 	 * 自定义基础sql全量查询，查询条件、过滤条件、排序动态生成。
@@ -69,7 +71,89 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param pageQuery 分页参数
 	 * @return 一页数据
 	 */
-	<E> PageableResult<E> execQueryForPage(Class<E> clazz, PageQuery pageQuery);
+	<E> PageData<E> execQueryForPage(Class<E> clazz, PageQuery pageQuery);
+
+	/**
+	 * 拼装 condition 条件（精确匹配），追加到 sql，params 写入命名参数。
+	 * 商业版实现，开源版暂不支持。
+	 *
+	 * @param sql         SQL 构建器
+	 * @param params      命名参数 Map
+	 * @param entityClass 实体类型（用于字段校验）
+	 * @param alias       表别名
+	 * @param condition   condition Map
+	 */
+	void appendConditionNamed(StringBuilder sql, Map<String, Object> params, Class<?> entityClass, String alias, Map<String, Object> condition);
+
+	/**
+	 * 拼装 filter 条件（IN 查询），追加到 sql，params 写入命名参数。
+	 * 商业版实现，开源版不支持。
+	 *
+	 * @param sql         SQL 构建器
+	 * @param params      命名参数 Map
+	 * @param entityClass 实体类型（用于字段校验）
+	 * @param alias       表别名
+	 * @param filter      filter Map
+	 */
+	void appendFilterNamed(StringBuilder sql, Map<String, Object> params, Class<?> entityClass, String alias, Map<String, List<Object>> filter);
+
+	/**
+	 * 拼装 ORDER BY，追加到 sql。
+	 * 商业版实现，开源版不支持。
+	 *
+	 * @param sql            SQL 构建器
+	 * @param sort           排序
+	 * @param alias          表别名
+	 * @param defaultOrderBy 当 sort 为空时的默认排序，如 "a.display_order asc"
+	 */
+	void appendOrderByNamed(StringBuilder sql, Sort sort, String alias, String defaultOrderBy);
+
+	/**
+	 * 拼装 condition 条件（多表），按字段名匹配到 SQLTable 中第一个包含该字段的表。
+	 * 商业版实现，开源版不支持。
+	 *
+	 * @param sql         SQL 构建器
+	 * @param params      命名参数 Map
+	 * @param sqlTables   表声明，如 SQLTable.of(Agreement.class, "a"), SQLTable.of(Resource.class, "r")
+	 * @param condition   condition Map
+	 */
+	void appendConditionNamed(StringBuilder sql, Map<String, Object> params, SQLTable[] sqlTables, Map<String, Object> condition);
+
+	/**
+	 * 拼装 filter 条件（多表），按字段名匹配到 SQLTable 中第一个包含该字段的表。
+	 * 商业版实现，开源版不支持。
+	 *
+	 * @param sql       SQL 构建器
+	 * @param params    命名参数 Map
+	 * @param sqlTables 表声明
+	 * @param filter    filter Map
+	 */
+	void appendFilterNamed(StringBuilder sql, Map<String, Object> params, SQLTable[] sqlTables, Map<String, List<Object>> filter);
+
+	/**
+	 * 拼装 ORDER BY（多表），按字段名匹配到 SQLTable 中第一个包含该字段的表。
+	 * 商业版实现，开源版不支持。
+	 *
+	 * @param sql            SQL 构建器
+	 * @param sort           排序
+	 * @param sqlTables      表声明
+	 * @param defaultOrderBy 当 sort 为空时的默认排序
+	 */
+	void appendOrderByNamed(StringBuilder sql, Sort sort, SQLTable[] sqlTables, String defaultOrderBy);
+
+	/**
+	 * NamedParameterJdbcTemplate 分页执行：count + list + limit，含深分页反向查询优化。
+	 * 业务模块先使用 appendConditionNamed/appendFilterNamed/appendOrderByNamed 拼装 sql+params，再调用此方法执行。
+	 * 商业版实现，开源版不支持。
+	 *
+	 * @param sql         完整 SQL（含 where、order by，不含 limit）
+	 * @param params      命名参数
+	 * @param pageQuery   分页参数
+	 * @param resultClass 结果类型
+	 * @param <V>         结果类型
+	 * @return 分页结果
+	 */
+	<V> PageData<V> execPageQueryNamed(String sql, Map<String, Object> params, PageQuery pageQuery, Class<V> resultClass);
 
 	/**
 	 * 根据实体属性查询数据库组装vo为单元的树结构。
@@ -81,7 +165,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <V> 属性集是实体bean的副本或子集
 	 * @return VO分页
 	 */
-	<V extends TreeNode<V>, E> PageableResult<V> execQueryForTree(Class<?> clazz, PageQuery pageQuery, Class<E> entity, long root);
+	<V extends TreeNode<V>, E> PageData<V> execQueryForTree(Class<?> clazz, PageQuery pageQuery, Class<E> entity, long root);
 
 	/**
 	 * 带条件查询所有单体
@@ -103,7 +187,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param isPage 是否分页，不分页将输出所有数据
 	 * @return VO分页
 	 */
-	<V, E> PageableResult<V> execQueryForPage(Class<V> clazz, PageQuery pageQuery, Class<E> entity, boolean isPage);
+	<V, E> PageData<V> execQueryForPage(Class<V> clazz, PageQuery pageQuery, Class<E> entity, boolean isPage);
 
 	/**
 	 * 根据父子关系表查询VO列表，支持父子表的查询条件、排序、过滤。
@@ -134,7 +218,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <V> VO类,系父表子集
 	 * @return 分页数据
 	 */
-	<P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey);
+	<P, C, V> PageData<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey);
 
 	/**
 	 * 根据父子关系表查询父表的分页，支持父子表的查询条件、排序、过滤。
@@ -150,7 +234,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <C> 子表实体类
 	 * @return 分页数据
 	 */
-	<PA, C> PageableResult<PA> execQueryForPage(Class<PA> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pTable, String cTable, String pIdKey);
+	<PA, C> PageData<PA> execQueryForPage(Class<PA> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pTable, String cTable, String pIdKey);
 
 	/**
 	 * 根据父子关系表查询父表的分页，支持父子表的查询条件、排序、过滤。
@@ -164,7 +248,7 @@ public interface CommonOperation extends FreeJdbcTemplate {
 	 * @param <C> 子表实体类
 	 * @return 分页数据
 	 */
-	<P, C> PageableResult<P> execQueryForPage(Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pIdKey);
+	<P, C> PageData<P> execQueryForPage(Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pIdKey);
 
 	/**
 	 * 统一的保存或更新方法，自动判断 insert/update，支持乐观锁、写入空值、合并 null 值等特性。

@@ -14,13 +14,13 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.7.1</version>
+		<version>2.3.8.0</version>
 	</parent>
 	<artifactId>wldos-common</artifactId>
 	<name>wldos-common</name>
 	<description>WLDOS通用工具类库</description>
 	<properties>
-        <wldos.version>2.3.7.1</wldos.version>
+        <wldos.version>2.3.8.0</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
@@ -50,6 +50,13 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
 			<version>1.70</version>
+		</dependency>
+		<!-- Swagger 注解，用于 API 文档（PageData、Result 等模型类） -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.5.21</version>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>

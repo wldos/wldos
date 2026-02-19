@@ -5,7 +5,7 @@
 <h3 align="center" style="margin:30px 0 30px;font-weight:bold;font-size:30px;">Cloud Application Support Platform - IoT Driver</h3>
 <h5 align="center" style="margin:30px 0 30px;font-size:20px;">Develop IoT applications based on WLDOS, focusing on, opening up, and managing your ecosystem</h5>
 <p align="center">
- <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.7.1" src="https://img.shields.io/badge/WLDOS-V2.3.7.1-deepskyblue.svg"></a>
+ <a href="http://gitee.com/wldos/wldos/" target="__blank"><img alt="WLDOS-V2.3.8.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1" src="https://img.shields.io/badge/WLDOS-V2.3.8.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1-deepskyblue.svg"></a>
  <a href="https://spring.io/projects/spring-boot#learn" target="__blank"><img alt="SpringBoot-2.7" src="https://img.shields.io/badge/SpringBoot-2.7-bluegreen.svg"></a>
  <a href="https://gitee.com/wldos/wldos/stargazers" target="__blank"><img alt="star" src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark"></a>
  <a href="https://gitee.com/wldos/wldos/members" target="__blank"><img alt="fork" src="https://gitee.com/wldos/wldos/badge/fork.svg?theme=dark"></a>
@@ -282,5 +282,8 @@ wldos root directory
 └── Development Log.txt
 
 ````
+### Version License Notes
+- wldos version 2.3.8.0 and above: All GPL/AGPL licensed dependencies have been completely removed. The main license is Apache License 2.0, which allows free distribution and commercial use in closed-source form (no requirement to open-source);
+- wldos version 2.3.7 and below: Contains GPL licensed dependencies. Use/distribution of this version must comply with GPL terms (it is recommended to upgrade to version 2.3.8.0+).
 
 [中文版README](README.md)

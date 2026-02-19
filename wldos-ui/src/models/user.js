@@ -10,6 +10,8 @@ import * as service from '@/services/user';
 import { setAuthority} from "@/utils/authority";
 import { loadPluginManifest } from '@/services/pluginManifest';
 
+let _fetchCurrentCallIndex = 0;
+
 const UserModel = {
   namespace: 'user',
   state: {
@@ -33,9 +35,13 @@ const UserModel = {
       });
     },
 
-    * fetchSite(_, {call, put}) {
+    * fetchSite(_, {call, put, select}) {
+        const state = yield select(s => s.user);
+        // 若 site 已有数据（含 siteDomain 或 siteTitle），跳过请求
+        if (state.site && (state.site.siteDomain || state.site.siteTitle)) {
+          return;
+        }
         const res = yield call(service.querySiteSeo);
-
         if (res && res.data) {
           yield put({
             type: 'saveSite',
@@ -45,13 +51,23 @@ const UserModel = {
     },
 
     * fetchCurrent(_, {call, put, select}) {
+      const state = yield select(s => s.user);
+      const hasData = state.route && Object.keys(state.route).length > 0;
+      if (hasData) {
+        _fetchCurrentCallIndex += 1;
+        if (_fetchCurrentCallIndex % 2 === 0) {
+          _fetchCurrentCallIndex = 0; // 跳过时清零，避免无限增大
+          return; // 偶数次跳过，请求量减半
+        }
+      }
+
       const response = yield call(service.queryCurrent);
       const dyn = yield call(service.fetchDynRoutes);
 
       // 同时加载插件 manifest（用户端和管理端共享）
       // 检查是否已加载，避免重复加载
-      const state = yield select(state => state.user);
-      if (!state.pluginManifest) {
+      const stateNow = yield select(s => s.user);
+      if (!stateNow.pluginManifest) {
         try {
           const manifest = yield call(loadPluginManifest);
           yield put({

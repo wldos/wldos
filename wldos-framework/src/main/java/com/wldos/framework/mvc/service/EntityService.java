@@ -16,7 +16,7 @@ import java.util.Optional;
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.framework.common.SaveOptions;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public abstract class EntityService<R extends BaseDao<E, PK>, E, PK> extends Non
 	 * 实体Repo
 	 */
 	@Autowired
-	@SuppressWarnings({ "all" })
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected R entityRepo;
 
 	/**
@@ -228,8 +228,8 @@ public abstract class EntityService<R extends BaseDao<E, PK>, E, PK> extends Non
 	 * @param pageable 分页参数
 	 * @return 实体分页
 	 */
-	public PageableResult<E> execQueryForPage(E entity, PageQuery pageable) {
-		return (PageableResult<E>) this.commonOperate.execQueryForPage(entity.getClass(), pageable);
+	public PageData<E> execQueryForPage(E entity, PageQuery pageable) {
+		return (PageData<E>) this.commonOperate.execQueryForPage(entity.getClass(), pageable);
 	}
 
 	/**
@@ -239,8 +239,8 @@ public abstract class EntityService<R extends BaseDao<E, PK>, E, PK> extends Non
 	 * @param pageable 分页参数
 	 * @return VO分页
 	 */
-	public <V> PageableResult<V> execQueryForPage(V vo, E entity, PageQuery pageable) {
-		return (PageableResult<V>) this.commonOperate.execQueryForPage(vo.getClass(), pageable, entity.getClass(), true);
+	public <V> PageData<V> execQueryForPage(V vo, E entity, PageQuery pageable) {
+		return (PageData<V>) this.commonOperate.execQueryForPage(vo.getClass(), pageable, entity.getClass(), true);
 	}
 
 	/**
@@ -251,8 +251,8 @@ public abstract class EntityService<R extends BaseDao<E, PK>, E, PK> extends Non
 	 * @param root 根节点ID
 	 * @return 一页数据
 	 */
-	public <V> PageableResult<V> execQueryForTree(V vo, E entity, PageQuery pageable, long root) {
-		return (PageableResult<V>) this.commonOperate.execQueryForTree(vo.getClass(), pageable, entity.getClass(), root);
+	public <V> PageData<V> execQueryForTree(V vo, E entity, PageQuery pageable, long root) {
+		return (PageData<V>) this.commonOperate.execQueryForTree(vo.getClass(), pageable, entity.getClass(), root);
 	}
 
 	protected void preDeletes(List<Object> ids) {

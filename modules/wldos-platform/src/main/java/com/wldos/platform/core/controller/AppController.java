@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoApp;
 import com.wldos.platform.core.enums.AppOriginEnum;
@@ -61,7 +61,7 @@ public class AppController extends EntityController<AppService, WoApp> {
 		@ApiImplicitParam(name = "appType", value = "应用类型", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<WoApp> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<WoApp> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		this.applyTenantFilter(pageQuery);
@@ -84,7 +84,7 @@ public class AppController extends EntityController<AppService, WoApp> {
 		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "query", required = true)
 	})
 	@GetMapping("domain")
-	public PageableResult<WoApp> listDomainApp(@RequestParam Map<String, Object> params) {
+	public PageData<WoApp> listDomainApp(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -106,7 +106,7 @@ public class AppController extends EntityController<AppService, WoApp> {
 		@ApiImplicitParam(name = "appName", value = "应用名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("select")
-	public PageableResult<WoApp> listSelect(@RequestParam Map<String, Object> params) {
+	public PageData<WoApp> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		if (this.isMultiTenancy() && !this.service.isAdmin(this.getUserId())) { // @todo 暂不支持发布私有应用(小程序)，还没有想好如何设计API开放平台

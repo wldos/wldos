@@ -52,6 +52,13 @@ public enum PubTypeEnum {
 	POETRY("poetry", "chapter", "诗词"), // 诗词谱
 	DANCE("dance", "chapter", "舞谱"), // 舞谱
 
+	// 商业模块 CMS 复用类型：在 CMS 创建对应类型 = 直接创建业务记录
+	AGREEMENT("agreement", "agreement", "服务协议"), // platform-plugin-agreement，协议正文
+	ORDER_POLICY("order_policy", "order_policy", "订单说明"), // store-plugin-order，订单说明/支付说明/售后政策
+	PAYMENT_POLICY("payment_policy", "payment_policy", "支付说明"),
+	AFTER_SALES_POLICY("after_sales_policy", "after_sales_policy", "售后政策"),
+	FAQ("faq", "faq", "常见问题"), // cms-plugin-customer，客服知识库
+
 	/* @todo 暂时不支持
 	PRODUCT("prod", "prod", "产品"),
 	SERVICE("service", "service", "服务"),

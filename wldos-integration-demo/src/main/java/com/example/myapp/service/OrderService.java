@@ -14,8 +14,13 @@
  */
 package com.example.myapp.service;
 
+import com.wldos.common.res.PageData;
+import com.wldos.common.res.PageQuery;
 import com.wldos.framework.mvc.service.NonEntityService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 订单服务类
@@ -66,12 +71,30 @@ public class OrderService extends NonEntityService {
     /**
      * 查询订单列表
      */
-    public java.util.List<String> getOrderList() {
-        // 获取当前用户ID
+    public List<String> getOrderList() {
         Long userId = this.getUserId();
-        
-        // 业务逻辑...
         return java.util.Arrays.asList("订单1", "订单2", "订单3");
+    }
+
+    /**
+     * 管理端订单分页列表（演示 Map + PageQuery + PageData 用法）
+     * Mock 实现：模拟分页数据
+     *
+     * @param pageQuery 分页查询参数
+     * @return 分页数据
+     */
+    public PageData<String> adminList(PageQuery pageQuery) {
+        List<String> all = new ArrayList<>();
+        for (int i = 1; i <= 25; i++) {
+            all.add("订单" + i);
+        }
+        int total = all.size();
+        int current = pageQuery != null ? pageQuery.getCurrent() : 1;
+        int pageSize = pageQuery != null ? pageQuery.getPageSize() : 10;
+        int from = Math.min((current - 1) * pageSize, total);
+        int to = Math.min(from + pageSize, total);
+        List<String> rows = all.subList(from, to);
+        return new PageData<>(total, current, pageSize, rows);
     }
 }
 

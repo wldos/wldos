@@ -8,7 +8,7 @@
 
 package com.wldos.platform.core.service;
 
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.framework.common.AuditFields;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ValidStatusEnum;
@@ -69,7 +69,7 @@ public class AppService extends EntityService<AppDao, WoApp, Long> {
 	 * @param pageQuery 分页参数和查询条件
 	 * @return 应用分页数据
 	 */
-	public PageableResult<WoApp> queryAppForPage(PageQuery pageQuery) {
+	public PageData<WoApp> queryAppForPage(PageQuery pageQuery) {
 		pageQuery.appendParam(AuditFields.DELETE_FLAG, DeleteFlagEnum.NORMAL.toString())
 				.appendParam(AuditFields.IS_VALID, ValidStatusEnum.VALID.toString()); // 注意枚举类型必须转换为String，否则jdbc模板无法自动转换，会导致查询结果为空
 

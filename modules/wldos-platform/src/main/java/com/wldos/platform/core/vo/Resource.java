@@ -59,6 +59,9 @@ public class Resource extends TreeNode<Resource> {
 	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
+	@ApiModelProperty(value = "菜单展示区域：nav_main=主导航，nav_avatar=头像下拉", example = "nav_main")
+	private String menuRegion;
+
 	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;
 

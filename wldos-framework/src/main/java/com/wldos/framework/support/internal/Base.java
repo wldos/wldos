@@ -134,10 +134,24 @@ public class Base {
 
 	private void initializeWebRoot() {
 		String rootPath = System.getProperty("wldos.platform.root", "");
-		if (rootPath != null && new File(rootPath).exists()) {
+		// 校验路径有效：排除 JAR 内 URL 产生的含 "!", "file:" 等无效路径
+		boolean valid = rootPath != null && !rootPath.isEmpty()
+			&& !rootPath.contains("!") && !rootPath.startsWith("file:")
+			&& new File(rootPath).exists();
+		if (valid) {
 			this.setWebRoot(rootPath);
 		} else {
-			this.getLog().warn("Invalid webRoot path: {}", rootPath);
+			if (rootPath != null && !rootPath.isEmpty()) {
+				this.getLog().warn("Invalid webRoot path: {}", rootPath);
+			}
+			// JAR 运行时兜底：使用 user.dir（通常为 JAR 所在目录的父目录）
+			String fallback = System.getProperty("user.dir", "");
+			if (fallback != null && !fallback.isEmpty()) {
+				File f = new File(fallback);
+				if (f.exists() && f.isDirectory()) {
+					this.setWebRoot(f.getAbsolutePath());
+				}
+			}
 		}
 	}
 
@@ -209,7 +223,12 @@ public class Base {
 	}
 
 	public String getWebRoot() {
-		return webRoot;
+		if (webRoot != null && !webRoot.isEmpty()) {
+			return webRoot;
+		}
+		// 兜底：避免返回 null 导致路径拼接为 /null/temp
+		String fallback = System.getProperty("wldos.platform.root", System.getProperty("user.dir", ""));
+		return (fallback != null && !fallback.isEmpty()) ? fallback : new File("").getAbsolutePath();
 	}
 
 	public void setWebRoot(String webRoot) {

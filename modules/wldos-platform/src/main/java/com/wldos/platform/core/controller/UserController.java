@@ -9,8 +9,14 @@
 package com.wldos.platform.core.controller;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
+import com.wldos.framework.support.notice.UserNoticesAggregator;
 import com.wldos.platform.auth.model.AccSecurity;
 import com.wldos.platform.auth.vo.AccountInfo;
 import com.wldos.framework.mvc.controller.EntityController;
@@ -22,6 +28,8 @@ import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.vo.User;
 import com.wldos.common.res.Result;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +51,9 @@ import javax.validation.Valid;
 @RestController
 public class UserController extends EntityController<UserService, WoUser> {
 
-
+	@Lazy
+	@Autowired(required = false)
+	private UserNoticesAggregator userNoticesAggregator;
 
 	/** 路由守护，检查路由是否可访问 */
 	@ApiOperation(value = "路由检查", notes = "检查路由是否可访问")
@@ -97,6 +107,36 @@ public class UserController extends EntityController<UserService, WoUser> {
 	public AccountInfo currentAccount() {
 
 		return this.service.queryAccountInfo(this.getUserId());
+	}
+
+	/**
+	 * 校验推荐码是否有效（下单前调用，可选登录）
+	 * 若已登录且推荐码为当前用户自己的码，返回 valid=false
+	 */
+	@ApiOperation(value = "推荐码校验", notes = "校验推荐码是否有效，用于结算页")
+	@GetMapping("referral/validate")
+	public Result<Map<String, Object>> validateReferralCode(@ApiParam("推荐码") @RequestParam String code) {
+		Optional<WoUser> opt = this.service.findByRecommendCode(code);
+		Map<String, Object> data = new HashMap<>();
+		if (!opt.isPresent()) {
+			data.put("valid", false);
+			data.put("message", "推荐码无效或已失效");
+			return Result.ok(data);
+		}
+		WoUser referrer = opt.get();
+		Long currentUserId = this.getUserId();
+		if (currentUserId != null && currentUserId.equals(referrer.getId())) {
+			data.put("valid", false);
+			data.put("message", "不能使用自己的推荐码");
+			return Result.ok(data);
+		}
+		data.put("valid", true);
+		data.put("recommendCode", referrer.getRecommendCode());
+		data.put("nickname", referrer.getNickname());
+		data.put("referrerUserId", referrer.getId());
+		// 优惠金额由产品/规则计算，此处仅占位；前端或结算页可按规则计算后传 discountAmount 下单
+		data.put("discountAmount", 0);
+		return Result.ok(data);
 	}
 
 	@ApiOperation(value = "上传头像", notes = "上传用户头像")
@@ -157,6 +197,53 @@ public class UserController extends EntityController<UserService, WoUser> {
 		this.service.saveOrUpdate(user);
 
 		return Result.ok("ok");
+	}
+
+	/** 通知列表短时缓存：TTL 45s，与前端 60s 轮询错峰，减轻重复聚合/查库 */
+	private static final long NOTICES_CACHE_TTL_MS = 45_000L;
+	private static final ConcurrentHashMap<Long, Object[]> NOTICES_CACHE = new ConcurrentHashMap<>(64);
+
+	private List<Map<String, Object>> getNoticesList(Long userId) {
+		if (userId == null) {
+			return Collections.emptyList();
+		}
+		long now = System.currentTimeMillis();
+		Object[] entry = NOTICES_CACHE.get(userId);
+		if (entry != null && (Long) entry[0] > now) {
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> cached = (List<Map<String, Object>>) entry[1];
+			return cached;
+		}
+		List<Map<String, Object>> list = userNoticesAggregator == null
+			? Collections.emptyList()
+			: userNoticesAggregator.aggregate(userId, 80);
+		NOTICES_CACHE.put(userId, new Object[] { now + NOTICES_CACHE_TTL_MS, list });
+		return list;
+	}
+
+	/**
+	 * 统一通知列表（消息气泡：工单提醒、站内信、邮件等）
+	 * 商业版由消息中间件实现聚合；开源版无实现则返回空列表。点击气泡时再拉全量。
+	 */
+	@ApiOperation(value = "通知列表", notes = "消息气泡数据源，点击气泡时拉取")
+	@GetMapping("notices")
+	public Result<List<Map<String, Object>>> notices() {
+		return Result.ok(getNoticesList(this.getUserId()));
+	}
+
+	/**
+	 * 轻量检查：仅返回条数，供前端轮询是否有新消息、更新角标；不返回列表以减小响应。
+	 */
+	@ApiOperation(value = "通知条数", notes = "轮询用，仅返回 totalCount/unreadCount，有新增时前端再调 notices 拉列表")
+	@GetMapping("notices/count")
+	public Result<Map<String, Integer>> noticesCount() {
+		List<Map<String, Object>> list = getNoticesList(this.getUserId());
+		int total = list.size();
+		int unread = (int) list.stream().filter(m -> !Boolean.TRUE.equals(m.get("read"))).count();
+		Map<String, Integer> count = new HashMap<>(2);
+		count.put("totalCount", total);
+		count.put("unreadCount", unread);
+		return Result.ok(count);
 	}
 
 	/**

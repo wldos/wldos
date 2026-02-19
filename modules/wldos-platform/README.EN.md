@@ -18,7 +18,7 @@ This project includes the following closed-source components, which are essentia
 
 ## License
 
-- The closed source components of this project are not compatible with open source licenses, but are compatible and can be used for free. Distribution must comply with commercial license agreements.
+- The closed source components of this project are not compatible with open source licenses, but are compatible and do not affect secondary development, can be used for free, and distribution must comply with commercial license agreements.
 - System infrastructure modules unrelated to business functions are part of the WLDOS platform infrastructure. They are delivered with open-source code and can be used for free for personal purposes. Distribution requires commercial authorization. Due to long-term development considerations, source code delivery is not supported (unless purchased outright).
 - Closed-source implementation modules related to business functions are commercial components. They are delivered with open-source code and can be used for free for personal purposes. Distribution requires commercial authorization. Negotiations are needed for source code access.
 - For more plugin extensions, please follow the community or visit wldos.com.

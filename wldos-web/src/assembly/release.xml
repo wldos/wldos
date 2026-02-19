@@ -17,11 +17,12 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
-        <!-- 打包 war 包 -->
+        <!-- 打包主应用：war 或 jar（根据 packaging 类型，spring-boot 打 jar 时生成 *.jar） -->
         <fileSet>
             <directory>${project.build.directory}</directory>
             <includes>
                 <include>*.war</include>
+                <include>*.jar</include>
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>

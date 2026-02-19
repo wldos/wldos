@@ -161,19 +161,21 @@ public class MyJdbcRepository<T, ID> extends SimpleJdbcRepository<T, ID> {
 				BeanUtils.copyProperties(old, instance, getNoNullProperties(instance));
 				EntityAssists.beforeUpdated(instance, this.getUserId(), this.getUserIp());
 			} else {
+				// id 有值但库中不存在，按“新实体”插入（仅填审计字段，保留原 id）
 				EntityAssists.beforeInsert(instance, this.getUserId(), this.getUserIp(), true);
 			}
 		} else {
-			// 新实体，直接 insert
+			// 新实体，直接 insert：先填充 id 与审计字段，再执行 insert
 			// 注意：EntityAssists.beforeInsert() 在 isRepo=true 时会排除 "versions" 字段
-			// Spring Data JDBC 会自动处理 @Version 字段：insert 时如果 version 为 null 或 0，会自动设置为 1
+			// Spring Data JDBC 的 save() 按 id 是否为空判断 insert/update，此处已设 id，必须用 insert 执行插入
 			EntityAssists.beforeInsert(instance, IDGen.nextId(), this.getUserId(), this.getUserIp(), true);
 		}
 
-		// Spring Data JDBC 的 entityOperations.save() 会自动处理 @Version 字段：
-		// - insert 时：如果 version 为 null 或 0，自动设置为 1
-		// - update 时：自动递增 version 值
-		return entityOperations.save(instance);
+		// 插入走 insert()，更新走 save()，避免“已设 id 的新实体”被误判为 update 导致 Id not found
+		if (isUpdate) {
+			return entityOperations.save(instance);
+		}
+		return (S) entityOperations.insert(instance);
 	}
 	
 	/**
@@ -552,23 +554,28 @@ public class MyJdbcRepository<T, ID> extends SimpleJdbcRepository<T, ID> {
 
 	private <E> String getIdColNameByEntity(Class<E> clazz) {
 		String pKeyName = "";
-		// 获取字段
-		Field[] fields = clazz.getDeclaredFields();
-
-		for (Field f : fields) {
-			if (f.getAnnotation(Id.class) != null) {
-				Column propRelColumn = f.getAnnotation(Column.class);
-				if (propRelColumn != null) {
-					pKeyName = propRelColumn.value();
-				}
-				else {
-					pKeyName = NameConvert.humpToUnderLine(f.getName());
-				}
-				break;
-			}  // 判断是否主键
+		Field idField = findIdFieldInHierarchy(clazz);
+		if (idField != null) {
+			Column propRelColumn = idField.getAnnotation(Column.class);
+			if (propRelColumn != null) {
+				pKeyName = propRelColumn.value();
+			} else {
+				pKeyName = NameConvert.humpToUnderLine(idField.getName());
+			}
 		}
-
 		return pKeyName;
+	}
+
+	/** 在类及其父类中查找带 @Id 的字段（子类实体继承 BaseEntity 时主键在父类） */
+	private static Field findIdFieldInHierarchy(Class<?> clazz) {
+		for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
+			for (Field f : c.getDeclaredFields()) {
+				if (f.getAnnotation(Id.class) != null) {
+					return f;
+				}
+			}
+		}
+		return null;
 	}
 
 	private HttpServletRequest getRequest() {
@@ -642,8 +649,14 @@ public class MyJdbcRepository<T, ID> extends SimpleJdbcRepository<T, ID> {
 	private String getTableName() {
 		Class<?> entityClass = entity.getType();
 		Table table = entityClass.getAnnotation(Table.class);
-		if (table != null && !table.value().isEmpty()) {
-			return table.value();
+		if (table != null) {
+			String name = table.value();
+			if (ObjectUtils.isBlank(name)) {
+				name = table.name();
+			}
+			if (!ObjectUtils.isBlank(name)) {
+				return name;
+			}
 		}
 		// 回退到类名转下划线
 		return NameConvert.humpToUnderLine(entityClass.getSimpleName()).toLowerCase();

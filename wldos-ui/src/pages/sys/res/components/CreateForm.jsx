@@ -570,6 +570,7 @@ const CreateForm = (props) => {
           requestMethod: 'GET',
           target: '_self',
           parentId,
+          displayOrder: 1, // 默认值，后端会按同级最大值+1覆盖（上限100）
         }}
       >
         {renderContent()}

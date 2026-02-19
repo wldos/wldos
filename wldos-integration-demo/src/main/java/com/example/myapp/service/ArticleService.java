@@ -15,13 +15,18 @@
 package com.example.myapp.service;
 
 import com.example.myapp.dao.ArticleDao;
-import com.example.myapp.dao.impl.MockArticleDao;
+import com.example.myapp.dao.MockArticleDaoImpl;
 import com.example.myapp.entity.Article;
+import com.wldos.common.res.PageData;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.common.SaveOptions;
 import com.wldos.framework.mvc.service.EntityService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +53,53 @@ import java.util.stream.Collectors;
 public class ArticleService extends EntityService<ArticleDao, Article, Long> {
     
     /**
+     * 分页列表（演示 Map + PageQuery + PageData 用法）
+     * Mock 实现：从内存过滤、排序、分页
+     *
+     * @param pageQuery 分页查询参数（condition 可含 author、status 等）
+     * @return 分页数据
+     */
+    public PageData<Article> pageList(PageQuery pageQuery) {
+        List<Article> all = findAll().stream().collect(Collectors.toList());
+        if (pageQuery != null && pageQuery.getCondition() != null) {
+            Object author = pageQuery.getCondition().get("author");
+            if (!ObjectUtils.isBlank(author)) {
+                all = all.stream().filter(a -> author.toString().equals(a.getAuthor())).collect(Collectors.toList());
+            }
+            Object status = pageQuery.getCondition().get("status");
+            if (status != null) {
+                int s = Integer.parseInt(status.toString());
+                all = all.stream().filter(a -> s == (a.getStatus() != null ? a.getStatus() : -1)).collect(Collectors.toList());
+            }
+        }
+        int total = all.size();
+        int current = pageQuery != null ? pageQuery.getCurrent() : 1;
+        int pageSize = pageQuery != null ? pageQuery.getPageSize() : 10;
+        if (pageQuery != null && pageQuery.getSorter() != null && !pageQuery.getSorter().isEmpty()) {
+            org.springframework.data.domain.Sort.Order first = pageQuery.getSorter().iterator().next();
+            String prop = first.getProperty();
+            boolean desc = first.isDescending();
+            all.sort(Comparator.comparing((Function<? super Article, ? extends String>) a -> {
+                Object v = getFieldValue(a, prop);
+                return v != null ? v.toString() : "";
+            }, desc ? Comparator.reverseOrder() : Comparator.naturalOrder()));
+        }
+        int from = Math.min((current - 1) * pageSize, total);
+        int to = Math.min(from + pageSize, total);
+        List<Article> rows = all.subList(from, to);
+        return new PageData<>(total, current, pageSize, rows);
+    }
+
+    private Object getFieldValue(Article a, String prop) {
+        if ("title".equals(prop)) return a.getTitle();
+        if ("author".equals(prop)) return a.getAuthor();
+        if ("status".equals(prop)) return a.getStatus();
+        if ("views".equals(prop)) return a.getViews();
+        if ("createTime".equals(prop)) return a.getCreateTime();
+        return null;
+    }
+
+    /**
      * 自定义方法：根据作者查询文章列表
      * 演示如何在 Service 中调用 DAO 的自定义方法
      * 
@@ -59,8 +111,8 @@ public class ArticleService extends EntityService<ArticleDao, Article, Long> {
      */
     public List<Article> findByAuthor(String author) {
         // 如果 entityRepo 是 MockArticleDao 实例，可以调用自定义方法
-        if (entityRepo instanceof MockArticleDao) {
-            return ((MockArticleDao) entityRepo).findByAuthor(author);
+        if (entityRepo instanceof MockArticleDaoImpl) {
+            return ((MockArticleDaoImpl) entityRepo).findByAuthor(author);
         }
         // 否则使用通用方法：查询所有后过滤
         return findAll().stream()
@@ -76,8 +128,8 @@ public class ArticleService extends EntityService<ArticleDao, Article, Long> {
      */
     public List<Article> findByStatus(Integer status) {
         // 如果 entityRepo 是 MockArticleDao 实例，可以调用自定义方法
-        if (entityRepo instanceof MockArticleDao) {
-            return ((MockArticleDao) entityRepo).findByStatus(status);
+        if (entityRepo instanceof MockArticleDaoImpl) {
+            return ((MockArticleDaoImpl) entityRepo).findByStatus(status);
         }
         // 否则使用通用方法：查询所有后过滤
         return findAll().stream()
@@ -138,10 +190,7 @@ public class ArticleService extends EntityService<ArticleDao, Article, Long> {
     public Article importArticle(Article article) {
         // 使用 SaveOptions.forImport() 创建导入配置
         // 不自动填充字段，写入所有字段（包括空值）
-        SaveOptions options = SaveOptions.builder()
-                .autoFill(false)  // 不自动填充
-                .includeNullValues(true)  // 写入空值
-                .build();
+        SaveOptions options = SaveOptions.forImport();
         
         return saveOrUpdate(article, options);
     }

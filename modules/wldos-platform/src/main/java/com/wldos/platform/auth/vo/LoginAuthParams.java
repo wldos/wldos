@@ -9,6 +9,8 @@
 package com.wldos.platform.auth.vo;
 
 import java.io.Serializable;
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -52,4 +54,7 @@ public class LoginAuthParams implements Serializable {
 
 	@ApiModelProperty(value = "登录方式：account（账号密码）、mobile（手机验证码）", example = "account")
 	private String type;
+
+	@ApiModelProperty(value = "勾选的协议ID列表（LOGIN类型），用于合规追溯", example = "[1]")
+	private List<Long> agreementIds;
 }

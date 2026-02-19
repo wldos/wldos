@@ -15,7 +15,7 @@ import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.platform.support.cms.vo.Product;
@@ -48,18 +48,18 @@ public class ProductController extends NonEntityController<KCMSService> {
 	 * @param pid 产品发布内容id
 	 * @return 详情信息
 	 */
-	@ApiOperation(value = "产品详情", notes = "根据ID查询产品详情")
-	@GetMapping("product-{pid:\\d+}.html")
-	public Product productInfo(@ApiParam(value = "产品ID", required = true) @PathVariable Long pid) {
+	@ApiOperation(value = "付费内容详情", notes = "根据ID查询付费内容详情（路由统一：content 表示内容付费）")
+	@GetMapping("content-{pid:\\d+}.html")
+	public Product productInfo(@ApiParam(value = "内容ID", required = true) @PathVariable Long pid) {
 		return this.service.productInfo(pid, false, this.getDomainId());
 	}
 
 	/**
-	 * 预览产品
+	 * 预览付费内容
 	 */
-	@ApiOperation(value = "预览产品", notes = "预览模式查看产品")
-	@GetMapping("product-{id:[0-9]+}/preview")
-	public Product previewProduct(@ApiParam(value = "产品ID", required = true) @PathVariable Long id) {
+	@ApiOperation(value = "预览付费内容", notes = "预览模式查看内容")
+	@GetMapping("content-{id:[0-9]+}/preview")
+	public Product previewProduct(@ApiParam(value = "内容ID", required = true) @PathVariable Long id) {
 		return this.service.productInfo(id, true, null);
 	}
 
@@ -68,7 +68,7 @@ public class ProductController extends NonEntityController<KCMSService> {
 	 *
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@ApiOperation(value = "产品存档列表", notes = "查询产品存档列表")
+	@ApiOperation(value = "付费内容存档列表", notes = "查询付费内容存档列表（路由统一：content）")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
 		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
@@ -76,8 +76,8 @@ public class ProductController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "termTypeId", value = "分类ID", dataTypeClass = Long.class, paramType = "query")
 	})
-	@GetMapping("product")
-	public PageableResult<PubUnit> productArchives(@RequestParam Map<String, Object> params) {
+	@GetMapping("content")
+	public PageData<PubUnit> productArchives(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -94,15 +94,15 @@ public class ProductController extends NonEntityController<KCMSService> {
 	 * @param slugCategory 分类目录别名
 	 * @return 按分类目录索引的存档列表页
 	 */
-	@ApiOperation(value = "分类产品列表", notes = "查询某分类下的产品列表")
+	@ApiOperation(value = "分类付费内容列表", notes = "查询某分类下的付费内容列表")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
 		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
 		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
-	@GetMapping("product/category/{slugCategory}")
-	public PageableResult<PubUnit> productCategory(@ApiParam(value = "分类别名", required = true) @PathVariable String slugCategory, 
+	@GetMapping("content/category/{slugCategory}")
+	public PageData<PubUnit> productCategory(@ApiParam(value = "分类别名", required = true) @PathVariable String slugCategory, 
 			@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -120,7 +120,7 @@ public class ProductController extends NonEntityController<KCMSService> {
 	 * @param xxTag 标签别名
 	 * @return 按标签索引的存档列表页
 	 */
-	@GetMapping("product/tag/{xxTag}")
+	@GetMapping("content/tag/{xxTag}")
 	public Result productTag(@PathVariable String xxTag) {
 
 		return Result.ok("");
@@ -132,7 +132,7 @@ public class ProductController extends NonEntityController<KCMSService> {
 	 * @param xxAuthor 作者用户id
 	 * @return 作者的内容存档页
 	 */
-	@GetMapping("product-author/{xxAuthor}")
+	@GetMapping("content-author/{xxAuthor}")
 	public Result productAuthor(@PathVariable String xxAuthor) {
 
 		return Result.ok("");

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
@@ -65,7 +65,7 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 		@ApiImplicitParam(name = "comName", value = "公司名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<Company> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<Company> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		return this.service.execQueryForTree(new Company(), new WoCompany(), pageQuery, Constants.TOP_COM_ID);

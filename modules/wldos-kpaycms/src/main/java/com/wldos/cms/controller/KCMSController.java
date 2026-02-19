@@ -21,7 +21,7 @@ import com.wldos.cms.vo.Article;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.common.vo.SelectOption;
 import com.wldos.platform.support.cms.vo.RouteParams;
@@ -68,7 +68,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "tagId", value = "标签ID", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<PubUnit> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
@@ -85,7 +85,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	 * @return 侧边栏数据
 	 */
 	@GetMapping("cms/listSideCar/{pageName}")
-	public PageableResult<PubUnit> listSideCar(@PathVariable String pageName) throws JsonProcessingException {
+	public PageData<PubUnit> listSideCar(@PathVariable String pageName) throws JsonProcessingException {
 		// 根据页面名称获取配置的侧边栏参数
 		Map<String, Object> params = this.service.readParamsSideCar(pageName);
 		PageQuery pageQuery = new PageQuery(params);
@@ -112,7 +112,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "tagId", value = "标签ID", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("archives-all/{pubType}")
-	public PageableResult<PubUnit> archivesPubType(@PathVariable String pubType, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesPubType(@PathVariable String pubType, @RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -139,7 +139,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "termTypeId", value = "分类ID", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("archives")
-	public PageableResult<PubUnit> archivesIndustry(@RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesIndustry(@RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -165,7 +165,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("archives/category/{slugCategory}")
-	public PageableResult<PubUnit> archivesCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesCategory(@PathVariable String slugCategory, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -190,7 +190,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("archives/tag/{slugTag}")
-	public PageableResult<PubUnit> archivesTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesTag(@PathVariable String slugTag, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -215,7 +215,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("archives-author/{userId:[0-9]+}.html")
-	public PageableResult<PubUnit> archivesAuthor(@PathVariable String userId, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesAuthor(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", userId);
@@ -275,7 +275,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("archives-like/{userId:[0-9]+}.html")
-	public PageableResult<PubUnit> archivesLike(@PathVariable String userId, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesLike(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
@@ -301,7 +301,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("archives-star/{userId:[0-9]+}.html")
-	public PageableResult<PubUnit> archivesStar(@PathVariable String userId, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> archivesStar(@PathVariable String userId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
@@ -339,7 +339,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("book-{bookId:[0-9]+}.html")
-	public PageableResult<PubUnit> queryBookChapter(@PathVariable Long bookId, @RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> queryBookChapter(@PathVariable Long bookId, @RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 

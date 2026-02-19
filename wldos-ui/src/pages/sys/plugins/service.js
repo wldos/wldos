@@ -39,7 +39,7 @@ export async function installPlugin(data) {
     method: 'POST',
     data: formData,
     headers: {
-      ...headerFix,
+      ...headerFix(),
       'Content-Type': 'multipart/form-data',
     },
   });

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.mvc.controller.EntityController;
@@ -64,7 +64,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 		@ApiImplicitParam(name = "domainName", value = "域名（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<WoDomain> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<WoDomain> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		this.applyTenantFilter(pageQuery);
@@ -87,7 +87,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "query", required = true)
 	})
 	@GetMapping("resList")
-	public PageableResult<DomainResource> listDomainRes(@RequestParam Map<String, Object> params) {
+	public PageData<DomainResource> listDomainRes(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		Long domainId = Long.parseLong(params.get("domainId").toString());

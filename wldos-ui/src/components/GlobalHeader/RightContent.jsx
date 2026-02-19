@@ -15,11 +15,34 @@ import NoticeIconView from './NoticeIconView';
 import {Button, Switch} from "antd";
 import updateDarkTheme from "@/components/DarkTheme/UpdateTheme";
 
+/** 从菜单树中收集 menuRegion===nav_avatar 的项，保留子菜单结构 */
+const collectAvatarMenuItems = (menus) => {
+  if (!menus || !Array.isArray(menus)) return [];
+  const result = [];
+  const walk = (items) => {
+    (items || []).forEach((item) => {
+      if (item.menuRegion === 'nav_avatar' && item.path) {
+        const node = { path: item.path, name: item.name, icon: item.icon, displayOrder: item.displayOrder };
+        if (item.children && item.children.length) {
+          node.children = item.children
+            .filter((c) => c.path)
+            .map((c) => ({ path: c.path, name: c.name, icon: c.icon, displayOrder: c.displayOrder }))
+            .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+        }
+        result.push(node);
+      }
+      if (item.children && item.children.length) walk(item.children);
+    });
+  };
+  walk(menus);
+  return result.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+};
+
 const GlobalHeaderRight = (props) => {
     const {theme, layout, currentUser = {
         avatar: '',
         nickname: '',
-    }, route} = props;
+    }, route, menuData} = props;
 
     const {module} = route && route['/'] || '';
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
@@ -76,9 +99,9 @@ const GlobalHeaderRight = (props) => {
                 onSearch={value => search(`/search`, value)}
             />
             {
-                currentUser?.nickname ? (<NoticeIconView/>) : ('')
+                currentUser?.nickname ? (<NoticeIconView disablePolling />) : ('')
             }
-            <Avatar menu/>
+            <Avatar menu avatarMenu={collectAvatarMenuItems(menuData)}/>
           {/* <SelectLang className={styles.action} /> */}
             <span className={styles.action}>
               <Switch checkedChildren="🌙" unCheckedChildren="☀" onClick={switchDarkMode} defaultChecked={darkMode} size={"small"} />
@@ -98,6 +121,7 @@ const GlobalHeaderRight = (props) => {
 export default connect(({ user, settings }) => ({
   currentUser: user.currentUser,
   route: user.route,
+  menuData: user.menuData || [],
   theme: settings.navTheme,
   layout: settings.layout,
 }))(GlobalHeaderRight);

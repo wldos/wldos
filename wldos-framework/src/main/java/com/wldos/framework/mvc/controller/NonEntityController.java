@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Lazy;
 public abstract class NonEntityController<S extends NonEntityService> extends Base {
 
 	@Autowired
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected S service;
 
 	/** 如果service层需要request，可以传给service，不要在service直接获取*/

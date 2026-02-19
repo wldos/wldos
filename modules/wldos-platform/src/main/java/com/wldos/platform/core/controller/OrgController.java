@@ -19,7 +19,7 @@ import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.Result;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.enums.OrgTypeEnum;
 import com.wldos.platform.core.entity.WoOrg;
@@ -68,7 +68,7 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 		@ApiImplicitParam(name = "orgName", value = "组织名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<Org> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<Org> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		this.applyTenantFilter(pageQuery);

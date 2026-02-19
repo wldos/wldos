@@ -7,8 +7,9 @@ import Category from "@/pages/home/components/Category";
 import Admin from "@/pages/sys/monitor";
 
 const Index = (props) => {
-  const {match, route,} = props;
+  const {match, route, loading: routeLoading} = props;
   const [HomeComponent, setHomeComponent] = useState(null);
+  const [componentLoading, setComponentLoading] = useState(false);
 
   // 安全地解构 match 和 params
   const params = match?.params || {};
@@ -46,6 +47,7 @@ const Index = (props) => {
   useEffect(() => {
     const loadHomeComponent = async () => {
       if (stableModule === 'component' && stableUrl) {
+        setComponentLoading(true);
         try {
           // url 作为组件路径，动态加载
           const module = await import(/* webpackChunkName: "[request]" */ `@/pages/${stableUrl}/index`);
@@ -54,14 +56,26 @@ const Index = (props) => {
         } catch (err) {
           console.error('加载首页组件失败:', err);
           setHomeComponent(null); // 加载失败，回退到旧逻辑
+        } finally {
+          setComponentLoading(false);
         }
       } else {
         setHomeComponent(null); // 不是 component 类型，使用旧逻辑
+        setComponentLoading(false);
       }
     };
 
     loadHomeComponent();
   }, [stableModule, stableUrl]);
+
+  // 如果正在加载路由数据或组件，显示加载状态
+  if (routeLoading || (stableModule === 'component' && stableUrl && componentLoading && !HomeComponent)) {
+    return (
+      <div style={{ padding: '100px', textAlign: 'center' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   // 新逻辑：如果加载了新组件，使用新组件
   if (HomeComponent) {

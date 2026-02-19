@@ -16,9 +16,13 @@ package com.example.myapp.controller;
 
 import com.example.myapp.entity.Article;
 import com.example.myapp.service.ArticleService;
+import com.wldos.common.res.PageData;
+import com.wldos.common.res.PageQuery;
 import com.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.EntityController;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -125,6 +129,25 @@ public class ArticleController extends EntityController<ArticleService, Article>
                 .collect(java.util.stream.Collectors.toList());
     }
     
+    /**
+     * 分页列表（框架自动解析 PageQuery，无需显式 new PageQuery(params)）
+     * 前端 ProTable 等可传 current、pageSize、author、status、sorter 等
+     *
+     * 访问：GET /api/articles/admin-list?current=1&pageSize=10&author=张三&status=1
+     */
+    @ApiOperation(value = "文章分页列表", notes = "PageQuery 由框架自动解析，支持动态筛选、排序")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页码", dataType = "int", paramType = "query", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页条数", dataType = "int", paramType = "query", example = "10"),
+            @ApiImplicitParam(name = "author", value = "作者筛选", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "状态筛选(0草稿/1已发布/2已删除)", dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "sorter", value = "排序，如 {\"createTime\":\"desc\"}", dataType = "string", paramType = "query")
+    })
+    @GetMapping("/admin-list")
+    public Result<PageData<Article>> adminList(PageQuery pageQuery) {
+        return Result.ok(service.pageList(pageQuery));
+    }
+
     /**
      * 自定义方法：根据作者查询文章列表
      * 演示调用 Service 的自定义方法
@@ -240,7 +263,7 @@ public class ArticleController extends EntityController<ArticleService, Article>
             article.setStatus(0);
             batchArticles.add(article);
         }
-        Iterable<Article> batchSaved = service.entityRepo.saveOrUpdateAll(batchArticles);
+        Iterable<Article> batchSaved = service.saveOrUpdateAll(batchArticles);
         demo.put("batchSaveOrUpdate", batchSaved);
         
         return Result.ok(demo);

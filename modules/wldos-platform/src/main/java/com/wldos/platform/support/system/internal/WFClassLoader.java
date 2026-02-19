@@ -11,7 +11,6 @@ package com.wldos.platform.support.system.internal;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -48,7 +47,8 @@ final class WFClassLoader extends ClassLoader {
                 newClass = findLoadedClass(className);
                 if (newClass != null)
                     return newClass;
-                ClassPathResource loaderRes = new ClassPathResource(File.separator + "include" + File.separator + "loader.ser");
+                // classpath 资源必须用 /，不能用 File.separator（Windows 下 \ 会导致 JAR 内查找失败）
+                ClassPathResource loaderRes = new ClassPathResource("/include/loader.ser");
                 byteCodeIn = loaderRes.getInputStream();
                 out = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];

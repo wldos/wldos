@@ -116,7 +116,7 @@ class BaseView extends Component {
     return {
       // multiple: true,
       accept: '.jpg,.png,.gif,.jpeg,.bmp',
-      headers: headerFix,
+      headers: headerFix(),
     };
   };
 

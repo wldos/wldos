@@ -11,10 +11,8 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {connect, history, Link, useIntl} from 'umi';
 import {BackTop, Tabs, Dropdown} from 'antd';
 import RightContent from '@/components/GlobalHeader/RightContentAdmin';
-import wldosFooterDom from '@/layouts/footAdmin';
 import styles from '@/wldos.less';
 import { renderIcon } from '@/utils/iconLibrary';
-import {querySiteSeo} from "@/services/user";
 import {wldosHeader} from "@/utils/utils";
 
 const AdminLayout = (props) => {
@@ -27,9 +25,10 @@ const AdminLayout = (props) => {
     menuData,
     settings,
     loading,
+    site: userSite,
   } = props;
 
-  const [site, setSite] = useState({title: '', keywords: '', description: '', logo: '', favicon: '', version: ''});
+
   const [collapsed, setCollapsed] = useState(false);
   const adminHomePath = '/admin';
   const [tabs, setTabs] = useState([
@@ -68,18 +67,34 @@ const AdminLayout = (props) => {
       dispatch({
         type: 'user/fetchAdminMenu',
       });
+      dispatch({
+        type: 'user/fetchSite',
+      });
     }
   }, []);
 
-  useEffect(async () => { // 获取域信息
-    const res =  await querySiteSeo();
-
-    if (res && res.data) {
-      const {siteTitle, siteDescription, siteLogo, favicon, version} = res.data;
-
-      setSite({title: `${siteTitle}_${siteDescription}`, logo: siteLogo, favicon, version});
+  // 管理端布局下通知气泡使用「工单待处理」数据，轮询时角标与桌面提醒为新工单/新回复
+  useEffect(() => {
+    if (dispatch) {
+      dispatch({ type: 'global/setNoticeMode', payload: 'adminTicket' });
+      dispatch({ type: 'global/fetchNoticesCount' });
     }
-  }, []);
+    return () => {
+      if (dispatch) {
+        dispatch({ type: 'global/setNoticeMode', payload: 'user' });
+      }
+    };
+  }, [dispatch]);
+
+  // 从 Redux site 派生展示用 site（复用 curDomain 缓存）
+  const site = userSite
+    ? {
+        title: `${userSite.siteTitle || ''}_${userSite.siteDescription || ''}`,
+        logo: userSite.siteLogo,
+        favicon: userSite.favicon,
+        version: userSite.version,
+      }
+    : { title: '', logo: '', favicon: '', version: '' };
 
   const handleMenuCollapse = (payload) => {
     setCollapsed(payload);
@@ -347,7 +362,7 @@ const AdminLayout = (props) => {
         logo={site.logo}
         title={site.title || ''}
         formatMessage={formatMessage}
-        contentStyle={{ background: '#f5f7fa' }}
+        contentStyle={{ background: '#fff', paddingBottom: 0, marginBottom: 0, minHeight: 'calc(100vh - 48px)' }}
         menuDataRender={(md) => {
           // 确保 menuData 是数组，如果为空则使用空数组
           const baseMenu = Array.isArray(menuData) ? menuData : [];
@@ -401,7 +416,8 @@ const AdminLayout = (props) => {
           if (!site.logo) { return ''; }
           // 根据菜单栏状态显示不同图标
           return (
-            <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%',cursor: 'pointer',
+              outline: 'none' }}>
               {collapsed ? (
                 // 菜单栏回收时显示favicon小图标
                 <img
@@ -437,7 +453,7 @@ const AdminLayout = (props) => {
           );
         }}
         // pageTitleRender={(props) => { return 'wldos'; }}
-        footerRender={() => wldosFooterDom(site.version)}
+        footerRender={() => null}
         rightContentRender={() => <RightContent/>}
         postMenuData={(menu) => { // 在显示前对菜单数据进行查看
           // 确保 menu 是数组
@@ -460,6 +476,7 @@ const AdminLayout = (props) => {
           return list;
         }}
       >
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 48px)', flex: 1 }}>
         {/* 多标签页区域 - 首页固定 + 其他可滚动 */}
         <div style={{
           position: 'sticky',
@@ -575,11 +592,12 @@ const AdminLayout = (props) => {
             </div>
           </div>
         </div>
-        {/* 内容容器：全宽布局，消除所有间隙 */}
+        {/* 内容容器：白底，与 ant-layout 一致；内层内容卡加浮雕边框 */}
         <div style={{
-          padding: '0',
-          background: '#f5f7fa',
-          minHeight: 'calc(100vh - 200px)'
+          padding: 0,
+          background: '#fff',
+          minHeight: 'calc(100vh - 48px)',
+          flex: 1,
         }}>
           {/* 去除错误边界，保留骨架屏 */}
           <React.Suspense fallback={
@@ -593,15 +611,19 @@ const AdminLayout = (props) => {
                 </div>
               </div>
             }>
-              <div style={{
-                background: '#fff',
-                borderRadius: 0,
-                minHeight: 'calc(100vh - 200px)',
-                width: '100%'
-              }}>
+              <div
+                className={styles.adminContentCard}
+                style={{
+                  background: '#fff',
+                  borderRadius: 0,
+                  width: '100%',
+                  minHeight: 'calc(100vh - 48px)',
+                }}
+              >
         {children}
               </div>
           </React.Suspense>
+        </div>
         </div>
       </ProLayout>
       <BackTop/>
@@ -611,6 +633,7 @@ const AdminLayout = (props) => {
 
 export default connect(({settings, user, loading}) => ({
   menuData: user.adminMenu,
+  site: user.site,
   loading: loading.models.user,
   settings: {
     ...settings,

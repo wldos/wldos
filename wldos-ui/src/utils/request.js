@@ -114,8 +114,8 @@ const request = (url, params) => {
   const {method = 'GET'} = params || {};
   const options = {
     method,
-    headers: { // umi-request默认Content-Type为application/json，此处省略。
-      ...headerFix,
+    headers: {
+      ...headerFix(),
       Accept: '*/*',
     },
   };

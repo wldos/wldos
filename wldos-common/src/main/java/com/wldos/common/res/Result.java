@@ -8,36 +8,34 @@
 
 package com.wldos.common.res;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 统一响应格式（新版本，不兼容旧格式）
- * 
+ * 泛型 T 用于 Swagger 等工具正确解析 data 字段的实际类型，生成准确的 API 文档
+ * 分页接口返回 {@link PageData}，由 resJson.format 自动包装为 Result&lt;PageData&lt;T&gt;&gt;
+ *
  * @author 元悉宇宙
  * @date 2025-12-26
  * @version 2.0
  */
-public class Result {
-    
-    /**
-     * 业务状态码：200=成功，非200=失败
-     */
-    private Integer code = 200;
+@ApiModel(description = "统一响应格式")
+public class Result<T> {
 
-    private static final String defaultMessage = "";
-    
-    /**
-     * 响应消息：成功时为空字符串，失败时为错误信息
-     */
-    private String message = defaultMessage;
-    
-    /**
-     * 响应数据：业务数据
-     */
-    private Object data;
-    
-    /**
-     * 操作是否成功：true=成功，false=失败
-     */
-    private Boolean success = true;
+	@ApiModelProperty(value = "业务状态码：200=成功，非200=失败", example = "200")
+	private Integer code = 200;
+
+	private static final String defaultMessage = "";
+
+	@ApiModelProperty(value = "响应消息：成功时为空字符串，失败时为错误信息", example = "")
+	private String message = defaultMessage;
+
+	@ApiModelProperty(value = "响应数据：业务数据")
+	private T data;
+
+	@ApiModelProperty(value = "操作是否成功：true=成功，false=失败", example = "true")
+	private Boolean success = true;
     
     public Result() {
     }
@@ -48,7 +46,7 @@ public class Result {
         this.success = (code != null && code == 200);
     }
     
-    public Result(Integer code, String message, Object data) {
+    public Result(Integer code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -58,44 +56,44 @@ public class Result {
     /**
      * 成功响应（无数据）
      */
-    public static Result ok() {
-        return new Result(200, defaultMessage, null);
+    public static <T> Result<T> ok() {
+        return new Result<>(200, defaultMessage, null);
     }
     
     /**
      * 成功响应（有数据）
      */
-    public static Result ok(Object data) {
-        return new Result(200, defaultMessage, data);
+    public static <T> Result<T> ok(T data) {
+        return new Result<>(200, defaultMessage, data);
     }
     
     /**
      * 成功响应（自定义消息）
      */
-    public static Result ok(String message, Object data) {
-        return new Result(200, message, data);
+    public static <T> Result<T> ok(String message, T data) {
+        return new Result<>(200, message, data);
     }
     
     /**
      * 错误响应
      */
-    public static Result error(Integer code, String message) {
-        return new Result(code, message, null);
+    public static <T> Result<T> error(Integer code, String message) {
+        return new Result<>(code, message, null);
     }
     
     /**
      * 错误响应（使用WLDOSResultCode枚举，使用枚举的默认消息）
      */
-    public static Result error(ResultCode resultCode) {
-        return new Result(resultCode.getCode(), resultCode.getMessage(), null);
+    public static <T> Result<T> error(ResultCode resultCode) {
+        return new Result<>(resultCode.getCode(), resultCode.getMessage(), null);
     }
     
     /**
      * 错误响应（使用WLDOSResultCode枚举，自定义消息）
      * 使用枚举的code，但使用自定义的message
      */
-    public static Result error(ResultCode resultCode, String message) {
-        return new Result(resultCode.getCode(), message, null);
+    public static <T> Result<T> error(ResultCode resultCode, String message) {
+        return new Result<>(resultCode.getCode(), message, null);
     }
     
     // Getters and Setters
@@ -116,11 +114,11 @@ public class Result {
         this.message = message;
     }
     
-    public Object getData() {
+    public T getData() {
         return data;
     }
     
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
     

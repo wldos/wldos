@@ -8,7 +8,7 @@ const getUrl = ({pubType, id}) => {
   if (pubType === 'info')
     return `/info-${id}.html`;
   if (pubType === 'book')
-    return `/product-${id}.html`;
+    return `/content-${id}.html`;
   if (pubType === 'doc')
     return `/doc/book/${id}.html`;
 

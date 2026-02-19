@@ -52,24 +52,26 @@ public class ResultJson {
 	private static final String RESULT_CLASS_NAME = Result.class.getName();
 	/**
 	 * 封装方法返回的数据到统一的数据结构中，以形成统一格式的json。
+	 * 泛型 T 便于 Swagger 等工具解析 data 类型，生成准确的 API 文档。
 	 *
 	 * @param res 操作返回的数据对象
-	 * @return 格式化后的json
+	 * @return 格式化后的 Result
 	 */
-	public Result format(Object res) {
+	@SuppressWarnings("unchecked")
+	public <T> Result<T> format(Object res) {
 		if (ObjectUtils.isBlank(res)) {
-			return new DomainResult().data("");
+			return (Result<T>) Result.ok("");
 		}
 
 		if (res.getClass().getName() == RESULT_CLASS_NAME) {
-			return (Result) res;
+			return (Result<T>) res;
 		}
 
 		if (res instanceof Result) {
-			return (Result) res;
+			return (Result<T>) res;
 		}
 
-		return new DomainResult().data(res);
+		return (Result<T>) Result.ok(res);
 	}
 
 	/**
@@ -77,9 +79,8 @@ public class ResultJson {
 	 *
 	 * @return 转换的json
 	 */
-	public Result ok() {
-		DomainResult result = new DomainResult();
-		return result.data("ok");
+	public Result<String> ok() {
+		return Result.ok("ok");
 	}
 
 	/**
@@ -88,20 +89,28 @@ public class ResultJson {
 	 * @param obj 返回字符串消息
 	 * @return 转换的json
 	 */
-	public Result message(String obj) {
-		DomainResult result = new DomainResult();
-		result.setMessage(obj);
-
-		return result.data(obj);
+	public Result<String> message(String obj) {
+		return Result.ok(obj, obj);
 	}
 
 	/**
-	 * 返回错误提示
+	 * 返回错误提示（无 code，兼容旧用法）
 	 *
 	 * @param msg 错误提示
 	 */
-	public Result error(String msg) {
+	public Result<String> error(String msg) {
 		return this.message(msg);
+	}
+
+	/**
+	 * 返回业务异常（带 code 和 message，符合 RESTful 标准）
+	 * 异常处理时优先使用 {@link com.wldos.common.exception.BaseException} 抛出，由 GlobalExceptionHandler 统一处理
+	 *
+	 * @param code 业务状态码（如 ResultCode.DATA_NOT_FOUND.getCode()）
+	 * @param msg  错误提示
+	 */
+	public <T> Result<T> fail(int code, String msg) {
+		return Result.error(code, msg);
 	}
 
 	/**
@@ -111,7 +120,7 @@ public class ResultJson {
 	 * @return 转换的json
 	 */
 	public String ok(Object obj) {
-		Result res = this.format(obj);
+		Result<Object> res = this.format(obj);
 		try {
 			return this.objectMapper.writeValueAsString(res);
 		}

@@ -30,7 +30,7 @@ import com.wldos.common.Constants;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.ThumbTypeEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
@@ -94,7 +94,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 		@ApiImplicitParam(name = "contType", value = "内容类型", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("space/book")
-	public PageableResult<PubUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
+	public PageData<PubUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", this.getUserId());

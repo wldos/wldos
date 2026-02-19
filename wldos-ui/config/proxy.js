@@ -15,8 +15,8 @@
 
 export default {
   dev: {
-      // 注意wldos、store、api是关键前缀，业务api不要包含这些，可能会导致404
-      // 后端api前缀：wldos mock专用api前缀
+      // 注意wldos、store、plugins、api是关键前缀，业务api不要包含这些，可能会导致404
+      // 后端api前缀：wldos 
       '/wldos/' : {
           target: 'http://localhost:8088/wldos',
           changeOrigin: true,

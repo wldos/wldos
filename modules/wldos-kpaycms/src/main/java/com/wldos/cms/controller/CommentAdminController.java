@@ -17,7 +17,7 @@ import com.wldos.cms.service.CommentService;
 import com.wldos.cms.vo.AuditComment;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,7 +61,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 		@ApiImplicitParam(name = "approved", value = "审核状态", dataTypeClass = String.class, paramType = "query")
 	})
 	@RequestMapping("")
-	public PageableResult<AuditComment> adminInfo(@RequestParam Map<String, Object> params) {
+	public PageData<AuditComment> adminInfo(@RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);

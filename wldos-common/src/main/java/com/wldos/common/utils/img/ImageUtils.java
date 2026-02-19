@@ -8,7 +8,11 @@
 
 package com.wldos.common.utils.img;
 
+import java.io.File;
 import java.io.IOException;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -48,5 +52,34 @@ public class ImageUtils {
 	 */
 	public static void imgScale(String source, String output, double scale) throws IOException {
 		Thumbnails.of(source).scale(scale).toFile(output);
+	}
+
+	/**
+	 * 转换为 WebP 格式
+	 * 
+	 * @param source 源图片路径
+	 * @param output WebP 输出路径
+	 * @param width 目标宽度（可选，null 则保持原尺寸）
+	 * @param height 目标高度（可选，null 则保持原尺寸）
+	 * @throws IOException io异常
+	 */
+	public static void convertToWebP(String source, String output, Integer width, Integer height) throws IOException {
+		Thumbnails.Builder<?> builder = Thumbnails.of(source);
+		
+		if (width != null && height != null) {
+			builder.size(width, height);
+		} else if (width != null) {
+			// 只指定宽度，按比例缩放
+			BufferedImage img = ImageIO.read(new File(source));
+			double scale = (double) width / img.getWidth();
+			builder.scale(scale);
+		} else {
+			// 保持原尺寸
+			builder.scale(1.0);
+		}
+		
+		// 输出为 WebP 格式
+		builder.outputFormat("webp")
+		       .toFile(output);
 	}
 }

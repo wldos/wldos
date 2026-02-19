@@ -61,3 +61,5 @@ build/
 /wldos-agent/
 /docs/
 !**/node/
+/auth-core/
+/commercial/

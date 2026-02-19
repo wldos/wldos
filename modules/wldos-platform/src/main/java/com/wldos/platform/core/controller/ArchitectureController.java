@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoArchitecture;
 import com.wldos.platform.core.enums.ArchTypeEnum;
@@ -61,7 +61,7 @@ public class ArchitectureController extends EntityController<ArchitectureService
 		@ApiImplicitParam(name = "archType", value = "体系类型", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<Architecture> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<Architecture> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		this.applyTenantFilter(pageQuery);

@@ -7,7 +7,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
-    <!-- Import Map: 为插件ESM模块提供依赖映射 -->
     <script type="importmap">
     {
       "imports": {
@@ -16,20 +15,10 @@
       }
     }
     </script>
-    <!-- 在主应用加载后，确保React和ReactDOM已暴露到全局，供ESM包装器使用 -->
-    <!-- 注意：app.js 会在主应用加载时将 React 和 ReactDOM 暴露到全局 -->
-    <!-- 这个脚本作为兜底机制，确保在主应用加载后再次检查 -->
     <script>
-      // 插件构建时使用 import React from "React" 会通过 import map 映射到 /react-esm.js
-      // 插件构建时使用 import ReactDOM from "ReactDOM" 会通过 import map 映射到 /react-dom-esm.js
-      // /react-esm.js 和 /react-dom-esm.js 会从全局对象 window.React 和 window.ReactDOM 获取并导出
       (function() {
-        // 等待主应用加载完成（umi.js 加载后，app.js 会执行并暴露 React）
         function ensureReactExposed() {
-          // app.js 已经将 React 暴露到全局，这里只是作为兜底检查
-          // 如果 app.js 执行失败，这里可以尝试从其他地方获取
           if (typeof window.React === 'undefined') {
-            // 尝试从 webpack 的全局变量获取（如果存在）
             if (typeof React !== 'undefined') {
               window.React = React;
             }
@@ -40,11 +29,7 @@
             }
           }
         }
-        
-        // 等待主应用加载完成后再执行
-        // 使用 window.addEventListener('load') 确保所有脚本（包括 umi.js）都已加载
         if (document.readyState === 'complete') {
-          // 如果文档已经加载完成，延迟执行以确保主应用已初始化
           setTimeout(ensureReactExposed, 200);
         } else {
           window.addEventListener('load', function() {
@@ -55,7 +40,7 @@
     </script>
   </head>
   <body>
-  	<!-- script>
+  	<!--script>
 	  (function(){
 		  var bp = document.createElement('script');
 		  var curProtocol = window.location.protocol.split(':')[0];
@@ -226,6 +211,5 @@
       </style>
 
     </div>
-    <script src="<%= context.config.publicPath + 'tinymce/tinymce.min.js'%>"></script>
   </body>
 </html>

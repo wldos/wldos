@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.7.1</version>
+		<version>2.3.8.0</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>
@@ -23,41 +23,271 @@
 		<maven.compiler.target>8</maven.compiler.target>
 		<projectName>wldos</projectName>
 	</properties>
+
+	<!-- 分环境依赖：通过 Maven Profile 切换，避免手动注释记混 -->
+	<!-- 使用方式：mvn package / mvn package -Pdev / mvn package -Pprod / mvn package -Pdev-release（dev 配置+混淆包） / mvn package -Pdesktop / mvn package -Pcommunity -->
+	<profiles>
+		<!-- dev/prod：全量依赖（不含 license、collector、agent） -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-oauth2</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-kpaycms</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform-plugin-agreement</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-plugin-order</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-products</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-member-marketing</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-cms-plugin-customer</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-msg-middleware</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-license-plugin-dist</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform-plugin-seo</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<!-- prod：与 dev 依赖一致，但商业模块使用混淆包（classifier=release），需先量产安装 *-release.jar 后再构建 -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-oauth2</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-kpaycms</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform-plugin-agreement</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-plugin-order</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-plugin-display</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-member-marketing</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-cms-plugin-customer</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-msg-middleware</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-license-plugin-dist</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform-plugin-seo</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+		<!-- dev-release：与 dev 相同的 Spring 配置（dev），但商业模块使用混淆包，便于本地用 dev 环境测试混淆 jar -->
+		<profile>
+			<id>dev-release</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-oauth2</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-kpaycms</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform-plugin-agreement</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-plugin-order</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-products</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-store-member-marketing</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-cms-plugin-customer</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-msg-middleware</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-license-plugin-dist</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-platform-plugin-seo</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+		<!-- desktop/community：仅 kpaycms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
+		<profile>
+			<id>desktop</id>
+			<properties>
+				<spring.profiles.active>desktop</spring.profiles.active>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-kpaycms</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<!-- 社区版：仅 kpaycms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
+			<id>community</id>
+			<properties>
+				<spring.profiles.active>community</spring.profiles.active>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-kpaycms</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
 	<dependencies>
-		<!-- wldos支撑平台
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-platform</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency> -->
-		<!-- wldos内容付费系统 -->
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-kpaycms</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<!-- wldos OAuth2 -->
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-oauth2</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<!-- ===== wldos-plugins下的模块依赖 ===== -->
-		<!-- 插件通过动态加载方式工作，不在编译时依赖 -->
-		<!-- 插件JAR文件通过maven-antrun-plugin复制到target/plugins目录 -->
-		<!-- ===== wldos-plugins下的模块依赖结束 ===== -->
-		<!-- wldos应用市场
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-store</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency> -->
-		<!-- wldos collector // 将以插件方式提供
-		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-collector</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency> -->
+		<!-- 基础依赖（所有 profile 共享，kpaycms 已包含在 profile 中） -->
+		<!-- 注意：desktop/community 仅含 kpaycms，dev/prod 含全量 -->
 	</dependencies>
 	<build><!-- 构建不带版本号的包 -->
 		<finalName>${projectName}</finalName>
@@ -78,6 +308,16 @@
 			</resource>
 		</resources>
 		<plugins>
+			<!-- 使用springboot打包时，主应用模块启用 repackage，覆盖父 POM 的 skip=true（库模块需跳过 repackage） -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+					<!-- 解决 Windows 控制台中文乱码 -->
+					<jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
+				</configuration>
+			</plugin>
 			<!-- 配置资源过滤插件，使用 @property@ 格式 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

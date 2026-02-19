@@ -4,10 +4,10 @@ import config from '@/utils/config';
 const { prefix } = config;
 
 export async function queryProduct(params) {
-  return request(`${prefix}/product-${params.id}.html`);
+  return request(`${prefix}/content-${params.id}.html`);
 }
 export async function previewProduct(params) {
-  return request(`${prefix}/product-${params.id}/${params.preview}`);
+  return request(`${prefix}/content-${params.id}/${params.preview}`);
 }
 export async function queryInfo(params) {
   return request(`${prefix}/info-${params.id}.html`);

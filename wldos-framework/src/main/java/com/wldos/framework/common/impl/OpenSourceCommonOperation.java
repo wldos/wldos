@@ -24,7 +24,7 @@ import com.wldos.common.Constants;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.NameConvert;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
@@ -70,7 +70,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
     }
 
     @Override
-    public <V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
+    public <V> PageData<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
         Sort sort = pageQuery.getSorter();
         Map<String, List<Object>> filter = pageQuery.getFilter();
         Map<String, Object> condition = pageQuery.getCondition();
@@ -89,11 +89,46 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
         currentPage = Math.min(currentPage, totalPageNum);
         List<V> list = this.execQueryForPage(vo, sql.toString(), currentPage, pageSize, params.toArray());
         
-        return new PageableResult<>(total, currentPage, pageSize, list);
+        return new PageData<>(total, currentPage, pageSize, list);
     }
 
     @Override
-    public <V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, List<Object> params, PageQuery pageQuery, SQLTable... sqlTables) {
+    public void appendConditionNamed(StringBuilder sql, Map<String, Object> params, Class<?> entityClass, String alias, Map<String, Object> condition) {
+        throw new UnsupportedOperationException("appendConditionNamed 为商业版功能，开源版不支持");
+    }
+
+    @Override
+    public void appendFilterNamed(StringBuilder sql, Map<String, Object> params, Class<?> entityClass, String alias, Map<String, List<Object>> filter) {
+        throw new UnsupportedOperationException("appendFilterNamed 为商业版功能，开源版不支持");
+    }
+
+    @Override
+    public void appendOrderByNamed(StringBuilder sql, Sort sort, String alias, String defaultOrderBy) {
+        throw new UnsupportedOperationException("appendOrderByNamed 为商业版功能，开源版不支持");
+    }
+
+    @Override
+    public void appendConditionNamed(StringBuilder sql, Map<String, Object> params, SQLTable[] sqlTables, Map<String, Object> condition) {
+        throw new UnsupportedOperationException("appendConditionNamed(sqlTables) 为商业版功能，开源版不支持");
+    }
+
+    @Override
+    public void appendFilterNamed(StringBuilder sql, Map<String, Object> params, SQLTable[] sqlTables, Map<String, List<Object>> filter) {
+        throw new UnsupportedOperationException("appendFilterNamed(sqlTables) 为商业版功能，开源版不支持");
+    }
+
+    @Override
+    public void appendOrderByNamed(StringBuilder sql, Sort sort, SQLTable[] sqlTables, String defaultOrderBy) {
+        throw new UnsupportedOperationException("appendOrderByNamed(sqlTables) 为商业版功能，开源版不支持");
+    }
+
+    @Override
+    public <V> PageData<V> execPageQueryNamed(String sql, Map<String, Object> params, PageQuery pageQuery, Class<V> resultClass) {
+        throw new UnsupportedOperationException("execPageQueryNamed 为商业版功能（含深分页反向查询优化），开源版不支持");
+    }
+
+    @Override
+    public <V> PageData<V> execQueryForPage(Class<V> vo, String sqlNoWhere, List<Object> params, PageQuery pageQuery, SQLTable... sqlTables) {
         Sort sort = pageQuery.getSorter();
         Map<String, List<Object>> filter = pageQuery.getFilter();
         Map<String, Object> condition = pageQuery.getCondition();
@@ -111,7 +146,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
         currentPage = Math.min(currentPage, totalPageNum);
         List<V> list = this.execQueryForPage(vo, sql.toString(), currentPage, pageSize, params.toArray());
         
-        return new PageableResult<>(total, currentPage, pageSize, list);
+        return new PageData<>(total, currentPage, pageSize, list);
     }
 
     @Override
@@ -128,16 +163,17 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
     }
 
     @Override
-    public <E> PageableResult<E> execQueryForPage(Class<E> clazz, PageQuery pageQuery) {
+    public <E> PageData<E> execQueryForPage(Class<E> clazz, PageQuery pageQuery) {
         return this.execQueryForPage(clazz, pageQuery, clazz, true);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <V extends TreeNode<V>, E> PageableResult<V> execQueryForTree(Class<?> clazz, PageQuery pageQuery, Class<E> entity, long root) {
-        PageableResult<V> voPageableResult = this.execQueryForPage((Class<V>) clazz, pageQuery, entity, false);
-        List<V> entityVOList = TreeUtils.build(voPageableResult.getData().getRows(), root);
-        return voPageableResult.setDataRows(entityVOList);
+    public <V extends TreeNode<V>, E> PageData<V> execQueryForTree(Class<?> clazz, PageQuery pageQuery, Class<E> entity, long root) {
+        PageData<V> voPageData = this.execQueryForPage((Class<V>) clazz, pageQuery, entity, false);
+        List<V> entityVOList = TreeUtils.build(voPageData.getRows(), root);
+        voPageData.setRows(entityVOList);
+        return voPageData;
     }
 
     @Override
@@ -169,7 +205,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
     }
 
     @Override
-    public <V, E> PageableResult<V> execQueryForPage(Class<V> clazz, PageQuery pageQuery, Class<E> entity, boolean isPage) {
+    public <V, E> PageData<V> execQueryForPage(Class<V> clazz, PageQuery pageQuery, Class<E> entity, boolean isPage) {
         List<V> list;
         Sort sort = pageQuery.getSorter();
         Map<String, List<Object>> filter = pageQuery.getFilter();
@@ -194,7 +230,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
             list = this.getJdbcOperations().query(sql.toString(), new BeanPropertyRowMapper<>(clazz), params.toArray());
         }
         
-        return new PageableResult<>(total, currentPage, pageSize, list);
+        return new PageData<>(total, currentPage, pageSize, list);
     }
 
     // ==================== 开源版 JDBC 操作方法 ====================
@@ -235,10 +271,10 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
      * 开源版实现：基于父子表查询 + 分页逻辑
      */
     @Override
-    public <P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey) {
+    public <P, C, V> PageData<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey) {
         if (pTableAndCTableAndPIdKey == null || pTableAndCTableAndPIdKey.length < 3) {
             log.warn("父子表查询参数不足，需要 [pTable, cTable, pIdKey]");
-            return new PageableResult<>(0, 1, pageQuery.getPageSize(), new ArrayList<>());
+            return new PageData<>(0, 1, pageQuery.getPageSize(), new ArrayList<>());
         }
         
         List<V> list;
@@ -274,7 +310,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
             list = this.getJdbcOperations().query(sql.toString(), new BeanPropertyRowMapper<>(vo), params.toArray());
         }
         
-        return new PageableResult<>(total, currentPage, pageSize, list);
+        return new PageData<>(total, currentPage, pageSize, list);
     }
 
     /**
@@ -282,7 +318,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
      * 开源版实现：调用上面的方法，VO类型等于父表实体类型
      */
     @Override
-    public <PA, C> PageableResult<PA> execQueryForPage(Class<PA> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pTable, String cTable, String pIdKey) {
+    public <PA, C> PageData<PA> execQueryForPage(Class<PA> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pTable, String cTable, String pIdKey) {
         return this.execQueryForPage(pClass, pClass, cClass, pageQuery, isPage, pTable, cTable, pIdKey);
     }
 
@@ -291,7 +327,7 @@ public class OpenSourceCommonOperation extends OpenSourceFreeJdbcTemplate implem
      * 开源版实现：自动获取表名，然后调用上面的方法
      */
     @Override
-    public <P, C> PageableResult<P> execQueryForPage(Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pIdKey) {
+    public <P, C> PageData<P> execQueryForPage(Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String pIdKey) {
         String pTable = this.getTableNameByEntity(pClass);
         String cTable = this.getTableNameByEntity(cClass);
         return this.execQueryForPage(pClass, cClass, pageQuery, isPage, pTable, cTable, pIdKey);

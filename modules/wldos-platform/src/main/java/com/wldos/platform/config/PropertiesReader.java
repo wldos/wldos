@@ -24,11 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * 加载配置信息。
+ * 依赖 dataSourceInitializer 确保数据库初始化完成后再加载配置。
  *
  * @author 元悉宇宙
  * @date 2021/7/13
@@ -36,6 +38,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  */
 @Slf4j
 @Configuration
+@DependsOn("dataSourceInitializer")
 public class PropertiesReader {
 	@SuppressWarnings("all")
 	@Autowired

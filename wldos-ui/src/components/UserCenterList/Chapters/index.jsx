@@ -137,7 +137,7 @@ const Chapters = (props) => {
             search: false,
             render: (dom, entity) => {
               // eslint-disable-next-line no-nested-ternary
-              return <Link to={entity.pubType === 'info' ? `/info-${entity.id}.html` : entity.pubType === 'book' ? `/product-${entity.id}.html` : `/archives-${entity.id}.html`} target="_blank" rel="noopener">{dom}</Link>;
+              return <Link to={entity.pubType === 'info' ? `/info-${entity.id}.html` : entity.pubType === 'book' ? `/content-${entity.id}.html` : `/archives-${entity.id}.html`} target="_blank" rel="noopener">{dom}</Link>;
             }
           },
           description: {
@@ -176,7 +176,7 @@ const Chapters = (props) => {
                 </div>
                 {/* eslint-disable-next-line no-nested-ternary */}
               <div dangerouslySetInnerHTML={{__html: item.pubType === 'info' ? `${item.pubExcerpt} ... <a href="/info-${item.id}.html" target="_blank">>>详情</a>` :
-                  (item.pubType === 'book' ? `${item.pubExcerpt} ... <a href="/product-${item.id}.html" target="_blank">>>详情</a>` :
+                  (item.pubType === 'book' ? `${item.pubExcerpt} ... <a href="/content-${item.id}.html" target="_blank">>>详情</a>` :
                     `${item.pubExcerpt} ... <a href="/archives-${item.id}.html" target="_blank">>>详情</a>`)}} />
               </>;
             },

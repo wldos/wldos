@@ -105,6 +105,29 @@ const Doc = (props) => {
   };
 
   const query = (dispatch, params, path) => {
+    // 处理 /doc 路径，确保重定向到第一个文档
+    if (path === '/doc' || path === '/doc/') {
+      if (menuData.length === 0) {
+        queryDoc(dispatch, (res) => {
+          const {data: {rows = [],},} = res;
+          if (rows?.length > 0) {
+            history.replace({
+              pathname: `/doc/book/${rows[0].id}.html`,
+            });
+          }
+        });
+      } else {
+        // 如果已有菜单数据，直接跳转到第一个文档
+        const firstDoc = menuData[0];
+        if (firstDoc) {
+          history.replace({
+            pathname: `/doc/book/${firstDoc.id}.html`,
+          });
+        }
+      }
+      return;
+    }
+    
     if (path === '/doc/book') {
       // 只有在没有菜单数据时才查询
       if (menuData.length === 0) {
@@ -179,6 +202,32 @@ const Doc = (props) => {
 
   useEffect(() => {
     const { match: {path, params, url} } = props;
+    
+    // 处理生产环境 /doc 路径问题：如果访问 /doc 或 /doc/，直接重定向到第一个文档
+    // 这解决了生产环境路由重定向可能失败的问题
+    // 原因：开发环境 webpack-dev-server 的 historyApiFallback 会直接返回 index.html
+    // 生产环境 Nginx 的 try_files 可能会先检查目录，导致路由重定向失败
+    if ((location.pathname === '/doc' || location.pathname === '/doc/') && 
+        path !== '/doc/book' && 
+        path !== '/doc/book/:bookId.html' && 
+        path !== '/doc/book/:bookId/chapter/:chapterId.html') {
+      if (menuData.length > 0) {
+        const firstDoc = menuData[0];
+        if (firstDoc) {
+          history.replace(`/doc/book/${firstDoc.id}.html`);
+          return;
+        }
+      } else if (dispatch) {
+        queryDoc(dispatch, (res) => {
+          const {data: {rows = [],},} = res;
+          if (rows?.length > 0) {
+            history.replace(`/doc/book/${rows[0].id}.html`);
+          }
+        });
+        return;
+      }
+    }
+    
     if (url !== localStorage?.getItem('docUrl') || !currentDoc.id) {
       if (dispatch) {
 
@@ -190,25 +239,22 @@ const Doc = (props) => {
 
   // 移除菜单数据监听，使用非受控方式
 
-  useEffect(async () => {
-
+  useEffect(() => {
+    if (!site) return;
     const {siteName, siteTitle, siteKeyword, siteDescription, siteLogo, favicon} = site;
     const pageDesc = siteTitle ? ` - ${siteName}` : '';
-
-    // 定义seo标签，首页取默认配置，内容页需要传递
     const homeFlag = location.pathname === getHome();
     setSeo({
       // eslint-disable-next-line no-nested-ternary
-      title: homeFlag ? (siteTitle?? '') : (tdk.title ? `${tdk.title}${pageDesc}` : ''),
-      keywords: homeFlag ? siteKeyword : tdk.keywords || siteKeyword,
-      description: homeFlag ? siteDescription : tdk.description || siteDescription,
+      title: homeFlag ? (siteTitle?? '') : (tdk?.title ? `${tdk.title}${pageDesc}` : ''),
+      keywords: homeFlag ? (siteKeyword ?? '') : (tdk?.keywords ?? siteKeyword ?? ''),
+      description: homeFlag ? (siteDescription ?? '') : (tdk?.description ?? siteDescription ?? ''),
       logo: siteLogo,
       favicon,
-      crumbs: tdk.crumbs || [],
+      crumbs: tdk?.crumbs || [],
     });
-    // 自动回到顶部
     document?.getElementById('root').scrollIntoView(true);
-  }, [tdk]);
+  }, [tdk, site, location.pathname]);
 
   // 监听窗口大小变化，判断移动端
   useEffect(() => {

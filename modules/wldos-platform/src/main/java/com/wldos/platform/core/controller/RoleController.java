@@ -15,7 +15,7 @@ import java.util.Map;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.platform.core.entity.WoRole;
 import com.wldos.platform.core.service.RoleService;
@@ -62,7 +62,7 @@ public class RoleController extends EntityController<RoleService, WoRole> {
 		@ApiImplicitParam(name = "roleName", value = "角色名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<Role> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<Role> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		return this.service.execQueryForTree(new Role(), new WoRole(), pageQuery, Constants.TOP_ROLE_ID);

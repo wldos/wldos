@@ -131,7 +131,7 @@ const Chapters = (props) => { // isBook=product表示是作品列表，否则是
                   (<>
                     <List.Item.Meta
                       title={
-                        <Link className={styles.listItemMetaTitle} to={`/product-${item.id}.html`} target="_blank" rel="noopener">
+                        <Link className={styles.listItemMetaTitle} to={`/content-${item.id}.html`} target="_blank" rel="noopener">
                           {item.pubTitle}
                         </Link>
                       }

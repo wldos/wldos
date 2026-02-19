@@ -9,13 +9,17 @@
 package com.wldos.framework.common;
 
 /**
- * 保存选项配置类，用于统一 CRUD 方法的参数配置。
- * 
- * 替代多个布尔参数，提供更清晰的 API。
+ * 保存选项配置类，用于 BaseDao.saveOrUpdate(entity, options) 等方法的参数配置。
+ * <p>
+ * 提供更灵活的可选保存行为，更符合实际场景：数据导入（不自动填充）、部分更新（只写非空）、
+ * 全量覆盖（写空值）、合并 null（更新时用库中旧值填充）等，替代多个布尔参数，API 更清晰。
+ * 使用方式：静态工厂如 {@code SaveOptions.mergeNulls()}；自定义选项可用 Builder：
+ * {@code SaveOptions.builder().autoFill(false).includeNullValues(true).build()}，或 {@code SaveOptions.custom().setAutoFill(false)...}。
  *
  * @author 元悉宇宙
  * @date 2025-01-03
  * @version 1.0
+ * @see com.wldos.framework.mvc.dao.BaseDao#saveOrUpdate(Object, SaveOptions)
  */
 public class SaveOptions {
 	
@@ -84,12 +88,55 @@ public class SaveOptions {
 	}
 	
 	/**
-	 * 自定义选项（Builder 模式）
+	 * 自定义选项（链式 setter，与 builder() 二选一即可）
 	 */
 	public static SaveOptions custom() {
 		return new SaveOptions();
 	}
-	
+
+	/**
+	 * Builder 入口，用于流式构建自定义选项。
+	 * 示例：{@code SaveOptions.builder().autoFill(false).includeNullValues(true).build()}
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	/**
+	 * Builder 模式实现类，用于流式构建 SaveOptions。
+	 */
+	public static final class Builder {
+		private boolean autoFill = true;
+		private boolean includeNullValues = false;
+		private boolean mergeNullValues = false;
+
+		private Builder() {
+		}
+
+		public Builder autoFill(boolean autoFill) {
+			this.autoFill = autoFill;
+			return this;
+		}
+
+		public Builder includeNullValues(boolean includeNullValues) {
+			this.includeNullValues = includeNullValues;
+			return this;
+		}
+
+		public Builder mergeNullValues(boolean mergeNullValues) {
+			this.mergeNullValues = mergeNullValues;
+			return this;
+		}
+
+		public SaveOptions build() {
+			SaveOptions opts = new SaveOptions();
+			opts.autoFill = this.autoFill;
+			opts.includeNullValues = this.includeNullValues;
+			opts.mergeNullValues = this.mergeNullValues;
+			return opts;
+		}
+	}
+
 	// Getters and Setters (支持链式调用)
 	
 	public boolean isAutoFill() {

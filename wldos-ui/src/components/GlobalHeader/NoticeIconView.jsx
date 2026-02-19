@@ -12,28 +12,71 @@ import { Tag, message } from 'antd';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
 import NoticeIcon from '../NoticeIcon';
+import { markTicketRead, markAdminTicketRead } from '@/services/user';
 import styles from './index.less';
+import { history } from 'umi';
 
 class GlobalHeaderRight extends Component {
+  pollTimer = null;
+
   componentDidMount() {
     const { dispatch } = this.props;
 
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
+
     if (dispatch) {
-      dispatch({
-        type: 'global/fetchNotices',
-      });
+      // 首屏拉一次角标（用户侧不轮询，管理端轮询）
+      dispatch({ type: 'global/fetchNoticesCount' });
+      if (!this.props.disablePolling) {
+        this.pollTimer = setInterval(() => {
+          if (this.props.dispatch) {
+            this.props.dispatch({ type: 'global/fetchNoticesCount' });
+          }
+        }, 60000);
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
     }
   }
 
   changeReadState = (clickedItem) => {
-    const { id } = clickedItem;
-    const { dispatch } = this.props;
+    const { id, link } = clickedItem;
+    const { dispatch, noticeMode } = this.props;
 
+    if (id && id.startsWith('ticket-')) {
+      const ticketId = id.replace(/^ticket-/, '');
+      if (ticketId) {
+        if (noticeMode === 'adminTicket') {
+          markAdminTicketRead(ticketId).then(() => {
+            if (dispatch) {
+              dispatch({ type: 'global/fetchNotices' });
+              dispatch({ type: 'global/fetchNoticesCount' });
+            }
+          });
+        } else {
+          markTicketRead(ticketId);
+        }
+      }
+    }
     if (dispatch) {
       dispatch({
         type: 'global/changeNoticeReadState',
         payload: id,
       });
+    }
+    if (link) {
+      if (link.startsWith('http')) {
+        window.open(link, '_blank');
+      } else {
+        history.push(link);
+      }
     }
   };
 
@@ -129,8 +172,18 @@ class GlobalHeaderRight extends Component {
         clearText="清空"
         viewMoreText="查看更多"
         onClear={this.handleNoticeClear}
-        onPopupVisibleChange={onNoticeVisibleChange}
-        onViewMore={() => message.info('Click on view more')}
+        onPopupVisibleChange={(visible) => {
+          if (visible && this.props.dispatch) {
+            this.props.dispatch({ type: 'global/fetchNotices' });
+          }
+          onNoticeVisibleChange && onNoticeVisibleChange(visible);
+        }}
+        onViewMore={({ tabKey }) => {
+          if (tabKey === 'notification') {
+            history.push(this.props.noticeMode === 'adminTicket' ? '/admin/sys/ticket' : '/ticket/list');
+          } else if (tabKey === 'message') history.push('/account/settings?tab=notification');
+          else message.info('查看更多');
+        }}
         clearClose
       >
         <NoticeIcon.Tab
@@ -165,6 +218,7 @@ class GlobalHeaderRight extends Component {
 export default connect(({ user, global, loading }) => ({
   currentUser: user.currentUser,
   collapsed: global.collapsed,
+  noticeMode: global.noticeMode,
   fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
   fetchingNotices: loading.effects['global/fetchNotices'],
   notices: global.notices,

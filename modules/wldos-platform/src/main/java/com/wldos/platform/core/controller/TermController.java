@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
@@ -69,7 +69,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 		@ApiImplicitParam(name = "name", value = "分类名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("/admin/cms/category")
-	public PageableResult<TermTree> listCategory(@RequestParam Map<String, Object> params) {
+	public PageData<TermTree> listCategory(@RequestParam Map<String, Object> params) {
 		// 如果参数中没有 classType，则默认为 category
 		if (!params.containsKey("classType") || ObjectUtils.isBlank(params.get("classType"))) {
 			params.put("classType", TermTypeEnum.CATEGORY.toString());
@@ -94,7 +94,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 		@ApiImplicitParam(name = "name", value = "标签名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("/admin/cms/tag")
-	public PageableResult<TermTree> listTag(@RequestParam Map<String, Object> params) {
+	public PageData<TermTree> listTag(@RequestParam Map<String, Object> params) {
 		params.put("classType", TermTypeEnum.TAG.toString());
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -274,10 +274,10 @@ public class TermController extends EntityController<TermService, KTerms> {
 		@ApiImplicitParam(name = "name", value = "分类项名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("/admin/term-type/term")
-	public PageableResult<TermTree> listTerm(@RequestParam Map<String, Object> params) {
+	public PageData<TermTree> listTerm(@RequestParam Map<String, Object> params) {
 		// classType 是必填参数
 		if (!params.containsKey("classType") || ObjectUtils.isBlank(params.get("classType"))) {
-			return new PageableResult<>(0L, 1, 15, new java.util.ArrayList<>());
+			return new PageData<>(0L, 1, 15, new java.util.ArrayList<>());
 		}
 		// 判断是否为扁平结构（tag 类型）
 		boolean isFlat = TermTypeEnum.TAG.toString().equals(params.get("classType"));
@@ -373,11 +373,15 @@ public class TermController extends EntityController<TermService, KTerms> {
 		return Boolean.TRUE;
 	}
 
+	/** 展示顺序上限，与前端校验规则 1-100 保持一致 */
+	private static final long DISPLAY_ORDER_MAX = 100L;
+
 	private void handleDisplayOrder(Term term) {
 		Long parentId = term.getParentId();
 
 		Long order = this.service.queryMaxOrder(parentId);
 
-		term.setDisplayOrder(ObjectUtils.nvlToZero(order) + 1L);
+		long nextOrder = ObjectUtils.nvlToZero(order) + 1L;
+		term.setDisplayOrder(Math.min(nextOrder, DISPLAY_ORDER_MAX));
 	}
 }

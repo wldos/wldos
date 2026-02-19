@@ -34,18 +34,41 @@ public class ShellUtils {
 	public static boolean execShell(String command, boolean isConsole) {
 		Process process = null;
 		BufferedReader input = null;
+		Thread stderrReader = null;
 		boolean flag = true;
 		try {
 			boolean isWin = ShellUtils.isWindows();
 			process = Runtime.getRuntime().exec(isWin ? new String[] { "cmd", "/c", command } : new String[] { "/bin/sh", "-c", command });
-			input = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName(isWin ? "GBK" : "UTF-8")));
+			// 消费 stderr，避免子进程因管道满而阻塞；同时便于看到 Allatori 等工具的报错/logo
+			BufferedReader errInput = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.forName(isWin ? "GBK" : "UTF-8")));
+			final boolean forwardToConsole = isConsole;
+			stderrReader = new Thread(() -> {
+				try {
+					String line;
+					while ((line = errInput.readLine()) != null) {
+						log.error("[stderr] {}", line);
+						if (forwardToConsole) {
+							System.err.println(line);
+						}
+					}
+				} catch (IOException e) {
+					log.debug("stderr read done or error", e);
+				} finally {
+					try {
+						errInput.close();
+					} catch (IOException ignored) { }
+				}
+			});
+			stderrReader.start();
 
+			input = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName(isWin ? "GBK" : "UTF-8")));
 			String line;
 			while ((line = input.readLine()) != null) {
-				if (isConsole)
-					log.info(line);
-				else
-					log.info(line);
+				log.info(line);
+				// 控制台模式时同时输出到 stdout，便于看到 Allatori logo、Maven 等子进程的原始输出
+				if (isConsole) {
+					System.out.println(line);
+				}
 			}
 		}
 		catch (Throwable e) {
@@ -57,6 +80,8 @@ public class ShellUtils {
 			try {
 				if (input != null)
 					input.close();
+				if (stderrReader != null)
+					stderrReader.join(2000);
 				if (process != null)
 					exitValue = process.waitFor();
 			}

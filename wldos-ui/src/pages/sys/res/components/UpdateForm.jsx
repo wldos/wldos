@@ -370,6 +370,32 @@ const UpdateForm = (props) => {
                   prefix="🔢"
                 />
               </FormItem>
+
+              <FormItem
+                noStyle
+                shouldUpdate={(prev, curr) => prev.resourceType !== curr.resourceType}
+              >
+                {({ getFieldValue }) =>
+                  (getFieldValue('resourceType') === 'menu' || getFieldValue('resourceType') === 'plugin_menu') ? (
+                    <FormItem
+                      name="menuRegion"
+                      label={
+                        <Space>
+                          展示区域
+                          <Tooltip title="主导航=顶部菜单，头像下拉=头像点击弹出的菜单">
+                            <InfoCircleOutlined style={{ color: '#999' }} />
+                          </Tooltip>
+                        </Space>
+                      }
+                    >
+                      <Select placeholder="默认主导航" allowClear>
+                        <Option value="nav_main">主导航</Option>
+                        <Option value="nav_avatar">头像下拉</Option>
+                      </Select>
+                    </FormItem>
+                  ) : null
+                }
+              </FormItem>
             </Col>
           </Row>
         </Card>
@@ -613,6 +639,7 @@ const UpdateForm = (props) => {
           remark: props.values.remark,
           isValid: props.values.isValid,
           displayOrder: props.values.displayOrder,
+          menuRegion: props.values.menuRegion,
         }}
       >
         {renderContent()}

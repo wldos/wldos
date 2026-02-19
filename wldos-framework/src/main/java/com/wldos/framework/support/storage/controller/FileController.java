@@ -17,6 +17,9 @@ import com.wldos.framework.support.storage.entity.WoFile;
 import com.wldos.framework.support.storage.service.FileService;
 import com.wldos.framework.support.storage.utils.StoreUtils;
 import com.wldos.framework.support.storage.vo.FileInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.FilenameUtils;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2021/5/30
  * @version 1.0
  */
+@Api(tags = "文件上传与存储")
 @RefreshScope
 @RestController
 @RequestMapping("file")

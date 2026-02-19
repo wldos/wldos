@@ -211,15 +211,30 @@ export const bodyContentBook = (content, pId) => (<>
   <BookClass bookId={pId} />
 </>);
 
+// 将 favicon 转为当前页同源请求，避免 www / 非 www 混用导致请求被取消（icon canceled）
+const faviconHrefSameOrigin = (favicon) => {
+  if (!favicon) return favicon;
+  try {
+    const u = new URL(favicon, window.location.origin);
+    return u.pathname + u.search;
+  } catch (_) {
+    return favicon;
+  }
+};
+
 export const wldosHeader = (seo) => {
-  document?.documentElement.style.setProperty('--mobile-logo', `url(${seo?.favicon ? seo.favicon : './assets/logo-m.png'})`);
+  const faviconHref = faviconHrefSameOrigin(seo?.favicon);
+  const iconForCss = faviconHref || seo?.favicon || './assets/logo-m.png';
+  document?.documentElement.style.setProperty('--mobile-logo', `url(${iconForCss})`);
+  const keywords = seo?.keywords != null ? String(seo.keywords) : '';
+  const description = seo?.description != null ? String(seo.description) : '';
   return (
   /* 可自定义需不需要编码 */
   <Helmet encodeSpecialCharacters={false}>
     <html lang="zh_CN"/>
-    <meta name="keywords" content={seo.keywords}/>
-    <meta name="description" content={seo.description}/>
-    <link rel="icon" href={seo.favicon} type="image/x-icon"/>
+    <meta name="keywords" content={keywords}/>
+    <meta name="description" content={description}/>
+    <link rel="icon" href={faviconHref || seo?.favicon} type="image/x-icon"/>
   </Helmet>
 )};
 
@@ -230,26 +245,34 @@ export const redirect = () => {
   let {redirect: _redirect} = query;
 
   if (_redirect) {
-    const redirectUrlParams = new URL(_redirect);
-
-    if (redirectUrlParams.origin === urlParams.origin) {
-      _redirect = _redirect.substring(urlParams.origin.length);
-
-      if (_redirect.match(/^\/.*#/)) {
-        _redirect = _redirect.substring(_redirect.indexOf('#') + 1);
+    if (_redirect.startsWith('/')) {
+      _redirect = urlParams.origin + _redirect;
+    } else {
+      try {
+        const redirectUrlParams = new URL(_redirect);
+        if (redirectUrlParams.origin === urlParams.origin) {
+          _redirect = _redirect.substring(urlParams.origin.length);
+          if (_redirect.match(/^\/.*#/)) {
+            _redirect = _redirect.substring(_redirect.indexOf('#') + 1);
+          }
+          _redirect = urlParams.origin + _redirect;
+        }
+      } catch (e) {
+        _redirect = urlParams.origin + (_redirect.startsWith('/') ? _redirect : '/' + _redirect);
       }
     }
   }
-  window.location.href = _redirect || '/';
+  window.location.href = _redirect || urlParams.origin + '/';
 };
-export const headerFix = {
+/** 每次调用返回当前请求头（从 storage 读 token），避免 401 清权后仍带过期 token；使用处请写 headerFix() */
+export const headerFix = () => ({
   'X-CU-AccessToken-WLDOS': wldosStorage.get('accessToken') || guest,
   'domain-wldos': getDomain(),
-};
+});
 
 export const typeEnum = {'doc': '文档', 'info': '信息', 'book': '合集', 'post': '文章'};
 export const typeUrl = (item) => item.pubType === 'info' ? `/info-${item.id}.html` :
-    (item.pubType === 'book' ? `/product-${item.id}.html`: (
+    (item.pubType === 'book' ? `/content-${item.id}.html`: (
       item.pubType === 'doc' ? `/doc/book/${item.id}.html` :
       (item.pubType === 'page' ? `/${item.pubName}` : `/archives-${item.id}.html`)));
 export function isPc () {

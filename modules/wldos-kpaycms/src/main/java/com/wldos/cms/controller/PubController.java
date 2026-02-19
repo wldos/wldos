@@ -16,7 +16,7 @@ import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.AuditPub;
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.platform.core.enums.PubTypeEnum;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,7 +60,7 @@ public class PubController extends EntityController<PubService, KPubs> {
 		@ApiImplicitParam(name = "pubStatus", value = "发布状态", dataTypeClass = String.class, paramType = "query")
 	})
 	@RequestMapping("chapter")
-	public PageableResult<AuditPub> adminPosts(@RequestParam Map<String, Object> params) {
+	public PageData<AuditPub> adminPosts(@RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -86,7 +86,7 @@ public class PubController extends EntityController<PubService, KPubs> {
 		@ApiImplicitParam(name = "pubStatus", value = "发布状态", dataTypeClass = String.class, paramType = "query")
 	})
 	@RequestMapping("book")
-	public PageableResult<AuditPub> adminBooks(@RequestParam Map<String, Object> params) {
+	public PageData<AuditPub> adminBooks(@RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
@@ -111,7 +111,7 @@ public class PubController extends EntityController<PubService, KPubs> {
 		@ApiImplicitParam(name = "pubStatus", value = "发布状态", dataTypeClass = String.class, paramType = "query")
 	})
 	@RequestMapping("info")
-	public PageableResult<AuditPub> adminInfo(@RequestParam Map<String, Object> params) {
+	public PageData<AuditPub> adminInfo(@RequestParam Map<String, Object> params) {
 
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);

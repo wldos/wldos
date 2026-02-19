@@ -42,6 +42,28 @@
   }
 }
 
+/* 首页沉浸式全宽：取消顶层内容区 max-width/margin，由首页组件自身控制内容宽度 */
+.homeLayout {
+  :global {
+    .ant-pro-basicLayout-content {
+      margin: 0;
+      padding: 0;
+    }
+    .ant-pro-basicLayout-content > .ant-pro-page-container {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+    .ant-pro-page-container-children-content {
+      margin: 0;
+      padding: 0;
+      max-width: none;
+      width: 100%;
+    }
+  }
+}
+
 /* 修复菜单选中状态：只让完全匹配的菜单项显示选中背景 */
 :global {
   // 当访问子路径时，移除父路径菜单项的选中背景
@@ -75,7 +97,7 @@
 }
 
 /*
- * 用于管理端
+ * 用于管理端：图2 风格 - 内容区白底，左侧菜单灰色，内容块边框；顶部 logo+导航 白色通栏
  */
 .slideNavWldos {
   :global {
@@ -88,8 +110,73 @@
         padding-left: 24px;
       }
     }
+
+    /* 顶部通栏：logo 区与导航区完全融合为一条白带，无中间分隔、高度一致、共用一个底边 */
+    .ant-pro-sider .ant-pro-sider-logo,
+    .ant-pro-sider .ant-layout-sider-children > div:first-child {
+      background: #fff !important;
+      height: 48px !important;
+      min-height: 48px !important;
+      display: flex !important;
+      align-items: center !important;
+      padding-left: 16px;
+      padding-right: 16px;
+      border-bottom: 1px solid #e8e8e8;
+      border-right: none !important;
+      box-shadow: none !important;
+    }
+    /* 导航区：与 logo 同高、同色、去掉左侧任何分隔线/阴影，与 logo 无缝衔接 */
+    .ant-pro-global-header,
+    .ant-layout-header.ant-pro-global-header {
+      background: #fff !important;
+      height: 48px !important;
+      min-height: 48px !important;
+      padding: 0 24px 0 0 !important;
+      border-bottom: 1px solid #e8e8e8;
+      border-left: none !important;
+      box-shadow: none !important;
+    }
+    .ant-pro-basicLayout .ant-layout-header {
+      border-left: none !important;
+      box-shadow: none !important;
+    }
+
+    /* 内容区背景：白色 */
+    .ant-layout {
+      background: #fff !important;
+    }
+    main.ant-layout-content.ant-pro-basicLayout-content {
+      background: #fff !important;
+    }
+
+    /* 左侧：整体灰色，logo 已在上面单独设为白底 */
+    .ant-pro-sider {
+      background: #f0f2f5 !important;
+    }
+    .ant-pro-sider .ant-layout-sider-children {
+      background: transparent !important;
+    }
+    .ant-pro-sider .ant-menu,
+    .ant-pro-sider .ant-menu-sub,
+    .ant-pro-sider .ant-pro-sider-menu {
+      background: #f0f2f5 !important;
+    }
+
+    /* 内容区标题：字重减轻，更严肃、与后台管理风格一致 */
+    .ant-pro-page-container .ant-page-header-heading-title,
+    .ant-pro-page-container .ant-pro-page-container-title,
+    .ant-pro-table-header .ant-pro-table-title,
+    .ant-pro-table .ant-pro-table-header h3 {
+      font-weight: 500 !important;
+    }
   }
-  
+
+  /* 内容区白色 div：左、右、下 1px 实线边框，灰色 #f0f2f5，边界清晰 */
+  .adminContentCard {
+    border-left: 1px solid #f0f2f5;
+    border-right: 1px solid #f0f2f5;
+    border-bottom: 1px solid #f0f2f5;
+  }
 }
 .docLayout {
   // 通过完整的DOM路径定位到main元素
@@ -104,6 +191,89 @@
     
     .ant-layout-content {
       overflow-x: hidden;
+    }
+  }
+  // 文档模块左侧菜单区域背景为默认白色（覆盖 slideNavWldos 的灰色）
+  :global {
+    .ant-pro-sider,
+    .ant-pro-sider .ant-layout-sider-children,
+    .ant-pro-sider .ant-menu,
+    .ant-pro-sider .ant-menu-sub,
+    .ant-pro-sider .ant-pro-sider-menu {
+      background: #fff !important;
+    }
+  }
+  // 左侧菜单：与右侧目录一致，悬停灰色背景+左侧竖线，无下划线
+  :global {
+    .ant-pro-sider-menu .ant-menu {
+      .ant-menu-item {
+        color: #666 !important;
+        font-weight: 400;
+        background-color: #fff !important;
+        font-size: 15px !important;
+        border-left: 3px solid transparent;
+        transition: background-color 0.2s ease, border-left-color 0.2s ease;
+        &:hover {
+          background-color: #f5f5f5 !important;
+          color: #333 !important;
+          border-left-color: @primary-color;
+        }
+        &.ant-menu-item-selected {
+          background-color: #e6f7ff !important; // 与右侧目录 .active 一致，浅蓝背景高亮
+          color: #000 !important;
+          font-weight: 700 !important;
+          border-left: 3px solid #1890ff;
+          border-right: none;
+        }
+      }
+      .ant-menu-item a {
+        display: block;
+        color: inherit !important;
+        text-decoration: none !important;
+        &:hover, &:focus, &:active, &:visited {
+          text-decoration: none !important;
+          color: inherit !important;
+        }
+      }
+      .ant-menu-item-selected a {
+        color: #000 !important;
+        font-weight: 700 !important;
+      }
+      .ant-menu-submenu .ant-menu-submenu-title {
+        color: #666 !important;
+        background-color: #fff !important;
+        &:hover {
+          background-color: #f0f0f0 !important;
+          color: #333 !important;
+        }
+      }
+      .ant-menu-sub .ant-menu-item {
+        color: #888 !important;
+        padding-left: 32px !important;
+        background-color: #fff !important;
+        border-left: 3px solid transparent;
+        transition: background-color 0.2s ease, border-left-color 0.2s ease;
+        &:hover {
+          background-color: #f5f5f5 !important;
+          color: #333 !important;
+          border-left-color: @primary-color;
+        }
+        &.ant-menu-item-selected {
+          background-color: #e6f7ff !important; // 与右侧目录 .active 一致，浅蓝背景高亮
+          color: #000 !important;
+          font-weight: 600 !important;
+          border-left: 3px solid #1890ff;
+        }
+        a {
+          display: block;
+          color: inherit !important;
+          text-decoration: none !important;
+          &:hover, &:focus, &:active, &:visited {
+            text-decoration: none !important;
+            color: inherit !important;
+          }
+        }
+      }
     }
   }
 }

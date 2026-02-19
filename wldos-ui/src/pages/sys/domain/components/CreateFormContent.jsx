@@ -50,7 +50,9 @@ const CreateFormContent = (props) => {
 
     if (status === 'done') {
       message.success(`上传成功！`, 1).then(() => {
-        const {data: {url, path}} = response;
+        // 框架包装为 Result<T>，response.data 为 FileInfo
+        const path = response?.data?.path ?? response?.path;
+        const url = response?.data?.url ?? response?.url;
         if (type === 'logo') {
           setLogoUrl(url ?? undefined);
           if (path)

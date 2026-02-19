@@ -16,12 +16,16 @@ package com.example.myapp.service;
 
 import com.example.myapp.dto.UserCreateDTO;
 import com.example.myapp.vo.UserVO;
+import com.wldos.common.res.PageData;
+import com.wldos.common.res.PageQuery;
+import com.wldos.common.utils.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * 用户服务类
@@ -51,6 +55,36 @@ public class UserService {
      */
     public List<UserVO> getUserList() {
         return new ArrayList<>(userStore.values());
+    }
+
+    /**
+     * 分页列表（演示 Map + PageQuery + PageData 用法）
+     * Mock 实现：从内存过滤、分页
+     *
+     * @param pageQuery 分页查询参数（condition 可含 username、nickname 等）
+     * @return 分页数据
+     */
+    public PageData<UserVO> pageList(PageQuery pageQuery) {
+        List<UserVO> all = new ArrayList<>(userStore.values());
+        if (pageQuery != null && pageQuery.getCondition() != null) {
+            Object username = pageQuery.getCondition().get("username");
+            if (!ObjectUtils.isBlank(username)) {
+                String kw = username.toString().toLowerCase();
+                all = all.stream().filter(u -> u.getUsername() != null && u.getUsername().toLowerCase().contains(kw)).collect(Collectors.toList());
+            }
+            Object nickname = pageQuery.getCondition().get("nickname");
+            if (!ObjectUtils.isBlank(nickname)) {
+                String kw = nickname.toString();
+                all = all.stream().filter(u -> u.getNickname() != null && u.getNickname().contains(kw)).collect(Collectors.toList());
+            }
+        }
+        int total = all.size();
+        int current = pageQuery != null ? pageQuery.getCurrent() : 1;
+        int pageSize = pageQuery != null ? pageQuery.getPageSize() : 10;
+        int from = Math.min((current - 1) * pageSize, total);
+        int to = Math.min(from + pageSize, total);
+        List<UserVO> rows = all.subList(from, to);
+        return new PageData<>(total, current, pageSize, rows);
     }
     
     /**

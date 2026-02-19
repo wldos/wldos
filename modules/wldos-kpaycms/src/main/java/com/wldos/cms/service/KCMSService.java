@@ -38,7 +38,7 @@ import com.wldos.common.dto.LevelNode;
 import com.wldos.common.enums.DeleteFlagEnum;
 import com.wldos.common.enums.FileAccessPolicyEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ChineseUtils;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.vo.SelectOption;
@@ -128,7 +128,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 页面参数
 	 * @return 分页数据
 	 */
-	public PageableResult<PubUnit> queryWorksList(PageQuery pageQuery) {
+	public PageData<PubUnit> queryWorksList(PageQuery pageQuery) {
 		// 列表样式：卡片式、存档式，卡片式要求的参数简约
 		Object listStyle = pageQuery.getCondition().get("listStyle");
 
@@ -146,7 +146,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 页面参数
 	 * @return 分页数据
 	 */
-	public PageableResult<PubUnit> queryWorksListWithPage(PageQuery pageQuery) {
+	public PageData<PubUnit> queryWorksListWithPage(PageQuery pageQuery) {
 		// 列表样式：卡片式、存档式，卡片式要求的参数简约
 		Object listStyle = pageQuery.getCondition().get("listStyle");
 
@@ -481,7 +481,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<PubUnit> queryProductPortal(PageQuery pageQuery) {
+	public PageData<PubUnit> queryProductPortal(PageQuery pageQuery) {
 
 		return this.pubService.queryPubWithExtList(pageQuery);
 	}
@@ -495,11 +495,11 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<PubUnit> queryProductPortalByCategory(String slugCategory, PageQuery pageQuery) {
+	public PageData<PubUnit> queryProductPortalByCategory(String slugCategory, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(slugCategory)) {
 			KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 			if (termType == null)
-				return new PageableResult<>();
+				return new PageData<>();
 			List<Object> ids = this.queryOwnIds(termType.getId());
 			// 查询分类及其子分类
 			this.filterByParentTermTypeId(ids, pageQuery);
@@ -514,7 +514,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<PubUnit> queryProductDomain(PageQuery pageQuery) {
+	public PageData<PubUnit> queryProductDomain(PageQuery pageQuery) {
 
 		return this.pubService.queryPubWithExtList(pageQuery);
 	}
@@ -526,10 +526,10 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<PubUnit> queryProductCategory(String slugCategory, PageQuery pageQuery) {
+	public PageData<PubUnit> queryProductCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 		if (termType == null)
-			return new PageableResult<>();
+			return new PageData<>();
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
 		this.filterByParentTermTypeId(ids, pageQuery);
@@ -544,7 +544,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesPortal(PageQuery pageQuery) {
+	public PageData<PubUnit> queryArchivesPortal(PageQuery pageQuery) {
 		// 前台数据展现，排除页面类型
 		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
 
@@ -559,11 +559,11 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesCategoryPortal(String slugCategory, PageQuery pageQuery) {
+	public PageData<PubUnit> queryArchivesCategoryPortal(String slugCategory, PageQuery pageQuery) {
 		if (!ObjectUtils.isBlank(slugCategory)) {
 			KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 			if (termType == null)
-				return new PageableResult<>();
+				return new PageData<>();
 			List<Object> ids = this.queryOwnIds(termType.getId());
 			// 查询分类及其子分类
 			this.filterByParentTermTypeId(ids, pageQuery);
@@ -581,7 +581,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数，支持KPubs、KTermObjects所有字段
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesDomain(PageQuery pageQuery) {
+	public PageData<PubUnit> queryArchivesDomain(PageQuery pageQuery) {
 
 		// 前台数据展现，排除页面类型
 		pageQuery.pushFilter("pubType", PubTypeEnum.listMainTypeNoPage());
@@ -595,14 +595,14 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesCategory(String slugCategory, PageQuery pageQuery) {
+	public PageData<PubUnit> queryArchivesCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 		if (termType == null)
-			return new PageableResult<>();
+			return new PageData<>();
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
 		if (ids.isEmpty())
-			return new PageableResult<>();
+			return new PageData<>();
 
 		this.filterByParentTermTypeId(ids, pageQuery);
 
@@ -618,7 +618,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesTag(String slugTag, PageQuery pageQuery) {
+	public PageData<PubUnit> queryArchivesTag(String slugTag, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugTag);
 		pageQuery.pushParam("termTypeId", termType.getId());
 
@@ -658,7 +658,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 分类存档列表页
 	 */
-	public PageableResult<PubUnit> queryArchivesUserDomain(Long domainId, PageQuery pageQuery) {
+	public PageData<PubUnit> queryArchivesUserDomain(Long domainId, PageQuery pageQuery) {
 		pageQuery.pushParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
 
 		// 前台数据展现，排除页面类型
@@ -674,7 +674,7 @@ public class KCMSService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品章节存档列表
 	 */
-	public PageableResult<PubUnit> queryBookChapter(Long bookId, PageQuery pageQuery) {
+	public PageData<PubUnit> queryBookChapter(Long bookId, PageQuery pageQuery) {
 		pageQuery.pushParam("parentId", bookId);
 		return this.pubService.queryArchives(pageQuery);
 	}

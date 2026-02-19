@@ -4,20 +4,21 @@ import {
   MobileTwoTone,
   UserOutlined,
 } from '@ant-design/icons';
-import {Alert, message, Space, Tabs, Tooltip} from 'antd';
-import React, {useEffect, useState} from 'react';
+import { Alert, message, Modal, Space, Spin, Tabs, Tooltip } from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
 import ProForm, {
   ProFormCaptcha,
   ProFormCheckbox,
   ProFormText
 } from '@ant-design/pro-form';
-import {connect, FormattedMessage, useIntl, Link} from 'umi';
+import {connect, FormattedMessage, useIntl, Link, history} from 'umi';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import {encryptByAES, redirect} from "@/utils/utils";
 import VerifyCode from "@/pages/user/components/VerifyCode";
 import {queryCurrent} from "@/services/user";
 import {checkCaptcha, fetchEncryptKey, queryCaptchaMobile} from "@/services/login";
+import { getAgreementByType, getAgreementListByType, getAgreementDetail } from './agreement';
 import {autoLoginManager} from "@/utils/autoLogin";
 import qq from "@/assets/qq-icon.svg";
 import wb from "@/assets/weibo-icon.svg";
@@ -45,7 +46,25 @@ const Login = (props) => {
   const [uuid, setUuid] = useState('');
   const [encryptKey, setEncryptKey] = useState('');
   const [autoLoginPreference, setAutoLoginPreference] = useState(false);
+  const [loginAgreements, setLoginAgreements] = useState([]);
+  const [agreementModal, setAgreementModal] = useState({ visible: false, title: '', content: '', loading: false });
+  const formRef = useRef();
   const intl = useIntl();
+
+  const openAgreementModal = (e, agreement) => {
+    if (e) e.preventDefault();
+    if (!agreement?.id) return;
+    setAgreementModal({ visible: true, title: agreement.title || '服务协议', content: '', loading: true });
+    getAgreementDetail(agreement.id)
+      .then((res) => {
+        const vo = res?.data?.data ?? res?.data;
+        const html = vo?.contentHtml || vo?.content || '';
+        setAgreementModal((prev) => ({ ...prev, content: html, loading: false }));
+      })
+      .catch(() => {
+        setAgreementModal((prev) => ({ ...prev, content: '<p>加载失败，请稍后重试。</p>', loading: false }));
+      });
+  };
 
   // 加载用户autoLogin偏好
   useEffect(() => {
@@ -79,30 +98,52 @@ const Login = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    // 优先用 list 接口拿到数组；失败时用 by-type 单条并包装成数组
+    getAgreementListByType('LOGIN')
+      .then((list) => {
+        if (Array.isArray(list) && list.length > 0) {
+          setLoginAgreements(list);
+          return;
+        }
+        return getAgreementByType('LOGIN').then((res) => {
+          const data = res?.data;
+          if (data && Array.isArray(data)) setLoginAgreements(data);
+          else if (data && data.id) setLoginAgreements([data]);
+        });
+      })
+      .catch(() => setLoginAgreements([]));
+  }, []);
+
   const handleSubmit = (values, encryptKey) => {
     if (verify !== 'ok') {
       return;
     }
-    
+    if (loginAgreements.length > 0 && !values.agreementConsent) {
+      message.error('请先确认已阅读服务协议');
+      return;
+    }
+
     // 保存用户autoLogin偏好
     if (values.autoLogin !== undefined) {
       autoLoginManager.setUserAutoLoginPreference(values.autoLogin);
       setAutoLoginPreference(values.autoLogin);
     }
-    
+
     const {dispatch} = props;
-    const {password, verifyCode, mobile, captcha} = values;
+    const {password, verifyCode, mobile, captcha, agreementConsent: _omit, ...rest} = values;
+    const agreementIds = loginAgreements.map((a) => a.id);
     if (loginType === 'mobile') {
       const aesPassword = encryptByAES(captcha, encryptKey);
       dispatch({
         type: 'login/mobile',
-        payload: {...values, password: aesPassword, type, mobile, captcha},
+        payload: {...rest, password: aesPassword, type, mobile, captcha, agreementIds},
       });
     } else {
       const aesPassword = encryptByAES(password, encryptKey);
       dispatch({
         type: 'login/login',
-        payload: {...values, password: aesPassword, type, verifyCode: `${verifyCode}${code}`},
+        payload: {...rest, password: aesPassword, type, verifyCode: `${verifyCode}${code}`, agreementIds},
       });
     }
   };
@@ -131,13 +172,15 @@ const Login = (props) => {
   return (
     <div className={styles.main}>
         <ProForm
+        formRef={formRef}
         initialValues={{
           autoLogin: autoLoginPreference,
         }}
         submitter={{
           render: (_, dom) => dom.pop(),
           submitButtonProps: {
-            loading: submitting,
+            loading: submitting || status === 'ok',
+            disabled: status === 'ok',
             size: 'large',
             style: {
               width: '100%',
@@ -322,6 +365,21 @@ const Login = (props) => {
             />
           </>
         )}
+        {loginAgreements.length > 0 && (
+          <ProFormCheckbox
+            name="agreementConsent"
+            rules={[{ required: true, message: '请先确认已阅读服务协议' }]}
+          >
+            <span>
+              我已阅读并同意
+              {loginAgreements.map((a) => (
+                <a key={a.id} href="#" onClick={(e) => openAgreementModal(e, a)} style={{ margin: '0 2px' }}>
+                  《{a.title}》
+                </a>
+              ))}
+            </span>
+          </ProFormCheckbox>
+        )}
         <div
           style={{
             marginBottom: 24,
@@ -355,12 +413,76 @@ const Login = (props) => {
           </a>
         </div>
       </ProForm>
-      <Space className={styles.other}>
-        <FormattedMessage id="pages.login.loginWith" defaultMessage="快捷登录"/>
-        <Link to='/user/auth/qq'><img src={qq} className={styles.icon} title={'qq互联直接登录'} alt={'qq'}/></Link>
-        <Link to='/user/auth/weibo'><img src={wb} className={styles.icon} title={'微博互联直接登录'} alt={'weibo'}/></Link>
-        <Link to='/user/auth/wechat'><img src={wx} className={styles.icon} title={'微信扫码登录'} alt={'wechat'}/></Link>
+      <Space className={styles.other} direction="vertical" style={{ width: '100%' }}>
+        <span>
+          <FormattedMessage id="pages.login.loginWith" defaultMessage="快捷登录"/>
+          <a
+            onClick={() => {
+              if (loginAgreements.length > 0 && !formRef.current?.getFieldValue('agreementConsent')) {
+                message.error('请先勾选并同意服务协议');
+                return;
+              }
+              history.push('/user/auth/qq');
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <img src={qq} className={styles.icon} title={'qq互联直接登录'} alt={'qq'}/>
+          </a>
+          <a
+            onClick={() => {
+              if (loginAgreements.length > 0 && !formRef.current?.getFieldValue('agreementConsent')) {
+                message.error('请先勾选并同意服务协议');
+                return;
+              }
+              history.push('/user/auth/weibo');
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <img src={wb} className={styles.icon} title={'微博互联直接登录'} alt={'weibo'}/>
+          </a>
+          <a
+            onClick={() => {
+              if (loginAgreements.length > 0 && !formRef.current?.getFieldValue('agreementConsent')) {
+                message.error('请先勾选并同意服务协议');
+                return;
+              }
+              history.push('/user/auth/wechat');
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <img src={wx} className={styles.icon} title={'微信扫码登录'} alt={'wechat'}/>
+          </a>
+        </span>
       </Space>
+
+      <Modal
+        title={agreementModal.title}
+        open={agreementModal.visible}
+        onCancel={() => setAgreementModal((prev) => ({ ...prev, visible: false }))}
+        footer={[
+          <button
+            key="close"
+            type="button"
+            className="ant-btn ant-btn-primary"
+            onClick={() => setAgreementModal((prev) => ({ ...prev, visible: false }))}
+          >
+            关闭
+          </button>,
+        ]}
+        width={640}
+        destroyOnClose
+      >
+        {agreementModal.loading ? (
+          <div style={{ textAlign: 'center', padding: 40 }}>
+            <Spin />
+          </div>
+        ) : (
+          <div
+            style={{ maxHeight: '70vh', overflow: 'auto', lineHeight: 1.6 }}
+            dangerouslySetInnerHTML={{ __html: agreementModal.content || '<p>暂无内容</p>' }}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

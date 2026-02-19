@@ -20,7 +20,7 @@ import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.common.Constants;
 import com.wldos.common.enums.RedisKeyEnum;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
 import com.wldos.common.vo.TreeSelectOption;
@@ -134,23 +134,23 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 	 * @param pageQuery 查询参数
 	 * @return 资源列表
 	 */
-	public PageableResult<DomRes> queryResByDomainId(Long domainId, PageQuery pageQuery) {
+	public PageData<DomRes> queryResByDomainId(Long domainId, PageQuery pageQuery) {
 		List<Object> appIds = this.domainAppService.queryAppListByDomainId(domainId);
 		if (ObjectUtils.isBlank(appIds))
-			return new PageableResult<>();
+			return new PageData<>();
 		pageQuery.pushFilter("appId", appIds);
 
-		PageableResult<DomRes> domRes = this.execQueryForTree(new DomRes(), new WoResource(), pageQuery, Constants.MENU_ROOT_ID);
+		PageData<DomRes> domRes = this.execQueryForTree(new DomRes(), new WoResource(), pageQuery, Constants.MENU_ROOT_ID);
 
 		List<WoDomainResource> resources = this.domainResourceRepo.queryDomainRes(domainId);
 		List<Long> bookedIds = resources.parallelStream().map(WoDomainResource::getResourceId).collect(Collectors.toList());
 
-		List<DomRes> allRes = domRes.getData().getRows();
+		List<DomRes> allRes = domRes.getRows();
 
 		// 递归设置所有节点（包括子节点）的选中状态：只有真正被添加到域的资源才显示为已选中
 		this.setSelectedRecursively(allRes, bookedIds);
 
-		domRes.setDataRows(allRes);
+		domRes.setRows(allRes);
 
 		return domRes;
 	}
@@ -217,7 +217,8 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 		}
 
 		Long order = this.entityRepo.queryMaxOrder(parentId);
-		displayOrder = ObjectUtils.nvlToZero(order) + 1L;
+		long nextOrder = ObjectUtils.nvlToZero(order) + 1L;
+		displayOrder = Math.min(nextOrder, 100L); // 与前端校验 1-100 保持一致
 
 		WoResource resource = new WoResource(resCode, resName, resPath, icon, resType, reqMethod, target, appId, parentId, displayOrder, remark);
 

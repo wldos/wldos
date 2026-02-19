@@ -19,7 +19,7 @@ import com.wldos.cms.vo.InfoUnit;
 import com.wldos.common.Constants;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.service.TermService;
 import com.wldos.platform.support.cms.dto.ContModelDto;
@@ -70,7 +70,7 @@ public class InfoService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 信息列表页
 	 */
-	public PageableResult<InfoUnit> queryInfoDomain(PageQuery pageQuery) {
+	public PageData<InfoUnit> queryInfoDomain(PageQuery pageQuery) {
 
 		// 判断是否指定类目
 		Object termTypeId = pageQuery.getCondition().get("termTypeId");
@@ -81,7 +81,7 @@ public class InfoService extends NonEntityService {
 			} else { // 不是根节点，则继续
 				KTermType termType = this.termService.queryTermTypeById(tId);
 				if (termType == null)
-					return new PageableResult<>();
+					return new PageData<>();
 				List<Object> ids = this.queryOwnIds(termType.getId());
 				pageQuery.removeParam("termTypeId");
 				this.filterByParentTermTypeId(ids, pageQuery);
@@ -100,10 +100,10 @@ public class InfoService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<InfoUnit> queryInfoCategory(String slugCategory, PageQuery pageQuery) {
+	public PageData<InfoUnit> queryInfoCategory(String slugCategory, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugCategory);
 		if (termType == null)
-			return new PageableResult<>();
+			return new PageData<>();
 		List<Object> ids = this.queryOwnIds(termType.getId());
 
 		// 判断是否指定类目
@@ -125,10 +125,10 @@ public class InfoService extends NonEntityService {
 	 * @param pageQuery 分页查询参数
 	 * @return 作品列表页
 	 */
-	public PageableResult<InfoUnit> queryInfoTag(String slugTag, PageQuery pageQuery) {
+	public PageData<InfoUnit> queryInfoTag(String slugTag, PageQuery pageQuery) {
 		KTermType termType = this.termService.queryTermTypeBySlug(slugTag);
 		if (termType == null)
-			return new PageableResult<>();
+			return new PageData<>();
 		pageQuery.pushParam("termTypeId", termType.getId());
 
 		this.handleCondition(pageQuery);

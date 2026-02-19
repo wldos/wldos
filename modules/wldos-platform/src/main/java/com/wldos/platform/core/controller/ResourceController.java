@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import com.wldos.common.Constants;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.Result;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.common.utils.TreeUtils;
@@ -69,7 +69,7 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 		@ApiImplicitParam(name = "resourceName", value = "资源名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("")
-	public PageableResult<Resource> listQuery(@RequestParam Map<String, Object> params) {
+	public PageData<Resource> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		return this.service.execQueryForTree(new Resource(), new WoResource(), pageQuery, Constants.MENU_ROOT_ID);
@@ -118,7 +118,7 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "query", required = true)
 	})
 	@GetMapping("select")
-	public PageableResult<DomRes> listSelect(@RequestParam Map<String, Object> params) {
+	public PageData<DomRes> listSelect(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 
@@ -130,13 +130,17 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	// @todo 改造点三，实现封装的菜单创建功能，考虑来源：应用路由（静态、动态）、链接（功能）、数据对象（具体数据内容）。
 	// 逻辑：只有全局管理员或域管理员(二级运营方)等运营方可以创建菜单、资源，创建菜单时根据选择的来源自动呈现对应的表单，菜单需要设置关联的域，域管理员创建时自动绑定当前域。
 
+	/** 展示顺序上限，与前端校验规则 1-100 保持一致 */
+	private static final long DISPLAY_ORDER_MAX = 100L;
+
 	@Override
 	protected void preAdd(WoResource resource) { // 自定义链接新增资源时，自动增加排序
 		Long parentId = resource.getParentId();
 
 		Long order = this.service.queryMaxOrder(parentId);
 
-		resource.setDisplayOrder(ObjectUtils.nvlToZero(order) + 1L);
+		long nextOrder = ObjectUtils.nvlToZero(order) + 1L;
+		resource.setDisplayOrder(Math.min(nextOrder, DISPLAY_ORDER_MAX));
 	}
 
 	@Override

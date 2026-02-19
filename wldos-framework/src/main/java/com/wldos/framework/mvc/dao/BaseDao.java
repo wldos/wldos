@@ -15,16 +15,21 @@ import com.wldos.framework.common.SaveOptions;
 import com.wldos.framework.common.CommonOperation;
 
 /**
- * 基础仓接口。BaseRepo 是所有数据访问对象的基础接口。相当于dao。
- * 
- * 提供统一的 CRUD 方法：
- * - 保存操作：使用 Spring Data JDBC 的 save() 方法（默认行为，不支持可选配置）
- * - 可选保存：使用 saveOrUpdate() 方法（支持 SaveOptions 配置，由 MyJdbcRepository 实现）
- * - 查询操作：使用 Spring Data JDBC 的原生 API（findById, findAll 等）
+ * 基础仓接口。BaseRepo 是所有数据访问对象的基础接口。相当于 dao。
+ * <p>
+ * 保存方法（更符合实际场景的推荐用法）：
+ * <ul>
+ *   <li><b>saveOrUpdate(entity)</b> / <b>saveOrUpdate(entity, SaveOptions)</b>：统一保存或更新，支持可选配置（自动填充、是否写空值、是否合并 null 等），
+ *       由 MyJdbcRepository 实现，<b>实际业务中优先使用</b>。</li>
+ *   <li>save(entity)：Spring Data JDBC 原生方法，无可选配置，简单场景可用。</li>
+ * </ul>
+ * 查询与其它：使用 Spring Data JDBC 原生 API（findById、findAll 等）；
+ * 复杂动态查询在 Jdbc 接口实现类中用 JdbcTemplate / NamedParameterJdbcTemplate 实现。
  *
  * @author 元悉宇宙
  * @date 2023/10/21
  * @version 1.0
+ * @see com.wldos.framework.common.SaveOptions
  */
 @NoRepositoryBean
 public interface BaseDao<E, PK> extends PagingAndSortingRepository<E, PK> {

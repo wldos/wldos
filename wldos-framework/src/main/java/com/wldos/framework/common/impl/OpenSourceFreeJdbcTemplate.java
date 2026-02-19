@@ -23,7 +23,7 @@ import com.wldos.framework.common.FreeJdbcTemplate;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.utils.NameConvert;
 import com.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.support.internal.God;
@@ -34,6 +34,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -108,7 +109,7 @@ public class OpenSourceFreeJdbcTemplate extends BaseWrap implements FreeJdbcTemp
     }
 
     @Override
-    public PageableResult<Map<String, Object>> execQueryForPageNoOrder(String sql, int currentPage, int pageSize, Object... params) {
+    public PageData<Map<String, Object>> execQueryForPageNoOrder(String sql, int currentPage, int pageSize, Object... params) {
         String countSql = "select count(1) as total from (" + sql + ") t";
         Integer total = this.getJdbcOperations().queryForObject(countSql, Integer.class, params);
         if (total == null) {
@@ -119,11 +120,11 @@ public class OpenSourceFreeJdbcTemplate extends BaseWrap implements FreeJdbcTemp
         currentPage = Math.min(currentPage, totalPageNum);
         
         List<Map<String, Object>> list = execQueryForPage(sql, currentPage, pageSize, params);
-        return new PageableResult<>(total, currentPage, pageSize, list);
+        return new PageData<>(total, currentPage, pageSize, list);
     }
 
     @Override
-    public <E> PageableResult<E> execQueryForPageNoOrder(Class<E> clazz, String sql, int currentPage, int pageSize, Object... params) {
+    public <E> PageData<E> execQueryForPageNoOrder(Class<E> clazz, String sql, int currentPage, int pageSize, Object... params) {
         String countSql = "select count(1) as total from (" + sql + ") t";
         Integer total = this.getJdbcOperations().queryForObject(countSql, Integer.class, params);
         if (total == null) {
@@ -134,17 +135,17 @@ public class OpenSourceFreeJdbcTemplate extends BaseWrap implements FreeJdbcTemp
         currentPage = Math.min(currentPage, totalPageNum);
         
         List<E> list = execQueryForPage(clazz, sql, currentPage, pageSize, params);
-        return new PageableResult<>(total, currentPage, pageSize, list);
+        return new PageData<>(total, currentPage, pageSize, list);
     }
 
     @Override
-    public PageableResult<Map<String, Object>> execQueryForPage(String sql, String sqlOrder, int currentPage, int pageSize, Object[] params) {
+    public PageData<Map<String, Object>> execQueryForPage(String sql, String sqlOrder, int currentPage, int pageSize, Object[] params) {
         String finalSql = sql + " " + sqlOrder;
         return execQueryForPageNoOrder(finalSql, currentPage, pageSize, params);
     }
 
     @Override
-    public <E> PageableResult<E> execQueryForPage(Class<E> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object... params) {
+    public <E> PageData<E> execQueryForPage(Class<E> clazz, String sql, String sqlOrder, PageQuery pageQuery, Object... params) {
         String finalSql = sql + " " + sqlOrder;
         return execQueryForPageNoOrder(clazz, finalSql, pageQuery.getCurrent(), pageQuery.getPageSize(), params);
     }
@@ -169,16 +170,13 @@ public class OpenSourceFreeJdbcTemplate extends BaseWrap implements FreeJdbcTemp
         Object value = this.cache.get(key);
         String pKeyName = "";
         if (value == null) {
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field f : fields) {
-                if (f.getAnnotation(Id.class) != null) {
-                    Column propRelColumn = f.getAnnotation(Column.class);
-                    if (propRelColumn != null) {
-                        pKeyName = propRelColumn.value();
-                    } else {
-                        pKeyName = NameConvert.humpToUnderLine(f.getName());
-                    }
-                    break;
+            Field idField = findIdFieldInHierarchy(clazz);
+            if (idField != null) {
+                Column propRelColumn = idField.getAnnotation(Column.class);
+                if (propRelColumn != null) {
+                    pKeyName = propRelColumn.value();
+                } else {
+                    pKeyName = NameConvert.humpToUnderLine(idField.getName());
                 }
             }
             this.cache.set(key, pKeyName, 30, TimeUnit.MINUTES);
@@ -187,17 +185,30 @@ public class OpenSourceFreeJdbcTemplate extends BaseWrap implements FreeJdbcTemp
         return String.valueOf(value);
     }
 
+    /** 在类及其父类中查找带 @Id 的字段（子类实体继承 BaseEntity 时主键在父类） */
+    private static Field findIdFieldInHierarchy(Class<?> clazz) {
+        for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field f : c.getDeclaredFields()) {
+                if (f.getAnnotation(Id.class) != null) {
+                    return f;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public <E> List<String> getMultiIdColNamesByEntity(Class<E> clazz) {
-        Field[] fields = clazz.getDeclaredFields();
         List<String> pKeyNames = new ArrayList<>();
-        for (Field f : fields) {
-            if (f.getAnnotation(Id.class) != null) {
-                Column propRelColumn = f.getAnnotation(Column.class);
-                if (propRelColumn != null) {
-                    pKeyNames.add(propRelColumn.value());
-                } else {
-                    pKeyNames.add(NameConvert.humpToUnderLine(f.getName()));
+        for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field f : c.getDeclaredFields()) {
+                if (f.getAnnotation(Id.class) != null) {
+                    Column propRelColumn = f.getAnnotation(Column.class);
+                    if (propRelColumn != null) {
+                        pKeyNames.add(propRelColumn.value());
+                    } else {
+                        pKeyNames.add(NameConvert.humpToUnderLine(f.getName()));
+                    }
                 }
             }
         }
@@ -400,43 +411,115 @@ public class OpenSourceFreeJdbcTemplate extends BaseWrap implements FreeJdbcTemp
         return this.existsSql(cAlias, entity, baseExistSql, params, pageQuery.getCondition(), pageQuery.getFilter());
     }
 
+    /** 是否已确认不支持 WITH RECURSIVE（MySQL 5.7 等），降级后不再尝试 */
+    private static volatile Boolean recursiveCteUnsupported;
+
     /**
      * 通过父节点id查询所有子节点(含父节点自身)
-     * 
-     * 注意：此实现使用 MySQL 特定的语法（用户变量、GROUP_CONCAT、FIND_IN_SET），
-     * 仅适用于 MySQL 数据库。如需支持其他数据库，请考虑使用递归 CTE 或数据库方言适配。
-     * 
-     * @param table 带parent_id 和 id的目标表名称
-     * @param pId 要查询的父节点id
-     * @return 一棵节点树
+     * 优先使用 WITH RECURSIVE（MySQL 8.0+、H2），不支持时自动降级为 Java 循环（MySQL 5.7）
      */
     @Override
     public List<LevelNode> queryTreeByParentId(String table, Object pId) {
-        String sql = "SELECT idt.level, target.id FROM (SELECT @ids AS _ids, (SELECT @ids := GROUP_CONCAT(id) FROM " +
-                table + " WHERE FIND_IN_SET(parent_id, @ids) ) as cIds, @lv := @lv+1 as level FROM " +
-                table + ", (SELECT @ids :=?, @lv := 0 ) b WHERE @ids IS NOT NULL ) idt, " +
-                table + " target WHERE FIND_IN_SET(target.id, idt._ids) ORDER BY level, id";
-        return this.getJdbcOperations().query(sql, new BeanPropertyRowMapper<>(LevelNode.class), pId);
+        if (!Boolean.TRUE.equals(recursiveCteUnsupported)) {
+            try {
+                String sql = "WITH RECURSIVE tree(level, id) AS (" +
+                        "  SELECT 1, id FROM " + table + " WHERE id = ? " +
+                        "  UNION ALL " +
+                        "  SELECT t.level + 1, c.id FROM " + table + " c " +
+                        "  INNER JOIN tree t ON c.parent_id = t.id" +
+                        ") SELECT level, id FROM tree ORDER BY level, id";
+                return this.getJdbcOperations().query(sql, new BeanPropertyRowMapper<>(LevelNode.class), pId);
+            } catch (BadSqlGrammarException e) {
+                recursiveCteUnsupported = true;
+                if (log.isDebugEnabled()) {
+                    log.debug("WITH RECURSIVE 不支持，降级为 Java 循环: {}", e.getSQLException().getMessage());
+                }
+            }
+        }
+        return queryTreeByParentIdFallback(table, pId);
     }
 
     /**
      * 通过子节点id查询所有父节点(含子节点自身)
-     * 
-     * 注意：此实现使用 MySQL 特定的语法（用户变量），仅适用于 MySQL 数据库。
-     * 如需支持其他数据库，请考虑使用递归 CTE 或数据库方言适配。
-     * 
-     * @param table 带parent_id 和 id的目标表名称
-     * @param cId 要查询的子节点id
-     * @return 一棵节点树
+     * 优先使用 WITH RECURSIVE（MySQL 8.0+、H2），不支持时自动降级为 Java 循环（MySQL 5.7）
      */
     @Override
     public List<LevelNode> queryTreeByChildId(String table, Object cId) {
-        // 修复：与加密版实现保持一致，使用更简单的逐级向上查询方式
-        String sql = "SELECT idt.level, target.id FROM (SELECT @id as _id, (SELECT @id := parent_id FROM " +
-                table + " WHERE id = @id limit 1) as _pid, @l := @l+1 as level FROM " +
-                table + ",(SELECT @id := ?, @l := 0 ) b WHERE @id > 0 ) idt, " +
-                table + " target WHERE idt._id = target.id ORDER BY level desc";
-        return this.getJdbcOperations().query(sql, new BeanPropertyRowMapper<>(LevelNode.class), cId);
+        if (!Boolean.TRUE.equals(recursiveCteUnsupported)) {
+            try {
+                String sql = "WITH RECURSIVE tree(level, id, parent_id) AS (" +
+                        "  SELECT 1, id, parent_id FROM " + table + " WHERE id = ? " +
+                        "  UNION ALL " +
+                        "  SELECT t.level + 1, p.id, p.parent_id FROM " + table + " p " +
+                        "  INNER JOIN tree t ON p.id = t.parent_id" +
+                        ") SELECT level, id FROM tree ORDER BY level DESC";
+                return this.getJdbcOperations().query(sql, new BeanPropertyRowMapper<>(LevelNode.class), cId);
+            } catch (BadSqlGrammarException e) {
+                recursiveCteUnsupported = true;
+                if (log.isDebugEnabled()) {
+                    log.debug("WITH RECURSIVE 不支持，降级为 Java 循环: {}", e.getSQLException().getMessage());
+                }
+            }
+        }
+        return queryTreeByChildIdFallback(table, cId);
+    }
+
+    /**
+     * 降级实现：按层级批量查询，每层 1 次 SQL，减少连接消耗
+     */
+    private List<LevelNode> queryTreeByParentIdFallback(String table, Object pId) {
+        List<LevelNode> result = new ArrayList<>();
+        List<Object> frontier = new ArrayList<>();
+        frontier.add(pId);
+        int level = 1;
+        String rootSql = "SELECT id FROM " + table + " WHERE id = ?";
+        List<Map<String, Object>> rootRows = this.getJdbcOperations().queryForList(rootSql, pId);
+        if (rootRows == null || rootRows.isEmpty()) return result;
+        Object rootId = rootRows.get(0).get("id");
+        LevelNode rootNode = new LevelNode();
+        rootNode.setLevel(1);
+        rootNode.setId(rootId instanceof Number ? ((Number) rootId).longValue() : Long.parseLong(ObjectUtils.string(rootId)));
+        result.add(rootNode);
+        while (!frontier.isEmpty()) {
+            level++;
+            String inPlaceholders = frontier.stream().map(f -> "?").collect(Collectors.joining(","));
+            String batchSql = "SELECT id, parent_id FROM " + table + " WHERE parent_id IN (" + inPlaceholders + ")";
+            List<Map<String, Object>> rows = this.getJdbcOperations().queryForList(batchSql, frontier.toArray());
+            frontier = new ArrayList<>();
+            if (rows != null) {
+                for (Map<String, Object> row : rows) {
+                    Object id = row.get("id");
+                    LevelNode node = new LevelNode();
+                    node.setLevel(level);
+                    node.setId(id instanceof Number ? ((Number) id).longValue() : Long.parseLong(ObjectUtils.string(id)));
+                    result.add(node);
+                    frontier.add(id);
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<LevelNode> queryTreeByChildIdFallback(String table, Object cId) {
+        List<LevelNode> path = new ArrayList<>();
+        Object currentId = cId;
+        String selectSql = "SELECT id, parent_id FROM " + table + " WHERE id = ?";
+        while (currentId != null) {
+            List<Map<String, Object>> rows = this.getJdbcOperations().queryForList(selectSql, currentId);
+            if (rows == null || rows.isEmpty()) break;
+            Map<String, Object> row = rows.get(0);
+            Object id = row.get("id");
+            Object parentId = row.get("parent_id");
+            LevelNode node = new LevelNode();
+            node.setId(id instanceof Number ? ((Number) id).longValue() : Long.parseLong(ObjectUtils.string(id)));
+            path.add(0, node);
+            if (parentId == null || ObjectUtils.isBlank(parentId)) break;
+            currentId = parentId;
+        }
+        for (int i = 0; i < path.size(); i++) {
+            path.get(i).setLevel(i + 1);
+        }
+        return path;
     }
 
     @Override

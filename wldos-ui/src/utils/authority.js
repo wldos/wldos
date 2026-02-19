@@ -1,5 +1,6 @@
 import {reloadAuthorized} from './Authorized';
 import wldosStorage from "@/utils/wldostorage";
+import {clearRouteAuthCache} from "@/utils/apiCache";
 
 export function getAuthority(str = 'guest') {
   const authorityString =
@@ -49,6 +50,8 @@ export function clearAuthority() {
   // 先清空本地缓存，如果启用token，应该先清除token
   wldosStorage.remove('accessToken');
   wldosStorage.remove('wldos-authority');
+  // 清空路由权限缓存，登出或 401 后需重新校验
+  clearRouteAuthCache();
 
   reloadAuthorized();
 }

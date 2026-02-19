@@ -15,7 +15,7 @@ import com.wldos.framework.common.CommonOperation;
 import com.wldos.common.dto.LevelNode;
 import com.wldos.common.dto.SQLTable;
 import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageableResult;
+import com.wldos.common.res.PageData;
 import com.wldos.common.res.ResultJson;
 import com.wldos.framework.common.SaveOptions;	
 
@@ -39,7 +39,6 @@ public abstract class NonEntityService extends Base {
 	 */
 	@Autowired
 	@Lazy
-	@SuppressWarnings({ "all" })
 	protected CommonOperation commonOperate;
 
 	@Autowired
@@ -134,8 +133,23 @@ public abstract class NonEntityService extends Base {
 	 * @param <V> VO类
 	 * @return VO分页列表
 	 */
-	public <V> PageableResult<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
+	public <V> PageData<V> execQueryForPage(Class<V> vo, String sqlNoWhere, PageQuery pageQuery, SQLTable... sqlTables) {
 		return this.commonOperate.execQueryForPage(vo, sqlNoWhere, pageQuery, sqlTables);
+	}
+
+	/**
+	 * NamedParameterJdbcTemplate 分页执行：count + list + limit，含深分页反向查询优化（商业版）。
+	 * 业务模块先使用 CommonOperation.appendConditionNamed/appendFilterNamed/appendOrderByNamed 拼装 sql+params，再调用此方法执行。
+	 *
+	 * @param sql         完整 SQL（含 where、order by，不含 limit）
+	 * @param params      命名参数
+	 * @param pageQuery   分页参数
+	 * @param resultClass 结果类型
+	 * @param <V>         结果类型
+	 * @return 分页结果
+	 */
+	public <V> PageData<V> execPageQueryNamed(String sql, java.util.Map<String, Object> params, PageQuery pageQuery, Class<V> resultClass) {
+		return this.commonOperate.execPageQueryNamed(sql, params, pageQuery, resultClass);
 	}
 
 	/**
@@ -169,7 +183,7 @@ public abstract class NonEntityService extends Base {
 	 * @param <V> VO类,系父表子集
 	 * @return 分页数据
 	 */
-	public <P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, String pTable, String cTable, String pIdKey, PageQuery pageQuery) {
+	public <P, C, V> PageData<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, String pTable, String cTable, String pIdKey, PageQuery pageQuery) {
 		return this.commonOperate.execQueryForPage(vo, pClass, cClass, pageQuery, true, pTable, cTable, pIdKey);
 	}
 
@@ -186,7 +200,7 @@ public abstract class NonEntityService extends Base {
 	 * @param <C> 子表实体类
 	 * @return 分页数据
 	 */
-	public <P, C> PageableResult<P> execQueryForPage(Class<P> pClass, Class<C> cClass, String pTable, String cTable, String pIdKey, PageQuery pageQuery) {
+	public <P, C> PageData<P> execQueryForPage(Class<P> pClass, Class<C> cClass, String pTable, String cTable, String pIdKey, PageQuery pageQuery) {
 		return this.commonOperate.execQueryForPage(pClass, cClass, pageQuery, true, pTable, cTable, pIdKey);
 	}
 
@@ -201,7 +215,7 @@ public abstract class NonEntityService extends Base {
 	 * @param <C> 子表实体类
 	 * @return 分页数据
 	 */
-	public <P, C> PageableResult<P> execQueryForPage(Class<P> pClass, Class<C> cClass, String pIdKey, PageQuery pageQuery) {
+	public <P, C> PageData<P> execQueryForPage(Class<P> pClass, Class<C> cClass, String pIdKey, PageQuery pageQuery) {
 		return this.commonOperate.execQueryForPage(pClass, cClass, pageQuery, true, pIdKey);
 	}
 
@@ -219,7 +233,7 @@ public abstract class NonEntityService extends Base {
 	 * @param <V> VO类,系父表子集
 	 * @return 分页数据
 	 */
-	public <P, C, V> PageableResult<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey) {
+	public <P, C, V> PageData<V> execQueryForPage(Class<V> vo, Class<P> pClass, Class<C> cClass, PageQuery pageQuery, boolean isPage, String... pTableAndCTableAndPIdKey) {
 		return this.commonOperate.execQueryForPage(vo, pClass, cClass, pageQuery, isPage, pTableAndCTableAndPIdKey);
 	}
 

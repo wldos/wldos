@@ -55,7 +55,7 @@ export const upParams = (width, height) => {
   const params = {
     // multiple: true,
     accept: '.jpg,.png,.gif,.jpeg,.bmp,.x-icon,.ico', // @todo 后期从后台配置获取，由后台驱动, .x-icon匹配ico图片
-    headers: headerFix,
+    headers: headerFix(),
   };
 
   return !width ? params : {...params, params: {width, height}};

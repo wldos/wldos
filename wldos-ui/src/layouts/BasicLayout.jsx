@@ -40,10 +40,20 @@ const BasicLayout = (props) => {
    * 因为权限已经在后端过滤，返回的都是有权限菜单，不必检查权限。（要求：除动态路由外，静态路由应该和菜单url相同，操作权限在API侧判断，主要包括数据权限和角色权限，数据权限发生在域、业务类型、租户、组织的边界）
    */
 
+  /** 过滤掉 menuRegion===nav_avatar 的项，仅主导航显示 nav_main 或未配置的菜单 */
+  const filterMainNavMenu = (menus) => {
+    if (!menus || !Array.isArray(menus)) return [];
+    return menus
+      .filter((item) => item.menuRegion !== 'nav_avatar')
+      .map((item) => ({
+        ...item,
+        children: item.children && item.children.length ? filterMainNavMenu(item.children) : item.children,
+      }));
+  };
+
   const menuHandle = (menus) =>
     menus.map((item) => ({
       ...item,
-      // 保持 name 为纯文本，避免悬浮提示问题
       name: item.name,
       icon: renderIcon(item.icon),
       children: item.children && menuHandle(item.children),
@@ -63,7 +73,7 @@ const BasicLayout = (props) => {
     }
   }, []);
 
-  useEffect(() => { // 获取域信息
+  useEffect(() => { // 获取域信息，依赖 site/tdk/location 以便 site 异步加载后更新 keywords 等
     const homeFlag = location.pathname === getHome();
     if (site) {
       const {siteName, siteTitle, siteKeyword, siteDescription, siteLogo, favicon} = site;
@@ -72,8 +82,8 @@ const BasicLayout = (props) => {
       setSeo({
         // eslint-disable-next-line no-nested-ternary
         title: homeFlag ? (siteTitle?? '') : (tdk.title ? `${tdk.title}${pageDesc}` : ''),
-        keywords: homeFlag ? siteKeyword : tdk.keywords || siteKeyword,
-        description: homeFlag ? siteDescription : tdk.description || siteDescription,
+        keywords: homeFlag ? (siteKeyword ?? '') : (tdk?.keywords ?? siteKeyword ?? ''),
+        description: homeFlag ? (siteDescription ?? '') : (tdk?.description ?? siteDescription ?? ''),
         logo: siteLogo,
         favicon,
         crumbs: tdk?.crumbs || [],
@@ -82,7 +92,7 @@ const BasicLayout = (props) => {
     }
     // 自动回到顶部
     document?.getElementById('root').scrollIntoView(true);
-  }, [tdk]);
+  }, [tdk, site, location.pathname]);
 
   /**
    * init variables
@@ -91,14 +101,15 @@ const BasicLayout = (props) => {
     setCollapsed(payload);
   };
 
+  const isHomePage = location.pathname === getHome();
   return (
     <>
       {wldosHeader(seo)}
       <ProLayout
-        className={`${styles.topNavWldos} ${closeBread ? styles.topNavContentNoBread : styles.topNavContent}`}
+        className={`${styles.topNavWldos} ${closeBread ? styles.topNavContentNoBread : styles.topNavContent} ${isHomePage ? styles.homeLayout : ''}`}
         logo={seo.logo}
         // formatMessage={formatMessage} // 关掉国际化输出防止未作国际化处理时报错，不从menu改是因为top布局时menu设置menu={{loading, locale: false}}会导致刷新时多个齿轮效果
-        menuDataRender={(md) => menuHandle(md && md.length>0 ? menuData.pushAll(md) : menuData)}
+        menuDataRender={(md) => menuHandle(filterMainNavMenu(md && md.length > 0 ? menuData.pushAll(md) : menuData))}
         {...settings}
         menu={loading}
         collapsed={collapsed}
