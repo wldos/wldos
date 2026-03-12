@@ -8,11 +8,10 @@
 
 package com.wldos.framework.mvc.dao;
 
+import io.github.wldos.framework.common.CommonOperation;
+import io.github.wldos.framework.common.SaveOptions;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
-
-import com.wldos.framework.common.SaveOptions;
-import com.wldos.framework.common.CommonOperation;
 
 /**
  * 基础仓接口。BaseRepo 是所有数据访问对象的基础接口。相当于 dao。
@@ -29,7 +28,7 @@ import com.wldos.framework.common.CommonOperation;
  * @author 元悉宇宙
  * @date 2023/10/21
  * @version 1.0
- * @see com.wldos.framework.common.SaveOptions
+ * @see SaveOptions
  */
 @NoRepositoryBean
 public interface BaseDao<E, PK> extends PagingAndSortingRepository<E, PK> {

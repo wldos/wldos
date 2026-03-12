@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.common.Constants;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoApp;
 import com.wldos.platform.core.enums.AppOriginEnum;

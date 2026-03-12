@@ -9,7 +9,7 @@
 package com.wldos.framework.support.web.handler;
 
 import com.wldos.framework.autoconfigure.WldosFrameworkProperties;
-import com.wldos.framework.support.web.EdgeHandler;
+import io.github.wldos.framework.support.web.EdgeHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

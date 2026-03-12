@@ -8,9 +8,9 @@
 
 package com.wldos.plugin.demo.login;
 
-import com.wldos.framework.support.hook.HookType;
-import com.wldos.framework.support.hook.WLDOSHook;
-import com.wldos.framework.support.plugins.AbstractPlugin;
+import io.github.wldos.framework.support.hook.HookType;
+import io.github.wldos.framework.support.hook.WLDOSHook;
+import io.github.wldos.framework.support.plugins.AbstractPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -500,6 +500,42 @@ const SysOptions = () => {
             </>
           )}
         </Card>
+        {/* 支付配置分组 */}
+        <Card title="支付配置" style={{ marginTop: 24 }}>
+          <Form.Item label="微信 AppID" name="wldos_pay_wechat_appid">
+            <Input placeholder="微信支付 AppID" />
+          </Form.Item>
+          <Form.Item label="微信商户号" name="wldos_pay_wechat_mch_id">
+            <Input placeholder="微信商户号 mch_id" />
+          </Form.Item>
+          <Form.Item label="微信 APIv3 密钥" name="wldos_pay_wechat_api_key">
+            <Input.Password placeholder="APIv3 密钥" />
+          </Form.Item>
+          <Form.Item label="微信证书序列号" name="wldos_pay_wechat_cert_serial_no">
+            <Input placeholder="证书序列号" />
+          </Form.Item>
+          <Form.Item label="微信商户私钥(PEM)" name="wldos_pay_wechat_private_key">
+            <Input.TextArea rows={4} placeholder="-----BEGIN PRIVATE KEY-----" />
+          </Form.Item>
+          <Form.Item label="微信回调基础URL" name="wldos_pay_notify_base_url">
+            <Input placeholder="如：https://example.com" />
+          </Form.Item>
+
+          <Divider />
+
+          <Form.Item label="支付宝 AppID" name="wldos_pay_alipay_app_id">
+            <Input placeholder="支付宝 AppID" />
+          </Form.Item>
+          <Form.Item label="支付宝应用私钥" name="wldos_pay_alipay_private_key">
+            <Input.TextArea rows={4} placeholder="应用私钥" />
+          </Form.Item>
+          <Form.Item label="支付宝公钥" name="wldos_pay_alipay_public_key">
+            <Input.TextArea rows={4} placeholder="支付宝公钥" />
+          </Form.Item>
+          <Form.Item label="支付宝回调基础URL" name="wldos_pay_alipay_notify_base_url">
+            <Input placeholder="如：https://example.com" />
+          </Form.Item>
+        </Card>
         {/* 操作按钮 */}
         <Card style={{ textAlign: 'center', marginTop: '24px' }}>
           <Space size="large">

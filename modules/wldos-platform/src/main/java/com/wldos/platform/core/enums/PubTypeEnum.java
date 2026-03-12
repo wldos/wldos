@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.ObjectUtils;
 
 /**
  * 把各种类型放在一起方便系统地实现业务，世界是普遍联系的，分而治之已经走到尽头

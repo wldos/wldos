@@ -8,7 +8,7 @@
 
 package com.wldos.platform.core.vo;
 
-import com.wldos.common.vo.TreeNode;
+import io.github.wldos.common.vo.TreeNode;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

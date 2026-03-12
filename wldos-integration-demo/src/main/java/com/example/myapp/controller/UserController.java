@@ -14,11 +14,11 @@
  */
 package com.example.myapp.controller;
 
-import com.wldos.common.exception.BaseException;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.Result;
-import com.wldos.common.res.ResultCode;
+import io.github.wldos.common.exception.BaseException;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.common.res.ResultCode;
 import com.example.myapp.dto.UserCreateDTO;
 import com.example.myapp.service.UserService;
 import com.example.myapp.vo.UserVO;

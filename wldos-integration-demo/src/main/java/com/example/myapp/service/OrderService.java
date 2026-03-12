@@ -14,8 +14,8 @@
  */
 package com.example.myapp.service;
 
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
 import com.wldos.framework.mvc.service.NonEntityService;
 import org.springframework.stereotype.Service;
 

@@ -9,8 +9,8 @@
 package com.wldos.platform.auth.service;
 
 import com.wldos.framework.mvc.service.NonEntityService;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.enums.RedisKeyEnum;
+import io.github.wldos.common.utils.ObjectUtils;
 
 import org.springframework.stereotype.Service;
 

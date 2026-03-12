@@ -20,16 +20,15 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.framework.common.EntityAssists;
-import com.wldos.common.Constants;
-import com.wldos.common.dto.SQLTable;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.TreeUtils;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.dto.SQLTable;
+import io.github.wldos.common.enums.DeleteFlagEnum;
+import io.github.wldos.common.enums.RedisKeyEnum;
+import io.github.wldos.common.enums.ValidStatusEnum;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.TreeUtils;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.dao.DomainDao;
 import com.wldos.platform.core.dao.DomainResourceDao;
@@ -37,10 +36,9 @@ import com.wldos.platform.core.dao.TermDao;
 import com.wldos.platform.core.entity.WoDomain;
 import com.wldos.platform.core.entity.WoDomainApp;
 import com.wldos.platform.core.entity.WoDomainResource;
-import com.wldos.platform.support.domain.vo.DomainResource;
-import com.wldos.platform.support.resource.entity.WoResource;
-import com.wldos.platform.support.term.dto.Term;
-import com.wldos.framework.common.SaveOptions;
+import io.github.wldos.platform.support.domain.vo.DomainResource;
+import io.github.wldos.platform.support.resource.entity.WoResource;
+import io.github.wldos.platform.support.term.dto.Term;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -177,8 +175,8 @@ public class DomainService extends EntityService<DomainDao, WoDomain, Long> {
 					domain.setDisplayOrder(1L);
 					domain.setSiteDescription("平台主站");
 					domain.setSiteUrl("http://" + this.getPlatDomain());
-					EntityAssists.beforeInsert(domain, this.nextId(), Constants.SYSTEM_USER_ID, "127.0.0.1", false);
-					this.saveOrUpdate(domain, SaveOptions.forImport()); // 特殊情况，需要手动设置公共字段
+					// 使用框架标准 saveOrUpdate，由 CommonOperation 内部自动填充审计字段（无请求时使用 SYSTEM_USER_ID / 127.0.0.1）
+					this.saveOrUpdate(domain);
 					domains = new ArrayList<>();
 					domains.add(domain);
 				}

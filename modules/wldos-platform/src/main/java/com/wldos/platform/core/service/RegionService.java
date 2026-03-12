@@ -13,8 +13,8 @@ import java.util.List;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.dao.RegionDao;
 import com.wldos.platform.core.enums.RegionLevelEnum;
-import com.wldos.platform.support.region.RegionOpener;
-import com.wldos.platform.support.region.vo.City;
+import io.github.wldos.platform.support.region.RegionOpener;
+import io.github.wldos.platform.support.region.vo.City;
 import com.wldos.platform.core.entity.WoRegion;
 import com.wldos.platform.core.vo.Prov;
 

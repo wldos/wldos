@@ -11,10 +11,10 @@ package com.wldos.platform.core.vo;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.framework.support.auth.vo.Token;
-import com.wldos.platform.support.auth.vo.UserInfo;
-import com.wldos.platform.support.resource.vo.Menu;
-import com.wldos.platform.support.resource.vo.Route;
+import io.github.wldos.framework.support.auth.vo.Token;
+import io.github.wldos.platform.support.auth.vo.UserInfo;
+import io.github.wldos.platform.support.resource.vo.Menu;
+import io.github.wldos.platform.support.resource.vo.Route;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

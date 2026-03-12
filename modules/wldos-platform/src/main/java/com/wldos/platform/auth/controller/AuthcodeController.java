@@ -15,8 +15,8 @@ import com.wldos.platform.auth.service.AuthCodeService;
 import com.wldos.platform.auth.vo.CaptchaVO;
 import com.wldos.platform.auth.vo.PasswdResetParams;
 import com.wldos.framework.mvc.controller.NonEntityController;
-import com.wldos.common.res.Result;
-import com.wldos.common.res.ResultCode;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.common.res.ResultCode;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

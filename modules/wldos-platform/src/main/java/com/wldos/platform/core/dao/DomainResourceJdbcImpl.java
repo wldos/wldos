@@ -11,8 +11,8 @@ package com.wldos.platform.core.dao;
 import java.util.Collections;
 import java.util.List;
 
-import com.wldos.platform.support.domain.DomainResourceOpener;
-import com.wldos.platform.support.domain.vo.DomainResource;
+import io.github.wldos.platform.support.domain.DomainResourceOpener;
+import io.github.wldos.platform.support.domain.vo.DomainResource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

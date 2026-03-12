@@ -16,9 +16,9 @@ package com.example.myapp.service;
 
 import com.example.myapp.dto.UserCreateDTO;
 import com.example.myapp.vo.UserVO;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.utils.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

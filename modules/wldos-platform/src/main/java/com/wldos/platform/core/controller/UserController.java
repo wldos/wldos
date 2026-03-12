@@ -16,17 +16,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.wldos.framework.support.notice.UserNoticesAggregator;
+import io.github.wldos.framework.support.notice.UserNoticesAggregator;
 import com.wldos.platform.auth.model.AccSecurity;
 import com.wldos.platform.auth.vo.AccountInfo;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.vo.Domain;
 import com.wldos.platform.core.vo.UserAuth;
-import com.wldos.platform.support.resource.vo.DynSet;
+import io.github.wldos.platform.support.resource.vo.DynSet;
 import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.vo.User;
-import com.wldos.common.res.Result;
+import io.github.wldos.common.res.Result;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

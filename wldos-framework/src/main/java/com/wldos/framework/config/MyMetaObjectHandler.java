@@ -12,8 +12,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.wldos.framework.common.CommonOperation;
-import com.wldos.common.utils.DateUtils;
+import io.github.wldos.framework.common.CommonOperation;
+import io.github.wldos.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 

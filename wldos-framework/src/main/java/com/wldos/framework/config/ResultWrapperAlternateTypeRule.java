@@ -8,7 +8,7 @@
 
 package com.wldos.framework.config;
 
-import com.wldos.common.res.Result;
+import io.github.wldos.common.res.Result;
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import org.springframework.core.io.Resource;

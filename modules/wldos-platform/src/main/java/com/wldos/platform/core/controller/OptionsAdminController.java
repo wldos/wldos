@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.service.OptionsService;
-import com.wldos.platform.support.system.entity.WoOptions;
+import io.github.wldos.platform.support.system.entity.WoOptions;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

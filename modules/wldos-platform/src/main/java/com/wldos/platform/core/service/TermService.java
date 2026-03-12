@@ -22,19 +22,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.framework.mvc.service.EntityService;
-import com.wldos.common.Constants;
-import com.wldos.common.dto.LevelNode;
-import com.wldos.common.enums.BoolEnum;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
-import com.wldos.common.utils.ChineseUtils;
-import com.wldos.common.utils.NameConvert;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.TreeUtils;
-import com.wldos.common.vo.SelectOption;
-import com.wldos.common.vo.TreeNode;
-import com.wldos.common.vo.TreeSelectOption;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.dto.LevelNode;
+import io.github.wldos.common.enums.BoolEnum;
+import io.github.wldos.common.enums.RedisKeyEnum;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.utils.ChineseUtils;
+import io.github.wldos.common.utils.NameConvert;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.TreeUtils;
+import io.github.wldos.common.vo.SelectOption;
+import io.github.wldos.common.vo.TreeNode;
+import io.github.wldos.common.vo.TreeSelectOption;
 import com.wldos.platform.core.dao.TermDao;
 import com.wldos.platform.core.dao.TermObjectDao;
 import com.wldos.platform.core.dao.TermTypeDao;
@@ -44,10 +44,11 @@ import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.entity.KTerms;
 import com.wldos.platform.core.vo.Category;
 import com.wldos.platform.core.vo.TermTree;
-import com.wldos.platform.support.term.TermOpener;
-import com.wldos.platform.support.term.dto.Term;
-import com.wldos.platform.support.term.enums.TermTypeEnum;
-import com.wldos.framework.common.SaveOptions;
+import io.github.wldos.platform.support.term.ITermDataOpener;
+import io.github.wldos.platform.support.term.TermOpener;
+import io.github.wldos.platform.support.term.dto.Term;
+import io.github.wldos.platform.support.term.enums.TermTypeEnum;
+import io.github.wldos.framework.common.SaveOptions;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
@@ -68,7 +69,7 @@ import org.springframework.util.ReflectionUtils;
 @RefreshScope
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class TermService extends EntityService<TermDao, KTerms, Long> implements TermOpener {
+public class TermService extends EntityService<TermDao, KTerms, Long> implements TermOpener, ITermDataOpener {
 
 	private final BeanCopier termCopier = BeanCopier.create(Term.class, KTerms.class, false);
 
@@ -692,7 +693,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 		this.saveOrUpdateAll(kTerms);
 		// 新增term type
 		for (KTermType termType : kTermTypes) {
-			this.saveOtherEntity(termType, com.wldos.framework.common.SaveOptions.forImport());
+			this.saveOtherEntity(termType, SaveOptions.forImport());
 		}
 	}
 
@@ -737,7 +738,7 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 */
 	public void relTermObject(KTermObject termObject) {
 		// 数据保存
-		this.saveOtherEntity(termObject, com.wldos.framework.common.SaveOptions.forImport());
+		this.saveOtherEntity(termObject, SaveOptions.forImport());
 		// 计数+1
 		this.termTypeRepo.countPlus(termObject.getTermTypeId());
 	}

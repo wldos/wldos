@@ -8,12 +8,12 @@
 
 package com.wldos.plugin.demo;
 
-import com.wldos.framework.support.plugins.AbstractPlugin;
-import com.wldos.framework.support.hook.WLDOSHook;
-import com.wldos.framework.support.hook.HookType;
-import com.wldos.framework.support.plugins.Handler;
-import com.wldos.framework.support.plugins.Invoker;
-import com.wldos.framework.support.plugins.core.IPluginMetadata;
+import io.github.wldos.framework.support.plugins.AbstractPlugin;
+import io.github.wldos.framework.support.hook.WLDOSHook;
+import io.github.wldos.framework.support.hook.HookType;
+import io.github.wldos.framework.support.plugins.Handler;
+import io.github.wldos.framework.support.plugins.Invoker;
+import io.github.wldos.framework.support.plugins.core.IPluginMetadata;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;

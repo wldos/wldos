@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.wldos.framework.mvc.controller.EntityController;
-import com.wldos.common.Constants;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.Result;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.Result;
 import com.wldos.platform.core.entity.WoRole;
 import com.wldos.platform.core.service.RoleService;
 import com.wldos.platform.core.vo.Role;

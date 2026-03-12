@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.8.0</version>
+		<version>2.3.8.2</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>
@@ -49,7 +49,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-kpaycms</artifactId>
+					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -119,7 +119,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-kpaycms</artifactId>
+					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -168,6 +168,12 @@
 					<artifactId>wldos-license-plugin-dist</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+					<exclusions>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-key</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
@@ -197,7 +203,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-kpaycms</artifactId>
+					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -246,6 +252,12 @@
 					<artifactId>wldos-license-plugin-dist</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+					<exclusions>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-key</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
@@ -255,7 +267,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		<!-- desktop/community：仅 kpaycms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
+		<!-- desktop/community：仅 cms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
 		<profile>
 			<id>desktop</id>
 			<properties>
@@ -264,13 +276,13 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-kpaycms</artifactId>
+					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
-			<!-- 社区版：仅 kpaycms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
+			<!-- 社区版：仅 cms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
 			<id>community</id>
 			<properties>
 				<spring.profiles.active>community</spring.profiles.active>
@@ -278,7 +290,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-kpaycms</artifactId>
+					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 			</dependencies>
@@ -286,8 +298,8 @@
 	</profiles>
 
 	<dependencies>
-		<!-- 基础依赖（所有 profile 共享，kpaycms 已包含在 profile 中） -->
-		<!-- 注意：desktop/community 仅含 kpaycms，dev/prod 含全量 -->
+		<!-- 基础依赖（所有 profile 共享，cms 已包含在 profile 中） -->
+		<!-- 注意：desktop/community 仅含 cms，dev/prod 含全量 -->
 	</dependencies>
 	<build><!-- 构建不带版本号的包 -->
 		<finalName>${projectName}</finalName>

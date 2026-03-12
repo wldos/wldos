@@ -10,7 +10,7 @@ package com.wldos.platform.auth.vo;
 
 import java.util.List;
 
-import com.wldos.framework.support.auth.vo.Token;
+import io.github.wldos.framework.support.auth.vo.Token;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -1,4 +1,4 @@
-const api = '/wldos';
-module.exports={
-    prefix: `${api}`,
-}
+const api = '/api';
+module.exports = {
+  prefix: `${api}`,
+};

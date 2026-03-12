@@ -12,12 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import com.wldos.common.exception.BaseException;
-import com.wldos.common.res.Result;
-import com.wldos.common.res.ResultCode;
-import com.wldos.framework.support.auth.TokenForbiddenException;
-import com.wldos.framework.support.auth.TokenInvalidException;
-import com.wldos.framework.support.auth.UserInvalidException;
+import io.github.wldos.common.exception.BaseException;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.common.res.ResultCode;
+import io.github.wldos.framework.support.auth.TokenForbiddenException;
+import io.github.wldos.framework.support.auth.TokenInvalidException;
+import io.github.wldos.framework.support.auth.UserInvalidException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cloud.context.config.annotation.RefreshScope;

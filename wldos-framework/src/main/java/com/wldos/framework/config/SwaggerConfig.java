@@ -39,11 +39,13 @@ import java.util.function.Predicate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.wldos.common.Constants;
+import io.github.wldos.common.Constants;
 import com.wldos.framework.autoconfigure.WldosFrameworkProperties;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
 
 /**
  * Swagger 2.x 配置（支持可配置的包路径）
@@ -72,7 +74,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     @Value("${server.domain:localhost}")
     private String domain;
     
-    @Value("${gateway.proxy.prefix:/wldos}")
+    @Value("${gateway.proxy.prefix:/api}")
     private String proxyPrefix;
     
     /** 产品版本号，从配置变量读取（PropertiesDynImpl 设置），如果无法读取则使用常量默认值 */
@@ -117,8 +119,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
             .securitySchemes(securitySchemes()) // 添加安全方案（Token 认证）
             // 避免 ModelContext.getGenericNamingStrategy 递归导致 StackOverflowError（Spring Data Page/Pageable 等泛型循环引用）
             .alternateTypeRules(
-                AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(com.wldos.common.res.PageQuery.class)),
-                AlternateTypeRules.newRule(typeResolver.resolve(Page.class, Object.class), typeResolver.resolve(com.wldos.common.res.PageData.class, Object.class))
+                AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(PageQuery.class)),
+                AlternateTypeRules.newRule(typeResolver.resolve(Page.class, Object.class), typeResolver.resolve(PageData.class, Object.class))
             );
     }
     

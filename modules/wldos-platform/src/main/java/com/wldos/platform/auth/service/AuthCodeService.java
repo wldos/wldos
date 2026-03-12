@@ -14,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.wldos.platform.auth.vo.CaptchaVO;
 import com.wldos.framework.mvc.service.NonEntityService;
-import com.wldos.common.enums.RedisKeyEnum;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.UUIDUtils;
-import com.wldos.common.utils.captcha.VerifyCode;
+import io.github.wldos.common.enums.RedisKeyEnum;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.UUIDUtils;
+import io.github.wldos.common.utils.captcha.VerifyCode;
 import com.wldos.platform.core.service.MailService;
 import com.wldos.platform.core.service.UserService;
 

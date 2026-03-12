@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.KModelPubTypeExt;
-import com.wldos.platform.support.cms.dto.PubTypeExt;
+import io.github.wldos.platform.support.cms.dto.PubTypeExt;
 
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;

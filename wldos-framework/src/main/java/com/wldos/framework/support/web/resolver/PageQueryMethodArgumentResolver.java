@@ -8,7 +8,7 @@
 
 package com.wldos.framework.support.web.resolver;
 
-import com.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageQuery;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

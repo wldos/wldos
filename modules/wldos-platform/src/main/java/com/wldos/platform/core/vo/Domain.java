@@ -8,7 +8,7 @@
 
 package com.wldos.platform.core.vo;
 
-import com.wldos.common.Constants;
+import io.github.wldos.common.Constants;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

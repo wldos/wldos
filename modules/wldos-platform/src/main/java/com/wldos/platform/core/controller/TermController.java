@@ -11,19 +11,19 @@ package com.wldos.platform.core.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.Result;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.vo.SelectOption;
-import com.wldos.common.vo.TreeSelectOption;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.vo.SelectOption;
+import io.github.wldos.common.vo.TreeSelectOption;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.KTerms;
 import com.wldos.platform.core.service.TermService;
 import com.wldos.platform.core.vo.Category;
 import com.wldos.platform.core.vo.TermTree;
-import com.wldos.platform.support.term.dto.Term;
-import com.wldos.platform.support.term.enums.TermTypeEnum;
+import io.github.wldos.platform.support.term.dto.Term;
+import io.github.wldos.platform.support.term.enums.TermTypeEnum;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

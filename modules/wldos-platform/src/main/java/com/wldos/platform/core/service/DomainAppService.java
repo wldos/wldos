@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.wldos.framework.mvc.service.EntityService;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
+import io.github.wldos.common.enums.DeleteFlagEnum;
+import io.github.wldos.common.enums.ValidStatusEnum;
 import com.wldos.platform.core.dao.DomainAppDao;
 import com.wldos.platform.core.entity.WoDomainApp;
 

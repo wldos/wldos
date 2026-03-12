@@ -8,7 +8,7 @@
 
 package com.wldos.platform.core.dao;
 
-import com.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.entity.WoUser;
 
 /**

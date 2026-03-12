@@ -16,9 +16,9 @@ package com.example.myapp.controller;
 
 import com.example.myapp.entity.Article;
 import com.example.myapp.service.ArticleService;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.Result;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.EntityController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

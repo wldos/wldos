@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.common.Constants;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.Result;
-import com.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoDomain;
 import com.wldos.platform.core.entity.WoDomainResource;
 import com.wldos.platform.core.service.DomainService;
-import com.wldos.platform.support.domain.vo.DomainResource;
+import io.github.wldos.platform.support.domain.vo.DomainResource;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

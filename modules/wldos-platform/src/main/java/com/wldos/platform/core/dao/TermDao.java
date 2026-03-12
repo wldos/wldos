@@ -13,7 +13,7 @@ import java.util.List;
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.entity.KTerms;
-import com.wldos.platform.support.term.dto.Term;
+import io.github.wldos.platform.support.term.dto.Term;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;

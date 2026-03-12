@@ -13,7 +13,7 @@ import java.io.File;
 import javax.mail.internet.MimeMessage;
 
 import com.wldos.framework.mvc.service.EntityService;
-import com.wldos.framework.support.mail.MailSender;
+import io.github.wldos.framework.support.mail.MailSender;
 import com.wldos.platform.core.entity.WoMail;
 import com.wldos.platform.core.enums.MailEnum;
 import com.wldos.platform.core.dao.MailDao;

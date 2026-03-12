@@ -8,7 +8,7 @@
 
 package com.wldos.platform.core.enums;
 
-import com.wldos.common.Constants;
+import io.github.wldos.common.Constants;
 
 /**
  * 系统配置选项枚举。

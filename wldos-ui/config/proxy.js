@@ -15,13 +15,13 @@
 
 export default {
   dev: {
-      // 注意wldos、store、plugins、api是关键前缀，业务api不要包含这些，可能会导致404
-      // 后端api前缀：wldos 
-      '/wldos/' : {
-          target: 'http://localhost:8088/wldos',
+      // 注意 api、store、plugins、mock-api 是关键前缀，业务 api 不要包含这些，可能会导致 404
+      // 后端统一 API 前缀：/api
+      '/api/' : {
+          target: 'http://localhost:8088/api',
           changeOrigin: true,
           pathRewrite: {
-              '^/wldos/' : '',
+              '^/api/' : '',
           },
       },
     // wldos文件服务前缀
@@ -40,12 +40,12 @@ export default {
         '^/plugins/' : '',
       },
     },
-    // mock专用api前缀
-    '/api/' : {
-      target: 'http://localhost:8088/api',
+    // mock 专用 api 前缀（与真实 /api 区分）
+    '/mock-api/' : {
+      target: 'http://localhost:8088/mock-api',
       changeOrigin: true,
       pathRewrite: {
-        '^/api/' : '',
+        '^/mock-api/' : '',
       },
     },
   },
@@ -59,11 +59,11 @@ export default {
     },
   },
   pre: {
-      '/wldos': {
-          target: 'http://localhost:8088/wldos',
+      '/api': {
+          target: 'http://localhost:8088/api',
           changeOrigin: true,
           pathRewrite: {
-              '^/wldos': '',
+              '^/api': '',
           },
       },
   },

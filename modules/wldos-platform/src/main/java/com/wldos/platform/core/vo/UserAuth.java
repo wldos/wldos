@@ -9,8 +9,8 @@
 package com.wldos.platform.core.vo;
 
 import com.wldos.platform.core.entity.WoUser;
-import com.wldos.platform.support.resource.vo.Menu;
-import com.wldos.platform.support.resource.vo.Route;
+import io.github.wldos.platform.support.resource.vo.Menu;
+import io.github.wldos.platform.support.resource.vo.Route;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

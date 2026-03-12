@@ -11,7 +11,7 @@ package com.wldos.gateway;
 import java.util.List;
 import java.util.Objects;
 
-import com.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**

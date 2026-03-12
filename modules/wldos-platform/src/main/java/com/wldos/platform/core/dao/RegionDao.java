@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.WoRegion;
-import com.wldos.platform.support.region.vo.City;
+import io.github.wldos.platform.support.region.vo.City;
 import com.wldos.platform.core.vo.Prov;
 
 import org.springframework.data.jdbc.repository.query.Query;

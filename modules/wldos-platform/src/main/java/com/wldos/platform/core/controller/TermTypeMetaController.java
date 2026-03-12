@@ -9,7 +9,7 @@
 package com.wldos.platform.core.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wldos.common.res.Result;
+import io.github.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.service.TermTypeMetaService;

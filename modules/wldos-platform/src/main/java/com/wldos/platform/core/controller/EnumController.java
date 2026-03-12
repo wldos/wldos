@@ -12,11 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.wldos.common.vo.SelectOption;
-import com.wldos.framework.support.plugins.core.AutoStartEnum;
-import com.wldos.framework.support.plugins.core.PluginStatus;
-import com.wldos.platform.support.resource.enums.ResourceEnum;
-import com.wldos.platform.support.web.enums.TemplateTypeEnum;
+import io.github.wldos.common.vo.SelectOption;
+import io.github.wldos.framework.support.plugins.core.AutoStartEnum;
+import io.github.wldos.framework.support.plugins.core.PluginStatus;
+import io.github.wldos.platform.support.resource.enums.ResourceEnum;
+import io.github.wldos.platform.support.web.enums.TemplateTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

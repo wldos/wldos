@@ -13,9 +13,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.wldos.framework.mvc.service.EntityService;
-import com.wldos.common.Constants;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.utils.TreeUtils;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.utils.TreeUtils;
 import com.wldos.platform.core.dao.AuthRoleDao;
 import com.wldos.platform.core.dao.RoleOrgDao;
 import com.wldos.platform.core.dao.RoleDao;
@@ -26,9 +26,8 @@ import com.wldos.platform.core.enums.RoleTypeEnum;
 import com.wldos.platform.core.vo.AuthRes;
 import com.wldos.platform.core.vo.RoleRes;
 import com.wldos.platform.core.vo.RoleResTree;
-import com.wldos.platform.support.resource.entity.WoResource;
+import io.github.wldos.platform.support.resource.entity.WoResource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

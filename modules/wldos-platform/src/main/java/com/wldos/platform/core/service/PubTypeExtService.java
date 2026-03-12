@@ -13,8 +13,8 @@ import java.util.List;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.dao.PubTypeExtDao;
 import com.wldos.platform.core.entity.KModelPubTypeExt;
-import com.wldos.platform.support.cms.PubTypeExtOpener;
-import com.wldos.platform.support.cms.dto.PubTypeExt;
+import io.github.wldos.platform.support.cms.PubTypeExtOpener;
+import io.github.wldos.platform.support.cms.dto.PubTypeExt;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

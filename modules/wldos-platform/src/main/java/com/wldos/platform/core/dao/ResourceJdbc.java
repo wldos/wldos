@@ -10,9 +10,9 @@ package com.wldos.platform.core.dao;
 
 import java.util.List;
 
-import com.wldos.platform.support.resource.ResourceOpener;
-import com.wldos.platform.support.resource.entity.WoResource;
-import com.wldos.platform.support.resource.vo.AuthInfo;
+import io.github.wldos.platform.support.resource.ResourceOpener;
+import io.github.wldos.platform.support.resource.entity.WoResource;
+import io.github.wldos.platform.support.resource.vo.AuthInfo;
 
 import org.springframework.transaction.annotation.Transactional;
 

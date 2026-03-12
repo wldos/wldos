@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.wldos.common.Constants;
-import com.wldos.common.enums.BoolEnum;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.enums.BoolEnum;
+import io.github.wldos.common.enums.DeleteFlagEnum;
+import io.github.wldos.common.enums.ValidStatusEnum;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.dao.*;
 import com.wldos.platform.core.dao.ComUserDao;

@@ -11,8 +11,8 @@
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3
           https://maven.apache.org/xsd/assembly-1.1.3.xsd">
     <id>${project.parent.version}</id> <!-- 必须有 -->
+    <!-- 仅 zip：避免 dir 被附加到构建导致 WARNING: Assembly file is not a regular file -->
     <formats>
-        <format>dir</format>
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>

@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.8.0</version>
+		<version>2.3.8.2</version>
 	</parent>
 	<artifactId>wldos-framework</artifactId>
 	<packaging>jar</packaging>
@@ -23,11 +23,10 @@
 		WLDOS®开发框架，是基于springboot实现的轻量级快速开发框架。
 	</description>
 	<dependencies>
+		<!-- SDK 由 parent dependencyManagement 管理版本；framework 显式依赖以传递到业务模块 -->
 		<dependency>
-			<groupId>com.wldos</groupId>
-			<artifactId>wldos-common</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>compile</scope>
+			<groupId>io.github.wldos</groupId>
+			<artifactId>wldos-sdk-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda.imageio</groupId>
@@ -68,9 +67,9 @@
 			<version>1.5.21</version>
 		</dependency>
 
-	</dependencies>
+    </dependencies>
 	<properties>
-        <wldos.version>2.3.8.0</wldos.version>
+        <wldos.version>2.3.8.2</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>

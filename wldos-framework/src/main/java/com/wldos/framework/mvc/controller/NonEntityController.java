@@ -11,10 +11,10 @@ package com.wldos.framework.mvc.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wldos.framework.support.internal.Base;
-import com.wldos.framework.common.CommonOperation;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.ResultJson;
+import io.github.wldos.framework.common.CommonOperation;
+import io.github.wldos.framework.support.internal.Base;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.ResultJson;
 
 import com.wldos.framework.mvc.service.NonEntityService;
 import org.springframework.beans.factory.annotation.Autowired;

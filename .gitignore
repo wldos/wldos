@@ -63,3 +63,4 @@ build/
 !**/node/
 /auth-core/
 /commercial/
+/wldos-ui/src/pages/commercial/

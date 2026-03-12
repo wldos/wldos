@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wldos.framework.mvc.controller.EntityController;
-import com.wldos.platform.support.region.vo.City;
+import io.github.wldos.platform.support.region.vo.City;
 import com.wldos.platform.core.entity.WoRegion;
 import com.wldos.platform.core.service.RegionService;
 import com.wldos.platform.core.vo.Prov;

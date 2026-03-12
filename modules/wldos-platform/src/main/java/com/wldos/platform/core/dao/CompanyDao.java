@@ -11,9 +11,9 @@ package com.wldos.platform.core.dao;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.wldos.common.Constants;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.enums.DeleteFlagEnum;
+import io.github.wldos.common.enums.ValidStatusEnum;
 
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.dto.Tenant;

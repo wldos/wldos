@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.wldos.common.enums.ValidStatusEnum;
+import io.github.wldos.common.enums.ValidStatusEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -23,6 +23,7 @@ import org.springframework.data.annotation.Version;
 
 /**
  * 抽象实体，用于定义公共字段对应的公共属性。
+ * 位于 framework 层，供业务实体继承。
  *
  * @author 元悉宇宙
  * @date 2021-02-11

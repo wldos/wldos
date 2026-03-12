@@ -17,10 +17,10 @@ package com.example.myapp.service;
 import com.example.myapp.dao.ArticleDao;
 import com.example.myapp.dao.MockArticleDaoImpl;
 import com.example.myapp.entity.Article;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.framework.common.SaveOptions;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.framework.common.SaveOptions;
 import com.wldos.framework.mvc.service.EntityService;
 import org.springframework.stereotype.Service;
 

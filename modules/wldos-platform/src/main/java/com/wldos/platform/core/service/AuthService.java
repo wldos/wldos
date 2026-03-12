@@ -15,20 +15,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.platform.core.dao.DomainResourceDao;
 import com.wldos.platform.core.dao.ResourceDao;
-import com.wldos.platform.support.auth.AuthOpener;
-import com.wldos.platform.support.auth.vo.AuthVerify;
-import com.wldos.framework.support.cache.ICache;
-import com.wldos.platform.support.resource.vo.AuthInfo;
-import com.wldos.platform.support.resource.vo.DynSet;
-import com.wldos.platform.support.resource.vo.Menu;
+import io.github.wldos.platform.support.auth.AuthOpener;
+import io.github.wldos.platform.support.auth.vo.AuthVerify;
+import io.github.wldos.framework.support.cache.ICache;
+import io.github.wldos.platform.support.resource.vo.AuthInfo;
+import io.github.wldos.platform.support.resource.vo.DynSet;
+import io.github.wldos.platform.support.resource.vo.Menu;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 /**
  * 平台权限体系service。
+ * 业务模块通过注入方式调用契约接口 AuthOpener，不实现该接口。
  *
  * @author 元悉宇宙
  * @date 2021/4/26
@@ -36,10 +38,11 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class AuthService implements AuthOpener {
+public class AuthService {
 	@SuppressWarnings("all")
 	@Autowired
 	@Lazy
+	@Qualifier("authOpener")
 	private AuthOpener authOpener;
 
 	private final ResourceDao resourceRepo;
@@ -70,7 +73,7 @@ public class AuthService implements AuthOpener {
 	 * @return AuthVerify 验证结果
 	 */
 	public AuthVerify verifyReqAuth(Long domainId, String appCode, Long userId, Long comId, String reqUri, String reqMethod) {
-		return this.authOpener.verifyReqAuth(domainId, appCode, userId, comId, reqUri, reqMethod, this.termService, this.resourceRepo, this.cache);
+		return this.authOpener.verifyReqAuth(domainId, appCode, userId, comId, reqUri, reqMethod);
 	}
 
 	/**
@@ -157,6 +160,6 @@ public class AuthService implements AuthOpener {
 	 * 已登录检查是否有权限，无权限返回403，否则返回200
 	 */
 	public String authorityRouteCheck(String route, Long userId, Long domainId, Long tenantId, HttpServletRequest request) {
-		return this.authOpener.authorityRoute(route, userId, domainId, tenantId, request, this);
+		return this.authOpener.authorityRoute(route, userId, domainId, tenantId, request, this.authOpener);
 	}
 }

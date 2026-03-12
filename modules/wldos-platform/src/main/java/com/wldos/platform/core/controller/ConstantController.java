@@ -12,9 +12,9 @@ import java.util.Map;
 
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.framework.mvc.service.impl.NullService;
-import com.wldos.common.enums.FileAccessPolicyEnum;
-import com.wldos.common.res.Result;
-import com.wldos.framework.support.storage.IStore;
+import io.github.wldos.common.enums.FileAccessPolicyEnum;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.framework.support.storage.IStore;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

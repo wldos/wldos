@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wldos.common.Constants;
-import com.wldos.common.res.PageQuery;
-
 import com.wldos.framework.mvc.service.EntityService;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.res.PageQuery;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

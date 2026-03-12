@@ -8,8 +8,8 @@
 
 package com.wldos.gateway;
 
-import com.wldos.common.Constants;
-import com.wldos.common.exception.BaseException;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.exception.BaseException;
 
 /**
  * 非法域名请求异常。

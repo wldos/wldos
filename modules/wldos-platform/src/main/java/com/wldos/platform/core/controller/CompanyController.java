@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wldos.common.Constants;
-import com.wldos.common.res.PageQuery;
-import com.wldos.common.res.PageData;
-import com.wldos.common.res.Result;
-import com.wldos.common.utils.ObjectUtils;
-import com.wldos.common.vo.SelectOption;
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.Result;
+import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.common.vo.SelectOption;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoCompany;
 import com.wldos.platform.core.service.CompanyService;

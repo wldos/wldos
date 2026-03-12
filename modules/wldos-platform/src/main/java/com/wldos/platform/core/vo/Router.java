@@ -10,7 +10,7 @@ package com.wldos.platform.core.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.wldos.platform.support.resource.vo.RouteNode;
+import io.github.wldos.platform.support.resource.vo.RouteNode;
 
 import io.swagger.annotations.ApiModel;
 

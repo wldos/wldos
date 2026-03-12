@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wldos.platform.config.PropertiesReader;
-import com.wldos.common.res.Result;
+import io.github.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.platform.core.service.OptionsNoRepoService;
-import com.wldos.platform.support.system.entity.WoOptions;
+import io.github.wldos.platform.support.system.entity.WoOptions;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;

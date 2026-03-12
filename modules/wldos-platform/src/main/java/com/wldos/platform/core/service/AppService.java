@@ -8,11 +8,11 @@
 
 package com.wldos.platform.core.service;
 
-import com.wldos.common.res.PageData;
-import com.wldos.framework.common.AuditFields;
-import com.wldos.common.enums.DeleteFlagEnum;
-import com.wldos.common.enums.ValidStatusEnum;
-import com.wldos.common.res.PageQuery;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.framework.common.AuditFields;
+import io.github.wldos.common.enums.DeleteFlagEnum;
+import io.github.wldos.common.enums.ValidStatusEnum;
+import io.github.wldos.common.res.PageQuery;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.dao.AppDao;
 import com.wldos.platform.core.dao.DomainResourceDao;
@@ -23,7 +23,7 @@ import com.wldos.platform.core.entity.WoApp;
 import com.wldos.platform.core.entity.WoDomainApp;
 import com.wldos.platform.core.enums.AppOriginEnum;
 import com.wldos.platform.core.enums.AppTypeEnum;
-import com.wldos.platform.support.plugins.IPluginDataService;
+import io.github.wldos.platform.support.plugins.IPluginDataService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +103,20 @@ public class AppService extends EntityService<AppDao, WoApp, Long> {
         app.setDeleteFlag(DeleteFlagEnum.NORMAL.toString());
         // saveOrUpdate 会自动填充 ID，直接返回保存后的实体
         return this.saveOrUpdate(app);
+    }
+
+    /**
+     * 获取或创建插件对应的系统应用（契约接口方法，供 PlatformPluginAppOpener 委托调用）。
+     */
+    public Long getOrCreatePluginApp(String pluginCode, String pluginName, String appOrigin) {
+        AppOriginEnum origin = AppOriginEnum.PLUGIN;
+        if (appOrigin != null && !appOrigin.isEmpty()) {
+            try {
+                origin = AppOriginEnum.valueOf(appOrigin.toUpperCase());
+            } catch (IllegalArgumentException ignored) {}
+        }
+        WoApp app = getOrCreatePluginApp(pluginCode, pluginName, origin);
+        return app != null ? app.getId() : null;
     }
 
     /**

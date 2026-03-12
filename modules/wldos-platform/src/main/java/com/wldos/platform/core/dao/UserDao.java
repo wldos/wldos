@@ -15,7 +15,7 @@ import java.util.Optional;
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.WoOrg;
 import com.wldos.platform.core.entity.WoUser;
-import com.wldos.platform.support.auth.vo.UserInfo;
+import io.github.wldos.platform.support.auth.vo.UserInfo;
 
 import org.springframework.data.jdbc.repository.query.Query;
 

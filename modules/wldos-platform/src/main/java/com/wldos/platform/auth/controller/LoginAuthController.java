@@ -10,7 +10,7 @@ package com.wldos.platform.auth.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wldos.common.res.Result;
+import io.github.wldos.common.res.Result;
 import com.wldos.platform.auth.service.LoginAuthService;
 import com.wldos.platform.auth.vo.ActiveParams;
 import com.wldos.platform.auth.vo.BakEmailModifyParams;
@@ -23,8 +23,8 @@ import com.wldos.platform.auth.vo.PasswdResetParams;
 import com.wldos.platform.auth.vo.Register;
 import com.wldos.platform.auth.vo.SecQuestModifyParams;
 import com.wldos.framework.mvc.controller.NonEntityController;
-import com.wldos.common.Constants;
-import com.wldos.platform.support.auth.KeyConfig;
+import io.github.wldos.common.Constants;
+import io.github.wldos.platform.support.auth.KeyConfig;
 import com.wldos.platform.core.vo.User;
 
 import org.springframework.beans.factory.annotation.Value;

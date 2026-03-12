@@ -10,7 +10,7 @@ package com.wldos.platform.core.dto;
 
 import java.util.List;
 
-import com.wldos.platform.support.term.dto.Term;
+import io.github.wldos.platform.support.term.dto.Term;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

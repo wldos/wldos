@@ -11,7 +11,7 @@ package com.wldos.platform.core.dao;
 import java.util.List;
 
 import com.wldos.framework.mvc.dao.BaseDao;
-import com.wldos.platform.support.resource.entity.WoResource;
+import io.github.wldos.platform.support.resource.entity.WoResource;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
