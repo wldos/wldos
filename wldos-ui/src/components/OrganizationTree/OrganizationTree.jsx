@@ -8,9 +8,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Tree, Spin, Badge, message } from 'antd';
+import { useIntl } from 'umi';
 import { fetchOrganizationData, fetchUsersByOrganization, loadSystemsByCompany, loadOrganizationsBySystem } from '@/services/organization';
 
 const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeDataChange, externalTreeData }) => {
+  const intl = useIntl();
   const [treeData, setTreeData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -47,7 +49,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
       }
       return data;
     } catch (error) {
-      message.error('加载组织架构数据失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadTreeFail' }));
       throw error;
     } finally {
       setLoading(false);
@@ -68,7 +70,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
       const users = await fetchUsersByOrganization(organizationId);
       updateTreeWithUsers(organizationId, users);
     } catch (error) {
-      message.error('加载用户数据失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadUsersFail' }));
     }
   };
 
@@ -116,15 +118,15 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
     const getNodeName = (node) => {
       switch (node.type) {
         case 'company':
-          return node.comName || '未知公司';
+          return node.comName || intl.formatMessage({ id: 'component.organizationTree.unknown.company' });
         case 'system':
-          return node.archName || '未知体系';
+          return node.archName || intl.formatMessage({ id: 'component.organizationTree.unknown.system' });
         case 'organization':
-          return node.orgName || '未知机构';
+          return node.orgName || intl.formatMessage({ id: 'component.organizationTree.unknown.organization' });
         case 'user':
-          return node.nickname || node.account || node.name || '未知用户';
+          return node.nickname || node.account || node.name || intl.formatMessage({ id: 'component.organizationTree.unknown.user' });
         default:
-          return node.name || '未知';
+          return node.name || intl.formatMessage({ id: 'component.organizationTree.unknown.default' });
       }
     };
 
@@ -180,7 +182,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
       updateTreeWithChildren(companyId, systems);
     } catch (error) {
       console.error('加载体系数据失败:', error);
-      message.error('加载体系数据失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadSystemsFail' }));
     }
   };
 
@@ -193,7 +195,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
       updateTreeWithChildren(systemId, organizations);
     } catch (error) {
       console.error('加载机构数据失败:', error);
-      message.error('加载机构数据失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadOrganizationsFail' }));
     }
   };
 

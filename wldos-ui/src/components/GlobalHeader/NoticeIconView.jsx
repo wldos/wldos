@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { connect } from 'umi';
+import { connect, useIntl } from 'umi';
 import { Tag, message } from 'antd';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
@@ -18,6 +18,7 @@ import { history } from 'umi';
 
 class GlobalHeaderRight extends Component {
   pollTimer = null;
+  intl = this.props.intl || this.props.injectedIntl || null;
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -82,7 +83,11 @@ class GlobalHeaderRight extends Component {
 
   handleNoticeClear = (title, key) => {
     const { dispatch } = this.props;
-    message.success(`${'清空了'} ${title}`);
+    const intl = this.intl || this.props.intl || this.props.injectedIntl;
+    const clearedText = intl
+      ? intl.formatMessage({ id: 'component.noticeIcon.cleared' })
+      : '清空了';
+    message.success(`${clearedText} ${title}`);
 
     if (dispatch) {
       dispatch({
@@ -160,6 +165,7 @@ class GlobalHeaderRight extends Component {
   render() {
     const { currentUser, fetchingNotices, onNoticeVisibleChange } = this.props;
     const noticeData = this.getNoticeData();
+    const intl = this.intl || this.props.intl || this.props.injectedIntl;
     const unreadMsg = this.getUnreadData(noticeData);
     return (
       <NoticeIcon
@@ -169,8 +175,8 @@ class GlobalHeaderRight extends Component {
           this.changeReadState(item);
         }}
         loading={fetchingNotices}
-        clearText="清空"
-        viewMoreText="查看更多"
+        clearText={intl ? intl.formatMessage({ id: 'component.noticeIcon.clear' }) : '清空'}
+        viewMoreText={intl ? intl.formatMessage({ id: 'component.noticeIcon.view-more' }) : '查看更多'}
         onClear={this.handleNoticeClear}
         onPopupVisibleChange={(visible) => {
           if (visible && this.props.dispatch) {
@@ -182,7 +188,7 @@ class GlobalHeaderRight extends Component {
           if (tabKey === 'notification') {
             history.push(this.props.noticeMode === 'adminTicket' ? '/admin/sys/ticket' : '/ticket/list');
           } else if (tabKey === 'message') history.push('/account/settings?tab=notification');
-          else message.info('查看更多');
+          else message.info(intl ? intl.formatMessage({ id: 'component.noticeIcon.view-more' }) : '查看更多');
         }}
         clearClose
       >
@@ -190,22 +196,22 @@ class GlobalHeaderRight extends Component {
           tabKey="notification"
           count={unreadMsg.notification}
           list={noticeData.notification}
-          title="通知"
-          emptyText="你已查看所有通知"
+          title={intl ? intl.formatMessage({ id: 'component.globalHeader.notification' }) : '通知'}
+          emptyText={intl ? intl.formatMessage({ id: 'component.globalHeader.notification.empty' }) : '你已查看所有通知'}
           showViewMore
         />
         <NoticeIcon.Tab
           tabKey="message"
           count={unreadMsg.message}
           list={noticeData.message}
-          title="消息"
-          emptyText="您已读完所有消息"
+          title={intl ? intl.formatMessage({ id: 'component.globalHeader.message' }) : '消息'}
+          emptyText={intl ? intl.formatMessage({ id: 'component.globalHeader.message.empty' }) : '您已读完所有消息'}
           showViewMore
         />
         <NoticeIcon.Tab
           tabKey="event"
-          title="待办"
-          emptyText="你已完成所有待办"
+          title={intl ? intl.formatMessage({ id: 'component.globalHeader.event' }) : '待办'}
+          emptyText={intl ? intl.formatMessage({ id: 'component.globalHeader.event.empty' }) : '你已完成所有待办'}
           count={unreadMsg.event}
           list={noticeData.event}
           showViewMore

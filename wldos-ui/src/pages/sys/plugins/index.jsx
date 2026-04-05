@@ -209,8 +209,6 @@ const PluginList = ({ dispatch }) => {
               title="确定要禁用这个插件吗？"
               description="禁用后插件将停止运行，但不会卸载。"
               onConfirm={() => handleDisable(record)}
-              okText="确定"
-              cancelText="取消"
             >
               <Tooltip title="禁用插件">
                 <Button
@@ -225,8 +223,6 @@ const PluginList = ({ dispatch }) => {
               title="确定要启用这个插件吗？"
               description="启用后插件将开始运行。"
               onConfirm={() => handleEnable(record)}
-              okText="确定"
-              cancelText="取消"
             >
               <Tooltip title="启用插件">
                 <Button
@@ -244,8 +240,6 @@ const PluginList = ({ dispatch }) => {
               title="确定要更新这个插件吗？"
               description="更新过程中插件将暂时不可用，请确认是否继续？"
               onConfirm={() => handleUpdate(record)}
-              okText="确定"
-              cancelText="取消"
             >
               <Tooltip title="更新插件">
                 <Button
@@ -270,8 +264,6 @@ const PluginList = ({ dispatch }) => {
               </div>
             }
             onConfirm={() => handleUninstall(record)}
-            okText="确定"
-            cancelText="取消"
           >
             <Tooltip title="卸载插件">
               <Button

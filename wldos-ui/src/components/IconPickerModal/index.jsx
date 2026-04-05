@@ -8,10 +8,12 @@
 
 import React, { useState } from 'react';
 import { Button, Space } from 'antd';
+import { useIntl } from 'umi';
 import FullscreenModal from '@/components/FullscreenModal';
 import IconSelector from '@/components/IconSelector';
 
 const IconPickerModal = ({ visible, onCancel, onOk, value }) => {
+  const intl = useIntl();
   const [selectedIcon, setSelectedIcon] = useState(value || {});
 
   // 当 visible 变化时，更新选中状态
@@ -34,17 +36,17 @@ const IconPickerModal = ({ visible, onCancel, onOk, value }) => {
   const renderFooter = () => (
     <Space>
       <Button onClick={handleCancel}>
-        取消
+        {intl.formatMessage({ id: 'component.iconPicker.cancel' })}
       </Button>
       <Button type="primary" onClick={handleOk}>
-        确定
+        {intl.formatMessage({ id: 'component.iconPicker.ok' })}
       </Button>
     </Space>
   );
 
   return (
     <FullscreenModal
-      title="选择图标"
+      title={intl.formatMessage({ id: 'component.iconPicker.title' })}
       visible={visible}
       onCancel={handleCancel}
       footer={renderFooter()}

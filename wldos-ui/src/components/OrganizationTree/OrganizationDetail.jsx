@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Switch, Spin, message } from 'antd';
+import { useIntl } from 'umi';
 import { fetchUsersByOrganization } from '@/services/organization';
 import CompanyDetail from './CompanyDetail';
 import SystemDetail from './SystemDetail';
@@ -28,6 +29,7 @@ const OrganizationDetail = ({
   onPermissionSettings,
   onOrganizationDelete
 }) => {
+  const intl = useIntl();
   const [showUsers, setShowUsers] = useState(false);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,7 @@ const OrganizationDetail = ({
     return (
       <Card>
         <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}>
-          请选择组织节点
+          {intl.formatMessage({ id: 'component.organizationTree.detail.selectNode' })}
         </div>
       </Card>
     );
@@ -84,7 +86,7 @@ const OrganizationDetail = ({
       setUsersLoaded(true);
     } catch (error) {
       console.error('加载用户数据失败:', error);
-      message.error('加载用户数据失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadUsersFail' }));
       setUsersLoaded(false);
     } finally {
       setLoading(false);
@@ -95,7 +97,7 @@ const OrganizationDetail = ({
     console.log('添加用户功能被调用:', data);
     // TODO: 实现添加用户的具体逻辑
     // 这里可以打开添加用户的模态框或跳转到用户管理页面
-    message.info('添加用户功能待实现');
+    message.info(intl.formatMessage({ id: 'component.organizationTree.detail.userAddTodo' }));
   };
 
   const handleShowUsers = () => {
@@ -197,7 +199,7 @@ const OrganizationDetail = ({
       case 'user':
         return <UserDetail user={selectedNode} />;
       default:
-        return <div>未知类型</div>;
+        return <div>{intl.formatMessage({ id: 'component.organizationTree.unknown.type' })}</div>;
     }
   };
 
@@ -205,28 +207,30 @@ const OrganizationDetail = ({
   const getNodeDisplayName = (node) => {
     switch (node.type) {
       case 'company':
-        return node.comName || '未知公司';
+        return node.comName || intl.formatMessage({ id: 'component.organizationTree.unknown.company' });
       case 'system':
-        return node.archName || '未知体系';
+        return node.archName || intl.formatMessage({ id: 'component.organizationTree.unknown.system' });
       case 'organization':
-        return node.orgName || '未知机构';
+        return node.orgName || intl.formatMessage({ id: 'component.organizationTree.unknown.organization' });
       case 'user':
-        return node.nickname || '未知用户';
+        return node.nickname || intl.formatMessage({ id: 'component.organizationTree.unknown.user' });
       default:
-        return node.name || '未知';
+        return node.name || intl.formatMessage({ id: 'component.organizationTree.unknown.default' });
     }
   };
 
   return (
     <Card
-      title={`${getNodeDisplayName(selectedNode)} - 详情管理`}
+      title={`${getNodeDisplayName(selectedNode)} - ${intl.formatMessage({ id: 'component.organizationTree.detail.manage' })}`}
       extra={
         selectedNode.type === 'organization' && (
           <Button
             type="primary"
             onClick={() => setShowUsers(!showUsers)}
           >
-            {showUsers ? '隐藏用户' : '显示用户'}
+            {showUsers
+              ? intl.formatMessage({ id: 'component.organizationTree.detail.hideUsers' })
+              : intl.formatMessage({ id: 'component.organizationTree.detail.showUsers' })}
           </Button>
         )
       }

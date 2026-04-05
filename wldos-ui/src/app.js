@@ -6,6 +6,24 @@ import {getAuthority} from "@/utils/authority";
 import {autoLoginManager} from "@/utils/autoLogin";
 // 导入 pluginRequest 以确保 window.pluginRequest 被暴露
 import '@/utils/pluginRequest';
+import { resolveRuntimeLocale, getMomentLocaleTag } from '@/utils/runtimeLocale';
+
+/** 统一语言解析：仅 zh-CN / zh-TW / en-US，避免匹配到 pt-BR 等片段 locale */
+export const locale = {
+  getLocale() {
+    return resolveRuntimeLocale();
+  },
+};
+
+/** 保证 moment 与 Umi 语言一致（ignoreMomentLocale 时仍需按需加载 locale 数据） */
+export async function render(oldRender) {
+  const m = (await import('moment')).default;
+  await import('moment/locale/zh-cn');
+  await import('moment/locale/zh-tw');
+  const tag = getMomentLocaleTag(resolveRuntimeLocale());
+  m.locale(tag);
+  oldRender();
+}
 
 // 主应用暴露 React 到全局，供插件运行时复用（类似 Java 类加载器机制）
 // 插件代码可以直接 import React from 'react'，webpack externals 会转换为从 window.React 获取

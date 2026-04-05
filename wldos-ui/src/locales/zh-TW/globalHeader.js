@@ -22,4 +22,11 @@ export default {
   'component.noticeIcon.cleared': '清空了',
   'component.noticeIcon.empty': '暫無資料',
   'component.noticeIcon.view-more': '查看更多',
+  'component.globalHeader.fullSearch': '全文檢索',
+  'component.globalHeader.fullscreen.enter': '進入全屏',
+  'component.globalHeader.fullscreen.exit': '退出全屏',
+  'component.globalHeader.menu.center': '個人中心',
+  'component.globalHeader.menu.settings': '個人設定',
+  'component.globalHeader.menu.logout': '退出登入',
+  'component.globalHeader.menu.login': '登入',
 };

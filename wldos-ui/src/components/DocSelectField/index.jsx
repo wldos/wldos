@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, InputNumber, Button, Input } from 'antd';
+import { useIntl } from 'umi';
 import { SearchOutlined } from '@ant-design/icons';
 import PubSelectorModal from './PubSelectorModal';
 
@@ -26,22 +27,23 @@ const DocSelectInput = ({ value, onOpenSelector, placeholder, buttonText }) => (
  * 须在 Form 内使用，内部通过 Form.useFormInstance() 写回选中项。
  *
  * @param {string} name - 表单字段名，如 'pubId'
- * @param {string} [label='CMS 文档'] - 表单项标签
+ * @param {string} [label] - 表单项标签
  * @param {object[]} [rules] - 校验规则
  * @param {string} [extra] - 额外说明
- * @param {string} [placeholder='点击右侧按钮选择文档'] - 输入框占位
- * @param {string} [buttonText='选择文档'] - 按钮文案
- * @param {string} [modalTitle='选择文档'] - 弹窗标题
+ * @param {string} [placeholder] - 输入框占位
+ * @param {string} [buttonText] - 按钮文案
+ * @param {string} [modalTitle] - 弹窗标题
  */
 const DocSelectField = ({
   name = 'pubId',
-  label = 'CMS 文档',
+  label,
   rules,
   extra,
-  placeholder = '点击右侧按钮选择文档',
-  buttonText = '选择文档',
-  modalTitle = '选择文档',
+  placeholder,
+  buttonText,
+  modalTitle,
 }) => {
+  const intl = useIntl();
   const form = Form.useFormInstance();
   const [visible, setVisible] = useState(false);
 
@@ -52,16 +54,21 @@ const DocSelectField = ({
 
   return (
     <>
-      <Form.Item name={name} label={label} rules={rules} extra={extra}>
+      <Form.Item
+        name={name}
+        label={label || intl.formatMessage({ id: 'component.docSelect.label' })}
+        rules={rules}
+        extra={extra}
+      >
         <DocSelectInput
-          placeholder={placeholder}
-          buttonText={buttonText}
+          placeholder={placeholder || intl.formatMessage({ id: 'component.docSelect.placeholder' })}
+          buttonText={buttonText || intl.formatMessage({ id: 'component.docSelect.button' })}
           onOpenSelector={() => setVisible(true)}
         />
       </Form.Item>
       <PubSelectorModal
         visible={visible}
-        title={modalTitle}
+        title={modalTitle || intl.formatMessage({ id: 'component.docSelect.modal.title' })}
         onSelect={handleSelect}
         onCancel={() => setVisible(false)}
       />

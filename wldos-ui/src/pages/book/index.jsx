@@ -11,6 +11,18 @@ import EditBookForm from "@/pages/book/components/EditBookForm";
 import {addBook, addChapter} from "@/pages/book/service";
 import updateDarkTheme from "@/components/DarkTheme/UpdateTheme";
 
+// 移动端三 pane 状态机（books/chapters/editor）收口函数：
+// - 优先使用显式传入的目标 pane（事件驱动）
+// - 否则按路由 + 作品类型推导默认 pane（数据驱动）
+const resolveMobilePane = ({forcedPane, match = {}, currentBook = {}, isSingleWork}) => {
+  if (forcedPane) return forcedPane;
+  const path = match?.path || '';
+  if (path === '/space/book') return 'books';
+  if (isSingleWork(currentBook)) return 'editor';
+  if (path === '/space/book/:bookId/chapter/:chapterId') return 'editor';
+  return 'chapters';
+};
+
 class Book extends Component {
   main = undefined;
   darkMode = localStorage.getItem("darkMode") === "1";
@@ -22,6 +34,8 @@ class Book extends Component {
       modalVisible: false,
       url: '',
       darkMode: false,
+      isPhone: false,
+      mobilePane: null,
     };
   }
 
@@ -79,13 +93,23 @@ class Book extends Component {
   callback4Chapter = (dispatch, resp) => {
     if (resp.success) {
       const {id: bookId, isSingle, chapter} = resp.data;
+      const { isPhone } = this.state;
+      // 移动端：始终以接口返回类型决定当前 pane，避免首击不切换
+      if (isPhone) {
+        this.setState({ mobilePane: isSingle ? 'editor' : 'chapters' });
+      }
       if (chapter?.length > 0) {
         const {id: chapterId} = chapter[0];
         // 单体无需二次查询
         if (!isSingle) {
-          history.push({
-            pathname: `/space/book/${bookId}/chapter/${chapterId}`,
-          });
+          if (isPhone) {
+            // 移动端保留在作品路由，但必须拉取章节详情，保证进入编辑区有完整内容
+            this.queryCurrentChapter(dispatch, {bookId, chapterId});
+          } else {
+            history.push({
+              pathname: `/space/book/${bookId}/chapter/${chapterId}`,
+            });
+          }
         } else {
           if (!chapter || !chapter[0])
             return;
@@ -143,20 +167,36 @@ class Book extends Component {
         return;
       }
 
-      let mode = 'inline';
-      const {offsetWidth} = this.main;
-
-      if (this.main.offsetWidth < 641 && offsetWidth > 400) {
-        mode = 'horizontal';
-      }
-
-      if (window.innerWidth < 768 && offsetWidth > 400) {
-        mode = 'horizontal';
-      }
-
-      this.setState({ mode });
+      const isPhone = window.innerWidth <= 640;
+      const mode = isPhone ? 'horizontal' : 'inline';
+      this.setState({ mode, isPhone });
     });
   };
+
+  componentDidUpdate(prevProps) {
+    const prevPath = prevProps?.match?.path;
+    const nextPath = this.props?.match?.path;
+    const prevBookParam = prevProps?.match?.params?.bookId;
+    const nextBookParam = this.props?.match?.params?.bookId;
+    const prevChapterParam = prevProps?.match?.params?.chapterId;
+    const nextChapterParam = this.props?.match?.params?.chapterId;
+    const routeChanged = prevPath !== nextPath
+      || prevBookParam !== nextBookParam
+      || prevChapterParam !== nextChapterParam;
+
+    if (routeChanged) {
+      this.query();
+    }
+
+    // 不在这里全局重置 mobilePane，避免用户手动切 pane 后被异步状态回写覆盖
+  }
+
+  getMobilePane = (props, forcedPane) => resolveMobilePane({
+    forcedPane,
+    match: props?.match,
+    currentBook: props?.currentBook,
+    isSingleWork: this.isSingleWork,
+  });
 
   queryCategory = (dispatch) => {
     dispatch({
@@ -172,6 +212,22 @@ class Book extends Component {
 
   setModalVisible = (bl) => {
     this.setState({modalVisible: bl});
+  };
+
+  isSingleWork = (bookItem) => {
+    const raw = bookItem?.isSingle;
+    return raw === true || raw === 1 || raw === '1' || raw === 'true';
+  };
+
+  onMobileBookSelected = (bookItem) => {
+    if (!bookItem) return;
+    // 点击作品后由 fetchCurrentBook 回调统一决定切换到章节或编辑
+  };
+
+  onMobileChapterSelected = () => {
+    this.setState((prevState, props) => ({
+      mobilePane: this.getMobilePane(props, 'editor'),
+    }));
   };
 
   addChapter = async (currentBook) => {
@@ -205,6 +261,8 @@ class Book extends Component {
         telephone: bookInfo.telephone,
         pubExcerpt: bookInfo.pubExcerpt,
         privacyLevel: bookInfo.privacyLevel,
+        visibilityScope: bookInfo.visibilityScope,
+        reward: bookInfo.reward,
         cover: bookInfo.cover,
         mainPic1: bookInfo.mainPic1,
         mainPic2: bookInfo.mainPic2,
@@ -239,12 +297,14 @@ class Book extends Component {
       match,
     } = this.props;
 
-    const {mode, modalVisible, darkMode} = this.state;
+    const {mode, modalVisible, darkMode, mobilePane, isPhone} = this.state;
+    let activeMobilePane = mobilePane ?? this.getMobilePane(this.props);
+    const isSingleBook = this.isSingleWork(currentBook);
+    // 桌面端：仅复合型展示章节；手机端：为保证可达性，始终展示章节 tab
+    const showChapterTab = !!currentBook?.id && (!isSingleBook || isPhone);
+    const hasChapter = (currentBook?.chapter?.length || 0) > 0;
 
-    if (match?.url !== localStorage?.getItem('bookUrl')) {
-      this.query();
-      localStorage.setItem('bookUrl', match.url);
-    }
+    const listMode = isPhone ? 'inline' : mode;
 
     return (
       <div
@@ -255,36 +315,99 @@ class Book extends Component {
           }
         }}
       >
-        <div className={`${styles.leftMenu} ${styles.book}`}>
-          <div>
-            <Button type="primary" shape="round" style={{ marginLeft: 2,}} href="/" target="_parent"><HomeOutlined/>返首页</Button>
-            <Button type="text" style={{ marginLeft: 2,}} onClick={() => this.setModalVisible(true)}><PlusOutlined/>新建作品</Button>
-            <Switch checkedChildren="🌙" unCheckedChildren="☀" onClick={this.switchDarkMode} defaultChecked={darkMode} size={"small"} />
+        <div
+          className={`${styles.leftMenu} ${styles.book} ${
+            isPhone && activeMobilePane !== 'books' ? styles.mobileOnlyNav : ''
+          }`}
+        >
+          <div className={styles.topActions}>
+            <Button size="small" type="primary" shape="round" style={{ marginLeft: 2,}} href="/" target="_parent"><HomeOutlined/>返首页</Button>
+            <Button size="small" type="text" style={{ marginLeft: 2,}} onClick={() => this.setModalVisible(true)}><PlusOutlined/>新建作品</Button>
+            <Switch
+              checkedChildren={<span className={styles.switchIcon}>🌙</span>}
+              unCheckedChildren={<span className={styles.switchIcon}>☀</span>}
+              onClick={this.switchDarkMode}
+              defaultChecked={darkMode}
+              size={"small"}
+            />
           </div>
-          <div className={styles.itemList}>
-            <BookList {...{ match, mode, history}} />
-          </div>
+          {isPhone ? (
+            <div className={styles.mobileNav}>
+              <Button
+                size="small"
+                type={activeMobilePane === 'books' ? 'primary' : 'default'}
+                onClick={() => this.setState((prevState, props) => ({ mobilePane: this.getMobilePane(props, 'books') }))}
+              >
+                作品
+              </Button>
+              {showChapterTab && (
+                <Button
+                  size="small"
+                  type={activeMobilePane === 'chapters' ? 'primary' : 'default'}
+                  onClick={() => this.setState((prevState, props) => ({ mobilePane: this.getMobilePane(props, 'chapters') }))}
+                >
+                  章节
+                </Button>
+              )}
+              <Button
+                size="small"
+                type={activeMobilePane === 'editor' ? 'primary' : 'default'}
+                onClick={() => this.setState((prevState, props) => ({ mobilePane: this.getMobilePane(props, 'editor') }))}
+              >
+                编辑
+              </Button>
+            </div>
+          ) : null}
+          {(!isPhone || activeMobilePane === 'books') && (
+            <div className={styles.itemList}>
+              <BookList {...{
+                match,
+                mode: listMode,
+                history,
+                onMobileBookSelected: this.onMobileBookSelected,
+              }} />
+            </div>
+          )}
         </div>
-        <div className={styles.right}>
+        {(!isPhone || activeMobilePane !== 'books') && (
+          <div className={`${styles.right} ${isPhone ? styles.mobileRight : ''}`}>
           {
               /* 判断是否复合结构，不是则展示一个编辑区 */
-            !currentBook.isSingle ? (<div className={styles.main}>
-                <div className={`${styles.leftMenu} ${styles.chapter}`}>
-                  <div>
-                    <Button type="text" style={{ marginLeft: 2 }} onClick={() => this.addChapter(currentBook)}><PlusOutlined/>添加内容</Button>
+            !currentBook.isSingle ? (
+              <div className={styles.main}>
+                {(!isPhone || activeMobilePane === 'chapters') && (
+                  <div className={`${styles.leftMenu} ${styles.chapter}`}>
+                    <div>
+                      <Button type="text" style={{ marginLeft: 2 }} onClick={() => this.addChapter(currentBook)}><PlusOutlined/>添加内容</Button>
+                    </div>
+                    <div className={styles.itemList}>
+                      {hasChapter ? <Chapter {...{
+                        mode: listMode,
+                        match,
+                        history,
+                        onMobileChapterSelected: this.onMobileChapterSelected,
+                      }} /> : (
+                        <div className={styles.emptyTips}>暂无章节，请先添加内容</div>
+                      )}
+                    </div>
                   </div>
-                  <div className={styles.itemList}>
-                    <Chapter {...{mode, match, history}} />
+                )}
+                {(!isPhone || activeMobilePane === 'editor') && (
+                  <div className={styles.right}>
+                    {hasChapter ? <BookView {...{dispatch, currentChapter}} />
+                      : <div className={styles.emptyTips}>暂无可编辑章节，请先到“章节”添加内容</div>}
                   </div>
-                </div>
-                <div className={styles.right}>
-                  {currentBook?.chapter?.length > 0 ? <BookView {...{dispatch, currentChapter}} />
-                    : <div className={styles.flow}><img alt="WLDOS" src="http://www.wldos.com/store/wldos.svg" /></div>}
-                </div>
-              </div>)
-              : <BookView {...{dispatch, currentChapter, isSingle: true}} />
+                )}
+              </div>
+            ) : (
+              (!isPhone || activeMobilePane === 'editor') && (
+                currentBook?.id ? <BookView {...{dispatch, currentChapter, isSingle: true}} />
+                  : <div className={styles.emptyTips}>请先在“作品”中选择一个作品</div>
+              )
+            )
           }
-        </div>
+          </div>
+        )}
         {modalVisible ? (<EditBookForm
           onSubmit={async (value) => {
             const success = await this.addBook(value);

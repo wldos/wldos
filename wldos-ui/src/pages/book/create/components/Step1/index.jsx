@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {Divider, List, Popover, Card, Button, Space, Typography, Skeleton} from 'antd';
-import {connect} from 'umi';
+import {connect, FormattedMessage} from 'umi';
 import styles from './index.less';
 
 const {Title, Text} = Typography;
@@ -155,9 +155,17 @@ const Step1 = ({dispatch, bookInfo: {list = [],}, loading}) => {
   return (
     <div className={styles.categoryList}>
       <div className={styles.header}>
-        <Title level={3} className={styles.title}>选择信息分类</Title>
+        <Title level={3} className={styles.title}>
+          <FormattedMessage
+            id="book.create.step1.title"
+            defaultMessage="选择信息分类"
+          />
+        </Title>
         <Text type="secondary" className={styles.subtitle}>
-          请选择您要发布的信息所属的分类，然后选择具体的子分类
+          <FormattedMessage
+            id="book.create.step1.subtitle"
+            defaultMessage="请选择您要发布的信息所属的分类，然后选择具体的子分类"
+          />
         </Text>
       </div>
       
@@ -168,20 +176,50 @@ const Step1 = ({dispatch, bookInfo: {list = [],}, loading}) => {
       <Divider style={{ margin: '40px 0 24px' }} />
       
       <div className={styles.desc}>
-        <Title level={4}>使用说明</Title>
+        <Title level={4}>
+          <FormattedMessage
+            id="book.create.step1.guide.title"
+            defaultMessage="使用说明"
+          />
+        </Title>
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           <div>
-            <Text strong>选择分类：</Text>
+            <Text strong>
+              <FormattedMessage
+                id="book.create.step1.guide.selectCategory.label"
+                defaultMessage="选择分类："
+              />
+            </Text>
             <Text>
               {isMobile 
-                ? '点击分类卡片，在弹出的选项中选择具体的子分类' 
-                : '将鼠标悬停在分类卡片上，在弹出的选项中选择具体的子分类'
+                ? (
+                  <FormattedMessage
+                    id="book.create.step1.guide.selectCategory.mobile"
+                    defaultMessage="点击分类卡片，在弹出的选项中选择具体的子分类"
+                  />
+                )
+                : (
+                  <FormattedMessage
+                    id="book.create.step1.guide.selectCategory.desktop"
+                    defaultMessage="将鼠标悬停在分类卡片上，在弹出的选项中选择具体的子分类"
+                  />
+                )
               }
             </Text>
           </div>
           <div>
-            <Text strong>填写信息：</Text>
-            <Text>选择分类后，将进入信息填写页面，需要上传封面图和主图</Text>
+            <Text strong>
+              <FormattedMessage
+                id="book.create.step1.guide.fillInfo.label"
+                defaultMessage="填写信息："
+              />
+            </Text>
+            <Text>
+              <FormattedMessage
+                id="book.create.step1.guide.fillInfo.desc"
+                defaultMessage="选择分类后，将进入信息填写页面，需要上传封面图和主图"
+              />
+            </Text>
           </div>
         </Space>
       </div>

@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.3.8.2</version>
+		<version>2.4.0.0</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>
@@ -97,6 +97,11 @@
 					<artifactId>wldos-platform-plugin-seo</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-license-oem</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
 			</dependencies>
 		</profile>
 		<!-- prod：与 dev 依赖一致，但商业模块使用混淆包（classifier=release），需先量产安装 *-release.jar 后再构建 -->
@@ -138,18 +143,37 @@
 					<artifactId>wldos-store-plugin-order</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+					<exclusions>
+						<!-- 子模块 POM 传递无 classifier 的 wldos-store；本 profile 已单独引入 wldos-store-release -->
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-plugin-display</artifactId>
+					<artifactId>wldos-store-products</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+					<exclusions>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
 					<artifactId>wldos-store-member-marketing</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+					<exclusions>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
@@ -173,6 +197,15 @@
 							<groupId>com.wldos</groupId>
 							<artifactId>wldos-key</artifactId>
 						</exclusion>
+						<!-- 子模块 POM 依赖无 classifier 的 order；本 profile 已单独引入 order-release，否则会与传递依赖明文 jar 并存 -->
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store-plugin-order</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store</artifactId>
+						</exclusion>
 					</exclusions>
 				</dependency>
 				<dependency>
@@ -180,6 +213,14 @@
 					<artifactId>wldos-platform-plugin-seo</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+				</dependency>
+				<!-- 生产连 MySQL 时打入官方驱动（父 POM 为 MariaDB 驱动；本 profile 额外带上 mysql-connector-j，与 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver 一致）
+					打包命令行：mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=prod" -P prod
+				-->
+				<dependency>
+					<groupId>com.mysql</groupId>
+					<artifactId>mysql-connector-j</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -222,6 +263,12 @@
 					<artifactId>wldos-store-plugin-order</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
+					<exclusions>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store-products</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
@@ -257,6 +304,10 @@
 							<groupId>com.wldos</groupId>
 							<artifactId>wldos-key</artifactId>
 						</exclusion>
+						<exclusion>
+							<groupId>com.wldos</groupId>
+							<artifactId>wldos-store-plugin-order</artifactId>
+						</exclusion>
 					</exclusions>
 				</dependency>
 				<dependency>
@@ -267,7 +318,9 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		<!-- desktop/community：仅 cms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 -->
+		<!-- desktop/community：仅 cms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 。构建安装命令如下：
+		mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=desktop" -P desktop
+		-->
 		<profile>
 			<id>desktop</id>
 			<properties>

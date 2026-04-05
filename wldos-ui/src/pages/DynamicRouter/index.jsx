@@ -1,9 +1,10 @@
 import React, { Suspense, useMemo, useEffect, useState, useRef } from 'react';
-import { connect } from 'umi';
+import { connect, getLocale } from 'umi';
+import { getAntdLocaleForUmiLocale } from '@/utils/runtimeLocale';
 import { GridContent } from '@ant-design/pro-layout';
 import { Card, Spin, Alert, ConfigProvider } from 'antd';
 import NoFoundPage from "@/pages/404";
-import { injectPluginStyles } from '@/utils/pluginCoLocatedLoader';
+import { injectPluginStyles, resolvePluginEsmUrl } from '@/utils/pluginCoLocatedLoader';
 import { getComponentPath } from '@/utils/getComponentPath';
 
 // Normalize component path: './ext/Page1' -> 'ext/Page1'
@@ -90,12 +91,11 @@ const PluginComponentLoader = ({ pluginCode, component, menu, pluginManifest, ..
 
 			// 先注入CSS样式
 			if (cssFiles && cssFiles.length > 0) {
-				injectPluginStyles(code, pluginInfo.version, cssFiles);
+				injectPluginStyles(code, pluginInfo.version, cssFiles, pluginInfo);
 			}
 
-			// 优先尝试加载 ESM 格式，失败则回退到 JSONP 格式
-			// ESM 文件路径：/plugin-assets/{code}/{version}/esm/index.js
-			const esmUrl = `/plugin-assets/${code}/${pluginInfo.version}/esm/index.js`;
+			// 优先尝试加载 ESM 格式，失败则回退到 JSONP 格式（支持 manifest.assetBase / esmEntry）
+			const esmUrl = resolvePluginEsmUrl(code, pluginInfo);
 
 			// 尝试加载 ESM 格式
 			try {
@@ -173,7 +173,7 @@ const PluginComponentLoader = ({ pluginCode, component, menu, pluginManifest, ..
 	if (lazyComponent) {
 		const LazyComp = lazyComponent;
 		return (
-			<ConfigProvider>
+			<ConfigProvider locale={getAntdLocaleForUmiLocale(getLocale())}>
 				<Suspense fallback={
 					<div style={{
 						display: 'flex',
@@ -342,6 +342,22 @@ const DynamicRouter = (props) => {
 
 			const pluginInfo = pluginManifest?.plugins?.[pluginCode];
 			if (!pluginInfo || !pluginInfo.version) {
+				if (pluginManifest == null) {
+					return (
+						<GridContent>
+							<Card>
+								<div style={{
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									height: '300px'
+								}}>
+									<Spin size="large" tip="thinking..." />
+								</div>
+							</Card>
+						</GridContent>
+					);
+				}
 				return (
 					<GridContent>
 						<Card>
@@ -354,11 +370,13 @@ const DynamicRouter = (props) => {
 			// 注入 CSS 样式
 			if (pluginInfo?.assets?.css) {
 				pluginInfo.assets.css.forEach(cssFile => {
-					injectPluginStyles(pluginCode, pluginInfo.version, [cssFile]);
+					injectPluginStyles(pluginCode, pluginInfo.version, [cssFile], pluginInfo);
 				});
 			}
 
-			const pluginPublicPath = `/plugin-assets/${pluginCode}/${pluginInfo.version}/`;
+			const pluginPublicPath = pluginInfo.assetBase
+				? (pluginInfo.assetBase.endsWith('/') ? pluginInfo.assetBase : `${pluginInfo.assetBase}/`)
+				: `/plugin-assets/${pluginCode}/${pluginInfo.version}/`;
 
 			// 备选方案：如果插件仍然生成了自己的 webpack runtime（向后兼容）
 			function loadPluginChunkWithPluginRuntime(chunkUrl, pluginPublicPath) {

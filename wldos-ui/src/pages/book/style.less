@@ -26,9 +26,60 @@
   .book {
     width: 13%
   }
+  .topActions {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 2px;
+    overflow: hidden;
+    :global {
+      .ant-switch-small {
+        min-width: 34px;
+      }
+      .ant-btn {
+        padding-inline: 8px;
+      }
+      .ant-btn > .anticon + span {
+        margin-left: 4px;
+      }
+    }
+  }
+  .mobileNav {
+    display: none;
+  }
+  .mobileOnlyNav {
+    height: auto !important;
+    flex: none !important;
+  }
+  .mobileRight {
+    overflow: hidden;
+  }
+  .emptyTips {
+    padding: 24px 12px;
+    color: @text-color-secondary;
+    text-align: center;
+  }
+  .switchIcon {
+    display: inline-block;
+    font-size: 10px;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
   .config {
     float: right;
     padding-left: 20px;
+  }
+  /** 作品/章节列表内齿轮：扩大命中区，且用 closest 识别以阻止 Menu 整行选中与移动端切编辑区 */
+  .menuConfigTrigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 36px;
+    margin: -6px -4px -6px 0;
+    padding: 4px;
+    cursor: pointer;
   }
   .pop {
     :global {
@@ -79,24 +130,41 @@
   }
 }
 
-@media screen and (max-width: @screen-md) {
+@media screen and (max-width: 640px) {
   .main {
     flex-direction: column;
     height: 100%;
     .leftMenu {
       width: 100%;
-      height: 19%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
       overflow: hidden;
       border: none;
     }
+    .book {
+      width: 100%;
+    }
     .itemList {
       width: 100%;
-      height: 100%;
+      flex: 1;
+      min-height: 0;
       overflow-y: scroll;
     }
+    .mobileNav {
+      display: flex;
+      gap: 6px;
+      padding: 6px 2px 8px;
+    }
     .right {
-      height: 81%;
+      height: 100%;
       padding: 2px;
+      min-height: 0;
+      overflow-y: auto;
+    }
+    .chapter {
+      width: 100%;
     }
   }
 }

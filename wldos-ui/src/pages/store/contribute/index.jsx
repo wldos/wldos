@@ -1,27 +1,26 @@
 import React from 'react';
-import { 
-  PageContainer 
-} from '@ant-design/pro-layout';
-import { 
-  Card, 
-  Typography, 
-  Steps, 
-  Alert, 
-  Space, 
+import { PageContainer } from '@ant-design/pro-layout';
+import {
+  Card,
+  Typography,
+  Steps,
+  Alert,
+  Space,
   Divider,
   List,
   Tag,
-  Button
+  Button,
 } from 'antd';
-import { 
+import {
   GithubOutlined,
   FileTextOutlined,
   CodeOutlined,
   CheckCircleOutlined,
   InfoCircleOutlined,
   LinkOutlined,
-  QuestionCircleOutlined
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
+import { FormattedMessage } from 'umi';
 import './index.less';
 
 const { Title, Paragraph, Text } = Typography;
@@ -30,31 +29,64 @@ const { Step } = Steps;
 const PluginContribute = () => {
   return (
     <PageContainer
-      title="插件贡献指南"
-      content="了解如何为 WLDOS 插件生态贡献您的插件"
+      title={
+        <FormattedMessage
+          id="store.contribute.title"
+          defaultMessage="Plugin contribution guide"
+        />
+      }
+      content={
+        <FormattedMessage
+          id="store.contribute.content"
+          defaultMessage="Learn how to contribute your plugin to the WLDOS plugin ecosystem."
+        />
+      }
     >
       <div className="plugin-contribute-container">
-        {/* 概述 */}
-        <Card 
+        <Card
           title={
             <Space>
               <InfoCircleOutlined />
-              <span>贡献概述</span>
+              <span>
+                <FormattedMessage
+                  id="store.contribute.overview.title"
+                  defaultMessage="Contribution overview"
+                />
+              </span>
             </Space>
           }
           style={{ marginBottom: 24 }}
         >
           <Alert
-            message="WLDOS 插件生态采用开源贡献模式"
+            message={
+              <FormattedMessage
+                id="store.contribute.overview.alert.title"
+                defaultMessage="The WLDOS plugin ecosystem adopts an open-source contribution model"
+              />
+            }
             description={
               <div>
                 <Paragraph>
-                  WLDOS 是一个开源平台，为了维护插件生态的质量和安全，所有插件贡献都需要通过官方审核流程。
-                  开发者可以通过 GitHub/GitLab 等代码托管平台提交插件，经过官方审核后，插件将被合并到官方仓库并随 WLDOS 发布。
+                  <FormattedMessage
+                    id="store.contribute.overview.alert.p1"
+                    defaultMessage="WLDOS is an open-source platform. To maintain the quality and security of the plugin ecosystem, all plugin contributions must go through the official review process."
+                  />
+                  <FormattedMessage
+                    id="store.contribute.overview.alert.p2"
+                    defaultMessage="Developers can submit plugins via GitHub/GitLab and other code hosting platforms. After official review, plugins will be merged into the official repository and released with WLDOS."
+                  />
                 </Paragraph>
                 <Paragraph>
-                  <Text strong>重要提示：</Text> 第三方 WLDOS 实例用户建议使用官方审核通过的插件，不建议直接添加插件。
-                  这确保了插件生态的安全性、稳定性和一致性。
+                  <Text strong>
+                    <FormattedMessage
+                      id="store.contribute.overview.alert.tipPrefix"
+                      defaultMessage="Important reminder:"
+                    />
+                  </Text>{' '}
+                  <FormattedMessage
+                    id="store.contribute.overview.alert.tipText"
+                    defaultMessage="Users of third-party WLDOS instances are advised to use officially approved plugins and not to add plugins directly. This ensures the security, stability, and consistency of the plugin ecosystem."
+                  />
                 </Paragraph>
               </div>
             }
@@ -63,32 +95,64 @@ const PluginContribute = () => {
           />
         </Card>
 
-        {/* 贡献流程 */}
-        <Card 
+        <Card
           title={
             <Space>
               <CodeOutlined />
-              <span>贡献流程</span>
+              <span>
+                <FormattedMessage
+                  id="store.contribute.flow.title"
+                  defaultMessage="Contribution process"
+                />
+              </span>
             </Space>
           }
           style={{ marginBottom: 24 }}
         >
           <Steps direction="vertical" size="small">
             <Step
-              title="开发插件"
+              title={
+                <FormattedMessage
+                  id="store.contribute.flow.step1.title"
+                  defaultMessage="Develop plugin"
+                />
+              }
               description={
                 <div>
                   <Paragraph>
-                    按照 WLDOS 插件开发规范开发您的插件，确保：
+                    <FormattedMessage
+                      id="store.contribute.flow.step1.p1"
+                      defaultMessage="Develop your plugin according to the WLDOS plugin development guidelines, and make sure:"
+                    />
                   </Paragraph>
                   <List
                     size="small"
                     dataSource={[
-                      '插件功能完整，能够正常运行',
-                      '代码质量良好，遵循开发规范',
-                      '包含完整的 plugin.yml 配置文件',
-                      '提供清晰的 README 文档',
-                      '通过基本的功能测试'
+                      <FormattedMessage
+                        id="store.contribute.flow.step1.item1"
+                        key="1"
+                        defaultMessage="Plugin functionality is complete and can run normally."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step1.item2"
+                        key="2"
+                        defaultMessage="Code quality is good and follows coding conventions."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step1.item3"
+                        key="3"
+                        defaultMessage="Includes a complete configuration file plugin.yml."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step1.item4"
+                        key="4"
+                        defaultMessage="Provides a clear README document."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step1.item5"
+                        key="5"
+                        defaultMessage="Passes basic functional tests."
+                      />,
                     ]}
                     renderItem={(item) => (
                       <List.Item>
@@ -102,20 +166,48 @@ const PluginContribute = () => {
               icon={<CodeOutlined />}
             />
             <Step
-              title="提交到代码仓库"
+              title={
+                <FormattedMessage
+                  id="store.contribute.flow.step2.title"
+                  defaultMessage="Submit to code repository"
+                />
+              }
               description={
                 <div>
                   <Paragraph>
-                    将插件代码提交到代码托管平台（GitHub/GitLab 等）：
+                    <FormattedMessage
+                      id="store.contribute.flow.step2.p1"
+                      defaultMessage="Submit plugin code to a code hosting platform (GitHub/GitLab, etc.):"
+                    />
                   </Paragraph>
                   <List
                     size="small"
                     dataSource={[
-                      '创建插件项目仓库',
-                      '上传插件源代码和构建产物',
-                      '编写详细的 README 说明文档',
-                      '添加必要的许可证文件',
-                      '创建 Release 版本（可选）'
+                      <FormattedMessage
+                        id="store.contribute.flow.step2.item1"
+                        key="1"
+                        defaultMessage="Create a plugin project repository."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step2.item2"
+                        key="2"
+                        defaultMessage="Upload plugin source code and build artifacts."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step2.item3"
+                        key="3"
+                        defaultMessage="Write a detailed README documentation."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step2.item4"
+                        key="4"
+                        defaultMessage="Add the necessary license files."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step2.item5"
+                        key="5"
+                        defaultMessage="Create a release version (optional)."
+                      />,
                     ]}
                     renderItem={(item) => (
                       <List.Item>
@@ -129,20 +221,48 @@ const PluginContribute = () => {
               icon={<GithubOutlined />}
             />
             <Step
-              title="提交 Pull Request"
+              title={
+                <FormattedMessage
+                  id="store.contribute.flow.step3.title"
+                  defaultMessage="Submit pull request"
+                />
+              }
               description={
                 <div>
                   <Paragraph>
-                    向 WLDOS 官方插件仓库提交 Pull Request：
+                    <FormattedMessage
+                      id="store.contribute.flow.step3.p1"
+                      defaultMessage="Submit a pull request to the WLDOS official plugin repository:"
+                    />
                   </Paragraph>
                   <List
                     size="small"
                     dataSource={[
-                      'Fork WLDOS 官方插件仓库',
-                      '将您的插件添加到仓库中',
-                      '填写详细的 PR 说明（插件功能、使用场景等）',
-                      '确保代码通过 CI 检查',
-                      '等待官方审核'
+                      <FormattedMessage
+                        id="store.contribute.flow.step3.item1"
+                        key="1"
+                        defaultMessage="Fork the WLDOS official plugin repository."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step3.item2"
+                        key="2"
+                        defaultMessage="Add your plugin to the repository."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step3.item3"
+                        key="3"
+                        defaultMessage="Fill out detailed PR description (plugin functionality, usage scenarios, etc.)."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step3.item4"
+                        key="4"
+                        defaultMessage="Ensure the code passes CI checks."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step3.item5"
+                        key="5"
+                        defaultMessage="Wait for official review."
+                      />,
                     ]}
                     renderItem={(item) => (
                       <List.Item>
@@ -158,7 +278,10 @@ const PluginContribute = () => {
                       href="https://github.com/wldos/wldos-plugins"
                       target="_blank"
                     >
-                      访问 WLDOS 官方插件仓库
+                      <FormattedMessage
+                        id="store.contribute.flow.step3.link"
+                        defaultMessage="Visit the WLDOS official plugin repository"
+                      />
                     </Button>
                   </div>
                 </div>
@@ -166,20 +289,48 @@ const PluginContribute = () => {
               icon={<GithubOutlined />}
             />
             <Step
-              title="官方审核"
+              title={
+                <FormattedMessage
+                  id="store.contribute.flow.step4.title"
+                  defaultMessage="Official review"
+                />
+              }
               description={
                 <div>
                   <Paragraph>
-                    WLDOS 官方团队将对您的插件进行审核：
+                    <FormattedMessage
+                      id="store.contribute.flow.step4.p1"
+                      defaultMessage="The WLDOS official team will review your plugin:"
+                    />
                   </Paragraph>
                   <List
                     size="small"
                     dataSource={[
-                      '代码质量审查',
-                      '功能完整性测试',
-                      '安全性检查',
-                      '规范符合性验证',
-                      '文档完整性检查'
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.item1"
+                        key="1"
+                        defaultMessage="Code quality review."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.item2"
+                        key="2"
+                        defaultMessage="Functional completeness testing."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.item3"
+                        key="3"
+                        defaultMessage="Security checks."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.item4"
+                        key="4"
+                        defaultMessage="Compliance with guidelines and policies."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.item5"
+                        key="5"
+                        defaultMessage="Documentation completeness check."
+                      />,
                     ]}
                     renderItem={(item) => (
                       <List.Item>
@@ -189,8 +340,18 @@ const PluginContribute = () => {
                     )}
                   />
                   <Alert
-                    message="审核时间"
-                    description="审核时间通常为 1-3 个工作日，复杂插件可能需要更长时间。"
+                    message={
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.alert.title"
+                        defaultMessage="Review time"
+                      />
+                    }
+                    description={
+                      <FormattedMessage
+                        id="store.contribute.flow.step4.alert.desc"
+                        defaultMessage="The review time is usually 1-3 working days. For complex plugins, it may take longer. We will communicate with you in time."
+                      />
+                    }
                     type="info"
                     showIcon
                     style={{ marginTop: 16 }}
@@ -200,19 +361,43 @@ const PluginContribute = () => {
               icon={<CheckCircleOutlined />}
             />
             <Step
-              title="合并发布"
+              title={
+                <FormattedMessage
+                  id="store.contribute.flow.step5.title"
+                  defaultMessage="Merge and release"
+                />
+              }
               description={
                 <div>
                   <Paragraph>
-                    审核通过后，您的插件将被：
+                    <FormattedMessage
+                      id="store.contribute.flow.step5.p1"
+                      defaultMessage="After passing the review, your plugin will be:"
+                    />
                   </Paragraph>
                   <List
                     size="small"
                     dataSource={[
-                      '合并到官方插件仓库',
-                      '添加到 WLDOS 插件市场',
-                      '随下一个 WLDOS 版本发布',
-                      '供所有 WLDOS 用户使用'
+                      <FormattedMessage
+                        id="store.contribute.flow.step5.item1"
+                        key="1"
+                        defaultMessage="Merged into the official plugin repository."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step5.item2"
+                        key="2"
+                        defaultMessage="Added to the WLDOS plugin marketplace."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step5.item3"
+                        key="3"
+                        defaultMessage="Released with the next WLDOS version."
+                      />,
+                      <FormattedMessage
+                        id="store.contribute.flow.step5.item4"
+                        key="4"
+                        defaultMessage="Available to all WLDOS users."
+                      />,
                     ]}
                     renderItem={(item) => (
                       <List.Item>
@@ -228,28 +413,58 @@ const PluginContribute = () => {
           </Steps>
         </Card>
 
-        {/* 开发规范 */}
-        <Card 
+        <Card
           title={
             <Space>
               <FileTextOutlined />
-              <span>开发规范</span>
+              <span>
+                <FormattedMessage
+                  id="store.contribute.spec.title"
+                  defaultMessage="Development guidelines"
+                />
+              </span>
             </Space>
           }
           style={{ marginBottom: 24 }}
         >
           <Alert
-            message="插件开发必须遵循以下规范"
+            message={
+              <FormattedMessage
+                id="store.contribute.spec.alert.title"
+                defaultMessage="Plugin development must follow the following guidelines"
+              />
+            }
             description={
               <div>
-                <Title level={5}>1. 代码规范</Title>
+                <Title level={5}>
+                  <FormattedMessage
+                    id="store.contribute.spec.section1.title"
+                    defaultMessage="1. Code conventions"
+                  />
+                </Title>
                 <List
                   size="small"
                   dataSource={[
-                    '遵循 Java 和 JavaScript 编码规范',
-                    '代码注释清晰，关键逻辑必须有说明',
-                    '避免硬编码，使用配置文件',
-                    '错误处理完善，有适当的异常捕获'
+                    <FormattedMessage
+                      id="store.contribute.spec.section1.item1"
+                      key="1"
+                      defaultMessage="Follow Java and JavaScript coding conventions."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section1.item2"
+                      key="2"
+                      defaultMessage="Code comments should be clear, especially for key logic."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section1.item3"
+                      key="3"
+                      defaultMessage="Avoid hard-coding; use configuration files instead."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section1.item4"
+                      key="4"
+                      defaultMessage="Handle errors properly with appropriate exception handling."
+                    />,
                   ]}
                   renderItem={(item) => (
                     <List.Item>
@@ -260,14 +475,35 @@ const PluginContribute = () => {
                 
                 <Divider />
                 
-                <Title level={5}>2. 插件配置</Title>
+                <Title level={5}>
+                  <FormattedMessage
+                    id="store.contribute.spec.section2.title"
+                    defaultMessage="2. Plugin configuration"
+                  />
+                </Title>
                 <List
                   size="small"
                   dataSource={[
-                    '必须包含有效的 plugin.yml 配置文件',
-                    '插件编码（code）必须唯一且符合命名规范',
-                    '版本号遵循语义化版本规范（SemVer）',
-                    '权限配置清晰，最小权限原则'
+                    <FormattedMessage
+                      id="store.contribute.spec.section2.item1"
+                      key="1"
+                      defaultMessage="Must contain a valid plugin.yml configuration file."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section2.item2"
+                      key="2"
+                      defaultMessage="Plugin code (code) must be unique and follow naming conventions."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section2.item3"
+                      key="3"
+                      defaultMessage="Version numbers must follow semantic versioning (SemVer)."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section2.item4"
+                      key="4"
+                      defaultMessage="Permission configuration should be clear and follow the principle of least privilege."
+                    />,
                   ]}
                   renderItem={(item) => (
                     <List.Item>
@@ -278,14 +514,35 @@ const PluginContribute = () => {
                 
                 <Divider />
                 
-                <Title level={5}>3. 安全性</Title>
+                <Title level={5}>
+                  <FormattedMessage
+                    id="store.contribute.spec.section3.title"
+                    defaultMessage="3. Security"
+                  />
+                </Title>
                 <List
                   size="small"
                   dataSource={[
-                    '不得包含恶意代码或后门',
-                    'API 调用必须进行权限验证',
-                    '用户输入必须进行验证和过滤',
-                    '敏感信息不得硬编码在代码中'
+                    <FormattedMessage
+                      id="store.contribute.spec.section3.item1"
+                      key="1"
+                      defaultMessage="Must not contain malicious code or backdoors."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section3.item2"
+                      key="2"
+                      defaultMessage="API calls must perform permission checks."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section3.item3"
+                      key="3"
+                      defaultMessage="User input must be validated and filtered."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section3.item4"
+                      key="4"
+                      defaultMessage="Sensitive information must not be hard-coded in the code."
+                    />,
                   ]}
                   renderItem={(item) => (
                     <List.Item>
@@ -296,14 +553,35 @@ const PluginContribute = () => {
                 
                 <Divider />
                 
-                <Title level={5}>4. 文档要求</Title>
+                <Title level={5}>
+                  <FormattedMessage
+                    id="store.contribute.spec.section4.title"
+                    defaultMessage="4. Documentation requirements"
+                  />
+                </Title>
                 <List
                   size="small"
                   dataSource={[
-                    '提供完整的 README.md 文档',
-                    '说明插件功能、使用方法和配置项',
-                    '提供安装和卸载说明',
-                    '包含必要的截图或示例'
+                    <FormattedMessage
+                      id="store.contribute.spec.section4.item1"
+                      key="1"
+                      defaultMessage="Provide a complete README.md document."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section4.item2"
+                      key="2"
+                      defaultMessage="Explain plugin features, usage, and configuration options."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section4.item3"
+                      key="3"
+                      defaultMessage="Provide installation and uninstallation instructions."
+                    />,
+                    <FormattedMessage
+                      id="store.contribute.spec.section4.item4"
+                      key="4"
+                      defaultMessage="Include necessary screenshots or examples."
+                    />,
                   ]}
                   renderItem={(item) => (
                     <List.Item>
@@ -318,12 +596,16 @@ const PluginContribute = () => {
           />
         </Card>
 
-        {/* 审核标准 */}
-        <Card 
+        <Card
           title={
             <Space>
               <CheckCircleOutlined />
-              <span>审核标准</span>
+              <span>
+                <FormattedMessage
+                  id="store.contribute.standard.title"
+                  defaultMessage="Review standards"
+                />
+              </span>
             </Space>
           }
           style={{ marginBottom: 24 }}
@@ -331,24 +613,74 @@ const PluginContribute = () => {
           <List
             dataSource={[
               {
-                title: '功能完整性',
-                description: '插件功能完整，能够正常运行，无明显 Bug'
+                  title: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item1.title"
+                      defaultMessage="Functional completeness"
+                    />
+                  ),
+                  description: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item1.desc"
+                      defaultMessage="Plugin functionality is complete, runs properly, and has no obvious bugs."
+                    />
+                  ),
               },
               {
-                title: '代码质量',
-                description: '代码结构清晰，遵循最佳实践，可维护性好'
+                  title: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item2.title"
+                      defaultMessage="Code quality"
+                    />
+                  ),
+                  description: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item2.desc"
+                      defaultMessage="Code structure is clear, follows best practices, and is maintainable."
+                    />
+                  ),
               },
               {
-                title: '安全性',
-                description: '通过安全审查，无安全漏洞和风险'
+                  title: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item3.title"
+                      defaultMessage="Security"
+                    />
+                  ),
+                  description: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item3.desc"
+                      defaultMessage="Passes security review with no security vulnerabilities or risks."
+                    />
+                  ),
               },
               {
-                title: '规范符合性',
-                description: '符合 WLDOS 插件开发规范和平台政策'
+                  title: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item4.title"
+                      defaultMessage="Compliance"
+                    />
+                  ),
+                  description: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item4.desc"
+                      defaultMessage="Complies with WLDOS plugin development guidelines and platform policies."
+                    />
+                  ),
               },
               {
-                title: '文档完整性',
-                description: '文档清晰完整，用户能够理解和使用'
+                  title: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item5.title"
+                      defaultMessage="Documentation completeness"
+                    />
+                  ),
+                  description: (
+                    <FormattedMessage
+                      id="store.contribute.standard.item5.desc"
+                      defaultMessage="Documentation is clear and complete, enabling users to understand and use the plugin."
+                    />
+                  ),
               }
             ]}
             renderItem={(item) => (
@@ -366,36 +698,90 @@ const PluginContribute = () => {
           />
         </Card>
 
-        {/* 常见问题 */}
-        <Card 
+        <Card
           title={
             <Space>
               <QuestionCircleOutlined />
-              <span>常见问题</span>
+              <span>
+                <FormattedMessage
+                  id="store.contribute.faq.title"
+                  defaultMessage="FAQ"
+                />
+              </span>
             </Space>
           }
         >
           <List
             dataSource={[
               {
-                q: 'Q: 我的插件审核需要多长时间？',
-                a: 'A: 通常为 1-3 个工作日。如果插件功能复杂或需要修改，可能需要更长时间。我们会及时与您沟通。'
+                    q: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q1.q"
+                        defaultMessage="Q: How long does it take to review my plugin?"
+                      />
+                    ),
+                    a: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q1.a"
+                        defaultMessage="A: Usually 1-3 working days. If the plugin is complex or changes are needed, it may take longer. We will communicate with you in time."
+                      />
+                    ),
               },
               {
-                q: 'Q: 审核不通过怎么办？',
-                a: 'A: 我们会详细说明不通过的原因和改进建议。您可以根据反馈修改后重新提交。'
+                    q: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q2.q"
+                        defaultMessage="Q: What if the review does not pass?"
+                      />
+                    ),
+                    a: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q2.a"
+                        defaultMessage="A: We will explain in detail the reasons for rejection and suggestions for improvement. You can modify based on the feedback and resubmit."
+                      />
+                    ),
               },
               {
-                q: 'Q: 可以提交商业插件吗？',
-                a: 'A: 可以。商业插件需要明确标注，并提供免费试用版本。商业授权由开发者自行处理。'
+                    q: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q3.q"
+                        defaultMessage="Q: Can I submit commercial plugins?"
+                      />
+                    ),
+                    a: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q3.a"
+                        defaultMessage="A: Yes. Commercial plugins need to be clearly marked and provide a free trial version. Commercial licensing is handled by the developer."
+                      />
+                    ),
               },
               {
-                q: 'Q: 插件发布后可以更新吗？',
-                a: 'A: 可以。通过提交新的 Pull Request 来更新插件版本。更新同样需要经过审核流程。'
+                    q: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q4.q"
+                        defaultMessage="Q: Can I update the plugin after it is released?"
+                      />
+                    ),
+                    a: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q4.a"
+                        defaultMessage="A: Yes. Submit a new pull request to update the plugin version. Updates must also go through the review process."
+                      />
+                    ),
               },
               {
-                q: 'Q: 如何联系官方团队？',
-                a: 'A: 可以通过 GitHub Issues、邮件（306991142@qq.com）或官方社区联系我们。'
+                    q: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q5.q"
+                        defaultMessage="Q: How can I contact the official team?"
+                      />
+                    ),
+                    a: (
+                      <FormattedMessage
+                        id="store.contribute.faq.q5.a"
+                        defaultMessage="A: You can contact us via GitHub issues, email (306991142@qq.com), or the official community."
+                      />
+                    ),
               }
             ]}
             renderItem={(item) => (
@@ -410,9 +796,13 @@ const PluginContribute = () => {
           />
         </Card>
 
-        {/* 相关链接 */}
-        <Card 
-          title="相关资源"
+        <Card
+          title={
+            <FormattedMessage
+              id="store.contribute.links.title"
+              defaultMessage="Related resources"
+            />
+          }
           style={{ marginTop: 24 }}
         >
           <Space direction="vertical" style={{ width: '100%' }}>
@@ -425,10 +815,18 @@ const PluginContribute = () => {
               style={{ textAlign: 'left', height: 'auto', padding: '8px 0' }}
             >
               <div>
-                <Text strong>WLDOS 官方插件仓库</Text>
+                <Text strong>
+                  <FormattedMessage
+                    id="store.contribute.links.repo.title"
+                    defaultMessage="WLDOS official plugin repository"
+                  />
+                </Text>
                 <br />
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  查看官方插件示例和提交您的插件
+                  <FormattedMessage
+                    id="store.contribute.links.repo.desc"
+                    defaultMessage="View official plugin examples and submit your plugin."
+                  />
                 </Text>
               </div>
             </Button>
@@ -442,10 +840,18 @@ const PluginContribute = () => {
               style={{ textAlign: 'left', height: 'auto', padding: '8px 0' }}
             >
               <div>
-                <Text strong>插件开发文档</Text>
+                <Text strong>
+                  <FormattedMessage
+                    id="store.contribute.links.docs.title"
+                    defaultMessage="Plugin development documentation"
+                  />
+                </Text>
                 <br />
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  详细的插件开发指南和 API 文档
+                  <FormattedMessage
+                    id="store.contribute.links.docs.desc"
+                    defaultMessage="Detailed plugin development guides and API documentation."
+                  />
                 </Text>
               </div>
             </Button>
@@ -459,10 +865,18 @@ const PluginContribute = () => {
               style={{ textAlign: 'left', height: 'auto', padding: '8px 0' }}
             >
               <div>
-                <Text strong>问题反馈</Text>
+                <Text strong>
+                  <FormattedMessage
+                    id="store.contribute.links.feedback.title"
+                    defaultMessage="Feedback"
+                  />
+                </Text>
                 <br />
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  提交问题、建议或咨询插件开发相关问题
+                  <FormattedMessage
+                    id="store.contribute.links.feedback.desc"
+                    defaultMessage="Submit issues, suggestions, or questions about plugin development."
+                  />
                 </Text>
               </div>
             </Button>

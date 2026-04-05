@@ -1,6 +1,6 @@
 import {UploadOutlined} from '@ant-design/icons';
 import {Button, Col, Form, Input, message, Modal, Radio, Row, Select, Upload} from 'antd';
-import {connect, FormattedMessage} from 'umi';
+import { connect, FormattedMessage, formatMessage } from 'umi';
 import React, {Component} from 'react';
 import GeographicView from './GeographicView';
 import PhoneView from './PhoneView';
@@ -27,10 +27,11 @@ const AvatarView = ({avatar, params = {}, beforeUp, onChange}) => (
             showUploadList={false}
             beforeUpload={(file) => { // @todo 其他全局前置约束，由后台同一配置驱动，前台获取结果
               if (params.accept.indexOf(`.${file.type.substring(file.type.indexOf('/')+1, file.type.length)}`) === -1)
-                return message.error('不允许的文件类型').then(() => false)
+                return message.error(formatMessage({ id: 'account.basic.avatar.file-type-not-allowed' })).then(() => false)
               return beforeUp(file);
             }}
             onChange={onChange}
+            data={{ allowWebp: false }}
             action={`${prefix}/user/uploadAvatar`}
             {...params}
     >
@@ -54,7 +55,7 @@ const validatorGeographic = (_, value) => {
     return Promise.resolve(); // 用Promise代替callback
 
   if (!city.key) {
-    return Promise.reject(new Error('请输入所在城市!'));
+    return Promise.reject(new Error(formatMessage({ id: 'account.basic.validator.city-required' })));
   }
 
   return Promise.resolve();
@@ -66,11 +67,11 @@ const validatorPhone = (rule, value) => {
   const values = value.split('-');
 
   if (!values[0]) {
-    return Promise.reject(new Error('请输入区号!'));
+    return Promise.reject(new Error(formatMessage({ id: 'account.basic.validator.area-code-required' })));
   }
 
   if (!values[1]) {
-    return Promise.reject(new Error('请输入电话号码!'));
+    return Promise.reject(new Error(formatMessage({ id: 'account.basic.validator.phone-required' })));
   }
 
   return Promise.resolve();
@@ -153,7 +154,7 @@ class BaseView extends Component {
   beforeUp = (file) => {
     const isGt50K = file.size / 1024 / 1024 > 5;
     if (isGt50K) {
-      return message.error('图片大小不能超过5M').then(() => false);
+      return message.error(formatMessage({ id: 'account.basic.avatar.size-limit' })).then(() => false);
     }
 
     const reader = new FileReader();
@@ -188,9 +189,15 @@ class BaseView extends Component {
     const {file: {status}} = info;
 
     if (status === 'done') {
-      message.success(`${info.file.name} 文件上传成功！`, 1).then(() => this.updateCurrent());
+      message.success(
+        formatMessage({ id: 'account.basic.avatar.upload-success' }, { fileName: info.file.name }),
+        1,
+      ).then(() => this.updateCurrent());
     } else if (status === 'error') {
-      message.error(`${info.file.name} 文件上传失败！`, 2).then();
+      message.error(
+        formatMessage({ id: 'account.basic.avatar.upload-fail' }, { fileName: info.file.name }),
+        2,
+      ).then();
     }
   };
 
@@ -340,9 +347,11 @@ class BaseView extends Component {
                 style={{
                   maxWidth: 220,
                 }}
-                label="国家"
+                label={formatMessage({ id: 'account.basic.country' })}
               >
-                <Option value="China">中国</Option>
+                <Option value="China">
+                  <FormattedMessage id="account.basic.country.china" defaultMessage="China" />
+                </Option>
               </Select>
             </Form.Item>
             <Form.Item
@@ -437,7 +446,7 @@ class BaseView extends Component {
                       onChange={this.handleChange}/>
         </div>
         <Modal
-          title="裁切"
+          title={<FormattedMessage id="account.basic.cropper.title" defaultMessage="Crop" />}
           visible={cropVisible}
           footer={null}
           width={748}
@@ -489,7 +498,9 @@ class BaseView extends Component {
             <Row gutter={[16, 16]}>
               <Col span={9}>
                 <Input.Group>
-                  <Button onClick={() => this.setRotateTo(-90)}>左旋转</Button>
+                  <Button onClick={() => this.setRotateTo(-90)}>
+                    <FormattedMessage id="account.basic.cropper.rotate-left" defaultMessage="Rotate left" />
+                  </Button>
                   <Button onClick={() => this.setRotateTo(-15)}>-15°</Button>
                   <Button onClick={() => this.setRotateTo(-30)}>-30°</Button>
                   <Button onClick={() => this.setRotateTo(-45)}>-45°</Button>
@@ -497,7 +508,9 @@ class BaseView extends Component {
               </Col>
               <Col span={9}>
                 <Input.Group>
-                  <Button onClick={() => this.setRotateTo(90)}>右旋转</Button>
+                  <Button onClick={() => this.setRotateTo(90)}>
+                    <FormattedMessage id="account.basic.cropper.rotate-right" defaultMessage="Rotate right" />
+                  </Button>
                   <Button onClick={() => this.setRotateTo(15)}>15°</Button>
                   <Button onClick={() => this.setRotateTo(30)}>30°</Button>
                   <Button onClick={() => this.setRotateTo(45)}>45°</Button>
@@ -505,7 +518,7 @@ class BaseView extends Component {
               </Col>
               <Col span={6}>
                 <Button type="primary" block onClick={() => this.saveCropper(type)}>
-                  确定
+                  <FormattedMessage id="account.common.confirm" defaultMessage="Confirm" />
                 </Button>
               </Col>
             </Row>

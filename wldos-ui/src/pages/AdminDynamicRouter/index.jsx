@@ -1,9 +1,10 @@
-import React, { Suspense, useMemo, useEffect, useState } from 'react';
-import { connect } from 'umi';
+import React, { Suspense, useMemo, useEffect, useState, useRef } from 'react';
+import { connect, getLocale } from 'umi';
+import { getAntdLocaleForUmiLocale } from '@/utils/runtimeLocale';
 import { GridContent } from '@ant-design/pro-layout';
 import { Card, Spin, Alert, ConfigProvider } from 'antd';
 import NoFoundPage from "@/pages/404";
-import { injectPluginStyles } from '@/utils/pluginCoLocatedLoader';
+import { injectPluginStyles, resolvePluginEsmUrl } from '@/utils/pluginCoLocatedLoader';
 import { getComponentPath } from '@/utils/getComponentPath';
 
 // Normalize component path: './ext/Page1' -> 'ext/Page1'
@@ -90,12 +91,10 @@ const AdminPluginComponentLoader = ({ pluginCode, component, menu, pluginManifes
 
 			// 先注入CSS样式
 			if (cssFiles && cssFiles.length > 0) {
-				injectPluginStyles(code, pluginInfo.version, cssFiles);
+				injectPluginStyles(code, pluginInfo.version, cssFiles, pluginInfo);
 			}
 
-			// 优先尝试加载 ESM 格式，失败则回退到 JSONP 格式
-			// ESM 文件路径：/plugin-assets/{code}/{version}/esm/index.js
-			const esmUrl = `/plugin-assets/${code}/${pluginInfo.version}/esm/index.js`;
+			const esmUrl = resolvePluginEsmUrl(code, pluginInfo);
 
 			// 尝试加载 ESM 格式
 			try {
@@ -173,7 +172,7 @@ const AdminPluginComponentLoader = ({ pluginCode, component, menu, pluginManifes
 	if (lazyComponent) {
 		const LazyComp = lazyComponent;
 		return (
-			<ConfigProvider>
+			<ConfigProvider locale={getAntdLocaleForUmiLocale(getLocale())}>
 				<Suspense fallback={
 					<div style={{
 						display: 'flex',
@@ -237,6 +236,11 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 
 	// 扁平化后端动态路由
 	const flat = useMemo(() => flattenRoutes(dynamicRoutes), [dynamicRoutes]);
+	// 本地组件的 React.lazy 缓存：避免父级（如通知轮询）重渲染时反复创建新的 Lazy 组件类型，
+	// 从而导致子页面卸载/挂载、重复触发 useEffect([]) 的初始化请求。
+	const localLazyCompCacheRef = useRef({});
+	// 插件路由的 React.lazy 缓存：同理避免父级重渲染导致的子页面反复卸载/挂载。
+	const pluginLazyCompCacheRef = useRef({});
 
 	// 查找匹配的路由
 	// 注意：UmiJS 路由系统已经处理了静态路由优先级
@@ -370,6 +374,23 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 			}
 
 			if (!pluginInfo || !pluginInfo.version) {
+				// manifest 尚未从 fetchCurrent 写入时勿误报「未找到」（刷新首帧常见）
+				if (pluginManifest == null) {
+					return (
+						<GridContent>
+							<Card>
+								<div style={{
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									height: '300px'
+								}}>
+									<Spin size="large" tip="thinking..." />
+								</div>
+							</Card>
+						</GridContent>
+					);
+				}
 				return (
 					<GridContent>
 						<Card>
@@ -382,11 +403,13 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 			// 注入 CSS 样式
 			if (pluginInfo?.assets?.css) {
 				pluginInfo.assets.css.forEach(cssFile => {
-					injectPluginStyles(pluginCode, pluginInfo.version, [cssFile]);
+					injectPluginStyles(pluginCode, pluginInfo.version, [cssFile], pluginInfo);
 				});
 			}
 
-			const pluginPublicPath = `/plugin-assets/${pluginCode}/${pluginInfo.version}/`;
+			const pluginPublicPath = pluginInfo.assetBase
+				? (pluginInfo.assetBase.endsWith('/') ? pluginInfo.assetBase : `${pluginInfo.assetBase}/`)
+				: `/plugin-assets/${pluginCode}/${pluginInfo.version}/`;
 
 			// 备选方案：如果插件仍然生成了自己的 webpack runtime（向后兼容）
 			function loadPluginChunkWithPluginRuntime(chunkUrl, pluginPublicPath) {
@@ -530,7 +553,9 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 			// ESM 文件路径：与 UmiJS chunk 命名规则一致
 			// UmiJS chunk: ./scheduler → p__scheduler.{hash}.async.js
 			// ESM 文件: ./scheduler → esm/scheduler.js
-			LazyComp = React.lazy(async () => {
+			const pluginCacheKey = `plugin:${pluginCode}:${pluginInfo.version}:${componentPath}`;
+			if (!pluginLazyCompCacheRef.current[pluginCacheKey]) {
+				pluginLazyCompCacheRef.current[pluginCacheKey] = React.lazy(async () => {
 				const esmUrl = `${pluginPublicPath}esm/${componentPath}.js`;
 
 				// 尝试加载 ESM 格式（直接加载对应的组件文件）
@@ -789,7 +814,9 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 						return loadPluginChunkWithPluginRuntime(chunkUrl, pluginPublicPath);
 					}
 				}
-			});
+				});
+			}
+			LazyComp = pluginLazyCompCacheRef.current[pluginCacheKey];
 		} else {
 			// 本地组件：使用 @/ 别名，@ 表示 src 目录
 			// componentPath 格式：sys/plugins（后端返回的格式）
@@ -798,7 +825,13 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 			// 如果后端返回的 component 不是以 /index 结尾（如 "sys/plugins/Detail"），
 			// 可能需要添加 .js 扩展名：`@/pages/${componentPath}.js`
 			// 需要根据实际后端返回的数据格式验证后确定
-			LazyComp = React.lazy(() => import(/* webpackChunkName: "dynamic-[request]" */ `@/pages/${componentPath}/index`));
+			const cacheKey = `local:${componentPath}`;
+			if (!localLazyCompCacheRef.current[cacheKey]) {
+				localLazyCompCacheRef.current[cacheKey] = React.lazy(() =>
+					import(/* webpackChunkName: "dynamic-[request]" */ `@/pages/${componentPath}/index`)
+				);
+			}
+			LazyComp = localLazyCompCacheRef.current[cacheKey];
 		}
 
 		// 注意：插件组件和本地组件的加载方式现在应该一样了

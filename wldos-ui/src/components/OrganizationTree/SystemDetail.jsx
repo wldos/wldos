@@ -8,11 +8,13 @@
 
 import React, { useState } from 'react';
 import { Descriptions, Tag, Button, Space, Modal, message, Popconfirm } from 'antd';
+import { useIntl } from 'umi';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import SystemEditForm from './SystemEditForm';
 import OrganizationCreateForm from './OrganizationCreateForm';
 
 const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, onSystemDelete }) => {
+  const intl = useIntl();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [orgModalVisible, setOrgModalVisible] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
@@ -30,12 +32,12 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
     try {
       if (onSystemDelete) {
         await onSystemDelete(system.id);
-        message.success('体系删除成功');
+        message.success(intl.formatMessage({ id: 'component.organizationTree.system.msg.deleteOk' }));
       } else {
-        message.info('删除体系功能待实现');
+        message.info(intl.formatMessage({ id: 'component.organizationTree.system.msg.deleteTodo' }));
       }
     } catch (error) {
-      message.error('删除体系失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.deleteFail' }));
     }
   };
 
@@ -47,11 +49,11 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
         // 不在这里显示成功消息，由父组件统一处理
         setEditModalVisible(false);
       } else {
-        message.info('更新体系信息功能待实现');
+        message.info(intl.formatMessage({ id: 'component.organizationTree.system.msg.updateTodo' }));
         setEditModalVisible(false);
       }
     } catch (error) {
-      message.error('更新体系信息失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.updateFail' }));
     } finally {
       setEditLoading(false);
     }
@@ -62,14 +64,14 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
     try {
       if (onOrganizationAdd) {
         await onOrganizationAdd(system.id, values);
-        message.success('机构添加成功');
+        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.addOk' }));
         setOrgModalVisible(false);
       } else {
-        message.info('添加机构功能待实现');
+        message.info(intl.formatMessage({ id: 'component.organizationTree.org.msg.addTodo' }));
         setOrgModalVisible(false);
       }
     } catch (error) {
-      message.error('添加机构失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.addFail' }));
     } finally {
       setOrgLoading(false);
     }
@@ -77,17 +79,27 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
 
   return (
     <div>
-      <Descriptions title="体系信息" bordered column={2}>
-        <Descriptions.Item label="体系名称">{system.archName || '-'}</Descriptions.Item>
-        <Descriptions.Item label="体系编码">{system.archCode || '-'}</Descriptions.Item>
-        <Descriptions.Item label="归属公司">{companyName || '-'}</Descriptions.Item>
-        <Descriptions.Item label="展示顺序">{system.displayOrder || '-'}</Descriptions.Item>
-        <Descriptions.Item label="描述" span={2}>
+      <Descriptions title={intl.formatMessage({ id: 'component.organizationTree.system.detail.title' })} bordered column={2}>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.name' })}>
+          {system.archName || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.code' })}>
+          {system.archCode || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.company' })}>
+          {companyName || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.displayOrder' })}>
+          {system.displayOrder || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.desc' })} span={2}>
           {system.archDesc || system.description || '-'}
         </Descriptions.Item>
-        <Descriptions.Item label="状态">
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.status' })}>
           <Tag color={system.isValid === '1' ? 'green' : 'red'}>
-            {system.isValid === '1' ? '有效' : '无效'}
+            {system.isValid === '1'
+              ? intl.formatMessage({ id: 'component.organizationTree.common.status.valid' })
+              : intl.formatMessage({ id: 'component.organizationTree.common.status.invalid' })}
           </Tag>
         </Descriptions.Item>
       </Descriptions>
@@ -95,20 +107,18 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
       <div style={{ marginTop: 16 }}>
         <Space>
           <Button type="primary" icon={<EditOutlined />} onClick={handleEditSystem}>
-            编辑体系
+            {intl.formatMessage({ id: 'component.organizationTree.system.action.edit' })}
           </Button>
           <Button icon={<PlusOutlined />} onClick={handleAddOrganization}>
-            添加机构
+            {intl.formatMessage({ id: 'component.organizationTree.org.action.add' })}
           </Button>
           <Popconfirm
-            title="确定要删除这个体系吗？"
-            description="删除后将无法恢复，请谨慎操作。"
+            title={intl.formatMessage({ id: 'component.organizationTree.system.confirm.deleteTitle' })}
+            description={intl.formatMessage({ id: 'component.organizationTree.common.confirm.deleteDesc' })}
             onConfirm={handleDeleteSystem}
-            okText="确定"
-            cancelText="取消"
           >
             <Button danger icon={<DeleteOutlined />}>
-              删除体系
+              {intl.formatMessage({ id: 'component.organizationTree.system.action.delete' })}
             </Button>
           </Popconfirm>
         </Space>
@@ -116,7 +126,7 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
 
       {/* 编辑体系模态框 */}
       <Modal
-        title="编辑体系"
+        title={intl.formatMessage({ id: 'component.organizationTree.system.modal.editTitle' })}
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         footer={null}
@@ -131,7 +141,7 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
 
       {/* 添加机构模态框 */}
       <Modal
-        title="添加机构"
+        title={intl.formatMessage({ id: 'component.organizationTree.org.modal.addTitle' })}
         open={orgModalVisible}
         onCancel={() => setOrgModalVisible(false)}
         footer={null}

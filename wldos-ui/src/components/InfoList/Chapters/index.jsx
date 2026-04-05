@@ -9,7 +9,7 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {Tag, Radio, Select, Space, Divider} from 'antd';
 import ProList from '@ant-design/pro-list';
-import {history, Link} from 'umi';
+import {history, Link, useIntl} from 'umi';
 import styles from './index.less';
 import {queryCategoryFromPlug} from "@/pages/sys/category/service";
 import {queryBookList} from "@/pages/home/service";
@@ -21,13 +21,22 @@ const {Group, Button} = Radio;
 const {Option} = Select;
 const Chapters = (props) => {
   const {title, slugTerm,  path, pubType='info', url, count, page} = props;
+  const intl = useIntl();
   const [categories, setCategories] = useState([]);
   const [prov, setProv] = useState([]);
   const [city, setCity] = useState([]);
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line no-unused-vars
-  const [price, setPrice] = useState([{label: '不限', value: '0,0'},{label: '100元以下', value: '0,100'},{label: '100-200元', value: '100,200'},{label: '200-500元', value: '200,500'},
-    {label: '500-1000元', value: '500,1000'},{label: '1000-2000元', value: '1000,2000'},{label: '2000-3500元', value: '2000,3500'},{label: '3500元以上', value: '3500,0'},]);
+  const [price, setPrice] = useState([
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.unlimited' }), value: '0,0'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.lt100' }), value: '0,100'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.100to200' }), value: '100,200'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.200to500' }), value: '200,500'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.500to1000' }), value: '500,1000'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.1000to2000' }), value: '1000,2000'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.2000to3500' }), value: '2000,3500'},
+    {label: intl.formatMessage({ id: 'component.infoList.chapters.price.gt3500' }), value: '3500,0'},
+  ]);
   const actionRef = useRef();
   const [param, setParam] = useState({});
 
@@ -87,23 +96,64 @@ const Chapters = (props) => {
 
   const checked = {color: 'blue', border: 0};
 
-  const rendItem = useCallback((term, tId) => term?.length && (
-      term.map((t, i) => <Button key={t.key} value={t.key} style={tId === t.key ? checked : {border: 0}}>{i === 0 ? '不限' : t.title}</Button>)
-  ), [checked]);
+  const rendItem = useCallback(
+    (term, tId) =>
+      term?.length &&
+      term.map((t, i) => (
+        <Button
+          key={t.key}
+          value={t.key}
+          style={tId === t.key ? checked : {border: 0}}
+        >
+          {i === 0
+            ? intl.formatMessage({ id: 'component.infoList.chapters.price.unlimited' })
+            : t.title}
+        </Button>
+      )),
+    [checked, intl],
+  );
 
-  const rendProv = useCallback((p) => p?.length && (
-    p.map(t => {
-      return <Option key={t.id} value={t.id}>{t.name}</Option>;
-    })
-  ), []);
+  const rendProv = useCallback(
+    (p) =>
+      p?.length &&
+      p.map((t) => (
+        <Option key={t.id} value={t.id}>
+          {t.name}
+        </Option>
+      )),
+    [],
+  );
 
-  const rendCity = useCallback((c, cId) => c?.length && cId && (
-    c.map(t => <Button key={t.id} value={t.id} style={cId === t.id ? checked : {border: 0}}>{t.name}</Button>)
-  ), [checked]);
+  const rendCity = useCallback(
+    (c, cId) =>
+      c?.length &&
+      cId &&
+      c.map((t) => (
+        <Button
+          key={t.id}
+          value={t.id}
+          style={cId === t.id ? checked : {border: 0}}
+        >
+          {t.name}
+        </Button>
+      )),
+    [checked],
+  );
 
-  const rendPrice = useCallback((c, cId) => c?.length && (
-    c.map(t => <Button key={t.value} value={t.value} style={cId === t.value ? checked : {border: 0}}>{t.label}</Button>)
-  ), [checked]);
+  const rendPrice = useCallback(
+    (c, cId) =>
+      c?.length &&
+      c.map((t) => (
+        <Button
+          key={t.value}
+          value={t.value}
+          style={cId === t.value ? checked : {border: 0}}
+        >
+          {t.label}
+        </Button>
+      )),
+    [checked],
+  );
   const formLayout = {
     span: 24,
   };
@@ -164,13 +214,17 @@ const Chapters = (props) => {
           pageSize: data.pageSize,
           showQuickJumper: true,
           showSizeChanger: false,
-          showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+          showTotal: (total, range) =>
+            intl.formatMessage(
+              { id: 'component.infoList.chapters.pagination.total' },
+              { start: range[0], end: range[1], total },
+            ),
           className: styles.pagination
         }}
         metas={{
           title: {
             dataIndex: 'pubTitle',
-            title: '标题',
+            title: intl.formatMessage({ id: 'component.infoList.chapters.col.title' }),
             search: false,
             render: (dom, entity) => {
               return <Link to={pubType === 'info' ? `/info-${entity.id}.html` : `/content-${entity.id}.html`} target="_blank" rel="noopener">{dom}</Link>;
@@ -198,18 +252,37 @@ const Chapters = (props) => {
               return <>
                 <div>
                   <Space split={<Divider type="vertical" />}>
-                    <span>{item.city?? '火星'}</span>
+                    <span>{item.city ?? intl.formatMessage({ id: 'component.infoList.chapters.city.fallback' })}</span>
                     <span>{moment(item.createTime).fromNow()}</span>
-                    <span style={{color: 'red'}}>{`￥${item.ornPrice?? '面议'}元`}</span>
+                    <span style={{color: 'red'}}>
+                      {intl.formatMessage(
+                        { id: 'component.infoList.chapters.price.display' },
+                        {
+                          price:
+                            item.ornPrice ??
+                            intl.formatMessage({ id: 'component.infoList.chapters.price.negotiable' }),
+                        },
+                      )}
+                    </span>
                   </Space>
                 </div>
-              <div dangerouslySetInnerHTML={{__html: pubType === 'info' ? `${item.pubExcerpt} ... <a href="/info-${item.id}.html" target="_blank">>>详情</a>` :
-                  `${item.pubExcerpt} ... <a href="/content-${item.id}.html" target="_blank">>>详情</a>`}} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html:
+                    pubType === 'info'
+                      ? `${item.pubExcerpt} ... <a href="/info-${item.id}.html" target="_blank">>>${intl.formatMessage({
+                          id: 'component.infoList.chapters.more',
+                        })}</a>`
+                      : `${item.pubExcerpt} ... <a href="/content-${item.id}.html" target="_blank">>>${intl.formatMessage({
+                          id: 'component.infoList.chapters.more',
+                        })}</a>`,
+                }}
+              />
               </>;
             },
           },
           termTypeId: { // 用list平铺展示当前分类下的所有子分类
-            title: '分类',
+            title: intl.formatMessage({ id: 'component.infoList.chapters.col.category' }),
             dataIndex: 'termTypeId',
             renderFormItem: (_, fieldConfig) => {
               if (fieldConfig.type === 'form') {
@@ -224,7 +297,7 @@ const Chapters = (props) => {
             }
           },
           city: {
-            title: '区域',
+            title: intl.formatMessage({ id: 'component.infoList.chapters.col.region' }),
             renderFormItem: () => {
               return <>
                 <Select showSearch style={{width: '120px'}} defaultValue=""
@@ -236,12 +309,14 @@ const Chapters = (props) => {
                             }
                             const res = await queryCity(v);
                             if (res?.data) {
-                              setCity([{id: '-1', name: '全省', parentId: v, provName: ''}, ...res.data]);
+                              setCity([{id: '-1', name: intl.formatMessage({ id: 'component.infoList.chapters.region.allProvince' }), parentId: v, provName: ''}, ...res.data]);
                             }
                             search({province: v, city: "-1"});
                           }
                         }>
-                  <Option key="" value="">-选择省分-</Option>
+                  <Option key="" value="">
+                    {intl.formatMessage({ id: 'component.infoList.chapters.region.selectProvince' })}
+                  </Option>
                   {rendProv(prov)}</Select>
                 <Group
                   className={styles.radioButton}
@@ -252,7 +327,7 @@ const Chapters = (props) => {
             },
           },
           price: {
-            title: '价位',
+            title: intl.formatMessage({ id: 'component.infoList.chapters.col.price' }),
             renderFormItem: () => {
               return <>
                 <Group

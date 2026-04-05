@@ -1,6 +1,7 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useCallback, useRef, useState, useEffect, useMemo} from 'react';
+import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -22,142 +23,131 @@ import {
 import AddUserList from "@/pages/sys/user/components/add";
 import Passwd from "@/pages/account/settings/components/Passwd";
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields) => {
-  const hide = message.loading('正在添加');
-
-  try {
-    const res = await addEntity({...fields});
-    if (res && res.data) {
-      const {status, news} = res.data;
-      if (status === 'error'){
-        message.error(news);
-        return false;
-      }
-    }
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateEntity({
-      nickname: fields.nickname,
-      remark: fields.remark,
-      loginName: fields.loginName,
-      passwd: fields.passwd,
-      status: fields.status,
-      id: fields.id,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
-/**
- *  批量删除
- * @param selectedRows
- */
-const handleRemove = async (selectedRows) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeEntities({
-      ids: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
-const cancelOrgStaff = async (selectedRows, orgId) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeOrgStaff({
-      ids: selectedRows.map((row) => row.id),
-      orgId
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
-/**
- *  删除节点
- * @param handleRemoveOne
- */
-const handleRemoveOne = async (fields) => {
-  const hide = message.loading('正在删除');
-  if (!fields) return true;
-
-  try {
-    await removeEntity({
-      id: fields.id,
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
-const changePasswd = async (values) => {
-  const {nickname, id, password, confirm} = values;
-
-  try {
-    const res = await updatePasswd4admin({id, password, confirm});
-
-    if (res && res.data) {
-      const {status, news} = res.data;
-      if (status === 'error'){
-        message.error(news);
-        return false;
-      }
-    }
-    message.info(`修改用户${nickname}密码成功！`);
-    return true;
-  } catch (error) {
-    message.error('修改失败请重试！');
-    return false;
-  }
-};
-
 const UserList = (props) => {
+  const intl = useIntl();
   const {orgId = '', archId = '', comId = '', addUser} = props;
+
+  const handleAdd = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      const res = await addEntity({...fields});
+      if (res && res.data) {
+        const {status, news} = res.data;
+        if (status === 'error'){
+          message.error(news);
+          return false;
+        }
+      }
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleUpdate = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.config', defaultMessage: '正在配置' }));
+
+    try {
+      await updateEntity({
+        nickname: fields.nickname,
+        remark: fields.remark,
+        loginName: fields.loginName,
+        passwd: fields.passwd,
+        status: fields.status,
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.configSuccess', defaultMessage: '配置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.configFail', defaultMessage: '配置失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemove = useCallback(async (selectedRows) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    try {
+      await removeEntities({
+        ids: selectedRows.map((row) => row.id),
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const cancelOrgStaff = useCallback(async (selectedRows, orgIdParam) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    try {
+      await removeOrgStaff({
+        ids: selectedRows.map((row) => row.id),
+        orgId: orgIdParam
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemoveOne = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!fields) return true;
+
+    try {
+      await removeEntity({
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const changePasswd = useCallback(async (values) => {
+    const {nickname, id, password, confirm} = values;
+
+    try {
+      const res = await updatePasswd4admin({id, password, confirm});
+
+      if (res && res.data) {
+        const {status, news} = res.data;
+        if (status === 'error'){
+          message.error(news);
+          return false;
+        }
+      }
+      message.info(intl.formatMessage(
+        { id: 'sys.user.msg.passwdSuccess', defaultMessage: '修改用户{nickname}密码成功！' },
+        { nickname },
+      ));
+      return true;
+    } catch (error) {
+      message.error(intl.formatMessage({ id: 'sys.user.msg.passwdFail', defaultMessage: '修改失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -167,54 +157,49 @@ const UserList = (props) => {
   const [addModalVisible, handleAddModalVisible] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
-  
-  // 移动端检测
+
   const mobile = isMobile();
-  
-  // 容器宽度监听
+
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
-  
-  // 使用桌面端粘性布局
+
   useDesktopSticky(actionRef);
 
-  // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateWidth = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
-    
+
     updateWidth();
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
-  // 计算列总宽度
-  const totalColsWidth = 1000; // 估算总宽度
+  const totalColsWidth = 1000;
   const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
 
-  const columns = [
+  const columns = useMemo(() => [
     {
-      title: '昵称',
+      title: intl.formatMessage({ id: 'sys.user.col.nickname', defaultMessage: '昵称' }),
       dataIndex: 'nickname',
-      tip: '用户指注册会员，可以是自然人或者法人，不同身份可以认证',
+      tip: intl.formatMessage({ id: 'sys.user.col.nickname.tip', defaultMessage: '用户指注册会员，可以是自然人或者法人，不同身份可以认证' }),
       fixed: mobile ? undefined : 'left',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '昵称为必填项',
+            message: intl.formatMessage({ id: 'sys.user.rule.nicknameRequired', defaultMessage: '昵称为必填项' }),
           },
           {
             max: 60,
             type: 'string',
-            message: '最多60个字',
+            message: intl.formatMessage({ id: 'sys.user.rule.nicknameMax', defaultMessage: '最多60个字' }),
           },
         ],
       },
@@ -223,25 +208,25 @@ const UserList = (props) => {
       },
     },
     {
-      title: '账号',
+      title: intl.formatMessage({ id: 'sys.user.col.loginName', defaultMessage: '账号' }),
       dataIndex: 'loginName',
-      tip: '登录用户名，建议使用邮箱',
+      tip: intl.formatMessage({ id: 'sys.user.col.loginName.tip', defaultMessage: '登录用户名，建议使用邮箱' }),
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '账号为必填项',
+            message: intl.formatMessage({ id: 'sys.user.rule.loginNameRequired', defaultMessage: '账号为必填项' }),
           },
           {
             max: 30,
             type: 'string',
-            message: '最大30个字符',
+            message: intl.formatMessage({ id: 'sys.user.rule.loginNameMax', defaultMessage: '最大30个字符' }),
           },
         ],
       },
     },
     {
-      title: '密码',
+      title: intl.formatMessage({ id: 'sys.user.col.passwd', defaultMessage: '密码' }),
       dataIndex: 'passwd',
       hideInSearch: true,
       hideInTable: true,
@@ -249,57 +234,57 @@ const UserList = (props) => {
         rules: [
           {
             required: true,
-            message: '密码为必填项,最多120位字符',
+            message: intl.formatMessage({ id: 'sys.user.rule.passwdRequired', defaultMessage: '密码为必填项,最多120位字符' }),
             max: 120,
           },
         ],
       },
     },
     {
-      title: '邮箱',
+      title: intl.formatMessage({ id: 'sys.user.col.email', defaultMessage: '邮箱' }),
       dataIndex: 'email',
-      tip: '用于找回密码',
+      tip: intl.formatMessage({ id: 'sys.user.col.email.tip', defaultMessage: '用于找回密码' }),
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '邮箱为必填项',
+            message: intl.formatMessage({ id: 'sys.user.rule.emailRequired', defaultMessage: '邮箱为必填项' }),
           },
           {
             max: 50,
             type: 'string',
-            message: '最大50个字符',
+            message: intl.formatMessage({ id: 'sys.user.rule.emailMax', defaultMessage: '最大50个字符' }),
           },
         ],
       },
     },
     {
-      title: '状态',
+      title: intl.formatMessage({ id: 'sys.user.col.status', defaultMessage: '状态' }),
       dataIndex: 'status',
       hideInForm: true,
       filters: true,
       onFilter: false,
       valueEnum: {
         locked: {
-          text: '已锁定',
+          text: intl.formatMessage({ id: 'sys.user.status.locked', defaultMessage: '已锁定' }),
         },
         cancelled: {
-          text: '已注销',
+          text: intl.formatMessage({ id: 'sys.user.status.cancelled', defaultMessage: '已注销' }),
         },
         normal: {
-          text: '正常',
+          text: intl.formatMessage({ id: 'sys.user.status.normal', defaultMessage: '正常' }),
         }
       },
     },
     {
-      title: '简介',
+      title: intl.formatMessage({ id: 'sys.user.col.remark', defaultMessage: '简介' }),
       dataIndex: 'remark',
       hideInForm: true,
       valueType: 'textarea',
       width: '16%'
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({ id: 'sys.user.col.createTime', defaultMessage: '创建时间' }),
       dataIndex: 'createTime',
       sorter: true,
       valueType: 'dateTime',
@@ -308,13 +293,13 @@ const UserList = (props) => {
       hideInTable: orgId !== '',
     },
     {
-      title: '用户ID',
+      title: intl.formatMessage({ id: 'sys.user.col.id', defaultMessage: '用户ID' }),
       dataIndex: 'id',
       hideInForm: true,
       valueType: 'string',
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'sys.user.col.operation', defaultMessage: '操作' }),
       dataIndex: 'option',
       valueType: 'option',
       hideInTable: orgId !== '',
@@ -327,7 +312,7 @@ const UserList = (props) => {
               setStepFormValues(record);
             }}
           >
-            配置
+            {intl.formatMessage({ id: 'sys.user.action.config', defaultMessage: '配置' })}
           </a>
           <Divider type="vertical"/>
           <a
@@ -336,20 +321,21 @@ const UserList = (props) => {
               setFormValues(record);
             }}
           >
-            更新密码
+            {intl.formatMessage({ id: 'sys.user.action.updatePasswd', defaultMessage: '更新密码' })}
           </a>
           <Divider type="vertical"/>
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.user.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemoveOne(record);
                         actionRef.current?.reloadAndRest?.();
                       }}>
-            <a>删除</a>
+            <a>{intl.formatMessage({ id: 'sys.user.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
         </>
       ),
     },
-  ];
+  ], [intl, mobile, orgId, handleRemoveOne]);
+
   return (
     <PageContainer
       style={{
@@ -363,7 +349,7 @@ const UserList = (props) => {
     >
       <div ref={containerRef}>
         <ProTableX
-          headerTitle="用户清单"
+          headerTitle={intl.formatMessage({ id: 'sys.user.headerTitle', defaultMessage: '用户清单' })}
           actionRef={actionRef}
           rowKey="id"
           search={{
@@ -371,10 +357,10 @@ const UserList = (props) => {
           }}
           toolBarRender={() => [
             <Button key={1} type="primary" hidden={orgId === ''}  onClick={() => handleAddModalVisible(true)}>
-              <PlusOutlined/> 添加
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.user.toolbar.add', defaultMessage: '添加' })}
             </Button>,
             <Button key={0} type="primary" hidden={orgId !== ''} onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新增
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.user.toolbar.new', defaultMessage: '新增' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
@@ -404,7 +390,11 @@ const UserList = (props) => {
             pageSizeOptions: ['10', '15', '20', '30', '50'],
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+            showTotal: (total, range) =>
+              intl.formatMessage(
+                { id: 'sys.user.pagination.range', defaultMessage: '第 {start}-{end} 条/总共 {total} 条' },
+                { start: range[0], end: range[1], total },
+              ),
           }}
           tableLayout={mobile ? undefined : 'fixed'}
           scroll={mobile ? undefined : { x: scrollX }}
@@ -414,7 +404,7 @@ const UserList = (props) => {
         <FooterToolbar
           extra={
             <div>
-              已选择{' '}
+              {intl.formatMessage({ id: 'sys.user.footer.selected', defaultMessage: '已选择' })}{' '}
               <a
                 style={{
                   fontWeight: 600,
@@ -422,11 +412,11 @@ const UserList = (props) => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项&nbsp;&nbsp;
+              {intl.formatMessage({ id: 'sys.user.footer.items', defaultMessage: '项' })}&nbsp;&nbsp;
             </div>
           }
         >
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.user.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         if (orgId === '') {
                           await handleRemove(selectedRowsState);
@@ -435,9 +425,9 @@ const UserList = (props) => {
                         }
                         actionRef.current?.reloadAndRest?.();
                       }}>
-            <Button>批量删除</Button>
+            <Button>{intl.formatMessage({ id: 'sys.user.footer.batchDelete', defaultMessage: '批量删除' })}</Button>
           </Popconfirm>
-          <Button type="primary">批量导出</Button>
+          <Button type="primary">{intl.formatMessage({ id: 'sys.user.footer.batchExport', defaultMessage: '批量导出' })}</Button>
         </FooterToolbar>
       )}
       <CreateForm onCancel={() => handleModalVisible(false)}

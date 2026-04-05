@@ -9,7 +9,7 @@
 import {LogoutOutlined, SettingOutlined, UserOutlined} from '@ant-design/icons';
 import {Avatar, Menu} from 'antd';
 import React from 'react';
-import {connect, history} from 'umi';
+import {connect, history, useIntl} from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import {getPageQuery, redirectReq} from "@/utils/utils";
@@ -66,6 +66,7 @@ class AvatarDropdown extends React.Component {
             menu,
             avatarMenu = [],
         } = this.props;
+        const intl = this.props.intl || this.context?.intl || null;
         const hasAvatarItems = avatarMenu && avatarMenu.length > 0;
         const renderAvatarMenuItem = (item) => {
             if (item.children && item.children.length > 0) {
@@ -93,17 +94,17 @@ class AvatarDropdown extends React.Component {
                 {/* 个人中心、个人设置始终保留（原写死项） */}
                 <Menu.Item key="center">
                     <UserOutlined/>
-                    个人中心
+                    {(intl && intl.formatMessage({ id: 'component.globalHeader.menu.center' })) || '个人中心'}
                 </Menu.Item>
                 <Menu.Item key="settings">
                     <SettingOutlined/>
-                    个人设置
+                    {(intl && intl.formatMessage({ id: 'component.globalHeader.menu.settings' })) || '个人设置'}
                 </Menu.Item>
                 <Menu.Divider/>
 
                 <Menu.Item key="logout">
                     <LogoutOutlined/>
-                    退出登录
+                    {(intl && intl.formatMessage({ id: 'component.globalHeader.menu.logout' })) || '退出登录'}
                 </Menu.Item>
             </Menu>
         );
@@ -116,7 +117,9 @@ class AvatarDropdown extends React.Component {
           </HeaderDropdown>
         ) : (
             <span className={`${styles.action} ${styles.account} ${styles.hide}`}>
-                <span className={` anticon`}><a onClick={() => redirectReq('/user/login')}>登录</a></span>
+                <span className={` anticon`}><a onClick={() => redirectReq('/user/login')}>
+                  {(intl && intl.formatMessage({ id: 'component.globalHeader.menu.login' })) || '登录'}
+                </a></span>
       </span>
         );
     };

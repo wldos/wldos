@@ -42,8 +42,8 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 		String controllerPackage = returnType.getContainingClass().getPackage().getName();
 		String basePackage = properties.getBasePackage();
 		
-		// 始终处理com.wldos包下的Controller（框架和platform）
-		if (controllerPackage.startsWith("com.wldos")) {
+		// 始终处理 com.wldos 与 io.github.wldos 包下的 Controller（框架、platform、sdk）
+		if (controllerPackage.startsWith("com.wldos") || controllerPackage.startsWith("io.github.wldos")) {
 			return true;
 		}
 		

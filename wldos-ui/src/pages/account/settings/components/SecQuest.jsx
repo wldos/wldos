@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Form, Input, Modal} from 'antd';
-import {useIntl} from "umi";
+import { useIntl } from 'umi';
 
 const FormItem = Form.Item;
 
@@ -33,7 +33,7 @@ const MobileChange = (props) => {
     return (
       <FormItem
         name="secQuest"
-        label="新密保问题"
+        label={intl.formatMessage({ id: 'account.security.question.new' })}
         rules={[
           {
             required: true,
@@ -58,8 +58,12 @@ const MobileChange = (props) => {
 
     return (
       <>
-        <Button onClick={() => handleModalVisible(false, values)}>取消</Button>
-        <Button type="primary" onClick={() => handleNext()}>提交</Button>
+        <Button onClick={() => handleModalVisible(false, values)}>
+          {intl.formatMessage({ id: 'account.common.cancel' })}
+        </Button>
+        <Button type="primary" onClick={() => handleNext()}>
+          {intl.formatMessage({ id: 'account.common.submit' })}
+        </Button>
       </>
     );
   };
@@ -68,7 +72,7 @@ const MobileChange = (props) => {
     return (
       <FormItem
         name="oldBakEmail"
-        label="原密保问题"
+        label={intl.formatMessage({ id: 'account.security.question.old' })}
         rules={[
           {
             required: true,
@@ -96,7 +100,7 @@ const MobileChange = (props) => {
         padding: '32px 40px 48px',
       }}
       destroyOnClose
-      title="密保问题"
+      title={intl.formatMessage({ id: 'account.security.question.modal' })}
       visible={modalVisible}
       footer={renderFooter()}
       onCancel={() => handleModalVisible()}

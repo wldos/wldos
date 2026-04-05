@@ -1,4 +1,4 @@
-import {connect, FormattedMessage} from 'umi';
+import { connect, FormattedMessage, formatMessage } from 'umi';
 import React, { Component } from 'react';
 import {List, message} from 'antd';
 import Passwd from "@/pages/account/settings/components/Passwd";
@@ -47,10 +47,10 @@ const changePasswd = async (values) => {
         return false;
       }
     }
-    message.info("修改成功，请重新登陆！");
+    message.info(formatMessage({ id: 'account.security.message.password-success-relogin' }));
     return true;
   } catch (error) {
-    message.error('修改失败请重试！');
+    message.error(formatMessage({ id: 'account.security.message.update-failed' }));
     return false;
   }
 };
@@ -70,10 +70,10 @@ const changeMobile = async (values) => {
         return false;
       }
     }
-    message.info("修改成功！");
+    message.info(formatMessage({ id: 'account.security.message.update-success' }));
     return true;
   } catch (error) {
-    message.error('修改失败请重试！');
+    message.error(formatMessage({ id: 'account.security.message.update-failed' }));
     return false;
   }
 };
@@ -93,10 +93,10 @@ const changeSecQuest = async (values) => {
         return false;
       }
     }
-    message.info("修改成功！");
+    message.info(formatMessage({ id: 'account.security.message.update-success' }));
     return true;
   } catch (error) {
-    message.error('修改失败请重试！');
+    message.error(formatMessage({ id: 'account.security.message.update-failed' }));
     return false;
   }
 };
@@ -116,10 +116,10 @@ const changeEmail = async (values) => {
         return false;
       }
     }
-    message.info("修改成功！");
+    message.info(formatMessage({ id: 'account.security.message.update-success' }));
     return true;
   } catch (error) {
-    message.error('修改失败请重试！');
+    message.error(formatMessage({ id: 'account.security.message.update-failed' }));
     return false;
   }
 };
@@ -167,7 +167,7 @@ class SecurityView extends Component {
     },
     {
       title: <FormattedMessage id="account.security.phone" />,
-      description: <><FormattedMessage id="account.security.phone-description" />{u.sec?.mobile?? '未设置'}</>,
+      description: <><FormattedMessage id="account.security.phone-description" />{u.sec?.mobile?? formatMessage({ id: 'account.security.not-set' })}</>,
       actions: [
         <a key="Modify" onClick={() => this.setVisible({mobileVisible: true}, u)}>
           <FormattedMessage id="account.security.modify" defaultMessage="Modify" />
@@ -176,7 +176,7 @@ class SecurityView extends Component {
     },
     {
       title: <FormattedMessage id="account.security.question" />,
-      description: <><FormattedMessage id="account.security.question-description" />{u.sec?.secQuest?? '未设置'}</>,
+      description: <><FormattedMessage id="account.security.question-description" />{u.sec?.secQuest?? formatMessage({ id: 'account.security.not-set' })}</>,
       actions: [
         <a key="Set" onClick={() => this.setVisible({questVisible: true}, u)}>
           <FormattedMessage id="account.security.set" defaultMessage="Set" />
@@ -185,7 +185,7 @@ class SecurityView extends Component {
     },
     {
       title: <FormattedMessage id="account.security.email" />,
-      description: <><FormattedMessage id="account.security.email-description" />{u.sec?.bakEmail?? '未设置'}</>,
+      description: <><FormattedMessage id="account.security.email-description" />{u.sec?.bakEmail?? formatMessage({ id: 'account.security.not-set' })}</>,
       actions: [
         <a key="Modify" onClick={() => this.setVisible({emailVisible: true}, u)}>
           <FormattedMessage id="account.security.modify" defaultMessage="Modify" />
@@ -194,9 +194,9 @@ class SecurityView extends Component {
     },
     {
       title:  <FormattedMessage id="account.security.mfa" />,
-      description: <><FormattedMessage id="account.security.mfa-description" />{u.sec?.mfa?? '未设置'}</>,
+      description: <><FormattedMessage id="account.security.mfa-description" />{u.sec?.mfa?? formatMessage({ id: 'account.security.not-set' })}</>,
       actions: [
-        <a key="bind" onClick={() => alert('暂未实现')}>
+        <a key="bind" onClick={() => alert(formatMessage({ id: 'account.security.not-implemented' }))}>
           <FormattedMessage id="account.security.bind" defaultMessage="Bind" />
         </a>,
       ],

@@ -1,12 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Form, Input, message,} from 'antd';
-import {connect} from 'umi';
+import {connect, FormattedMessage, useIntl} from 'umi';
 import '@/pages/book/components/BaseView.less';
 // TinyMCE 已移除（此组件未使用）
 import styles from "@/pages/book/create/components/Step2/index.less";
 import {formItemLayout} from "@/pages/book/create/components/Step2";
 
 const Step3 = ({data, dispatch, submitting }) => {
+  const intl = useIntl();
   const [form] = Form.useForm();
   const FormItem = Form.Item;
   const editorRef = useRef(null);
@@ -42,7 +43,7 @@ const Step3 = ({data, dispatch, submitting }) => {
 
   const doSave = async (values) => {
     if (!values.pubContent) {
-      message.error("请描述详情！");
+      message.error(intl.formatMessage({ id: 'book.create.step3.message.contentRequired', defaultMessage: '请描述详情！' }));
       return;
     }
     if (dispatch) {
@@ -83,10 +84,10 @@ const Step3 = ({data, dispatch, submitting }) => {
           }}
         >
           <Button type="primary" onClick={form.submit} loading={submitting}>
-            提交
+            <FormattedMessage id="book.create.step3.button.submit" defaultMessage="提交" />
           </Button>
           <Button onClick={onPrev} style={{ marginLeft: 8, }}>
-            上一步
+            <FormattedMessage id="book.create.step3.button.prev" defaultMessage="上一步" />
           </Button>
         </FormItem>
       </Form>

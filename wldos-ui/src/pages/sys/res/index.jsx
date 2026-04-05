@@ -1,6 +1,7 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useMemo, useCallback} from 'react';
+import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -20,106 +21,93 @@ import {
 import {queryEnumResource} from "@/services/enum";
 import {renderIcon} from "@/utils/iconLibrary";
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields) => {
-  const hide = message.loading('正在添加');
-
-  try {
-    await addEntity({...fields});
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateEntity({
-      resourceName: fields.resourceName,
-      resourcePath: fields.resourcePath,
-      resourceCode: fields.resourceCode,
-      resourceType: fields.resourceType,
-      componentPath: fields.componentPath,
-      icon: fields.icon,
-      requestMethod: fields.requestMethod,
-      target: fields.target,
-      appId: fields.appId,
-      isValid: fields.isValid,
-      id: fields.id,
-      parentId: fields.parentId,
-      remark: fields.remark,
-      displayOrder: fields.displayOrder,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
-/**
- *  批量删除
- * @param selectedRows
- */
-const handleRemove = async (selectedRows) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeEntitys({
-      ids: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-/**
- *  删除节点
- * @param handleRemoveOne
- */
-const handleRemoveOne = async (fields) => {
-  if (!fields) return true;
-
-  if (fields.children) {
-    message.info("存在子节点，请先删除子节点");
-    return true;
-  }
-  const hide = message.loading('正在删除');
-  try {
-    await removeEntity({
-      id: fields.id,
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
 const ResourceList = () => {
+  const intl = useIntl();
+
+  const handleAdd = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingAdd', defaultMessage: '正在添加' }));
+
+    try {
+      await addEntity({...fields});
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.res.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.res.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleUpdate = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingConfig', defaultMessage: '正在配置' }));
+
+    try {
+      await updateEntity({
+        resourceName: fields.resourceName,
+        resourcePath: fields.resourcePath,
+        resourceCode: fields.resourceCode,
+        resourceType: fields.resourceType,
+        componentPath: fields.componentPath,
+        icon: fields.icon,
+        requestMethod: fields.requestMethod,
+        target: fields.target,
+        appId: fields.appId,
+        isValid: fields.isValid,
+        id: fields.id,
+        parentId: fields.parentId,
+        remark: fields.remark,
+        displayOrder: fields.displayOrder,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.res.msg.configSuccess', defaultMessage: '配置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.res.msg.configFail', defaultMessage: '配置失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemove = useCallback(async (selectedRows) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingDelete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    try {
+      await removeEntitys({
+        ids: selectedRows.map((row) => row.id),
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.res.msg.deleteSuccessRefresh', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.res.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemoveOne = useCallback(async (fields) => {
+    if (!fields) return true;
+
+    if (fields.children) {
+      message.info(intl.formatMessage({ id: 'sys.res.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
+      return true;
+    }
+    const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingDelete', defaultMessage: '正在删除' }));
+    try {
+      await removeEntity({
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.res.msg.deleteSuccessRefresh', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.res.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -133,15 +121,12 @@ const ResourceList = () => {
   const [apps, setApps] = useState([]);
   const [resTypes, setResTypes] = useState({});
   const [resTypeOptions, setResTypeOptions] = useState([]);
-  
-  // 移动端检测
+
   const mobile = isMobile();
-  
-  // 容器宽度监听
+
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
-  
-  // 使用桌面端粘性布局
+
   useDesktopSticky(actionRef);
 
   useEffect(async () => {
@@ -192,42 +177,43 @@ const ResourceList = () => {
       setMenus(menuRes.data);
   }, []);
 
-  // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateWidth = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
-    
+
     updateWidth();
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
-  // 计算列总宽度
-  const totalColsWidth = 1500; // 估算总宽度
+  const totalColsWidth = 1500;
   const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
 
-  const columns = [
+  const columns = useMemo(() => [
     {
-      title: '资源名称',
+      title: intl.formatMessage({ id: 'sys.res.col.resourceName', defaultMessage: '资源名称' }),
       dataIndex: 'resourceName',
-      tip: '资源包括菜单、组件、api或静态资源，特点是需要用确定的方式请求(URI+HTTP METHOD)',
+      tip: intl.formatMessage({
+        id: 'sys.res.tip.resourceName',
+        defaultMessage: '资源包括菜单、组件、api或静态资源，特点是需要用确定的方式请求(URI+HTTP METHOD)',
+      }),
       fixed: mobile ? undefined : 'left',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '资源名称为必填项',
+            message: intl.formatMessage({ id: 'sys.res.rule.resourceNameRequired', defaultMessage: '资源名称为必填项' }),
           },
           {
             max: 25,
             type: 'string',
-            message: '最多25个字',
+            message: intl.formatMessage({ id: 'sys.res.rule.max25', defaultMessage: '最多25个字' }),
           },
         ],
       },
@@ -236,63 +222,70 @@ const ResourceList = () => {
       },
     },
     {
-      title: '展示顺序',
+      title: intl.formatMessage({ id: 'sys.res.col.displayOrder', defaultMessage: '展示顺序' }),
       dataIndex: 'displayOrder',
       hideInSearch: true,
       hideInForm: true,
       sorter: true,
     },
     {
-      title: '资源编码',
+      title: intl.formatMessage({ id: 'sys.res.col.resourceCode', defaultMessage: '资源编码' }),
       dataIndex: 'resourceCode',
-      tip: '菜单和路由保持一致：资源编码在同一应用下唯一，资源编码原则上取urlPattern的叶子节点：/appCode/resName，子资源名称在父资源名称之后。',
+      tip: intl.formatMessage({
+        id: 'sys.res.tip.resourceCode',
+        defaultMessage:
+          '菜单和路由保持一致：资源编码在同一应用下唯一，资源编码原则上取urlPattern的叶子节点：/appCode/resName，子资源名称在父资源名称之后。',
+      }),
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '应用编码为必填项',
+            message: intl.formatMessage({ id: 'sys.res.rule.resourceCodeRequired', defaultMessage: '资源编码为必填项' }),
           },
           {
             max: 50,
             type: 'string',
-            message: '最大50个字符',
+            message: intl.formatMessage({ id: 'sys.res.rule.max50', defaultMessage: '最大50个字符' }),
           },
         ],
       },
     },
     {
-      title: '资源路径',
+      title: intl.formatMessage({ id: 'sys.res.col.resourcePath', defaultMessage: '资源路径' }),
       dataIndex: 'resourcePath',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '资源路径为必填项',
+            message: intl.formatMessage({ id: 'sys.res.rule.resourcePathRequired', defaultMessage: '资源路径为必填项' }),
           },
           {
             max: 250,
             type: 'string',
-            message: '最大250个字符',
+            message: intl.formatMessage({ id: 'sys.res.rule.max250', defaultMessage: '最大250个字符' }),
           },
         ],
       },
     },
     {
-      title: '组件路径',
+      title: intl.formatMessage({ id: 'sys.res.col.componentPath', defaultMessage: '组件路径' }),
       dataIndex: 'componentPath',
       hideInSearch: true,
       formItemProps: {
         rules: [
           {
             required: false,
-            message: '组件路径格式：pathX/xxx/xxx，相对于src/pages/目录',
+            message: intl.formatMessage({
+              id: 'sys.res.rule.componentPathPattern',
+              defaultMessage: '组件路径格式：pathX/xxx/xxx，相对于src/pages/目录',
+            }),
             pattern: /^[a-zA-Z0-9\/\-_]+$/,
           },
         ],
       },
     },
     {
-      title: 'icon图标',
+      title: intl.formatMessage({ id: 'sys.res.col.icon', defaultMessage: 'icon图标' }),
       dataIndex: 'icon',
       render: (text) => {
         if (!text) return '-';
@@ -301,14 +294,14 @@ const ResourceList = () => {
       },
     },
     {
-      title: '资源类型',
+      title: intl.formatMessage({ id: 'sys.res.col.resourceType', defaultMessage: '资源类型' }),
       dataIndex: 'resourceType',
       filters: true,
       onFilter: false,
       valueEnum: resTypes,
     },
     {
-      title: '请求方法',
+      title: intl.formatMessage({ id: 'sys.res.col.requestMethod', defaultMessage: '请求方法' }),
       dataIndex: 'requestMethod',
       filters: true,
       onFilter: false,
@@ -328,7 +321,7 @@ const ResourceList = () => {
       },
     },
     {
-      title: '打开方式',
+      title: intl.formatMessage({ id: 'sys.res.col.target', defaultMessage: '打开方式' }),
       dataIndex: 'target',
       valueEnum: {
         '_self': {
@@ -346,44 +339,44 @@ const ResourceList = () => {
       },
     },
     {
-      title: '上级资源',
+      title: intl.formatMessage({ id: 'sys.res.col.parentResource', defaultMessage: '上级资源' }),
       dataIndex: 'parentId',
       hideInTable: true,
       hideInForm: true,
       valueEnum: resList,
     },
     {
-      title: '归属应用',
+      title: intl.formatMessage({ id: 'sys.res.col.app', defaultMessage: '归属应用' }),
       dataIndex: 'appId',
       filters: true,
       onFilter: false,
       valueEnum: appList,
     },
     {
-      title: '资源描述',
+      title: intl.formatMessage({ id: 'sys.res.col.remark', defaultMessage: '资源描述' }),
       dataIndex: 'remark',
       valueType: 'textarea',
       width: '16%'
     },
     {
-      title: '资源状态',
+      title: intl.formatMessage({ id: 'sys.res.col.status', defaultMessage: '资源状态' }),
       dataIndex: 'isValid',
       hideInForm: true,
       filters: true,
       onFilter: false,
       valueEnum: {
         '0': {
-          text: '无效',
+          text: intl.formatMessage({ id: 'sys.res.status.invalid', defaultMessage: '无效' }),
           status: 'invalid',
         },
         '1': {
-          text: '有效',
+          text: intl.formatMessage({ id: 'sys.res.status.valid', defaultMessage: '有效' }),
           status: 'valid',
         },
       },
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'sys.res.col.action', defaultMessage: '操作' }),
       dataIndex: 'option',
       valueType: 'option',
       fixed: mobile ? undefined : 'right',
@@ -395,13 +388,13 @@ const ResourceList = () => {
               setParentId(record.id);
             }}
           >
-            子级
+            {intl.formatMessage({ id: 'sys.res.action.child', defaultMessage: '子级' })}
           </a>
           <Divider type="vertical"/>
           <a onClick={() => {
             handleModalVisible(true);
             setParentId(record.parentId);
-          }}>同级</a>
+          }}>{intl.formatMessage({ id: 'sys.res.action.sibling', defaultMessage: '同级' })}</a>
           <Divider type="vertical"/>
           <a
             onClick={() => {
@@ -409,20 +402,23 @@ const ResourceList = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            {intl.formatMessage({ id: 'sys.res.action.config', defaultMessage: '配置' })}
           </a>
           <Divider type="vertical"/>
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                      onConfirm={async () => {
-                        await handleRemoveOne(record);
-                        actionRef.current?.reloadAndRest?.();
-                      }}>
-            <a>删除</a>
+          <Popconfirm
+            title={intl.formatMessage({ id: 'sys.res.confirm.delete', defaultMessage: '您确定要删除？' })}
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            onConfirm={async () => {
+              await handleRemoveOne(record);
+              actionRef.current?.reloadAndRest?.();
+            }}
+          >
+            <a>{intl.formatMessage({ id: 'sys.res.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
         </>
       ),
     },
-  ];
+  ], [intl, mobile, resTypes, appList, resList, handleRemoveOne]);
 
   return (
     <PageContainer
@@ -437,7 +433,7 @@ const ResourceList = () => {
     >
       <div ref={containerRef}>
         <ProTableX
-          headerTitle="资源清单"
+          headerTitle={intl.formatMessage({ id: 'sys.res.list.title', defaultMessage: '资源清单' })}
           actionRef={actionRef}
           rowKey="id"
           search={{
@@ -445,7 +441,7 @@ const ResourceList = () => {
           }}
           toolBarRender={() => [
             <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.res.toolbar.new', defaultMessage: '新建' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
@@ -470,7 +466,11 @@ const ResourceList = () => {
             pageSizeOptions: ['10', '15', '20', '30', '50'],
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+            showTotal: (total, range) =>
+              intl.formatMessage(
+                { id: 'sys.res.pagination.range', defaultMessage: '第 {start}-{end} 条/总共 {total} 条' },
+                { start: range[0], end: range[1], total },
+              ),
           }}
           tableLayout={mobile ? undefined : 'fixed'}
           scroll={mobile ? undefined : { x: scrollX }}
@@ -480,7 +480,7 @@ const ResourceList = () => {
         <FooterToolbar
           extra={
             <div>
-              已选择{' '}
+              {intl.formatMessage({ id: 'sys.res.footer.selected', defaultMessage: '已选择' })}{' '}
               <a
                 style={{
                   fontWeight: 600,
@@ -488,21 +488,27 @@ const ResourceList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项&nbsp;&nbsp;
+              {intl.formatMessage({ id: 'sys.res.footer.items', defaultMessage: '项' })}&nbsp;&nbsp;
               <span>
-                应用调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)} 万
+                {intl.formatMessage(
+                  { id: 'sys.res.footer.callTotal', defaultMessage: '应用调用次数总计 {n} 万' },
+                  { n: selectedRowsState.reduce((pre, item) => pre + item.callNo, 0) },
+                )}
               </span>
             </div>
           }
         >
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                      onConfirm={async () => {
-                        await handleRemove(selectedRowsState);
-                        actionRef.current?.reloadAndRest?.();
-                      }}>
-            <Button>批量删除</Button>
+          <Popconfirm
+            title={intl.formatMessage({ id: 'sys.res.confirm.delete', defaultMessage: '您确定要删除？' })}
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            onConfirm={async () => {
+              await handleRemove(selectedRowsState);
+              actionRef.current?.reloadAndRest?.();
+            }}
+          >
+            <Button>{intl.formatMessage({ id: 'sys.res.batch.delete', defaultMessage: '批量删除' })}</Button>
           </Popconfirm>
-          <Button type="primary">批量导出</Button>
+          <Button type="primary">{intl.formatMessage({ id: 'sys.res.batch.export', defaultMessage: '批量导出' })}</Button>
         </FooterToolbar>
       )}
       {createModalVisible && <CreateForm

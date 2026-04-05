@@ -106,4 +106,7 @@ public class Pub {
 
 	@ApiModelProperty(value = "扩展属性列表")
 	private List<PubTypeExt> pubTypeExt;
+
+	@ApiModelProperty(value = "主表可发现性（k_pubs.visibility_scope）：PUBLIC_LISTED / UNLISTED / INTERNAL_ONLY；与 meta 中的隐私级别等扩展字段分离，勿混用")
+	private String visibilityScope;
 }

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { useIntl } from 'umi';
 import {Button, Form, Input, Select, TreeSelect, Space, Typography, Row, Col, Card, Divider, Tooltip, Alert, Radio} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {
@@ -31,6 +32,7 @@ const formLayout = {
 };
 
 const UpdateForm = (props) => {
+  const intl = useIntl();
   const [form] = Form.useForm();
   const {
     onSubmit: handleUpdate,
@@ -85,7 +87,7 @@ const UpdateForm = (props) => {
     onChange: setTermValue,
     treeDefaultExpandAll: true,
     treeLine: true,
-    placeholder: '请选择',
+    placeholder: intl.formatMessage({ id: 'sys.res.ph.treeSelect', defaultMessage: '请选择' }),
     treeNodeFilterProp: 'title',
     dropdownStyle: { maxHeight: 400, overflow: 'auto'},
   };
@@ -118,13 +120,13 @@ const UpdateForm = (props) => {
           title={
             <Space>
               <AppstoreOutlined style={{ color: '#1890ff' }} />
-              基础信息
+              {intl.formatMessage({ id: 'sys.res.form.card.basic', defaultMessage: '基础信息' })}
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title="资源的基本标识信息">
+            <Tooltip title={intl.formatMessage({ id: 'sys.res.form.tip.cardBasic', defaultMessage: '资源的基本标识信息' })}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -135,8 +137,8 @@ const UpdateForm = (props) => {
                 name="resourceName"
                 label={
                   <Space>
-                    资源名称
-                    <Tooltip title="资源的显示名称，用于识别">
+                    {intl.formatMessage({ id: 'sys.res.field.resourceName', defaultMessage: '资源名称' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.resourceName.tip', defaultMessage: '资源的显示名称，用于识别' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -144,17 +146,17 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: '资源名称为必填项',
+                    message: intl.formatMessage({ id: 'sys.res.rule.resourceNameRequired', defaultMessage: '资源名称为必填项' }),
                   },
                   {
                     max: 25,
                     type: 'string',
-                    message: '最多25个字',
+                    message: intl.formatMessage({ id: 'sys.res.rule.max25', defaultMessage: '最多25个字' }),
                   },
                 ]}
               >
                 <Input
-                  placeholder="请输入资源名称，最多25个字"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.resourceName', defaultMessage: '请输入资源名称，最多25个字' })}
                   prefix="📝"
                 />
               </FormItem>
@@ -163,8 +165,8 @@ const UpdateForm = (props) => {
                 name="resourceCode"
                 label={
                   <Space>
-                    资源编码
-                    <Tooltip title="资源的唯一标识码">
+                    {intl.formatMessage({ id: 'sys.res.field.resourceCode', defaultMessage: '资源编码' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.resourceCode.tip', defaultMessage: '资源的唯一标识码' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -172,17 +174,17 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: '资源编码为必填项',
+                    message: intl.formatMessage({ id: 'sys.res.rule.resourceCodeRequired', defaultMessage: '资源编码为必填项' }),
                   },
                   {
                     max: 50,
                     type: 'string',
-                    message: '最多50个字符',
+                    message: intl.formatMessage({ id: 'sys.res.rule.max50', defaultMessage: '最多50个字符' }),
                   },
                 ]}
               >
                 <Input
-                  placeholder="请输入英文编码，最多50个字符"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.resourceCode', defaultMessage: '请输入英文编码，最多50个字符' })}
                   prefix="🔑"
                 />
               </FormItem>
@@ -193,8 +195,8 @@ const UpdateForm = (props) => {
                 name="resourcePath"
                 label={
                   <Space>
-                    资源路径
-                    <Tooltip title="资源的访问路径">
+                    {intl.formatMessage({ id: 'sys.res.field.resourcePath', defaultMessage: '资源路径' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.resourcePath.tip', defaultMessage: '资源的访问路径' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -202,17 +204,17 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: '资源路径为必填项',
+                    message: intl.formatMessage({ id: 'sys.res.rule.resourcePathRequired', defaultMessage: '资源路径为必填项' }),
                   },
                   {
                     max: 250,
                     type: 'string',
-                    message: '最多250个字符',
+                    message: intl.formatMessage({ id: 'sys.res.rule.max250', defaultMessage: '最多250个字符' }),
                   },
                 ]}
               >
                 <Input
-                  placeholder="请输入英文或符号字符，最多250个字符"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.resourcePath', defaultMessage: '请输入英文或符号字符，最多250个字符' })}
                   prefix="🔗"
                 />
               </FormItem>
@@ -221,8 +223,8 @@ const UpdateForm = (props) => {
                 name="componentPath"
                 label={
                   <Space>
-                    组件路径
-                    <Tooltip title="组件文件路径，相对于src/pages/目录">
+                    {intl.formatMessage({ id: 'sys.res.field.componentPath', defaultMessage: '组件路径' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.componentPath.tip', defaultMessage: '组件文件路径，相对于src/pages/目录' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -230,13 +232,16 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: false,
-                    message: '组件路径格式：pathX/xxx/xxx，相对于src/pages/目录',
+                    message: intl.formatMessage({
+                      id: 'sys.res.rule.componentPathPattern',
+                      defaultMessage: '组件路径格式：pathX/xxx/xxx，相对于src/pages/目录',
+                    }),
                     pattern: /^[a-zA-Z0-9\/\-_]+$/,
                   },
                 ]}
               >
                 <Input
-                  placeholder="请输入组件路径，如：test，注意无需加/index"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.componentPath', defaultMessage: '请输入组件路径，如：test，注意无需加/index' })}
                   prefix="📁"
                 />
               </FormItem>
@@ -249,13 +254,13 @@ const UpdateForm = (props) => {
           title={
             <Space>
               <MenuOutlined style={{ color: '#52c41a' }} />
-              菜单配置
+              {intl.formatMessage({ id: 'sys.res.form.card.menu', defaultMessage: '菜单配置' })}
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title="菜单相关的配置信息">
+            <Tooltip title={intl.formatMessage({ id: 'sys.res.form.tip.cardMenu', defaultMessage: '菜单相关的配置信息' })}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -266,8 +271,8 @@ const UpdateForm = (props) => {
                 name="resourceType"
                 label={
                   <Space>
-                    资源类型
-                    <Tooltip title="资源的类型，影响显示方式">
+                    {intl.formatMessage({ id: 'sys.res.field.resourceType', defaultMessage: '资源类型' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.resourceType.tip', defaultMessage: '资源的类型，影响显示方式' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -275,12 +280,12 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: '请选择资源类型',
+                    message: intl.formatMessage({ id: 'sys.res.rule.selectResourceType', defaultMessage: '请选择资源类型' }),
                   },
                 ]}
               >
                 <Select
-                  placeholder="请选择资源类型"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.selectResourceType', defaultMessage: '请选择资源类型' })}
                   style={{ width: '100%' }}
                   filterOption={(input, option) =>
                     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -292,8 +297,8 @@ const UpdateForm = (props) => {
               <FormItem
                 label={
                   <Space>
-                    菜单图标
-                    <Tooltip title="菜单显示的图标">
+                    {intl.formatMessage({ id: 'sys.res.field.menuIcon', defaultMessage: '菜单图标' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.menuIcon.tip', defaultMessage: '菜单显示的图标' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -301,23 +306,23 @@ const UpdateForm = (props) => {
               >
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <Radio.Group value={iconType} onChange={(e) => setIconType(e.target.value)}>
-                    <Radio value="antd">内置</Radio>
-                    <Radio value="custom">自定义</Radio>
-                    <Radio value="url">链接</Radio>
+                    <Radio value="antd">{intl.formatMessage({ id: 'sys.res.icon.builtin', defaultMessage: '内置' })}</Radio>
+                    <Radio value="custom">{intl.formatMessage({ id: 'sys.res.icon.custom', defaultMessage: '自定义' })}</Radio>
+                    <Radio value="url">{intl.formatMessage({ id: 'sys.res.icon.url', defaultMessage: '链接' })}</Radio>
                   </Radio.Group>
                   {iconType === 'antd' && (
                     <Space>
                       <div style={{ width: 200, height: 32, border: '1px solid #d9d9d9', borderRadius: '6px', display: 'flex', alignItems: 'center', padding: '0 11px', backgroundColor: '#fafafa' }}>
-                        {selectedAntdName ? renderIcon({ type: 'antd', name: selectedAntdName }) : <span style={{ color: '#bfbfbf' }}>请选择图标</span>}
+                        {selectedAntdName ? renderIcon({ type: 'antd', name: selectedAntdName }) : <span style={{ color: '#bfbfbf' }}>{intl.formatMessage({ id: 'sys.res.icon.pick', defaultMessage: '请选择图标' })}</span>}
                       </div>
-                      <Button icon={<SettingOutlined />} onClick={() => setIconPickerVisible(true)} title="配置图标" />
+                      <Button icon={<SettingOutlined />} onClick={() => setIconPickerVisible(true)} title={intl.formatMessage({ id: 'sys.res.icon.configTitle', defaultMessage: '配置图标' })} />
                     </Space>
                   )}
                   {iconType === 'custom' && (
-                    <Input placeholder="输入自定义图标名称" value={customIcon} onChange={(e) => setCustomIcon(e.target.value)} />
+                    <Input placeholder={intl.formatMessage({ id: 'sys.res.icon.ph.customName', defaultMessage: '输入自定义图标名称' })} value={customIcon} onChange={(e) => setCustomIcon(e.target.value)} />
                   )}
                   {iconType === 'url' && (
-                    <Input placeholder="输入图标URL" value={customUrl} onChange={(e) => setCustomUrl(e.target.value)} />
+                    <Input placeholder={intl.formatMessage({ id: 'sys.res.icon.ph.url', defaultMessage: '输入图标URL' })} value={customUrl} onChange={(e) => setCustomUrl(e.target.value)} />
                   )}
                 </Space>
               </FormItem>
@@ -328,8 +333,8 @@ const UpdateForm = (props) => {
                 name="parentId"
                 label={
                   <Space>
-                    上级菜单
-                    <Tooltip title="菜单的父级菜单">
+                    {intl.formatMessage({ id: 'sys.res.field.parentMenu', defaultMessage: '上级菜单' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.parentMenu.tip', defaultMessage: '菜单的父级菜单' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -337,7 +342,7 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: false,
-                    message: '请选择上级菜单',
+                    message: intl.formatMessage({ id: 'sys.res.rule.selectParentMenu', defaultMessage: '请选择上级菜单' }),
                   },
                 ]}
               >
@@ -348,8 +353,8 @@ const UpdateForm = (props) => {
                 name="displayOrder"
                 label={
                   <Space>
-                    展示顺序
-                    <Tooltip title="菜单的显示顺序，数字越小越靠前">
+                    {intl.formatMessage({ id: 'sys.res.field.displayOrder', defaultMessage: '展示顺序' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.displayOrder.tip', defaultMessage: '菜单的显示顺序，数字越小越靠前' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -357,16 +362,16 @@ const UpdateForm = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: '展示顺序为必填项',
+                    message: intl.formatMessage({ id: 'sys.res.rule.displayOrderRequired', defaultMessage: '展示顺序为必填项' }),
                   },
                   {
                     pattern: /^([1-9]|[1-9]\d|100)$/,
-                    message: '请输入1-100之间的数字',
+                    message: intl.formatMessage({ id: 'sys.res.rule.displayOrderRange', defaultMessage: '请输入1-100之间的数字' }),
                   },
                 ]}
               >
                 <Input
-                  placeholder="请输入数字，1-100"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.displayOrder', defaultMessage: '请输入数字，1-100' })}
                   prefix="🔢"
                 />
               </FormItem>
@@ -381,16 +386,16 @@ const UpdateForm = (props) => {
                       name="menuRegion"
                       label={
                         <Space>
-                          展示区域
-                          <Tooltip title="主导航=顶部菜单，头像下拉=头像点击弹出的菜单">
+                          {intl.formatMessage({ id: 'sys.res.field.menuRegion', defaultMessage: '展示区域' })}
+                          <Tooltip title={intl.formatMessage({ id: 'sys.res.field.menuRegion.tip', defaultMessage: '主导航=顶部菜单，头像下拉=头像点击弹出的菜单' })}>
                             <InfoCircleOutlined style={{ color: '#999' }} />
                           </Tooltip>
                         </Space>
                       }
                     >
-                      <Select placeholder="默认主导航" allowClear>
-                        <Option value="nav_main">主导航</Option>
-                        <Option value="nav_avatar">头像下拉</Option>
+                      <Select placeholder={intl.formatMessage({ id: 'sys.res.field.menuRegion.placeholder', defaultMessage: '默认主导航' })} allowClear>
+                        <Option value="nav_main">{intl.formatMessage({ id: 'sys.res.menuRegion.navMain', defaultMessage: '主导航' })}</Option>
+                        <Option value="nav_avatar">{intl.formatMessage({ id: 'sys.res.menuRegion.navAvatar', defaultMessage: '头像下拉' })}</Option>
                       </Select>
                     </FormItem>
                   ) : null
@@ -405,13 +410,13 @@ const UpdateForm = (props) => {
           title={
             <Space>
               <KeyOutlined style={{ color: '#fa8c16' }} />
-              技术配置
+              {intl.formatMessage({ id: 'sys.res.form.card.tech', defaultMessage: '技术配置' })}
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title="资源的技术配置信息">
+            <Tooltip title={intl.formatMessage({ id: 'sys.res.form.tip.cardTech', defaultMessage: '资源的技术配置信息' })}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -422,15 +427,15 @@ const UpdateForm = (props) => {
                 name="requestMethod"
                 label={
                   <Space>
-                    请求方法
-                    <Tooltip title="HTTP请求方法">
+                    {intl.formatMessage({ id: 'sys.res.field.requestMethod', defaultMessage: '请求方法' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.requestMethod.tip', defaultMessage: 'HTTP请求方法' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
                 }
               >
                 <Select
-                  placeholder="请选择请求方法"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.selectRequestMethod', defaultMessage: '请选择请求方法' })}
                   style={{ width: '100%' }}
                 >
                   <Option value="GET">GET</Option>
@@ -446,15 +451,15 @@ const UpdateForm = (props) => {
                 name="target"
                 label={
                   <Space>
-                    打开方式
-                    <Tooltip title="链接的打开方式">
+                    {intl.formatMessage({ id: 'sys.res.field.target', defaultMessage: '打开方式' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.target.tip', defaultMessage: '链接的打开方式' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
                 }
               >
                 <Select
-                  placeholder="请选择打开方式"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.selectTarget', defaultMessage: '请选择打开方式' })}
                   style={{ width: '100%' }}
                 >
                   <Option value="_self">self</Option>
@@ -472,13 +477,13 @@ const UpdateForm = (props) => {
           title={
             <Space>
               <GlobalOutlined style={{ color: '#722ed1' }} />
-              应用配置
+              {intl.formatMessage({ id: 'sys.res.form.card.app', defaultMessage: '应用配置' })}
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title="资源的应用归属和状态配置">
+            <Tooltip title={intl.formatMessage({ id: 'sys.res.form.tip.cardApp', defaultMessage: '资源的应用归属和状态配置' })}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -489,15 +494,15 @@ const UpdateForm = (props) => {
                 name="appId"
                 label={
                   <Space>
-                    归属应用
-                    <Tooltip title="资源所属的应用">
+                    {intl.formatMessage({ id: 'sys.res.field.app', defaultMessage: '归属应用' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.app.tip', defaultMessage: '资源所属的应用' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
                 }
               >
                 <Select
-                  placeholder="请选择归属应用"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.selectApp', defaultMessage: '请选择归属应用' })}
                   style={{ width: '100%' }}
                   filterOption={(input, option) =>
                     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -512,19 +517,19 @@ const UpdateForm = (props) => {
                 name="isValid"
                 label={
                   <Space>
-                    应用状态
-                    <Tooltip title="资源是否启用">
+                    {intl.formatMessage({ id: 'sys.res.field.appStatus', defaultMessage: '应用状态' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.appStatus.tip', defaultMessage: '资源是否启用' })}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
                 }
               >
                 <Select
-                  placeholder="请选择应用状态"
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.selectAppStatus', defaultMessage: '请选择应用状态' })}
                   style={{ width: '100%' }}
                 >
-                  <Option value="1">有效</Option>
-                  <Option value="0">无效</Option>
+                  <Option value="1">{intl.formatMessage({ id: 'sys.res.status.valid', defaultMessage: '有效' })}</Option>
+                  <Option value="0">{intl.formatMessage({ id: 'sys.res.status.invalid', defaultMessage: '无效' })}</Option>
                 </Select>
               </FormItem>
             </Col>
@@ -536,13 +541,13 @@ const UpdateForm = (props) => {
           title={
             <Space>
               <FileTextOutlined style={{ color: '#13c2c2' }} />
-              描述信息
+              {intl.formatMessage({ id: 'sys.res.form.card.desc', defaultMessage: '描述信息' })}
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title="资源的详细描述信息">
+            <Tooltip title={intl.formatMessage({ id: 'sys.res.form.tip.cardDesc', defaultMessage: '资源的详细描述信息' })}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -551,8 +556,8 @@ const UpdateForm = (props) => {
             name="remark"
             label={
               <Space>
-                资源描述
-                <Tooltip title="资源的详细描述信息">
+                {intl.formatMessage({ id: 'sys.res.field.remark', defaultMessage: '资源描述' })}
+                <Tooltip title={intl.formatMessage({ id: 'sys.res.field.remark.tip', defaultMessage: '资源的详细描述信息' })}>
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -561,7 +566,7 @@ const UpdateForm = (props) => {
               {
                 max: 50,
                 type: 'string',
-                message: '最多50个字',
+                message: intl.formatMessage({ id: 'sys.res.rule.remarkMax', defaultMessage: '最多50个字' }),
               },
             ]}
             labelCol={{ span: 3 }}
@@ -569,7 +574,7 @@ const UpdateForm = (props) => {
           >
             <TextArea
               rows={3}
-              placeholder="请输入资源描述，例如：系统核心功能模块、用户管理相关页面等"
+              placeholder={intl.formatMessage({ id: 'sys.res.ph.remark', defaultMessage: '请输入资源描述，例如：系统核心功能模块、用户管理相关页面等' })}
               showCount
               maxLength={50}
               style={{
@@ -592,10 +597,10 @@ const UpdateForm = (props) => {
     (
       <Space>
         <Button onClick={() => handleUpdateModalVisible()}>
-          取消
+          {intl.formatMessage({ id: 'sys.res.common.cancel', defaultMessage: '取消' })}
         </Button>
         <Button type="primary" onClick={() => handleNext()}>
-          保存配置
+          {intl.formatMessage({ id: 'sys.res.update.save', defaultMessage: '保存配置' })}
         </Button>
       </Space>
     );
@@ -610,7 +615,7 @@ const UpdateForm = (props) => {
       title={
         <Space>
           <EditOutlined style={{ color: '#1890ff' }} />
-          资源配置
+          {intl.formatMessage({ id: 'sys.res.update.title', defaultMessage: '资源配置' })}
         </Space>
       }
       visible={updateModalVisible}

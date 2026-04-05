@@ -1,6 +1,7 @@
 import {queryCity, queryProvince, queryRegionInfo, saveBaseInfo} from './service';
 import {queryCurAccount} from "@/services/user";
 import {message} from "antd";
+import { formatMessage } from 'umi';
 
 const titles = [
   'Alipay',
@@ -106,9 +107,9 @@ const Model = {
 
       const response = yield call(saveBaseInfo, payload);
       if (response?.data && response.data === 'ok')
-        message.success("设置成功！");
+        message.success(formatMessage({ id: 'account.basic.save.success' }));
       else
-        message.error("保存信息失败！");
+        message.error(formatMessage({ id: 'account.basic.save.fail' }));
 
       if (callback)
         callback(response || {});

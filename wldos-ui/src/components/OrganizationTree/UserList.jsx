@@ -8,7 +8,8 @@
 
 import React, { useState } from 'react';
 import { Table, Spin, Button, Space, Tag, Avatar, Input, Select, Row, Col } from 'antd';
-import { EditOutlined, DeleteOutlined, UserOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UserOutlined, EyeOutlined } from '@ant-design/icons';
+import { useIntl } from 'umi';
 import moment from 'moment';
 import UserPermissionView from '@/components/UserPermissionView';
 
@@ -16,6 +17,7 @@ const { Search } = Input;
 const { Option } = Select;
 
 const UserList = ({ users, loading, organizationId }) => {
+  const intl = useIntl();
   const [permissionModalVisible, setPermissionModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchText, setSearchText] = useState('');
@@ -47,7 +49,7 @@ const UserList = ({ users, loading, organizationId }) => {
 
   const columns = [
     {
-      title: '头像',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.avatar' }),
       dataIndex: 'avatar',
       key: 'avatar',
       width: 60,
@@ -60,32 +62,36 @@ const UserList = ({ users, loading, organizationId }) => {
       ),
     },
     {
-      title: '昵称',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.nickname' }),
       dataIndex: 'nickname',
       key: 'nickname',
     },
     {
-      title: '登录名',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.loginName' }),
       dataIndex: 'login_name',
       key: 'login_name',
     },
     {
-      title: '邮箱',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.email' }),
       dataIndex: 'email',
       key: 'email',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.status' }),
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Tag color={status === '正常' ? 'green' : 'red'}>
-          {status}
+        <Tag color={status === '正常' || status === 'normal' ? 'green' : 'red'}>
+          {status === '正常' || status === 'normal'
+            ? intl.formatMessage({ id: 'component.organizationTree.userList.status.normal' })
+            : status === 'notActive'
+              ? intl.formatMessage({ id: 'component.organizationTree.userList.status.notActive' })
+              : status}
         </Tag>
       ),
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.createTime' }),
       dataIndex: 'createTime',
       key: 'createTime',
       render: (createTime) => {
@@ -96,7 +102,7 @@ const UserList = ({ users, loading, organizationId }) => {
       },
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'component.organizationTree.userList.col.action' }),
       key: 'action',
       render: (_, record) => (
         <Space size="small">
@@ -105,7 +111,7 @@ const UserList = ({ users, loading, organizationId }) => {
             icon={<EditOutlined />}
             size="small"
           >
-            编辑
+            {intl.formatMessage({ id: 'component.organizationTree.userList.action.edit' })}
           </Button>
           <Button
             type="link"
@@ -113,7 +119,7 @@ const UserList = ({ users, loading, organizationId }) => {
             size="small"
             onClick={() => handleViewPermission(record)}
           >
-            权限查看
+            {intl.formatMessage({ id: 'component.organizationTree.userList.action.permissionView' })}
           </Button>
           <Button
             type="link"
@@ -121,7 +127,7 @@ const UserList = ({ users, loading, organizationId }) => {
             icon={<DeleteOutlined />}
             size="small"
           >
-            删除
+            {intl.formatMessage({ id: 'component.organizationTree.userList.action.delete' })}
           </Button>
         </Space>
       ),
@@ -132,7 +138,7 @@ const UserList = ({ users, loading, organizationId }) => {
     <div style={{ marginTop: 16 }}>
       <div style={{ marginBottom: 16 }}>
         <h3 style={{ margin: 0, color: '#333' }}>
-          <UserOutlined /> 组织成员
+          <UserOutlined /> {intl.formatMessage({ id: 'component.organizationTree.userList.title' })}
         </h3>
       </div>
 
@@ -141,7 +147,7 @@ const UserList = ({ users, loading, organizationId }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Search
-              placeholder="搜索昵称、登录名或邮箱"
+              placeholder={intl.formatMessage({ id: 'component.organizationTree.userList.searchPlaceholder' })}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               onSearch={setSearchText}
@@ -154,11 +160,11 @@ const UserList = ({ users, loading, organizationId }) => {
               value={statusFilter}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
-              placeholder="选择状态"
+              placeholder={intl.formatMessage({ id: 'component.organizationTree.userList.filter.statusPlaceholder' })}
             >
-              <Option value="all">全部状态</Option>
-              <Option value="正常">正常</Option>
-              <Option value="notActive">未激活</Option>
+              <Option value="all">{intl.formatMessage({ id: 'component.organizationTree.userList.filter.allStatus' })}</Option>
+              <Option value="正常">{intl.formatMessage({ id: 'component.organizationTree.userList.status.normal' })}</Option>
+              <Option value="notActive">{intl.formatMessage({ id: 'component.organizationTree.userList.status.notActive' })}</Option>
             </Select>
           </Col>
         </Row>
@@ -173,7 +179,7 @@ const UserList = ({ users, loading, organizationId }) => {
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条记录`,
+            showTotal: (total) => intl.formatMessage({ id: 'component.organizationTree.userList.pagination.total' }, { total }),
           }}
           size="small"
         />

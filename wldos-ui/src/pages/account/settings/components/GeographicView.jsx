@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Select, Spin} from 'antd';
-import {connect} from 'umi';
+import { connect, formatMessage } from 'umi';
 import styles from './GeographicView.less';
 
 const {Option} = Select;
@@ -45,7 +45,7 @@ class GeographicView extends Component {
     if (list === undefined || list.length < 1) {
       return (
         <Option key={0} value={0}>
-          没有找到选项
+          {formatMessage({ id: 'account.basic.geographic.no-options' })}
         </Option>
       );
     }

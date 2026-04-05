@@ -1,4 +1,4 @@
-import { Link, history } from 'umi';
+import { FormattedMessage, history } from 'umi';
 import { Result, Button } from 'antd';
 import React from 'react';
 
@@ -9,13 +9,24 @@ export default () => (
     style={{
       background: 'none',
     }}
-    subTitle="抱歉，您没有权限访问此页面"
+    subTitle={
+      <FormattedMessage
+        id="exceptionand403.description.403"
+        defaultMessage="Sorry, you are not authorized to access this page."
+      />
+    }
     extra={[
       <Button type="primary" key="home" onClick={() => history.push('/')}>
-        返回首页
+        <FormattedMessage
+          id="exceptionand403.exception.back"
+          defaultMessage="Back to home"
+        />
       </Button>,
       <Button key="back" onClick={() => history.goBack()}>
-        返回上页
+        <FormattedMessage
+          id="exceptionand403.exception.backToPrevious"
+          defaultMessage="Back to previous page"
+        />
       </Button>,
     ]}
   />

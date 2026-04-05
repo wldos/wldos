@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>2.3.8.2</version>
+	<version>2.4.0.0</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<!-- WLDOS 版本号 - 统一管理，修改此处即可更新所有地方的版本号 -->
-		<wldos.version>2.3.8.2</wldos.version>
+		<wldos.version>2.4.0.0</wldos.version>
 	</properties>
 	<url>http://www.gitee.com/wldos/wldos</url>
 	<licenses>
@@ -42,7 +42,7 @@
 	</licenses>
 	<developers>
 		<developer>
-			<name>元悉宇宙(yuanxiyuzhou)</name>
+			<name>元悉宇宙(Yuanxi Universe)</name>
 			<email>306991142@qq.com</email>
 			<roles>
 				<role>leader</role>
@@ -230,6 +230,13 @@
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.github.wldos</groupId>
+				<artifactId>wldos-sdk-api</artifactId>
+				<version>${wldos.version}</version>
+			</dependency>
+		</dependencies>
 	</dependencyManagement>
 
 	<build>

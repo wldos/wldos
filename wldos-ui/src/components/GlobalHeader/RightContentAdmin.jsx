@@ -9,10 +9,11 @@
 import { Tooltip, Button, Input } from 'antd';
 import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
-import { connect, SelectLang, history } from 'umi';
+import { connect, history, useIntl } from 'umi';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const { Search } = Input;
 
@@ -21,6 +22,7 @@ const GlobalHeaderRightAdmin = (props) => {
         avatar: '',
         nickname: '',
     },} = props;
+    const intl = useIntl();
 
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? (window.innerWidth || document.documentElement.clientWidth) < 768 : false);
@@ -92,14 +94,14 @@ const GlobalHeaderRightAdmin = (props) => {
     return (
         <div className={className} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Search
-                placeholder="全文检索"
+                placeholder={intl.formatMessage({ id: 'component.globalHeader.fullSearch' })}
                 allowClear
                 onSearch={onFullTextSearch}
                 style={{ width: 220, flexShrink: 0 }}
                 size="middle"
                 className={styles.headerSearchInput}
             />
-            { <Tooltip title="使用文档">
+            { <Tooltip title={intl.formatMessage({ id: 'component.globalHeader.help' })}>
                 <a
                     style={{
                         color: 'inherit',
@@ -115,7 +117,9 @@ const GlobalHeaderRightAdmin = (props) => {
 
             {/* 全屏控件 - 仅桌面端显示 */}
             {!isMobile && (
-                <Tooltip title={isFullscreen ? "退出全屏" : "进入全屏"}>
+                <Tooltip title={isFullscreen
+                  ? intl.formatMessage({ id: 'component.globalHeader.fullscreen.exit' })
+                  : intl.formatMessage({ id: 'component.globalHeader.fullscreen.enter' })}>
                     <Button
                         className={`${styles.action} fullscreen-toggle`}
                         type="text"
@@ -136,7 +140,7 @@ const GlobalHeaderRightAdmin = (props) => {
                 // @TODO isManageSide从后端取
             }
             <Avatar menu isManageSide={0}/>
-            <SelectLang className={styles.action}/>
+            <LanguageSwitcher className={styles.action} />
         </div>
     )
 }

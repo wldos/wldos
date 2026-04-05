@@ -8,7 +8,7 @@
 
 import ProLayout from '@ant-design/pro-layout';
 import React, {useEffect, useRef, useState} from 'react';
-import {connect, history, Link} from 'umi';
+import {connect, history, Link, useIntl} from 'umi';
 import {BackTop} from 'antd';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import WldosFooterDom from '@/layouts/foot';
@@ -101,6 +101,8 @@ const BasicLayout = (props) => {
     setCollapsed(payload);
   };
 
+  const {formatMessage} = useIntl();
+
   const isHomePage = location.pathname === getHome();
   return (
     <>
@@ -108,7 +110,7 @@ const BasicLayout = (props) => {
       <ProLayout
         className={`${styles.topNavWldos} ${closeBread ? styles.topNavContentNoBread : styles.topNavContent} ${isHomePage ? styles.homeLayout : ''}`}
         logo={seo.logo}
-        // formatMessage={formatMessage} // 关掉国际化输出防止未作国际化处理时报错，不从menu改是因为top布局时menu设置menu={{loading, locale: false}}会导致刷新时多个齿轮效果
+        formatMessage={formatMessage} // 关掉国际化输出防止未作国际化处理时报错，不从menu改是因为top布局时menu设置menu={{loading, locale: false}}会导致刷新时多个齿轮效果
         menuDataRender={(md) => menuHandle(filterMainNavMenu(md && md.length > 0 ? menuData.pushAll(md) : menuData))}
         {...settings}
         menu={loading}

@@ -11,6 +11,7 @@ package com.wldos.cms.controller;
 import java.util.Map;
 
 import com.wldos.framework.mvc.controller.EntityController;
+import io.github.wldos.common.res.Result;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.AuditPub;
@@ -19,7 +20,9 @@ import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import com.wldos.platform.core.enums.PubTypeEnum;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -146,5 +149,15 @@ public class PubController extends EntityController<PubService, KPubs> {
 	public Boolean offlinePost(@ApiParam(value = "待下线内容", required = true) @Valid @RequestBody AuditPub pub) {
 		this.service.offlinePub(pub);
 		return Boolean.TRUE;
+	}
+
+	@ApiOperation(value = "更新内容可发现性", notes = "写入 k_pubs.visibility_scope（PUBLIC_LISTED / UNLISTED / INTERNAL_ONLY）")
+	@PutMapping("{id}/visibility-scope")
+	public Result<Void> updateVisibilityScope(
+			@ApiParam(value = "内容ID", required = true) @PathVariable Long id,
+			@RequestBody(required = false) Map<String, String> body) {
+		String scope = body != null ? body.get("visibilityScope") : null;
+		this.service.updateVisibilityScope(id, scope, this.getDomainId(), this.getUserId(), this.getUserIp());
+		return Result.ok(null);
 	}
 }

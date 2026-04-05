@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
@@ -34,6 +35,10 @@ public class WoDomainResource {
 	private Long termTypeId;
 
 	private String url;
+
+	/** 域资源扩展 JSON，下发至 DynSet.extraProps（如门户静态首页 portalStatic） */
+	@Column("extra_props")
+	private String extraProps;
 
 	private Long domainId;
 

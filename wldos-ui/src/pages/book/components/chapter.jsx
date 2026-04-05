@@ -64,7 +64,8 @@ const Chapter = (props) => {
     mode,
     categories,
     tagData,
-    history
+    history,
+    onMobileChapterSelected,
   } = props;
 
   const {id: bookId, chapter} = currentBook;
@@ -72,7 +73,14 @@ const Chapter = (props) => {
   const [contInfo, setContInfo] = useState({});
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
 
-  const clickListen = () => setVisible(false);
+  /** 仅在点击浮层外时收起；浮层内 mouseup 不能关（否则先于 link 的 click 卸载 Popover，click 会落到下层 Menu 触发移动端切编辑区） */
+  const clickListen = (e) => {
+    const el = e.target?.nodeType === 3 ? e.target.parentElement : e.target;
+    if (el && typeof el.closest === 'function' && el.closest('.ant-popover')) {
+      return;
+    }
+    setVisible(false);
+  };
   const keyupListen = (e) => {if (e.key === 'Escape') setVisible(false);};
 
   useEffect(() => {
@@ -87,17 +95,22 @@ const Chapter = (props) => {
   const rendItem = (curCont) => (
     <ul style={{padding: '0', marginLeft: -10}}>
       <li>
-        <a onClick={async () => {
-          const res = await preUpdate({id: curCont.id});
-          if (res?.data) {
-            const {pubTypeExt, ...otherValues} = res.data;
-            const realValues = {...otherValues, ...pubTypeExt};
-            setContInfo(realValues);
-          }
+        <a
+          href="#"
+          onClick={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const res = await preUpdate({id: curCont.id});
+            if (res?.data) {
+              const {pubTypeExt, ...otherValues} = res.data;
+              const realValues = {...otherValues, ...pubTypeExt};
+              setContInfo(realValues);
+            }
 
-          handleUpdateModalVisible(true);
-          setVisible(false);
-        }}>配置内容</a>
+            handleUpdateModalVisible(true);
+            setVisible(false);
+          }}
+        >配置内容</a>
       </li>
       <li style={{marginTop: 5}}>
         <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
@@ -111,7 +124,7 @@ const Chapter = (props) => {
                   setVisible(false);
                 }
               }}>
-          <a onClick={() => setVisible(false)}>删除此条</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVisible(false); }}>删除此条</a>
         </Popconfirm>
       </li>
     </ul>
@@ -119,22 +132,19 @@ const Chapter = (props) => {
 
   const getMenuChapter = (chapterList, curCont) => {
     return chapterList?.length ? chapterList.map(({id, pubTitle}) =>
-        <Item key={id} title={pubTitle} onClick={(e) => {
-          const config = document.getElementById("subConf");
-          if (!config) {
-            return;
-          }
-          const confPos = config.getBoundingClientRect();
-          const eventX = e.domEvent.clientX;
-          const eventY = e.domEvent.clientY;
-          if (confPos.left < eventX && eventX < confPos.right && confPos.top < eventY && eventY < confPos.bottom) {
-            config.click();
-            setVisible(true);
-          }
-        }}>
+        <Item key={id} title={pubTitle}>
           {id === curCont.id && <div className={styles.config}>
-            <Popover placement="bottomRight" title={false} content={rendItem(curCont)} trigger="click" visible={visible}>
-              <SettingOutlined id="subConf" />
+            <Popover placement="bottomRight" title={false} content={rendItem(curCont)} trigger="click" visible={visible}
+              onVisibleChange={setVisible}>
+              <span
+                role="button"
+                tabIndex={0}
+                className={styles.menuConfigTrigger}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <SettingOutlined aria-label="内容配置" />
+              </span>
             </Popover>
           </div>}
           <span>{pubTitle}</span>
@@ -148,6 +158,22 @@ const Chapter = (props) => {
           selectedKeys={currentChapter.id}
           defaultSelectedKeys={[chapter?.length ? chapter[0].id : '']}
           onClick={(item) => {
+            // 点击齿轮或 Popover 内菜单：不触发章节选中（否则移动端会切到「编辑」区）
+            const t = item.domEvent?.target;
+            if (t?.closest?.(`.${styles.menuConfigTrigger}`) || t?.closest?.('.ant-popover')) {
+              return;
+            }
+            // 无论是否为当前选中项，都先拉取一次章节详情，保证编辑区内容完整
+            dispatch({
+              type: 'bookSpace/fetchCurrentChapter',
+              payload: {
+                bookId,
+                chapterId: item.key,
+              },
+            });
+            if (onMobileChapterSelected) {
+              onMobileChapterSelected();
+            }
             if (currentChapter.id !== item.key) {
               history.push({
                 pathname: `/space/book/${bookId}/chapter/${item.key}`,

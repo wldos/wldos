@@ -131,19 +131,13 @@ const routes = [
                 component: './sys/config',
               },
               {
-                path: '/admin/sys/seo',
-                component: './commercial/sys/seo',
-                name: 'SEO',
-              },
-              /* 与 SEO 同组件，兼容菜单 path 配置为 robots 时打开白屏 */
-              {
-                path: '/admin/sys/robots',
-                component: './commercial/sys/seo',
-                name: 'robots管理',
-              },
-              {
                 path: '/admin/sys/reg',
                 component: './sys/reg',
+              },
+              {
+                path: '/admin/sys/license-apply',
+                component: './sys/license-apply',
+                name: '许可证申请',
               },
               {
                 path: '/admin/sys/oauth',
@@ -490,11 +484,6 @@ const routes = [
                 path: '/account/settings',
                 component: './account/settings',
               },
-              {
-                path: '/account/referral',
-                component: './commercial/referral',
-                name: '个人推荐中心',
-              },
             ],
           },
           {
@@ -516,4 +505,19 @@ const routes = [
   },
 ];
 
+/** 递归收集所有带 name 的路由，得到 path -> title，供布局等通用使用 */
+export function getRouteTitleByPath(routeList) {
+  const out = {};
+  function walk(list) {
+    if (!list || !Array.isArray(list)) return;
+    list.forEach((r) => {
+      if (r.path && r.name) out[r.path] = r.name;
+      if (r.routes) walk(r.routes);
+    });
+  }
+  walk(routeList || []);
+  return out;
+}
+
+export const routeTitleByPath = getRouteTitleByPath(routes);
 export default routes;

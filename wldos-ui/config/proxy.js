@@ -15,7 +15,7 @@
 
 export default {
   dev: {
-      // 注意 api、store、plugins、mock-api 是关键前缀，业务 api 不要包含这些，可能会导致 404
+      // 注意 api、store、plugins、mock-api 是关键前缀；插件静态资源走 /api/plugin-assets/**，与 /api 共用代理
       // 后端统一 API 前缀：/api
       '/api/' : {
           target: 'http://localhost:8088/api',

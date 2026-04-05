@@ -53,6 +53,7 @@ import io.github.wldos.platform.support.cms.model.Attachment;
 import io.github.wldos.platform.support.cms.model.IMeta;
 import io.github.wldos.platform.support.cms.model.KModelMetaKey;
 import io.github.wldos.platform.support.cms.model.MainPicture;
+import com.wldos.cms.query.CmsKpubsDiscoverySql;
 import io.github.wldos.platform.support.cms.vo.Product;
 import io.github.wldos.platform.support.cms.vo.RouteParams;
 import io.github.wldos.platform.support.cms.vo.SeoCrumbs;
@@ -176,6 +177,7 @@ public class KCMSService extends NonEntityService {
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
+		this.applyVisibilityScopeFromRequest(pub, pubs);
 		// 存在别名，自动加1设置不重复别名
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
 			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
@@ -265,6 +267,7 @@ public class KCMSService extends NonEntityService {
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
+		this.applyVisibilityScopeFromRequest(pub, pubs);
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("updatePub", pubs);
 
@@ -991,8 +994,18 @@ public class KCMSService extends NonEntityService {
 		if (ObjectUtils.isBlank(pubType))
 			return true;
 		KPubs pub = this.pubService.findById(id);
+		if (pub == null)
+			return false;
 		if (PubTypeEnum.isSingle(pub.getPubType()))
 			return PubTypeEnum.isSingle(pubType);
 		return PubTypeEnum.isComplex(pubType);
+	}
+
+	/**
+	 * 主表可发现性：仅根据 {@link Pub#getVisibilityScope()} 写入 {@code k_pubs.visibility_scope}。
+	 * 与 k_pubmeta 中的隐私/查看方式等扩展字段无关，不得从后者推断本字段。
+	 */
+	private void applyVisibilityScopeFromRequest(Pub pub, KPubs pubs) {
+		pubs.setVisibilityScope(CmsKpubsDiscoverySql.normalizeScopeForSave(pub.getVisibilityScope()));
 	}
 }

@@ -8,10 +8,12 @@
 
 import React from 'react';
 import { Form, Input, Button, Space, Select } from 'antd';
+import { useIntl } from 'umi';
 
 const { Option } = Select;
 
 const UserCreateForm = ({ organizationId, onSubmit, loading }) => {
+  const intl = useIntl();
   const [form] = Form.useForm();
 
   const handleSubmit = async (values) => {
@@ -41,69 +43,69 @@ const UserCreateForm = ({ organizationId, onSubmit, loading }) => {
     >
       <Form.Item
         name="userName"
-        label="用户名"
+        label={intl.formatMessage({ id: 'component.organizationTree.user.form.userName' })}
         rules={[
-          { required: true, message: '请输入用户名' },
-          { max: 50, message: '用户名不能超过50个字符' }
+          { required: true, message: intl.formatMessage({ id: 'component.organizationTree.user.form.userName.required' }) },
+          { max: 50, message: intl.formatMessage({ id: 'component.organizationTree.user.form.userName.max' }) },
         ]}
       >
-        <Input placeholder="请输入用户名" />
+        <Input placeholder={intl.formatMessage({ id: 'component.organizationTree.user.form.userName.placeholder' })} />
       </Form.Item>
 
       <Form.Item
         name="nickName"
-        label="昵称"
+        label={intl.formatMessage({ id: 'component.organizationTree.user.form.nickName' })}
         rules={[
-          { required: true, message: '请输入昵称' },
-          { max: 50, message: '昵称不能超过50个字符' }
+          { required: true, message: intl.formatMessage({ id: 'component.organizationTree.user.form.nickName.required' }) },
+          { max: 50, message: intl.formatMessage({ id: 'component.organizationTree.user.form.nickName.max' }) },
         ]}
       >
-        <Input placeholder="请输入昵称" />
+        <Input placeholder={intl.formatMessage({ id: 'component.organizationTree.user.form.nickName.placeholder' })} />
       </Form.Item>
 
       <Form.Item
         name="email"
-        label="邮箱"
+        label={intl.formatMessage({ id: 'component.organizationTree.user.form.email' })}
         rules={[
-          { required: true, message: '请输入邮箱' },
-          { type: 'email', message: '请输入有效的邮箱地址' }
+          { required: true, message: intl.formatMessage({ id: 'component.organizationTree.user.form.email.required' }) },
+          { type: 'email', message: intl.formatMessage({ id: 'component.organizationTree.user.form.email.invalid' }) },
         ]}
       >
-        <Input placeholder="请输入邮箱" />
+        <Input placeholder={intl.formatMessage({ id: 'component.organizationTree.user.form.email.placeholder' })} />
       </Form.Item>
 
       <Form.Item
         name="phone"
-        label="手机号"
+        label={intl.formatMessage({ id: 'component.organizationTree.user.form.phone' })}
         rules={[
-          { required: true, message: '请输入手机号' },
-          { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号' }
+          { required: true, message: intl.formatMessage({ id: 'component.organizationTree.user.form.phone.required' }) },
+          { pattern: /^1[3-9]\d{9}$/, message: intl.formatMessage({ id: 'component.organizationTree.user.form.phone.invalid' }) },
         ]}
       >
-        <Input placeholder="请输入手机号" />
+        <Input placeholder={intl.formatMessage({ id: 'component.organizationTree.user.form.phone.placeholder' })} />
       </Form.Item>
 
       <Form.Item
         name="role"
-        label="角色"
+        label={intl.formatMessage({ id: 'component.organizationTree.user.form.role' })}
         rules={[
-          { required: true, message: '请选择角色' }
+          { required: true, message: intl.formatMessage({ id: 'component.organizationTree.user.form.role.required' }) },
         ]}
       >
-        <Select placeholder="请选择角色">
-          <Option value="admin">管理员</Option>
-          <Option value="user">普通用户</Option>
-          <Option value="guest">访客</Option>
+        <Select placeholder={intl.formatMessage({ id: 'component.organizationTree.user.form.role.placeholder' })}>
+          <Option value="admin">{intl.formatMessage({ id: 'component.organizationTree.user.form.role.admin' })}</Option>
+          <Option value="user">{intl.formatMessage({ id: 'component.organizationTree.user.form.role.user' })}</Option>
+          <Option value="guest">{intl.formatMessage({ id: 'component.organizationTree.user.form.role.guest' })}</Option>
         </Select>
       </Form.Item>
 
       <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
         <Space>
           <Button onClick={() => form.resetFields()}>
-            重置
+            {intl.formatMessage({ id: 'component.organizationTree.user.form.reset' })}
           </Button>
           <Button type="primary" htmlType="submit" loading={loading}>
-            创建
+            {intl.formatMessage({ id: 'component.organizationTree.user.form.create' })}
           </Button>
         </Space>
       </Form.Item>

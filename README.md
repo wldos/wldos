@@ -9,7 +9,7 @@
     <a href="README.EN.md">English</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.3.8.2-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V2.4.0.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -18,6 +18,14 @@
 
 ---
 
+## 🌍 愿景与价值
+
+WLDOS 的核心目标是让“能力按需装卸、协作按协议自洽”，从而支撑分布式一体化系统的长期运行。
+
+- 单实例：动态单体架构 + 模块插件热插拔，让系统在运行期持续获得新能力
+- 多实例：通过服务网格/sidecar 方向的协同机制，让多个副本实例进行自洽协商与能力分工
+- 结果导向：用工程化的方式把系统编排变成可持续受益的能力网络
+
 ## ✨ 核心能力
 
 | 能力 | 说明 |
@@ -25,6 +33,7 @@
 | 🏢 **多租户** | 一套代码服务多个客户，数据完全隔离 |
 | 🌐 **多域名** | 不同域名展示不同内容，独立品牌运营 |
 | 🔌 **插件热插拔** | 业务模块即插即用，无需重启 |
+| 🔗 **联邦协作（多实例）** | 支持多实例分布式协同（服务网格/sidecar 方向），能力分工协同后覆盖同类需求 |
 | 🔐 **完整权限** | RBAC + 数据权限 + 多级组织 |
 | 📱 **前后端融合** | Spring Boot + React，动态单体架构 |
 | 💰 **内容付费** | 内置付费系统，开箱即用 |

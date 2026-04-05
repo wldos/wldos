@@ -28,6 +28,8 @@ export const updateBook = async (bookInfo) => {
       telephone: bookInfo.telephone,
       pubExcerpt: bookInfo.pubExcerpt,
       privacyLevel: bookInfo.privacyLevel,
+      visibilityScope: bookInfo.visibilityScope,
+      reward: bookInfo.reward,
       cover: bookInfo.cover,
       mainPic1: bookInfo.mainPic1,
       mainPic2: bookInfo.mainPic2,
@@ -87,7 +89,8 @@ const BookList = (props) => {
     categories,
     tagData,
     mode,
-    history
+    history,
+    onMobileBookSelected,
   } = props;
 
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
@@ -172,6 +175,10 @@ const BookList = (props) => {
       <Menu key="book" mode={mode} selectedKeys={currentBook.id}
             defaultSelectedKeys={[book?.length ? book[0].id : '']}
             onClick={(item) => {
+              const selected = (book || []).find((b) => String(b.id) === String(item.key));
+              if (onMobileBookSelected) {
+                onMobileBookSelected(selected);
+              }
               if (currentBook.id !== item.key) {
                 history.push({
                   pathname: `/space/book/${item.key}`,

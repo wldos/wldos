@@ -29,7 +29,7 @@ import {
   GithubOutlined,
   SyncOutlined
 } from '@ant-design/icons';
-import { connect } from 'umi';
+import { connect, useIntl } from 'umi';
 import moment from 'moment';
 import StoreForm from '../components/StoreForm';
 import StoreDetail from '../components/StoreDetail';
@@ -50,6 +50,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const StoreReview = ({ dispatch }) => {
+  const intl = useIntl();
   const [formVisible, setFormVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
   const [reviewVisible, setReviewVisible] = useState(false);
@@ -146,7 +147,7 @@ const StoreReview = ({ dispatch }) => {
   // 表格列配置
   const columns = [
     {
-      title: '插件编码',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.pluginCode', defaultMessage: '插件编码' }),
       dataIndex: 'pluginCode',
       key: 'pluginCode',
       width: 150,
@@ -154,26 +155,26 @@ const StoreReview = ({ dispatch }) => {
       fixed: mobile ? undefined : 'left',
     },
     {
-      title: '插件名称',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.pluginName', defaultMessage: '插件名称' }),
       dataIndex: 'pluginName',
       key: 'pluginName',
       width: 180,
       ellipsis: true,
     },
     {
-      title: '版本',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.version', defaultMessage: '版本' }),
       dataIndex: 'version',
       key: 'version',
       width: 100,
     },
     {
-      title: '作者',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.author', defaultMessage: '作者' }),
       dataIndex: 'author',
       key: 'author',
       width: 120,
     },
     {
-      title: '分类',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.category', defaultMessage: '分类' }),
       dataIndex: 'termTypeId',  // 查询条件使用 termTypeId（单个分类ID）
       key: 'termTypeId',
       width: 120,
@@ -203,7 +204,7 @@ const StoreReview = ({ dispatch }) => {
       },
     },
     {
-      title: '标签',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.tags', defaultMessage: '标签' }),
       dataIndex: 'tags',
       key: 'tags',
       width: 200,
@@ -221,56 +222,62 @@ const StoreReview = ({ dispatch }) => {
       },
     },
     {
-      title: '审核状态',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.reviewStatus', defaultMessage: '审核状态' }),
       dataIndex: 'reviewStatus',
       key: 'reviewStatus',
       width: 120,
       filters: [
-        { text: '待审核', value: 'PENDING' },
-        { text: '已通过', value: 'APPROVED' },
-        { text: '已拒绝', value: 'REJECTED' },
-        { text: '已下架', value: 'OFFLINE' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.pending', defaultMessage: '待审核' }), value: 'PENDING' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.approved', defaultMessage: '已通过' }), value: 'APPROVED' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.rejected', defaultMessage: '已拒绝' }), value: 'REJECTED' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.offline', defaultMessage: '已下架' }), value: 'OFFLINE' },
       ],
       render: (status) => {
         const statusMap = {
-          'PENDING': { text: '待审核', color: 'orange' },
-          'APPROVED': { text: '已通过', color: 'green' },
-          'REJECTED': { text: '已拒绝', color: 'red' },
-          'OFFLINE': { text: '已下架', color: 'default' },
+          'PENDING': { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.pending', defaultMessage: '待审核' }), color: 'orange' },
+          'APPROVED': { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.approved', defaultMessage: '已通过' }), color: 'green' },
+          'REJECTED': { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.rejected', defaultMessage: '已拒绝' }), color: 'red' },
+          'OFFLINE': { text: intl.formatMessage({ id: 'sys.storeReview.reviewStatus.offline', defaultMessage: '已下架' }), color: 'default' },
         };
-        const config = statusMap[status] || { text: '未知', color: 'default' };
+        const config = statusMap[status] || {
+          text: intl.formatMessage({ id: 'sys.storeReview.status.unknown', defaultMessage: '未知' }),
+          color: 'default',
+        };
         return <Badge status={config.color} text={config.text} />;
       },
     },
     {
-      title: '安装来源',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.installSource', defaultMessage: '安装来源' }),
       dataIndex: 'installSource',
       key: 'installSource',
       width: 120,
       filters: [
-        { text: '上传', value: 'UPLOAD' },
-        { text: 'GitHub', value: 'GITHUB' },
-        { text: 'Gitee', value: 'GITEE' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.installSource.upload', defaultMessage: '上传' }), value: 'UPLOAD' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.installSource.github', defaultMessage: 'GitHub' }), value: 'GITHUB' },
+        { text: intl.formatMessage({ id: 'sys.storeReview.installSource.gitee', defaultMessage: 'Gitee' }), value: 'GITEE' },
       ],
       render: (source) => {
         const sourceMap = {
-          'UPLOAD': { text: '上传', color: 'default' },
-          'GITHUB': { text: 'GitHub', color: 'blue' },
-          'GITEE': { text: 'Gitee', color: 'green' },
+          'UPLOAD': { text: intl.formatMessage({ id: 'sys.storeReview.installSource.upload', defaultMessage: '上传' }), color: 'default' },
+          'GITHUB': { text: intl.formatMessage({ id: 'sys.storeReview.installSource.github', defaultMessage: 'GitHub' }), color: 'blue' },
+          'GITEE': { text: intl.formatMessage({ id: 'sys.storeReview.installSource.gitee', defaultMessage: 'Gitee' }), color: 'green' },
         };
-        const config = sourceMap[source] || { text: '未知', color: 'default' };
+        const config = sourceMap[source] || {
+          text: intl.formatMessage({ id: 'sys.storeReview.status.unknown', defaultMessage: '未知' }),
+          color: 'default',
+        };
         return <Tag color={config.color}>{config.text}</Tag>;
       },
     },
     {
-      title: '审核人',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.reviewerName', defaultMessage: '审核人' }),
       dataIndex: 'reviewerName',
       key: 'reviewerName',
       width: 120,
       render: (text) => text || '-',
     },
     {
-      title: '审核时间',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.reviewTime', defaultMessage: '审核时间' }),
       dataIndex: 'reviewTime',
       key: 'reviewTime',
       width: 180,
@@ -303,14 +310,14 @@ const StoreReview = ({ dispatch }) => {
       },
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.createTime', defaultMessage: '创建时间' }),
       dataIndex: 'createTime',
       key: 'createTime',
       width: 180,
       valueType: 'dateTime',
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'sys.storeReview.col.action', defaultMessage: '操作' }),
       key: 'action',
       width: 280,
       fixed: mobile ? undefined : 'right',
@@ -322,7 +329,7 @@ const StoreReview = ({ dispatch }) => {
 
         return (
           <Space size="small">
-            <Tooltip title="查看详情">
+            <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.view', defaultMessage: '查看详情' })}>
               <Button
                 type="link"
                 size="small"
@@ -331,7 +338,7 @@ const StoreReview = ({ dispatch }) => {
               />
             </Tooltip>
             {isNotPublished && (
-              <Tooltip title="编辑">
+              <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.edit', defaultMessage: '编辑' })}>
                 <Button
                   type="link"
                   size="small"
@@ -342,7 +349,7 @@ const StoreReview = ({ dispatch }) => {
             )}
             {record.reviewStatus === 'PENDING' && (
               <>
-                <Tooltip title="通过审核">
+                <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.approve', defaultMessage: '通过审核' })}>
                   <Button
                     type="link"
                     size="small"
@@ -351,7 +358,7 @@ const StoreReview = ({ dispatch }) => {
                     onClick={() => handleReview(record, true)}
                   />
                 </Tooltip>
-                <Tooltip title="拒绝审核">
+                <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.reject', defaultMessage: '拒绝审核' })}>
                   <Button
                     type="link"
                     size="small"
@@ -365,12 +372,10 @@ const StoreReview = ({ dispatch }) => {
             {isPublished && (
               <>
                 {!isInstalled(record.pluginCode) && (
-                  <Tooltip title="测试安装">
+                  <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.testInstall', defaultMessage: '测试安装' })}>
                     <Popconfirm
-                      title="确认测试安装此插件？"
+                      title={intl.formatMessage({ id: 'sys.storeReview.popconfirm.testInstall', defaultMessage: '确认测试安装此插件？' })}
                       onConfirm={() => handleTestInstall(record)}
-                      okText="确认"
-                      cancelText="取消"
                     >
                       <Button
                         type="link"
@@ -382,7 +387,7 @@ const StoreReview = ({ dispatch }) => {
                   </Tooltip>
                 )}
                 {(record.installSource === 'GITHUB' || record.installSource === 'GITEE') && (
-                  <Tooltip title="同步最新版本">
+                  <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.syncLatest', defaultMessage: '同步最新版本' })}>
                     <Button
                       type="link"
                       size="small"
@@ -393,12 +398,10 @@ const StoreReview = ({ dispatch }) => {
                     />
                   </Tooltip>
                 )}
-                <Tooltip title="下架">
+                <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.offline', defaultMessage: '下架' })}>
                   <Popconfirm
-                    title="确认下架此插件？"
+                    title={intl.formatMessage({ id: 'sys.storeReview.popconfirm.offline', defaultMessage: '确认下架此插件？' })}
                     onConfirm={() => handleOffline(record)}
-                    okText="确认"
-                    cancelText="取消"
                   >
                     <Button
                       type="link"
@@ -431,17 +434,20 @@ const StoreReview = ({ dispatch }) => {
   // 删除插件
   const handleDelete = (record) => {
     Modal.confirm({
-      title: '确认删除',
-      content: `确定要删除插件 "${record.pluginName || record.pluginCode}" 吗？`,
+      title: intl.formatMessage({ id: 'sys.storeReview.delete.confirmTitle', defaultMessage: '确认删除' }),
+      content: intl.formatMessage(
+        { id: 'sys.storeReview.delete.confirmContent', defaultMessage: '确定要删除插件「{name}」吗？' },
+        { name: record.pluginName || record.pluginCode },
+      ),
       onOk: async () => {
         try {
           await deleteStorePlugin(record.id);
-          message.success('删除成功');
+          message.success(intl.formatMessage({ id: 'sys.storeReview.delete.success', defaultMessage: '删除成功' }));
           if (actionRef.current) {
             actionRef.current.reload();
           }
         } catch (error) {
-          message.error('删除失败');
+          message.error(intl.formatMessage({ id: 'sys.storeReview.delete.failed', defaultMessage: '删除失败' }));
         }
       },
     });
@@ -474,17 +480,26 @@ const StoreReview = ({ dispatch }) => {
           ...mappedValues,
           id: currentPlugin.id
         });
-        message.success('更新成功');
+        message.success(intl.formatMessage({ id: 'sys.storeReview.save.updateSuccess', defaultMessage: '更新成功' }));
       } else {
         await addStorePlugin(mappedValues);
-        message.success('添加成功');
+        message.success(intl.formatMessage({ id: 'sys.storeReview.save.addSuccess', defaultMessage: '添加成功' }));
       }
       setFormVisible(false);
       if (actionRef.current) {
         actionRef.current.reload();
       }
     } catch (error) {
-      message.error('操作失败: ' + (error.message || '未知错误'));
+      message.error(
+        intl.formatMessage(
+          { id: 'sys.storeReview.save.operationFailedDetail', defaultMessage: '操作失败：{reason}' },
+          {
+            reason:
+              error.message ||
+              intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+          },
+        ),
+      );
     }
   };
 
@@ -507,13 +522,26 @@ const StoreReview = ({ dispatch }) => {
         comments: reviewComment
       });
 
-      message.success(`插件${reviewStatus ? '审核通过' : '审核拒绝'}成功`);
+      message.success(
+        reviewStatus
+          ? intl.formatMessage({ id: 'sys.storeReview.review.approvedSuccess', defaultMessage: '审核通过成功' })
+          : intl.formatMessage({ id: 'sys.storeReview.review.rejectedSuccess', defaultMessage: '审核拒绝成功' }),
+      );
       setReviewVisible(false);
       if (actionRef.current) {
         actionRef.current.reload();
       }
     } catch (error) {
-      message.error('审核失败: ' + (error.message || '未知错误'));
+      message.error(
+        intl.formatMessage(
+          { id: 'sys.storeReview.review.failedDetail', defaultMessage: '审核失败：{reason}' },
+          {
+            reason:
+              error.message ||
+              intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+          },
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -525,7 +553,12 @@ const StoreReview = ({ dispatch }) => {
       const response = await installPlugin({ pluginCode: record.pluginCode });
 
       if (response?.data === 'ok') {
-        message.success(`插件 "${record.pluginName || record.pluginCode}" 测试安装成功`);
+        message.success(
+          intl.formatMessage(
+            { id: 'sys.storeReview.testInstall.success', defaultMessage: '插件「{name}」测试安装成功' },
+            { name: record.pluginName || record.pluginCode },
+          ),
+        );
         // 更新已安装插件列表
         setInstalledPlugins(prev => [...prev, record.pluginCode]);
         // 刷新插件清单
@@ -533,11 +566,29 @@ const StoreReview = ({ dispatch }) => {
           dispatch({ type: 'user/refreshPluginManifest' });
         }
       } else {
-        message.error('测试安装失败: ' + (response?.message || '未知错误'));
+        message.error(
+          intl.formatMessage(
+            { id: 'sys.storeReview.testInstall.failedDetail', defaultMessage: '测试安装失败：{reason}' },
+            {
+              reason:
+                response?.message ||
+                intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+            },
+          ),
+        );
       }
     } catch (error) {
       console.error('测试安装失败:', error);
-      message.error('测试安装失败: ' + (error.message || '网络错误'));
+      message.error(
+        intl.formatMessage(
+          { id: 'sys.storeReview.testInstall.failedDetail', defaultMessage: '测试安装失败：{reason}' },
+          {
+            reason:
+              error.message ||
+              intl.formatMessage({ id: 'sys.storeReview.error.network', defaultMessage: '网络错误' }),
+          },
+        ),
+      );
     }
   };
 
@@ -549,7 +600,12 @@ const StoreReview = ({ dispatch }) => {
       const response = await installPlugin({ pluginCode: currentPlugin.pluginCode });
 
       if (response?.data === 'ok') {
-        message.success(`插件 "${currentPlugin.pluginName || currentPlugin.pluginCode}" 安装成功`);
+        message.success(
+          intl.formatMessage(
+            { id: 'sys.storeReview.install.success', defaultMessage: '插件「{name}」安装成功' },
+            { name: currentPlugin.pluginName || currentPlugin.pluginCode },
+          ),
+        );
         // 更新已安装插件列表
         setInstalledPlugins(prev => [...prev, currentPlugin.pluginCode]);
         // 刷新插件清单
@@ -559,11 +615,29 @@ const StoreReview = ({ dispatch }) => {
         // 关闭详情弹窗
         setDetailVisible(false);
       } else {
-        message.error('安装失败: ' + (response?.message || '未知错误'));
+        message.error(
+          intl.formatMessage(
+            { id: 'sys.storeReview.install.failedDetail', defaultMessage: '安装失败：{reason}' },
+            {
+              reason:
+                response?.message ||
+                intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+            },
+          ),
+        );
       }
     } catch (error) {
       console.error('安装失败:', error);
-      message.error('安装失败: ' + (error.message || '网络错误'));
+      message.error(
+        intl.formatMessage(
+          { id: 'sys.storeReview.install.failedDetail', defaultMessage: '安装失败：{reason}' },
+          {
+            reason:
+              error.message ||
+              intl.formatMessage({ id: 'sys.storeReview.error.network', defaultMessage: '网络错误' }),
+          },
+        ),
+      );
     }
   };
 
@@ -577,14 +651,17 @@ const StoreReview = ({ dispatch }) => {
       if (response?.success) {
         message.error(response.message);
       } else {
-        message.success('插件上传成功，等待审核');
+        message.success(intl.formatMessage({ id: 'sys.storeReview.upload.successPending', defaultMessage: '插件上传成功，等待审核' }));
         if (actionRef.current) {
           actionRef.current.reload();
         }
       }
     } catch (error) {
       // 从响应中提取错误消息
-      const errorMessage = error?.response?.message || error?.message || '上传失败';
+      const errorMessage =
+        error?.response?.message ||
+        error?.message ||
+        intl.formatMessage({ id: 'sys.storeReview.upload.failed', defaultMessage: '上传失败' });
       message.error(errorMessage);
     } finally {
       setUploading(false);
@@ -595,12 +672,21 @@ const StoreReview = ({ dispatch }) => {
   const handleOffline = async (record) => {
     try {
       await offlineStorePlugin(record.pluginCode);
-      message.success('插件下架成功');
+      message.success(intl.formatMessage({ id: 'sys.storeReview.offline.success', defaultMessage: '插件下架成功' }));
       if (actionRef.current) {
         actionRef.current.reload();
       }
     } catch (error) {
-      message.error('下架失败: ' + (error.message || '未知错误'));
+      message.error(
+        intl.formatMessage(
+          { id: 'sys.storeReview.offline.failedDetail', defaultMessage: '下架失败：{reason}' },
+          {
+            reason:
+              error.message ||
+              intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+          },
+        ),
+      );
     }
   };
 
@@ -625,13 +711,22 @@ const StoreReview = ({ dispatch }) => {
       };
 
       await syncFromGitHub(syncData);
-      message.success('插件同步成功');
+      message.success(intl.formatMessage({ id: 'sys.storeReview.sync.success', defaultMessage: '插件同步成功' }));
       setSyncVisible(false);
       if (actionRef.current) {
         actionRef.current.reload();
       }
     } catch (error) {
-      message.error('同步失败: ' + (error.message || '未知错误'));
+      message.error(
+        intl.formatMessage(
+          { id: 'sys.storeReview.sync.failedDetail', defaultMessage: '同步失败：{reason}' },
+          {
+            reason:
+              error.message ||
+              intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+          },
+        ),
+      );
     } finally {
       setSyncing(false);
     }
@@ -640,13 +735,16 @@ const StoreReview = ({ dispatch }) => {
   // 同步最新版本（针对已存在的 Git 插件）
   const handleSyncLatest = async (record) => {
     if (!record.pluginUrl) {
-      message.warning('该插件没有 Git 仓库地址');
+      message.warning(intl.formatMessage({ id: 'sys.storeReview.syncLatest.noRepoUrl', defaultMessage: '该插件没有 Git 仓库地址' }));
       return;
     }
 
     Modal.confirm({
-      title: '确认同步最新版本',
-      content: `确定要从 Git 仓库同步插件 "${record.pluginName || record.pluginCode}" 的最新版本吗？`,
+      title: intl.formatMessage({ id: 'sys.storeReview.syncLatest.confirmTitle', defaultMessage: '确认同步最新版本' }),
+      content: intl.formatMessage(
+        { id: 'sys.storeReview.syncLatest.confirmContent', defaultMessage: '确定要从 Git 仓库同步插件「{name}」的最新版本吗？' },
+        { name: record.pluginName || record.pluginCode },
+      ),
       onOk: async () => {
         try {
           setSyncing(true);
@@ -658,12 +756,21 @@ const StoreReview = ({ dispatch }) => {
             buildTimeoutSeconds: 600,
           };
           await syncFromGitHub(syncData);
-          message.success('同步成功');
+          message.success(intl.formatMessage({ id: 'sys.storeReview.syncLatest.success', defaultMessage: '同步成功' }));
           if (actionRef.current) {
             actionRef.current.reload();
           }
         } catch (error) {
-          message.error('同步失败: ' + (error.message || '未知错误'));
+          message.error(
+            intl.formatMessage(
+              { id: 'sys.storeReview.syncLatest.failedDetail', defaultMessage: '同步失败：{reason}' },
+              {
+                reason:
+                  error.message ||
+                  intl.formatMessage({ id: 'sys.storeReview.error.unknown', defaultMessage: '未知错误' }),
+              },
+            ),
+          );
         } finally {
           setSyncing(false);
         }
@@ -673,14 +780,14 @@ const StoreReview = ({ dispatch }) => {
 
   return (
     <PageContainer
-      title="插件审核管理"
+      title={intl.formatMessage({ id: 'sys.storeReview.pageTitle', defaultMessage: '插件审核管理' })}
       extra={
         <Space>
           <Button
             icon={<GithubOutlined />}
             onClick={handleOpenSync}
           >
-            从 Git 同步
+            {intl.formatMessage({ id: 'sys.storeReview.syncFromGit', defaultMessage: '从 Git 同步' })}
           </Button>
           <Button
             icon={<UploadOutlined />}
@@ -699,7 +806,7 @@ const StoreReview = ({ dispatch }) => {
             }}
             loading={uploading}
           >
-            上传插件
+            {intl.formatMessage({ id: 'sys.storeReview.uploadPlugin', defaultMessage: '上传插件' })}
           </Button>
           <Button
             icon={<ReloadOutlined />}
@@ -709,7 +816,7 @@ const StoreReview = ({ dispatch }) => {
               }
             }}
           >
-            刷新
+            {intl.formatMessage({ id: 'sys.storeReview.refresh', defaultMessage: '刷新' })}
           </Button>
         </Space>
       }
@@ -724,7 +831,7 @@ const StoreReview = ({ dispatch }) => {
     >
       <div ref={containerRef}>
         <ProTableX
-          headerTitle="插件审核列表"
+          headerTitle={intl.formatMessage({ id: 'sys.storeReview.tableTitle', defaultMessage: '插件审核列表' })}
           actionRef={actionRef}
           rowKey="id"
           search={{
@@ -737,7 +844,7 @@ const StoreReview = ({ dispatch }) => {
               icon={<UploadOutlined />}
               onClick={handleAdd}
             >
-              新增插件
+              {intl.formatMessage({ id: 'sys.storeReview.addPlugin', defaultMessage: '新增插件' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
@@ -802,7 +909,11 @@ const StoreReview = ({ dispatch }) => {
             pageSizeOptions: ['10', '15', '20', '30', '50'],
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+            showTotal: (total, range) =>
+              intl.formatMessage(
+                { id: 'sys.storeReview.paginationRange', defaultMessage: '第 {start}-{end} 条/总共 {total} 条' },
+                { start: range[0], end: range[1], total },
+              ),
           }}
         />
       </div>
@@ -828,13 +939,15 @@ const StoreReview = ({ dispatch }) => {
 
       {/* 审核弹窗 */}
       <Modal
-        title={reviewStatus ? '通过审核' : '拒绝审核'}
+        title={
+          reviewStatus
+            ? intl.formatMessage({ id: 'sys.storeReview.modalReview.titleApprove', defaultMessage: '通过审核' })
+            : intl.formatMessage({ id: 'sys.storeReview.modalReview.titleReject', defaultMessage: '拒绝审核' })
+        }
         visible={reviewVisible}
         onOk={handleReviewSubmit}
         onCancel={() => setReviewVisible(false)}
         confirmLoading={loading}
-        okText="确认"
-        cancelText="取消"
         okButtonProps={{
           danger: !reviewStatus,
           type: reviewStatus ? 'primary' : 'default'
@@ -843,17 +956,31 @@ const StoreReview = ({ dispatch }) => {
       >
         <div style={{ marginBottom: '16px' }}>
           <p>
-            插件：<strong>{currentPlugin?.pluginName || currentPlugin?.pluginCode}</strong>
+            {intl.formatMessage({ id: 'sys.storeReview.modalReview.labelPlugin', defaultMessage: '插件' })}：
+            <strong>{currentPlugin?.pluginName || currentPlugin?.pluginCode}</strong>
           </p>
           <p>
-            版本：<strong>{currentPlugin?.version}</strong>
+            {intl.formatMessage({ id: 'sys.storeReview.modalReview.labelVersion', defaultMessage: '版本' })}：
+            <strong>{currentPlugin?.version}</strong>
           </p>
         </div>
         <div>
-          <p style={{ marginBottom: '8px' }}>审核意见：</p>
+          <p style={{ marginBottom: '8px' }}>
+            {intl.formatMessage({ id: 'sys.storeReview.modalReview.labelComment', defaultMessage: '审核意见' })}：
+          </p>
           <TextArea
             rows={4}
-            placeholder={reviewStatus ? '请输入审核通过的意见（可选）' : '请输入拒绝审核的原因'}
+            placeholder={
+              reviewStatus
+                ? intl.formatMessage({
+                    id: 'sys.storeReview.modalReview.placeholderApprove',
+                    defaultMessage: '请输入审核通过的意见（可选）',
+                  })
+                : intl.formatMessage({
+                    id: 'sys.storeReview.modalReview.placeholderReject',
+                    defaultMessage: '请输入拒绝审核的原因',
+                  })
+            }
             value={reviewComment}
             onChange={(e) => setReviewComment(e.target.value)}
             maxLength={500}
@@ -867,7 +994,7 @@ const StoreReview = ({ dispatch }) => {
         title={
           <Space>
             <GithubOutlined />
-            <span>从 Git 仓库同步插件</span>
+            <span>{intl.formatMessage({ id: 'sys.storeReview.modalSync.title', defaultMessage: '从 Git 仓库同步插件' })}</span>
           </Space>
         }
         visible={syncVisible}
@@ -877,8 +1004,6 @@ const StoreReview = ({ dispatch }) => {
           syncForm.resetFields();
         }}
         confirmLoading={syncing}
-        okText="开始同步"
-        cancelText="取消"
         width={600}
       >
         <Form
@@ -892,48 +1017,77 @@ const StoreReview = ({ dispatch }) => {
         >
           <Form.Item
             name="repoUrl"
-            label="Git 仓库地址"
+            label={intl.formatMessage({ id: 'sys.storeReview.modalSync.repoUrl', defaultMessage: 'Git 仓库地址' })}
             rules={[
-              { required: true, message: '请输入 Git 仓库地址' },
-              { type: 'url', message: '请输入有效的 URL 地址' },
+              {
+                required: true,
+                message: intl.formatMessage({ id: 'sys.storeReview.modalSync.repoUrlRequired', defaultMessage: '请输入 Git 仓库地址' }),
+              },
+              {
+                type: 'url',
+                message: intl.formatMessage({ id: 'sys.storeReview.modalSync.repoUrlInvalid', defaultMessage: '请输入有效的 URL 地址' }),
+              },
             ]}
-            tooltip="支持 GitHub 和 Gitee，例如：https://github.com/owner/repo.git 或 https://gitee.com/owner/repo.git"
+            tooltip={intl.formatMessage({
+              id: 'sys.storeReview.modalSync.repoUrlTooltip',
+              defaultMessage:
+                '支持 GitHub 和 Gitee，例如：https://github.com/owner/repo.git 或 https://gitee.com/owner/repo.git',
+            })}
           >
             <Input
-              placeholder="https://github.com/owner/repo.git"
+              placeholder={intl.formatMessage({
+                id: 'sys.storeReview.modalSync.repoUrlPlaceholder',
+                defaultMessage: 'https://github.com/owner/repo.git',
+              })}
               prefix={<GithubOutlined />}
             />
           </Form.Item>
 
           <Form.Item
             name="branch"
-            label="分支名"
-            tooltip="要同步的分支，默认为 main"
+            label={intl.formatMessage({ id: 'sys.storeReview.modalSync.branch', defaultMessage: '分支名' })}
+            tooltip={intl.formatMessage({ id: 'sys.storeReview.modalSync.branchTooltip', defaultMessage: '要同步的分支，默认为 main' })}
           >
-            <Input placeholder="main" />
+            <Input
+              placeholder={intl.formatMessage({ id: 'sys.storeReview.modalSync.branchPlaceholder', defaultMessage: 'main' })}
+            />
           </Form.Item>
 
           <Form.Item
             name="commitHash"
-            label="提交哈希（可选）"
-            tooltip="如果指定提交哈希，将使用该提交而不是分支"
+            label={intl.formatMessage({ id: 'sys.storeReview.modalSync.commitHash', defaultMessage: '提交哈希（可选）' })}
+            tooltip={intl.formatMessage({
+              id: 'sys.storeReview.modalSync.commitHashTooltip',
+              defaultMessage: '如果指定提交哈希，将使用该提交而不是分支',
+            })}
           >
-            <Input placeholder="可选，留空则使用分支最新提交" />
+            <Input
+              placeholder={intl.formatMessage({
+                id: 'sys.storeReview.modalSync.commitHashPlaceholder',
+                defaultMessage: '可选，留空则使用分支最新提交',
+              })}
+            />
           </Form.Item>
 
           <Form.Item
             name="buildFromSource"
-            label="从源码构建"
+            label={intl.formatMessage({ id: 'sys.storeReview.modalSync.buildFromSource', defaultMessage: '从源码构建' })}
             valuePropName="checked"
-            tooltip="如果启用，将从源码编译构建插件；否则直接下载 ZIP 包"
+            tooltip={intl.formatMessage({
+              id: 'sys.storeReview.modalSync.buildFromSourceTooltip',
+              defaultMessage: '如果启用，将从源码编译构建插件；否则直接下载 ZIP 包',
+            })}
           >
             <Switch />
           </Form.Item>
 
           <Form.Item
             name="buildTimeoutSeconds"
-            label="构建超时时间（秒）"
-            tooltip="从源码构建时的超时时间，默认 600 秒"
+            label={intl.formatMessage({ id: 'sys.storeReview.modalSync.buildTimeout', defaultMessage: '构建超时时间（秒）' })}
+            tooltip={intl.formatMessage({
+              id: 'sys.storeReview.modalSync.buildTimeoutTooltip',
+              defaultMessage: '从源码构建时的超时时间，默认 600 秒',
+            })}
           >
             <Input type="number" min={60} max={3600} />
           </Form.Item>

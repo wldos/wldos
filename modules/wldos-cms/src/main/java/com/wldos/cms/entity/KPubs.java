@@ -16,6 +16,7 @@ import io.github.wldos.common.res.Integer2JsonSerializer;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
@@ -85,4 +86,8 @@ public class KPubs {
 
 	@Version
 	private Integer versions;
+
+	/** 可发现性：PUBLIC_LISTED / UNLISTED / INTERNAL_ONLY；空等价 PUBLIC_LISTED。 */
+	@Column("visibility_scope")
+	private String visibilityScope;
 }

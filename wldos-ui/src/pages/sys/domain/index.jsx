@@ -1,6 +1,7 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, Form, Input, message, Popconfirm, Space} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -25,169 +26,143 @@ import {fetchOssUrl} from "@/services/constant";
 import {UploadView, upParams} from "@/components/FileUpload";
 import {selectToEnum} from "@/utils/utils";
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields) => {
-  const hide = message.loading('正在添加');
-
-  try {
-    await addEntity({...fields});
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateEntity({
-      siteName: fields.siteName,
-      siteDomain: fields.siteDomain,
-      siteLogo: fields.siteLogo,
-      favicon: fields.favicon,
-      secondDomain: fields.secondDomain,
-      siteUrl:fields.siteUrl,
-      siteTitle: fields.siteTitle,
-      siteKeyword: fields.siteKeyword,
-      siteDescription: fields.siteDescription,
-      slogan: fields.slogan,
-      comId: fields.comId,
-      isValid: fields.isValid,
-      displayOrder: fields.displayOrder,
-      cnameDomain: fields.cnameDomain,
-      foot: fields.foot,
-      flink: fields.flink,
-      copy: fields.copy,
-      id: fields.id,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
-/**
- *  批量删除
- * @param selectedRows
- */
-const handleRemove = async (selectedRows) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeEntities({
-      ids: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
-/**
- * 删除节点
- *
- * @param fields
- * @returns {Promise<boolean>}
- */
-const handleRemoveOne = async (fields) => {
-  if (!fields) return true;
-
-  if (fields.children) {
-    message.info("存在子节点，请先删除子节点");
-    return true;
-  }
-  const hide = message.loading('正在删除');
-  try {
-    await removeEntity({
-      id: fields.id,
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
-/**
- * 添加应用
- * @param value
- * @returns {Promise<boolean>}
- */
-const addApp = async (value={ids: [], domainId: '', comId: ''}) => {
-  if (!!value && value.ids?.length === 0) {
-    message.info('请选择要添加的应用！');
-    return false;
-  }
-
-  const hide = message.loading('正在添加');
-
-  try {
-    const res = await addDomainApp(value);
-    hide();
-    if (res?.data !== '')
-      message.warn(res.data);
-    else
-      message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 添加资源
- * @param value
- * @returns {Promise<boolean>}
- */
-const addRes = async (value={ids: [], domainId: ''}) => {
-  if (!!value && value.ids?.length === 0) {
-    message.info('请选择要添加的资源！');
-    return false;
-  }
-
-  const hide = message.loading('正在添加');
-
-  try {
-    const res = await addDomainRes(value);
-    hide();
-    if (res?.data !== '')
-      message.warn(res.data);
-    else
-      message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
 const DomainList = () => {
+  const intl = useIntl();
+
+  const handleAdd = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      await addEntity({...fields});
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleUpdate = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.config', defaultMessage: '正在配置' }));
+
+    try {
+      await updateEntity({
+        siteName: fields.siteName,
+        siteDomain: fields.siteDomain,
+        siteLogo: fields.siteLogo,
+        favicon: fields.favicon,
+        secondDomain: fields.secondDomain,
+        siteUrl:fields.siteUrl,
+        siteTitle: fields.siteTitle,
+        siteKeyword: fields.siteKeyword,
+        siteDescription: fields.siteDescription,
+        slogan: fields.slogan,
+        comId: fields.comId,
+        isValid: fields.isValid,
+        displayOrder: fields.displayOrder,
+        cnameDomain: fields.cnameDomain,
+        foot: fields.foot,
+        flink: fields.flink,
+        copy: fields.copy,
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.configSuccess', defaultMessage: '配置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.configFail', defaultMessage: '配置失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemove = useCallback(async (selectedRows) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    try {
+      await removeEntities({
+        ids: selectedRows.map((row) => row.id),
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemoveOne = useCallback(async (fields) => {
+    if (!fields) return true;
+
+    if (fields.children) {
+      message.info(intl.formatMessage({ id: 'sys.domain.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
+      return true;
+    }
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.delete', defaultMessage: '正在删除' }));
+    try {
+      await removeEntity({
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const addApp = useCallback(async (value={ids: [], domainId: '', comId: ''}) => {
+    if (!!value && value.ids?.length === 0) {
+      message.info(intl.formatMessage({ id: 'sys.domain.msg.selectApps', defaultMessage: '请选择要添加的应用！' }));
+      return false;
+    }
+
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      const res = await addDomainApp(value);
+      hide();
+      if (res?.data !== '')
+        message.warn(res.data);
+      else
+        message.success(intl.formatMessage({ id: 'sys.domain.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const addRes = useCallback(async (value={ids: [], domainId: ''}) => {
+    if (!!value && value.ids?.length === 0) {
+      message.info(intl.formatMessage({ id: 'sys.domain.msg.selectRes', defaultMessage: '请选择要添加的资源！' }));
+      return false;
+    }
+
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      const res = await addDomainRes(value);
+      hide();
+      if (res?.data !== '')
+        message.warn(res.data);
+      else
+        message.success(intl.formatMessage({ id: 'sys.domain.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -204,39 +179,36 @@ const DomainList = () => {
   const [logoUrl, setLogoUrl] = useState('');
   const [logoPath, setPath] = useState('');
 
-  // 移动端检测
   const mobile = isMobile();
 
-  // 容器宽度监听
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
 
-  // 使用桌面端粘性布局
   useDesktopSticky(actionRef);
 
-  const beforeUp = (file) => {
+  const beforeUp = useCallback((file) => {
     const isGt50K = file.size / 1024 > 100;
     if (isGt50K) {
-      return message.error('logo大小不能超过100k').then(() => false);
+      return message.error(intl.formatMessage({ id: 'sys.domain.msg.logoMax', defaultMessage: 'logo大小不能超过100k' })).then(() => false);
     }
 
     return true;
-  };
+  }, [intl]);
 
-  const handleChange = (info) => {
+  const handleChange = useCallback((info) => {
     const {file: {status, response}} = info;
 
     if (status === 'done') {
-      message.success(`上传成功！`, 1).then(() => {
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.uploadSuccess', defaultMessage: '上传成功！' }), 1).then(() => {
         const {data: {url, path}} = response;
         setLogoUrl(url ?? undefined);
         if (path)
           setPath(path);
       });
     } else if (status === 'error') {
-      message.error(`上传失败！`, 2).then(()=>{});
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.uploadFail', defaultMessage: '上传失败！' }), 2).then(()=>{});
     }
-  };
+  }, [intl]);
 
   useEffect(async () => {
     const comData = await getComSelectOption();
@@ -254,7 +226,6 @@ const DomainList = () => {
       setOssUrl(oss.data.ossUrl);
   }, []);
 
-  // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -370,32 +341,31 @@ const DomainList = () => {
     "<a href=\"http://www.gitee.com/wldos/wldos/\" rel=\"nofollow\">WLDOS</a> 版权所有\n" +
     "</p>";
 
-  // 计算列总宽度
-  const totalColsWidth = 2000; // 估算总宽度
+  const totalColsWidth = 2000;
   const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
 
-  const columns = [
+  const columns = useMemo(() => [
     {
-      title: '序号',
+      title: intl.formatMessage({ id: 'sys.domain.col.index', defaultMessage: '序号' }),
       dataIndex: 'displayOrder',
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteName', defaultMessage: '名称' }),
       dataIndex: 'siteName',
-      tip: '在平台基础上配置的独立域',
+      tip: intl.formatMessage({ id: 'sys.domain.col.siteName.tip', defaultMessage: '在平台基础上配置的独立域' }),
       fixed: mobile ? undefined : 'left',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '网站名称为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.siteNameRequired', defaultMessage: '网站名称为必填项' }),
           },
           {
             max: 50,
             type: 'string',
-            message: '最多50个字',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max50chars', defaultMessage: '最多50个字' }),
           },
         ],
       },
@@ -404,24 +374,24 @@ const DomainList = () => {
       },
     },
     {
-      title: '域名',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteDomain', defaultMessage: '域名' }),
       dataIndex: 'siteDomain',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '域名为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.siteDomainRequired', defaultMessage: '域名为必填项' }),
           },
           {
             max: 50,
             type: 'string',
-            message: '最多50位',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max50', defaultMessage: '最多50位' }),
           },
         ],
       },
     },
     {
-      title: 'logo',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteLogo', defaultMessage: 'logo' }),
       dataIndex: 'siteLogo',
       valueType: 'image',
       width: 80,
@@ -434,7 +404,7 @@ const DomainList = () => {
       renderFormItem: (entity) => (
         <Input.Group compact>
             <span>
-            <UploadView key={entity.id} buttonTitle="点此上传" src={logoUrl} params={{...upParams(), accept: '.jpg,.png,.gif,.jpeg,.bmp,.svg,.svg+xml'}}
+            <UploadView key={entity.id} buttonTitle={intl.formatMessage({ id: 'sys.domain.upload.click', defaultMessage: '点此上传' })} src={logoUrl} params={{...upParams(), accept: '.jpg,.png,.gif,.jpeg,.bmp,.svg,.svg+xml'}}
                         beforeUp={(file) => beforeUp(file)}
                         onChange={(info) => handleChange(info)} />
             </span>
@@ -442,7 +412,7 @@ const DomainList = () => {
       )
     },
     {
-      title: 'favicon',
+      title: intl.formatMessage({ id: 'sys.domain.col.favicon', defaultMessage: 'favicon' }),
       dataIndex: 'favicon',
       valueType: 'image',
       width: 50,
@@ -455,7 +425,7 @@ const DomainList = () => {
       renderFormItem: (entity) => (
         <Input.Group compact>
             <span>
-            <UploadView key={entity.id} buttonTitle="点此上传" src={logoUrl} params={{...upParams(), accept: '.jpg,.png,.gif,.jpeg,.bmp,.svg,.x-icon,.ico,.svg+xml'}}
+            <UploadView key={entity.id} buttonTitle={intl.formatMessage({ id: 'sys.domain.upload.click', defaultMessage: '点此上传' })} src={logoUrl} params={{...upParams(), accept: '.jpg,.png,.gif,.jpeg,.bmp,.svg,.x-icon,.ico,.svg+xml'}}
                         beforeUp={(file) => beforeUp(file)}
                         onChange={(info) => handleChange(info)} />
             </span>
@@ -463,9 +433,9 @@ const DomainList = () => {
       )
     },
     {
-      title: '个性域名',
+      title: intl.formatMessage({ id: 'sys.domain.col.secondDomain', defaultMessage: '个性域名' }),
       dataIndex: 'secondDomain',
-      tip: `个性域名.${platDomain}`,
+      tip: intl.formatMessage({ id: 'sys.domain.col.secondDomain.tip', defaultMessage: '个性域名.{platDomain}' }, { platDomain }),
       renderFormItem: () => (
         <Input.Group compact>
             <span>
@@ -475,17 +445,17 @@ const DomainList = () => {
               rules={[
                 {
                   required: true,
-                  message: '个性域名为必填项',
+                  message: intl.formatMessage({ id: 'sys.domain.rule.secondDomainRequired', defaultMessage: '个性域名为必填项' }),
                 },
                 {
                   max: 10,
                   type: 'string',
-                  message: '最多10位',
+                  message: intl.formatMessage({ id: 'sys.domain.rule.max10', defaultMessage: '最多10位' }),
                 },
                 {
                   type: 'string',
                   pattern: '^[a-z]+$',
-                  message: '只能是小写字母'
+                  message: intl.formatMessage({ id: 'sys.domain.rule.lowercaseOnly', defaultMessage: '只能是小写字母' })
                 }
               ]}
             >
@@ -493,7 +463,7 @@ const DomainList = () => {
                 style={{
                   width: 'calc(100% - 100px)',
                 }}
-                placeholder="请输入个性域名，不能为空！"
+                placeholder={intl.formatMessage({ id: 'sys.domain.ph.secondDomain', defaultMessage: '请输入个性域名，不能为空！' })}
               />
             </Form.Item>
             .{platDomain}</span>
@@ -503,95 +473,95 @@ const DomainList = () => {
         rules: [
           {
             required: true,
-            message: '个性域名为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.secondDomainRequired', defaultMessage: '个性域名为必填项' }),
           },
           {
             max: 10,
             type: 'string',
-            message: '最多10位',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max10', defaultMessage: '最多10位' }),
           },
           {
             type: 'string',
             pattern: '^[a-z]+$',
-            message: '只能是小写字母'
+            message: intl.formatMessage({ id: 'sys.domain.rule.lowercaseOnly', defaultMessage: '只能是小写字母' })
           }
         ],
       },
       render: (_, record) => (<span>{record.secondDomain}</span>),
     },
     {
-      title: '网址',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteUrl', defaultMessage: '网址' }),
       dataIndex: 'siteUrl',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '主页地址为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.siteUrlRequired', defaultMessage: '主页地址为必填项' }),
           },
           {
             max: 200,
             type: 'string',
-            message: '最多200位',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max200', defaultMessage: '最多200位' }),
           },
         ],
       },
     },
     {
-      title: '网站标题',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteTitle', defaultMessage: '网站标题' }),
       dataIndex: 'siteTitle',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '网站标题为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.siteTitleRequired', defaultMessage: '网站标题为必填项' }),
           },
           {
             max: 50,
             type: 'string',
-            message: '最多50个字',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max50chars', defaultMessage: '最多50个字' }),
           },
         ],
       },
       width: '10%'
     },
     {
-      title: '关键词',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteKeyword', defaultMessage: '关键词' }),
       dataIndex: 'siteKeyword',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '关键词为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.keywordRequired', defaultMessage: '关键词为必填项' }),
           },
           {
             max: 125,
             type: 'string',
-            message: '最多125个字',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max125', defaultMessage: '最多125个字' }),
           },
         ],
       },
       width: '10%'
     },
     {
-      title: '描述',
+      title: intl.formatMessage({ id: 'sys.domain.col.siteDescription', defaultMessage: '描述' }),
       dataIndex: 'siteDescription',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '描述为必填项',
+            message: intl.formatMessage({ id: 'sys.domain.rule.descRequired', defaultMessage: '描述为必填项' }),
           },
           {
             max: 125,
             type: 'string',
-            message: '最多125个字',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max125', defaultMessage: '最多125个字' }),
           },
         ],
       },
       width: '12%'
     },
     {
-      title: '网站口号',
+      title: intl.formatMessage({ id: 'sys.domain.col.slogan', defaultMessage: '网站口号' }),
       dataIndex: 'slogan',
       hideInSearch: true,
       formItemProps: {
@@ -599,13 +569,13 @@ const DomainList = () => {
           {
             max: 25,
             type: 'string',
-            message: '最多25个字',
+            message: intl.formatMessage({ id: 'sys.domain.rule.max25', defaultMessage: '最多25个字' }),
           },
         ],
       },
     },
     {
-      title: '公司',
+      title: intl.formatMessage({ id: 'sys.domain.col.comId', defaultMessage: '公司' }),
       dataIndex: 'comId',
       filters: true,
       onFilter: false,
@@ -613,28 +583,28 @@ const DomainList = () => {
       valueEnum: comList,
     },
     {
-      title: '状态',
+      title: intl.formatMessage({ id: 'sys.domain.col.status', defaultMessage: '状态' }),
       dataIndex: 'isValid',
       hideInForm: true,
       filters: true,
       onFilter: false,
       valueEnum: {
         '0': {
-          text: '无效',
+          text: intl.formatMessage({ id: 'sys.domain.status.invalid', defaultMessage: '无效' }),
           status: 'invalid',
         },
         '1': {
-          text: '有效',
+          text: intl.formatMessage({ id: 'sys.domain.status.valid', defaultMessage: '有效' }),
           status: 'valid',
         },
       },
     },
     {
-      title: '别名',
+      title: intl.formatMessage({ id: 'sys.domain.col.cnameDomain', defaultMessage: '别名' }),
       dataIndex: 'cnameDomain',
     },
     {
-      title: '底部栏目',
+      title: intl.formatMessage({ id: 'sys.domain.col.foot', defaultMessage: '底部栏目' }),
       dataIndex: 'foot',
       hideInSearch: true,
       hideInTable: true,
@@ -644,7 +614,7 @@ const DomainList = () => {
       />)
     },
     {
-      title: '友情链接',
+      title: intl.formatMessage({ id: 'sys.domain.col.flink', defaultMessage: '友情链接' }),
       dataIndex: 'flink',
       hideInSearch: true,
       hideInTable: true,
@@ -654,7 +624,7 @@ const DomainList = () => {
       />)
     },
     {
-      title: '版权信息',
+      title: intl.formatMessage({ id: 'sys.domain.col.copy', defaultMessage: '版权信息' }),
       dataIndex: 'copy',
       hideInSearch: true,
       hideInTable: true,
@@ -664,7 +634,7 @@ const DomainList = () => {
       />)
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'sys.domain.col.operation', defaultMessage: '操作' }),
       dataIndex: 'option',
       valueType: 'option',
       fixed: mobile ? undefined : 'right',
@@ -676,7 +646,7 @@ const DomainList = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            {intl.formatMessage({ id: 'sys.domain.action.config', defaultMessage: '配置' })}
           </a>
           <Divider type="vertical"/>
           <a
@@ -685,7 +655,7 @@ const DomainList = () => {
               handleAddAppModalVisible(true);
             }}
           >
-            应用
+            {intl.formatMessage({ id: 'sys.domain.action.app', defaultMessage: '应用' })}
           </a>
           <Divider type="vertical"/>
           <a
@@ -694,22 +664,23 @@ const DomainList = () => {
               handleAddResModalVisible(true);
             }}
           >
-            资源
+            {intl.formatMessage({ id: 'sys.domain.action.res', defaultMessage: '资源' })}
           </a>
           <Divider type="vertical"/>
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.domain.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemoveOne(record);
                         actionRef.current?.reloadAndRest?.();
                       }}
           >
-            <a>删除</a>
+            <a>{intl.formatMessage({ id: 'sys.domain.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
         </>
       ),
       width: 250
     },
-  ];
+  ], [intl, mobile, comList, platDomain, handleRemoveOne, logoUrl, beforeUp, handleChange]);
+
   return (
     <PageContainer
       style={{
@@ -723,7 +694,7 @@ const DomainList = () => {
     >
       <div ref={containerRef}>
         <ProTableX
-          headerTitle="域名清单"
+          headerTitle={intl.formatMessage({ id: 'sys.domain.headerTitle', defaultMessage: '域名清单' })}
           actionRef={actionRef}
           rowKey="id"
           size={"small"}
@@ -732,7 +703,7 @@ const DomainList = () => {
           }}
           toolBarRender={() => [
             <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.domain.toolbar.new', defaultMessage: '新建' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
@@ -758,7 +729,11 @@ const DomainList = () => {
             pageSizeOptions: ['10', '15', '20', '30', '50'],
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+            showTotal: (total, range) =>
+              intl.formatMessage(
+                { id: 'sys.domain.pagination.range', defaultMessage: '第 {start}-{end} 条/总共 {total} 条' },
+                { start: range[0], end: range[1], total },
+              ),
           }}
           tableLayout={mobile ? undefined : 'fixed'}
           scroll={mobile ? undefined : { x: scrollX }}
@@ -768,7 +743,7 @@ const DomainList = () => {
         <FooterToolbar
           extra={
             <div>
-              已选择{' '}
+              {intl.formatMessage({ id: 'sys.domain.footer.selected', defaultMessage: '已选择' })}{' '}
               <a
                 style={{
                   fontWeight: 600,
@@ -776,21 +751,21 @@ const DomainList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项&nbsp;&nbsp;
+              {intl.formatMessage({ id: 'sys.domain.footer.items', defaultMessage: '项' })}&nbsp;&nbsp;
             </div>
           }
         >
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.domain.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemove(selectedRowsState);
                         setSelectedRows([]);
                         actionRef.current?.reloadAndRest?.();
                       }}>
             <Button>
-              批量删除
+              {intl.formatMessage({ id: 'sys.domain.footer.batchDelete', defaultMessage: '批量删除' })}
             </Button>
           </Popconfirm>
-          <Button type="primary">批量导出</Button>
+          <Button type="primary">{intl.formatMessage({ id: 'sys.domain.footer.batchExport', defaultMessage: '批量导出' })}</Button>
         </FooterToolbar>
       )}
       <CreateForm

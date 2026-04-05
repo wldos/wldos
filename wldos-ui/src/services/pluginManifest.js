@@ -1,37 +1,61 @@
 /**
- * 插件manifest服务
- * 负责加载和管理插件UI清单文件
+ * 插件 manifest 服务：优先从引擎 API 拉取，失败时回退静态 /plugin-assets/manifest.json
  */
+import config from '@/utils/config';
+import { headerFix } from '@/utils/utils';
+
+const { prefix } = config;
 
 /**
- * 加载插件manifest.json
- * @returns {Promise<Object>} manifest对象
+ * 加载插件 manifest（聚合 JSON）
+ * @returns {Promise<Object>} manifest 对象，结构 { plugins: { ... } }
  */
 export async function loadPluginManifest() {
-  try {
+  const tryApi = async () => {
+    const response = await fetch(`${prefix}/plugin-ui/manifest`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Cache-Control': 'no-cache',
+        ...headerFix(),
+      },
+      credentials: 'same-origin',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const manifest = await response.json();
+    return manifest || { plugins: {} };
+  };
+
+  const tryStatic = async () => {
     const response = await fetch('/plugin-assets/manifest.json', {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Cache-Control': 'no-cache',
       },
     });
-
     if (!response.ok) {
       if (response.status === 404) {
-        // manifest文件不存在，返回空对象
-        console.warn('[PluginManifest] manifest.json 不存在，可能没有安装插件');
         return { plugins: {} };
       }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-
     const manifest = await response.json();
     return manifest || { plugins: {} };
-  } catch (error) {
-    console.error('[PluginManifest] 加载manifest失败:', error);
-    // 返回空对象，避免阻塞应用启动
-    return { plugins: {} };
+  };
+
+  try {
+    return await tryApi();
+  } catch (e) {
+    console.warn('[PluginManifest] API 拉取失败，回退静态 manifest.json:', e?.message || e);
+    try {
+      return await tryStatic();
+    } catch (err2) {
+      console.error('[PluginManifest] 加载 manifest 失败:', err2);
+      return { plugins: {} };
+    }
   }
 }
 
@@ -48,19 +72,17 @@ export function convertManifestToRoutes(manifest) {
   const routes = [];
   const plugins = manifest.plugins;
 
-  Object.keys(plugins).forEach(pluginCode => {
+  Object.keys(plugins).forEach((pluginCode) => {
     const plugin = plugins[pluginCode];
     if (!plugin || !plugin.routes || !Array.isArray(plugin.routes)) {
       return;
     }
 
-    // 为每个路由创建菜单项
-    plugin.routes.forEach(route => {
+    plugin.routes.forEach((route) => {
       if (!route.path || !route.component) {
         return;
       }
 
-      // 判断是管理侧还是用户侧路由
       const isAdminRoute = route.path.startsWith('/admin/');
       const resourceType = isAdminRoute ? 'admin_plugin_menu' : 'plugin_menu';
 
@@ -71,8 +93,7 @@ export function convertManifestToRoutes(manifest) {
         icon: route.icon,
         sort: route.sort || 0,
         type: resourceType,
-        // 保存插件信息，供组件加载器使用
-        pluginCode: pluginCode,
+        pluginCode,
         version: plugin.version,
         moduleFormat: plugin.moduleFormat || 'esm',
         entry: plugin.entry || 'index.js',
@@ -95,18 +116,15 @@ export function mergeRoutes(existingRoutes, manifestRoutes) {
     return existingRoutes || [];
   }
 
-  // 创建路径映射，避免重复
   const pathMap = new Map();
-  
-  // 先添加现有路由
-  (existingRoutes || []).forEach(route => {
+
+  (existingRoutes || []).forEach((route) => {
     if (route.path) {
       pathMap.set(route.path, route);
     }
   });
 
-  // 再添加manifest路由（如果路径不存在）
-  manifestRoutes.forEach(route => {
+  manifestRoutes.forEach((route) => {
     if (route.path && !pathMap.has(route.path)) {
       pathMap.set(route.path, route);
     }
@@ -114,4 +132,3 @@ export function mergeRoutes(existingRoutes, manifestRoutes) {
 
   return Array.from(pathMap.values());
 }
-

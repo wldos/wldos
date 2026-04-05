@@ -1,4 +1,4 @@
-import { Link } from 'umi';
+import { Link, FormattedMessage } from 'umi';
 import { Result, Button } from 'antd';
 import React from 'react';
 export default () => (
@@ -8,10 +8,20 @@ export default () => (
     style={{
       background: 'none',
     }}
-    subTitle="Sorry, the page you visited does not exist."
+    subTitle={
+      <FormattedMessage
+        id="exceptionand404.description.404"
+        defaultMessage="Sorry, the page you visited does not exist."
+      />
+    }
     extra={
       <Link to="/">
-        <Button type="primary">Back Home</Button>
+        <Button type="primary">
+          <FormattedMessage
+            id="exceptionand404.exception.back"
+            defaultMessage="Back to home"
+          />
+        </Button>
       </Link>
     }
   />

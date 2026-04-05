@@ -27,6 +27,14 @@ import {queryLayerCategory} from "@/pages/sys/category/service";
 
 const SysOptions = () => {
   const [form] = Form.useForm();
+  // 文件服务模式：true=local（本地文件服务），false=remote（走远程 wldos 文件服务）
+  // 兼容首次打开时该 key 不存在或是字符串 "true"/"false" 的情况。
+  const fileStoreLocalRaw = Form.useWatch('wldos_file_store_local', form);
+  const fileStoreLocal = (() => {
+    if (fileStoreLocalRaw === undefined || fileStoreLocalRaw === null) return true; // 默认本地
+    if (typeof fileStoreLocalRaw === 'string') return fileStoreLocalRaw === 'true' || fileStoreLocalRaw === '1';
+    return !!fileStoreLocalRaw;
+  })();
   const [tenantStatus, setTenantStatus] = useState(false);
   const [domainStatus, setDomainStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
@@ -36,7 +44,13 @@ const SysOptions = () => {
   const reload = async () => {
     const res = await service.fetchSysOptions();
     if (res?.data) {
-      form.setFieldsValue(res.data);
+      // Switch 需要 boolean 类型，否则 checked 可能无法正确工作
+      const values = { ...res.data };
+      const v = values.wldos_file_store_local;
+      if (typeof v === 'string') {
+        values.wldos_file_store_local = v === 'true' || v === '1';
+      }
+      form.setFieldsValue(values);
       // eslint-disable-next-line camelcase
       const {wldos_system_multitenancy_switch = 'false', wldos_system_multidomain_switch = 'false', wldos_platform_user_register_emailaction = 'false'} = res.data;
       setTenantStatus(wldos_system_multitenancy_switch === 'true');
@@ -116,7 +130,7 @@ const SysOptions = () => {
         showIcon
         style={{ marginBottom: '24px' }}
       />
-      
+
       <Form
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 16 }}
@@ -125,7 +139,7 @@ const SysOptions = () => {
         size="large"
       >
         {/* 基础配置分组 */}
-        <Card 
+        <Card
           title={
             <Space>
               <SettingOutlined style={{ color: '#1890ff' }} />
@@ -151,12 +165,12 @@ const SysOptions = () => {
               },
             ]}
           >
-            <Input 
+            <Input
               placeholder="不带www的顶级域名，如：example.com"
               prefix="🌐"
             />
           </Form.Item>
-          
+
           <Form.Item
             name="wldos_req_protocol"
             label="平台请求协议"
@@ -172,9 +186,9 @@ const SysOptions = () => {
               <Select.Option value="https">HTTPS（推荐）</Select.Option>
             </Select>
           </Form.Item>
-          
-          <Form.Item 
-            name="wldos_system_multitenancy_switch" 
+
+          <Form.Item
+            name="wldos_system_multitenancy_switch"
             label={
               <Space>
                 多租户模式
@@ -184,16 +198,16 @@ const SysOptions = () => {
               </Space>
             }
           >
-            <Switch 
-              checkedChildren="开启" 
-              unCheckedChildren="关闭" 
-              checked={tenantStatus} 
+            <Switch
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+              checked={tenantStatus}
               onChange={(e) => setTenantStatus(e)}
             />
           </Form.Item>
-          
-          <Form.Item 
-            name="wldos_system_multidomain_switch" 
+
+          <Form.Item
+            name="wldos_system_multidomain_switch"
             label={
               <Space>
                 多站点模式
@@ -203,22 +217,60 @@ const SysOptions = () => {
               </Space>
             }
           >
-            <Switch 
-              checkedChildren="开启" 
-              unCheckedChildren="关闭" 
-              checked={domainStatus} 
+            <Switch
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+              checked={domainStatus}
               onChange={(e) => setDomainStatus(e)}
             />
           </Form.Item>
-          
-          <Form.Item 
-            name="wldos_file_store_path" 
-            label="文件存储路径"
-            extra="留空则使用默认路径：根目录/store"
+
+          <Form.Item
+            name="wldos_file_store_local"
+            label={
+              <Space>
+                文件服务模式
+                <Tooltip title="开启：本地文件服务；关闭：上传/转发走远程文件服务URL">
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            extra="开启：本地文件服务；关闭：上传/转发走远程文件服务URL"
+            valuePropName="checked"
+            initialValue={true}
           >
-            <Input placeholder="自定义文件存储路径，留空使用默认路径" />
+            <Switch
+              checkedChildren="本地"
+              unCheckedChildren="远程"
+            />
           </Form.Item>
-          
+
+          {fileStoreLocal !== false && (
+            <Form.Item
+              name="wldos_file_store_path"
+              label="文件存储路径"
+              extra="store目录的父级目录绝对路径，留空则使用默认路径：根目录/store"
+            >
+              <Input placeholder="自定义文件存储路径，留空使用默认路径" />
+            </Form.Item>
+          )}
+
+          {fileStoreLocal === false && (
+            <Form.Item
+              name="wldos_file_store_url"
+              label="文件服务URL"
+              extra="对外访问前缀（如 http://host:port）。用于远程文件服务场景（免重启）"
+              rules={[
+                {
+                  required: true,
+                  message: '请填写远程文件服务URL',
+                },
+              ]}
+            >
+              <Input placeholder="例如：https://example.com:8000" />
+            </Form.Item>
+          )}
+
           <Form.Item
             name="wldos_platform_adminEmail"
             label="管理员邮箱"
@@ -234,14 +286,14 @@ const SysOptions = () => {
               }
             ]}
           >
-            <Input 
+            <Input
               placeholder="系统管理员邮箱地址"
               prefix="📧"
             />
           </Form.Item>
         </Card>
         {/* 内容配置分组 */}
-        <Card 
+        <Card
           title={
             <Space>
               <FileTextOutlined style={{ color: '#52c41a' }} />
@@ -273,7 +325,7 @@ const SysOptions = () => {
           >
             <TreeSelect {...tProps} />
           </Form.Item>
-          
+
           <Form.Item
             name="wldos_cms_content_maxLength"
             label="单篇内容最大长度"
@@ -292,14 +344,14 @@ const SysOptions = () => {
             ]}
             extra="建议设置：2000-53610字符"
           >
-            <InputNumber 
+            <InputNumber
               style={{ width: '100%' }}
               placeholder="设置单篇内容最大字符数"
               min={2000}
               max={53610}
             />
           </Form.Item>
-          
+
           <Form.Item
             name="wldos_cms_tag_maxTagNum"
             label="单个发布最多标签数"
@@ -318,14 +370,14 @@ const SysOptions = () => {
             ]}
             extra="建议设置：1-5个标签"
           >
-            <InputNumber 
+            <InputNumber
               style={{ width: '100%' }}
               placeholder="设置单个发布最多标签数"
               min={1}
               max={5}
             />
           </Form.Item>
-          
+
           <Form.Item
             name="wldos_cms_tag_tagLength"
             label="标签最长字符数"
@@ -344,16 +396,16 @@ const SysOptions = () => {
             ]}
             extra="建议设置：3-30个字符（1个汉字=3个字符）"
           >
-            <InputNumber 
+            <InputNumber
               style={{ width: '100%' }}
               placeholder="设置标签最长字符数"
               min={3}
               max={30}
             />
           </Form.Item>
-          
-          <Form.Item 
-            name="wldos_cms_comment_audit" 
+
+          <Form.Item
+            name="wldos_cms_comment_audit"
             label={
               <Space>
                 评论审核
@@ -363,16 +415,16 @@ const SysOptions = () => {
               </Space>
             }
           >
-            <Switch 
-              checkedChildren="开启" 
-              unCheckedChildren="关闭" 
-              checked={commentStatus} 
+            <Switch
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+              checked={commentStatus}
               onChange={(e) => setCommentStatus(e)}
             />
           </Form.Item>
         </Card>
         {/* 邮件配置分组 */}
-        <Card 
+        <Card
           title={
             <Space>
               <MailOutlined style={{ color: '#fa8c16' }} />
@@ -386,8 +438,8 @@ const SysOptions = () => {
             </Tooltip>
           }
         >
-          <Form.Item 
-            name="wldos_platform_user_register_emailaction" 
+          <Form.Item
+            name="wldos_platform_user_register_emailaction"
             label={
               <Space>
                 注册邮箱激活
@@ -397,14 +449,14 @@ const SysOptions = () => {
               </Space>
             }
           >
-            <Switch 
-              checkedChildren="开启" 
-              unCheckedChildren="关闭" 
-              checked={emailStatus} 
+            <Switch
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+              checked={emailStatus}
               onChange={(e) => setEmailStatus(e)}
             />
           </Form.Item>
-          
+
           {emailStatus && (
             <>
               <Divider orientation="left" plain>
@@ -413,7 +465,7 @@ const SysOptions = () => {
                   SMTP服务器配置
                 </Space>
               </Divider>
-              
+
               <Form.Item
                 name="spring_mail_host"
                 label="SMTP服务器"
@@ -426,12 +478,12 @@ const SysOptions = () => {
                 ]}
                 extra="例如：smtp.qq.com、smtp.163.com"
               >
-                <Input 
+                <Input
                   placeholder="请输入SMTP服务器地址"
                   prefix="🔗"
                 />
               </Form.Item>
-              
+
               <Form.Item
                 name="spring_mail_username"
                 label="SMTP用户名"
@@ -444,12 +496,12 @@ const SysOptions = () => {
                 ]}
                 extra="通常是完整的邮箱地址"
               >
-                <Input 
+                <Input
                   placeholder="请输入SMTP认证用户名"
                   prefix="👤"
                 />
               </Form.Item>
-              
+
               <Form.Item
                 name="spring_mail_password"
                 label="SMTP密码"
@@ -462,12 +514,12 @@ const SysOptions = () => {
                 ]}
                 extra="QQ邮箱需要使用授权码，不是登录密码"
               >
-                <Input.Password 
+                <Input.Password
                   placeholder="请输入SMTP认证密码"
                   prefix="🔒"
                 />
               </Form.Item>
-              
+
               <Form.Item
                 name="wldos_mail_fromMail_addr"
                 label="发件邮箱地址"
@@ -484,12 +536,12 @@ const SysOptions = () => {
                 ]}
                 extra="系统发送邮件的发件人地址"
               >
-                <Input 
+                <Input
                   placeholder="请输入发件邮箱地址"
                   prefix="📧"
                 />
               </Form.Item>
-              
+
               <Alert
                 message="邮件配置说明"
                 description="请确保SMTP服务器支持您使用的邮箱服务商。QQ邮箱需要开启SMTP服务并获取授权码。"
@@ -539,8 +591,8 @@ const SysOptions = () => {
         {/* 操作按钮 */}
         <Card style={{ textAlign: 'center', marginTop: '24px' }}>
           <Space size="large">
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               size="large"
               icon={<CheckCircleOutlined />}
               onClick={() => handleFinish()}
@@ -548,7 +600,7 @@ const SysOptions = () => {
             >
               保存配置
             </Button>
-            <Button 
+            <Button
               size="large"
               onClick={() => form.resetFields()}
               style={{ minWidth: '120px' }}

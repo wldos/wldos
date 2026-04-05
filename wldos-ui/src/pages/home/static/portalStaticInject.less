@@ -1,0 +1,903 @@
+/*
+ * 门户静态首页 extraProps 注入 HTML 专用样式。
+ * 与默认页：各区块注入后须与未配置时默认 JSX+index.less 观感完全、确定一致（逐项对齐）；不得为凑效果改 index.less / index.jsx。
+ * 隔离：① 仅 section.portal-static-inject.portal-static-{key} 下生效；
+ * ② 类名 portalStatic_{sectionKey}_*，禁止跨区块复用同一类名。
+ */
+
+/* —— hero —— */
+.portal-static-inject.portal-static-hero {
+  .portalStatic_heroContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .portalStatic_heroBadge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  }
+  .portalStatic_heroTitle {
+    font-size: 72px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.2;
+    color: #262626;
+    letter-spacing: -2px;
+  }
+  .portalStatic_heroSubtitle {
+    font-size: 20px;
+    margin-bottom: 40px;
+    color: #595959;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .portalStatic_heroSubtitleLead {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #666;
+  }
+  .portalStatic_heroSubtitleTip {
+    margin-top: 12px;
+    font-size: 15px;
+    color: #1890ff;
+    font-weight: 500;
+  }
+  .portalStatic_heroSubtitleMeta {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+  }
+  .portalStatic_heroActions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+  }
+  .portalStatic_heroStats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+    padding-top: 40px;
+    border-top: 1px solid #e8e8e8;
+  }
+  .portalStatic_hero_statItem {
+    text-align: center;
+  }
+  .portalStatic_hero_statNumber {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1890ff;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .portalStatic_hero_statLabel {
+    font-size: 14px;
+    color: #8c8c8c;
+  }
+  .portalStatic_hero_btnPrimary {
+    display: inline-block;
+    background: #1890ff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 14px 36px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.25);
+    transition: all 0.3s;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+  .portalStatic_hero_btnPrimary:hover {
+    background: #40a9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(24, 144, 255, 0.35);
+    color: #fff;
+  }
+  .portalStatic_hero_btnSecondary {
+    display: inline-block;
+    background: #fff;
+    color: #1890ff;
+    border: 2px solid #1890ff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 34px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+    transition: all 0.3s;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .portalStatic_hero_btnSecondary:hover {
+    background: #e6f7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.25);
+    color: #1890ff;
+  }
+}
+
+/* —— coreCapabilities —— 仅在此文件对齐默认页：index.less 中 .capabilityGrid + .capabilityIcon/.capabilityHighlight + 两段 .capabilityItem 合并后对三卡栅格的实际像素（不改 index） */
+.portal-static-inject.portal-static-coreCapabilities {
+  .portalStatic_coreCapabilities_sectionHeader,
+  .portalStatic_coreCapabilities_grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* 与 .coreCapabilities .sectionHeader 一致：同行 max-width 规则里 margin:0 auto，竖直边距为 0，不占 60px 下边距 */
+  .portalStatic_coreCapabilities_sectionHeader {
+    text-align: center;
+  }
+
+  .portalStatic_coreCapabilities_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+
+  .portalStatic_coreCapabilities_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+    padding-bottom: 0;
+  }
+
+  /* 注入区：副标题与三卡紧贴（仅动态区块；默认页仍由 index.less 控制） */
+  .portalStatic_coreCapabilities_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 0;
+  }
+
+  /* 合并后：后段覆盖 padding/radius/阴影/左条；前段保留 text-align:center 与 border 其余边 */
+  .portalStatic_coreCapabilities_card {
+    padding: 32px;
+    background: #fff;
+    border-radius: 12px;
+    border: 2px solid #e8e8e8;
+    border-left: 4px solid #1890ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s;
+    text-align: center;
+  }
+
+  /* 合并后 :hover：后段 shadow/transform；前段仍贡献 border-color */
+  .portalStatic_coreCapabilities_card:hover {
+    border-color: #1890ff;
+    box-shadow: 0 8px 24px rgba(24, 144, 255, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .portalStatic_coreCapabilities_icon {
+    font-size: 48px;
+    margin-bottom: 24px;
+    color: #1890ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portalStatic_coreCapabilities_icon svg {
+    width: 48px;
+    height: 48px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+
+  .portalStatic_coreCapabilities_card h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .portalStatic_coreCapabilities_card p {
+    font-size: 16px;
+    color: #595959;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .portalStatic_coreCapabilities_highlight {
+    font-size: 13px;
+    color: #1890ff;
+    font-weight: 500;
+    padding: 8px 16px;
+    background: #e6f7ff;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 12px;
+  }
+}
+
+/* —— coreValue ——（标题区与栅格间距与 coreCapabilities 注入块一致：不占 60px 下边距） */
+.portal-static-inject.portal-static-coreValue {
+  .portalStatic_coreValue_sectionHeader,
+  .portalStatic_coreValue_grid {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+
+  .portalStatic_coreValue_sectionHeader {
+    text-align: center;
+  }
+
+  .portalStatic_coreValue_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_coreValue_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_coreValue_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 32px;
+    margin-top: 0;
+  }
+  .portalStatic_coreValue_item {
+    padding: 32px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px solid #e8e8e8;
+    transition: all 0.3s;
+  }
+  .portalStatic_coreValue_item:hover {
+    background: #fff;
+    border-color: #1890ff;
+    box-shadow: 0 8px 24px rgba(24, 144, 255, 0.1);
+    transform: translateY(-4px);
+  }
+  .portalStatic_coreValue_icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    color: #1890ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .portalStatic_coreValue_icon svg {
+    width: 40px;
+    height: 40px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  .portalStatic_coreValue_item h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 12px;
+  }
+  .portalStatic_coreValue_item p {
+    font-size: 15px;
+    color: #595959;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+/* —— useCases ——（标题与卡片间距与 coreCapabilities / coreValue 注入块一致） */
+.portal-static-inject.portal-static-useCases {
+  .portalStatic_useCases_sectionHeader,
+  .portalStatic_useCases_grid {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+
+  .portalStatic_useCases_sectionHeader {
+    text-align: center;
+  }
+
+  .portalStatic_useCases_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_useCases_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_useCases_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 0;
+  }
+  .portalStatic_useCases_item {
+    padding: 28px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8e8e8;
+    transition: all 0.3s;
+  }
+  .portalStatic_useCases_item:hover {
+    border-color: #1890ff;
+    box-shadow: 0 4px 16px rgba(24, 144, 255, 0.1);
+    transform: translateY(-2px);
+  }
+  .portalStatic_useCases_item h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .portalStatic_useCases_icon {
+    color: #1890ff;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .portalStatic_useCases_icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  .portalStatic_useCases_item p {
+    font-size: 14px;
+    color: #595959;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+/* —— architecture ——（与默认 .architecture .archComparison 一致：内容区 max-width 1200px，与其它模块等宽） */
+.portal-static-inject.portal-static-architecture {
+  .portalStatic_architecture_sectionHeader,
+  .portalStatic_architecture_comparison {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+
+  .portalStatic_architecture_sectionHeader {
+    text-align: center;
+  }
+  .portalStatic_architecture_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_architecture_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_architecture_comparison {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 0;
+  }
+  .portalStatic_architecture_item {
+    padding: 32px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 2px solid #e8e8e8;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .portalStatic_architecture_item:last-child {
+    background: linear-gradient(135deg, #f0f7ff 0%, #f8f0ff 100%);
+    border-color: #1890ff;
+    box-shadow: 0 4px 16px rgba(24, 144, 255, 0.15);
+  }
+  .portalStatic_architecture_item h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 20px;
+  }
+  .portalStatic_architecture_item ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+  }
+  .portalStatic_architecture_item li {
+    font-size: 15px;
+    color: #595959;
+    padding: 8px 0;
+    line-height: 1.6;
+  }
+}
+
+/* —— capabilities（列表区块，与 coreCapabilities 类名完全区分；标题与列表间距与注入规范一致） —— */
+.portal-static-inject.portal-static-capabilities {
+  .portalStatic_capabilities_sectionHeader,
+  .portalStatic_capabilities_list {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+
+  .portalStatic_capabilities_sectionHeader {
+    text-align: center;
+  }
+  .portalStatic_capabilities_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_capabilities_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_capabilities_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 32px;
+    margin-top: 0;
+  }
+  .portalStatic_capabilities_listItem {
+    padding: 32px;
+    background: #fff;
+    border-radius: 12px;
+    border-left: 4px solid #1890ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s;
+  }
+  .portalStatic_capabilities_listItem:hover {
+    box-shadow: 0 8px 24px rgba(24, 144, 255, 0.12);
+    transform: translateY(-2px);
+  }
+  .portalStatic_capabilities_listItem h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .portalStatic_capabilities_inlineIcon {
+    color: #1890ff;
+    font-size: 24px;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .portalStatic_capabilities_inlineIcon svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  .portalStatic_capabilities_listItem p {
+    font-size: 16px;
+    color: #595959;
+    line-height: 1.8;
+    margin: 0;
+  }
+}
+
+/* —— techStack ——（标题与列表间距与注入规范一致） */
+.portal-static-inject.portal-static-techStack {
+  .portalStatic_techStack_sectionHeader,
+  .portalStatic_techStack_list {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+
+  .portalStatic_techStack_sectionHeader {
+    text-align: center;
+  }
+  .portalStatic_techStack_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_techStack_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_techStack_list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 0;
+  }
+  .portalStatic_techStack_item {
+    text-align: center;
+    padding: 24px 32px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s;
+    min-width: 120px;
+  }
+  .portalStatic_techStack_item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  .portalStatic_techStack_icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.85);
+  }
+  .portalStatic_techStack_icon svg {
+    width: 32px;
+    height: 32px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  .portalStatic_techStack_name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #262626;
+  }
+}
+
+/* —— techPhilosophy ——（按钮类仅本区块；标题与 slogan 间距与注入规范一致） */
+.portal-static-inject.portal-static-techPhilosophy {
+  .portalStatic_techPhilosophy_sectionHeader {
+    text-align: center;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+  .portalStatic_techPhilosophy_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_techPhilosophy_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_techPhilosophy_slogan {
+    font-size: 24px;
+    color: #1890ff;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 32px;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+    text-align: center;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+  .portalStatic_techPhilosophy_desc {
+    font-size: 18px;
+    color: #262626;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .portalStatic_techPhilosophy_actions {
+    margin-top: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+  }
+  .portalStatic_techPhilosophy_actions .portalStatic_techPhilosophy_btnPrimary,
+  .portalStatic_techPhilosophy_actions .portalStatic_techPhilosophy_btnSecondary {
+    margin-right: 0;
+    font-weight: 500;
+    padding: 12px 32px;
+    font-size: 15px;
+    min-width: 120px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .portalStatic_techPhilosophy_btnIcon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .portalStatic_techPhilosophy_btnIcon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  .portalStatic_techPhilosophy_btnPrimary {
+    display: inline-block;
+    padding: 10px 28px;
+    background: #1890ff;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  }
+  .portalStatic_techPhilosophy_btnSecondary {
+    background: #fff !important;
+    color: #1890ff !important;
+    border: 2px solid #1890ff !important;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+}
+
+/* —— cloudIot —— */
+.portal-static-inject.portal-static-cloudIot {
+  .portalStatic_cloudIot_wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .portalStatic_cloudIot_sectionHeader {
+    text-align: center;
+  }
+  .portalStatic_cloudIot_sectionHeader h2 {
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+  .portalStatic_cloudIot_sectionHeader p {
+    font-size: 18px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .portalStatic_cloudIot_content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    margin-top: 0;
+  }
+  .portalStatic_cloudIot_item {
+    background: #fafafa;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #1890ff;
+    transition: all 0.3s;
+  }
+  .portalStatic_cloudIot_item:hover {
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+  .portalStatic_cloudIot_item h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1890ff;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .portalStatic_cloudIot_item p {
+    font-size: 16px;
+    color: #262626;
+    line-height: 1.8;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .portal-static-inject.portal-static-hero {
+    .portalStatic_heroContent {
+      padding: 0 16px;
+    }
+    .portalStatic_heroTitle {
+      font-size: 36px;
+    }
+    .portalStatic_heroSubtitle {
+      font-size: 16px;
+    }
+    .portalStatic_heroStats {
+      gap: 40px;
+    }
+    .portalStatic_hero_statNumber {
+      font-size: 18px;
+    }
+    .portalStatic_heroBadge {
+      font-size: 12px;
+      padding: 4px 12px;
+    }
+  }
+
+  .portal-static-inject.portal-static-coreCapabilities {
+    .portalStatic_coreCapabilities_sectionHeader,
+    .portalStatic_coreCapabilities_grid {
+      padding: 0 16px;
+    }
+    .portalStatic_coreCapabilities_grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .portalStatic_coreCapabilities_card {
+      padding: 32px 24px;
+    }
+    .portalStatic_coreCapabilities_icon {
+      font-size: 40px;
+    }
+    .portalStatic_coreCapabilities_icon svg {
+      width: 40px;
+      height: 40px;
+    }
+    .portalStatic_coreCapabilities_card h3 {
+      font-size: 20px;
+    }
+    .portalStatic_coreCapabilities_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-coreValue {
+    .portalStatic_coreValue_sectionHeader,
+    .portalStatic_coreValue_grid {
+      padding: 0 16px;
+    }
+    .portalStatic_coreValue_grid {
+      grid-template-columns: 1fr;
+    }
+    .portalStatic_coreValue_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-useCases {
+    .portalStatic_useCases_sectionHeader,
+    .portalStatic_useCases_grid {
+      padding: 0 16px;
+    }
+    .portalStatic_useCases_grid {
+      grid-template-columns: 1fr;
+    }
+    .portalStatic_useCases_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-architecture {
+    .portalStatic_architecture_sectionHeader,
+    .portalStatic_architecture_comparison {
+      padding: 0 16px;
+    }
+    .portalStatic_architecture_comparison {
+      grid-template-columns: 1fr;
+    }
+    .portalStatic_architecture_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-capabilities {
+    .portalStatic_capabilities_sectionHeader,
+    .portalStatic_capabilities_list {
+      padding: 0 16px;
+    }
+    .portalStatic_capabilities_list {
+      grid-template-columns: 1fr;
+    }
+    .portalStatic_capabilities_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-techStack {
+    .portalStatic_techStack_sectionHeader,
+    .portalStatic_techStack_list {
+      padding: 0 16px;
+    }
+    .portalStatic_techStack_list {
+      gap: 20px;
+    }
+    .portalStatic_techStack_item {
+      min-width: 100px;
+      padding: 20px 24px;
+    }
+    .portalStatic_techStack_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-techPhilosophy {
+    .portalStatic_techPhilosophy_sectionHeader,
+    .portalStatic_techPhilosophy_slogan,
+    .portalStatic_techPhilosophy_desc,
+    .portalStatic_techPhilosophy_actions {
+      padding: 0 16px;
+    }
+    .portalStatic_techPhilosophy_actions {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .portalStatic_techPhilosophy_actions .portalStatic_techPhilosophy_btnPrimary,
+    .portalStatic_techPhilosophy_actions .portalStatic_techPhilosophy_btnSecondary {
+      width: 100%;
+      max-width: 280px;
+    }
+    .portalStatic_techPhilosophy_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+
+  .portal-static-inject.portal-static-cloudIot {
+    .portalStatic_cloudIot_wrap {
+      padding: 0 16px;
+    }
+    .portalStatic_cloudIot_content {
+      grid-template-columns: 1fr;
+    }
+    .portalStatic_cloudIot_sectionHeader h2 {
+      font-size: 32px;
+    }
+  }
+}

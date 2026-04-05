@@ -28,8 +28,8 @@ import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.vo.User;
 import io.github.wldos.common.res.Result;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,9 +51,8 @@ import javax.validation.Valid;
 @RestController
 public class UserController extends EntityController<UserService, WoUser> {
 
-	@Lazy
 	@Autowired(required = false)
-	private UserNoticesAggregator userNoticesAggregator;
+	private ObjectProvider<UserNoticesAggregator> userNoticesAggregatorProvider;
 
 	/** 路由守护，检查路由是否可访问 */
 	@ApiOperation(value = "路由检查", notes = "检查路由是否可访问")
@@ -214,11 +213,12 @@ public class UserController extends EntityController<UserService, WoUser> {
 			List<Map<String, Object>> cached = (List<Map<String, Object>>) entry[1];
 			return cached;
 		}
-		List<Map<String, Object>> list = userNoticesAggregator == null
+		UserNoticesAggregator aggregator = userNoticesAggregatorProvider.getIfAvailable();
+		List<Map<String, Object>> notices = aggregator == null
 			? Collections.emptyList()
-			: userNoticesAggregator.aggregate(userId, 80);
-		NOTICES_CACHE.put(userId, new Object[] { now + NOTICES_CACHE_TTL_MS, list });
-		return list;
+			: aggregator.aggregate(userId, 80);
+		NOTICES_CACHE.put(userId, new Object[] { now + NOTICES_CACHE_TTL_MS, notices });
+		return notices;		
 	}
 
 	/**

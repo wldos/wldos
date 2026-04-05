@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Input, Table, message } from 'antd';
+import { useIntl } from 'umi';
 import { queryBookList } from '@/pages/home/service';
 
 /**
  * 存档文档选择弹窗（/archives 分页查询，支持所有类型文档）
  * 供 DocSelectField 及协议、产品管理等页面复用。
  */
-const PubSelectorModal = ({ visible, onSelect, onCancel, title = '选择文档' }) => {
+const PubSelectorModal = ({ visible, onSelect, onCancel, title }) => {
+  const intl = useIntl();
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -29,7 +31,7 @@ const PubSelectorModal = ({ visible, onSelect, onCancel, title = '选择文档' 
       setDataSource(Array.isArray(rows) ? rows : []);
       setTotal(totalCount || 0);
     } catch (e) {
-      message.error('加载存档文档列表失败');
+      message.error(intl.formatMessage({ id: 'component.docSelect.msg.loadFail' }));
       setDataSource([]);
       setTotal(0);
     } finally {
@@ -63,8 +65,16 @@ const PubSelectorModal = ({ visible, onSelect, onCancel, title = '选择文档' 
 
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 80 },
-    { title: '标题', dataIndex: 'pubTitle', ellipsis: true },
-    { title: '类型', dataIndex: 'pubType', width: 80 },
+    {
+      title: intl.formatMessage({ id: 'component.docSelect.col.title' }),
+      dataIndex: 'pubTitle',
+      ellipsis: true,
+    },
+    {
+      title: intl.formatMessage({ id: 'component.docSelect.col.type' }),
+      dataIndex: 'pubType',
+      width: 80,
+    },
   ];
 
   return (
@@ -78,7 +88,7 @@ const PubSelectorModal = ({ visible, onSelect, onCancel, title = '选择文档' 
     >
       <div style={{ marginBottom: 16 }}>
         <Input.Search
-          placeholder="搜索标题"
+          placeholder={intl.formatMessage({ id: 'component.docSelect.search.placeholder' })}
           allowClear
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
@@ -97,7 +107,8 @@ const PubSelectorModal = ({ visible, onSelect, onCancel, title = '选择文档' 
           pageSize,
           total,
           showSizeChanger: true,
-          showTotal: (t) => `共 ${t} 条`,
+          showTotal: (t) =>
+            intl.formatMessage({ id: 'component.docSelect.pagination.total' }, { total: t }),
         }}
         onChange={handleTableChange}
         onRow={(record) => ({

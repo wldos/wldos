@@ -10,9 +10,10 @@ import React from 'react';
 import {defineConfig} from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-import routes from './routes';
+import routes from './routes.index';
+import path from 'path';
 
-const {REACT_APP_ENV} = process.env;
+const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
   // mfsu: {},
@@ -30,7 +31,8 @@ export default defineConfig({
   locale: {
     default: 'zh-CN',
     antd: true,
-    baseNavigator: true,
+    // 浏览器语言由 src/app.js locale.getLocale + runtimeLocale 统一解析，避免匹配到项目内 pt-BR 等片段文件
+    baseNavigator: false,
   },
   dynamicImport: {
     loading: '@/components/PageLoading/index',
@@ -58,6 +60,12 @@ export default defineConfig({
   },
   // 配置 webpack
   chainWebpack(config, { env }) {
+    // 社区版：本地化聚合入口（仅 flavor/community）
+    config.resolve.alias.set(
+      '@flavor-locales',
+      path.resolve(__dirname, '../src/locales/flavor/community'),
+    );
+
     // ========== 插件配置 ==========
     // 允许动态导入（插件路径是运行时才过来的，webpack 无法在构建时打包）
     config.module

@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip, Alert, InputNumber} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {FolderOutlined, KeyOutlined, SettingOutlined, InfoCircleOutlined, EditOutlined} from '@ant-design/icons';
+import { useIntl } from 'umi';
 
 const FormItem = Form.Item;
 const {TextArea} = Input;
@@ -18,6 +19,7 @@ const formLayout = {
 
 const UpdateForm = (props) => {
   const [form] = Form.useForm();
+  const intl = useIntl();
   const {
     onSubmit: handleUpdate,
     onCancel: handleUpdateModalVisible,
@@ -87,14 +89,14 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入分类名称，不能为空，最多50个字！',
+                message: intl.formatMessage({ id: 'sys.termType.nameRequired', defaultMessage: '请输入分类名称，不能为空，最多50个字！' }),
                 max: 50,
               },
             ]}
           >
             <Input
               prefix={<FolderOutlined />}
-              placeholder="请输入分类名称，最多50个字"
+              placeholder={intl.formatMessage({ id: 'sys.termType.namePlaceholder', defaultMessage: '请输入分类名称，最多50个字' })}
             />
           </FormItem>
 
@@ -111,14 +113,14 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入分类别名，不能为空，最多200个字符！',
+                message: intl.formatMessage({ id: 'sys.termType.slugRequired', defaultMessage: '请输入分类别名，不能为空，最多200个字符！' }),
                 max: 200,
               },
             ]}
           >
             <Input
               prefix={<KeyOutlined />}
-              placeholder="请输入分类别名，最多200个字符"
+              placeholder={intl.formatMessage({ id: 'sys.termType.slugPlaceholder', defaultMessage: '请输入分类别名，最多200个字符' })}
             />
           </FormItem>
 
@@ -135,13 +137,13 @@ const UpdateForm = (props) => {
             rules={[
               {
                 max: 200,
-                message: '分类描述最多200个字符！',
+                message: intl.formatMessage({ id: 'sys.termType.descriptionMax', defaultMessage: '分类描述最多200个字符！' }),
               },
             ]}
           >
             <TextArea
               rows={3}
-              placeholder="请输入分类描述，最多200个字符"
+              placeholder={intl.formatMessage({ id: 'sys.termType.descriptionPlaceholder', defaultMessage: '请输入分类描述，最多200个字符' })}
               style={{ resize: 'vertical' }}
             />
           </FormItem>
@@ -180,7 +182,7 @@ const UpdateForm = (props) => {
                 treeDefaultExpandAll
                 allowClear
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto'}}
-                placeholder="请选择父级分类"
+                placeholder={intl.formatMessage({ id: 'sys.termType.parentPlaceholder', defaultMessage: '请选择父级分类' })}
                 treeNodeFilterProp="title"
                 style={{ width: '100%' }}
               />
@@ -200,14 +202,14 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入展示顺序，范围1-100！',
+                message: intl.formatMessage({ id: 'sys.termType.displayOrderRequired', defaultMessage: '请输入展示顺序，范围1-100！' }),
               },
             ]}
           >
             <InputNumber
               min={1}
               max={100}
-              placeholder="请输入展示顺序，范围1-100"
+              placeholder={intl.formatMessage({ id: 'sys.termType.displayOrderPlaceholder', defaultMessage: '请输入展示顺序，范围1-100' })}
               style={{ width: '100%' }}
             />
           </FormItem>
@@ -224,11 +226,11 @@ const UpdateForm = (props) => {
             }
           >
             <Select
-              placeholder="请选择分类状态"
+              placeholder={intl.formatMessage({ id: 'sys.termType.isValidPlaceholder', defaultMessage: '请选择分类状态' })}
               style={{ width: '100%' }}
             >
-              <Option value="1">有效</Option>
-              <Option value="0">无效</Option>
+              <Option value="1">{intl.formatMessage({ id: 'sys.termType.valid', defaultMessage: '有效' })}</Option>
+              <Option value="0">{intl.formatMessage({ id: 'sys.termType.invalid', defaultMessage: '无效' })}</Option>
             </Select>
           </FormItem>
 
@@ -246,11 +248,15 @@ const UpdateForm = (props) => {
               }
             >
               <Select
-                placeholder="请选择信息发布状态"
+                placeholder={intl.formatMessage({ id: 'sys.termType.infoFlagPlaceholder', defaultMessage: '请选择信息发布状态' })}
                 style={{ width: '100%' }}
               >
-                <Option value="1">开启</Option>
-                <Option value="0">关闭</Option>
+              <Option value="1">
+                {intl.formatMessage({ id: 'sys.termType.enable', defaultMessage: '开启' })}
+              </Option>
+              <Option value="0">
+                {intl.formatMessage({ id: 'sys.termType.disable', defaultMessage: '关闭' })}
+              </Option>
               </Select>
             </FormItem>
           )}
@@ -262,8 +268,12 @@ const UpdateForm = (props) => {
   const renderFooter = () =>
     (
       <>
-        <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
-        <Button type="primary" icon={<EditOutlined />} onClick={() => handleNext()}>保存配置</Button>
+        <Button onClick={() => handleUpdateModalVisible(false, values)}>
+          {intl.formatMessage({ id: 'sys.termType.cancel', defaultMessage: '取消' })}
+        </Button>
+        <Button type="primary" icon={<EditOutlined />} onClick={() => handleNext()}>
+          {intl.formatMessage({ id: 'sys.termType.saveConfig', defaultMessage: '保存配置' })}
+        </Button>
       </>
     );
 

@@ -42,6 +42,7 @@ import io.github.wldos.platform.support.cms.PubOpener;
 import io.github.wldos.platform.support.cms.dto.ContModelDto;
 import io.github.wldos.platform.support.cms.entity.KPubmeta;
 import io.github.wldos.platform.support.cms.model.KModelMetaKey;
+import com.wldos.cms.query.CmsKpubsDiscoverySql;
 import io.github.wldos.platform.support.region.vo.City;
 import io.github.wldos.platform.support.term.dto.Term;
 import io.github.wldos.platform.support.term.enums.TermTypeEnum;
@@ -50,6 +51,7 @@ import com.wldos.platform.core.service.RegionService;
 import com.wldos.platform.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,7 +122,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @return 一页数据
 	 */
 	public PageData<PubUnit> queryPubWithExtList(PageQuery pageQuery) {
-		PageData<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+		PageData<PubUnit> pubUnitPage = this.execQueryForPageKpubsParentWithChild(PubUnit.class, KTermObject.class, "k_term_object", "object_id", pageQuery);
 
 		List<PubUnit> pubUnits = pubUnitPage.getRows();
 
@@ -174,7 +176,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @return 一页数据，仅关注概要信息：id、title、**count、cover、excerpt、tags等
 	 */
 	public PageData<PubUnit> queryArchives(PageQuery pageQuery) {
-		PageData<PubUnit> pubUnits = this.execQueryForPage(PubUnit.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+		PageData<PubUnit> pubUnits = this.execQueryForPageKpubsParentWithChild(PubUnit.class, KTermObject.class, "k_term_object", "object_id", pageQuery);
 		return this.handlePubUnit(pubUnits, pageQuery);
 	}
 
@@ -185,7 +187,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @return 一页文档列表
 	 */
 	public PageData<DocItem> queryDocList(PageQuery pageQuery) {
-		return this.execQueryForPage(DocItem.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+		return this.execQueryForPageKpubsParentWithChild(DocItem.class, KTermObject.class, "k_term_object", "object_id", pageQuery);
 	}
 
 	/**
@@ -195,8 +197,10 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @return 分页信息列表
 	 */
 	public PageData<InfoUnit> queryInfos(PageQuery pageQuery) {
-		String sqlNoWhere = "select p.* from k_pubs p where 1=1 ";
 		Map<String, Object> condition = pageQuery.getCondition();
+		StringBuilder sqlSb = new StringBuilder("select p.* from k_pubs p where 1=1 ");
+		CmsKpubsDiscoverySql.appendFrontDiscoveryWhere(sqlSb, "p", condition);
+		String sqlNoWhere = sqlSb.toString();
 		Map<String, List<Object>> filter = pageQuery.getFilter();
 		List<Object> params = new ArrayList<>(); // 参数寄存器
 
@@ -379,6 +383,8 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 
 		// 域隔离
 		pageQuery.appendParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
+		// 管理端列表：不过滤 UNLISTED / INTERNAL_ONLY
+		pageQuery.pushParam(CmsKpubsDiscoverySql.CONDITION_INCLUDE_UNLISTED, Boolean.TRUE);
 
 		PageData<AuditPub> pubUnitPage = this.execQueryForPage(AuditPub.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
 
@@ -427,7 +433,10 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 */
 	public PageData<SPub> searchPubs(Long domainId, PageQuery pageQuery, String keywords) {
 
-		String sql = "select s.id, s.pub_title, s.pub_type from k_pubs s where s.delete_flag = 'normal' and s.pub_status in ('publish', 'inherit')  and (instr(s.pub_title, ?)>0 or instr(s.pub_content, ?) >0) and domain_id=?";
+		String sql = "select s.id, s.pub_title, s.pub_type from k_pubs s where s.delete_flag = 'normal' and s.pub_status in ('publish', 'inherit') "
+				+ "and (COALESCE(NULLIF(TRIM(s.visibility_scope), ''), '" + CmsKpubsDiscoverySql.SCOPE_PUBLIC_LISTED + "') NOT IN ('"
+				+ CmsKpubsDiscoverySql.SCOPE_UNLISTED + "', '" + CmsKpubsDiscoverySql.SCOPE_INTERNAL_ONLY + "')) "
+				+ "and (instr(s.pub_title, ?)>0 or instr(s.pub_content, ?) >0) and domain_id=?";
 
 		return this.commonOperate.execQueryForPageNoOrder(SPub.class, sql, pageQuery.getCurrent(), pageQuery.getPageSize(), keywords, keywords, domainId);
 	}
@@ -444,7 +453,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	}
 
 	public PageData<PubUnit> queryArchivesUser(PageQuery pageQuery) {
-		PageData<PubUnit> pubUnitPage = this.execQueryForPage(PubUnit.class, KPubs.class, KStars.class, "k_pubs", "k_stars", "object_id", pageQuery);
+		PageData<PubUnit> pubUnitPage = this.execQueryForPageKpubsParentWithChild(PubUnit.class, KStars.class, "k_stars", "object_id", pageQuery);
 
 		return this.handlePubUnit(pubUnitPage, pageQuery);
 	}
@@ -713,5 +722,43 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 
 	public boolean existsByIdAndPubStatusAndDeleteFlag(Long id, String pubStatus, String deleteFlag) {
 		return this.entityRepo.existsByIdAndPubStatusAndDeleteFlag(id, pubStatus, deleteFlag);
+	}
+
+	/** 更新可发现性（主表 {@code k_pubs.visibility_scope}）。 */
+	public void updateVisibilityScope(Long id, String visibilityScope, Long domainId, Long userId, String userIp) {
+		KPubs pub = this.findById(id);
+		if (pub == null) {
+			throw new IllegalArgumentException("内容不存在");
+		}
+		if (domainId != null && pub.getDomainId() != null && !domainId.equals(pub.getDomainId())) {
+			throw new IllegalArgumentException("无权限操作该内容");
+		}
+		pub.setVisibilityScope(CmsKpubsDiscoverySql.normalizeScopeForSave(visibilityScope));
+		pub.setUpdateBy(userId);
+		pub.setUpdateIp(userIp);
+		this.entityRepo.saveOrUpdate(pub);
+	}
+
+	/**
+	 * k_pubs 父子分页：父表动态条件 + 前台可发现性（{@link CmsKpubsDiscoverySql#appendFrontDiscoveryWhere}）+ 子表 EXISTS。
+	 */
+	private <V, C> PageData<V> execQueryForPageKpubsParentWithChild(Class<V> vo, Class<C> cClass, String cTable, String pIdKey, PageQuery pageQuery) {
+		Sort sort = pageQuery.getSorter();
+		Map<String, List<Object>> filter = pageQuery.getFilter();
+		Map<String, Object> condition = pageQuery.getCondition();
+		List<Object> params = new ArrayList<>();
+		StringBuilder sql = this.commonOperate.querySqlByTable("k_pubs", KPubs.class, params, condition, filter);
+		CmsKpubsDiscoverySql.appendFrontDiscoveryWhere(sql, "a", condition);
+		sql.append(this.commonOperate.existsSql("b", cClass, this.commonOperate.makeBaseExistsSql(cTable, "b", "a", pIdKey), params, condition, filter));
+		String countSql = "select count(1) as total from ( " + sql + " ) w";
+		List<Map<String, Object>> all = this.commonOperate.getJdbcOperations().queryForList(countSql, params.toArray());
+		int total = Integer.parseInt(ObjectUtils.string(all.get(0).get("total")));
+		this.commonOperate.orderSql(sort, sql);
+		int currentPage = pageQuery.getCurrent();
+		int pageSize = pageQuery.getPageSize();
+		int totalPageNum = (total - 1) / pageSize + 1;
+		currentPage = Math.min(currentPage, totalPageNum);
+		List<V> list = this.commonOperate.execQueryForPage(vo, sql.toString(), currentPage, pageSize, params.toArray());
+		return new PageData<>(total, currentPage, pageSize, list);
 	}
 }

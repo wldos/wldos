@@ -184,7 +184,9 @@ const validatorGeographic = (_, value) => {
   return Promise.resolve();
 };
 
-export const formContent = (privacyEnum, tProps, tagProps) => (
+export const formContent = (privacyEnum, tProps, tagProps, privacyExtra = {}) => {
+  const { rewardStatus, onPrivacyChange } = privacyExtra;
+  return (
   <>
     <Form.Item name="cover" noStyle>
       <Input hidden/>
@@ -295,7 +297,32 @@ export const formContent = (privacyEnum, tProps, tagProps) => (
     <Form.Item label="标签" name="tagIds">
       <Select mode="tags" {...tagProps} />
     </Form.Item>
-  </>);
+    <Form.Item name="visibilityScope" label="发现范围" tooltip="主表可发现性；与「查看方式」独立">
+      <Select allowClear placeholder="默认：前台可发现" options={[
+        { value: 'PUBLIC_LISTED', label: '前台可发现' },
+        { value: 'UNLISTED', label: '仅链接访问（不参与列表/搜索）' },
+        { value: 'INTERNAL_ONLY', label: '仅内部可见' },
+      ]}
+      />
+    </Form.Item>
+    <Form.Item name="privacyLevel" label="查看方式" tooltip="访问与付费策略（存 meta）；与「发现范围」独立">
+      <Radio.Group options={privacyEnum} onChange={onPrivacyChange} />
+    </Form.Item>
+    {rewardStatus ? (
+      <Form.Item
+        label="打赏金额"
+        name="reward"
+        rules={[
+          { required: true, message: '请输入打赏金额' },
+          { pattern: /^(\d+)((?:\.\d+)?)$/, message: '请输入合法金额数字' },
+        ]}
+      >
+        <Input prefix="￥" placeholder="请输入打赏金额" />
+      </Form.Item>
+    ) : null}
+  </>
+  );
+};
 
 const picHandle = (coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url) =>
   (<Row gutter={2}>
@@ -349,6 +376,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   // TinyMCE 按需加载状态
   const [tinymceReady, setTinymceReady] = useState(false);
   const [EditorComponent, setEditorComponent] = useState(null);
+  const [rewardStatus, setReward] = useState(false);
 
   // TinyMCE 按需加载
   useEffect(() => {
@@ -368,6 +396,10 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     initTinyMCE();
     return () => { mounted = false; };
   }, []);
+
+  useEffect(() => {
+    setReward(data?.privacyLevel === 'reward');
+  }, [data?.id, data?.privacyLevel]);
 
   useEffect(async () => {
     const resData = await fetchEnumMap();
@@ -393,13 +425,13 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     }
   }, []);
 
+  useEffect(() => {
+    form.setFieldsValue({pubContent: content});
+  }, [content, form]);
+
   if (!data) {
     return null;
   }
-
-  useEffect(() => {
-    form.setFieldsValue({pubContent: content});
-  }, [content]);
 
   const {validateFields, getFieldsValue} = form;
 
@@ -571,7 +603,13 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
             <Form.Item label="封面与主图" className={styles.main}>
               {picHandle(coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url)}
             </Form.Item>
-            {formContent(privacyEnum, typeProps, tagProps)}
+            {formContent(privacyEnum, typeProps, tagProps, {
+              rewardStatus,
+              onPrivacyChange: (e) => {
+                if (e?.target?.value === 'reward') setReward(true);
+                else setReward(false);
+              },
+            })}
             <Form.Item name="pubContent" noStyle>
               <textarea hidden
                     value={content} onChange={(e) => setContent(e.target.value)}/>

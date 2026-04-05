@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Form, Input, Modal} from 'antd';
-import {useIntl} from "umi";
+import { useIntl } from 'umi';
 
 const FormItem = Form.Item;
 
@@ -33,7 +33,7 @@ const BakEmailChange = (props) => {
     return (
       <FormItem
         name="bakEmail"
-        label="新邮箱"
+        label={intl.formatMessage({ id: 'account.security.email.new' })}
         rules={[
           {
             required: true,
@@ -58,8 +58,12 @@ const BakEmailChange = (props) => {
 
     return (
       <>
-        <Button onClick={() => handleModalVisible(false, values)}>取消</Button>
-        <Button type="primary" onClick={() => handleNext()}>提交</Button>
+        <Button onClick={() => handleModalVisible(false, values)}>
+          {intl.formatMessage({ id: 'account.common.cancel' })}
+        </Button>
+        <Button type="primary" onClick={() => handleNext()}>
+          {intl.formatMessage({ id: 'account.common.submit' })}
+        </Button>
       </>
     );
   };
@@ -68,7 +72,7 @@ const BakEmailChange = (props) => {
     return (
       <FormItem
         name="oldBakEmail"
-        label="原备用邮箱"
+        label={intl.formatMessage({ id: 'account.security.email.old' })}
         rules={[
           {
             required: true,
@@ -96,7 +100,7 @@ const BakEmailChange = (props) => {
         padding: '32px 40px 48px',
       }}
       destroyOnClose
-      title="备用邮箱"
+      title={intl.formatMessage({ id: 'account.security.email.modal' })}
       visible={modalVisible}
       footer={renderFooter()}
       onCancel={() => handleModalVisible()}

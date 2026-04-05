@@ -3,7 +3,7 @@ import {
   Button, Col,
   Form, Input,
   message,
-  Radio, Row, Select, TreeSelect, Space, Card, Typography
+  Row, Select, TreeSelect, Space, Card, Typography
 } from 'antd';
 import {EditOutlined, PictureOutlined, SettingOutlined, UploadOutlined, DeleteOutlined} from '@ant-design/icons';
 import FullscreenModal from '@/components/FullscreenModal';
@@ -12,13 +12,11 @@ import {fetchEnumMap} from "@/pages/book/create/service";
 import {
   AvatarView,
   formContent,
-  picModal
+  picModal,
 } from "@/pages/book/create/components/Step2";
 import ImageConfig from "./ImageConfig";
 import {fetchEnumPubType} from "@/services/enum";
 import {upParams} from "@/components/FileUpload";
-
-const RadioGroup = Radio.Group;
 
 const { SHOW_PARENT } = TreeSelect;
 const {Title, Text} = Typography;
@@ -142,6 +140,11 @@ const UpdateForm = (props) => {
       undefined;
     setPreviewUrl(firstAvailable);
   }, []);
+
+  useEffect(() => {
+    if (values?.privacyLevel === 'reward') setReward(true);
+    else setReward(false);
+  }, [values?.id, values?.privacyLevel]);
 
   const { validateFields } = form;
 
@@ -338,46 +341,19 @@ const UpdateForm = (props) => {
                     >
                     </Select>
                   </Form.Item>
-                  {formContent(privacyEnum, typeProps, tagProps)}                  
+                  {formContent(privacyEnum, typeProps, tagProps, undefined, {
+                    rewardStatus,
+                    onPrivacyChange: (e) => {
+                      if (e?.target?.value === 'reward') setReward(true);
+                      else setReward(false);
+                    },
+                  })}
                   <Form.Item
                     label="别名"
                     name="pubName"
                   >
                     <Input placeholder="设置有意义的别名"/>
                   </Form.Item>
-                  <Form.Item
-                    name="privacyLevel"
-                    label="查看方式"
-                    rules={[
-                      {
-                        required: false,
-                        message: '请设置查看方式'
-                      },
-                    ]}
-                  >
-                    <RadioGroup
-                      options={privacyEnum}
-                      onChange={(e) => {
-                        if (e.target.value === 'reward') setReward(true); else setReward(false);
-                      }}
-                    />
-                  </Form.Item>
-                  {rewardStatus && <Form.Item
-                    label="打赏金额"
-                    name="reward"
-                    rules={[
-                      {
-                        required: true,
-                        message: '请输入打赏金额',
-                      },
-                      {
-                        pattern: /^(\d+)((?:\.\d+)?)$/,
-                        message: '请输入合法金额数字',
-                      },
-                    ]}
-                  >
-                    <Input prefix="￥" placeholder="请输入打赏金额"/>
-                  </Form.Item>}
                   <Form.Item
                     name="pubExcerpt"
                     label="摘要"

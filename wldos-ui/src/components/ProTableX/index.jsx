@@ -10,13 +10,6 @@ import React from 'react';
 import ProTable from '@ant-design/pro-table';
 import isMobile from '@/hooks/isMobile';
 
-// 分页中文文案，避免出现 "Go to" "Page" 等英文
-const paginationLocale = {
-  items_per_page: '条/页',
-  jump_to: '跳转',
-  page: '页',
-};
-
 /**
  * 增强版 ProTable - 自动适配移动端
  * 移动端：禁用全屏按钮、固定布局、横向滚动等特效
@@ -48,7 +41,7 @@ export default function ProTableX(props) {
   const mergedPagination =
     pagination === false
       ? false
-      : { locale: paginationLocale, ...pagination };
+      : pagination;
 
   return (
     <ProTable

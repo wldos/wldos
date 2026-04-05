@@ -11,7 +11,7 @@ import {
   Row, Select, Spin, Switch, TreeSelect,
   Upload
 } from 'antd';
-import {connect} from 'umi';
+import {connect, FormattedMessage, useIntl} from 'umi';
 import styles from './index.less';
 import GeographicView from "@/pages/account/settings/components/GeographicView";
 import config from "@/utils/config";
@@ -27,6 +27,13 @@ import {upParams} from "@/components/FileUpload";
 import {loadTinyMCE} from "@/utils/loadTinyMCE";
 
 const { SHOW_PARENT } = TreeSelect;
+
+/** 与后端 k_pubs.visibility_scope 取值一致（见 CMS Pub 保存） */
+export const VISIBILITY_SCOPE_OPTIONS = [
+  { value: 'PUBLIC_LISTED', label: '前台可发现' },
+  { value: 'UNLISTED', label: '仅链接访问（不参与列表/搜索）' },
+  { value: 'INTERNAL_ONLY', label: '仅内部可见' },
+];
 
 export const formItemLayout = {
   labelCol: {
@@ -54,7 +61,7 @@ export const AvatarView = ({
           showUploadList={false}
           beforeUpload={(file) => { // @todo 其他全局前置约束，由后台同一配置驱动，前台获取结果
             if (params.accept.indexOf(`.${file.type.substring(file.type.indexOf('/')+1, file.type.length)}`) === -1)
-              return message.error('不允许的文件类型').then(() => false)
+              return message.error('book.create.step2.message.fileTypeNotAllowed').then(() => false)
             return beforeUp(file);
           }}
           onChange={onChange}
@@ -63,7 +70,9 @@ export const AvatarView = ({
   >
     <div className={`${styles.button_view} ${avatar ? styles.hidden : ''}`}>
       <Button>
-        <UploadOutlined/><font style={{fontSize: 7}}>封面</font>
+        <UploadOutlined/><font style={{fontSize: 7}}>
+        <FormattedMessage id="book.create.step2.cover.button" defaultMessage="封面" />
+        </font>
       </Button>
     </div>
   </Upload>
@@ -77,7 +86,7 @@ export const AvatarView = ({
           showUploadList={false}
           beforeUpload={(file) => { // @todo 其他全局前置约束，由后台同一配置驱动，前台获取结果
             if (params.accept.indexOf(`.${file.type.substring(file.type.indexOf('/')+1, file.type.length)}`) === -1)
-              return message.error('不允许的文件类型').then(() => false)
+              return message.error('book.create.step2.message.fileTypeNotAllowed').then(() => false)
             return beforeUp(file);
           }}
           onChange={onChange}
@@ -86,7 +95,9 @@ export const AvatarView = ({
   >
     <div className={`${styles.button_pic} ${avatar ? styles.hidden : ''}`}>
       <Button>
-        <UploadOutlined/><font style={{fontSize: 7}}>主图</font>
+        <UploadOutlined/><font style={{fontSize: 7}}>
+        <FormattedMessage id="book.create.step2.mainPic.button" defaultMessage="主图" />
+        </font>
       </Button>
     </div>
   </Upload>
@@ -95,7 +106,7 @@ export const AvatarView = ({
 
 export const picModal = (cropVisible, setCropVisible, cropRef, cropSrc, aspect, setAspectRatio, setRotateTo, saveCropper, type) =>
   (<Modal
-    title="裁切"
+    title={<FormattedMessage id="book.create.step2.crop.title" defaultMessage="裁切" />}
     visible={cropVisible}
     footer={null}
     width={748}
@@ -148,7 +159,9 @@ export const picModal = (cropVisible, setCropVisible, cropRef, cropSrc, aspect, 
       <Row gutter={[16, 16]}>
         <Col span={9}>
           <Input.Group>
-            <Button onClick={() => setRotateTo(-90)}>左旋转</Button>
+            <Button onClick={() => setRotateTo(-90)}>
+              <FormattedMessage id="book.create.step2.crop.rotate.left" defaultMessage="左旋转" />
+            </Button>
             <Button onClick={() => setRotateTo(-15)}>-15°</Button>
             <Button onClick={() => setRotateTo(-30)}>-30°</Button>
             <Button onClick={() => setRotateTo(-45)}>-45°</Button>
@@ -156,7 +169,9 @@ export const picModal = (cropVisible, setCropVisible, cropRef, cropSrc, aspect, 
         </Col>
         <Col span={9}>
           <Input.Group>
-            <Button onClick={() => setRotateTo(90)}>右旋转</Button>
+            <Button onClick={() => setRotateTo(90)}>
+              <FormattedMessage id="book.create.step2.crop.rotate.right" defaultMessage="右旋转" />
+            </Button>
             <Button onClick={() => setRotateTo(15)}>15°</Button>
             <Button onClick={() => setRotateTo(30)}>30°</Button>
             <Button onClick={() => setRotateTo(45)}>45°</Button>
@@ -164,7 +179,7 @@ export const picModal = (cropVisible, setCropVisible, cropRef, cropSrc, aspect, 
         </Col>
         <Col span={6}>
           <Button type="primary" block onClick={() => saveCropper(type)}>
-            确定
+            <FormattedMessage id="book.create.step2.crop.confirm" defaultMessage="确定" />
           </Button>
         </Col>
       </Row>
@@ -178,13 +193,29 @@ const validatorGeographic = (_, value) => {
     return Promise.resolve(); // 用Promise代替callback
 
   if (!city.key) {
-    return Promise.reject(new Error('请输入所在城市!'));
+    return Promise.reject(new Error('book.create.step2.validate.city.required'));
   }
 
   return Promise.resolve();
 };
 
-export const formContent = (privacyEnum, tProps, tagProps) => (
+/**
+ * 作品基本信息字段片段（标题、分类、发现范围、查看方式等）。
+ * - visibilityScope：主表 k_pubs.visibility_scope
+ * - privacyLevel：meta 扩展（查看方式）
+ * privacyExtra：打赏与 Radio 联动；与上两字段无关。
+ */
+export const formContent = (
+  privacyEnum,
+  tProps,
+  tagProps,
+  intl = {
+    formatMessage: ({ defaultMessage, id }) => defaultMessage || id,
+  },
+  privacyExtra = {},
+) => {
+  const { rewardStatus, onPrivacyChange } = privacyExtra;
+  return (
   <>
     <Form.Item name="cover" noStyle>
       <Input hidden/>
@@ -202,45 +233,45 @@ export const formContent = (privacyEnum, tProps, tagProps) => (
       <Input hidden/>
     </Form.Item>
     <Form.Item
-      label="标题"
+      label={intl.formatMessage({ id: 'book.create.step2.field.title.label', defaultMessage: '标题' })}
       name="pubTitle"
       rules={[
         {
           required: true,
-          message: '请输入标题',
+          message: intl.formatMessage({ id: 'book.create.step2.field.title.required', defaultMessage: '请输入标题' }),
         },
         {
           max: 50,
           type: 'string',
-          message: '最多50个汉字'
+          message: intl.formatMessage({ id: 'book.create.step2.field.title.max', defaultMessage: '最多50个汉字' }),
         },
       ]}
     >
-      <Input placeholder="请输入标题"/>
+      <Input placeholder={intl.formatMessage({ id: 'book.create.step2.field.title.placeholder', defaultMessage: '请输入标题' })}/>
     </Form.Item>
     <Form.Item
-      label="价格"
+      label={intl.formatMessage({ id: 'book.create.step2.field.price.label', defaultMessage: '价格' })}
       name="ornPrice"
       rules={[
         {
           required: false,
-          message: '请输入价格',
+          message: intl.formatMessage({ id: 'book.create.step2.field.price.required', defaultMessage: '请输入价格' }),
         },
         {
           pattern: /^(\d+)((?:\.\d+)?)$/,
-          message: '请输入合法金额数字',
+          message: intl.formatMessage({ id: 'book.create.step2.field.price.invalid', defaultMessage: '请输入合法金额数字' }),
         },
       ]}
     >
-      <Input prefix="￥" placeholder="请输入价格"/>
+      <Input prefix="￥" placeholder={intl.formatMessage({ id: 'book.create.step2.field.price.placeholder', defaultMessage: '请输入价格' })}/>
     </Form.Item>
     <Form.Item
       name="geographic"
-      label="地区"
+      label={intl.formatMessage({ id: 'book.create.step2.field.region.label', defaultMessage: '地区' })}
       rules={[
         {
           required: false,
-          message: '请输入地区'
+          message: intl.formatMessage({ id: 'book.create.step2.field.region.required', defaultMessage: '请输入地区' })
         },
         {
           validator: validatorGeographic,
@@ -251,16 +282,16 @@ export const formContent = (privacyEnum, tProps, tagProps) => (
     </Form.Item>
     <Form.Item
       name="contact"
-      label="联系人"
+      label={intl.formatMessage({ id: 'book.create.step2.field.contact.label', defaultMessage: '联系人' })}
       rules={[
         {
           required: false,
-          message: '请输入联系人姓名'
+          message: intl.formatMessage({ id: 'book.create.step2.field.contact.required', defaultMessage: '请输入联系人姓名' })
         },
         {
           max: 10,
           type: 'string',
-          message: '姓名最多10个汉字！',
+          message: intl.formatMessage({ id: 'book.create.step2.field.contact.max', defaultMessage: '姓名最多10个汉字！' }),
         },
       ]}
     >
@@ -268,48 +299,99 @@ export const formContent = (privacyEnum, tProps, tagProps) => (
     </Form.Item>
     <Form.Item
       name="telephone"
-      label="联系电话"
+      label={intl.formatMessage({ id: 'book.create.step2.field.telephone.label', defaultMessage: '联系电话' })}
       rules={[
         {
           required: false,
-          message: '请输入电话'
+          message: intl.formatMessage({ id: 'book.create.step2.field.telephone.required', defaultMessage: '请输入电话' })
         },
         {
           pattern: /^1\d{10}$/,
-          message: '手机号格式错误！',
+          message: intl.formatMessage({ id: 'book.create.step2.field.telephone.invalid', defaultMessage: '手机号格式错误！' }),
         },
       ]}
     >
       <Input/>
     </Form.Item>
-    <Form.Item label="分类" name="termTypeIds"
+    <Form.Item label={intl.formatMessage({ id: 'book.create.step2.field.category.label', defaultMessage: '分类' })} name="termTypeIds"
                rules={[
                  {
                    required: true,
-                   message: '请设置分类'
+                   message: intl.formatMessage({ id: 'book.create.step2.field.category.required', defaultMessage: '请设置分类' })
                  },
                ]}
     >
       <TreeSelect {...tProps} />
     </Form.Item>
-    <Form.Item label="标签" name="tagIds">
+    <Form.Item label={intl.formatMessage({ id: 'book.create.step2.field.tags.label', defaultMessage: '标签' })} name="tagIds">
       <Select mode="tags" {...tagProps} />
     </Form.Item>
-    <Form.Item label="水印设置">
+    <Form.Item
+      name="visibilityScope"
+      label={intl.formatMessage({ id: 'book.create.step2.field.visibilityScope.label', defaultMessage: '发现范围' })}
+      tooltip={intl.formatMessage({
+        id: 'book.create.step2.field.visibilityScope.tooltip',
+        defaultMessage: '是否出现在前台列表/搜索；与「查看方式」独立',
+      })}
+    >
+      <Select
+        allowClear
+        placeholder={intl.formatMessage({
+          id: 'book.create.step2.field.visibilityScope.placeholder',
+          defaultMessage: '默认：前台可发现',
+        })}
+        options={VISIBILITY_SCOPE_OPTIONS}
+      />
+    </Form.Item>
+    <Form.Item label={intl.formatMessage({ id: 'book.create.step2.field.watermark.label', defaultMessage: '水印设置' })}>
       <Row gutter={8}>
         <Col span={16}>
           <Form.Item name="watermarkText" noStyle>
-            <Input placeholder="请输入水印文字，如：WLDOS" />
+            <Input placeholder={intl.formatMessage({ id: 'book.create.step2.field.watermark.placeholder', defaultMessage: '请输入水印文字，如：WLDOS' })} />
           </Form.Item>
         </Col>
         <Col span={8}>
           <Form.Item name="watermarkEnabled" noStyle valuePropName="checked">
-            <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+            <Switch
+              checkedChildren={intl.formatMessage({ id: 'book.create.step2.field.watermark.enabled', defaultMessage: '启用' })}
+              unCheckedChildren={intl.formatMessage({ id: 'book.create.step2.field.watermark.disabled', defaultMessage: '禁用' })}
+            />
           </Form.Item>
         </Col>
       </Row>
     </Form.Item>
-  </>);
+    <Form.Item
+      name="privacyLevel"
+      label={intl.formatMessage({
+        id: 'book.create.step2.field.privacyLevel.label',
+        defaultMessage: '查看方式',
+      })}
+      tooltip={intl.formatMessage({
+        id: 'book.create.step2.field.privacyLevel.tooltip',
+        defaultMessage: '访问与付费策略（存扩展 meta）；与「发现范围」独立',
+      })}
+      rules={[{ required: false, message: intl.formatMessage({ id: 'book.create.step2.field.privacyLevel.required', defaultMessage: '请设置查看方式' }) }]}
+    >
+      <Radio.Group options={privacyEnum} onChange={onPrivacyChange} />
+    </Form.Item>
+    {rewardStatus ? (
+      <Form.Item
+        label={intl.formatMessage({ id: 'book.create.step2.field.reward.label', defaultMessage: '打赏金额' })}
+        name="reward"
+        rules={[
+          { required: true, message: intl.formatMessage({ id: 'book.create.step2.field.reward.required', defaultMessage: '请输入打赏金额' }) },
+          { pattern: /^(\d+)((?:\.\d+)?)$/, message: intl.formatMessage({ id: 'book.create.step2.field.reward.invalid', defaultMessage: '请输入合法金额数字' }) },
+        ]}
+      >
+        <Input
+          prefix="￥"
+          placeholder={intl.formatMessage({ id: 'book.create.step2.field.reward.placeholder', defaultMessage: '请输入打赏金额' })}
+        />
+      </Form.Item>
+    ) : null}
+  </>
+  );
+};
 
 const picHandle = (coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url) =>
   (<Row gutter={2}>
@@ -343,6 +425,7 @@ const picHandle = (coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, 
 let blobFile = null;
 // @todo 按照Pro Antd分步表单的方式，实现分片式信息表单，突出内容信息、交易信息。
 const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
+  const intl = useIntl();
   const [form] = Form.useForm();
   const editorRef = useRef(null);
   const [coverUrl, setCoverUrl] = useState(undefined);
@@ -363,6 +446,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   // TinyMCE 按需加载状态
   const [tinymceReady, setTinymceReady] = useState(false);
   const [EditorComponent, setEditorComponent] = useState(null);
+  const [rewardStatus, setReward] = useState(false);
 
   // TinyMCE 按需加载
   useEffect(() => {
@@ -407,13 +491,17 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     }
   }, []);
 
-  if (!data) {
-    return null;
-  }
+  useEffect(() => {
+    setReward(data?.privacyLevel === 'reward');
+  }, [data?.id, data?.privacyLevel]);
 
   useEffect(() => {
     form.setFieldsValue({pubContent: content});
-  }, [content]);
+  }, [content, form]);
+
+  if (!data) {
+    return null;
+  }
 
   const {validateFields, getFieldsValue} = form;
 
@@ -435,7 +523,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     const values = await validateFields();
 
     if (!values.pubContent) {
-      message.error("请描述详情！");
+      message.error(intl.formatMessage({ id: 'book.create.step2.message.contentRequired', defaultMessage: '请描述详情！' }));
       return;
     }
 
@@ -479,7 +567,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   const beforeUp = (file, asp) => {
     const isGt50K = file.size / 1024 / 1024 > 15;
     if (isGt50K) {
-      return message.error('图片大小超限').then(() => false);
+      return message.error(intl.formatMessage({ id: 'book.create.step2.message.imageTooLarge', defaultMessage: '图片大小超限' })).then(() => false);
     }
 
     const reader = new FileReader();
@@ -514,7 +602,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     const {file: {status, response}} = info;
 
     if (status === 'done') {
-      message.success(`上传成功！`, 1).then(() => {
+      message.success(intl.formatMessage({ id: 'book.create.step2.message.uploadSuccess', defaultMessage: '上传成功！' }), 1).then(() => {
         const {data: {url, path}} = response;
         if (index === 1) {
           setCoverUrl(url ?? undefined);
@@ -539,7 +627,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
         }
       });
     } else if (status === 'error') {
-      message.error(`上传失败！`, 2);
+      message.error(intl.formatMessage({ id: 'book.create.step2.message.uploadFail', defaultMessage: '上传失败！' }), 2);
     }
   };
 
@@ -554,7 +642,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     treeLine: true,
     treeCheckStrictly: true,
     showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择',
+    placeholder: intl.formatMessage({ id: 'book.create.step2.field.category.placeholder', defaultMessage: '请选择' }),
     style: {
       width: '100%',
     },
@@ -563,7 +651,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   const tagProps = {
     value: tagValue,
     onChange: setTagValue,
-    placeholder: '设置标签',
+    placeholder: intl.formatMessage({ id: 'book.create.step2.field.tags.placeholder', defaultMessage: '设置标签' }),
     style: {
       width: '100%',
     },
@@ -582,10 +670,19 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
             hideRequiredMark
             initialValues={data}
           >
-            <Form.Item label="封面与主图" className={styles.main}>
+            <Form.Item
+              label={intl.formatMessage({ id: 'book.create.step2.section.images', defaultMessage: '封面与主图' })}
+              className={styles.main}
+            >
               {picHandle(coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url)}
             </Form.Item>
-            {formContent(privacyEnum, typeProps, tagProps)}
+            {formContent(privacyEnum, typeProps, tagProps, intl, {
+              rewardStatus,
+              onPrivacyChange: (e) => {
+                if (e?.target?.value === 'reward') setReward(true);
+                else setReward(false);
+              },
+            })}
             <Form.Item name="pubContent" noStyle>
               <textarea hidden
                     value={content} onChange={(e) => setContent(e.target.value)}/>
@@ -636,10 +733,10 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
               }}
             >
               <Button onClick={onPrev}>
-                上一步
+                <FormattedMessage id="book.create.step2.button.prev" defaultMessage="上一步" />
               </Button>
               <Button type="primary" onClick={onValidateForm} loading={submitting}  style={{ marginLeft: 8, }}>
-                提交
+                <FormattedMessage id="book.create.step2.button.submit" defaultMessage="提交" />
               </Button>
             </Form.Item>
           </Form>
@@ -647,14 +744,26 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
       </div>
       <Divider style={{ margin: '40px 0 24px', }} />
       <div className={styles.desc}>
-        <h3>说明</h3>
-        <h4>选择分类</h4>
+        <h3>
+          <FormattedMessage id="book.create.step2.guide.title" defaultMessage="说明" />
+        </h3>
+        <h4>
+          <FormattedMessage id="book.create.step2.guide.category.title" defaultMessage="选择分类" />
+        </h4>
         <p>
-          PC端鼠标移动到分类上，弹出小类选择框，点击选定的小类打开信息编辑页；移动端需要点击分类弹出小类选择框。
+          <FormattedMessage
+            id="book.create.step2.guide.category.desc"
+            defaultMessage="PC端鼠标移动到分类上，弹出小类选择框，点击选定的小类打开信息编辑页；移动端需要点击分类弹出小类选择框。"
+          />
         </p>
-        <h4>填写信息</h4>
+        <h4>
+          <FormattedMessage id="book.create.step2.guide.info.title" defaultMessage="填写信息" />
+        </h4>
         <p>
-          填写信息需要上传封面图和主图，如果不上传，会展示默认封面，默认封面不具备显著特征不易被识别，主图至少上传一张。
+          <FormattedMessage
+            id="book.create.step2.guide.info.desc"
+            defaultMessage="填写信息需要上传封面图和主图，如果不上传，会展示默认封面，默认封面不具备显著特征不易被识别，主图至少上传一张。"
+          />
         </p>
       </div>
       {picModal(cropVisible, setCropVisible, cropRef, cropSrc, aspect, setAspectRatio, setRotateTo, saveCropper, type)}

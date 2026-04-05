@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Row,
@@ -9,11 +9,13 @@ import {
   Button,
   Divider,
   Alert,
+  Modal,
+  Upload,
   Progress,
   Statistic,
   Timeline,
-  Tooltip,
   Badge,
+  message,
 } from 'antd';
 import {
   InfoCircleOutlined,
@@ -25,27 +27,60 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
   DownloadOutlined,
+  SafetyCertificateOutlined,
+  KeyOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
+import { Link } from 'umi';
 import styles from './style.less';
-import {queryIssueVersion, queryLicense} from "@/pages/sys/reg/service";
+import { queryIssueVersion, queryLicense, uploadOemPublicKeystore } from '@/pages/sys/reg/service';
 
 const { Title, Text, Paragraph } = Typography;
 
 const License = () => {
-  const [licInfo, setLicInfo] = useState({orgName: '', prodName: '', edition: '', version: ''});
+  const [licInfo, setLicInfo] = useState({ orgName: '', prodName: '', edition: '', version: '' });
   const [licEnum, setLicEnum] = useState([]);
   const [systemInfo, setSystemInfo] = useState({
     uptime: '7天12小时',
     memoryUsage: 65,
     diskUsage: 42,
     lastUpdate: '2025-01-15',
-    status: 'running'
+    status: 'running',
   });
+  const [oemKeystoreModalVisible, setOemKeystoreModalVisible] = useState(false);
+  const [uploadingOemKeystore, setUploadingOemKeystore] = useState(false);
 
+  const handleUploadOemPublicKeystore = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    setUploadingOemKeystore(true);
+    try {
+      const res = await uploadOemPublicKeystore(formData);
+      const payload = res?.data?.data != null ? res.data.data : res?.data;
+      if (res?.code === 200) {
+        const abs = payload?.absolutePath;
+        const readable = payload?.oemPublicKeyReadable;
+        let msg = res?.message || 'OEM 公钥库已更新';
+        if (abs) msg = `${msg}（${abs}）`;
+        message.success(msg);
+        if (readable === false) {
+          message.warning('文件已保存，但按当前口令/别名无法打开公钥库，请检查 license.oem.public-keystore-store-password、alias 等配置');
+        }
+        setOemKeystoreModalVisible(false);
+      } else {
+        message.error(res?.message || '上传失败');
+      }
+    } catch (e) {
+      message.error(e?.data?.message || e?.message || '上传失败');
+    } finally {
+      setUploadingOemKeystore(false);
+    }
+  };
   useEffect(async () => {
     const res = await queryLicense();
-    if (res?.data) {
-      setLicInfo(res.data);
+    const d = res?.data?.data != null ? res.data.data : res?.data;
+    if (d) {
+      setLicInfo((prev) => ({ ...prev, ...d }));
     }
   }, []);
 
@@ -81,6 +116,9 @@ const License = () => {
     return status === 'running' ? 'success' : 'error';
   };
 
+  /** 后端 Lic：oemMainLicenseActive / oemMotherDistribution，任一为真即 OEM 链路实例 */
+  const showOemKeystoreUpload = !!(licInfo.oemMainLicenseActive || licInfo.oemMotherDistribution);
+
   return (
     <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
       {/* 页面标题 */}
@@ -97,7 +135,7 @@ const License = () => {
       <Row gutter={[24, 24]}>
         {/* 产品信息卡片 */}
         <Col xs={24} lg={12}>
-          <Card 
+          <Card
             title={
               <Space>
                 <CloudOutlined style={{ color: '#1890ff' }} />
@@ -119,14 +157,14 @@ const License = () => {
                   </Title>
                 </div>
               </div>
-              
+
               <div>
                 <Text strong>授权组织</Text>
                 <div style={{ marginTop: '8px' }}>
                   <Text>{licInfo.orgName || '开源用户'}</Text>
                 </div>
               </div>
-              
+
               <div>
                 <Text strong>版本号</Text>
                 <div style={{ marginTop: '8px' }}>
@@ -135,7 +173,7 @@ const License = () => {
                   </Tag>
                 </div>
               </div>
-              
+
               {licInfo.edition && licInfo.edition !== 'Free' && (
                 <div>
                   <Text strong>到期时间</Text>
@@ -150,7 +188,7 @@ const License = () => {
 
         {/* 系统状态卡片 */}
         <Col xs={24} lg={12}>
-          <Card 
+          <Card
             title={
               <Space>
                 <CheckCircleOutlined style={{ color: '#52c41a' }} />
@@ -158,8 +196,8 @@ const License = () => {
               </Space>
             }
             extra={
-              <Badge 
-                status={getStatusColor(systemInfo.status)} 
+              <Badge
+                status={getStatusColor(systemInfo.status)}
                 text={systemInfo.status === 'running' ? '运行中' : '异常'}
               />
             }
@@ -182,8 +220,8 @@ const License = () => {
               <Col span={24}>
                 <div style={{ marginTop: '16px' }}>
                   <Text strong>内存使用率</Text>
-                  <Progress 
-                    percent={systemInfo.memoryUsage} 
+                  <Progress
+                    percent={systemInfo.memoryUsage}
                     status={systemInfo.memoryUsage > 80 ? 'exception' : 'active'}
                     style={{ marginTop: '8px' }}
                   />
@@ -192,8 +230,8 @@ const License = () => {
               <Col span={24}>
                 <div style={{ marginTop: '16px' }}>
                   <Text strong>磁盘使用率</Text>
-                  <Progress 
-                    percent={systemInfo.diskUsage} 
+                  <Progress
+                    percent={systemInfo.diskUsage}
                     status={systemInfo.diskUsage > 90 ? 'exception' : 'active'}
                     style={{ marginTop: '8px' }}
                   />
@@ -205,7 +243,7 @@ const License = () => {
 
         {/* 版本历史卡片 */}
         <Col xs={24} lg={12}>
-          <Card 
+          <Card
             title={
               <Space>
                 <DatabaseOutlined style={{ color: '#fa8c16' }} />
@@ -239,9 +277,9 @@ const License = () => {
           </Card>
         </Col>
 
-        {/* 操作和链接卡片 */}
+        {/* 帮助与支持 */}
         <Col xs={24} lg={12}>
-          <Card 
+          <Card
             title={
               <Space>
                 <QuestionCircleOutlined style={{ color: '#722ed1' }} />
@@ -263,18 +301,29 @@ const License = () => {
                     <Button icon={<InfoCircleOutlined />}>
                       系统诊断
                     </Button>
+                    <Link to="/admin/sys/license-apply">
+                      <Button icon={<SafetyCertificateOutlined />}>申请/更换许可证</Button>
+                    </Link>
+                    {showOemKeystoreUpload && (
+                      <Button
+                        icon={<KeyOutlined />}
+                        onClick={() => setOemKeystoreModalVisible(true)}
+                      >
+                        上传公钥
+                      </Button>
+                    )}
                   </Space>
                 </div>
               </div>
-              
+
               <Divider />
-              
+
               <div>
                 <Text strong>相关链接</Text>
                 <div style={{ marginTop: '12px' }}>
                   <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                    <Button 
-                      type="link" 
+                    <Button
+                      type="link"
                       icon={<GithubOutlined />}
                       href="https://github.com/wldos/wldos"
                       target="_blank"
@@ -282,8 +331,8 @@ const License = () => {
                     >
                       GitHub 开源社区
                     </Button>
-                    <Button 
-                      type="link" 
+                    <Button
+                      type="link"
                       icon={<CloudOutlined />}
                       href="https://gitee.com/wldos/wldos"
                       target="_blank"
@@ -291,8 +340,8 @@ const License = () => {
                     >
                       Gitee 开源社区
                     </Button>
-                    <Button 
-                      type="link" 
+                    <Button
+                      type="link"
                       icon={<QuestionCircleOutlined />}
                       href="https://gitee.com/wldos/wldos/wikis/关于我们"
                       target="_blank"
@@ -315,11 +364,11 @@ const License = () => {
           description={
             <div>
               <Text type="secondary">
-                © 2025 WLDOS 云管端解决方案 {licInfo.version || 'V2.0.1'} | 
-                开源社区 | 
+                © 2025 WLDOS 云管端解决方案 {licInfo.version || 'V2.0.1'} |
+                开源社区 |
                 <a href="https://github.com/wldos/wldos" target="_blank" rel="noopener noreferrer">
                   GitHub
-                </a> | 
+                </a> |
                 <a href="https://gitee.com/wldos/wldos" target="_blank" rel="noopener noreferrer">
                   Gitee
                 </a>
@@ -331,6 +380,34 @@ const License = () => {
           style={{ background: '#f6ffed', border: '1px solid #b7eb8f' }}
         />
       </div>
+
+      {showOemKeystoreUpload && (
+        <Modal
+          title="上传公钥"
+          open={oemKeystoreModalVisible}
+          onCancel={() => setOemKeystoreModalVisible(false)}
+          footer={null}
+          destroyOnClose
+        >
+          <p style={{ marginBottom: 12, color: '#666', fontSize: 13 }}>
+            用于 <strong>公钥更新</strong>：请上传发行端「生成公钥」得到的 PKCS12（如 public-*.p12），与签发 license 所用私钥对应。
+            上传后写入本实例配置路径，机器码加密将使用该公钥。
+          </p>
+          <Upload
+            accept=".p12,.pfx,.keystore,.jks"
+            maxCount={1}
+            beforeUpload={(file) => {
+              handleUploadOemPublicKeystore(file);
+              return false;
+            }}
+            showUploadList={!uploadingOemKeystore}
+          >
+            <Button icon={<UploadOutlined />} loading={uploadingOemKeystore}>
+              选择公钥库文件
+            </Button>
+          </Upload>
+        </Modal>
+      )}
     </div>
   );
 };

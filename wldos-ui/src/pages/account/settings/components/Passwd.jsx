@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, Modal} from 'antd';
 import styles from "@/pages/user/register/style.less";
-import {useIntl} from "umi";
+import { useIntl } from 'umi';
 import {fetchEncryptKey} from "@/services/login";
 
 const FormItem = Form.Item;
@@ -88,7 +88,7 @@ const PasswdChange = (props) => {
       <>
         <FormItem
           name="oldPasswd"
-          label="原密码"
+          label={intl.formatMessage({ id: 'account.security.password.old' })}
           hidden={hideOld}
           className={
             form.getFieldValue('oldPasswd') &&
@@ -114,7 +114,7 @@ const PasswdChange = (props) => {
         </FormItem>
         <FormItem
           name="password"
-          label="新密码"
+          label={intl.formatMessage({ id: 'account.security.password.new' })}
           className={
             form.getFieldValue('password') &&
             form.getFieldValue('password').length > 0 &&
@@ -136,7 +136,7 @@ const PasswdChange = (props) => {
         </FormItem>
         <FormItem
           name="confirm"
-          label="确 认"
+          label={intl.formatMessage({ id: 'account.security.password.confirm' })}
           rules={[
             {
               required: true,
@@ -165,8 +165,12 @@ const PasswdChange = (props) => {
 
     return (
       <>
-        <Button onClick={() => handleModalVisible(false, {...values, encryptKey})}>取消</Button>
-        <Button type="primary" onClick={() => handleNext()}>提交</Button>
+        <Button onClick={() => handleModalVisible(false, { ...values, encryptKey })}>
+          {intl.formatMessage({ id: 'account.common.cancel' })}
+        </Button>
+        <Button type="primary" onClick={() => handleNext()}>
+          {intl.formatMessage({ id: 'account.common.submit' })}
+        </Button>
       </>
     );
   };
@@ -178,7 +182,7 @@ const PasswdChange = (props) => {
         padding: '32px 40px 48px',
       }}
       destroyOnClose
-      title="修改密码"
+      title={intl.formatMessage({ id: 'account.security.password.modal' })}
       visible={modalVisible}
       footer={renderFooter(encryptKey)}
       onCancel={() => handleModalVisible()}

@@ -1,11 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Button, Col,
-  Divider,
   Form, Input,
   message,
-  Modal, Radio, Row, Select, TreeSelect,
+  Radio, Row, Select, Space, TreeSelect,
 } from 'antd';
+import {EditOutlined} from '@ant-design/icons';
+import FullscreenModal from '@/components/FullscreenModal';
 import styles from "@/pages/book/create/components/Step2/index.less";
 import {fetchEnumMap} from "@/pages/book/create/service";
 import {
@@ -13,7 +14,6 @@ import {
   picModal,
 } from "@/pages/book/create/components/Step2";
 import {upParams} from "@/components/FileUpload";
-import Draggable from "react-draggable";
 
 const RadioGroup = Radio.Group;
 
@@ -269,71 +269,32 @@ const UpdateForm = (props) => {
 
   const renderFooter = () =>
     (
-      <>
+      <Space>
         <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
         <Button type="primary" onClick={() => handleNext()}>提交</Button>
-      </>
+      </Space>
     );
 
-  const [disabled, setDisabled] = useState(false);
-  const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
-  const draggleRef = useRef(null);
-
-  const onStart = (_event, uiData) => {
-    const { clientWidth, clientHeight } = window.document.documentElement;
-    const targetRect = draggleRef.current?.getBoundingClientRect();
-    if (!targetRect) {
-      return;
-    }
-    setBounds({
-      left: -targetRect.left + uiData.x,
-      right: clientWidth - (targetRect.right - uiData.x),
-      top: -targetRect.top + uiData.y,
-      bottom: clientHeight - (targetRect.bottom - uiData.y),
-    });
-  };
-
   return (
-    <Modal
-      centered={true}
+    <FullscreenModal
+      width={1200}
+      bodyStyle={{
+        padding: '24px',
+      }}
       maskClosable={false}
-      width="fit-content"
       destroyOnClose
       title={
-        <div
-          style={{
-            width: '100%',
-            cursor: 'move',
-          }}
-          onMouseOver={() => {
-            if (disabled) {
-              setDisabled(false);
-            }
-          }}
-          onMouseOut={() => {
-            setDisabled(true);
-          }}
-          onFocus={() => {}}
-          onBlur={() => {}}
-        >
+        <Space>
+          <EditOutlined style={{ color: '#1890ff' }} />
           内容配置
-        </div>
+        </Space>
       }
       visible={updateModalVisible}
       footer={renderFooter()}
       onCancel={() => handleUpdateModalVisible()}
-      modalRender={modal => (
-        <Draggable
-          disabled={disabled}
-          bounds={bounds}
-          onStart={(event, uiData) => onStart(event, uiData)}
-        >
-          <div ref={draggleRef}>{modal}</div>
-        </Draggable>
-      )}
     >
       {renderContent()}
-    </Modal>
+    </FullscreenModal>
   );
 };
 

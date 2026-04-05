@@ -8,12 +8,26 @@
 
 import React, { useState } from 'react';
 import { Descriptions, Tag, Button, Space, Modal, message, Popconfirm } from 'antd';
+import { useIntl } from 'umi';
 import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 import OrganizationEditForm from './OrganizationEditForm';
 import UserCreateForm from './UserCreateForm';
 import PermissionSettings from './PermissionSettings';
 
-const OrganizationDetailContent = ({ organization, onAddUser, companyName, systemName, userCount, showUsers, usersLoaded, onOrganizationUpdate, onUserAdd, onPermissionSettings, onOrganizationDelete }) => {
+const OrganizationDetailContent = ({
+  organization,
+  onAddUser,
+  companyName,
+  systemName,
+  userCount,
+  showUsers,
+  usersLoaded,
+  onOrganizationUpdate,
+  onUserAdd,
+  onPermissionSettings,
+  onOrganizationDelete,
+}) => {
+  const intl = useIntl();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [userModalVisible, setUserModalVisible] = useState(false);
   const [permissionModalVisible, setPermissionModalVisible] = useState(false);
@@ -36,12 +50,12 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
     try {
       if (onOrganizationDelete) {
         await onOrganizationDelete(organization.id);
-        message.success('机构删除成功');
+        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.deleteOk' }));
       } else {
-        message.info('删除机构功能待实现');
+        message.info(intl.formatMessage({ id: 'component.organizationTree.org.msg.deleteTodo' }));
       }
     } catch (error) {
-      message.error('删除机构失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.deleteFail' }));
     }
   };
 
@@ -50,14 +64,14 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
     try {
       if (onOrganizationUpdate) {
         await onOrganizationUpdate(organization.id, values);
-        message.success('机构信息更新成功');
+        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.updateOk' }));
         setEditModalVisible(false);
       } else {
-        message.info('更新机构信息功能待实现');
+        message.info(intl.formatMessage({ id: 'component.organizationTree.org.msg.updateTodo' }));
         setEditModalVisible(false);
       }
     } catch (error) {
-      message.error('更新机构信息失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.updateFail' }));
     } finally {
       setEditLoading(false);
     }
@@ -68,14 +82,14 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
     try {
       if (onUserAdd) {
         await onUserAdd(organization.id, values);
-        message.success('用户添加成功');
+        message.success(intl.formatMessage({ id: 'component.organizationTree.user.msg.addOk' }));
         setUserModalVisible(false);
       } else {
-        message.info('添加用户功能待实现');
+        message.info(intl.formatMessage({ id: 'component.organizationTree.user.msg.addTodo' }));
         setUserModalVisible(false);
       }
     } catch (error) {
-      message.error('添加用户失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.user.msg.addFail' }));
     } finally {
       setUserLoading(false);
     }
@@ -90,34 +104,48 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
 
   return (
     <div>
-      <Descriptions title="机构信息" bordered column={2}>
-        <Descriptions.Item label="机构名称">{organization.orgName || '-'}</Descriptions.Item>
-        <Descriptions.Item label="机构编码">{organization.orgCode || '-'}</Descriptions.Item>
-        <Descriptions.Item label="组织类型">
-          {organization.orgType === 'org' ? '组织' :
-           organization.orgType === 'dept' ? '部门' :
-           organization.orgType || organization.type || '-'}
+      <Descriptions title={intl.formatMessage({ id: 'component.organizationTree.org.detail.title' })} bordered column={2}>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.name' })}>
+          {organization.orgName || '-'}
         </Descriptions.Item>
-        <Descriptions.Item label="归属公司">{companyName || '-'}</Descriptions.Item>
-        <Descriptions.Item label="归属体系">{systemName || '-'}</Descriptions.Item>
-        <Descriptions.Item label="展示顺序">{organization.displayOrder || '-'}</Descriptions.Item>
-        <Descriptions.Item label="状态">
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.code' })}>
+          {organization.orgCode || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.type' })}>
+          {organization.orgType === 'org'
+            ? intl.formatMessage({ id: 'component.organizationTree.org.detail.type.org' })
+            : organization.orgType === 'dept'
+              ? intl.formatMessage({ id: 'component.organizationTree.org.detail.type.dept' })
+              : organization.orgType || organization.type || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.company' })}>
+          {companyName || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.system' })}>
+          {systemName || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.displayOrder' })}>
+          {organization.displayOrder || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.status' })}>
           <Tag color={organization.isValid === '1' || organization.isValid === 1 ? 'green' : 'red'}>
-            {organization.isValid === '1' || organization.isValid === 1 ? '有效' : '无效'}
+            {organization.isValid === '1' || organization.isValid === 1
+              ? intl.formatMessage({ id: 'component.organizationTree.common.status.valid' })
+              : intl.formatMessage({ id: 'component.organizationTree.common.status.invalid' })}
           </Tag>
         </Descriptions.Item>
-        <Descriptions.Item label="用户数量">
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.org.detail.userCount' })}>
           {showUsers && usersLoaded ? (
             <Tag color="blue">
-              <UserOutlined /> {userCount || 0} 人
+              <UserOutlined /> {userCount || 0} {intl.formatMessage({ id: 'component.organizationTree.org.detail.userCount.unit' })}
             </Tag>
           ) : showUsers && !usersLoaded ? (
             <Tag color="default">
-              <UserOutlined /> 加载中...
+              <UserOutlined /> {intl.formatMessage({ id: 'component.organizationTree.org.detail.userCount.loading' })}
             </Tag>
           ) : (
             <Tag color="default" style={{ cursor: 'pointer' }} onClick={handleShowUsers}>
-              <UserOutlined /> 点击显示用户查看
+              <UserOutlined /> {intl.formatMessage({ id: 'component.organizationTree.org.detail.userCount.show' })}
             </Tag>
           )}
         </Descriptions.Item>
@@ -126,23 +154,21 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
       <div style={{ marginTop: 16 }}>
         <Space>
           <Button type="primary" icon={<EditOutlined />} onClick={handleEditOrganization}>
-            编辑机构
+            {intl.formatMessage({ id: 'component.organizationTree.org.action.edit' })}
           </Button>
           <Button icon={<PlusOutlined />} onClick={handleAddUser}>
-            添加用户
+            {intl.formatMessage({ id: 'component.organizationTree.user.action.add' })}
           </Button>
           <Button icon={<SettingOutlined />} onClick={handlePermissionSettings}>
-            权限设置
+            {intl.formatMessage({ id: 'component.organizationTree.permission.action.settings' })}
           </Button>
           <Popconfirm
-            title="确定要删除这个机构吗？"
-            description="删除后将无法恢复，请谨慎操作。"
+            title={intl.formatMessage({ id: 'component.organizationTree.org.confirm.deleteTitle' })}
+            description={intl.formatMessage({ id: 'component.organizationTree.common.confirm.deleteDesc' })}
             onConfirm={handleDeleteOrganization}
-            okText="确定"
-            cancelText="取消"
           >
             <Button danger icon={<DeleteOutlined />}>
-              删除机构
+              {intl.formatMessage({ id: 'component.organizationTree.org.action.delete' })}
             </Button>
           </Popconfirm>
         </Space>
@@ -150,7 +176,7 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
 
       {/* 编辑机构模态框 */}
       <Modal
-        title="编辑机构"
+        title={intl.formatMessage({ id: 'component.organizationTree.org.modal.editTitle' })}
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         footer={null}
@@ -165,7 +191,7 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
 
       {/* 添加用户模态框 */}
       <Modal
-        title="添加用户"
+        title={intl.formatMessage({ id: 'component.organizationTree.user.modal.addTitle' })}
         open={userModalVisible}
         onCancel={() => setUserModalVisible(false)}
         footer={null}
@@ -180,7 +206,7 @@ const OrganizationDetailContent = ({ organization, onAddUser, companyName, syste
 
       {/* 权限设置模态框 */}
       <Modal
-        title="权限设置"
+        title={intl.formatMessage({ id: 'component.organizationTree.permission.modal.title' })}
         open={permissionModalVisible}
         onCancel={() => setPermissionModalVisible(false)}
         footer={null}

@@ -12,6 +12,7 @@ import {
 import { queryTermTypes, saveTermType, deleteTermType } from './service';
 import CategoryManagement from './components/CategoryManagement';
 import styles from './index.less';
+import { useIntl } from 'umi';
 
 const { Title, Text } = Typography;
 
@@ -33,6 +34,7 @@ const TermTypeManagement = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const intl = useIntl();
 
   // 加载分类类型列表
   const loadTermTypes = async () => {
@@ -49,7 +51,7 @@ const TermTypeManagement = () => {
       }
       return [];
     } catch (error) {
-      message.error('加载分类类型失败');
+      message.error(intl.formatMessage({ id: 'sys.termType.loadFailed', defaultMessage: '加载分类类型失败' }));
       return [];
     } finally {
       setLoading(false);
@@ -69,9 +71,9 @@ const TermTypeManagement = () => {
   // 获取结构类型标签
   const getStructureTypeTag = (structureType) => {
     if (structureType === 'tree') {
-      return <Tag color="blue">树形</Tag>;
+      return <Tag color="blue">{intl.formatMessage({ id: 'sys.termType.structureTypeTree', defaultMessage: '树形' })}</Tag>;
     } else if (structureType === 'flat') {
-      return <Tag color="green">扁平</Tag>;
+      return <Tag color="green">{intl.formatMessage({ id: 'sys.termType.structureTypeFlat', defaultMessage: '扁平' })}</Tag>;
     }
     return null;
   };
@@ -119,13 +121,13 @@ const TermTypeManagement = () => {
         {/* 左侧：类型列表 */}
         <div className={styles.typeList}>
           <Card
-            title="分类类型"
+            title={intl.formatMessage({ id: 'sys.termType.typeListTitle', defaultMessage: '分类类型' })}
             size="small"
             extra={
               <Space size={8} style={{ flexWrap: 'nowrap' }}>
                 <Input
                   size="small"
-                  placeholder="搜索类型名称、编码或描述"
+                  placeholder={intl.formatMessage({ id: 'sys.termType.searchPlaceholder', defaultMessage: '搜索类型名称、编码或描述' })}
                   prefix={<SearchOutlined />}
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
@@ -141,7 +143,7 @@ const TermTypeManagement = () => {
                     setModalVisible(true);
                   }}
                 >
-                  新增
+                  {intl.formatMessage({ id: 'sys.termType.add', defaultMessage: '新增' })}
                 </Button>
                 <Button
                   size="small"
@@ -150,7 +152,7 @@ const TermTypeManagement = () => {
                     loadTermTypes();
                   }}
                 >
-                  刷新
+                  {intl.formatMessage({ id: 'sys.termType.refresh', defaultMessage: '刷新' })}
                 </Button>
               </Space>
             }
@@ -188,7 +190,7 @@ const TermTypeManagement = () => {
                             setModalVisible(true);
                           }}
                         >
-                          编辑
+                          {intl.formatMessage({ id: 'sys.termType.edit', defaultMessage: '编辑' })}
                         </Button>
                       ),
                       !item.isSystem && (
@@ -199,28 +201,40 @@ const TermTypeManagement = () => {
                           onClick={async (e) => {
                             e.stopPropagation();
                             Modal.confirm({
-                              title: '确认删除',
-                              content: `确定要删除分类类型"${item.name}"吗？`,
+                              title: intl.formatMessage({ id: 'sys.termType.confirmDeleteTitle', defaultMessage: '确认删除' }),
+                              content: intl.formatMessage(
+                                { id: 'sys.termType.confirmDeleteContent', defaultMessage: '确定要删除分类类型"{name}"吗？' },
+                                { name: item.name },
+                              ),
                               onOk: async () => {
                                 try {
                                   const res = await deleteTermType(item.code);
                                   if (res?.data === 'ok') {
-                                    message.success('删除成功');
+                                    message.success(intl.formatMessage({ id: 'sys.termType.deleteSuccess', defaultMessage: '删除成功' }));
                                     loadTermTypes();
                                     if (selectedType?.code === item.code) {
                                       setSelectedType(null);
                                     }
                                   } else {
-                                    message.error(res?.message || '删除失败');
+                                    message.error(res?.message || intl.formatMessage({ id: 'sys.termType.deleteFailed', defaultMessage: '删除失败' }));
                                   }
                                 } catch (error) {
-                                  message.error('删除失败：' + (error.message || '未知错误'));
+                                  message.error(
+                                    intl.formatMessage(
+                                      { id: 'sys.termType.deleteFailedWithReason', defaultMessage: '删除失败：{reason}' },
+                                      {
+                                        reason:
+                                          error.message ||
+                                          intl.formatMessage({ id: 'sys.termType.unknownError', defaultMessage: '未知错误' }),
+                                      },
+                                    ),
+                                  );
                                 }
                               },
                             });
                           }}
                         >
-                          删除
+                          {intl.formatMessage({ id: 'sys.termType.delete', defaultMessage: '删除' })}
                         </Button>
                       ),
                     ].filter(Boolean)}
@@ -234,7 +248,7 @@ const TermTypeManagement = () => {
                       title={
                         <Space>
                           <Text strong={isSelected}>{item.name}</Text>
-                          {item.isSystem && <Tag color="red">系统</Tag>}
+                          {item.isSystem && <Tag color="red">{intl.formatMessage({ id: 'sys.termType.system', defaultMessage: '系统' })}</Tag>}
                         </Space>
                       }
                       description={
@@ -246,18 +260,18 @@ const TermTypeManagement = () => {
                               wordBreak: 'break-word',
                               overflowWrap: 'break-word',
                             }}
-                            ellipsis={{ tooltip: item.description || '无描述' }}
+                            ellipsis={{ tooltip: item.description || intl.formatMessage({ id: 'sys.termType.noDescription', defaultMessage: '无描述' }) }}
                           >
-                            {item.description || '无描述'}
+                            {item.description || intl.formatMessage({ id: 'sys.termType.noDescription', defaultMessage: '无描述' })}
                           </Text>
                           <Space size={8} wrap style={{ alignItems: 'center' }}>
                             <Text type="secondary" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-                              编码: {item.code}
+                              {intl.formatMessage({ id: 'sys.termType.codePrefix', defaultMessage: '编码' })}: {item.code}
                             </Text>
                             {getStructureTypeTag(item.structureType)}
                             {item.existsInDb && (
                               <Tag color="success" style={{ fontSize: 11, margin: 0 }}>
-                                已使用
+                                {intl.formatMessage({ id: 'sys.termType.used', defaultMessage: '已使用' })}
                               </Tag>
                             )}
                           </Space>
@@ -277,7 +291,12 @@ const TermTypeManagement = () => {
                   total={filteredAndPaginatedTypes.total}
                   showSizeChanger
                   showQuickJumper
-                  showTotal={(total) => `共 ${total} 条`}
+                  showTotal={(total) =>
+                    intl.formatMessage(
+                      { id: 'sys.termType.paginationTotal', defaultMessage: '共 {total} 条' },
+                      { total },
+                    )
+                  }
                   pageSizeOptions={['5', '10', '15', '20']}
                   onChange={(page, size) => {
                     setCurrentPage(page);
@@ -303,7 +322,7 @@ const TermTypeManagement = () => {
             />
           ) : (
             <Card>
-              <Empty description="请选择一个分类类型" />
+              <Empty description={intl.formatMessage({ id: 'sys.termType.chooseCategoryType', defaultMessage: '请选择一个分类类型' })} />
             </Card>
           )}
         </div>
@@ -311,7 +330,11 @@ const TermTypeManagement = () => {
 
       {/* 新增/编辑分类类型弹窗 */}
       <Modal
-        title={editingType ? '编辑分类类型' : '新增分类类型'}
+        title={
+          editingType
+            ? intl.formatMessage({ id: 'sys.termType.modalTitleEdit', defaultMessage: '编辑分类类型' })
+            : intl.formatMessage({ id: 'sys.termType.modalTitleCreate', defaultMessage: '新增分类类型' })
+        }
         visible={modalVisible}
         onCancel={() => {
           setModalVisible(false);
@@ -323,7 +346,11 @@ const TermTypeManagement = () => {
             const values = await form.validateFields();
             const res = await saveTermType(values);
             if (res?.data === 'ok') {
-              message.success(editingType ? '编辑成功' : '新增成功');
+              message.success(
+                editingType
+                  ? intl.formatMessage({ id: 'sys.termType.saveSuccessEdit', defaultMessage: '编辑成功' })
+                  : intl.formatMessage({ id: 'sys.termType.saveSuccessCreate', defaultMessage: '新增成功' }),
+              );
               setModalVisible(false);
               const editingCode = editingType?.code;
               setEditingType(null);
@@ -338,11 +365,20 @@ const TermTypeManagement = () => {
                 }
               }
             } else {
-              message.error(res?.message || '操作失败');
+              message.error(res?.message || intl.formatMessage({ id: 'sys.termType.saveFailed', defaultMessage: '操作失败' }));
             }
           } catch (error) {
             console.error('保存失败:', error);
-            message.error('保存失败：' + (error.message || '未知错误'));
+            message.error(
+              intl.formatMessage(
+                { id: 'sys.termType.saveFailedWithReason', defaultMessage: '保存失败：{reason}' },
+                {
+                  reason:
+                    error.message ||
+                    intl.formatMessage({ id: 'sys.termType.unknownError', defaultMessage: '未知错误' }),
+                },
+              ),
+            );
           }
         }}
         width={600}
@@ -358,48 +394,48 @@ const TermTypeManagement = () => {
         >
           <Form.Item
             name="code"
-            label="编码"
+            label={intl.formatMessage({ id: 'sys.termType.form.code', defaultMessage: '编码' })}
             rules={[
-              { required: true, message: '请输入编码' },
-              { pattern: /^[a-z_]+$/, message: '编码只能包含小写字母和下划线' },
+              { required: true, message: intl.formatMessage({ id: 'sys.termType.form.codeRequired', defaultMessage: '请输入编码' }) },
+              { pattern: /^[a-z_]+$/, message: intl.formatMessage({ id: 'sys.termType.form.codePattern', defaultMessage: '编码只能包含小写字母和下划线' }) },
             ]}
           >
             <Input
-              placeholder="请输入编码，如：custom_type"
+              placeholder={intl.formatMessage({ id: 'sys.termType.form.codePlaceholder', defaultMessage: '请输入编码，如：custom_type' })}
               disabled={!!editingType}
             />
           </Form.Item>
           <Form.Item
             name="name"
-            label="名称"
-            rules={[{ required: true, message: '请输入名称' }]}
+            label={intl.formatMessage({ id: 'sys.termType.form.name', defaultMessage: '名称' })}
+            rules={[{ required: true, message: intl.formatMessage({ id: 'sys.termType.form.nameRequired', defaultMessage: '请输入名称' }) }]}
           >
-            <Input placeholder="请输入名称" />
+            <Input placeholder={intl.formatMessage({ id: 'sys.termType.form.namePlaceholder', defaultMessage: '请输入名称' })} />
           </Form.Item>
           <Form.Item
             name="description"
-            label="描述"
+            label={intl.formatMessage({ id: 'sys.termType.form.description', defaultMessage: '描述' })}
           >
             <Input.TextArea
               rows={3}
-              placeholder="请输入描述"
+              placeholder={intl.formatMessage({ id: 'sys.termType.form.descriptionPlaceholder', defaultMessage: '请输入描述' })}
             />
           </Form.Item>
           <Form.Item
             name="structureType"
-            label="结构类型"
-            rules={[{ required: true, message: '请选择结构类型' }]}
+            label={intl.formatMessage({ id: 'sys.termType.form.structureType', defaultMessage: '结构类型' })}
+            rules={[{ required: true, message: intl.formatMessage({ id: 'sys.termType.form.structureTypeRequired', defaultMessage: '请选择结构类型' }) }]}
           >
             <Select>
-              <Select.Option value="tree">树形</Select.Option>
-              <Select.Option value="flat">扁平</Select.Option>
+              <Select.Option value="tree">{intl.formatMessage({ id: 'sys.termType.form.structureTypeTree', defaultMessage: '树形' })}</Select.Option>
+              <Select.Option value="flat">{intl.formatMessage({ id: 'sys.termType.form.structureTypeFlat', defaultMessage: '扁平' })}</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item
             name="icon"
-            label="图标"
+            label={intl.formatMessage({ id: 'sys.termType.form.icon', defaultMessage: '图标' })}
           >
-            <Input placeholder="请输入图标名称，如：FolderOutlined" />
+            <Input placeholder={intl.formatMessage({ id: 'sys.termType.form.iconPlaceholder', defaultMessage: '请输入图标名称，如：FolderOutlined' })} />
           </Form.Item>
         </Form>
       </Modal>

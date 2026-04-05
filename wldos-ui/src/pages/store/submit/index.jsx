@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import { 
-  PageContainer 
-} from '@ant-design/pro-layout';
-import { 
-  Card, 
-  Upload, 
-  Button, 
-  message, 
-  Steps, 
-  Alert, 
-  Typography, 
+import { PageContainer } from '@ant-design/pro-layout';
+import {
+  Card,
+  Upload,
+  Button,
+  message,
+  Steps,
+  Alert,
+  Typography,
   Space,
   Divider,
   List,
   Tag,
-  Progress
+  Progress,
 } from 'antd';
-import { 
-  UploadOutlined, 
-  FileZipOutlined, 
+import {
+  UploadOutlined,
+  FileZipOutlined,
   CheckCircleOutlined,
   InboxOutlined,
   InfoCircleOutlined,
-  CloudUploadOutlined
+  CloudUploadOutlined,
 } from '@ant-design/icons';
+import { FormattedMessage } from 'umi';
 import { uploadPluginFile } from '@/pages/sys/store/service';
 import './index.less';
 
@@ -37,7 +36,6 @@ const PluginSubmit = () => {
   const [fileList, setFileList] = useState([]);
   const [submitHistory, setSubmitHistory] = useState([]);
 
-  // 上传配置
   const uploadProps = {
     name: 'file',
     multiple: false,
@@ -46,12 +44,22 @@ const PluginSubmit = () => {
     beforeUpload: (file) => {
       const isZip = file.type === 'application/zip' || file.name.endsWith('.zip');
       if (!isZip) {
-        message.error('只能上传 ZIP 格式的插件包！');
+        message.error(
+          <FormattedMessage
+            id="store.submit.upload.onlyZip"
+            defaultMessage="Only ZIP plugin packages are allowed."
+          />,
+        );
         return false;
       }
       const isLt100M = file.size / 1024 / 1024 < 100;
       if (!isLt100M) {
-        message.error('插件包大小不能超过 100MB！');
+        message.error(
+          <FormattedMessage
+            id="store.submit.upload.maxSize"
+            defaultMessage="Plugin package size must not exceed 100MB."
+          />,
+        );
         return false;
       }
       setFileList([file]);
@@ -63,10 +71,14 @@ const PluginSubmit = () => {
     },
   };
 
-  // 处理上传
   const handleUpload = async () => {
     if (fileList.length === 0) {
-      message.error('请先选择插件包文件');
+      message.error(
+        <FormattedMessage
+          id="store.submit.upload.selectFileFirst"
+          defaultMessage="Please select a plugin package file first."
+        />,
+      );
       return;
     }
 
@@ -87,20 +99,24 @@ const PluginSubmit = () => {
       }, 200);
 
       await uploadPluginFile(file);
-      
+
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
-      message.success('插件提交成功！等待审核中...');
-      
+
+      message.success(
+        <FormattedMessage
+          id="store.submit.upload.success"
+          defaultMessage="Plugin submitted successfully! Waiting for review..."
+        />,
+      );
+
       // 添加到提交历史
       const newHistory = {
         id: Date.now(),
         fileName: file.name,
-        fileSize: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-        submitTime: new Date().toLocaleString('zh-CN'),
+        fileSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+        submitTime: new Date().toISOString(),
         status: 'pending',
-        statusText: '待审核'
       };
       setSubmitHistory([newHistory, ...submitHistory]);
       
@@ -108,63 +124,151 @@ const PluginSubmit = () => {
       setFileList([]);
       setUploadProgress(0);
     } catch (error) {
-      console.error('上传失败:', error);
-      message.error('插件提交失败: ' + (error.message || '未知错误'));
+      console.error('upload plugin failed:', error);
+      message.error(
+        `${window.g_app?._store?.getState()?.intl?.messages?.['store.submit.upload.failPrefix'] ||
+          'Plugin submission failed: '}${
+          error && error.message
+            ? error.message
+            : window.g_app?._store?.getState()?.intl?.messages?.['store.submit.upload.unknownError'] ||
+              'Unknown error'
+        }`,
+      );
       setUploadProgress(0);
     } finally {
       setUploading(false);
     }
   };
 
-  // 获取状态标签
   const getStatusTag = (status) => {
     const statusMap = {
-      pending: { color: 'orange', text: '待审核' },
-      approved: { color: 'green', text: '已通过' },
-      rejected: { color: 'red', text: '已拒绝' },
+      pending: {
+        color: 'orange',
+        text: (
+          <FormattedMessage
+            id="store.submit.status.pending"
+            defaultMessage="Pending"
+          />
+        ),
+      },
+      approved: {
+        color: 'green',
+        text: (
+          <FormattedMessage
+            id="store.submit.status.approved"
+            defaultMessage="Approved"
+          />
+        ),
+      },
+      rejected: {
+        color: 'red',
+        text: (
+          <FormattedMessage
+            id="store.submit.status.rejected"
+            defaultMessage="Rejected"
+          />
+        ),
+      },
     };
-    const statusInfo = statusMap[status] || { color: 'default', text: '未知' };
+    const statusInfo =
+      statusMap[status] || {
+        color: 'default',
+        text: (
+          <FormattedMessage
+            id="store.submit.status.unknown"
+            defaultMessage="Unknown"
+          />
+        ),
+      };
     return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
   };
 
   return (
     <PageContainer
-      title="提交插件"
-      content="将您的插件提交到 WLDOS 插件市场，审核通过后即可供其他用户安装使用"
+      title={
+        <FormattedMessage
+          id="store.submit.title"
+          defaultMessage="Submit Plugin"
+        />
+      }
+      content={
+        <FormattedMessage
+          id="store.submit.content"
+          defaultMessage="Submit your plugin to the WLDOS plugin marketplace. Once approved, it will be available for other users to install."
+        />
+      }
     >
       <div className="plugin-submit-container">
-        {/* 提交步骤说明 */}
-        <Card 
+        <Card
           title={
             <Space>
               <InfoCircleOutlined />
-              <span>提交流程</span>
+            <span>
+              <FormattedMessage
+                id="store.submit.steps.title"
+                defaultMessage="Submission process"
+              />
+            </span>
             </Space>
           }
           style={{ marginBottom: 24 }}
         >
           <Steps current={fileList.length > 0 ? 1 : 0} size="small">
-            <Step 
-              title="选择插件包" 
-              description="上传符合规范的 ZIP 格式插件包"
+            <Step
+              title={
+                <FormattedMessage
+                  id="store.submit.steps.step1.title"
+                  defaultMessage="Select plugin package"
+                />
+              }
+              description={
+                <FormattedMessage
+                  id="store.submit.steps.step1.desc"
+                  defaultMessage="Upload a compliant ZIP plugin package."
+                />
+              }
               icon={<FileZipOutlined />}
             />
-            <Step 
-              title="提交审核" 
-              description="系统将自动解析插件信息并提交审核"
+            <Step
+              title={
+                <FormattedMessage
+                  id="store.submit.steps.step2.title"
+                  defaultMessage="Submit for review"
+                />
+              }
+              description={
+                <FormattedMessage
+                  id="store.submit.steps.step2.desc"
+                  defaultMessage="The system will automatically parse plugin info and submit it for review."
+                />
+              }
               icon={<CloudUploadOutlined />}
             />
-            <Step 
-              title="等待审核" 
-              description="管理员审核通过后，插件将上架到市场"
+            <Step
+              title={
+                <FormattedMessage
+                  id="store.submit.steps.step3.title"
+                  defaultMessage="Wait for review"
+                />
+              }
+              description={
+                <FormattedMessage
+                  id="store.submit.steps.step3.desc"
+                  defaultMessage="After administrator approval, the plugin will be listed in the marketplace."
+                />
+              }
               icon={<CheckCircleOutlined />}
             />
           </Steps>
         </Card>
 
-        {/* 上传区域 */}
-        <Card 
-          title="上传插件包"
+        <Card
+          title={
+            <FormattedMessage
+              id="store.submit.card.upload.title"
+              defaultMessage="Upload plugin package"
+            />
+          }
           extra={
             <Button
               type="primary"
@@ -173,7 +277,10 @@ const PluginSubmit = () => {
               loading={uploading}
               disabled={fileList.length === 0}
             >
-              提交审核
+              <FormattedMessage
+                id="store.submit.card.upload.button"
+                defaultMessage="Submit for review"
+              />
             </Button>
           }
           style={{ marginBottom: 24 }}
@@ -182,9 +289,17 @@ const PluginSubmit = () => {
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className="ant-upload-text">点击或拖拽插件包文件到此区域上传</p>
+            <p className="ant-upload-text">
+              <FormattedMessage
+                id="store.submit.card.upload.dragText"
+                defaultMessage="Click or drag plugin package file to this area to upload"
+              />
+            </p>
             <p className="ant-upload-hint">
-              支持 ZIP 格式，文件大小不超过 100MB
+              <FormattedMessage
+                id="store.submit.card.upload.hint"
+                defaultMessage="ZIP format only, file size must not exceed 100MB."
+              />
             </p>
           </Dragger>
 
@@ -202,21 +317,63 @@ const PluginSubmit = () => {
           )}
         </Card>
 
-        {/* 提交须知 */}
-        <Card 
-          title="提交须知"
+        <Card
+          title={
+            <FormattedMessage
+              id="store.submit.notice.title"
+              defaultMessage="Submission notes"
+            />
+          }
           style={{ marginBottom: 24 }}
         >
           <Alert
-            message="插件提交规范"
+            message={
+              <FormattedMessage
+                id="store.submit.notice.specTitle"
+                defaultMessage="Plugin submission guidelines"
+              />
+            }
             description={
               <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-                <li>插件包必须是 ZIP 格式，包含完整的插件文件结构</li>
-                <li>插件包必须包含有效的 <Text code>plugin.yml</Text> 配置文件</li>
-                <li>插件代码必须符合 WLDOS 插件开发规范</li>
-                <li>插件不得包含恶意代码或违反法律法规的内容</li>
-                <li>提交后，插件将进入审核流程，审核通过后才会在市场上架</li>
-                <li>审核时间通常为 1-3 个工作日</li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.spec.item1"
+                    defaultMessage="The plugin package must be in ZIP format and contain the complete plugin file structure."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.spec.item2"
+                    defaultMessage="The plugin package must contain a valid configuration file {file}."
+                    values={{
+                      file: <Text code>plugin.yml</Text>,
+                    }}
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.spec.item3"
+                    defaultMessage="Plugin code must comply with the WLDOS plugin development guidelines."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.spec.item4"
+                    defaultMessage="Plugins must not contain malicious code or content that violates laws or regulations."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.spec.item5"
+                    defaultMessage="After submission, the plugin will enter the review process, and will be listed in the marketplace only after approval."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.spec.item6"
+                    defaultMessage="The review time is usually 1-3 working days."
+                  />
+                </li>
               </ul>
             }
             type="info"
@@ -224,13 +381,38 @@ const PluginSubmit = () => {
             style={{ marginBottom: 16 }}
           />
           <Alert
-            message="审核标准"
+            message={
+              <FormattedMessage
+                id="store.submit.notice.reviewTitle"
+                defaultMessage="Review standards"
+              />
+            }
             description={
               <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-                <li>插件功能完整，能够正常运行</li>
-                <li>插件描述准确，无虚假宣传</li>
-                <li>插件代码质量良好，无明显安全漏洞</li>
-                <li>插件符合 WLDOS 平台规范和政策要求</li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.review.item1"
+                    defaultMessage="Plugin functionality is complete and works properly."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.review.item2"
+                    defaultMessage="Plugin description is accurate and not misleading."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.review.item3"
+                    defaultMessage="Plugin code quality is good and has no obvious security vulnerabilities."
+                  />
+                </li>
+                <li>
+                  <FormattedMessage
+                    id="store.submit.notice.review.item4"
+                    defaultMessage="Plugin complies with WLDOS platform specifications and policies."
+                  />
+                </li>
               </ul>
             }
             type="warning"
@@ -238,9 +420,15 @@ const PluginSubmit = () => {
           />
         </Card>
 
-        {/* 提交历史 */}
         {submitHistory.length > 0 && (
-          <Card title="我的提交记录">
+          <Card
+            title={
+              <FormattedMessage
+                id="store.submit.history.title"
+                defaultMessage="My submission records"
+              />
+            }
+          >
             <List
               dataSource={submitHistory}
               renderItem={(item) => (
@@ -255,8 +443,20 @@ const PluginSubmit = () => {
                     }
                     description={
                       <Space split={<Divider type="vertical" />}>
-                        <Text type="secondary">大小: {item.fileSize}</Text>
-                        <Text type="secondary">提交时间: {item.submitTime}</Text>
+                        <Text type="secondary">
+                          <FormattedMessage
+                            id="store.submit.history.size"
+                            defaultMessage="Size: {size}"
+                            values={{ size: item.fileSize }}
+                          />
+                        </Text>
+                        <Text type="secondary">
+                          <FormattedMessage
+                            id="store.submit.history.time"
+                            defaultMessage="Submitted at: {time}"
+                            values={{ time: item.submitTime }}
+                          />
+                        </Text>
                       </Space>
                     }
                   />

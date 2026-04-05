@@ -30,6 +30,7 @@ const handleUpdate = async (fields) => {
       moduleName: fields.moduleName,
       url: fields.url,
       termTypeId: fields.termTypeId,
+      extraProps: fields.extraProps,
     });
     hide();
     message.success('配置成功');

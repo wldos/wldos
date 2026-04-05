@@ -9,7 +9,7 @@
     <a href="README.md">中文</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.3.8.2-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V2.4.0.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -18,6 +18,14 @@
 
 ---
 
+## 🌍 Vision & Value
+
+WLDOS aims to support distributed "federated" systems through two principles: capability can be installed/removed at runtime, and cooperation can converge to a consistent outcome via protocol-level negotiation.
+
+- Single instance: Dynamic monolith + hot-pluggable modules/plugins to continuously gain capabilities without restart
+- Multi instance: service-mesh/sidecar-oriented collaboration to achieve division of responsibilities and cover the same class of needs
+- Outcome-driven: engineering mechanisms that turn orchestration into a long-lived, compounding capability network
+
 ## ✨ Core Features
 
 | Feature | Description |
@@ -25,6 +33,7 @@
 | 🏢 **Multi-Tenant** | One codebase serves multiple customers with complete data isolation |
 | 🌐 **Multi-Domain** | Different domains display different content, independent brand operation |
 | 🔌 **Hot-Pluggable Plugins** | Business modules plug and play, no restart required |
+| 🔗 **Federated Collaboration (Multi-instance)** | Support multi-instance distributed collaboration (service mesh/sidecar), covering the same class of needs after self-consistent negotiation |
 | 🔐 **Complete Permissions** | RBAC + Data permissions + Multi-level organization |
 | 📱 **Full-Stack Fusion** | Spring Boot + React, Dynamic Monolithic Architecture |
 | 💰 **Content Payment** | Built-in payment system, ready to use |

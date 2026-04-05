@@ -14,6 +14,7 @@ import RightContent from '@/components/GlobalHeader/RightContentAdmin';
 import styles from '@/wldos.less';
 import { renderIcon } from '@/utils/iconLibrary';
 import {wldosHeader} from "@/utils/utils";
+import { routeTitleByPath } from '../../config/routes.index';
 
 const AdminLayout = (props) => {
   const {
@@ -31,6 +32,8 @@ const AdminLayout = (props) => {
 
   const [collapsed, setCollapsed] = useState(false);
   const adminHomePath = '/admin';
+  /** 未在菜单中配置的路由，从路由配置的 name 取标签标题（通用，无硬编码） */
+  const pathTitleFallback = routeTitleByPath || {};
   const [tabs, setTabs] = useState([
     { key: adminHomePath, path: adminHomePath, title: '首页', closable: false }
   ]); // 存储标签信息，首页不可关闭
@@ -162,14 +165,14 @@ const AdminLayout = (props) => {
         return prev.map(t => {
           if (t.key === path) {
             // 直接从最新 menuData 里获取；若未就绪则保持为空，避免显示路径
-            const title = findTitleFromMenu(menuData, t.path || path) || t.title || '';
+            const title = findTitleFromMenu(menuData, t.path || path) || pathTitleFallback[t.path || path] || t.title || '';
             return { ...t, title };
           }
           return t;
         });
       }
       // 新增标签
-      const title = findTitleFromMenu(menuData, path) || '';
+      const title = findTitleFromMenu(menuData, path) || pathTitleFallback[path] || '';
       const newTab = {
         key: path,
         path,
@@ -208,8 +211,7 @@ const AdminLayout = (props) => {
     if (!menuReady) return;
 
     setTabs((prev) => prev.map((t) => {
-      const fixedTitle = findTitleFromMenu(menuData, t.path || t.key) || t.title || '';
-
+      const fixedTitle = findTitleFromMenu(menuData, t.path || t.key) || pathTitleFallback[t.path || t.key] || t.title || '';
       return { ...t, title: fixedTitle };
     }));
   }, [menuReady, menuData, findTitleFromMenu]);
@@ -218,7 +220,7 @@ const AdminLayout = (props) => {
   useEffect(() => {
     if (!menuReady) return;
     setTabs((prev) => prev.map((t) => {
-      const fixedTitle = findTitleFromMenu(menuData, t.path || t.key) || t.title || '';
+      const fixedTitle = findTitleFromMenu(menuData, t.path || t.key) || pathTitleFallback[t.path || t.key] || t.title || '';
       return { ...t, title: fixedTitle };
     }));
   }, [location.pathname, menuReady, menuData, findTitleFromMenu]);
@@ -554,7 +556,7 @@ const AdminLayout = (props) => {
                 key={`tabs-${activeKey}`}
                 items={tabs.filter(t => t.key !== adminHomePath).map(t => {
                   const m = pathToMenu.current[t.path] || pathToMenu.current[t.key] || {};
-                  const title = t.title || m.name || m.title || '';
+                  const title = t.title || m.name || m.title || pathTitleFallback[t.path] || pathTitleFallback[t.key] || '';
                   // 调试：渲染标签日志（开发时可开启）
                   return ({
                     key: t.key,

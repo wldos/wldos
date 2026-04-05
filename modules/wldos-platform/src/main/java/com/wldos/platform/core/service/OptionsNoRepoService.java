@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import io.github.wldos.common.utils.ObjectUtils;
@@ -58,9 +59,11 @@ public class OptionsNoRepoService extends NonEntityService implements OptionsOpe
 	}
 
 	public Map<String, String> configSysOptions(Map<String, Object> config) {
+		Map<String, Object> normalizedConfig = new HashMap<>(config);
+
 		List<WoOptions> insertOptions = new ArrayList<>();
 		List<WoOptions> updateOptions =
-		config.entrySet().stream().map(c -> {
+		normalizedConfig.entrySet().stream().map(c -> {
 			WoOptions option = this.optionsRepo.findByOptionKey(c.getKey());
 			if (option == null) {
 				insertOptions.add(WoOptions.of(this.nextId(), c.getKey(), ObjectUtils.string(c.getValue()), OptionTypeEnum.AUTO_RELOAD.getValue(), this.APP_CODE_SYSTEM));

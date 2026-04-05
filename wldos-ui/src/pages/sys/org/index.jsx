@@ -1,6 +1,7 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
@@ -26,153 +27,143 @@ import {getComSelectOption} from "@/pages/sys/com/service";
 import {getArchList} from "@/pages/sys/arch/service";
 import {selectToEnum} from "@/utils/utils";
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields) => {
-  const hide = message.loading('正在添加');
-
-  try {
-    await addEntity({...fields});
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateEntity({
-      orgName: fields.orgName,
-      orgCode: fields.orgCode,
-      orgType: fields.orgType,
-      comId: fields.comId,
-      archId: fields.archId,
-      parentId: fields.parentId,
-      isValid: fields.isValid,
-      displayOrder: fields.displayOrder,
-      id: fields.id,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
-/**
- *  批量删除
- * @param selectedRows
- */
-const handleRemove = async (selectedRows) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeEntitys({
-      ids: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-/**
- *  删除节点
- */
-const handleRemoveOne = async (fields) => {
-  if (!fields) return true;
-
-  if (fields.children) {
-    message.info("存在子节点，请先删除子节点");
-    return true;
-  }
-  const hide = message.loading('正在删除');
-  try {
-    await removeEntity({
-      id: fields.id,
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-const handleAuth = async (fields = {roleIds: [], orgId: '', archId: '', comId: ''}, existRes = []) => {
-  if (existRes?.length === fields.roleIds?.length &&
-      fields.roleIds.every(id => existRes.some(eid => eid === id))) {
-    message.info('没有任何改变，不做操作！');
-    return false;
-  }
-
-  const hide = message.loading('正在授权');
-
-  try {
-    await authRole({
-      roleIds: fields.roleIds,
-      orgId: fields.orgId,
-      archId: fields.archId,
-      comId: fields.comId,
-    });
-    hide();
-    message.success('授权成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('授权失败请重试！');
-    return false;
-  }
-};
-const addUser = async (value={ids: [], orgId: '', archId: '', comId: ''}) => {
-  if (!!value && value.ids?.length === 0) {
-    message.info('请选择要添加的成员！');
-    return false;
-  }
-
-  const hide = message.loading('正在添加');
-
-  try {
-    const res = await addOrgUser({
-      userIds: value.ids,
-      orgId: value.orgId,
-      archId: value.archId,
-      comId: value.comId
-    });
-    hide();
-    if (res?.data !== '')
-      message.warn(res.data);
-    else
-      message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-
-};
-
 const OrgList = () => {
+  const intl = useIntl();
+
+  const handleAdd = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      await addEntity({...fields});
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.org.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.org.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleUpdate = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.config', defaultMessage: '正在配置' }));
+
+    try {
+      await updateEntity({
+        orgName: fields.orgName,
+        orgCode: fields.orgCode,
+        orgType: fields.orgType,
+        comId: fields.comId,
+        archId: fields.archId,
+        parentId: fields.parentId,
+        isValid: fields.isValid,
+        displayOrder: fields.displayOrder,
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.org.msg.configSuccess', defaultMessage: '配置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.org.msg.configFail', defaultMessage: '配置失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemove = useCallback(async (selectedRows) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    try {
+      await removeEntitys({
+        ids: selectedRows.map((row) => row.id),
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.org.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.org.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemoveOne = useCallback(async (fields) => {
+    if (!fields) return true;
+
+    if (fields.children) {
+      message.info(intl.formatMessage({ id: 'sys.org.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
+      return true;
+    }
+    const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.delete', defaultMessage: '正在删除' }));
+    try {
+      await removeEntity({
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.org.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.org.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleAuth = useCallback(async (fields = {roleIds: [], orgId: '', archId: '', comId: ''}, existRes = []) => {
+    if (existRes?.length === fields.roleIds?.length &&
+        fields.roleIds.every(id => existRes.some(eid => eid === id))) {
+      message.info(intl.formatMessage({ id: 'sys.org.msg.authNoChange', defaultMessage: '没有任何改变，不做操作！' }));
+      return false;
+    }
+
+    const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.auth', defaultMessage: '正在授权' }));
+
+    try {
+      await authRole({
+        roleIds: fields.roleIds,
+        orgId: fields.orgId,
+        archId: fields.archId,
+        comId: fields.comId,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.org.msg.authSuccess', defaultMessage: '授权成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.org.msg.authFail', defaultMessage: '授权失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const addUser = useCallback(async (value={ids: [], orgId: '', archId: '', comId: ''}) => {
+    if (!!value && value.ids?.length === 0) {
+      message.info(intl.formatMessage({ id: 'sys.org.msg.selectMembers', defaultMessage: '请选择要添加的成员！' }));
+      return false;
+    }
+
+    const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      const res = await addOrgUser({
+        userIds: value.ids,
+        orgId: value.orgId,
+        archId: value.archId,
+        comId: value.comId
+      });
+      hide();
+      if (res?.data !== '')
+        message.warn(res.data);
+      else
+        message.success(intl.formatMessage({ id: 'sys.org.msg.addMemberSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.org.msg.addMemberFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+
+  }, [intl]);
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [authModalVisible, handleAuthModalVisible] = useState(false);
@@ -181,29 +172,26 @@ const OrgList = () => {
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
   const [parentId, setParentId] = useState('0');
-  const [currentRecord, setCurrentRecord] = useState(null); // 存储当前记录信息
+  const [currentRecord, setCurrentRecord] = useState(null);
   const [roleList, setRoleList] = useState({});
   const [roles, setRoles] = useState([]);
   const [resTree, setResTree] = useState([]);
   const [existRes, setAuthRes] = useState([]);
   const [authRoleValues, setAuthRoleValues] = useState({});
   const [comList, setComList] = useState({});
-  const [comListArray, setComListArray] = useState([]); // 用于表单的数组格式
+  const [comListArray, setComListArray] = useState([]);
   const [orgTypeEnum, setOrgType] = useState({});
-  const [orgTypes, setOrgTypeList] = useState([]); // 同名不能正常显示
+  const [orgTypes, setOrgTypeList] = useState([]);
   const [archList, setArchList] = useState({});
   const [archs, setArchs] = useState([]);
   const [addUserModalVisible, handleAddUserModalVisible] = useState(false);
   const [addUserValues, setAddUserValues] = useState({});
 
-  // 移动端检测
   const mobile = isMobile();
 
-  // 容器宽度监听
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
 
-  // 使用桌面端粘性布局 - 重新启用，已移除推挤逻辑
   useDesktopSticky(actionRef);
 
   useEffect(async () => {
@@ -224,8 +212,8 @@ const OrgList = () => {
 
     const comData = await getComSelectOption();
     arr = comData?.data?? [];
-    setComList(selectToEnum(arr)); // 用于表格的枚举值
-    setComListArray(arr); // 用于表单的数组格式
+    setComList(selectToEnum(arr));
+    setComListArray(arr);
 
     const orgType = await fetchOrgType();
     data = {};
@@ -254,7 +242,6 @@ const OrgList = () => {
     setArchs(temp);
   }, []);
 
-  // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -275,22 +262,22 @@ const OrgList = () => {
     return getExistRes({orgId});
   };
 
-  const columns = [
+  const columns = useMemo(() => [
     {
-      title: '组织名称',
+      title: intl.formatMessage({ id: 'sys.org.col.orgName', defaultMessage: '组织名称' }),
       dataIndex: 'orgName',
-      tip: '组织是业务域运营的人员管理',
+      tip: intl.formatMessage({ id: 'sys.org.col.orgName.tip', defaultMessage: '组织是业务域运营的人员管理' }),
       fixed: mobile ? undefined : 'left',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '组织名称为必填项',
+            message: intl.formatMessage({ id: 'sys.org.rule.orgNameRequired', defaultMessage: '组织名称为必填项' }),
           },
           {
             max: 60,
             type: 'string',
-            message: '最多60个字',
+            message: intl.formatMessage({ id: 'sys.org.rule.orgNameMax', defaultMessage: '最多60个字' }),
           },
         ],
       },
@@ -300,38 +287,38 @@ const OrgList = () => {
       width: '17%'
     },
     {
-      title: '组织编码',
+      title: intl.formatMessage({ id: 'sys.org.col.orgCode', defaultMessage: '组织编码' }),
       dataIndex: 'orgCode',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '组织编码为必填项',
+            message: intl.formatMessage({ id: 'sys.org.rule.orgCodeRequired', defaultMessage: '组织编码为必填项' }),
           },
           {
             max: 32,
             type: 'string',
-            message: '最多32位',
+            message: intl.formatMessage({ id: 'sys.org.rule.orgCodeMax', defaultMessage: '最多32位' }),
           },
         ],
       },
     },
     {
-      title: '组织类型',
+      title: intl.formatMessage({ id: 'sys.org.col.orgType', defaultMessage: '组织类型' }),
       dataIndex: 'orgType',
       filters: true,
       onFilter: false,
       valueEnum: orgTypeEnum,
     },
     {
-      title: '上级组织',
+      title: intl.formatMessage({ id: 'sys.org.col.parentId', defaultMessage: '上级组织' }),
       dataIndex: 'parentId',
       hideInTable: true,
       hideInForm: true,
       valueEnum: roleList,
     },
     {
-      title: '归属公司',
+      title: intl.formatMessage({ id: 'sys.org.col.comId', defaultMessage: '归属公司' }),
       dataIndex: 'comId',
       filters: true,
       onFilter: false,
@@ -340,37 +327,37 @@ const OrgList = () => {
       width: '17%'
     },
     {
-      title: '归属体系',
+      title: intl.formatMessage({ id: 'sys.org.col.archId', defaultMessage: '归属体系' }),
       dataIndex: 'archId',
       filters: true,
       onFilter: false,
       valueEnum: archList,
     },
     {
-      title: '展示顺序',
+      title: intl.formatMessage({ id: 'sys.org.col.displayOrder', defaultMessage: '展示顺序' }),
       dataIndex: 'displayOrder',
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: '状态',
+      title: intl.formatMessage({ id: 'sys.org.col.status', defaultMessage: '状态' }),
       dataIndex: 'isValid',
       hideInForm: true,
       filters: true,
       onFilter: false,
       valueEnum: {
         '0': {
-          text: '无效',
+          text: intl.formatMessage({ id: 'sys.org.status.invalid', defaultMessage: '无效' }),
           status: 'invalid',
         },
         '1': {
-          text: '有效',
+          text: intl.formatMessage({ id: 'sys.org.status.valid', defaultMessage: '有效' }),
           status: 'valid',
         },
       },
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'sys.org.col.operation', defaultMessage: '操作' }),
       dataIndex: 'option',
       valueType: 'option',
       fixed: mobile ? undefined : 'right',
@@ -378,7 +365,6 @@ const OrgList = () => {
         <>
           <a
             onClick={() => {
-              // 子级：父组织=当前记录，组织类型=当前记录的组织类型，归属公司=当前记录的归属公司，归属体系=当前记录的归属体系
               setCurrentRecord({
                 parentId: record.id,
                 orgType: record.orgType,
@@ -388,11 +374,10 @@ const OrgList = () => {
               handleModalVisible(true);
             }}
           >
-            子级
+            {intl.formatMessage({ id: 'sys.org.action.child', defaultMessage: '子级' })}
           </a>
           <Divider type="vertical"/>
           <a onClick={() => {
-            // 同级：父组织=当前记录的父组织，组织类型=当前记录的组织类型，归属公司=当前记录的归属公司，归属体系=当前记录的归属体系
             setCurrentRecord({
               parentId: record.parentId,
               orgType: record.orgType,
@@ -400,7 +385,7 @@ const OrgList = () => {
               archId: record.archId
             });
             handleModalVisible(true);
-          }}>同级</a>
+          }}>{intl.formatMessage({ id: 'sys.org.action.sibling', defaultMessage: '同级' })}</a>
           <Divider type="vertical"/>
           <a
             onClick={() => {
@@ -408,7 +393,7 @@ const OrgList = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            {intl.formatMessage({ id: 'sys.org.action.config', defaultMessage: '配置' })}
           </a>
           <Divider type="vertical"/>
           <a
@@ -426,7 +411,7 @@ const OrgList = () => {
               });
             }}
           >
-            授权
+            {intl.formatMessage({ id: 'sys.org.action.auth', defaultMessage: '授权' })}
           </a>
           <Divider type="vertical"/>
           <a
@@ -435,23 +420,22 @@ const OrgList = () => {
               setAddUserValues(record);
             }}
           >
-            人员
+            {intl.formatMessage({ id: 'sys.org.action.staff', defaultMessage: '人员' })}
           </a>
           <Divider type="vertical"/>
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.org.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
            onConfirm={async () => {
              await handleRemoveOne(record);
              actionRef.current?.reloadAndRest?.();
            }}
           >
-            <a>删除</a>
+            <a>{intl.formatMessage({ id: 'sys.org.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
         </>
       ),
     },
-  ];
+  ], [intl, mobile, orgTypeEnum, roleList, comList, archList, handleRemoveOne]);
 
-  // 计算列总宽度 - 动态计算
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
@@ -468,7 +452,7 @@ const OrgList = () => {
     >
       <div ref={containerRef}>
         <ProTableX
-          headerTitle="组织清单"
+          headerTitle={intl.formatMessage({ id: 'sys.org.headerTitle', defaultMessage: '组织清单' })}
           actionRef={actionRef}
           rowKey="id"
           search={{
@@ -476,7 +460,7 @@ const OrgList = () => {
           }}
           toolBarRender={() => [
             <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.org.toolbar.new', defaultMessage: '新建' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
@@ -502,7 +486,11 @@ const OrgList = () => {
             pageSizeOptions: ['10', '15', '20', '30', '50'],
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+            showTotal: (total, range) =>
+              intl.formatMessage(
+                { id: 'sys.org.pagination.range', defaultMessage: '第 {start}-{end} 条/总共 {total} 条' },
+                { start: range[0], end: range[1], total },
+              ),
           }}
           tableLayout={mobile ? undefined : 'fixed'}
           scroll={mobile ? undefined : { x: scrollX }}
@@ -512,7 +500,7 @@ const OrgList = () => {
         <FooterToolbar
           extra={
             <div>
-              已选择{' '}
+              {intl.formatMessage({ id: 'sys.org.footer.selected', defaultMessage: '已选择' })}{' '}
               <a
                 style={{
                   fontWeight: 600,
@@ -520,35 +508,34 @@ const OrgList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项&nbsp;&nbsp;
+              {intl.formatMessage({ id: 'sys.org.footer.items', defaultMessage: '项' })}&nbsp;&nbsp;
             </div>
           }
         >
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.org.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemove(selectedRowsState);
                         setSelectedRows([]);
                         actionRef.current?.reloadAndRest?.();
                       }}>
             <Button>
-              批量删除
+              {intl.formatMessage({ id: 'sys.org.footer.batchDelete', defaultMessage: '批量删除' })}
             </Button>
           </Popconfirm>
-          <Button type="primary">批量导出</Button>
+          <Button type="primary">{intl.formatMessage({ id: 'sys.org.footer.batchExport', defaultMessage: '批量导出' })}</Button>
         </FooterToolbar>
       )}
       <CreateForm onCancel={() => handleModalVisible(false)}
                   modalVisible={createModalVisible}>
         <CreateFormContent
           onSubmit={async (value) => {
-            // 使用 currentRecord 中的 parentId，如果没有则使用默认的 parentId
             const finalParentId = currentRecord?.parentId || parentId;
             const success = await handleAdd({...value, parentId: finalParentId});
 
             if (success) {
               handleModalVisible(false);
               setParentId('0');
-              setCurrentRecord(null); // 清空当前记录
+              setCurrentRecord(null);
 
               if (actionRef.current) {
                 actionRef.current.reload();
@@ -558,7 +545,7 @@ const OrgList = () => {
           onCancel={() => {
             handleModalVisible(false);
             setParentId('0');
-            setCurrentRecord(null); // 清空当前记录
+            setCurrentRecord(null);
           }}
           roles={roles}
           archs={archs}

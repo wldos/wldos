@@ -13,6 +13,12 @@ import AvatarList from "@/components/AvatarList";
 import {bodyContent, genAvatars, genTdkCrumbs, typeUrl} from "@/utils/utils";
 import TelCode from "@/pages/book/detail/components/TelCode";
 import {createImageErrorHandler} from "@/utils/imageUtils";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import ReactMarkdown from "react-markdown";
+import MarkdownImage from "@/components/MarkdownImage";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const getKey = (id, index) => `${id}-${index}`;
 
@@ -374,7 +380,76 @@ const Info = (props) => {
                   activeTabKey={tabKey}
                   onTabChange={(a) => setTabKey(a)}
             >
-              {tabKey === 'info' ? (<>{bodyContent(product?.pubContent) || '没有内容'}<Divider style={{ margin: '40px 0 24px', }} /></>) : <Comments id={product?.id}/>}
+              {tabKey === 'info' ? (
+                <>
+                  {product?.pubContent ? (
+                    product?.pubMimeType === 'text/markdown' ? (
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeRaw]}
+                        className={"markdown-body"}
+                        components={{
+                          img({src, alt, title, ...props}) {
+                            return (
+                              <MarkdownImage
+                                src={src}
+                                alt={alt}
+                                title={title}
+                                content={product?.pubContent}
+                                {...props}
+                              />
+                            );
+                          },
+                          code({node, inline, className, children, ...props}) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline && match ? (
+                              <div style={{
+                                backgroundColor: '#f6f8fa',
+                                borderRadius: '6px',
+                                padding: '16px',
+                                margin: '16px 0',
+                                overflow: 'auto',
+                              }}>
+                                <SyntaxHighlighter
+                                  style={vs}
+                                  language={match[1]}
+                                  PreTag="div"
+                                  showLineNumbers={false}
+                                  wrapLines={true}
+                                  wrapLongLines={true}
+                                  customStyle={{
+                                    background: 'transparent',
+                                    margin: 0,
+                                    padding: 0,
+                                    border: 'none',
+                                    borderRadius: 0,
+                                  }}
+                                  {...props}
+                                >
+                                  {String(children).replace(/\n$/, '')}
+                                </SyntaxHighlighter>
+                              </div>
+                            ) : (
+                              <code className={className} {...props}>
+                                {children}
+                              </code>
+                            );
+                          },
+                        }}
+                      >
+                        {product?.pubContent}
+                      </ReactMarkdown>
+                    ) : (
+                      bodyContent(product?.pubContent)
+                    )
+                  ) : (
+                    '没有内容'
+                  )}
+                  <Divider style={{ margin: '40px 0 24px', }} />
+                </>
+              ) : (
+                <Comments id={product?.id}/>
+              )}
             </Card>
           </Col>
         </Row>

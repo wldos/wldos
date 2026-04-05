@@ -7,13 +7,14 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {history, connect, SelectLang } from 'umi';
+import {history, connect, useIntl } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
 import {Button, Switch} from "antd";
 import updateDarkTheme from "@/components/DarkTheme/UpdateTheme";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 /** 从菜单树中收集 menuRegion===nav_avatar 的项，保留子菜单结构 */
 const collectAvatarMenuItems = (menus) => {
@@ -43,6 +44,7 @@ const GlobalHeaderRight = (props) => {
         avatar: '',
         nickname: '',
     }, route, menuData} = props;
+    const intl = useIntl();
 
     const {module} = route && route['/'] || '';
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
@@ -78,22 +80,22 @@ const GlobalHeaderRight = (props) => {
         <div className={className}>
             <HeaderSearch
                 className={`${styles.action} ${styles.search}`}
-                placeholder="站内搜索"
-                defaultValue="云平台"
+                placeholder={intl.formatMessage({ id: 'component.globalHeader.search' })}
+                defaultValue={intl.formatMessage({ id: 'component.globalHeader.search.example1' })}
                 options={[
                     {
-                        label: <a onClick={() => search('/search', '云平台')} href="#">云平台</a>,
-                        value: '云平台',
+                        label: <a onClick={() => search('/search', intl.formatMessage({ id: 'component.globalHeader.search.example1' }))} href="#">{intl.formatMessage({ id: 'component.globalHeader.search.example1' })}</a>,
+                        value: intl.formatMessage({ id: 'component.globalHeader.search.example1' }),
                     },
                     {
-                        label: <a onClick={() => search('/search', '技术')}
-                                  href="#">技术</a>,
-                        value: '技术',
+                        label: <a onClick={() => search('/search', intl.formatMessage({ id: 'component.globalHeader.search.example2' }))}
+                                  href="#">{intl.formatMessage({ id: 'component.globalHeader.search.example2' })}</a>,
+                        value: intl.formatMessage({ id: 'component.globalHeader.search.example2' }),
                     },
                     {
-                        label: <a onClick={() => search('/search', '信息')}
-                                  href="#">信息</a>,
-                        value: '信息',
+                        label: <a onClick={() => search('/search', intl.formatMessage({ id: 'component.globalHeader.search.example3' }))}
+                                  href="#">{intl.formatMessage({ id: 'component.globalHeader.search.example3' })}</a>,
+                        value: intl.formatMessage({ id: 'component.globalHeader.search.example3' }),
                     },
                 ]}
                 onSearch={value => search(`/search`, value)}
@@ -102,7 +104,7 @@ const GlobalHeaderRight = (props) => {
                 currentUser?.nickname ? (<NoticeIconView disablePolling />) : ('')
             }
             <Avatar menu avatarMenu={collectAvatarMenuItems(menuData)}/>
-          {/* <SelectLang className={styles.action} /> */}
+            <LanguageSwitcher className={styles.action} />
             <span className={styles.action}>
               <Switch checkedChildren="🌙" unCheckedChildren="☀" onClick={switchDarkMode} defaultChecked={darkMode} size={"small"} />
             </span>

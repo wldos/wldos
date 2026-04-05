@@ -1,6 +1,7 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -21,126 +22,110 @@ import {
 } from './service';
 import AuthRes from "@/pages/sys/role/components/AuthRes";
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields) => {
-  const hide = message.loading('正在添加');
-
-  try {
-    await addEntity({...fields});
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateEntity({
-      roleName: fields.roleName,
-      roleCode: fields.roleCode,
-      roleType: fields.roleType,
-      parentId: fields.parentId,
-      roleDesc: fields.roleDesc,
-      isValid: fields.isValid,
-      displayOrder: fields.displayOrder,
-      id: fields.id,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
-/**
- *  批量删除
- * @param selectedRows
- */
-const handleRemove = async (selectedRows) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeEntitys({
-      ids: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemoveOne = async (fields) => {
-  if (!fields) return true;
-
-  if (fields.children) {
-    message.info("存在子节点，请先删除子节点");
-    return true;
-  }
-  const hide = message.loading('正在删除');
-  try {
-    await removeEntity({
-      id: fields.id,
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-/**
- * 角色授权
- * @param fields
- */
-const handleAuth = async (fields = {roleIds: [], roleId: ''}, existRes = []) => {
-  if (existRes?.length === fields.roleIds?.length && fields.roleIds.every(id => existRes.some(eid => eid === id))) {
-    message.info('没有任何改变，不做操作！');
-    return false;
-  }
-
-  const hide = message.loading('正在授权');
-
-  try {
-    await authRole({
-      resIds: fields.resIds,
-      roleId: fields.roleId,
-    });
-    hide();
-    message.success('授权成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('授权失败请重试！');
-    return false;
-  }
-};
-
 const RoleList = () => {
+  const intl = useIntl();
+
+  const handleAdd = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.role.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      await addEntity({...fields});
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.role.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.role.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleUpdate = useCallback(async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.role.msg.loading.config', defaultMessage: '正在配置' }));
+
+    try {
+      await updateEntity({
+        roleName: fields.roleName,
+        roleCode: fields.roleCode,
+        roleType: fields.roleType,
+        parentId: fields.parentId,
+        roleDesc: fields.roleDesc,
+        isValid: fields.isValid,
+        displayOrder: fields.displayOrder,
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.role.msg.configSuccess', defaultMessage: '配置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.role.msg.configFail', defaultMessage: '配置失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemove = useCallback(async (selectedRows) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.role.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    try {
+      await removeEntitys({
+        ids: selectedRows.map((row) => row.id),
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.role.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.role.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleRemoveOne = useCallback(async (fields) => {
+    if (!fields) return true;
+
+    if (fields.children) {
+      message.info(intl.formatMessage({ id: 'sys.role.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
+      return true;
+    }
+    const hide = message.loading(intl.formatMessage({ id: 'sys.role.msg.loading.delete', defaultMessage: '正在删除' }));
+    try {
+      await removeEntity({
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.role.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.role.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      return false;
+    }
+  }, [intl]);
+
+  const handleAuth = useCallback(async (fields = {roleIds: [], roleId: ''}, existRes = []) => {
+    if (existRes?.length === fields.roleIds?.length && fields.roleIds.every(id => existRes.some(eid => eid === id))) {
+      message.info(intl.formatMessage({ id: 'sys.role.msg.authNoChange', defaultMessage: '没有任何改变，不做操作！' }));
+      return false;
+    }
+
+    const hide = message.loading(intl.formatMessage({ id: 'sys.role.msg.loading.auth', defaultMessage: '正在授权' }));
+
+    try {
+      await authRole({
+        resIds: fields.resIds,
+        roleId: fields.roleId,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.role.msg.authSuccess', defaultMessage: '授权成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.role.msg.authFail', defaultMessage: '授权失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [authModalVisible, handleAuthModalVisible] = useState(false);
@@ -148,22 +133,19 @@ const RoleList = () => {
   const actionRef = useRef();
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
-  const [parentId, setParentId] = useState('0'); 
-  const [currentRecord, setCurrentRecord] = useState(null); // 存储当前记录信息
+  const [parentId, setParentId] = useState('0');
+  const [currentRecord, setCurrentRecord] = useState(null);
   const [roleList, setRoleList] = useState({});
   const [roles, setRoles] = useState([]);
   const [resTree, setResTree] = useState([]);
   const [existRes, setAuthRes] = useState([]);
   const [authRoleValues, setAuthRoleValues] = useState({});
-  
-  // 移动端检测
+
   const mobile = isMobile();
-  
-  // 容器宽度监听
+
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
-  
-  // 使用桌面端粘性布局 - 使用原版
+
   useDesktopSticky(actionRef);
 
   useEffect(async () => {
@@ -182,20 +164,19 @@ const RoleList = () => {
     setRoles(temp);
   }, []);
 
-  // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateWidth = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
-    
+
     updateWidth();
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -205,22 +186,22 @@ const RoleList = () => {
     return res;
   };
 
-  const columns = [
+  const columns = useMemo(() => [
     {
-      title: '角色名称',
+      title: intl.formatMessage({ id: 'sys.role.col.roleName', defaultMessage: '角色名称' }),
       dataIndex: 'roleName',
-      tip: '角色的显示名称，用于界面展示',
+      tip: intl.formatMessage({ id: 'sys.role.col.roleName.tip', defaultMessage: '角色的显示名称，用于界面展示' }),
       fixed: mobile ? undefined : 'left',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '角色名称为必填项',
+            message: intl.formatMessage({ id: 'sys.role.rule.roleNameRequired', defaultMessage: '角色名称为必填项' }),
           },
           {
             max: 25,
             type: 'string',
-            message: '最多25个字',
+            message: intl.formatMessage({ id: 'sys.role.rule.roleNameMax', defaultMessage: '最多25个字' }),
           },
         ],
       },
@@ -229,104 +210,104 @@ const RoleList = () => {
       },
     },
     {
-      title: '角色编码',
+      title: intl.formatMessage({ id: 'sys.role.col.roleCode', defaultMessage: '角色编码' }),
       dataIndex: 'roleCode',
-      tip: '角色的唯一标识，用于系统识别',
+      tip: intl.formatMessage({ id: 'sys.role.col.roleCode.tip', defaultMessage: '角色的唯一标识，用于系统识别' }),
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '角色编码为必填项',
+            message: intl.formatMessage({ id: 'sys.role.rule.roleCodeRequired', defaultMessage: '角色编码为必填项' }),
           },
           {
             max: 32,
             type: 'string',
-            message: '最多32位',
+            message: intl.formatMessage({ id: 'sys.role.rule.roleCodeMax', defaultMessage: '最多32位' }),
           },
         ],
       },
     },
     {
-      title: '描述',
+      title: intl.formatMessage({ id: 'sys.role.col.roleDesc', defaultMessage: '描述' }),
       dataIndex: 'roleDesc',
       valueType: 'textarea',
-      tip: '角色的详细说明，帮助理解角色用途',
+      tip: intl.formatMessage({ id: 'sys.role.col.roleDesc.tip', defaultMessage: '角色的详细说明，帮助理解角色用途' }),
       width: '17%',
       formItemProps: {
         rules: [
           {
             max: 150,
             type: 'string',
-            message: '最多150个字',
+            message: intl.formatMessage({ id: 'sys.role.rule.roleDescMax', defaultMessage: '最多150个字' }),
           },
         ],
       },
     },
     {
-      title: '角色类型',
+      title: intl.formatMessage({ id: 'sys.role.col.roleType', defaultMessage: '角色类型' }),
       dataIndex: 'roleType',
-      tip: '角色的分类，影响权限范围',
+      tip: intl.formatMessage({ id: 'sys.role.col.roleType.tip', defaultMessage: '角色的分类，影响权限范围' }),
       filters: true,
       onFilter: false,
       valueEnum: {
         'sys_role': {
-          text: '系统角色',
+          text: intl.formatMessage({ id: 'sys.role.roleType.sys_role', defaultMessage: '系统角色' }),
         },
         'subject': {
-          text: '社会主体',
+          text: intl.formatMessage({ id: 'sys.role.roleType.subject', defaultMessage: '社会主体' }),
         },
         'tal_role': {
-          text: '租户角色',
+          text: intl.formatMessage({ id: 'sys.role.roleType.tal_role', defaultMessage: '租户角色' }),
         },
       },
     },
     {
-      title: '父角色',
+      title: intl.formatMessage({ id: 'sys.role.col.parentId', defaultMessage: '父角色' }),
       dataIndex: 'parentId',
-      tip: '角色的上级角色，用于角色层级管理',
+      tip: intl.formatMessage({ id: 'sys.role.col.parentId.tip', defaultMessage: '角色的上级角色，用于角色层级管理' }),
       hideInTable: true,
       hideInForm: false,
       valueEnum: roleList,
     },
     {
-      title: '展示顺序',
+      title: intl.formatMessage({ id: 'sys.role.col.displayOrder', defaultMessage: '展示顺序' }),
       dataIndex: 'displayOrder',
-      tip: '角色在列表中的显示顺序，1-100',
+      tip: intl.formatMessage({ id: 'sys.role.col.displayOrder.tip', defaultMessage: '角色在列表中的显示顺序，1-100' }),
       hideInSearch: true,
       sorter: true,
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '展示顺序为必填项',
+            message: intl.formatMessage({ id: 'sys.role.rule.displayOrderRequired', defaultMessage: '展示顺序为必填项' }),
           },
           {
             pattern: '^([1-9]|[1-9]\\d|100)$',
-            message: '请输入1-100之间的数字',
+            message: intl.formatMessage({ id: 'sys.role.rule.displayOrderRange', defaultMessage: '请输入1-100之间的数字' }),
           },
         ],
       },
     },
     {
-      title: '状态',
+      title: intl.formatMessage({ id: 'sys.role.col.status', defaultMessage: '状态' }),
       dataIndex: 'isValid',
-      tip: '角色的启用状态',
+      tip: intl.formatMessage({ id: 'sys.role.col.status.tip', defaultMessage: '角色的启用状态' }),
       hideInForm: false,
       filters: true,
       onFilter: false,
       valueEnum: {
         '0': {
-          text: '无效',
+          text: intl.formatMessage({ id: 'sys.role.status.invalid', defaultMessage: '无效' }),
           status: 'invalid',
         },
         '1': {
-          text: '有效',
+          text: intl.formatMessage({ id: 'sys.role.status.valid', defaultMessage: '有效' }),
           status: 'valid',
         },
       },
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ id: 'sys.role.col.operation', defaultMessage: '操作' }),
       dataIndex: 'option',
       valueType: 'option',
       fixed: mobile ? undefined : 'right',
@@ -334,7 +315,6 @@ const RoleList = () => {
         <>
           <a
             onClick={() => {
-              // 子级：父角色=当前记录，角色类型=当前记录的角色类型
               setCurrentRecord({
                 parentId: record.id,
                 roleType: record.roleType
@@ -342,17 +322,16 @@ const RoleList = () => {
               handleModalVisible(true);
             }}
           >
-            子级
+            {intl.formatMessage({ id: 'sys.role.action.child', defaultMessage: '子级' })}
           </a>
           <Divider type="vertical"/>
           <a onClick={() => {
-            // 同级：父角色=当前记录的父角色，角色类型=当前记录的角色类型
             setCurrentRecord({
               parentId: record.parentId,
               roleType: record.roleType
             });
             handleModalVisible(true);
-          }}>同级</a>
+          }}>{intl.formatMessage({ id: 'sys.role.action.sibling', defaultMessage: '同级' })}</a>
           <Divider type="vertical"/>
           <a
             onClick={() => {
@@ -360,7 +339,7 @@ const RoleList = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            {intl.formatMessage({ id: 'sys.role.action.config', defaultMessage: '配置' })}
           </a>
           <Divider type="vertical"/>
           <a
@@ -378,22 +357,21 @@ const RoleList = () => {
               });
             }}
           >
-            授权
+            {intl.formatMessage({ id: 'sys.role.action.auth', defaultMessage: '授权' })}
           </a>
           <Divider type="vertical"/>
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.role.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemoveOne(record);
                         actionRef.current?.reloadAndRest?.();
                       }}>
-            <a>删除</a>
+            <a>{intl.formatMessage({ id: 'sys.role.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
         </>
       ),
     },
-  ];
+  ], [intl, mobile, roleList, handleRemoveOne]);
 
-  // 计算列总宽度 - 动态计算
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
@@ -410,7 +388,7 @@ const RoleList = () => {
     >
       <div ref={containerRef}>
         <ProTableX
-          headerTitle="角色清单"
+          headerTitle={intl.formatMessage({ id: 'sys.role.headerTitle', defaultMessage: '角色清单' })}
           actionRef={actionRef}
           rowKey="id"
           search={{
@@ -418,7 +396,7 @@ const RoleList = () => {
           }}
           toolBarRender={() => [
             <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.role.toolbar.new', defaultMessage: '新建' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
@@ -443,7 +421,11 @@ const RoleList = () => {
             pageSizeOptions: ['10', '15', '20', '30', '50'],
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+            showTotal: (total, range) =>
+              intl.formatMessage(
+                { id: 'sys.role.pagination.range', defaultMessage: '第 {start}-{end} 条/总共 {total} 条' },
+                { start: range[0], end: range[1], total },
+              ),
           }}
           tableLayout={mobile ? undefined : 'fixed'}
           scroll={mobile ? undefined : { x: scrollX }}
@@ -453,7 +435,7 @@ const RoleList = () => {
         <FooterToolbar
           extra={
             <div>
-              已选择{' '}
+              {intl.formatMessage({ id: 'sys.role.footer.selected', defaultMessage: '已选择' })}{' '}
               <a
                 style={{
                   fontWeight: 600,
@@ -461,32 +443,31 @@ const RoleList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项&nbsp;&nbsp;
+              {intl.formatMessage({ id: 'sys.role.footer.items', defaultMessage: '项' })}&nbsp;&nbsp;
             </div>
           }
         >
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+          <Popconfirm title={intl.formatMessage({ id: 'sys.role.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemove(selectedRowsState);
                         actionRef.current?.reloadAndRest?.();
                       }}>
-            <Button>批量删除</Button>
+            <Button>{intl.formatMessage({ id: 'sys.role.footer.batchDelete', defaultMessage: '批量删除' })}</Button>
           </Popconfirm>
-          <Button type="primary">批量导出</Button>
+          <Button type="primary">{intl.formatMessage({ id: 'sys.role.footer.batchExport', defaultMessage: '批量导出' })}</Button>
         </FooterToolbar>
       )}
       <CreateForm onCancel={() => handleModalVisible(false)}
                   modalVisible={createModalVisible}>
         <CreateFormContent
           onSubmit={async (value) => {
-            // 使用 currentRecord 中的 parentId，如果没有则使用默认的 parentId
             const finalParentId = currentRecord?.parentId || parentId;
             const success = await handleAdd({...value, parentId: finalParentId});
 
             if (success) {
               handleModalVisible(false);
               setParentId('0');
-              setCurrentRecord(null); // 清空当前记录
+              setCurrentRecord(null);
 
               if (actionRef.current) {
                 actionRef.current.reload();
@@ -496,7 +477,7 @@ const RoleList = () => {
           onCancel={() => {
             handleModalVisible(false);
             setParentId('0');
-            setCurrentRecord(null); // 清空当前记录
+            setCurrentRecord(null);
           }}
           roles={roles}
           currentRecord={currentRecord}
