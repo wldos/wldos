@@ -87,7 +87,7 @@ yarn install && npm start
 | 公众号 | 元悉世界（id: yuanxiyuzhou） |
 | 演示站 | [www.wldos.com](http://www.wldos.com) |
 
-![元悉世界公众号](wldos-web/wldos-web/store/dev/元悉世界公众号.jpg)
+![元悉世界公众号](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/元悉世界公众号.jpg)
 
 ---
 
