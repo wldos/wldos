@@ -1,0 +1,84 @@
+name: Swap README for GitHub
+
+# 目的：让 GitHub 仓库默认展示英文 README，而 Gitee 端保持中文 README。
+#
+# 工作机制：
+# - 主源（Gitee/本地）维护两份文件：
+#     README.md     —— 中文（Gitee 默认展示）
+#     README.EN.md  —— 英文
+# - 推送到 GitHub 后，本工作流会在 GitHub 端自动：
+#     1) 把当前 README.md（中文）保存为 README.ZH.md
+#     2) 把 README.EN.md 的内容写入 README.md（GitHub 默认展示英文）
+#     3) 修正英文 README 顶部 "中文" 链接，使其指向 README.ZH.md
+#     4) 用 [skip-readme-swap] 标记的 commit 推回 GitHub，避免触发死循环
+#
+# 注意：本工作流只影响 GitHub 仓库内容，不会回流到 Gitee。
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'README.md'
+      - 'README.EN.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: swap-readme-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  swap:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip-readme-swap]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detect whether swap is needed
+        id: detect
+        run: |
+          set -e
+          if [ ! -f README.EN.md ]; then
+            echo "README.EN.md not found, skip."
+            echo "need_swap=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if diff -q README.md README.EN.md >/dev/null 2>&1; then
+            echo "README.md already equals README.EN.md, skip."
+            echo "need_swap=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "need_swap=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Swap READMEs
+        if: steps.detect.outputs.need_swap == 'true'
+        run: |
+          set -e
+          # 1) 备份当前 README.md（中文）为 README.ZH.md
+          cp README.md README.ZH.md
+          # 2) 用 README.EN.md 覆盖 README.md（GitHub 默认展示英文）
+          cp README.EN.md README.md
+          # 3) 修正新 README.md 顶部 “中文” 链接：README.md -> README.ZH.md
+          #    仅替换 href="README.md"，避免误伤其它链接
+          sed -i 's|href="README.md"|href="README.ZH.md"|g' README.md
+          # 4) 同时让 README.ZH.md 的 “English” 链接保持指向 README.md（已天然成立，无需改）
+
+      - name: Commit & push
+        if: steps.detect.outputs.need_swap == 'true'
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md README.ZH.md
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "docs: swap README to English for GitHub [skip-readme-swap]"
+          git push
