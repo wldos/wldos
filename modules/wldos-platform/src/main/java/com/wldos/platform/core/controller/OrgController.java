@@ -21,6 +21,7 @@ import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.platform.core.enums.OrgTypeEnum;
 import com.wldos.platform.core.entity.WoOrg;
 import com.wldos.platform.core.service.OrgService;
@@ -110,6 +111,7 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 */
 	@ApiOperation(value = "组织授权", notes = "给组织关联系统角色")
 	@PostMapping("auth")
+	@OpLog(action = "组织角色授权", resourceType = "org", resourceId = "#roleOrg['orgId']")
 	public Result authOrg(@ApiParam(value = "角色授权参数", required = true) @RequestBody Map<String, Object> roleOrg) {
 		Long orgId = Long.parseLong(roleOrg.get("orgId").toString());
 		Long archId = Long.parseLong(roleOrg.get("archId").toString());
@@ -131,6 +133,7 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 	 */
 	@ApiOperation(value = "组织添加成员", notes = "给组织添加成员")
 	@PostMapping("user")
+	@OpLog(action = "组织添加成员", resourceType = "org", resourceId = "#orgUser['orgId']")
 	public Result userOrg(@ApiParam(value = "添加人员参数", required = true) @RequestBody Map<String, Object> orgUser) {
 		Long orgId = Long.parseLong(orgUser.get("orgId").toString());
 		Long archId = Long.parseLong(orgUser.get("archId").toString());
@@ -150,6 +153,7 @@ public class OrgController extends EntityController<OrgService, WoOrg> {
 		@ApiImplicitParam(name = "orgId", value = "组织ID", dataTypeClass = Long.class, paramType = "body", required = true)
 	})
 	@DeleteMapping("staffDel")
+	@OpLog(action = "组织移除成员", resourceType = "org", resourceId = "#params['orgId']")
 	public Boolean removeOrgStaff(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<String>) params.get("ids")).stream().map(Long::parseLong).collect(Collectors.toList());
 		Long orgId = Long.parseLong(ObjectUtils.string(params.get("orgId")));

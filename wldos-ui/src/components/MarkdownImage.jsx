@@ -8,6 +8,30 @@
 
 import React from 'react';
 
+/** 仅透传可出现在 img 元素上的合法属性，避免 react-markdown / rehype 传入 node、mode 等污染 DOM */
+function sanitizeImgDomProps(raw) {
+  const allow = [
+    'className',
+    'id',
+    'loading',
+    'decoding',
+    'sizes',
+    'srcSet',
+    'crossOrigin',
+    'referrerPolicy',
+    'draggable',
+    'fetchPriority',
+  ];
+  const out = {};
+  for (const k of allow) {
+    const v = raw[k];
+    if (v != null && typeof v !== 'object') {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
 /**
  * 共享的 Markdown 图片组件
  * 支持解析 HTML 注释中的尺寸信息
@@ -36,7 +60,6 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
   for (const pattern of patterns) {
     match = markdownContent.match(pattern);
     if (match) {
-      console.log('图片匹配成功:', { src, match, pattern: pattern.source });
       break;
     }
   }
@@ -50,7 +73,6 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
         if (sizeMatch) {
           width = sizeMatch[1];
           height = sizeMatch[2];
-          console.log('通过行匹配找到尺寸:', { src, width, height, line });
           break;
         }
       }
@@ -75,19 +97,26 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
     }
   }
 
-  let imgStyle = {
+  const shadow = '0 2px 8px rgba(0,0,0,0.1)';
+  const imgStyle = {
     maxWidth: '100%',
     height: 'auto',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    width: 'auto',
+    display: 'block',
+    margin: '0 auto',
+    boxShadow: shadow,
   };
 
   if (width && height) {
-    imgStyle = {
-      width: `${width}px`,
-      height: `${height}px`,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-    };
+    const w = Number(width);
+    const h = Number(height);
+    if (w > 0 && h > 0) {
+      imgStyle.maxWidth = `min(100%, ${w}px)`;
+      imgStyle.aspectRatio = `${w} / ${h}`;
+    }
   }
+
+  const domExtra = sanitizeImgDomProps(props);
 
   return (
     <div style={{ textAlign: 'center', margin: '16px 0' }}>
@@ -99,7 +128,7 @@ const MarkdownImage = ({ src, alt, title, content, ...props }) => {
         onError={(e) => {
           e.target.style.display = 'none';
         }}
-        {...props}
+        {...domExtra}
       />
     </div>
   );

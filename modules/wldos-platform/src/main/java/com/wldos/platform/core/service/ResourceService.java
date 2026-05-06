@@ -237,9 +237,13 @@ public class ResourceService extends EntityService<ResourceDao, WoResource, Long
 		try {
 			ObjectMapper om = new ObjectMapper();
 			if (ObjectUtils.isBlank(value)) {
+				// 上级菜单选择器需覆盖所有"菜单类"资源类型，包含插件扩展菜单/扩展管理菜单，
+				// 否则在新建插件菜单或其子菜单时无法选择到现有的扩展菜单作为父级。
 				List<String> resTypes = new ArrayList<>();
 				resTypes.add(ResourceEnum.MENU.getValue());
 				resTypes.add(ResourceEnum.ADMIN_MENU.getValue());
+				resTypes.add(ResourceEnum.PLUGIN_MENU.getValue());
+				resTypes.add(ResourceEnum.ADMIN_PLUGIN_MENU.getValue());
 				List<WoResource> allRes = this.entityRepo.queryByResTypes(resTypes);
 
 				List<TreeSelectOption> menus = allRes.parallelStream().map(res -> {

@@ -10,6 +10,7 @@ package com.wldos.platform.core.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.wldos.common.res.Result;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.service.TermTypeMetaService;
@@ -80,6 +81,7 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 	 */
 	@ApiOperation(value = "保存分类类型元数据", notes = "保存分类类型元数据（新增或更新）")
 	@PostMapping("")
+	@OpLog(action = "保存分类类型元数据", resourceType = "term_type")
 	public Result saveTermTypeMeta(@ApiParam(value = "分类类型元数据", required = true) @RequestBody Object data) {
 		TermTypeMeta meta;
 		if (data instanceof TermTypeMeta) {
@@ -112,6 +114,7 @@ public class TermTypeMetaController extends EntityController<TermTypeMetaService
 	 */
 	@ApiOperation(value = "删除分类类型", notes = "删除分类类型（仅限自定义类型）")
 	@DeleteMapping("/code/{code}")
+	@OpLog(action = "删除分类类型元数据", resourceType = "term_type", resourceId = "#code", recordParams = false)
 	public Result deleteTermTypeMeta(@ApiParam(value = "类型编码", required = true) @PathVariable String code) {
 		String result = this.service.deleteTermTypeMeta(code);
 		if ("ok".equals(result)) {

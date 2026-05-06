@@ -9,7 +9,7 @@
     <a href="README.EN.md">English</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.4.0.0-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V2.5.0.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -59,7 +59,7 @@ mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev"
 
 # 5. 启动前端
 cd wldos-ui
-npm install && npm start
+yarn install && npm start
 
 # 6. 访问 http://localhost:8000  账号：admin / admin
 ```
@@ -73,9 +73,9 @@ npm install && npm start
 <details>
 <summary>点击展开截图</summary>
 
-![系统管理](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
-![内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
-![动态单体架构](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos2.0.jpeg)
+![系统管理](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/wldos.jpeg)
+![内容付费](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/KPayCMS.jpeg)
+![动态单体架构](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/wldos2.0.jpeg)
 
 </details>
 
@@ -87,7 +87,7 @@ npm install && npm start
 | 公众号 | 元悉世界（id: yuanxiyuzhou） |
 | 演示站 | [www.wldos.com](http://www.wldos.com) |
 
-![元悉世界公众号](zone/dev/元悉世界公众号.jpg)
+![元悉世界公众号](wldos-web/wldos-web/store/dev/元悉世界公众号.jpg)
 
 ---
 
@@ -101,10 +101,10 @@ npm install && npm start
 WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三大板块构成，其中框架和支撑平台是通用支撑，内容付费是基于通用支撑展开的最佳实践。<br/>  
 输出两个项目：WLDOS云应用支撑平台（管理端）和WLDOS内容付费系统（业务端），2.0版本推出动态单体架构融合了前后端分离架构和微服务架构。应用功能结构如下：
 #### 1.0前后端分离架构
-![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
-![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
+![WLDOS支撑平台](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/wldos.jpeg)
+![WLDOS内容付费](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/KPayCMS.jpeg)
 #### 2.0动态单体架构
-![WLDOS2.0动态单体](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos2.0.jpeg)
+![WLDOS2.0动态单体](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/wldos2.0.jpeg)
 
 ### 技术说明
 **语言：** Java8、ReactJs17。  
@@ -146,17 +146,17 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 #### 启动后端：
 1. 后端工程下载到本地，用idea打开项目。<br/>
 2. 安装mysql数据库脚本，生成数据库。 <br/>
-   数据库脚本在wldos-web/db下，mysql5.7，数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/>
+   数据库脚本在wldos-web/db下，mysql5.7+（建议8.0+），数据库用户名、密码见wldos-web/resources/application-dev.properties。 <br/><br/>
 
 3. 设置文件存储位置。  <br/>
    默认:${project-root}\\wldos-web\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  <br/><br/>
 4. 项目更新maven库。服务器端口号默认8080。<br/><br/>
 5. 安装项目；  <br/>
-   mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev" <br/><br/>
+   mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev" -P dev <br/><br/>
    启动项目：    
-   mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev"。<br/><br/>
+   mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev" -P dev。<br/><br/>
 6. 项目打包：<br/>
-   mvn clean package -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=prod"
+   mvn clean package -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=prod" -P prod
 
 #### 启动前端： <br/>
 1.下载前端项目到本地后，打开项目，执行tyarn安装依赖js库。<br/>
@@ -258,7 +258,7 @@ wldos-ui根目录
 │  │  └─user----------------------------------------用户登录
 │  ├─services---------------------------------------全局API
 │  └─utils------------------------------------------工具类
-└─zone----------------------------------------------README图片
+
 
 ````
 #### 2.0动态单体项目结构
@@ -318,14 +318,15 @@ wldos根目录
 │   ├── src---------------------------------源码目录
 │   └── store-------------------------------附件目录（本地存储服务）
 │       ├── 2025----------------------------随机附件文件目录
-│       └── plugins-------------------------内置插件目录（插件市场）
+│       ├── plugins-------------------------内置插件目录（插件市场）
+│       └── dev-----------------------------README图片
 └── 开发日志.txt
 
 ````
 
 ### 版本协议说明
-- wldos 2.3.8.2+ 版本：已彻底移除所有GPL/AGPL协议依赖，主协议为 Apache License 2.0，可自由分发、闭源商用（无需开源）；
-- wldos 2.3.7及以下版本：包含GPL协议依赖，使用/分发该版本需遵守GPL条款（建议升级至2.3.8.2+）。
+- wldos 2.4.1.0+ 版本：已彻底移除所有GPL/AGPL协议依赖，主协议为 Apache License 2.0，可自由分发、闭源商用（无需开源）；
+- wldos 2.3.7及以下版本：包含GPL协议依赖，使用/分发该版本需遵守GPL条款（建议升级至2.4.1.0+）。
 
 </details>
 

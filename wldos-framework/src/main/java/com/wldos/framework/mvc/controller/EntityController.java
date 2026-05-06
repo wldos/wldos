@@ -15,6 +15,7 @@ import java.util.Map;
 import com.wldos.framework.mvc.service.EntityService;
 import io.github.wldos.common.Constants;
 import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,16 +32,32 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  * @param <S> 实体service
  * @param <E> 拥有数据库表的实体
- * @author wldos
+ * @author 元悉宇宙
  * @date 2021-04-16
  * @version 1.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class EntityController<S extends EntityService, E> extends NonEntityController<S> {
 
-
+	/**
+	 * 标准实体新增。
+	 *
+	 * <p><b>审计</b>：自动记入 {@code wo_op_log}，由切面 {@code OpLogAspect} 拦截：
+	 * <ul>
+	 *   <li>{@code module} 缺省 → 取类上 {@code @Api.tags}（项目惯例必填，无需重复定义）；</li>
+	 *   <li>{@code action} 显式 = "新增"；</li>
+	 *   <li>{@code resourceId} 取 {@code #entity.id}（saveOrUpdate 内部分配雪花 ID 后回填到入参对象上，
+	 *       因此切面 {@code @Around} 在业务方法返回后能拿到 id；解析失败回填 null 不影响业务）；</li>
+	 *   <li>{@code recordParams} = true：默认脱敏字段（password/passwd/token/secret/captcha 等）已覆盖最常见敏感项；
+	 *       业务实体若有额外敏感字段，请在子类覆写并补 {@code sensitiveFields}。</li>
+	 * </ul>
+	 *
+	 * <p><b>覆写注意</b>：子类如显式覆写本方法，**必须**重新声明 {@code @OpLog}；
+	 * Java 方法注解默认不被覆写所继承（参见 {@code 02-OpLog-API覆盖清单.md § 1.3}）。
+	 */
 	@PostMapping("add")
-	public String add(@RequestBody E entity) {
+	@OpLog(action = "新增", resourceId = "#entity.id")
+	public String addEntity(@RequestBody E entity) {
 		this.preAdd(entity);
 		service.saveOrUpdate(entity);  // 统一使用 saveOrUpdate() 方法，自动判断 insert/update
 		this.postAdd(entity);
@@ -61,8 +78,14 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	protected void postAdd(E entity) {
 	}
 
+	/**
+	 * 标准实体更新。审计语义与 {@link #addEntity(Object)} 一致；详见类上方说明与 {@code @OpLog}。
+	 *
+	 * <p>子类如覆写本方法（如解决 Ambiguous mapping），<b>必须</b>重新贴 {@code @OpLog} 注解。
+	 */
 	@PostMapping("update")
-	public String update(@RequestBody E entity) {
+	@OpLog(action = "更新", resourceId = "#entity.id")
+	public String updateEntity(@RequestBody E entity) {
 		this.preUpdate(entity);
 		service.saveOrUpdate(entity);  // 统一使用 saveOrUpdate() 方法，自动判断 insert/update
 		this.postUpdate(entity);
@@ -83,8 +106,15 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	protected void postUpdate(E entity) {
 	}
 
+	/**
+	 * 标准实体单条删除。审计语义同上。
+	 *
+	 * <p>{@code recordParams} = false：删除一般不需要在日志里记录被删实体的全部字段值
+	 * （如需保留删除前快照，业务侧应在 {@link #preDelete(Object)} hook 里另外记业务追溯日志）。
+	 */
 	@DeleteMapping("delete")
-	public String remove(@RequestBody E entity) {
+	@OpLog(action = "删除", resourceId = "#entity.id", recordParams = false)
+	public String removeEntity(@RequestBody E entity) {
 		this.preDelete(entity);
 		this.service.delete(entity);
 		this.postDelete(entity);
@@ -108,9 +138,13 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	/**
 	 * 批量物理删
 	 * @param jsonObject 批量参数 Map<String, Object> key="ids"
+	 *
+	 * <p>审计：{@code resourceId} 取 {@code #jsonObject['ids']}，落表的会是 {@code "[123, 456, ...]"}
+	 * 字符串形式（{@code Object#toString}），便于跨条 group by 分析批量操作影响面。
 	 */
 	@DeleteMapping("deletes")
-	public String removeIds(@RequestBody Map<String, Object> jsonObject) {
+	@OpLog(action = "批量删除", resourceId = "#jsonObject['ids']")
+	public String removeEntitiesByIds(@RequestBody Map<String, Object> jsonObject) {
 		Object ids = jsonObject.get("ids");
 		if (ids != null) {
 			List<Object> objects = (List<Object>) ids;
@@ -138,12 +172,12 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	}
 
 	@GetMapping("get")
-	public Object get(@RequestParam long id) {
+	public Object getEntityById(@RequestParam long id) {
 		return service.findById(id);
 	}
 
 	@GetMapping("all")
-	public List<E> all() {
+	public List<E> allEntities() {
 		if (this.isMultiTenancy() && !this.service.isAdmin(this.getUserId())) {
 			Map<String, Object> cond = new HashMap<>();
 			Class<E> clazz = this.service.getEntityClass(1);
@@ -172,7 +206,7 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	 */
 	@Deprecated
 	@GetMapping("page")
-	public Page<E> list(@RequestParam Map<String, Object> params) {
+	public Page<E> entityList(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
 		Pageable page = PageRequest.of(pageQuery.getCurrent() - 1, pageQuery.getPageSize(), pageQuery.getSorter());

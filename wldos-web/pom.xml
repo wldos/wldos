@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.4.0.0</version>
+		<version>2.5.0.0</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>war</packaging>
@@ -25,7 +25,10 @@
 	</properties>
 
 	<!-- 分环境依赖：通过 Maven Profile 切换，避免手动注释记混 -->
-	<!-- 使用方式：mvn package / mvn package -Pdev / mvn package -Pprod / mvn package -Pdev-release（dev 配置+混淆包） / mvn package -Pdesktop / mvn package -Pcommunity -->
+	<!-- 使用方式：mvn package / mvn package -Pdev / mvn package -Pprod / mvn package -Pdev-release（dev 配置+混淆包） / mvn package -Pdesktop / mvn package -Pcommunity
+		 构建命令：mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev" -P dev
+		 如果构建清理后调试启动提示找不到包，idea整个项目reload mvn 注意多个ide之间文件锁
+	-->
 	<profiles>
 		<!-- dev/prod：全量依赖（不含 license、collector、agent） -->
 		<profile>
@@ -59,12 +62,12 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-plugin-agreement</artifactId>
+					<artifactId>wldos-platform-agreement</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-plugin-order</artifactId>
+					<artifactId>wldos-store-order</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -79,7 +82,12 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-plugin-customer</artifactId>
+					<artifactId>wldos-cms-customer</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-cms-social-publish</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -89,12 +97,12 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-plugin-dist</artifactId>
+					<artifactId>wldos-license-dist</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-plugin-seo</artifactId>
+					<artifactId>wldos-platform-seo</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -131,16 +139,17 @@
 					<groupId>com.wldos</groupId>
 					<artifactId>wldos-store</artifactId>
 					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-plugin-agreement</artifactId>
+					<artifactId>wldos-platform-agreement</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-plugin-order</artifactId>
+					<artifactId>wldos-store-order</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 					<exclusions>
@@ -177,7 +186,13 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-plugin-customer</artifactId>
+					<artifactId>wldos-cms-customer</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-cms-social-publish</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 				</dependency>
@@ -189,7 +204,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-plugin-dist</artifactId>
+					<artifactId>wldos-license-dist</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 					<exclusions>
@@ -200,7 +215,7 @@
 						<!-- 子模块 POM 依赖无 classifier 的 order；本 profile 已单独引入 order-release，否则会与传递依赖明文 jar 并存 -->
 						<exclusion>
 							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store-plugin-order</artifactId>
+							<artifactId>wldos-store-order</artifactId>
 						</exclusion>
 						<exclusion>
 							<groupId>com.wldos</groupId>
@@ -210,7 +225,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-plugin-seo</artifactId>
+					<artifactId>wldos-platform-seo</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 				</dependency>
@@ -254,13 +269,13 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-plugin-agreement</artifactId>
+					<artifactId>wldos-platform-agreement</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-plugin-order</artifactId>
+					<artifactId>wldos-store-order</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 					<exclusions>
@@ -284,7 +299,13 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-plugin-customer</artifactId>
+					<artifactId>wldos-cms-customer</artifactId>
+					<version>${project.parent.version}</version>
+					<classifier>release</classifier>
+				</dependency>
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-cms-social-publish</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 				</dependency>
@@ -296,7 +317,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-plugin-dist</artifactId>
+					<artifactId>wldos-license-dist</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 					<exclusions>
@@ -306,20 +327,20 @@
 						</exclusion>
 						<exclusion>
 							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store-plugin-order</artifactId>
+							<artifactId>wldos-store-order</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-plugin-seo</artifactId>
+					<artifactId>wldos-platform-seo</artifactId>
 					<version>${project.parent.version}</version>
 					<classifier>release</classifier>
 				</dependency>
 			</dependencies>
 		</profile>
-		<!-- desktop/community：仅 cms，不含消息中间件等商业模块，用户需要购买商业插件本地安装 。构建安装命令如下：
-		mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=desktop" -P desktop
+		<!-- desktop/community：仅 cms，不含消息中间件等商业模块；desktop 另以 provided 依赖 wldos-desktop-shell（JCEF 壳），与 BuildManager 的 -P {platform},desktop 同链。
+		mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=desktop" -P desktop,windows-x86_64
 		-->
 		<profile>
 			<id>desktop</id>
@@ -331,6 +352,13 @@
 					<groupId>com.wldos</groupId>
 					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
+				</dependency>
+				<!-- 桌面 JCEF 壳：纳入 reactor（mvn -pl wldos-web -am -P desktop,windows-x86_64），不进 WAR -->
+				<dependency>
+					<groupId>com.wldos</groupId>
+					<artifactId>wldos-desktop-shell</artifactId>
+					<version>${project.parent.version}</version>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>

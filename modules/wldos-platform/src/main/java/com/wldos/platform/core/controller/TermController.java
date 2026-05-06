@@ -15,6 +15,7 @@ import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import io.github.wldos.common.vo.SelectOption;
 import io.github.wldos.common.vo.TreeSelectOption;
 import com.wldos.framework.mvc.controller.EntityController;
@@ -210,6 +211,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 
 	@ApiOperation(value = "添加分类", notes = "添加新的分类")
 	@PostMapping("/admin/cms/category/add")
+	@OpLog(action = "新增分类", resourceType = "category", resourceId = "#term.id")
 	public Result addCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		term.setClassType(TermTypeEnum.CATEGORY.toString());
 		this.handleDisplayOrder(term);
@@ -220,6 +222,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 
 	@ApiOperation(value = "更新分类", notes = "更新分类信息")
 	@PostMapping("/admin/cms/category/update")
+	@OpLog(action = "更新分类", resourceType = "category", resourceId = "#term.id")
 	public Result updateCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
@@ -228,6 +231,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 
 	@ApiOperation(value = "删除分类", notes = "删除指定的分类")
 	@DeleteMapping("/admin/cms/category/delete")
+	@OpLog(action = "删除分类", resourceType = "category", resourceId = "#term.id", recordParams = false)
 	public Result deleteCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		this.service.deleteTerm(term);
 		this.service.refreshTerm();
@@ -237,6 +241,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@ApiOperation(value = "批量删除分类", notes = "批量删除分类")
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("/admin/cms/category/deletes")
+	@OpLog(action = "批量删除分类", resourceType = "category")
 	public Boolean removeIds(@ApiParam(value = "分类列表", required = true) @RequestBody List<Term> terms) {
 		if (!ObjectUtils.isBlank(terms)) {
 			this.service.deleteTerms(terms);
@@ -249,6 +254,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 
 	@ApiOperation(value = "添加标签", notes = "添加新的标签")
 	@PostMapping("/admin/cms/tag/add")
+	@OpLog(action = "新增标签", resourceType = "tag", resourceId = "#term.id")
 	public Result addTag(@ApiParam(value = "标签信息", required = true) @Valid @RequestBody Term term) {
 		term.setClassType(TermTypeEnum.TAG.toString());
 		this.handleDisplayOrder(term);
@@ -295,6 +301,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 */
 	@ApiOperation(value = "通用分类项新增", notes = "通用分类项新增，支持所有类型")
 	@PostMapping("/admin/term-type/term/add")
+	@OpLog(action = "新增分类项", resourceType = "term", resourceId = "#term.id")
 	public Result addTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		// classType 是必填字段
 		if (ObjectUtils.isBlank(term.getClassType())) {
@@ -318,6 +325,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 */
 	@ApiOperation(value = "通用分类项更新", notes = "通用分类项更新，支持所有类型")
 	@PostMapping("/admin/term-type/term/update")
+	@OpLog(action = "更新分类项", resourceType = "term", resourceId = "#term.id")
 	public Result updateTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
 		this.service.refreshTerm();
@@ -332,6 +340,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 */
 	@ApiOperation(value = "通用分类项删除", notes = "通用分类项删除，支持所有类型")
 	@DeleteMapping("/admin/term-type/term/delete")
+	@OpLog(action = "删除分类项", resourceType = "term", resourceId = "#term.id", recordParams = false)
 	public Result deleteTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		this.service.deleteTerm(term);
 		this.service.refreshTerm();
@@ -347,6 +356,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@ApiOperation(value = "通用分类项批量删除", notes = "通用分类项批量删除，支持所有类型")
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("/admin/term-type/term/deletes")
+	@OpLog(action = "批量删除分类项", resourceType = "term")
 	public Boolean removeTerms(@ApiParam(value = "分类项列表", required = true) @RequestBody List<Term> terms) {
 		if (!ObjectUtils.isBlank(terms)) {
 			this.service.deleteTerms(terms);
@@ -364,6 +374,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@ApiOperation(value = "设置信息发布状态", notes = "批量给分类项设置信息发布状态")
 	@SuppressWarnings("unchecked")
 	@PostMapping("/admin/cms/term/infoFlags")
+	@OpLog(action = "切换信息发布状态", resourceType = "term", resourceId = "#termIds")
 	public Boolean infoFlag(@ApiParam(value = "分类项IDs", required = true) @RequestBody List<Long> termIds) {
 		if (!ObjectUtils.isBlank(termIds)) {
 			this.service.infoFlagByIds(termIds);

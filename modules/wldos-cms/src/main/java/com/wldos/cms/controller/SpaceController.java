@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.wldos.common.res.ResultCode;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.MIMETypeEnum;
 import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.cms.query.CmsKpubsDiscoverySql;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.service.SpaceService;
 import com.wldos.cms.vo.Book;
@@ -99,6 +101,8 @@ public class SpaceController extends NonEntityController<SpaceService> {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("createBy", this.getUserId());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		// 工作台列表需展示作者全部作品（含 INTERNAL_ONLY / UNLISTED）
+		pageQuery.pushParam(CmsKpubsDiscoverySql.CONDITION_INCLUDE_UNLISTED, Boolean.TRUE);
 		pageQuery.pushFilter("parentId", Constants.TOP_PUB_ID); // 父id为0的都是主类型
 		this.applyDomainFilter(pageQuery);
 
@@ -141,6 +145,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @throws JsonProcessingException 处理异常
 	 */
 	@PostMapping("space/book/add")
+	@OpLog(action = "新建作品", resourceType = "book")
 	public String addContent(@ApiParam(value = "作品JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub pub = InfoUtil.extractPubInfo(json);
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
@@ -179,6 +184,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 */
 	@ApiOperation(value = "新增章节", notes = "创建新的章节")
 	@PostMapping("space/book/newChapter")
+	@OpLog(action = "新建章节", resourceType = "chapter")
 	public Chapter createChapter(@ApiParam(value = "章节JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub chapter = InfoUtil.extractPubInfo(json);
 		if (chapter.getParentId() == null)
@@ -197,6 +203,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 */
 	@ApiOperation(value = "保存章节", notes = "更新章节内容")
 	@PostMapping("space/book/saveChapter")
+	@OpLog(action = "保存章节", resourceType = "chapter")
 	public Result saveChapter(@ApiParam(value = "章节JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub chapter = InfoUtil.extractPubInfo(json);
 		if (chapter.getId() == null)
@@ -217,6 +224,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 */
 	@ApiOperation(value = "上传文章图片", notes = "文章编辑时上传图片")
 	@PostMapping("space/upload/chapter")
+	@OpLog(action = "上传章节图片", resourceType = "chapter_image", recordParams = false)
 	public Result uploadArticle(@ApiParam(value = "图片文件", required = true) @RequestParam("file") MultipartFile file) throws IOException {
 		Long id = Long.parseLong(this.request.getParameter("id"));
 		String type = ObjectUtils.string(file.getContentType()).split("/")[0];

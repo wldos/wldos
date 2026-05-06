@@ -27,6 +27,7 @@ import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.vo.User;
 import io.github.wldos.common.res.Result;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 	 */
 	@ApiOperation(value = "用户信息配置", notes = "用户信息配置,含头像设置")
 	@PostMapping("conf")
+	@OpLog(action = "更新个人资料", resourceType = "user_profile", resourceId = "#user.id")
 	public Result userConfig(@ApiParam(value = "用户信息", required = true) @Valid @RequestBody WoUser user) {
 		Long userId = this.getUserId();
 		user.setId(userId);
@@ -164,6 +166,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 	@ApiOperation(value = "标签配置", notes = "配置用户标签")
 	@PostMapping("conf/tags")
+	@OpLog(action = "更新个人标签", resourceType = "user_tags")
 	public Result tagsConfig(@ApiParam(value = "标签JSON", required = true) @RequestBody String tags) {
 		this.service.tagsConfig(tags, this.getUserId());
 
@@ -172,6 +175,8 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 	@ApiOperation(value = "安全配置", notes = "配置用户安全设置")
 	@PostMapping("conf/sec")
+	@OpLog(action = "更新账户安全设置", resourceType = "user_security",
+			sensitiveFields = {"oldPassword", "newPassword", "passwd", "password", "pwd", "code", "captcha"})
 	public Result securityConfig(@ApiParam(value = "安全配置", required = true) @Valid @RequestBody AccSecurity sec) {
 		this.service.accountConfig(sec, this.getUserId());
 
@@ -180,6 +185,8 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 	@ApiOperation(value = "绑定配置", notes = "配置用户绑定信息")
 	@PostMapping("conf/bind")
+	@OpLog(action = "更新账户绑定", resourceType = "user_bind", resourceId = "#user.id",
+			sensitiveFields = {"password", "passwd", "pwd", "code", "captcha"})
 	public Result bindConfig(@ApiParam(value = "用户信息", required = true) @Valid @RequestBody WoUser user) {
 		Long userId = this.getUserId();
 		user.setId(userId);
@@ -190,6 +197,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 	@ApiOperation(value = "通知配置", notes = "配置用户通知设置")
 	@PostMapping("conf/notice")
+	@OpLog(action = "更新通知设置", resourceType = "user_notice", resourceId = "#user.id")
 	public Result noticeConfig(@ApiParam(value = "用户信息", required = true) @Valid @RequestBody WoUser user) {
 		Long userId = this.getUserId();
 		user.setId(userId);

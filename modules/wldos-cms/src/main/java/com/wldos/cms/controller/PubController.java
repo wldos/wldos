@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.wldos.framework.mvc.controller.EntityController;
 import io.github.wldos.common.res.Result;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.PubService;
 import com.wldos.cms.vo.AuditPub;
@@ -133,6 +134,7 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 */
 	@ApiOperation(value = "内容发布", notes = "发布审核通过的内容")
 	@PostMapping("publish")
+	@OpLog(action = "内容发布", resourceType = "pub", resourceId = "#pub.id")
 	public Boolean publishPost(@ApiParam(value = "待发布审核内容", required = true) @Valid @RequestBody AuditPub pub) {
 		this.service.publishPub(pub.getId(), pub.getPubType());
 		return Boolean.TRUE;
@@ -146,6 +148,7 @@ public class PubController extends EntityController<PubService, KPubs> {
 	 */
 	@ApiOperation(value = "内容下线", notes = "将已发布的内容下线")
 	@PostMapping("offline")
+	@OpLog(action = "内容下线", resourceType = "pub", resourceId = "#pub.id")
 	public Boolean offlinePost(@ApiParam(value = "待下线内容", required = true) @Valid @RequestBody AuditPub pub) {
 		this.service.offlinePub(pub);
 		return Boolean.TRUE;
@@ -153,6 +156,7 @@ public class PubController extends EntityController<PubService, KPubs> {
 
 	@ApiOperation(value = "更新内容可发现性", notes = "写入 k_pubs.visibility_scope（PUBLIC_LISTED / UNLISTED / INTERNAL_ONLY）")
 	@PutMapping("{id}/visibility-scope")
+	@OpLog(action = "更新可发现性", resourceType = "pub", resourceId = "#id")
 	public Result<Void> updateVisibilityScope(
 			@ApiParam(value = "内容ID", required = true) @PathVariable Long id,
 			@RequestBody(required = false) Map<String, String> body) {

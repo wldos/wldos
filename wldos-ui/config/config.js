@@ -12,6 +12,7 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes.index';
 import path from 'path';
+import { applyFlavorExtensionAliases } from './flavorAliases';
 
 const { REACT_APP_ENV } = process.env;
 
@@ -60,11 +61,11 @@ export default defineConfig({
   },
   // 配置 webpack
   chainWebpack(config, { env }) {
-    // 社区版：本地化聚合入口（仅 flavor/community）
-    config.resolve.alias.set(
-      '@flavor-locales',
-      path.resolve(__dirname, '../src/locales/flavor/community'),
-    );
+    // 开源 / 商业 flavor 扩展点别名（统一入口，详见 ./flavorAliases.js）：
+    //   清单驱动；未显式 APP_FLAVOR 时按"商业目录是否存在"自动选择，社区源码下默认
+    //   npm start/dev/build 能直接跑（自动 fallback 到 community stub + warn）。
+    //   商业分支因 commercial 目录均在，命中真实路径，行为完全不变。
+    applyFlavorExtensionAliases(config, { uiRoot: path.resolve(__dirname, '..') });
 
     // ========== 插件配置 ==========
     // 允许动态导入（插件路径是运行时才过来的，webpack 无法在构建时打包）

@@ -17,6 +17,7 @@ import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoDomain;
 import com.wldos.platform.core.entity.WoDomainResource;
@@ -102,6 +103,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 	 */
 	@ApiOperation(value = "批量添加应用", notes = "批量添加应用")
 	@PostMapping("app")
+	@OpLog(action = "域订阅应用", resourceType = "domain", resourceId = "#domainApp['domainId']")
 	public Result domainApp(@ApiParam(value = "预订应用参数", required = true) @RequestBody Map<String, Object> domainApp) {
 		Long domainId = Long.parseLong(domainApp.get("domainId").toString());
 		Long comId = Long.parseLong(domainApp.get("comId").toString());
@@ -130,6 +132,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "body", required = true)
 	})
 	@DeleteMapping("appDel")
+	@OpLog(action = "域取消订阅应用", resourceType = "domain", resourceId = "#params['domainId']")
 	public Boolean removeDomainApp(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<Object>) params.get("ids")).stream().map(id -> Long.parseLong(ObjectUtils.string(id))).collect(Collectors.toList());
 		Long domainId = Long.parseLong(ObjectUtils.string(params.get("domainId")));
@@ -149,6 +152,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 	 */
 	@ApiOperation(value = "批量添加资源", notes = "批量添加资源")
 	@PostMapping("res")
+	@OpLog(action = "域订阅资源", resourceType = "domain", resourceId = "#domainRes['domainId']")
 	public Result domainRes(@ApiParam(value = "预订资源参数", required = true) @RequestBody Map<String, Object> domainRes) {
 		Long domainId = Long.parseLong(domainRes.get("domainId").toString());
 		List<String> resIds = (List<String>) domainRes.get("ids");
@@ -174,6 +178,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 		@ApiImplicitParam(name = "domainId", value = "域名ID", dataTypeClass = Long.class, paramType = "body", required = true)
 	})
 	@DeleteMapping("resDel")
+	@OpLog(action = "域取消订阅资源", resourceType = "domain", resourceId = "#params['domainId']")
 	public Boolean removeDomainRes(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<Object>) params.get("ids")).stream().map(id -> Long.parseLong(ObjectUtils.string(id))).collect(Collectors.toList());
 		Long domainId = Long.parseLong(ObjectUtils.string(params.get("domainId")));
@@ -187,6 +192,7 @@ public class DomainController extends EntityController<DomainService, WoDomain> 
 
 	@ApiOperation(value = "域资源配置", notes = "配置域资源")
 	@PostMapping("resConf")
+	@OpLog(action = "域资源配置", resourceType = "domain", resourceId = "#dRes.domainId")
 	public Boolean domainResConf(@ApiParam(value = "域资源配置", required = true) @RequestBody WoDomainResource dRes) {
 		this.service.domainResConf(dRes);
 		Long domainId = dRes.getDomainId();

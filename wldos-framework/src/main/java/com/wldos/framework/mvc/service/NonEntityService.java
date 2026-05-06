@@ -28,6 +28,10 @@ import org.springframework.lang.NonNull;
 
 /**
  * 非实体基类service，对多个实体综合处理的业务类，可以注入多个不同实体的数据层访问接口。
+ *
+ * @author 元悉宇宙
+ * @date 2021/5/5
+ * @version 1.0
  */
 @Slf4j
 @SuppressWarnings({ "unused" })

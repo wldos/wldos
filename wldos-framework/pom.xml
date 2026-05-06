@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.4.0.0</version>
+		<version>2.5.0.0</version>
 	</parent>
 	<artifactId>wldos-framework</artifactId>
 	<packaging>jar</packaging>
@@ -69,7 +69,7 @@
 
     </dependencies>
 	<properties>
-        <wldos.version>2.4.0.0</wldos.version>
+        <wldos.version>2.5.0.0</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>

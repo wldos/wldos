@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.wldos.common.res.ResultCode;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.enums.PrivacyLevelEnum;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -216,6 +217,7 @@ public class InfoController extends NonEntityController<InfoService> {
 	 */
 	@ApiOperation(value = "发布信息", notes = "按分类发布新的信息")
 	@PostMapping("info/add")
+	@OpLog(action = "新增内容", resourceType = "info")
 	public Result addContent(@ApiParam(value = "信息JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub pub = InfoUtil.extractPubInfo(json);
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
@@ -268,6 +270,7 @@ public class InfoController extends NonEntityController<InfoService> {
 	 */
 	@ApiOperation(value = "更新信息", notes = "更新已发布的信息")
 	@PostMapping("info/update")
+	@OpLog(action = "更新内容", resourceType = "info")
 	public Result updateContent(@ApiParam(value = "信息JSON", required = true) @RequestBody String json) throws JsonProcessingException {
 		Pub pub = InfoUtil.extractPubInfo(json);
 		if (ObjectUtils.isOutBoundsClearHtml(pub.getPubContent(), this.maxLength))
@@ -307,6 +310,7 @@ public class InfoController extends NonEntityController<InfoService> {
 	 */
 	@ApiOperation(value = "删除信息", notes = "删除已发布的信息")
 	@DeleteMapping("info/delete")
+	@OpLog(action = "删除内容", resourceType = "info", resourceId = "#pub.id")
 	public Result deleteContent(@ApiParam(value = "信息对象", required = true) @RequestBody Pub pub) {
 		String res = this.kcmsService.delete(pub);
 		return Result.ok(res);
@@ -321,6 +325,7 @@ public class InfoController extends NonEntityController<InfoService> {
 	 */
 	@ApiOperation(value = "上传封面", notes = "上传信息封面图片")
 	@PostMapping("info/upload")
+	@OpLog(action = "上传封面", resourceType = "info_cover", recordParams = false)
 	public Result uploadCover(@ApiParam(value = "图片文件", required = true) @RequestParam("file") MultipartFile file) throws IOException {
 		String width = this.request.getParameter("width");
 		String height = this.request.getParameter("height");

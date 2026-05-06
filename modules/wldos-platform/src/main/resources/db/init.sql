@@ -2884,7 +2884,7 @@ INSERT INTO `wo_options` VALUES (268507343822176260, 'wldos_platform_user_regist
 INSERT INTO `wo_options` VALUES (268507343834759168, 'spring_mail_host', NULL, 'smtp.88.com', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268507343847342087, 'spring_mail_username', NULL, 'gitee.com/wldos/wldos', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268507343859924993, 'spring_mail_password', NULL, 'wiVQA8hEUhYX432E', NULL, 'auto_reload', 'sys_option');
-INSERT INTO `wo_options` VALUES (268507343876702209, 'wldos_mail_fromMail_addr', NULL, 'wldos.com@88.com', NULL, 'auto_reload', 'sys_option');
+INSERT INTO `wo_options` VALUES (268507343876702209, 'wldos_mail_fromMail_addr', NULL, 'xx@yy.com', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268563415123542023, 'wldos_cms_comment_audit', NULL, 'false', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (268993001648996359, 'wldos_file_store_path', NULL, '', NULL, 'auto_reload', 'sys_option');
 INSERT INTO `wo_options` VALUES (269981894250774529, 'wldos_platform_adminEmail', NULL, '306991142@qq.com', NULL, 'auto_reload', 'sys_option');
@@ -3996,5 +3996,122 @@ INSERT INTO `wo_usermeta` VALUES (1971940409689067522, 1971940409559044098, 'pas
 INSERT INTO `wo_usermeta` VALUES (2005266788928987137, 100, 'tags', '[{\"key\":\"tag-0\",\"label\":\"111\"}]');
 INSERT INTO `wo_usermeta` VALUES (2005270491962556417, 2005270491576680450, 'passStatus', 'medium');
 INSERT INTO `wo_usermeta` VALUES (2010724053022744578, 100, 'passStatus', 'weak');
+
+
+-- ----------------------------
+-- Table structure for wo_calendar_holiday
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_calendar_holiday`;
+CREATE TABLE `wo_calendar_holiday`  (
+                                        `id` bigint NOT NULL,
+                                        `holiday_date` date NOT NULL COMMENT '具体日期，业务唯一键（软删除维度上唯一）',
+                                        `year` int NOT NULL COMMENT '冗余 holiday_date 的年份，便于年度查询',
+                                        `day_kind` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '单日类型 OFF=放假 / WORK=调休补班',
+                                        `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '节日名（春节/国庆/调休补班等）；多语展示由前端 i18n 处理',
+                                        `source` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'MANUAL' COMMENT '来源 MANUAL=手工 / SYNC=外部同步 / IMPORT=批量导入',
+                                        `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                        `create_by` bigint NULL DEFAULT NULL,
+                                        `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间（UTC datetime）',
+                                        `update_by` bigint NULL DEFAULT NULL,
+                                        `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间（UTC datetime）',
+                                        `create_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+                                        `update_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+                                        `delete_flag` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'normal',
+                                        `is_valid` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '1' COMMENT '0=禁用/1=启用，对齐 BaseEntity.isValid',
+                                        `versions` int NOT NULL DEFAULT 0,
+                                        PRIMARY KEY (`id`) USING BTREE,
+                                        UNIQUE INDEX `uk_wo_calendar_holiday_date`(`holiday_date` ASC, `delete_flag` ASC) USING BTREE,
+                                        INDEX `idx_wo_calendar_holiday_year`(`year` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '法定节假日 / 调休补班单日条目（wldos 平台基础）' ROW_FORMAT = Dynamic;
+
+
+-- ----------------------------
+-- Table structure for wo_login_log
+-- 登录/账号安全事件日志（写入即不可改；按 occur_at 周期归档清理；不继承 BaseEntity，省去 update_xxx/delete_flag/is_valid/versions）
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_login_log`;
+CREATE TABLE `wo_login_log`  (
+                                 `id` bigint NOT NULL,
+                                 `user_id` bigint NULL DEFAULT NULL COMMENT '已登录用户ID；失败/未通过验证时为 NULL',
+                                 `login_account` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户输入的账号（手机号/邮箱/用户名/openId）',
+                                 `event_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ACCOUNT/MOBILE/OAUTH/MFA/LOGOUT/REGISTER/ACTIVE/RESET/PASSWD_CHANGE/MOBILE_CHANGE/SEC_QUEST_CHANGE/BAK_EMAIL_CHANGE/MFA_CHANGE',
+                                 `oauth_provider` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'OAuth provider，如 github / wechat / qq',
+                                 `result` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'SUCCESS/FAIL/LOCKED/EXPIRED/MFA_REQUIRED',
+                                 `fail_reason` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '失败原因短文案/错误码',
+                                 `ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '客户端 IP（已 X-Forwarded-For 解析）',
+                                 `user_agent` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '浏览器 UA',
+                                 `domain_id` bigint NULL DEFAULT NULL COMMENT '当前域 ID（多租户）',
+                                 `com_id` bigint NULL DEFAULT NULL COMMENT '当前公司 ID（多租户）',
+                                 `occur_at` datetime NOT NULL COMMENT '事件发生时间（UTC datetime，业务侧填，避免异步落库时间漂移）',
+                                 `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库时间（UTC datetime）',
+                                 PRIMARY KEY (`id`) USING BTREE,
+                                 INDEX `idx_wo_login_log_user`(`user_id` ASC, `occur_at` ASC) USING BTREE,
+                                 INDEX `idx_wo_login_log_account`(`login_account` ASC, `occur_at` ASC) USING BTREE,
+                                 INDEX `idx_wo_login_log_ip`(`ip` ASC, `occur_at` ASC) USING BTREE,
+                                 INDEX `idx_wo_login_log_occur`(`occur_at` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '登录/账号安全事件日志（一次写入不可改，周期归档清理）' ROW_FORMAT = Dynamic;
+
+
+-- ----------------------------
+-- Table structure for wo_op_log
+-- 业务操作日志（@OpLog 注解 + AOP 切面采集；写入即不可改；按 occur_at 周期归档清理）
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_op_log`;
+CREATE TABLE `wo_op_log`  (
+                              `id` bigint NOT NULL,
+                              `user_id` bigint NULL DEFAULT NULL COMMENT '操作者用户ID（游客=GUEST_ID）',
+                              `virtual_user_id` bigint NULL DEFAULT NULL COMMENT '虚拟身份ID；无虚拟身份概念时与 user_id 一致',
+                              `user_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '操作者账号（冗余，避免后续 join user 表）',
+                              `domain_id` bigint NULL DEFAULT NULL COMMENT '当前域 ID（多租户）',
+                              `com_id` bigint NULL DEFAULT NULL COMMENT '当前公司 ID（多租户）',
+                              `module` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '业务模块（@OpLog.module 优先 → @Api.tags 兜底）',
+                              `action` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '操作动作（@OpLog.action 优先 → @ApiOperation.value 兜底）',
+                              `resource_type` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源类型，如 order / product',
+                              `resource_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源主键（字符串避免 Long 精度）',
+                              `resource_name` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '资源人性化名称（事件发生时刻的快照；超长截断尾部加省略号）',
+                              `request_path` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'HTTP 路径',
+                              `http_method` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'GET/POST/PUT/DELETE',
+                              `params_summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '入参摘要（脱敏 + 截断后的 JSON）',
+                              `result_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '业务结果码（如 200 / 500）',
+                              `error_message` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '失败时的错误摘要',
+                              `duration_ms` int NULL DEFAULT 0 COMMENT '方法耗时（毫秒）',
+                              `ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '客户端 IP',
+                              `user_agent` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '浏览器 UA',
+                              `occur_at` datetime NOT NULL COMMENT '事件发生时间（UTC datetime）',
+                              `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库时间（UTC datetime）',
+                              PRIMARY KEY (`id`) USING BTREE,
+                              INDEX `idx_wo_op_log_user`(`user_id` ASC, `occur_at` ASC) USING BTREE,
+                              INDEX `idx_wo_op_log_virtual_user`(`virtual_user_id` ASC, `occur_at` ASC) USING BTREE,
+                              INDEX `idx_wo_op_log_module_action`(`module` ASC, `action` ASC, `occur_at` ASC) USING BTREE,
+                              INDEX `idx_wo_op_log_domain`(`domain_id` ASC, `occur_at` ASC) USING BTREE,
+                              INDEX `idx_wo_op_log_resource`(`resource_type` ASC, `resource_id` ASC) USING BTREE,
+                              INDEX `idx_wo_op_log_occur`(`occur_at` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '业务操作日志（一次写入不可改，周期归档清理）' ROW_FORMAT = Dynamic;
+
+
+-- ----------------------------
+-- Table structure for wo_sys_log
+-- 系统事件日志（ApplicationEventPublisher 触发；配置变更/调度任务/严重异常等运维事件）
+-- ----------------------------
+DROP TABLE IF EXISTS `wo_sys_log`;
+CREATE TABLE `wo_sys_log`  (
+                               `id` bigint NOT NULL,
+                               `source_module` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '事件来源模块，如 config / scheduler / platform / pay',
+                               `event_type` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '事件类型，如 CONFIG_CHANGE / TASK_TRIGGERED / EXCEPTION',
+                               `severity` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'INFO/WARN/ERROR/CRITICAL',
+                               `message` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '一句话描述',
+                               `metadata` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '扩展信息（JSON）',
+                               `operator_user_id` bigint NULL DEFAULT NULL COMMENT '触发者；调度任务等无人触发场景为 NULL',
+                               `domain_id` bigint NULL DEFAULT NULL COMMENT '当前域 ID（多租户）',
+                               `com_id` bigint NULL DEFAULT NULL COMMENT '当前公司 ID（多租户）',
+                               `occur_at` datetime NOT NULL COMMENT '事件发生时间（UTC datetime）',
+                               `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库时间（UTC datetime）',
+                               PRIMARY KEY (`id`) USING BTREE,
+                               INDEX `idx_wo_sys_log_module_type`(`source_module` ASC, `event_type` ASC, `occur_at` ASC) USING BTREE,
+                               INDEX `idx_wo_sys_log_severity`(`severity` ASC, `occur_at` ASC) USING BTREE,
+                               INDEX `idx_wo_sys_log_operator`(`operator_user_id` ASC, `occur_at` ASC) USING BTREE,
+                               INDEX `idx_wo_sys_log_occur`(`occur_at` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '系统事件日志（运维侧关键变更/任务/异常）' ROW_FORMAT = Dynamic;
+
 
 SET FOREIGN_KEY_CHECKS = 1;

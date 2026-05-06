@@ -9,7 +9,7 @@
     <a href="README.md">中文</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.4.0.0-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V2.5.0.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -54,12 +54,12 @@ cd wldos
 # Edit wldos-web/src/main/resources/application-dev.properties
 
 # 4. Start backend
-mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev"
-mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev"
+mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev" -P dev
+mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev" -P dev
 
 # 5. Start frontend
 cd wldos-ui
-npm install && npm start
+yarn install && npm start
 
 # 6. Visit http://localhost:8000  Account: admin / admin
 ```
@@ -73,9 +73,9 @@ Download the desktop installer, double-click to run. [Download](http://www.wldos
 <details>
 <summary>Click to expand</summary>
 
-![System Management](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos.jpeg)
-![Content Payment](https://gitee.com/wldos/wldos/raw/master/zone/dev/KPayCMS.jpeg)
-![Dynamic Monolithic](https://gitee.com/wldos/wldos/raw/master/zone/dev/wldos2.0.jpeg)
+![System Management](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/wldos.jpeg)
+![Content Payment](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/KPayCMS.jpeg)
+![Dynamic Monolithic](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/wldos2.0.jpeg)
 
 </details>
 
@@ -189,7 +189,7 @@ wldos/
 See [LICENSE](LICENSE) and [term.md](term.md) for details.
 
 ### Version Notes
-- v2.3.8.2+: Apache 2.0, no GPL dependencies
+- v2.4.1.0+: Apache 2.0, no GPL dependencies
 - v2.3.7 and below: Contains GPL dependencies
 
 </details>

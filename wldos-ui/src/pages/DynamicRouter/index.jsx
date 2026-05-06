@@ -7,6 +7,50 @@ import NoFoundPage from "@/pages/404";
 import { injectPluginStyles, resolvePluginEsmUrl } from '@/utils/pluginCoLocatedLoader';
 import { getComponentPath } from '@/utils/getComponentPath';
 
+class RouteComponentErrorBoundary extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { hasError: false, error: null };
+	}
+
+	static getDerivedStateFromError(error) {
+		return { hasError: true, error };
+	}
+
+	componentDidCatch(error) {
+		if (process.env.NODE_ENV === 'development') {
+			console.warn('[DynamicRouter] 动态组件加载失败，降级为路由级错误页面:', error);
+		}
+	}
+
+	render() {
+		if (!this.state.hasError) {
+			return this.props.children;
+		}
+		const msg = this.state.error?.message || '';
+		const isModuleNotFound =
+			msg.includes('Cannot find module') ||
+			msg.includes("can't resolve") ||
+			msg.includes('Loading chunk') ||
+			msg.includes('ChunkLoadError');
+		if (isModuleNotFound) {
+			return <NoFoundPage key={window?.location?.pathname} />;
+		}
+		return (
+			<GridContent>
+				<Card>
+					<Alert
+						type="error"
+						message="页面加载失败"
+						description="当前菜单配置的组件不存在或无法加载，请检查菜单 component 配置。"
+						showIcon
+					/>
+				</Card>
+			</GridContent>
+		);
+	}
+}
+
 // Normalize component path: './ext/Page1' -> 'ext/Page1'
 const normalizeComponentPath = (component) => {
 	if (!component) return '';
@@ -108,7 +152,7 @@ const PluginComponentLoader = ({ pluginCode, component, menu, pluginManifest, ..
 					setLoading(false);
 
 					if (process.env.NODE_ENV === 'development') {
-						console.log(`[AdminDynamicRouter] ESM插件加载成功: ${code}`, {
+						console.log(`[dynamicrouter] ESM插件加载成功: ${code}`, {
 							version: pluginInfo.version,
 							esmUrl: esmUrl,
 							component: compName
@@ -118,18 +162,18 @@ const PluginComponentLoader = ({ pluginCode, component, menu, pluginManifest, ..
 				} else {
 					// ESM 模块加载成功，但找不到对应的组件
 					if (process.env.NODE_ENV === 'development') {
-						console.warn(`[AdminDynamicRouter] ESM模块加载成功，但找不到组件 ${compName}，尝试JSONP回退`);
+						console.warn(`[dynamicrouter] ESM模块加载成功，但找不到组件 ${compName}，尝试JSONP回退`);
 					}
 				}
 			} catch (esmError) {
 				// ESM 加载失败，回退到 JSONP 格式
 				if (process.env.NODE_ENV === 'development') {
-					console.warn(`[AdminDynamicRouter] ESM格式加载失败，回退到JSONP: ${code}`, esmError);
+					console.warn(`[dynamicrouter] ESM格式加载失败，回退到JSONP: ${code}`, esmError);
 				}
 			}
 
 			// 回退到 JSONP 格式（使用 UmiJS 构建的 chunk）
-			// JSONP 加载逻辑在下面的 AdminDynamicRouter 组件中实现
+			// JSONP 加载逻辑在下面的 dynamicrouter 组件中实现
 			// 这里不抛出错误，让代码继续执行，由下面的逻辑处理 JSONP 加载
 			// 设置一个标记，表示 ESM 加载失败，需要回退到 JSONP
 			setLoading(false);
@@ -730,7 +774,29 @@ const DynamicRouter = (props) => {
 			// 如果后端返回的 component 不是以 /index 结尾（如 "sys/plugins/Detail"），
 			// 可能需要添加 .js 扩展名：`@/pages/${componentPath}.js`
 			// 需要根据实际后端返回的数据格式验证后确定
-			LazyComp = React.lazy(() => import(/* webpackChunkName: "dynamic-[request]" */ `@/pages/${componentPath}/index`));
+			LazyComp = React.lazy(() =>
+				import(/* webpackChunkName: "dynamic-[request]" */ `@/pages/${componentPath}/index`)
+					.catch((err) => {
+						// 动态菜单 component 配错时，不抛到全局错误页，降级当前页 404
+						const msg = err?.message || '';
+						const isMissingModule =
+							msg.includes('Cannot find module')
+							|| msg.includes("can't resolve")
+							|| msg.includes('Loading chunk')
+							|| msg.includes('ChunkLoadError');
+						if (process.env.NODE_ENV === 'development') {
+							console.warn('[dynamicrouter] 本地动态组件加载失败，降级404', {
+								componentPath,
+								error: err,
+							});
+						}
+						if (isMissingModule) {
+							return { default: NoFoundPage };
+						}
+						// 其它异常交由 ErrorBoundary 呈现友好错误提示
+						throw err;
+					})
+			);
 		}
 
 		// 注意：插件组件和本地组件的加载方式现在应该一样了
@@ -752,7 +818,9 @@ const DynamicRouter = (props) => {
 					<Spin size="large" />
 				</div>
 			}>
-				<LazyComp key={location.pathname} />
+				<RouteComponentErrorBoundary>
+					<LazyComp key={location.pathname} />
+				</RouteComponentErrorBoundary>
 			</Suspense>
 		);
 	}

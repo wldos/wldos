@@ -32,7 +32,10 @@ import org.springframework.context.annotation.FilterType;
  */
 @Configuration
 @EnableJdbcRepositories(
-    basePackages="${spring.data.jdbc.packages:com.wldos.**.dao}", 
+    basePackages= {
+			"${spring.data.jdbc.packages:com.wldos.**.dao}",
+			"${spring.data.jdbc.packages.ext:${wldos.framework.base-package:com.wldos.never}.**.dao}"
+	},
     excludeFilters = @ComponentScan.Filter(
         type = FilterType.REGEX,
         pattern = "com\\.wldos\\.plugin\\..*"

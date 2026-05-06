@@ -2,6 +2,7 @@ import {extend} from 'umi-request';
 import {notification} from 'antd';
 import {clearAuthority, setAuthority} from "@/utils/authority";
 import {getPageQuery, headerFix, guest} from "@/utils/utils";
+import {notifyDesktopEmbeddedSession} from '@/utils/desktopEmbeddedBridge';
 import {history} from "umi";
 import {stringify} from "querystring";
 
@@ -102,6 +103,8 @@ req.interceptors.response.use(async (res) => {
       // 不打印警告，因为可能是正常的非 JSON 响应（如文件下载）
     }
   }
+
+  notifyDesktopEmbeddedSession();
 
   return res;
 }, (error) => {

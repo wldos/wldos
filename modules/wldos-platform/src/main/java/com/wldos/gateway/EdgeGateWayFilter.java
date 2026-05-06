@@ -28,6 +28,8 @@ import io.github.wldos.common.res.Result;
 import io.github.wldos.common.res.ResultJson;
 import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.common.utils.http.IpUtils;
+import io.github.wldos.framework.support.audit.ISystemLogger;
+import io.github.wldos.framework.support.audit.SystemEvent;
 import io.github.wldos.framework.support.auth.JWTTool;
 import io.github.wldos.framework.support.auth.TokenForbiddenException;
 import io.github.wldos.framework.support.auth.TokenInvalidException;
@@ -81,6 +83,19 @@ public class EdgeGateWayFilter implements Filter {
 	/** jwt全家桶工具 */
 	protected JWTTool jwtTool;
 
+	/**
+	 * 系统日志（运维事件）写入器；可空（裁剪部署不开 audit 内核也能跑）。
+	 *
+	 * <p>记录策略（避免噪音）：只把<b>高价值的拒绝</b>写进系统日志：
+	 * <ul>
+	 *   <li>{@code IllegalDomainException} → WARN（域名非法常意味着配置错误或域名嗅探攻击）；</li>
+	 *   <li>未知 500 异常 → ERROR（系统级 bug 或外部依赖故障）。</li>
+	 * </ul>
+	 * {@code TokenInvalid/Forbidden} 流量大且属于"正常用户行为"（token 过期、未登录访问受保护资源），
+	 * 这些由网关 access log 自己管，<b>不进</b> wo_sys_log，避免压垮系统日志页。
+	 */
+	private ISystemLogger systemLogger;
+
 	/** 要放行的uri前缀 */
 	private List<String> excludeUris;
 
@@ -124,6 +139,13 @@ public class EdgeGateWayFilter implements Filter {
 		this.pluginApiGateway = ac.getBean(IPluginApiGateway.class);
 		this.jwtTool = ac.getBean(JWTTool.class);
 		this.resJson = ac.getBean(ResultJson.class);
+		// systemLogger 可选：未启用 audit 内核时为 null，throwException 内已做空判
+		try {
+			this.systemLogger = ac.getBean(ISystemLogger.class);
+		}
+		catch (Exception ignored) {
+			this.systemLogger = null;
+		}
 	}
 
 	@Override
@@ -230,7 +252,56 @@ public class EdgeGateWayFilter implements Filter {
 				this.throwException(response, new BaseException("请求异常，请重试！"), userIP, reqUri, userId);
 				e.printStackTrace();
 			}
+			// 高价值拒绝/异常入系统日志（token 失效之类的高频"正常拒绝"刻意排除）
+			recordEdgeRejection(e, userIP, reqUri, userId);
 		}
+	}
+
+	/**
+	 * 把"高价值的拒绝/异常"翻译成系统事件（运维侧可见）。
+	 *
+	 * <ul>
+	 *   <li>{@link IllegalDomainException} → {@code edge.ILLEGAL_DOMAIN} (WARN)：常见于配置漂移或域名嗅探；</li>
+	 *   <li>{@link TokenInvalidException} / {@link TokenForbiddenException} / {@link ClientAbortException} → 不写
+	 *       （流量大且属于正常用户行为，避免噪音灌爆 wo_sys_log）；</li>
+	 *   <li>其他未捕获 {@link Exception} → {@code edge.GATEWAY_500} (ERROR)：系统级 bug 或外部依赖故障。</li>
+	 * </ul>
+	 */
+	private void recordEdgeRejection(Exception e, String userIP, String reqUri, String userId) {
+		if (this.systemLogger == null || e == null) {
+			return;
+		}
+		try {
+			SystemEvent ev;
+			if (e instanceof IllegalDomainException) {
+				ev = SystemEvent.warn("edge", "ILLEGAL_DOMAIN",
+						"非法域名访问被拒: " + ObjectUtils.string(e.getMessage()));
+			}
+			else if (e instanceof TokenInvalidException
+					|| e instanceof TokenForbiddenException
+					|| e instanceof ClientAbortException) {
+				return;
+			}
+			else if (e instanceof BaseException) {
+				return;
+			}
+			else {
+				ev = SystemEvent.error("edge", "GATEWAY_500",
+						"网关未捕获异常: " + e.getClass().getSimpleName() + " - "
+								+ ObjectUtils.string(e.getMessage()));
+			}
+			ev.withMetadata("{\"ip\":\"" + safeJson(userIP) + "\",\"uri\":\"" + safeJson(reqUri)
+					+ "\",\"userId\":\"" + safeJson(userId) + "\"}");
+			this.systemLogger.recordAsync(ev);
+		}
+		catch (Exception ignored) {
+			// 审计旁路必须吞异常，绝不让自己反过来影响主请求链路
+		}
+	}
+
+	private static String safeJson(String s) {
+		if (s == null) return "";
+		return s.replace("\\", "\\\\").replace("\"", "\\\"");
 	}
 
 	@Value("${wldos_platform_adminEmail:306991142#qq.com}")

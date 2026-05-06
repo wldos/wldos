@@ -10,10 +10,8 @@ package com.wldos.platform.config;
 
 import com.wldos.framework.config.DatabaseInitializationCustomizer;
 
-import com.wldos.platform.core.service.OptionsNoRepoService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +21,7 @@ import java.sql.ResultSet;
 /**
  * 自定义数据源初始化器。
  * H2 使用 init-h2.sql，MySQL 使用 init.sql
- * 当 wo_options 或 wo_plugin_registry 等关键表不存在时执行初始化脚本。
+ * 当 platform 核心库未就绪（见 {@link #needsInit()}）时执行初始化脚本。
  *
  * @author 元悉宇宙
  * @date 2023/4/9
@@ -38,11 +36,9 @@ public class PlatformDataSourceInitializer implements DatabaseInitializationCust
 	@Value("classpath:db/init-h2.sql")
 	private Resource sqlH2;
 
-	private final OptionsNoRepoService service;
 	private final DataSource dataSource;
 
-	public PlatformDataSourceInitializer(OptionsNoRepoService service, DataSource dataSource) {
-		this.service = service;
+	public PlatformDataSourceInitializer(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
@@ -55,21 +51,23 @@ public class PlatformDataSourceInitializer implements DatabaseInitializationCust
 	}
 
 	/**
-	 * 判断是否需要执行初始化脚本。
-	 * 1. getSystemOptions 失败（wo_options 不存在）时需初始化
-	 * 2. H2 下 wo_plugin_registry 不存在时也需初始化（修复部分初始化导致的缺失表）
+	 * 判断是否需要执行 platform 全量 init.sql。
+	 * 框架层会先执行 {@code framework-init.sql}（含 wo_options 空表），若仅用
+	 * {@code getSystemOptions()} 判断是否已初始化，空表也会“成功”从而跳过灌库。
+	 * 因此以 {@code wo_org} 等 platform 独有表是否存在为准；H2 另检 {@code wo_plugin_registry}。
 	 */
 	private boolean needsInit() {
 		try {
-			this.service.getSystemOptions();
-			// getSystemOptions 成功，再检查 wo_plugin_registry 是否存在（H2 部分初始化场景）
+			if (!tableExists("wo_options")) {
+				return true;
+			}
+			if (!tableExists("wo_org")) {
+				return true;
+			}
 			if (isH2() && !tableExists("wo_plugin_registry")) {
 				return true;
 			}
 			return false;
-		}
-		catch (DataAccessException ignored) {
-			return true;
 		}
 		catch (Exception ignored) {
 			return true;

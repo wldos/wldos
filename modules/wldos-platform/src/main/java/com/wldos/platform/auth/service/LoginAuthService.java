@@ -263,6 +263,57 @@ public class LoginAuthService extends NonEntityService {
 		return this.userService.queryGuest(domainId);
 	}
 
+	/**
+	 * 旁路审计辅助：根据 userId 查询登录账号名，仅供登录日志（{@code wo_login_log.login_account}）回填使用。
+	 *
+	 * <p>调用方约定：
+	 * <ul>
+	 *   <li>guest 与 null 由调用方提前过滤，无需在这里再判断；</li>
+	 *   <li>本方法可能因为各种原因（数据被删、库不可达、缓存预热不全等）查不到，
+	 *       直接返回 {@code null}，调用方退化为仅靠 {@code userId} 定位审计行；</li>
+	 *   <li>不参与任何写动作，不参与登录主链路，性能与可用性都让位于安全。</li>
+	 * </ul>
+	 *
+	 * @param userId 当前用户 id（已确保非 guest）
+	 * @return 用户名，查不到则 {@code null}
+	 */
+	public String queryUsernameForAudit(Long userId) {
+		try {
+			com.wldos.platform.core.entity.WoUser wo = this.userService.findById(userId);
+			if (wo == null) {
+				return null;
+			}
+			// login_account 与登录入参一致优先取 loginName；老数据可能只填了 username。
+			return wo.getLoginName() != null ? wo.getLoginName() : wo.getUsername();
+		}
+		catch (Exception ex) {
+			return null;
+		}
+	}
+
+	/**
+	 * 反向查 {@code userId}（仅审计用）：登录/注册/重置等流程拿到 {@code account}（登录账号）
+	 * 后用本方法补充 {@code wo_login_log.user_id}，避免登录日志只有 account 没有 user_id。
+	 *
+	 * <p>容错原则与 {@link #queryUsernameForAudit(Long)} 相同——查不到、库不可达、账号被删
+	 * 一律返回 {@code null}，绝不抛异常打断主登录链路。
+	 *
+	 * @param account 登录账号（{@code wo_user.login_name}）
+	 * @return 用户 id；查不到返回 {@code null}
+	 */
+	public Long queryUserIdForAudit(String account) {
+		if (account == null || account.isEmpty()) {
+			return null;
+		}
+		try {
+			com.wldos.platform.core.entity.WoUser wo = this.userService.findByLoginName(account);
+			return wo == null ? null : wo.getId();
+		}
+		catch (Exception ex) {
+			return null;
+		}
+	}
+
 	@Value("${app.register.passwd.maxLength}")
 	private Integer passwdMaxLenth;
 

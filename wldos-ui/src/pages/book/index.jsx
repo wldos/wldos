@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
 import {connect, history} from 'umi';
-import {Button, message, Switch} from 'antd';
-import {PlusOutlined} from '@ant-design/icons';
+import {Button, message} from 'antd';
+import {PlusOutlined, HomeOutlined, SettingOutlined, SunOutlined, MoonOutlined} from '@ant-design/icons';
 import styles from './style.less';
-import HomeOutlined from "@ant-design/icons/HomeOutlined";
 import Chapter from "@/pages/book/components/chapter";
 import BookList from "@/pages/book/components/booklist";
 import BookView from "@/pages/book/components/BookView";
 import EditBookForm from "@/pages/book/components/EditBookForm";
 import {addBook, addChapter} from "@/pages/book/service";
 import updateDarkTheme from "@/components/DarkTheme/UpdateTheme";
+import { isDesktopEmbedded } from '@/utils/desktopEmbeddedBridge';
 
 // 移动端三 pane 状态机（books/chapters/editor）收口函数：
 // - 优先使用显式传入的目标 pane（事件驱动）
@@ -36,6 +36,7 @@ class Book extends Component {
       darkMode: false,
       isPhone: false,
       mobilePane: null,
+      assistantSettingsSignal: 0,
     };
   }
 
@@ -50,6 +51,7 @@ class Book extends Component {
     if (this.props.match)
       localStorage.setItem('bookUrl', this.props.match.url);
     updateDarkTheme(this.darkMode).then();
+    this.setState({ darkMode: this.darkMode });
   }
 
   componentWillUnmount() {
@@ -188,6 +190,12 @@ class Book extends Component {
       this.query();
     }
 
+    // 无章节（单体）作品不展示章节 pane：若仍停留在 chapters 则切回编辑区（避免隐藏 tab 后仍停留在无效 pane）
+    const { isPhone, mobilePane } = this.state;
+    if (isPhone && this.isSingleWork(this.props.currentBook) && mobilePane === 'chapters') {
+      this.setState({ mobilePane: 'editor' });
+    }
+
     // 不在这里全局重置 mobilePane，避免用户手动切 pane 后被异步状态回写覆盖
   }
 
@@ -297,14 +305,15 @@ class Book extends Component {
       match,
     } = this.props;
 
-    const {mode, modalVisible, darkMode, mobilePane, isPhone} = this.state;
+    const {mode, modalVisible, darkMode, mobilePane, isPhone, assistantSettingsSignal} = this.state;
     let activeMobilePane = mobilePane ?? this.getMobilePane(this.props);
     const isSingleBook = this.isSingleWork(currentBook);
-    // 桌面端：仅复合型展示章节；手机端：为保证可达性，始终展示章节 tab
-    const showChapterTab = !!currentBook?.id && (!isSingleBook || isPhone);
     const hasChapter = (currentBook?.chapter?.length || 0) > 0;
 
     const listMode = isPhone ? 'inline' : mode;
+
+    /** 桌面端依据：桌面壳 JCEF 注入 window.cefQuery（见 isDesktopEmbedded）；云端无此前提 */
+    const showAssistantSettings = isDesktopEmbedded();
 
     return (
       <div
@@ -321,14 +330,45 @@ class Book extends Component {
           }`}
         >
           <div className={styles.topActions}>
-            <Button size="small" type="primary" shape="round" style={{ marginLeft: 2,}} href="/" target="_parent"><HomeOutlined/>返首页</Button>
-            <Button size="small" type="text" style={{ marginLeft: 2,}} onClick={() => this.setModalVisible(true)}><PlusOutlined/>新建作品</Button>
-            <Switch
-              checkedChildren={<span className={styles.switchIcon}>🌙</span>}
-              unCheckedChildren={<span className={styles.switchIcon}>☀</span>}
+            <Button
+              size="small"
+              type="default"
+              href="/"
+              target="_parent"
+              icon={<HomeOutlined />}
+              className={styles.topIconBtn}
+              aria-label="返回首页"
+            />
+            <Button
+              size="small"
+              type="default"
+              icon={<PlusOutlined />}
+              className={styles.topIconBtn}
+              aria-label="新建作品"
+              onClick={() => this.setModalVisible(true)}
+            />
+            {showAssistantSettings ? (
+              <Button
+                size="small"
+                type="default"
+                icon={<SettingOutlined />}
+                className={styles.topIconBtn}
+                aria-label="自媒体发布设置"
+                onClick={() =>
+                  this.setState((prevState) => ({
+                    assistantSettingsSignal: (prevState.assistantSettingsSignal || 0) + 1,
+                    mobilePane: this.getMobilePane(this.props, 'editor'),
+                  }))
+                }
+              />
+            ) : null}
+            <Button
+              size="small"
+              type="default"
+              icon={darkMode ? <MoonOutlined /> : <SunOutlined />}
+              className={styles.topIconBtn}
+              aria-label={darkMode ? '切换为浅色' : '切换为深色'}
               onClick={this.switchDarkMode}
-              defaultChecked={darkMode}
-              size={"small"}
             />
           </div>
           {isPhone ? (
@@ -340,7 +380,7 @@ class Book extends Component {
               >
                 作品
               </Button>
-              {showChapterTab && (
+              {currentBook?.id && !isSingleBook ? (
                 <Button
                   size="small"
                   type={activeMobilePane === 'chapters' ? 'primary' : 'default'}
@@ -348,7 +388,7 @@ class Book extends Component {
                 >
                   章节
                 </Button>
-              )}
+              ) : null}
               <Button
                 size="small"
                 type={activeMobilePane === 'editor' ? 'primary' : 'default'}
@@ -394,14 +434,14 @@ class Book extends Component {
                 )}
                 {(!isPhone || activeMobilePane === 'editor') && (
                   <div className={styles.right}>
-                    {hasChapter ? <BookView {...{dispatch, currentChapter}} />
+                    {hasChapter ? <BookView {...{dispatch, currentChapter, assistantSettingsSignal}} />
                       : <div className={styles.emptyTips}>暂无可编辑章节，请先到“章节”添加内容</div>}
                   </div>
                 )}
               </div>
             ) : (
               (!isPhone || activeMobilePane === 'editor') && (
-                currentBook?.id ? <BookView {...{dispatch, currentChapter, isSingle: true}} />
+                currentBook?.id ? <BookView {...{dispatch, currentChapter, isSingle: true, assistantSettingsSignal}} />
                   : <div className={styles.emptyTips}>请先在“作品”中选择一个作品</div>
               )
             )

@@ -17,6 +17,7 @@ import io.github.wldos.common.Constants;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.Result;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.platform.core.entity.WoRole;
 import com.wldos.platform.core.service.RoleService;
 import com.wldos.platform.core.vo.Role;
@@ -87,6 +88,7 @@ public class RoleController extends EntityController<RoleService, WoRole> {
 
 	@ApiOperation(value = "角色授权", notes = "给角色授权资源")
 	@PostMapping("auth")
+	@OpLog(action = "角色资源授权", resourceType = "role", resourceId = "#resRole['roleId']")
 	public Result authRole(@ApiParam(value = "角色资源授权参数", required = true) @RequestBody Map<String, Object> resRole) {
 		Long roleId = Long.parseLong(resRole.get("roleId").toString());
 		List<String> resIds = (List<String>) resRole.get("resIds");

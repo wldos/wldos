@@ -18,6 +18,7 @@ import com.wldos.cms.vo.AuditComment;
 import io.github.wldos.common.enums.DeleteFlagEnum;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,6 +96,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 	 */
 	@ApiOperation(value = "删除评论", notes = "删除指定的评论")
 	@DeleteMapping("del")
+	@OpLog(action = "删除评论", resourceType = "comment", resourceId = "#entity.id", recordParams = false)
 	public Boolean delete(@ApiParam(value = "评论信息", required = true) @Valid @RequestBody KComments entity) {
 		this.service.deleteComment(entity);
 
@@ -110,6 +112,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 	@ApiOperation(value = "批量删除评论", notes = "批量删除评论")
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("delBatch")
+	@OpLog(action = "批量删除评论", resourceType = "comment", resourceId = "#jsonObject['ids']")
 	public Boolean deletes(@ApiParam(value = "评论IDs", required = true) @RequestBody Map<String, Object> jsonObject) {
 		Object ids = jsonObject.get("ids");
 		if (ids != null) {
@@ -128,6 +131,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 	 */
 	@ApiOperation(value = "驳回评论", notes = "驳回指定的评论")
 	@PostMapping("reject")
+	@OpLog(action = "驳回评论", resourceType = "comment", resourceId = "#entity.id")
 	public Boolean reject(@ApiParam(value = "评论信息", required = true) @Valid @RequestBody KComments entity) {
 		this.service.rejectComment(entity);
 
@@ -142,6 +146,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 	 */
 	@ApiOperation(value = "审核通过评论", notes = "审核通过指定的评论")
 	@PostMapping("audit")
+	@OpLog(action = "审核通过评论", resourceType = "comment", resourceId = "#entity.id")
 	public Boolean audit(@ApiParam(value = "评论信息", required = true) @Valid @RequestBody KComments entity) {
 		this.service.auditComment(entity);
 
@@ -156,6 +161,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 	 */
 	@ApiOperation(value = "置为垃圾评论", notes = "将评论标记为垃圾评论")
 	@PostMapping("spam")
+	@OpLog(action = "标记垃圾评论", resourceType = "comment", resourceId = "#entity.id")
 	public Boolean spam(@ApiParam(value = "评论信息", required = true) @Valid @RequestBody KComments entity) {
 		this.service.spamComment(entity);
 
@@ -170,6 +176,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 	 */
 	@ApiOperation(value = "移到回收站", notes = "将评论移到回收站")
 	@PostMapping("trash")
+	@OpLog(action = "评论移入回收站", resourceType = "comment", resourceId = "#entity.id")
 	public Boolean trash(@ApiParam(value = "评论信息", required = true) @Valid @RequestBody KComments entity) {
 		this.service.trashComment(entity);
 

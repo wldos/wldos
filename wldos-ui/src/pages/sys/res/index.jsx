@@ -115,6 +115,10 @@ const ResourceList = () => {
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
   const [parentId, setParentId] = useState('0');
+  // 新建上下文：来源记录与新增模式（child 子级 / sibling 同级 / null 顶部新建）
+  // 用于在 CreateForm 中按"选定资源"派生默认值，提升配置效率
+  const [sourceRecord, setSourceRecord] = useState(null);
+  const [addMode, setAddMode] = useState(null);
   const [resList, setResList] = useState({});
   const [menus, setMenus] = useState([]);
   const [appList, setAppList] = useState({});
@@ -384,16 +388,20 @@ const ResourceList = () => {
         <>
           <a
             onClick={() => {
-              handleModalVisible(true);
               setParentId(record.id);
+              setSourceRecord(record);
+              setAddMode('child');
+              handleModalVisible(true);
             }}
           >
             {intl.formatMessage({ id: 'sys.res.action.child', defaultMessage: '子级' })}
           </a>
           <Divider type="vertical"/>
           <a onClick={() => {
-            handleModalVisible(true);
             setParentId(record.parentId);
+            setSourceRecord(record);
+            setAddMode('sibling');
+            handleModalVisible(true);
           }}>{intl.formatMessage({ id: 'sys.res.action.sibling', defaultMessage: '同级' })}</a>
           <Divider type="vertical"/>
           <a
@@ -440,7 +448,12 @@ const ResourceList = () => {
             labelWidth: 120,
           }}
           toolBarRender={() => [
-            <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
+            <Button key={0} type="primary" onClick={() => {
+              setParentId('0');
+              setSourceRecord(null);
+              setAddMode(null);
+              handleModalVisible(true);
+            }}>
               <PlusOutlined/> {intl.formatMessage({ id: 'sys.res.toolbar.new', defaultMessage: '新建' })}
             </Button>,
           ]}
@@ -518,6 +531,8 @@ const ResourceList = () => {
           if (success) {
             handleModalVisible(false);
             setParentId('0');
+            setSourceRecord(null);
+            setAddMode(null);
             if (actionRef.current) {
               actionRef.current.reload();
             }
@@ -526,12 +541,16 @@ const ResourceList = () => {
         onCancel={() => {
           handleModalVisible(false);
           setParentId('0');
+          setSourceRecord(null);
+          setAddMode(null);
         }}
         modalVisible={createModalVisible}
         apps={apps}
         menus={menus}
         resTypeOptions={resTypeOptions}
         parentId={parentId}
+        sourceRecord={sourceRecord}
+        addMode={addMode}
       />}
       {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm

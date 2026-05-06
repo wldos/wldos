@@ -50,6 +50,12 @@ const SysOptions = () => {
       if (typeof v === 'string') {
         values.wldos_file_store_local = v === 'true' || v === '1';
       }
+      const picSrcsetEn = values.wldos_file_pic_srcset_enabled;
+      if (picSrcsetEn === undefined || picSrcsetEn === null || picSrcsetEn === '') {
+        values.wldos_file_pic_srcset_enabled = true;
+      } else if (typeof picSrcsetEn === 'string') {
+        values.wldos_file_pic_srcset_enabled = picSrcsetEn === 'true';
+      }
       form.setFieldsValue(values);
       // eslint-disable-next-line camelcase
       const {wldos_system_multitenancy_switch = 'false', wldos_system_multidomain_switch = 'false', wldos_platform_user_register_emailaction = 'false'} = res.data;
@@ -421,6 +427,23 @@ const SysOptions = () => {
               checked={commentStatus}
               onChange={(e) => setCommentStatus(e)}
             />
+          </Form.Item>
+
+          <Form.Item
+            name="wldos_file_pic_srcset_enabled"
+            label={
+              <Space>
+                正文图片 srcset 注入
+                <Tooltip title="仅商业版 Agent 生效：开启时在阅读页为内容图片注入 srcset/sizes；关闭后仍生成多尺寸缩略图，但不改写 HTML。值为 true/false。">
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            extra="与系统参数键 wldos_file_pic_srcset_enabled 对应；关闭仅停止 Agent 注入 srcset，上传缩略图照常生成"
+            valuePropName="checked"
+            initialValue={true}
+          >
+            <Switch checkedChildren="开启" unCheckedChildren="关闭" />
           </Form.Item>
         </Card>
         {/* 邮件配置分组 */}

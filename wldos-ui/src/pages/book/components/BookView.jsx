@@ -1,11 +1,35 @@
 import React, {useEffect, useRef, useState, useCallback, useMemo} from 'react';
-import {Form, Input, message, Alert, Space, Typography, Button, Tabs, Modal, Spin} from "antd";
-import {SaveOutlined, CheckCircleOutlined, ClockCircleOutlined, EditOutlined, EyeOutlined, BoldOutlined, ItalicOutlined, LinkOutlined, PictureOutlined, UnorderedListOutlined, CodeOutlined, UndoOutlined, RedoOutlined, EyeOutlined as PreviewOutlined, QuestionCircleOutlined, SunOutlined, MoonOutlined, FullscreenOutlined, FullscreenExitOutlined} from '@ant-design/icons';
+import {Form, Input, message, Alert, Space, Typography, Button, Tabs, Modal, Spin, Dropdown, Menu, Tag, Card, DatePicker} from "antd";
+import {SaveOutlined, CheckCircleOutlined, ClockCircleOutlined, EditOutlined, EyeOutlined, BoldOutlined, ItalicOutlined, LinkOutlined, PictureOutlined, UnorderedListOutlined, CodeOutlined, UndoOutlined, RedoOutlined, EyeOutlined as PreviewOutlined, QuestionCircleOutlined, SunOutlined, MoonOutlined, FullscreenOutlined, FullscreenExitOutlined, DownOutlined, SettingOutlined} from '@ant-design/icons';
 import './BaseView.less';
 import {loadTinyMCE} from "@/utils/loadTinyMCE";
-import {saveChapter, uploadFile} from "@/pages/book/service";
+import {
+  saveChapter,
+  uploadFile
+} from "@/pages/book/service";
+// 自媒体发布助手扩展点：通过 webpack alias `@book-publish-ext` 在 commercial / community 之间切换。
+//   commercial → pages/commercial/social-publish/book-integration/*（真实实现）
+//   community  → pages/book/_ext/publish-stub/*（noop 兜底）
+// 这层中性 alias 让本开源组件不直接耦合 commercial 路径；社区分支删 commercial 目录后 webpack 仍能解析。
+import {
+  bindMyPublishAccount as bindAssistantPublishAccount,
+  queryMyPublishAccounts as queryAssistantPublishAccounts,
+  querySupportedPlatforms as queryAssistantPlatforms,
+} from '@book-publish-ext/service';
+import {
+  DEFAULT_SCHEDULE_POLICY,
+  loadDefaultPublishContext,
+  calcScheduleRule,
+  createAssistantPublishJobs,
+  fetchAssistantJobsForSource,
+} from '@book-publish-ext/assistantPublishCore';
+import { submitCmsReviewFromBookEditor, applyWebBookPublishRequest } from '@/pages/book/utils/cmsReviewPublish';
 import config from "@/utils/config";
+import { isDesktopEmbedded } from '@/utils/desktopEmbeddedBridge';
 import MarkdownImage from '@/components/MarkdownImage';
+import PublishSettingsDrawer from '@book-publish-ext/components/PublishSettingsDrawer';
+import AccountManageModal from '@book-publish-ext/components/AccountManageModal';
+import PublishRecordModal from '@book-publish-ext/components/PublishRecordModal';
 
 // ========== 大库懒加载 ==========
 // CodeMirror 相关（只在 Markdown 模式下加载）
@@ -71,6 +95,18 @@ const loadSyntaxHighlighter = async () => {
 
 export const {prefix} = config;
 
+/** 绑定成功后合并：避免列表接口滞后/偶发空数组导致左侧分组空白（id 为 Long→JSON 字符串，用 `===` 见 MDC） */
+function mergeAssistantAccountIntoList(prevList, created) {
+  if (!created || created.id == null) return prevList || [];
+  const next = [...(prevList || [])];
+  const idx = next.findIndex((a) => a && a.id === created.id);
+  if (idx >= 0) {
+    next[idx] = { ...next[idx], ...created };
+    return next;
+  }
+  return [created, ...next];
+}
+
 // 创建语法高亮样式（懒加载时调用）
 const createHighlightStyles = (HighlightStyle, tags) => {
   const lightHighlightStyle = HighlightStyle.define([
@@ -124,7 +160,11 @@ const handleSave = async (fields, chapter = {pubTitle: '', pubContent: '',}) => 
   try {
     if (!fields || !Object.keys(fields).length)
       return false;
-    if (chapter.pubContent === fields.pubContent && chapter.pubTitle === fields.pubTitle) {
+    const sameBody =
+      chapter.pubContent === fields.pubContent && chapter.pubTitle === fields.pubTitle;
+    const sameStatus = String(chapter.pubStatus ?? '') === String(fields.pubStatus ?? '');
+    // 申请发布等仅变更 pubStatus 时也必须请求保存（不能只比较正文）
+    if (sameBody && sameStatus) {
       return false;
     }
     const res = await saveChapter({
@@ -162,30 +202,88 @@ export const imgUploadHandler = async (img, success, failure, form) => {
 
 export const filePickerCallBack = async (callback, value, meta, form) => {
   // 支持的类型有：media、image、file
-  if (meta.filetype === 'media') { // 媒体类型
+  if (meta.filetype === 'media' || meta.filetype === 'image') { // 媒体/图片类型
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
+    if (meta.filetype === 'image') {
+      input.setAttribute('accept', 'image/*');
+    }
     input.onchange = async function() {
-      const file = this.files[0];
+      const file = this.files && this.files[0];
+      if (!file) return;
       const formData = new FormData();
       formData.append("file", file);
       formData.append("id", form.getFieldValue("id"));
       const res = await uploadFile(formData);
-      if (res?.data)
-        callback(res.data.url);
+      if (res?.data?.url) {
+        callback(res.data.url, meta.filetype === 'image' ? { alt: file.name } : undefined);
+      } else {
+        message.error('上传失败，请重试');
+      }
     }
     input.click();
   }
+};
+
+export const pickAndInsertImageForTiny = async (editor, form) => {
+  if (!editor) return;
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.style.position = 'fixed';
+  input.style.left = '-9999px';
+  input.style.top = '-9999px';
+  document.body.appendChild(input);
+
+  const cleanup = () => {
+    try {
+      if (input.parentNode) input.parentNode.removeChild(input);
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  input.onchange = async function() {
+    const file = this.files && this.files[0];
+    if (!file) {
+      cleanup();
+      return;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('id', form.getFieldValue('id'));
+    try {
+      const res = await uploadFile(formData);
+      const url = res?.data?.url;
+      if (!url) {
+        message.error(res?.data?.error || '上传失败，请重试');
+        return;
+      }
+      const safeAlt = (file.name || '图片').replace(/"/g, '&quot;');
+      editor.insertContent(`<img src="${url}" alt="${safeAlt}" />`);
+    } catch (e) {
+      message.error(e?.message || '上传失败，请重试');
+    } finally {
+      cleanup();
+    }
+  };
+
+  input.click();
 };
 
 const FormItem = Form.Item;
 
 const {Text} = Typography;
 
-const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '', pubContent: ''}, isSingle=false }) => {
+const BookView = ({
+  dispatch,
+  currentChapter = { id: '', parentId: '', pubTitle: '', pubContent: '' },
+  isSingle = false,
+  assistantSettingsSignal = 0,
+}) => {
 
   const [form] = Form.useForm();
-  
+
   // 将form和editorView暴露到全局，供脚本使用
   useEffect(() => {
     window.currentForm = form;
@@ -204,7 +302,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   const [data, setData] = useState(currentChapter?.pubContent?? '');
   const [saveStatus, setSaveStatus] = useState('idle'); // idle, saving, saved, error
   const [lastSaveTime, setLastSaveTime] = useState(null);
-  
+
   // 编辑器模式状态
   const [editorMode, setEditorMode] = useState('rich'); // 'rich' | 'markdown'
   const [markdownContent, setMarkdownContent] = useState('');
@@ -217,15 +315,50 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   const [isDarkTheme, setIsDarkTheme] = useState(false); // 主题状态：true为深色，false为浅色
   const [editorView, setEditorView] = useState(null); // CodeMirror编辑器实例
   const [isFullscreen, setIsFullscreen] = useState(false); // 全屏状态
+  const [progressModalOpen, setProgressModalOpen] = useState(false);
+  const [progressLoading, setProgressLoading] = useState(false);
+  const [progressRows, setProgressRows] = useState([]);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [scheduleAt, setScheduleAt] = useState(null);
+  const [scheduleRule, setScheduleRule] = useState({
+    minLeadMinutes: DEFAULT_SCHEDULE_POLICY.minLeadMinutes,
+    maxLeadMinutes: DEFAULT_SCHEDULE_POLICY.maxLeadMinutes,
+    platformCodes: [],
+  });
+  const [publishTip, setPublishTip] = useState({ visible: false, type: 'idle', text: '暂无发布' });
+  const [publishSettingsOpen, setPublishSettingsOpen] = useState(false);
+  const [accountManageOpen, setAccountManageOpen] = useState(false);
+  const [immersiveRecordOpen, setImmersiveRecordOpen] = useState(false);
+  const [assistantAccountsForUi, setAssistantAccountsForUi] = useState([]);
+  const [assistantPlatformsForUi, setAssistantPlatformsForUi] = useState([]);
+  /** 与 AccountManageModal 内锁配合：异步 bind API 层再防一次并发重复 POST */
+  const assistantAccountBindLockRef = useRef(false);
+  const publishTipTimerRef = useRef(null);
   // TinyMCE 按需加载状态
   const [tinymceReady, setTinymceReady] = useState(false);
   const [EditorComponent, setEditorComponent] = useState(null);
-
+  /**
+   * 自媒体发布助手入口开关（双因子）：
+   *   1. APP_FLAVOR !== 'community'：社区版构建时 webpack 把 `@book-publish-ext` alias 切到 stub，
+   *      stub 是 noop 兜底（保证不报 Module not found），但 BookView 也不应让用户看到发布按钮 / 抽屉等入口；
+   *   2. isDesktopEmbedded()：发布助手依赖桌面壳注入的 window.cefQuery 做 JCEF 多账号 cookie 切换，云端浏览器没这前提。
+   * 两者必须同时满足，发布助手 UI 才会渲染；任意一项不满足 → 入口隐藏 + 异步函数也不会被调到 stub。
+   */
+  const assistantDesktopCommercial = useMemo(
+    () => process.env.APP_FLAVOR !== 'community' && isDesktopEmbedded(),
+    [],
+  );
+  useEffect(() => () => {
+    if (publishTipTimerRef.current) {
+      clearTimeout(publishTipTimerRef.current);
+      publishTipTimerRef.current = null;
+    }
+  }, []);
   // TinyMCE 按需加载 - 仅在富文本模式下加载
   useEffect(() => {
     // 只有在富文本模式下才加载 TinyMCE
     if (editorMode !== 'rich' || tinymceReady) return;
-    
+
     let mounted = true;
     const initTinyMCE = async () => {
       try {
@@ -293,6 +426,12 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
           lineHeight: "1.6",
           fontSize: "16px",
           fontWeight: "600",
+          wordBreak: "break-word",
+          overflowWrap: "anywhere",
+        },
+        ".cm-line": {
+          wordBreak: "break-word",
+          overflowWrap: "anywhere",
         },
         ".cm-focused": {
           outline: "none",
@@ -306,7 +445,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
           fontFamily: '"JetBrains Mono", "Fira Code", "Cascadia Code", "SF Mono", Monaco, "Consolas", "Liberation Mono", "Courier New", monospace',
           fontSize: "16px",
           fontWeight: "600",
-          overflow: 'auto'
+          overflowX: "hidden",
+          overflowY: "auto",
         },
         // Markdown 语法高亮
         ".cm-header": {
@@ -398,12 +538,14 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       "&": {
         height: "100%",
         minHeight: "400px",
-        overflow: "auto"
+        overflow: "hidden",
+        minWidth: 0,
       },
       ".cm-scroller": {
-        overflow: "auto",
-        maxHeight: "100%"
-      }
+        overflowX: "hidden",
+        overflowY: "auto",
+        maxHeight: "100%",
+      },
     });
 
     const state = EditorState.create({
@@ -457,7 +599,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
           }
         }
       }, 100);
-      
+
       return () => clearTimeout(timer);
     } else {
       // 切换到其他模式时，重置加载状态
@@ -498,61 +640,61 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   // 统计规则：只移除 Markdown 语法标记，保留所有文本内容和标点符号
   const getMarkdownPlainText = useCallback((markdown) => {
     if (!markdown) return '';
-    
+
     let text = markdown;
-    
+
     // 1. 处理代码块（```...```格式）
     // 提取代码块中的内容（包括标点符号），只移除代码块标记
     text = text.replace(/```[\w]*\n?([\s\S]*?)```/g, '$1');
-    
+
     // 2. 处理行内代码（`...`格式）
     // 提取行内代码中的内容（包括标点符号），只移除行内代码标记
     text = text.replace(/`([^`\n]+)`/g, '$1');
-    
+
     // 3. 移除标题标记（# 开头），保留标题文本和标点符号
     text = text.replace(/^#{1,6}\s+/gm, '');
-    
+
     // 4. 移除粗体和斜体标记（**、*），保留文本和标点符号
     text = text.replace(/\*\*([^*]+?)\*\*/g, '$1');
     text = text.replace(/\*([^*\s][^*]*?[^*\s])\*/g, '$1');
     text = text.replace(/__([^_]+?)__/g, '$1');
     text = text.replace(/_([^_\s][^_]*?[^_\s])_/g, '$1');
-    
+
     // 5. 移除链接标记（[文本](链接)），保留链接文本和标点符号
     text = text.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
-    
+
     // 6. 移除图片标记（![alt](src)），保留图片描述文本和标点符号
     text = text.replace(/!\[([^\]]*)\]\([^\)]+\)/g, '$1');
-    
+
     // 7. 移除引用标记（> 开头），保留引用内容和标点符号
     text = text.replace(/^>\s+/gm, '');
-    
+
     // 8. 移除列表标记（-、*、+、数字.），保留列表内容和标点符号
     text = text.replace(/^[\s]*[-*+]\s+/gm, '');
     text = text.replace(/^[\s]*\d+\.\s+/gm, '');
-    
+
     // 9. 移除水平线标记（仅当整行都是 - 或 *，且数量>=3时才移除）
     text = text.replace(/^[\s]*[-*]{3,}[\s]*$/gm, '');
-    
+
     // 10. 处理表格标记（|）
     // 移除表格单元格之间的 | 分隔符，但保留单元格内容和标点符号
     // 移除表格分隔符行（只包含 |、-、:、空格的整行）
     text = text.replace(/^\|[\s]*:?-+:?[\s\|]*$/gm, ''); // 表格分隔符行
     text = text.replace(/\|/g, ' '); // 表格单元格分隔符替换为空格
-    
+
     // 11. 移除多余的空白行（连续3个以上换行符替换为2个）
     text = text.replace(/\n{3,}/g, '\n\n');
-    
+
     // 12. 移除首尾空白（但保留内部的所有内容和标点符号）
     text = text.trim();
-    
+
     return text;
   }, []);
 
   // Markdown语法高亮函数
   const highlightMarkdown = useCallback((text) => {
     if (!text) return '';
-    
+
     return text
       // 标题高亮
       .replace(/^(#{1,6})\s+(.+)$/gm, (match, hashes, content) => {
@@ -607,7 +749,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       message.warning('内容已保存，编辑器模式已锁定，无法切换');
       return;
     }
-    
+
     if (mode === 'markdown') {
       // 切换到Markdown模式
       if (editorMode === 'rich') {
@@ -642,11 +784,11 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   // 处理Markdown内容变化
   const handleMarkdownChange = useCallback((value) => {
     setMarkdownContent(value);
-    
+
     // 检查内容是否真的发生了变化
     const hasChanged = value !== lastMarkdownContent;
     setIsContentModified(hasChanged);
-    
+
     // 添加到历史记录
     if (hasChanged) {
       const newHistory = markdownHistory.slice(0, historyIndex + 1);
@@ -654,11 +796,11 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       setMarkdownHistory(newHistory);
       setHistoryIndex(newHistory.length - 1);
     }
-    
+
     // 在Markdown模式下，直接保存Markdown格式到表单
     // 不需要转换为HTML，因为保存时会根据模式决定格式
     form.setFieldsValue({pubContent: value});
-    
+
     // 触发自动保存（与富文本模式保持一致，每次内容变化都触发防抖）
     wait3s();
   }, [form, lastMarkdownContent, markdownHistory, historyIndex, wait3s]);
@@ -666,18 +808,18 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   // 处理富文本内容变化，自动生成标题ID
   const handleRichTextChange = useCallback((content) => {
     setData(content);
-    
+
     // 自动为标题添加ID
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = content;
     const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    
+
     headings.forEach((heading, index) => {
       if (!heading.id) {
         heading.id = `heading-${index}`;
       }
     });
-    
+
     // 更新内容
     const processedContent = tempDiv.innerHTML;
     if (processedContent !== content) {
@@ -686,7 +828,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         editorRef.current.setContent(processedContent);
       }
     }
-    
+
     wait3s();
   }, [wait3s]);
 
@@ -718,13 +860,13 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
     } else {
       content = editorRef.current?.getContent() || data;
     }
-    
+
     // 懒加载预览所需的库
     const [{ ReactMarkdown, remarkGfm, rehypeRaw, renderToString }, { SyntaxHighlighter, vscDarkPlus, vs }] = await Promise.all([
       loadMarkdown(),
       loadSyntaxHighlighter()
     ]);
-    
+
     // 使用类似 TinyMCE 的对话框预览
     const showDialog = () => {
       // 创建遮罩层
@@ -739,7 +881,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 999999;
       `;
-      
+
       // 创建对话框
       const dialog = document.createElement('div');
       dialog.className = 'tox-dialog-wrap';
@@ -754,7 +896,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         align-items: center;
         justify-content: center;
       `;
-      
+
       // 创建对话框内容
       const dialogContent = document.createElement('div');
       dialogContent.className = 'tox-dialog';
@@ -770,7 +912,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         flex-direction: column;
         overflow: hidden;
       `;
-      
+
       // 创建标题栏
       const header = document.createElement('div');
       header.className = 'tox-dialog__header';
@@ -782,10 +924,10 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         align-items: center;
         background: #fafafa;
       `;
-      
+
       // 全屏状态
       let isFullscreen = false;
-      
+
       const toggleFullscreen = () => {
         isFullscreen = !isFullscreen;
         if (isFullscreen) {
@@ -824,7 +966,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
           fullscreenBtn.title = '全屏';
         }
       };
-      
+
       const fullscreenBtn = document.createElement('button');
       fullscreenBtn.innerHTML = '⤢';
       fullscreenBtn.title = '全屏';
@@ -844,7 +986,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         justify-content: center;
       `;
       fullscreenBtn.onclick = toggleFullscreen;
-      
+
       header.innerHTML = `
         <div class="tox-dialog__title">内容预览</div>
         <div style="display: flex; align-items: center;">
@@ -852,7 +994,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         </div>
       `;
       header.querySelector('div:last-child').insertBefore(fullscreenBtn, header.querySelector('div:last-child').firstChild);
-      
+
       // 创建内容区域
       const body = document.createElement('div');
       body.className = 'tox-dialog__body';
@@ -864,7 +1006,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         line-height: 1.6;
         color: #2c3e50;
       `;
-      
+
       // 创建底部按钮区域
       const footer = document.createElement('div');
       footer.className = 'tox-dialog__footer';
@@ -875,7 +1017,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         justify-content: flex-end;
         background: #fafafa;
       `;
-      
+
       const closeButton = document.createElement('button');
       closeButton.className = 'tox-button';
       closeButton.textContent = '关闭';
@@ -888,18 +1030,18 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         cursor: pointer;
         font-size: 14px;
       `;
-      
+
       // 创建关闭函数
       window.closeDialog = () => {
         document.body.removeChild(backdrop);
         document.body.removeChild(dialog);
         delete window.closeDialog;
       };
-      
+
       // 绑定关闭事件
       closeButton.onclick = window.closeDialog;
       backdrop.onclick = window.closeDialog;
-      
+
       // 渲染内容
       if (editorMode === 'markdown') {
         // 使用 ReactMarkdown 渲染，与文档模块保持一致
@@ -919,10 +1061,10 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
             },
             code({node, inline, className, children, ...props}) {
               const match = /language-(\w+)/.exec(className || '');
-              
+
               return !inline && match ? (
                 React.createElement('div', {
-                  style: { 
+                  style: {
                     backgroundColor: isDarkTheme ? '#0d1117' : '#f6f8fa',
                     borderRadius: '6px',
                     padding: '16px',
@@ -951,10 +1093,10 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
             }
           }
         }, content);
-        
+
         // 渲染为 HTML 字符串
         const html = renderToString(markdownElement);
-        
+
         body.innerHTML = `
           <style>
             .markdown-body {
@@ -1023,19 +1165,19 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       } else {
         body.innerHTML = `<div class="preview-content">${content}</div>`;
       }
-      
+
       // 组装对话框
       dialogContent.appendChild(header);
       dialogContent.appendChild(body);
       footer.appendChild(closeButton);
       dialogContent.appendChild(footer);
       dialog.appendChild(dialogContent);
-      
+
       // 添加到页面
       document.body.appendChild(backdrop);
       document.body.appendChild(dialog);
     };
-    
+
     showDialog();
   }, [editorMode, markdownContent, data, isDarkTheme]);
 
@@ -1049,14 +1191,14 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         pubStatus: currentChapter.pubStatus,
       });
       setData(currentChapter.pubContent);
-      
+
       // 根据内容判断是否为新建内容
       const content = currentChapter.pubContent || '';
       const mimeType = currentChapter.pubMimeType;
       const hasContent = content.trim() !== '';
-      
+
       setIsNewContent(!hasContent);
-      
+
       if (!hasContent) {
         // 无内容：默认富文本模式，可以切换
         setEditorMode('rich');
@@ -1065,7 +1207,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       } else {
         // 有内容：根据MIME类型锁定模式
         setModeLocked(true);
-        
+
         if (mimeType === 'text/markdown') {
           // Markdown内容：锁定为Markdown模式
           setMarkdownContent(content);
@@ -1116,7 +1258,11 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
     if (!values?.id || !values?.pubTitle) {
       return;
     }
-    if ((values?.pubContent === currentChapter?.pubContent) && (values?.pubTitle === currentChapter?.pubTitle)) {
+    const contentUnchanged =
+      (values?.pubContent === currentChapter?.pubContent) && (values?.pubTitle === currentChapter?.pubTitle);
+    const statusChanged = String(values?.pubStatus ?? '') !== String(currentChapter?.pubStatus ?? '');
+    // 纯「申请发布」仅改 pubStatus 时也必须落库（原逻辑会因正文未改而跳过，导致不调 API）
+    if (contentUnchanged && !statusChanged) {
       return;
     }
 
@@ -1124,7 +1270,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
     try {
       // 根据当前编辑器模式决定保存格式
       let saveValues = {...values};
-      
+
       if (editorMode === 'markdown') {
         // Markdown模式：保存Markdown格式
         saveValues.pubContent = markdownContent;
@@ -1147,18 +1293,19 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       const res = await handleSave(saveValues, currentChapter);
       if (!res) {
         setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 3000);
         return;
       }
 
       setSaveStatus('saved');
       setLastSaveTime(new Date());
       dirtyRef.current = false;
-      
+
       // 更新最后保存的内容
       if (editorMode === 'markdown') {
         setLastMarkdownContent(markdownContent);
       }
-      
+
       // 保存后锁定编辑器模式
       setModeLocked(true);
       setIsNewContent(false);
@@ -1178,6 +1325,242 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
   }, [currentChapter, dispatch, isSingle, editorMode, markdownContent, isContentModified]);
+
+  const buildPublishSourcePayload = useCallback(() => {
+    const values = form.getFieldsValue();
+    if (!values?.id || !values?.pubTitle) {
+      return null;
+    }
+    return {
+      sourceType: 'PUB_SINGLE',
+      sourcePubId: values.id,
+    };
+  }, [form]);
+
+  /** 书本发布设置抽屉：仅助手侧第三方任务；CMS 审核不走此入口 */
+  const createThirdPublishJobByAccounts = useCallback(async (accountIds, scheduledTime) => {
+    if (!accountIds.length) {
+      return null;
+    }
+    const source = buildPublishSourcePayload();
+    if (!source) {
+      throw new Error('请先保存内容');
+    }
+    return createAssistantPublishJobs({
+      sourcePayload: source,
+      contentMode: editorMode === 'markdown' ? 'MARKDOWN' : 'HTML',
+      accountIds,
+      scheduledTime,
+    });
+  }, [buildPublishSourcePayload, editorMode]);
+
+  const showPublishTip = useCallback((type, text, autoHide = true) => {
+    setPublishTip({ visible: true, type, text });
+    if (publishTipTimerRef.current) {
+      clearTimeout(publishTipTimerRef.current);
+      publishTipTimerRef.current = null;
+    }
+    if (autoHide) {
+      publishTipTimerRef.current = setTimeout(() => {
+        setPublishTip((prev) => ({ ...prev, visible: false }));
+      }, 8000);
+    }
+  }, []);
+
+  const loadPublishProgress = useCallback(async () => {
+    const source = buildPublishSourcePayload();
+    if (!source?.sourcePubId) {
+      setProgressRows([]);
+      return;
+    }
+    setProgressLoading(true);
+    try {
+      const rows = await fetchAssistantJobsForSource(source.sourcePubId);
+      setProgressRows(rows);
+    } catch (e) {
+      setProgressRows([]);
+    } finally {
+      setProgressLoading(false);
+    }
+  }, [buildPublishSourcePayload]);
+
+  const loadAssistantAccounts = useCallback(async () => {
+    try {
+      const res = await queryAssistantPublishAccounts();
+      setAssistantAccountsForUi(res?.data || []);
+    } catch (e) {
+      setAssistantAccountsForUi([]);
+    }
+  }, []);
+
+  const loadAssistantPlatforms = useCallback(async () => {
+    try {
+      const res = await queryAssistantPlatforms();
+      setAssistantPlatformsForUi(res?.data || []);
+    } catch (e) {
+      setAssistantPlatformsForUi([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!assistantSettingsSignal) return;
+    if (!assistantDesktopCommercial) return;
+    Promise.all([loadAssistantAccounts(), loadAssistantPlatforms()]).then(() => {
+      setAccountManageOpen(true);
+    });
+  }, [assistantSettingsSignal, assistantDesktopCommercial, loadAssistantAccounts, loadAssistantPlatforms]);
+
+  /**
+   * 编排：CMS 本站审核（可选） + 助手第三方任务（可选）。
+   * 二者来源不同，分别调用 cmsReviewPublish 与 assistantPublishCore。
+   */
+  const triggerPublishByConfig = useCallback(async (opts = {}) => {
+    const source = buildPublishSourcePayload();
+    if (!source) {
+      message.warning('请先保存内容，再进行发布').then(() => {});
+      return;
+    }
+    const scheduledTime = opts.scheduledTime || '';
+    showPublishTip('running', scheduledTime ? '定时发布提交中' : '发布提交中', false);
+    const context = await loadDefaultPublishContext();
+    const accountIds = context.accountIds;
+    if ((context.rawIds.length || context.rawGroupIds.length) && !accountIds.length) {
+      message.warning('默认发布里包含已失效的账号/分组，请到「自媒体发布 → 发布设置」重新勾选');
+    }
+    const includeWldosSelf = context.includeWldosSelf !== false;
+    let sent = 0;
+    if (includeWldosSelf) {
+      submitCmsReviewFromBookEditor(form, timerId);
+      sent++;
+    }
+    if (accountIds.length) {
+      await createAssistantPublishJobs({
+        sourcePayload: source,
+        contentMode: editorMode === 'markdown' ? 'MARKDOWN' : 'HTML',
+        accountIds,
+        scheduledTime: scheduledTime || undefined,
+      });
+      sent++;
+    }
+    if (!sent) {
+      message.warning('请先在「自媒体发布」添加账号并设为默认，或勾选同步到本站');
+      showPublishTip('failed', '提交失败：未命中可发布账号');
+      return;
+    }
+    showPublishTip('success', scheduledTime ? '定时发布已设置' : '已提交发布');
+    message.success({
+      content: assistantDesktopCommercial ? (
+        <span>
+          已提交发布
+          <a
+            style={{ marginLeft: 4 }}
+            onClick={() => window.open(`/social-publish?tab=records&sourcePubId=${source.sourcePubId}`, '_blank', 'noopener,noreferrer')}
+          >
+            发布记录
+          </a>
+          查看各渠道进度与结果。
+        </span>
+      ) : (
+        <span>已提交发布，本站已进入审核流程。</span>
+      ),
+      duration: 4,
+    });
+  }, [buildPublishSourcePayload, editorMode, form, showPublishTip, assistantDesktopCommercial]);
+
+  /** 打开自媒体发布页（新标签）；tab：publish | records | accounts | defaults；launchMode：scheduled 等 */
+  const openSocialPublishWorkbench = useCallback((tab = 'publish', launchMode) => {
+    const source = buildPublishSourcePayload();
+    const query = new URLSearchParams();
+    query.set('tab', tab);
+    if (launchMode) {
+      query.set('launchMode', launchMode);
+    }
+    if (source?.sourcePubId) {
+      query.set('sourcePubId', source.sourcePubId);
+    }
+    query.set('contentMode', editorMode === 'markdown' ? 'MARKDOWN' : 'HTML');
+    window.open(`/social-publish?${query.toString()}`, '_blank', 'noopener,noreferrer');
+  }, [buildPublishSourcePayload, editorMode]);
+
+  /** 发布中心下拉：仅立即发布 / 定时发布 / 发布记录；账号与发布设置等走左侧齿轮进发布页 */
+  const openPublishCenter = useCallback(async (actionKey = 'records') => {
+    if (!assistantDesktopCommercial && (actionKey === 'publish-scheduled' || actionKey === 'records')) {
+      return;
+    }
+    if (actionKey === 'publish-now') {
+      await triggerPublishByConfig();
+      return;
+    }
+    if (actionKey === 'publish-scheduled') {
+      try {
+        const context = await loadDefaultPublishContext();
+        if (!context.includeWldosSelf && !context.accountIds.length) {
+          message.warning('请先在发布设置中勾选默认账号或启用同步到本站');
+          return;
+        }
+        if ((context.rawIds.length || context.rawGroupIds.length) && !context.accountIds.length) {
+          message.warning('默认发布账号/分组已失效，请先在自媒体发布设置中更新');
+        }
+        const nextRule = calcScheduleRule(context.selectedAccounts, context.schedulePolicyMap);
+        if (nextRule.maxLeadMinutes <= nextRule.minLeadMinutes) {
+          message.warning('所选平台定时规则无可用交集，请调整发布账号');
+          return;
+        }
+        setScheduleRule(nextRule);
+      } catch (e) {
+        setScheduleRule({
+          minLeadMinutes: DEFAULT_SCHEDULE_POLICY.minLeadMinutes,
+          maxLeadMinutes: DEFAULT_SCHEDULE_POLICY.maxLeadMinutes,
+          platformCodes: [],
+        });
+      }
+      setScheduleAt(null);
+      setScheduleModalOpen(true);
+      return;
+    }
+    if (actionKey === 'records') {
+      setImmersiveRecordOpen(true);
+      loadPublishProgress().catch(() => {});
+    }
+  }, [assistantDesktopCommercial, triggerPublishByConfig, loadPublishProgress, loadDefaultPublishContext, calcScheduleRule]);
+
+  const publishCenterMenu = useMemo(() => (
+    <Menu onClick={({ key }) => openPublishCenter(key)}>
+      <Menu.Item key="publish-now">立即发布</Menu.Item>
+      {assistantDesktopCommercial ? (
+        <>
+          <Menu.Item key="publish-scheduled">定时发布</Menu.Item>
+          <Menu.Item key="records">发布记录</Menu.Item>
+        </>
+      ) : null}
+    </Menu>
+  ), [openPublishCenter, assistantDesktopCommercial]);
+
+  const toDate = (v) => {
+    if (!v) return null;
+    if (v instanceof Date) return v;
+    if (typeof v.toDate === 'function') return v.toDate();
+    return null;
+  };
+
+  const scheduleBounds = useMemo(() => {
+    const now = new Date();
+    const minAt = new Date(now.getTime() + scheduleRule.minLeadMinutes * 60 * 1000);
+    const maxAt = new Date(now.getTime() + scheduleRule.maxLeadMinutes * 60 * 1000);
+    return { minAt, maxAt };
+  }, [scheduleRule]);
+
+  const disabledScheduleDate = (current) => {
+    const d = toDate(current);
+    if (!d) return false;
+    return d.getTime() < scheduleBounds.minAt.getTime() || d.getTime() > scheduleBounds.maxAt.getTime();
+  };
+
+  const formatSchedule = (dt) => {
+    const p = (n) => (n < 10 ? `0${n}` : `${n}`);
+    return `${dt.getFullYear()}-${p(dt.getMonth() + 1)}-${p(dt.getDate())} ${p(dt.getHours())}:${p(dt.getMinutes())}:00`;
+  };
+
 
   const inputProp = {
     style: {
@@ -1220,8 +1603,10 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   const renderEditorContent = () => {
     if (editorMode === 'markdown') {
       return (
-        <div style={{ 
+        <div style={{
           flex: 1,
+          minWidth: 0,
+          width: '100%',
           border: '1px solid #d9d9d9',
           display: 'flex',
           flexDirection: 'column',
@@ -1263,8 +1648,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               gap: '0',
               padding: '8px 4px'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<BoldOutlined />}
                 title="粗体"
                 style={{
@@ -1299,8 +1684,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                   }
                 }}
               />
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<ItalicOutlined />}
                 title="斜体"
                 style={{
@@ -1336,7 +1721,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 }}
               />
             </div>
-            
+
             {/* 链接和图片组 */}
             <div style={{
               display: 'flex',
@@ -1345,8 +1730,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               padding: '8px 4px',
               borderLeft: '1px solid #d9d9d9'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<LinkOutlined />}
                 title="链接"
                 style={{
@@ -1381,8 +1766,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                   }
                 }}
               />
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<PictureOutlined />}
                 title="图片"
                 style={{
@@ -1408,7 +1793,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 }}
               />
             </div>
-            
+
             {/* 为markdown模式添加图片右键编辑功能 */}
             {editorMode === 'markdown' && (
               <script dangerouslySetInnerHTML={{
@@ -1419,17 +1804,17 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                       markdownContent.addEventListener('contextmenu', (e) => {
                         const text = markdownContent.value;
                         const cursorPos = markdownContent.selectionStart;
-                        
+
                         // 检查光标位置是否在图片标签内
                         const beforeCursor = text.substring(0, cursorPos);
-                        
+
                         // 查找最近的图片标签
                         const imgMatch = beforeCursor.match(/<img[^>]*src="([^"]*)"[^>]*>/);
                         const markdownImgMatch = beforeCursor.match(/!\\[([^\\]]*)\\]\\(([^)]+)\\)/);
-                        
+
                         if (imgMatch || markdownImgMatch) {
                           e.preventDefault();
-                          
+
                           // 创建右键菜单
                           const contextMenu = document.createElement('div');
                           contextMenu.style.cssText = \`
@@ -1443,7 +1828,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                             z-index: 999999;
                             padding: 4px 0;
                           \`;
-                          
+
                           const editItem = document.createElement('div');
                           editItem.textContent = '编辑图片';
                           editItem.style.cssText = \`
@@ -1453,10 +1838,10 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                           \`;
                           editItem.onmouseover = () => editItem.style.backgroundColor = '#f5f5f5';
                           editItem.onmouseout = () => editItem.style.backgroundColor = 'transparent';
-                          
+
                           editItem.onclick = () => {
                             document.body.removeChild(contextMenu);
-                            
+
                             // 获取图片信息
                             let imageUrl, imageAlt, imageWidth, imageHeight, imageName;
                             if (imgMatch) {
@@ -1477,7 +1862,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                               const titleMatch = markdownImgMatch[0].match(/\\[([^\\]]*)\\]\\(([^)]+)\\) "([^"]*)"/);
                               imageName = titleMatch ? titleMatch[3] : '';
                             }
-                            
+
                             // 显示编辑对话框
                             if (window.showMarkdownImageDialog) {
                               window.showMarkdownImageDialog({
@@ -1489,10 +1874,10 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                               }, window.currentForm, window.currentEditorView);
                             }
                           };
-                          
+
                           contextMenu.appendChild(editItem);
                           document.body.appendChild(contextMenu);
-                          
+
                           // 点击其他地方关闭菜单
                           const closeMenu = (e) => {
                             if (!contextMenu.contains(e.target)) {
@@ -1508,7 +1893,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 `
               }} />
             )}
-            
+
             {/* 列表和代码组 */}
             <div style={{
               display: 'flex',
@@ -1517,8 +1902,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               padding: '8px 4px',
               borderLeft: '1px solid #d9d9d9'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<UnorderedListOutlined />}
                 title="列表"
                 style={{
@@ -1555,8 +1940,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                   }
                 }}
               />
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<CodeOutlined />}
                 title="代码"
                 style={{
@@ -1594,7 +1979,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 }}
               />
             </div>
-            
+
             {/* 操作组 */}
             <div style={{
               display: 'flex',
@@ -1603,8 +1988,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               padding: '8px 4px',
               borderLeft: '1px solid #d9d9d9'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<UndoOutlined />}
                 title="撤销"
                 style={{
@@ -1627,8 +2012,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 onClick={handleUndo}
                 disabled={historyIndex <= 0}
               />
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<RedoOutlined />}
                 title="重做"
                 style={{
@@ -1652,7 +2037,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 disabled={historyIndex >= markdownHistory.length - 1}
               />
             </div>
-            
+
             {/* 主题切换组 */}
             <div style={{
               display: 'flex',
@@ -1661,8 +2046,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               padding: '8px 4px',
               borderLeft: '1px solid #d9d9d9'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
                 title={isDarkTheme ? "切换到浅色主题" : "切换到深色主题"}
                 style={{
@@ -1684,8 +2069,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 }}
                 onClick={toggleTheme}
               />
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<QuestionCircleOutlined />}
                 title="帮助"
                 style={{
@@ -1729,7 +2114,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 }}
               />
             </div>
-            
+
             {/* 全屏组 */}
             <div style={{
               display: 'flex',
@@ -1738,8 +2123,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               padding: '8px 4px',
               borderLeft: '1px solid #d9d9d9'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
                 title={isFullscreen ? "退出全屏" : "全屏"}
                 style={{
@@ -1770,8 +2155,8 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               padding: '8px 4px',
               borderLeft: '1px solid #d9d9d9'
             }}>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 icon={<PreviewOutlined />}
                 title="预览"
                 style={{
@@ -1794,13 +2179,40 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                 onClick={handlePreview}
               />
             </div>
+            {/* 发布：Web 端同富文本「申请发布」；桌面壳为发布中心下拉 */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '4px 8px',
+              borderLeft: '1px solid #d9d9d9',
+              flexShrink: 0,
+            }}>
+              {assistantDesktopCommercial ? (
+                <Dropdown overlay={publishCenterMenu} trigger={['click']} placement="bottomRight">
+                  <Button size="small" type="default">
+                    发布中心 <DownOutlined />
+                  </Button>
+                </Dropdown>
+              ) : (
+                <Button
+                  size="small"
+                  type="default"
+                  title="申请发布"
+                  onClick={() => applyWebBookPublishRequest(form, timerId, message)}
+                >
+                  发布
+                </Button>
+              )}
+            </div>
           </div>
-          
+
           {/* CodeMirror编辑器容器 */}
-          <div 
+          <div
             id="codemirror-editor"
-            style={{ 
-              width: '100%', 
+            style={{
+              width: '100%',
+              minWidth: 0,
               border: 'none',
               outline: 'none',
               overflow: 'hidden',
@@ -1810,7 +2222,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
             }}
           >
             {codemirrorLoading && !editorView && (
-              <div style={{ 
+              <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
@@ -1826,7 +2238,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               </div>
             )}
           </div>
-          
+
           {/* Markdown状态栏 */}
           <div style={{
             borderTop: '1px solid #d9d9d9',
@@ -1856,12 +2268,12 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
       // 富文本模式 - TinyMCE 按需加载
       if (!tinymceReady || !EditorComponent) {
         return (
-          <div style={{ 
-            height: 'calc(100vh - 41px - 32px)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            border: '1px solid #d9d9d9', 
+          <div style={{
+            height: 'calc(100vh - 41px - 32px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid #d9d9d9',
             borderRadius: '4px',
             backgroundColor: '#fafafa'
           }}>
@@ -1869,7 +2281,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
           </div>
         );
       }
-      
+
       return (
         <EditorComponent
           onInit={(evt, editor) => {
@@ -1887,7 +2299,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               imgUploadHandler(blobInfo, success, failure, form);
             },
             convert_urls: false,
-            file_picker_types: 'media',
+            file_picker_types: 'image media',
             file_picker_callback: (callback, value, meta) => {
               filePickerCallBack(callback, value, meta, form);
             },
@@ -1907,11 +2319,21 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
               'importcss save directionality visualchars template codesample hr pagebreak nonbreaking toc imagetools textpattern noneditable quickbars emoticons'
             ],
             paste_data_images: true,
+            quickbars_insert_toolbar: 'imgupload quicktable',
             toolbar_sticky: true,
             toolbar_sticky_offset: 0,
             toolbar: ['formatselect | bold italic | forecolor backcolor | bullist numlist | alignleft aligncenter alignright alignjustify | link unlink | undo redo | fontsizeselect | paste removeformat | code | preview | fullscreen publish',
             ],
             setup(ed) {
+              // 小屏悬浮工具中的图片上传入口，绕开移动端 image 弹窗回调不稳定问题
+              ed.ui.registry.addButton('imgupload', {
+                icon: 'image',
+                tooltip: '上传图片',
+                onAction: () => {
+                  pickAndInsertImageForTiny(ed, form);
+                },
+              });
+
               // 添加预览按钮
               ed.ui.registry.addButton('preview', {
                 text: '预览',
@@ -1920,7 +2342,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                   handlePreview();
                 }
               });
-              
+
               // 自动生成标题ID功能
               ed.on('NodeChange', (e) => {
                 const node = e.element;
@@ -1937,14 +2359,14 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                   }
                 }
               });
-              
+
               // 内容变化时自动处理标题ID
               ed.on('Change', () => {
                 const content = ed.getContent();
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = content;
                 const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                
+
                 let hasChanges = false;
                 headings.forEach((heading) => {
                   if (!heading.id) {
@@ -1959,7 +2381,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                     }
                   }
                 });
-                
+
                 if (hasChanges) {
                   const newContent = tempDiv.innerHTML;
                   if (newContent !== content) {
@@ -1967,25 +2389,25 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                   }
                 }
               });
-              
-              // 添加发布按钮
-              ed.ui.registry.addButton('publish', {
-                text: '发布',
-                tooltip: '申请发布',
-                onAction: () => {
-                  if ((form.getFieldValue('pubStatus') ?? '') === 'in_review') {
-                    message.warn('已申请，请等待').then(() => {});
-                  } else if ((form.getFieldValue('pubStatus') ?? '') === 'inherit'){
-                    message.info('已发布，请不要频繁修改').then();
-                  }
-                  else {
-                    form.setFieldsValue({pubStatus: 'in_review'});
-                    form.submit();
-                    if (timerId.current)
-                      clearTimeout(timerId.current);
-                  }
-                }
-              });
+
+              if (assistantDesktopCommercial) {
+                ed.ui.registry.addMenuButton('publish', {
+                  text: '发布中心',
+                  fetch: (callback) => {
+                    callback([
+                      { type: 'menuitem', text: '立即发布', onAction: () => openPublishCenter('publish-now') },
+                      { type: 'menuitem', text: '定时发布', onAction: () => openPublishCenter('publish-scheduled') },
+                      { type: 'menuitem', text: '发布记录', onAction: () => openPublishCenter('records') },
+                    ]);
+                  },
+                });
+              } else {
+                ed.ui.registry.addButton('publish', {
+                  text: '发布',
+                  tooltip: '申请发布',
+                  onAction: () => applyWebBookPublishRequest(form, timerId, message),
+                });
+              }
             }
           }}
           onEditorChange={(content) => {
@@ -1999,7 +2421,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
   };
 
   return (
-    <div className="editor-container" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="editor-container" style={{ height: '100vh', minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {saveStatusAlert}
       <Form
         layout="vertical"
@@ -2041,17 +2463,16 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
                     value={data} onChange={(e) => setData(e.target.value)}/>
         </FormItem>
       </Form>
-      
       {/* 编辑器模式切换按钮 - 只在新建时显示 */}
       {!modeLocked && (
-        <div style={{ 
-          marginBottom: '16px', 
-          display: 'flex', 
+        <div style={{
+          marginBottom: '16px',
+          display: 'flex',
           gap: '8px',
           padding: '8px 0',
           borderBottom: '1px solid #f0f0f0'
         }}>
-          <Button 
+          <Button
             type={editorMode === 'rich' ? 'primary' : 'default'}
             icon={<EditOutlined />}
             onClick={() => handleModeChange('rich')}
@@ -2059,7 +2480,7 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
           >
             富文本
           </Button>
-          <Button 
+          <Button
             type={editorMode === 'markdown' ? 'primary' : 'default'}
             icon={<EditOutlined />}
             onClick={() => handleModeChange('markdown')}
@@ -2070,6 +2491,198 @@ const BookView = ({dispatch, currentChapter={id: '', parentId: '', pubTitle: '',
         </div>
       )}
       {renderEditorContent()}
+      <PublishSettingsDrawer
+        open={publishSettingsOpen}
+        onClose={() => setPublishSettingsOpen(false)}
+        accounts={assistantAccountsForUi}
+        onSubmit={async ({ accountIds, scheduled, scheduledAt }) => {
+          try {
+            if (!buildPublishSourcePayload()) {
+              message.warning('请先保存内容，再进行发布');
+              return;
+            }
+            const d = scheduled ? toDate(scheduledAt) : null;
+            await createThirdPublishJobByAccounts(accountIds || [], d ? formatSchedule(d) : undefined);
+            message.success(scheduled ? '已设置定时发布' : '已提交发布');
+            setPublishSettingsOpen(false);
+            setImmersiveRecordOpen(true);
+            await loadPublishProgress();
+          } catch (e) {
+            message.error(e?.message || '提交失败');
+          }
+        }}
+      />
+      <AccountManageModal
+        open={accountManageOpen}
+        onClose={() => setAccountManageOpen(false)}
+        accounts={assistantAccountsForUi}
+        platforms={assistantPlatformsForUi}
+        onAddAccount={async ({ platform, accountName, groupName, platformHomeUrl, extraJson }) => {
+          if (!platform) {
+            message.warning('请先选择平台');
+            return null;
+          }
+          if (assistantAccountBindLockRef.current) {
+            message.warning('正在提交账号，请稍候');
+            return null;
+          }
+          assistantAccountBindLockRef.current = true;
+          try {
+            const resolvedExtra =
+              extraJson != null && String(extraJson).trim() !== ''
+                ? extraJson
+                : JSON.stringify({ groupName });
+            const res = await bindAssistantPublishAccount({
+              platform,
+              bindChannel: 'WEB_SESSION',
+              accountName,
+              extraJson: resolvedExtra,
+              ...(platformHomeUrl ? { platformHomeUrl } : {}),
+            });
+            const payload = res?.data?.data != null ? res.data.data : res?.data ?? {};
+            const account = payload.account != null ? payload.account : payload;
+            const action = payload.action;
+            const replacedPreviousAccountId = payload.replacedPreviousAccountId;
+            await loadAssistantAccounts();
+            setAssistantAccountsForUi((prev) => mergeAssistantAccountIntoList(prev, account));
+            return { account, action, replacedPreviousAccountId };
+          } finally {
+            assistantAccountBindLockRef.current = false;
+          }
+        }}
+        onRefresh={loadAssistantAccounts}
+      />
+      <PublishRecordModal
+        open={immersiveRecordOpen}
+        onClose={() => setImmersiveRecordOpen(false)}
+        rows={progressRows}
+        loading={progressLoading}
+        onRefresh={loadPublishProgress}
+      />
+      <Modal
+        title="定时发布"
+        open={scheduleModalOpen}
+        onCancel={() => setScheduleModalOpen(false)}
+        onOk={async () => {
+          const d = toDate(scheduleAt);
+          if (!d) {
+            message.warning('请先选择发布时间');
+            return;
+          }
+          if (d.getTime() < scheduleBounds.minAt.getTime() || d.getTime() > scheduleBounds.maxAt.getTime()) {
+            const minHour = Math.ceil(scheduleRule.minLeadMinutes / 60);
+            const maxDay = Math.floor(scheduleRule.maxLeadMinutes / (24 * 60));
+            message.warning(`请选择 ${minHour} 小时到 ${maxDay} 天范围内的时间`);
+            return;
+          }
+          await triggerPublishByConfig({ scheduledTime: formatSchedule(d) });
+          message.success('已设置定时发布');
+          setScheduleModalOpen(false);
+        }}
+        okText="保存"
+        cancelText="取消"
+        destroyOnClose
+        width={720}
+      >
+        <Space direction="vertical" style={{ width: '100%' }} size={14}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Typography.Text style={{ minWidth: 60 }}>发布时间</Typography.Text>
+            <DatePicker
+              showTime={{ format: 'HH:mm' }}
+              style={{ width: 280 }}
+              value={scheduleAt}
+              onChange={(v) => setScheduleAt(v)}
+              disabledDate={disabledScheduleDate}
+              format="YYYY年MM月DD日 HH:mm"
+              placeholder="选择发布时间"
+            />
+          </div>
+          {(() => {
+            const d = toDate(scheduleAt);
+            if (!d) return null;
+            return (
+              <Typography.Text>
+                当前选择 {d.getFullYear()} 年 {String(d.getMonth() + 1).padStart(2, '0')} 月 {String(d.getDate()).padStart(2, '0')} 日 {String(d.getHours()).padStart(2, '0')}:{String(d.getMinutes()).padStart(2, '0')} 发布
+              </Typography.Text>
+            );
+          })()}
+          <Card size="small" style={{ background: '#fafafa', borderColor: '#f0f0f0' }}>
+            <Typography.Text type="secondary">
+              {(() => {
+                const minHour = Math.ceil(scheduleRule.minLeadMinutes / 60);
+                const maxDay = Math.floor(scheduleRule.maxLeadMinutes / (24 * 60));
+                const platforms = scheduleRule.platformCodes.length ? scheduleRule.platformCodes.join(' / ') : '默认规则';
+                return `提示：已按所选平台定时策略取交集（${platforms}），当前可选 ${minHour} 小时到 ${maxDay} 天。定时指令由桌面 JS 提交到平台官方定时表单/接口，云端仅记录与缓存。`;
+              })()}
+            </Typography.Text>
+          </Card>
+        </Space>
+      </Modal>
+      <Modal
+        title="发布进度状态"
+        open={progressModalOpen}
+        onCancel={() => setProgressModalOpen(false)}
+        footer={[
+          <Button key="refresh" onClick={() => loadPublishProgress().catch(() => {})}>刷新</Button>,
+          <Button key="close" type="primary" onClick={() => setProgressModalOpen(false)}>关闭</Button>,
+        ]}
+        width={860}
+      >
+        {progressLoading ? (
+          <Spin />
+        ) : !progressRows.length ? (
+          <Typography.Text type="secondary">暂无发布任务</Typography.Text>
+        ) : (
+          <div style={{ maxHeight: 420, overflowY: 'auto' }}>
+            {progressRows.map((row) => (
+              <Card key={row.id} size="small" style={{ marginBottom: 10 }}>
+                <Space direction="vertical" size={2} style={{ width: '100%' }}>
+                  <Typography.Text strong>{row.sourcePubTitle || `任务 ${row.id}`}</Typography.Text>
+                  <Space>
+                    <Tag>{row.status || 'UNKNOWN'}</Tag>
+                    <Typography.Text type="secondary">任务ID：{row.id}</Typography.Text>
+                  </Space>
+                  {(row.tasks || []).map((t) => (
+                    <Space key={t.id} size={8} wrap>
+                      <Tag>{t.platform}</Tag>
+                      <Tag color={t.status === 'SUCCESS' ? 'green' : t.status === 'FAILED' ? 'red' : 'blue'}>{t.status}</Tag>
+                      {t.errorCode ? <Tag color="orange">{t.errorCode}</Tag> : null}
+                      {t.errorMsg ? <Typography.Text type="secondary">{t.errorMsg}</Typography.Text> : null}
+                    </Space>
+                  ))}
+                </Space>
+              </Card>
+            ))}
+          </div>
+        )}
+      </Modal>
+      {publishTip.visible ? (
+        <div
+          onClick={() => {
+            setProgressModalOpen(true);
+            loadPublishProgress().catch(() => {});
+          }}
+          style={{
+            position: 'fixed',
+            right: 20,
+            bottom: 24,
+            zIndex: 1000,
+            background: '#fff',
+            border: '1px solid #f0f0f0',
+            borderRadius: 8,
+            boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+            padding: '8px 12px',
+            cursor: 'pointer',
+          }}
+        >
+          <Space size={8}>
+            <Tag color={publishTip.type === 'success' ? 'green' : publishTip.type === 'failed' ? 'red' : publishTip.type === 'running' ? 'blue' : 'default'}>
+              {publishTip.type === 'success' ? '发布成功' : publishTip.type === 'failed' ? '发布失败' : publishTip.type === 'running' ? '发布中' : '发布状态'}
+            </Tag>
+            <Typography.Text type="secondary">{publishTip.text}</Typography.Text>
+          </Space>
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -2083,7 +2696,7 @@ let originalContent = '';
 // HTML转Markdown的简单实现
 function htmlToMarkdown(html) {
   let markdown = html;
-  
+
   // 基本转换规则
   markdown = markdown.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n');
   markdown = markdown.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n');
@@ -2091,37 +2704,37 @@ function htmlToMarkdown(html) {
   markdown = markdown.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n');
   markdown = markdown.replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1\n');
   markdown = markdown.replace(/<h6[^>]*>(.*?)<\/h6>/gi, '###### $1\n');
-  
+
   markdown = markdown.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
   markdown = markdown.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
   markdown = markdown.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
   markdown = markdown.replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*');
-  
+
   markdown = markdown.replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)');
-  
+
   markdown = markdown.replace(/<ul[^>]*>(.*?)<\/ul>/gis, function(match, content) {
     return content.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
   });
-  
+
   markdown = markdown.replace(/<ol[^>]*>(.*?)<\/ol>/gis, function(match, content) {
     let counter = 1;
     return content.replace(/<li[^>]*>(.*?)<\/li>/gi, function(match, content) {
       return `${counter++}. ${content}\n`;
     });
   });
-  
+
   markdown = markdown.replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`');
   markdown = markdown.replace(/<pre[^>]*><code[^>]*>(.*?)<\/code><\/pre>/gis, '```\n$1\n```');
-  
+
   markdown = markdown.replace(/<br[^>]*\/?>/gi, '\n');
   markdown = markdown.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
-  
+
   // 清理多余的标签
   markdown = markdown.replace(/<[^>]*>/g, '');
-  
+
   // 清理多余的空行
   markdown = markdown.replace(/\n{3,}/g, '\n\n');
-  
+
   return markdown.trim();
 }
 
@@ -2131,7 +2744,7 @@ async function generateSyntaxHighlightedHTML(code, language, isDarkMode) {
     // 懒加载语法高亮库
     const { SyntaxHighlighter, vscDarkPlus, vs } = await loadSyntaxHighlighter();
     const { renderToString } = await loadMarkdown();
-    
+
     const style = isDarkMode ? vscDarkPlus : vs;
     const highlightedHTML = renderToString(
       React.createElement(SyntaxHighlighter, {
@@ -2167,40 +2780,40 @@ async function generateSyntaxHighlightedHTML(code, language, isDarkMode) {
 // Markdown转HTML的简单实现（支持异步语法高亮）
 async function markdownToHtml(markdown, isDarkMode = false) {
   let html = markdown;
-  
+
   // 标题
   html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
   html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
   html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-  
+
   // 粗体和斜体
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  
+
   // 链接
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-  
+
   // 图片处理 - 支持带HTML注释的markdown图片
   html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)(?: "([^"]*)")?(?:\s*<!--\s*尺寸:\s*(\d+)x(\d+)\s*-->)?/g, (match, alt, src, title, width, height) => {
     let imgStyle = "max-width: 100%; height: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);";
-    
+
     // 如果指定了尺寸，应用具体尺寸
     if (width && height) {
       imgStyle = `width: ${width}px; height: ${height}px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);`;
     }
-    
+
     // 构建title属性
     let titleAttr = title ? ` title="${title}"` : '';
-    
+
     return `<div style="text-align: center; margin: 16px 0;"><img src="${src}" alt="${alt || ''}"${titleAttr} style="${imgStyle}" onerror="this.style.display='none'; console.warn('图片加载失败:', '${src}');" /></div>`;
   });
-  
+
   // 处理HTML格式的图片标签（保持原有样式和属性）
   html = html.replace(/<img([^>]*?)src="([^"]*)"([^>]*?)>/g, (match, beforeSrc, src, afterSrc) => {
     // 提取alt属性
     const altMatch = match.match(/alt="([^"]*)"/);
     const alt = altMatch ? altMatch[1] : '';
-    
+
     // 检查是否已经有样式设置
     if (match.includes('style=') || match.includes('width=') || match.includes('height=')) {
       // 如果已经有样式，直接包装在div中
@@ -2210,7 +2823,7 @@ async function markdownToHtml(markdown, isDarkMode = false) {
       return `<div style="text-align: center; margin: 16px 0;"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onerror="this.style.display='none'; console.warn('图片加载失败:', '${src}');" /></div>`;
     }
   });
-  
+
   // 代码块处理（使用真正的语法高亮，异步处理）
   const codeBlockMatches = [];
   html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
@@ -2219,9 +2832,9 @@ async function markdownToHtml(markdown, isDarkMode = false) {
     codeBlockMatches.push({ placeholder, language, code: code.trim(), isDarkMode });
     return placeholder;
   });
-  
+
   // 异步处理所有代码块
-  const codeBlockPromises = codeBlockMatches.map(({ language, code, isDarkMode }) => 
+  const codeBlockPromises = codeBlockMatches.map(({ language, code, isDarkMode }) =>
     generateSyntaxHighlightedHTML(code, language, isDarkMode).catch(err => {
       console.warn('代码块高亮失败:', err);
       const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -2229,23 +2842,23 @@ async function markdownToHtml(markdown, isDarkMode = false) {
     })
   );
   const highlightedBlocks = await Promise.all(codeBlockPromises);
-  
+
   // 替换回代码块
   codeBlockMatches.forEach(({ placeholder }, index) => {
     html = html.replace(placeholder, highlightedBlocks[index]);
   });
-  
+
   // 行内代码
   html = html.replace(/`([^`]+)`/g, '<code style="background-color: rgba(27, 31, 35, 0.05); color: #2c3e50; padding: 0.2em 0.4em; border-radius: 3px; font-family: \'JetBrains Mono\', \'Fira Code\', \'Cascadia Code\', \'SF Mono\', Monaco, \'Consolas\', \'Liberation Mono\', \'Courier New\', monospace;">$1</code>');
-  
+
   // 列表
   html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
   html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-  
+
   // 段落
   html = html.replace(/\n\n/g, '</p><p>');
   html = '<p>' + html + '</p>';
-  
+
   return html;
 }
 
@@ -2257,14 +2870,14 @@ async function toggleMarkdownMode(editor) {
     const htmlContent = await markdownToHtml(markdownContent, isDarkTheme);
     editor.setContent(htmlContent);
     isMarkdownMode = false;
-    
+
     // 更新模式指示器
     const modeButton = editor.theme.panel.find('toolbar').find('button[data-mce-name="mode_indicator"]')[0];
     if (modeButton) {
       modeButton.text('富文本');
       modeButton.aria('label', '当前模式：富文本');
     }
-    
+
     message.success('已切换到富文本模式');
   } else {
     // 从富文本模式切换到Markdown模式
@@ -2272,14 +2885,14 @@ async function toggleMarkdownMode(editor) {
     const markdownContent = htmlToMarkdown(originalContent);
     editor.setContent(markdownContent);
     isMarkdownMode = true;
-    
+
     // 更新模式指示器
     const modeButton = editor.theme.panel.find('toolbar').find('button[data-mce-name="mode_indicator"]')[0];
     if (modeButton) {
       modeButton.text('Markdown');
       modeButton.aria('label', '当前模式：Markdown');
     }
-    
+
     message.success('已切换到Markdown模式');
   }
 }
@@ -2288,7 +2901,7 @@ async function toggleMarkdownMode(editor) {
 async function showMarkdownPreview(editor) {
   const content = editor.getContent();
   let htmlContent;
-  
+
   if (isMarkdownMode) {
     // 如果是Markdown模式，直接转换
     htmlContent = await markdownToHtml(content, isDarkTheme);
@@ -2297,7 +2910,7 @@ async function showMarkdownPreview(editor) {
     const markdown = htmlToMarkdown(content);
     htmlContent = await markdownToHtml(markdown, isDarkTheme);
   }
-  
+
   editor.windowManager.open({
     title: 'Markdown预览',
     body: {
@@ -2351,7 +2964,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999999;
   `;
-  
+
   // 创建对话框
   const dialog = document.createElement('div');
   dialog.className = 'markdown-image-dialog';
@@ -2368,7 +2981,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
     z-index: 999999;
     padding: 0;
   `;
-  
+
   // 创建对话框内容
   dialog.innerHTML = `
     <div style="padding: 20px 20px 0 20px;">
@@ -2376,13 +2989,13 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
         <h3 style="margin: 0; color: #333;">插入/编辑图片</h3>
         <button id="closeBtn" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999;">&times;</button>
       </div>
-      
+
       <!-- 标签页 -->
       <div style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 20px;">
         <button id="urlTab" class="tab-btn active" style="padding: 8px 16px; border: none; background: none; border-bottom: 2px solid #1890ff; color: #1890ff; cursor: pointer;">普通</button>
         <button id="uploadTab" class="tab-btn" style="padding: 8px 16px; border: none; background: none; border-bottom: 2px solid transparent; color: #666; cursor: pointer;">上传</button>
       </div>
-      
+
       <!-- URL标签页内容 -->
       <div id="urlTabContent" class="tab-content">
         <div style="margin-bottom: 15px;">
@@ -2409,7 +3022,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
           </div>
         </div>
       </div>
-      
+
       <!-- 上传标签页内容 -->
       <div id="uploadTabContent" class="tab-content" style="display: none;">
         <div style="margin-bottom: 15px;">
@@ -2437,17 +3050,17 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
         </div>
       </div>
     </div>
-    
+
     <div style="padding: 20px; border-top: 1px solid #e8e8e8; display: flex; justify-content: flex-end; gap: 10px;">
       <button id="cancelBtn" style="padding: 8px 16px; border: 1px solid #d9d9d9; background: white; border-radius: 4px; cursor: pointer;">取消</button>
       <button id="saveBtn" style="padding: 8px 16px; border: none; background: #1890ff; color: white; border-radius: 4px; cursor: pointer;">保存</button>
     </div>
   `;
-  
+
   // 添加到页面
   document.body.appendChild(backdrop);
   document.body.appendChild(dialog);
-  
+
   // 如果是编辑已有图片，填充数据
   if (existingImage) {
     const urlInput = dialog.querySelector('#imageUrl');
@@ -2455,20 +3068,20 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
     const altInput = dialog.querySelector('#imageAlt');
     const widthInput = dialog.querySelector('#imageWidth');
     const heightInput = dialog.querySelector('#imageHeight');
-    
+
     urlInput.value = existingImage.url || '';
     nameInput.value = existingImage.name || '';
     altInput.value = existingImage.alt || '';
     widthInput.value = existingImage.width || '';
     heightInput.value = existingImage.height || '';
   }
-  
+
   // 标签页切换功能
   const urlTab = dialog.querySelector('#urlTab');
   const uploadTab = dialog.querySelector('#uploadTab');
   const urlTabContent = dialog.querySelector('#urlTabContent');
   const uploadTabContent = dialog.querySelector('#uploadTabContent');
-  
+
   urlTab.onclick = () => {
     urlTab.classList.add('active');
     uploadTab.classList.remove('active');
@@ -2479,7 +3092,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
     uploadTab.style.borderBottomColor = 'transparent';
     uploadTab.style.color = '#666';
   };
-  
+
   uploadTab.onclick = () => {
     uploadTab.classList.add('active');
     urlTab.classList.remove('active');
@@ -2490,47 +3103,47 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
     urlTab.style.borderBottomColor = 'transparent';
     urlTab.style.color = '#666';
   };
-  
+
   // 比例锁定功能
   let isLocked = true;
   let aspectRatio = 1;
-  
+
   const setupRatioLock = (widthInput, heightInput, lockBtn) => {
     const updateHeight = () => {
       if (isLocked && widthInput.value && aspectRatio) {
         heightInput.value = Math.round(widthInput.value / aspectRatio);
       }
     };
-    
+
     const updateWidth = () => {
       if (isLocked && heightInput.value && aspectRatio) {
         widthInput.value = Math.round(heightInput.value * aspectRatio);
       }
     };
-    
+
     widthInput.addEventListener('input', updateHeight);
     heightInput.addEventListener('input', updateWidth);
-    
+
     lockBtn.onclick = () => {
       isLocked = !isLocked;
       lockBtn.textContent = isLocked ? '🔒' : '🔓';
       lockBtn.title = isLocked ? '锁定比例' : '解锁比例';
     };
   };
-  
+
   // 为URL标签页设置比例锁定
   const urlInput = dialog.querySelector('#imageUrl');
   const urlWidthInput = dialog.querySelector('#imageWidth');
   const urlHeightInput = dialog.querySelector('#imageHeight');
   const urlLockBtn = dialog.querySelector('#lockRatioBtn');
   setupRatioLock(urlWidthInput, urlHeightInput, urlLockBtn);
-  
+
   // 为上传标签页设置比例锁定
   const uploadWidthInput = dialog.querySelector('#uploadImageWidth');
   const uploadHeightInput = dialog.querySelector('#uploadImageHeight');
   const uploadLockBtn = dialog.querySelector('#uploadLockRatioBtn');
   setupRatioLock(uploadWidthInput, uploadHeightInput, uploadLockBtn);
-  
+
   // 图片URL变化时获取尺寸
   urlInput.addEventListener('input', () => {
     if (urlInput.value) {
@@ -2543,7 +3156,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
       img.src = urlInput.value;
     }
   });
-  
+
   // 文件选择时获取尺寸
   const fileInput = dialog.querySelector('#imageFile');
   fileInput.addEventListener('change', (e) => {
@@ -2562,24 +3175,24 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
       reader.readAsDataURL(file);
     }
   });
-  
+
   // 绑定事件
   const closeBtn = dialog.querySelector('#closeBtn');
   const cancelBtn = dialog.querySelector('#cancelBtn');
   const saveBtn = dialog.querySelector('#saveBtn');
-  
+
   const closeDialog = () => {
     document.body.removeChild(backdrop);
     document.body.removeChild(dialog);
   };
-  
+
   closeBtn.onclick = closeDialog;
   cancelBtn.onclick = closeDialog;
   backdrop.onclick = closeDialog;
-  
+
   saveBtn.onclick = async () => {
     const isUploadTab = uploadTab.classList.contains('active');
-    
+
     if (isUploadTab) {
       // 上传模式
       const file = fileInput.files[0];
@@ -2587,26 +3200,26 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
         message.warn('请选择图片文件');
         return;
       }
-      
+
       // 检查文件大小
       const isGt15M = file.size / 1024 / 1024 > 15;
       if (isGt15M) {
         message.warn('图片尺寸超限, 请压缩后上传');
         return;
       }
-      
+
       try {
         message.loading('正在上传图片...', 0);
-        
+
         const formData = new FormData();
         formData.append("file", file);
         if (formInstance) {
           formData.append("id", formInstance.getFieldValue("id"));
         }
         const res = await uploadFile(formData);
-        
+
         message.destroy();
-        
+
         if (res?.data?.url) {
           const uploadImageAlt = dialog.querySelector('#uploadImageAlt');
           const uploadImageName = dialog.querySelector('#uploadImageName');
@@ -2627,7 +3240,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
         message.warn('请输入图片URL');
         return;
       }
-      
+
       const imageAlt = dialog.querySelector('#imageAlt');
       const imageName = dialog.querySelector('#imageName');
       insertImage(url, imageAlt.value || '图片', urlWidthInput.value, urlHeightInput.value, imageName.value);
@@ -2635,11 +3248,11 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
       message.success('图片插入成功');
     }
   };
-  
+
   // 插入图片到编辑器
   function insertImage(url, alt, width, height, imageName = '') {
     let imageMarkdown;
-    
+
     // 始终使用标准markdown语法，即使设置了宽高
     // 标准markdown语法：![alt](url "title")
     if (imageName) {
@@ -2647,12 +3260,12 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
     } else {
       imageMarkdown = `![${alt}](${url})`;
     }
-    
+
     // 如果设置了宽高，在markdown后面添加HTML注释说明尺寸
     if (width || height) {
       imageMarkdown += ` <!-- 尺寸: ${width || 'auto'}x${height || 'auto'} -->`;
     }
-    
+
     // 插入到编辑器中
     if (editorInstance) {
       const doc = editorInstance.state.doc;
@@ -2675,7 +3288,7 @@ function showMarkdownImageDialog(existingImage = null, formInstance = null, edit
         const after = markdownContent.substring(end);
         const newContent = before + `\n${imageMarkdown}\n` + after;
         handleMarkdownChange(newContent);
-        
+
         setTimeout(() => {
           textarea.focus();
           textarea.setSelectionRange(start + imageMarkdown.length + 2, start + imageMarkdown.length + 2);
@@ -2702,7 +3315,7 @@ function showImageEditDialog(imageUrl, imageAlt, format = 'html') {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999999;
   `;
-  
+
   // 创建对话框
   const dialog = document.createElement('div');
   dialog.className = 'image-edit-dialog';
@@ -2719,7 +3332,7 @@ function showImageEditDialog(imageUrl, imageAlt, format = 'html') {
     z-index: 999999;
     padding: 20px;
   `;
-  
+
   // 创建表单内容
   dialog.innerHTML = `
     <div style="margin-bottom: 20px;">
@@ -2754,90 +3367,90 @@ function showImageEditDialog(imageUrl, imageAlt, format = 'html') {
       <button id="editConfirmBtn" style="padding: 8px 16px; border: none; background: #1890ff; color: white; border-radius: 4px; cursor: pointer;">确认修改</button>
     </div>
   `;
-  
+
   // 添加到页面
   document.body.appendChild(backdrop);
   document.body.appendChild(dialog);
-  
+
   // 获取图片原始尺寸
   const img = new Image();
   img.onload = function() {
     const originalWidth = this.naturalWidth;
     const originalHeight = this.naturalHeight;
     const aspectRatio = originalWidth / originalHeight;
-    
+
     // 设置默认值（原始尺寸）
     const widthInput = dialog.querySelector('#editImageWidth');
     const heightInput = dialog.querySelector('#editImageHeight');
     const lockRatioCheckbox = dialog.querySelector('#editLockRatio');
-    
+
     widthInput.value = originalWidth;
     heightInput.value = originalHeight;
-    
+
     // 比例锁定功能
     let isLocked = true;
-    
+
     const updateHeight = () => {
       if (isLocked && widthInput.value) {
         heightInput.value = Math.round(widthInput.value / aspectRatio);
       }
     };
-    
+
     const updateWidth = () => {
       if (isLocked && heightInput.value) {
         widthInput.value = Math.round(heightInput.value * aspectRatio);
       }
     };
-    
+
     widthInput.addEventListener('input', updateHeight);
     heightInput.addEventListener('input', updateWidth);
-    
+
     lockRatioCheckbox.addEventListener('change', (e) => {
       isLocked = e.target.checked;
     });
   };
   img.src = imageUrl;
-  
+
   // 绑定事件
   const cancelBtn = dialog.querySelector('#editCancelBtn');
   const confirmBtn = dialog.querySelector('#editConfirmBtn');
-  
+
   const closeDialog = () => {
     document.body.removeChild(backdrop);
     document.body.removeChild(dialog);
   };
-  
+
   cancelBtn.onclick = closeDialog;
   backdrop.onclick = closeDialog;
-  
+
   confirmBtn.onclick = () => {
     const alt = dialog.querySelector('#editImageAlt').value || '图片';
     const width = dialog.querySelector('#editImageWidth').value;
     const height = dialog.querySelector('#editImageHeight').value;
     const center = dialog.querySelector('#editImageCenter').checked;
-    
+
     // 生成新的图片引用
     let newImageMarkdown;
-    
+
     if (width || height || center) {
       // 使用HTML格式
       let imgAttributes = '';
       if (width) imgAttributes += ` width="${width}"`;
       if (height) imgAttributes += ` height="${height}"`;
       if (center) imgAttributes += ' style="display: block; margin: 0 auto;"';
-      
+
       newImageMarkdown = `<img src="${imageUrl}" alt="${alt}"${imgAttributes}>`;
     } else {
       // 使用标准markdown语法
       newImageMarkdown = `![${alt}](${imageUrl})`;
     }
-    
+
     // 替换编辑器中的图片
     const markdownContent = document.querySelector('#codemirror-editor textarea');
     if (markdownContent) {
       const text = markdownContent.value;
       let newText;
-      
+
       if (format === 'html') {
         // 替换HTML格式的图片
         newText = text.replace(/<img[^>]*src="[^"]*"[^>]*>/g, (match) => {
@@ -2855,10 +3468,10 @@ function showImageEditDialog(imageUrl, imageAlt, format = 'html') {
           return match;
         });
       }
-      
+
       handleMarkdownChange(newText);
     }
-    
+
     closeDialog();
     message.success('图片修改成功');
   };

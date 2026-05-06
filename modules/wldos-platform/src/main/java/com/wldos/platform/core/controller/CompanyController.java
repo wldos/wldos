@@ -19,6 +19,7 @@ import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.common.vo.SelectOption;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoCompany;
 import com.wldos.platform.core.service.CompanyService;
@@ -77,7 +78,7 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	@ApiOperation(value = "公司下拉选项", notes = "支持多租户查询的公司下拉选项列表")
 	@GetMapping("select")
 	public List<SelectOption> queryComSelectOption() {
-		return this.all().stream().map(com -> SelectOption.of(com.getComName(), com.getId().toString())).collect(Collectors.toList());
+		return this.allEntities().stream().map(com -> SelectOption.of(com.getComName(), com.getId().toString())).collect(Collectors.toList());
 	}
 
 	/**
@@ -88,6 +89,7 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	 */
 	@ApiOperation(value = "添加租户管理员", notes = "超级管理员后台给租户添加管理员")
 	@PostMapping("admin")
+	@OpLog(action = "添加租户管理员", resourceType = "company", resourceId = "#orgUser['userComId']")
 	public Result addTenantAdmin(@ApiParam(value = "添加人员参数", required = true) @RequestBody Map<String, Object> orgUser) {
 		Long userComId = Long.parseLong(orgUser.get("userComId").toString());
 		List<String> userIds = (List<String>) orgUser.get("userIds");
@@ -105,6 +107,7 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 		@ApiImplicitParam(name = "userComId", value = "用户公司ID", dataTypeClass = Long.class, paramType = "body", required = true)
 	})
 	@DeleteMapping("rmAdmin")
+	@OpLog(action = "移除租户管理员", resourceType = "company", resourceId = "#params['userComId']")
 	public Boolean removeTenantAdmin(@RequestBody Map<String, Object> params) {
 		List<Long> ids = ((List<String>) params.get("ids")).stream().map(Long::parseLong).collect(Collectors.toList());
 		Long userComId = Long.parseLong(ObjectUtils.string(params.get("userComId")));

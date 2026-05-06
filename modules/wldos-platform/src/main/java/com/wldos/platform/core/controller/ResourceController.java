@@ -20,6 +20,7 @@ import io.github.wldos.common.res.Result;
 import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.common.utils.TreeUtils;
 import io.github.wldos.common.vo.TreeSelectOption;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.service.ResourceService;
 import com.wldos.platform.core.vo.AuthRes;
@@ -194,6 +195,7 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	 */
 	@ApiOperation(value = "按模板新建菜单", notes = "按模板新建菜单")
 	@PostMapping("addSimple")
+	@OpLog(action = "按模板新建菜单", resourceType = "resource", resourceId = "#resSimple.id")
 	public Result addSimpleMenu(@ApiParam(value = "资源模板", required = true) @Valid @RequestBody ResSimple resSimple) {
 		this.service.addSimpleMenu(resSimple, this.getUserId(), this.getUserIp());
 		this.refreshAuth();

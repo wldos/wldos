@@ -7,6 +7,50 @@ import NoFoundPage from "@/pages/404";
 import { injectPluginStyles, resolvePluginEsmUrl } from '@/utils/pluginCoLocatedLoader';
 import { getComponentPath } from '@/utils/getComponentPath';
 
+class RouteComponentErrorBoundary extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { hasError: false, error: null };
+	}
+
+	static getDerivedStateFromError(error) {
+		return { hasError: true, error };
+	}
+
+	componentDidCatch(error) {
+		if (process.env.NODE_ENV === 'development') {
+			console.warn('[AdminDynamicRouter] 动态组件加载失败，降级为路由级错误页面:', error);
+		}
+	}
+
+	render() {
+		if (!this.state.hasError) {
+			return this.props.children;
+		}
+		const msg = this.state.error?.message || '';
+		const isModuleNotFound =
+			msg.includes('Cannot find module') ||
+			msg.includes("can't resolve") ||
+			msg.includes('Loading chunk') ||
+			msg.includes('ChunkLoadError');
+		if (isModuleNotFound) {
+			return <NoFoundPage key={window?.location?.pathname} />;
+		}
+		return (
+			<GridContent>
+				<Card>
+					<Alert
+						type="error"
+						message="页面加载失败"
+						description="当前菜单配置的组件不存在或无法加载，请检查菜单 component 配置。"
+						showIcon
+					/>
+				</Card>
+			</GridContent>
+		);
+	}
+}
+
 // Normalize component path: './ext/Page1' -> 'ext/Page1'
 const normalizeComponentPath = (component) => {
 	if (!component) return '';
@@ -829,6 +873,26 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 			if (!localLazyCompCacheRef.current[cacheKey]) {
 				localLazyCompCacheRef.current[cacheKey] = React.lazy(() =>
 					import(/* webpackChunkName: "dynamic-[request]" */ `@/pages/${componentPath}/index`)
+						.catch((err) => {
+							// 动态菜单 component 配错时，不抛到全局错误页，降级当前页 404
+							const msg = err?.message || '';
+							const isMissingModule =
+								msg.includes('Cannot find module')
+								|| msg.includes("can't resolve")
+								|| msg.includes('Loading chunk')
+								|| msg.includes('ChunkLoadError');
+							if (process.env.NODE_ENV === 'development') {
+								console.warn('[admindynamicrouter] 本地动态组件加载失败，降级404', {
+									componentPath,
+									error: err,
+								});
+							}
+							if (isMissingModule) {
+								return { default: NoFoundPage };
+							}
+							// 其它异常交由 ErrorBoundary 呈现友好错误提示
+							throw err;
+						})
 				);
 			}
 			LazyComp = localLazyCompCacheRef.current[cacheKey];
@@ -854,7 +918,9 @@ const AdminDynamicRouter = ({ dynamicRoutes, pluginManifest, dispatch }) => {
 					<Spin size="large" />
 				</div>
 			}>
-				<LazyComp key={location.pathname} />
+				<RouteComponentErrorBoundary>
+					<LazyComp key={location.pathname} />
+				</RouteComponentErrorBoundary>
 			</Suspense>
 		);
 	}

@@ -19,6 +19,7 @@ import com.wldos.platform.auth.vo.Register;
 import com.wldos.framework.mvc.controller.EntityController;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
+import io.github.wldos.framework.support.audit.annotation.OpLog;
 import io.github.wldos.platform.support.resource.vo.Menu;
 import com.wldos.platform.core.entity.WoOrg;
 import com.wldos.platform.core.entity.WoUser;
@@ -180,6 +181,8 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 	 */
 	@ApiOperation(value = "管理员修改密码", notes = "管理员后台设置新密码，直接覆盖原密码")
 	@PostMapping("passwd4admin")
+	@OpLog(action = "管理员重置密码", resourceType = "user", resourceId = "#adminPasswdModifyParams.id",
+			sensitiveFields = {"password", "passwd", "newPasswd", "oldPasswd", "confirm", "token", "secret", "captcha"})
 	public Login changePasswd4admin(@ApiParam(value = "管理员密码修改参数", required = true) @Valid @RequestBody AdminPasswdModifyParams adminPasswdModifyParams) {
 
 		getLog().info("用户id: {} 密码修改, 修改人id：{}", adminPasswdModifyParams.getId(), this.getUserId());
@@ -208,6 +211,7 @@ public class UserAdminController extends EntityController<UserService, WoUser> {
 	 */
 	@ApiOperation(value = "管理员添加用户", notes = "管理员后台添加新用户")
 	@PostMapping("register4admin")
+	@OpLog(action = "管理员新增用户", resourceType = "user", resourceId = "#register.id")
 	public Login addUser4admin(@ApiParam(value = "用户注册信息", required = true) @Valid @RequestBody Register register) {
 		register.setId(this.nextId());
 		register.setRegisterIp(this.getUserIp());

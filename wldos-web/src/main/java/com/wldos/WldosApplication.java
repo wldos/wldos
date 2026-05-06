@@ -13,9 +13,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
+@SuppressWarnings("SpringComponentScan")
 @SpringBootApplication
 @ComponentScan(
-    basePackages = "com.wldos",
+    basePackages =  {"com.wldos", "${wldos.framework.base-package:com.wldos.never}"},
     excludeFilters = @ComponentScan.Filter(
         type = FilterType.REGEX,
         pattern = "com\\.wldos\\.plugin\\..*"

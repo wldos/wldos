@@ -41,8 +41,47 @@ const CreateForm = (props) => {
     apps,
     menus,
     resTypeOptions,
-    parentId
+    parentId,
+    sourceRecord,
+    addMode
   } = props;
+
+  // 基于"选定资源 + 新增模式"派生默认值，提升新建子级/同级时的配置效率
+  // - 子级(child)：与父资源一致的归属应用、应用状态、资源类型；展示顺序起始为 1
+  // - 同级(sibling)：与同级资源一致的资源类型/归属应用/应用状态；展示顺序在源记录基础上 +1（上限 100）
+  // - 顶部新建(无 sourceRecord)：保持既有默认值
+  const computedDefaults = (() => {
+    const base = {
+      resourceType: 'menu',
+      requestMethod: 'GET',
+      target: '_self',
+      parentId,
+      isValid: '1', // 默认有效，避免新建后资源不可见
+      displayOrder: 1, // 默认值，后端会按同级最大值+1覆盖（上限100）
+    };
+    if (!sourceRecord) return base;
+
+    // isValid 在表格中以 '0'/'1' 字符串枚举，统一转字符串以匹配 Select 选项
+    const isValid = sourceRecord.isValid !== undefined && sourceRecord.isValid !== null
+      ? String(sourceRecord.isValid)
+      : undefined;
+
+    let displayOrder = 1;
+    const srcOrder = Number(sourceRecord.displayOrder);
+    if (addMode === 'sibling' && Number.isFinite(srcOrder)) {
+      displayOrder = Math.min(srcOrder + 1, 100);
+    } else if (addMode === 'child') {
+      displayOrder = 1;
+    }
+
+    return {
+      ...base,
+      resourceType: sourceRecord.resourceType || base.resourceType,
+      appId: sourceRecord.appId,
+      isValid,
+      displayOrder,
+    };
+  })();
 
   const [termValue, setTermValue] = useState(undefined);
   const [iconPickerVisible, setIconPickerVisible] = useState(false);
@@ -570,13 +609,7 @@ const CreateForm = (props) => {
       <Form
         {...formLayout}
         form={form}
-        initialValues={{
-          resourceType: 'menu',
-          requestMethod: 'GET',
-          target: '_self',
-          parentId,
-          displayOrder: 1, // 默认值，后端会按同级最大值+1覆盖（上限100）
-        }}
+        initialValues={computedDefaults}
       >
         {renderContent()}
       </Form>
