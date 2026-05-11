@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -78,7 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * cms全局service。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021/6/13
  * @version 1.0
  */
@@ -380,7 +380,7 @@ public class KCMSService extends NonEntityService {
 		mp.setKey(pic);
 		for (KPubmeta meta : metas) {
 			if (meta.getMetaKey().equals(pic)) {
-				mp.setUrl(this.store.getFileUrl(meta.getMetaValue(), null));
+				mp.setUrl(this.store.getPublicUrl(meta.getMetaValue(), null));
 				break;
 			}
 		}

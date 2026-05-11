@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.service;
@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * {@code @Component} 上——Spring Boot 评估时会把"待注册的 default 自身"也算入 typecheck，
  * 触发"已存在 bean"误判，反而导致默认实现被排除、容器里没有任何 HolidayExternalSource。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

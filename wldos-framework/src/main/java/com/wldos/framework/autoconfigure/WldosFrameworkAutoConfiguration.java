@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -26,7 +26,7 @@ import org.springframework.context.annotation.FilterType;
  * - 第三方应用需要在自己的配置类中配置ComponentScan来扫描自己的包路径
  * - SDK 契约层的 bean（CommonOperation、FreeJdbcTemplate）已迁移到 WldosSdkAutoConfiguration
  * 
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2025-12-26
  * @version 2.0
  */

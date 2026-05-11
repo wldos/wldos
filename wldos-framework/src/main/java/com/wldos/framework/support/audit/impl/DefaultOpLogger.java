@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>Bean 装配：由 {@code com.wldos.framework.support.audit.config.AuditAutoConfiguration}
  * 通过 {@code @Bean + @ConditionalOnMissingBean(IOpLogger.class)} 装配，理由参见 {@link DefaultLoginLogger}。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -34,7 +34,7 @@ import io.github.wldos.framework.support.audit.ResourceTypeDict;
  * <p>命名约定（与 02-OpLog-API覆盖清单 一致）：{@code code} 全小写英文 + 单数 + 下划线，
  * 与审计表 {@code wo_op_log.resource_type} 列严格一致。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/05
  * @version 1.0
  */

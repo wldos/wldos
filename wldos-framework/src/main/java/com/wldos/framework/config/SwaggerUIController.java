@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Swagger UI 控制器
  * 重定向到 Knife4j 文档页面（默认就是左右分栏布局）
  * 
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2025-12-28
  * @version 2.0
  */

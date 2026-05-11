@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -9,7 +9,7 @@
 /*
  * WLDOS 第三方集成示例项目
  * 
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2025-12-28
  */
 package com.example.myapp.controller;

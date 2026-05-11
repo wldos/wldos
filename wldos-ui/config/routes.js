@@ -1,6 +1,6 @@
-/*
+﻿/*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -129,6 +129,11 @@ const routes = [
               {
                 path: '/admin/sys/options',
                 component: './sys/config',
+              },
+              {
+                path: '/admin/sys/calendar',
+                component: './sys/calendar',
+                name: '节假日日历',
               },
               {
                 path: '/admin/sys/reg',
@@ -284,6 +289,7 @@ const routes = [
                     path: '/admin/cms/pub/info',
                     component: './sys/info',
                   },
+                  { path: '/*', component: './admindynamicrouter', hideInMenu: true },
                 ],
               },
               {
@@ -327,6 +333,7 @@ const routes = [
                 path: '/admin/collector/rule',
                 component: './sys/collector/rule',
               },
+              { path: '/*', component: './admindynamicrouter', hideInMenu: true },
             ],
           },
           // 管理端动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 AdminDynamicRouter 渲染）
@@ -432,61 +439,6 @@ const routes = [
             path: '/info-author/:userId.html',
             component: './account/center/components/InfoAuthor'
           },
-          // 商业模块（社区版注释掉本段代码，不分发 commercial 目录）
-          {
-            path: '/product',
-            component: './commercial/products', name: '产品中心',
-          },
-          {
-            path: '/product-:id.html',
-            component: './commercial/products/detail',
-          },
-          {
-            path: '/product/trial',
-            component: './commercial/trial',
-            name: '试用申请',
-          },
-          {
-            path: '/agreement',
-            component: './commercial/agreement', name: '服务协议',
-          },
-          {
-            path: '/checkout',
-            component: './commercial/checkout', name: '结算页',
-          },
-          {
-            path: '/order/list',
-            component: './commercial/order', name: '我的订单',
-          },
-          {
-            path: '/order/:orderNo',
-            component: './commercial/order/detail'
-          },
-          {
-            path: '/license/list',
-            component: './commercial/license', name: '我的 License'
-          },
-          {
-            path: '/license/:id',
-            component: './commercial/license/detail'
-          },
-          {
-            path: '/ticket/list',
-            component: './commercial/ticket', name: '我的工单'
-          },
-          {
-            path: '/ticket/create',
-            component: './commercial/ticket/create'
-          },
-          {
-            path: '/ticket/:id',
-            component: './commercial/ticket/detail'
-          },
-          {
-            path: '/social-publish',
-            component: './commercial/social-publish',
-            name: '内容发布',
-          },
           {
             path: '/search',
             component: './search',
@@ -549,11 +501,6 @@ const routes = [
               {
                 path: '/account/settings',
                 component: './account/settings',
-              },
-              {
-                path: '/account/referral',
-                component: './commercial/referral',
-                name: '个人推荐中心',
               },
             ],
           },

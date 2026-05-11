@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.vo;
@@ -17,7 +17,7 @@ import lombok.Setter;
  * <p>给客户端用 yyyy-MM-dd 字符串而非 Date，避免时区与序列化坑；
  * 管理端表单同样用此 VO，提交时按 day-precision 解析回 Date。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

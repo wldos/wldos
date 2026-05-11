@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.entity;
@@ -25,7 +25,7 @@ import lombok.Setter;
  *   <li>审计字段继承 BaseEntity（id / createBy / updateBy / createTime / updateTime / deleteFlag / versions ...）。</li>
  * </ul>
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

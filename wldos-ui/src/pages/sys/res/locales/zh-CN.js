@@ -65,7 +65,21 @@ export default {
   'sys.res.field.resourceCode': '资源编码',
   'sys.res.field.resourceCode.tip': '资源的唯一标识码',
   'sys.res.field.resourcePath': '资源路径',
-  'sys.res.field.resourcePath.tip': '资源的访问路径',
+  'sys.res.field.resourcePath.tip':
+    '后端 Spring 接口的 URL 模板，使用 AntPath 语法。' +
+    '例：/admin/agreement/{id}/active、/admin/user/{id:\\d+}、/static/**。' +
+    '路径变量请用 {id}（不要写成 ${id}，那是前端 JS 模板字符串语法）。' +
+    '请确保「请求方法」与后端 Controller 一致，方法不一致会让此条资源永远 0 命中。',
+  'sys.res.rule.resourcePathInvalid':
+    '资源路径疑似使用了 JS 模板字符串写法 ${...}，Spring AntPath 应使用 {变量名}，例如 /admin/agreement/{id}/active',
+  'sys.res.rule.resourcePathNoSpace': '资源路径不能含空格或换行',
+  'sys.res.rule.resourcePathVarInvalid': '路径变量请使用 {name} 或 {name:regex}，且不可嵌套大括号',
+  'sys.res.rule.apiPathExternal': 'API 资源不可配置为外链 URL，请填写以 / 开头的相对路径',
+  'sys.res.rule.apiPathLeadSlash': 'API 资源路径必须以 / 开头',
+  'sys.res.rule.apiPathDoubleSlash': '路径中不能含连续斜杠 //',
+  'sys.res.rule.menuPathInvalid': '请填写以 / 开头的相对路径，或合法的 http(s):// URL',
+  'sys.res.rule.requestMethodRequired': 'API 资源必须选择请求方法',
+  'sys.res.rule.requestMethodEnum': '请求方法仅允许 GET/POST/PUT/DELETE/PATCH，全大写',
   'sys.res.field.componentPath': '组件路径',
   'sys.res.field.componentPath.tip': '组件文件路径，相对于src/pages/目录',
   'sys.res.field.resourceType': '资源类型',
@@ -77,7 +91,11 @@ export default {
   'sys.res.field.displayOrder': '展示顺序',
   'sys.res.field.displayOrder.tip': '菜单的显示顺序，数字越小越靠前',
   'sys.res.field.requestMethod': '请求方法',
-  'sys.res.field.requestMethod.tip': 'HTTP请求方法',
+  'sys.res.field.requestMethod.tip':
+    '必须与后端 Controller 完全一致（GET/POST/PUT/DELETE，大写）。' +
+    '鉴权按「方法 + 路径」联合匹配，方法配错会导致该资源永远 0 命中：' +
+    'strict-mode=OFF 时表现为「鉴权失效（任何登录用户都能调）」，' +
+    'strict-mode=ON 时表现为「合法用户被 403」。',
   'sys.res.field.target': '打开方式',
   'sys.res.field.target.tip': '链接的打开方式',
   'sys.res.field.app': '归属应用',

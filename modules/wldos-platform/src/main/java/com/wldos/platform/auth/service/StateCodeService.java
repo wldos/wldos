@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 /**
  * 状态码服务，状态码是用来表达异步交互在时间维度上状态的随机码，有效期默认2分钟，防止csrf攻击。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2022/10/17
  * @version 1.0
  */

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.service;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@code @Bean + @ConditionalOnMissingBean} 装配，避免 {@code @Component} 上加
  * {@code @ConditionalOnMissingBean} 的"自匹配"陷阱。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

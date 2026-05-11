@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -8,7 +8,7 @@
 
 /**
  * TinyMCE 按需加载工具
- * 
+ *
  * 使用方法：
  * 1. 在组件中 import { loadTinyMCE } from '@/utils/loadTinyMCE';
  * 2. 在 useEffect 或 componentDidMount 中调用 await loadTinyMCE();
@@ -39,18 +39,18 @@ export function loadTinyMCE() {
     const script = document.createElement('script');
     script.src = '/tinymce/tinymce.min.js';
     script.async = true;
-    
+
     script.onload = () => {
       isLoaded = true;
       loadingPromise = null;
       resolve();
     };
-    
+
     script.onerror = (error) => {
       loadingPromise = null;
       reject(new Error('Failed to load TinyMCE: ' + error.message));
     };
-    
+
     document.head.appendChild(script);
   });
 

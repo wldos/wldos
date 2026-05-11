@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -31,7 +31,7 @@ import java.util.Map;
  * 只有超级管理员可以使用
  * 基于现有 k_term_type 表，不创建新表
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2025/12/07
  * @version 1.0
  */

@@ -1,10 +1,4 @@
-/*
- * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
- * Licensed under the Apache License, Version 2.0 or a commercial license.
- * For Apache License Version 2.0 see License in the project root for license information.
- * For commercial licenses see term.md or contact 306991142@qq.com
- */
+
 
 /**
  * 开源 / 商业 flavor 扩展点 webpack alias 配置（单一信息源）。
@@ -62,7 +56,7 @@ const FLAVOR_EXTENSION_POINTS = [
  *   <li>显式 {@code APP_FLAVOR=community} → 走 community/stub 路径（不检测 commercial 是否存在）</li>
  *   <li>显式 {@code APP_FLAVOR=commercial} → 必须能找到 commercial 路径，否则 fail fast。
  *       CI 流水线打商业版时绝不能静默 fallback 到 stub，避免生产生成无功能的"商业版"</li>
- *   <li>未显式（默认 commercial）→ 优先 commercial；不存在则自动 fallback 到 community/stub 并打 warn</li>
+ *   <li>未显式（默认 commercial）→ 优先 commercial；不存在则静默 fallback 到 community/stub</li>
  * </ul>
  *
  * <p>这层 fallback 让"社区源码 + 默认 {@code npm start} / {@code npm run dev}"也能直接跑：
@@ -89,12 +83,6 @@ function resolveFlavorAliasTarget({ flavor, aliasName, commercialPath, community
   if (fs.existsSync(commercialPath)) {
     return commercialPath;
   }
-  console.warn(
-    `[wldos][config] 未显式设置 APP_FLAVOR 且 ${aliasName} 主路径不存在`
-    + `\n  expected: ${commercialPath}`
-    + `\n  fallback: ${communityPath}`
-    + '\n  建议社区分支显式使用 APP_FLAVOR=community（npm run start:community:dev / build:community）。',
-  );
   return communityPath;
 }
 

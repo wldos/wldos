@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -40,6 +40,7 @@ import io.github.wldos.platform.support.domain.vo.DomainResource;
 import io.github.wldos.platform.support.resource.entity.WoResource;
 import io.github.wldos.platform.support.term.dto.Term;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 域管理service。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021/4/28
  * @version 1.0
  */
@@ -311,7 +312,7 @@ public class DomainService extends EntityService<DomainDao, WoDomain, Long> {
 	 * @return url
 	 */
 	public String getDomainLogo(String logoPath) {
-		return this.store.getFileUrl(logoPath, this.store.getFileUrl(this.defaultLogo, null));
+		return this.store.getPublicUrl(logoPath, this.store.getPublicUrl(this.defaultLogo, null));
 	}
 
 	/**
@@ -321,7 +322,7 @@ public class DomainService extends EntityService<DomainDao, WoDomain, Long> {
 	 * @return url
 	 */
 	public String getDomainFavicon(String iconPath) {
-		return this.store.getFileUrl(iconPath, this.store.getFileUrl(this.defaultFavicon, null));
+		return this.store.getPublicUrl(iconPath, this.store.getPublicUrl(this.defaultFavicon, null));
 	}
 
 	/**
@@ -337,10 +338,10 @@ public class DomainService extends EntityService<DomainDao, WoDomain, Long> {
 		domains = domains.parallelStream().peek(d -> {
 			String logo = d.getSiteLogo();
 			if (!ObjectUtils.isBlank(logo))
-				d.setSiteLogo(this.store.getFileUrl(logo, null));
+				d.setSiteLogo(this.store.getPublicUrl(logo, null));
 			String favicon = d.getFavicon();
 			if (!ObjectUtils.isBlank(favicon))
-				d.setFavicon(this.store.getFileUrl(favicon, null));
+				d.setFavicon(this.store.getPublicUrl(favicon, null));
 		}).collect(Collectors.toList());
 
 		domainPage.setRows(domains);

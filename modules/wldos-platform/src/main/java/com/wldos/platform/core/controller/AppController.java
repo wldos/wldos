@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
  * 应用相关controller。
  * @todo 租户的小程序是应用管理的衍生，相当于开放平台，暂不支持。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021/5/2
  * @version 1.0
  */

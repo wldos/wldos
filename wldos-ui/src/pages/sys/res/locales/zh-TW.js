@@ -65,7 +65,21 @@ export default {
   'sys.res.field.resourceCode': '資源編碼',
   'sys.res.field.resourceCode.tip': '資源的唯一識別碼',
   'sys.res.field.resourcePath': '資源路徑',
-  'sys.res.field.resourcePath.tip': '資源的存取路徑',
+  'sys.res.field.resourcePath.tip':
+    '後端 Spring 介面的 URL 模板，使用 AntPath 語法。' +
+    '例：/admin/agreement/{id}/active、/admin/user/{id:\\d+}、/static/**。' +
+    '路徑變數請用 {id}（不要寫成 ${id}，那是前端 JS 模板字串語法）。' +
+    '請確保「請求方法」與後端 Controller 一致，方法不一致將使此筆資源永遠 0 命中。',
+  'sys.res.rule.resourcePathInvalid':
+    '資源路徑疑似使用了 JS 模板字串寫法 ${...}，Spring AntPath 應使用 {變數名}，例如 /admin/agreement/{id}/active',
+  'sys.res.rule.resourcePathNoSpace': '資源路徑不能含空格或換行',
+  'sys.res.rule.resourcePathVarInvalid': '路徑變數請使用 {name} 或 {name:regex}，且不可巢狀大括號',
+  'sys.res.rule.apiPathExternal': 'API 資源不可設為外鏈 URL，請填寫以 / 開頭的相對路徑',
+  'sys.res.rule.apiPathLeadSlash': 'API 資源路徑必須以 / 開頭',
+  'sys.res.rule.apiPathDoubleSlash': '路徑中不能含連續斜線 //',
+  'sys.res.rule.menuPathInvalid': '請填寫以 / 開頭的相對路徑，或合法的 http(s):// URL',
+  'sys.res.rule.requestMethodRequired': 'API 資源必須選擇請求方法',
+  'sys.res.rule.requestMethodEnum': '請求方法僅允許 GET/POST/PUT/DELETE/PATCH，全大寫',
   'sys.res.field.componentPath': '元件路徑',
   'sys.res.field.componentPath.tip': '元件檔案路徑，相對於 src/pages/ 目錄',
   'sys.res.field.resourceType': '資源類型',
@@ -77,7 +91,11 @@ export default {
   'sys.res.field.displayOrder': '展示順序',
   'sys.res.field.displayOrder.tip': '選單顯示順序，數字越小越靠前',
   'sys.res.field.requestMethod': '請求方法',
-  'sys.res.field.requestMethod.tip': 'HTTP 請求方法',
+  'sys.res.field.requestMethod.tip':
+    '必須與後端 Controller 完全一致（GET/POST/PUT/DELETE，大寫）。' +
+    '鑑權按「方法 + 路徑」聯合匹配，方法配錯會讓此資源永遠 0 命中：' +
+    'strict-mode=OFF 時表現為「鑑權失效（任何登入用戶都可呼叫）」，' +
+    'strict-mode=ON 時表現為「合法用戶被 403」。',
   'sys.res.field.target': '開啟方式',
   'sys.res.field.target.tip': '連結的開啟方式',
   'sys.res.field.app': '歸屬應用',

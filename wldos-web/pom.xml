@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
-  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Created by Yuanxi Universe (306991142@qq.com)
   ~ Licensed under the Apache License, Version 2.0 or a commercial license.
   ~ For Apache License Version 2.0 see License in the project root for license information.
   ~ For commercial licenses see term.md or contact 306991142@qq.com
@@ -14,10 +14,10 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.5.0.0</version>
+		<version>2.5.1.0</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
@@ -47,67 +47,7 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-oauth2</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
 					<artifactId>wldos-cms</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-agreement</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-order</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-products</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-member-marketing</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-customer</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-social-publish</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-msg-middleware</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-dist</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-seo</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-oem</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 			</dependencies>
@@ -126,108 +66,8 @@
 				</dependency>
 				<dependency>
 					<groupId>com.wldos</groupId>
-					<artifactId>wldos-oauth2</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
 					<artifactId>wldos-cms</artifactId>
 					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-agreement</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-order</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-					<exclusions>
-						<!-- 子模块 POM 传递无 classifier 的 wldos-store；本 profile 已单独引入 wldos-store-release -->
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-products</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-					<exclusions>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-member-marketing</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-					<exclusions>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-customer</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-social-publish</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-msg-middleware</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-dist</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-					<exclusions>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-key</artifactId>
-						</exclusion>
-						<!-- 子模块 POM 依赖无 classifier 的 order；本 profile 已单独引入 order-release，否则会与传递依赖明文 jar 并存 -->
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store-order</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-seo</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
 				</dependency>
 				<!-- 生产连 MySQL 时打入官方驱动（父 POM 为 MariaDB 驱动；本 profile 额外带上 mysql-connector-j，与 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver 一致）
 					打包命令行：mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=prod" -P prod
@@ -236,129 +76,6 @@
 					<groupId>com.mysql</groupId>
 					<artifactId>mysql-connector-j</artifactId>
 					<scope>runtime</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<!-- dev-release：与 dev 相同的 Spring 配置（dev），但商业模块使用混淆包，便于本地用 dev 环境测试混淆 jar -->
-		<profile>
-			<id>dev-release</id>
-			<properties>
-				<spring.profiles.active>dev</spring.profiles.active>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-oauth2</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-agreement</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-order</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-					<exclusions>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store-products</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-products</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-store-member-marketing</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-customer</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms-social-publish</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-msg-middleware</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-license-dist</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-					<exclusions>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-key</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>com.wldos</groupId>
-							<artifactId>wldos-store-order</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-platform-seo</artifactId>
-					<version>${project.parent.version}</version>
-					<classifier>release</classifier>
-				</dependency>
-			</dependencies>
-		</profile>
-		<!-- desktop/community：仅 cms，不含消息中间件等商业模块；desktop 另以 provided 依赖 wldos-desktop-shell（JCEF 壳），与 BuildManager 的 -P {platform},desktop 同链。
-		mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=desktop" -P desktop,windows-x86_64
-		-->
-		<profile>
-			<id>desktop</id>
-			<properties>
-				<spring.profiles.active>desktop</spring.profiles.active>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-cms</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<!-- 桌面 JCEF 壳：纳入 reactor（mvn -pl wldos-web -am -P desktop,windows-x86_64），不进 WAR -->
-				<dependency>
-					<groupId>com.wldos</groupId>
-					<artifactId>wldos-desktop-shell</artifactId>
-					<version>${project.parent.version}</version>
-					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>

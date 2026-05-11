@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -20,10 +20,11 @@ import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /**
- * 框架默认的数据库初始化（允许依赖模块自定义追加初始化脚本）
- * H2 使用 framework-init-h2.sql，MySQL 使用 framework-init.sql
- *
- * @author 元悉宇宙
+ * 框架默认的数据库初始化（允许依赖模块自定义追加初始化行为）。
+ * 不依赖 wldos-platform：未引入任何 {@link DatabaseInitializationCustomizer} 时仍可通过本类注册的
+ * {@link DataSourceInitializer} 仅执行 framework-init*.sql。
+ * H2 使用 {@code framework-init-h2.sql}，其余 JDBC 使用 {@code framework-init.sql}。
+ * @author Yuanxi Universe
  * @version 1.0
  * @date 2025/2/22
  */

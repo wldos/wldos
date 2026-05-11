@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
  * 还要再落一条 {@link SystemEvent}（"系统的什么配置发生了变化"），便于运维筛 wo_sys_log
  * 一处看到所有配置漂移历史，无需在 wo_op_log 海量记录中翻找。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021/5/2
  * @version 1.0
  */

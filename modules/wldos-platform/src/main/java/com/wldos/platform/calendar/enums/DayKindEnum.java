@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.enums;
@@ -16,7 +16,7 @@ package com.wldos.platform.calendar.enums;
  * <p>表 wo_calendar_holiday 内**仅记录**与默认周末日历不同的日子；
  * 平日工作 / 周末休息属于默认行为，不入表，由调用方按 weekday 兜底。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

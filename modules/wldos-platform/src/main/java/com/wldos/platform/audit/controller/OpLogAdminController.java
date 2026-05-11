@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -39,7 +39,7 @@ import io.swagger.annotations.ApiOperation;
  * <p>实现注意：与 {@code LoginLogAdminController} 同——继承 {@link NonEntityController} 而不是
  * {@code EntityController}，避免自动暴露 add / update / delete 通用端点，违反"一次写入不可改"的合规要求。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

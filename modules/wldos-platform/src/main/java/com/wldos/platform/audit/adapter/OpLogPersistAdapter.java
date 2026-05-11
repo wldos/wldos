@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>异步线程做 DB 反查不影响业务请求延迟；批量 IN 查询无 N+1；
  * 名字一旦落库即"冻结"，业务命名后续变化不影响历史日志，满足合规级审计要求。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

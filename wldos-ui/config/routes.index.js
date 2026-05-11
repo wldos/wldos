@@ -12,14 +12,6 @@ function loadCommercialRoutesSafely() {
     const mod = require('./routes.commercial');
     return mod && mod.default ? mod.default : mod;
   } catch (e) {
-    if (process.env.APP_FLAVOR !== 'community') {
-      // 默认 APP_FLAVOR=commercial 但目录已删，提示开发者建议切到 community 脚本
-      // eslint-disable-next-line no-console
-      console.warn(
-        '[wldos][routes] routes.commercial.js 不存在，默认/commercial 模式将 fallback 到 community 路由。'
-        + ' 建议社区分支显式使用 APP_FLAVOR=community（npm run start:community:dev）。',
-      );
-    }
     return null;
   }
 }

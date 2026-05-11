@@ -22,7 +22,7 @@ export async function uploadLicense(formData) {
 export async function pullPublicKeystore(url) {
   return request(`${prefix}/admin/sys/license/pull-public-keystore`, {
     method: 'POST',
-    params: { url },
+    data: { url },
   });
 }
 
@@ -38,7 +38,7 @@ export async function uploadOemPublicKeystore(formData) {
 export async function pullOemPublicKeystore(url) {
   return request(`${prefix}/admin/sys/license/pull-oem-public-keystore`, {
     method: 'POST',
-    params: { url },
+    data: { url },
   });
 }
 
@@ -46,7 +46,7 @@ export async function pullOemPublicKeystore(url) {
 export async function pullLicense(url) {
   return request(`${prefix}/admin/sys/license/pull-license`, {
     method: 'POST',
-    params: { url },
+    data: { url },
   });
 }
 

@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import IconPickerModal from '@/components/IconPickerModal';
 import { renderIcon, iconMap } from '@/utils/iconLibrary';
+import { buildResourcePathValidator, buildRequestMethodValidator } from './resourcePathValidator';
 
 const FormItem = Form.Item;
 const {TextArea} = Input;
@@ -211,6 +212,10 @@ const UpdateForm = (props) => {
                     type: 'string',
                     message: intl.formatMessage({ id: 'sys.res.rule.max250', defaultMessage: '最多250个字符' }),
                   },
+                  buildResourcePathValidator(
+                    () => form.getFieldValue('resourceType'),
+                    (id, def) => intl.formatMessage({ id, defaultMessage: def }),
+                  ),
                 ]}
               >
                 <Input
@@ -433,6 +438,12 @@ const UpdateForm = (props) => {
                     </Tooltip>
                   </Space>
                 }
+                rules={[
+                  buildRequestMethodValidator(
+                    () => form.getFieldValue('resourceType'),
+                    (id, def) => intl.formatMessage({ id, defaultMessage: def }),
+                  ),
+                ]}
               >
                 <Select
                   placeholder={intl.formatMessage({ id: 'sys.res.ph.selectRequestMethod', defaultMessage: '请选择请求方法' })}

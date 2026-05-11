@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -18,7 +18,7 @@ import lombok.Setter;
  * <p>字段集与 {@link com.wldos.platform.audit.entity.WoLoginLog} 完全对齐，
  * {@code id} 转 String 避免前端 {@code Number} 精度丢失（项目惯例）。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

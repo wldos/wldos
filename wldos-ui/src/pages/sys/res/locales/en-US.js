@@ -65,7 +65,24 @@ export default {
   'sys.res.field.resourceCode': 'Code',
   'sys.res.field.resourceCode.tip': 'Unique code identifier',
   'sys.res.field.resourcePath': 'Path',
-  'sys.res.field.resourcePath.tip': 'Access path',
+  'sys.res.field.resourcePath.tip':
+    'URL pattern of the backend Spring endpoint, in AntPath syntax. ' +
+    'e.g. /admin/agreement/{id}/active, /admin/user/{id:\\d+}, /static/**. ' +
+    'Use {id} for path variables (NOT ${id}, which is JS template literal syntax). ' +
+    'Make sure HTTP method matches the Controller; a mismatch causes this resource to never hit.',
+  'sys.res.rule.resourcePathInvalid':
+    'Resource path looks like JS template literal ${...}; Spring AntPath uses {var}, e.g. /admin/agreement/{id}/active',
+  'sys.res.rule.resourcePathNoSpace': 'Resource path cannot contain spaces or newlines',
+  'sys.res.rule.resourcePathVarInvalid':
+    'Path variables must be {name} or {name:regex}, no nested braces',
+  'sys.res.rule.apiPathExternal':
+    'API resource cannot be an external URL; use a relative path starting with /',
+  'sys.res.rule.apiPathLeadSlash': 'API resource path must start with /',
+  'sys.res.rule.apiPathDoubleSlash': 'Path cannot contain consecutive slashes //',
+  'sys.res.rule.menuPathInvalid': 'Use a relative path starting with /, or a valid http(s):// URL',
+  'sys.res.rule.requestMethodRequired': 'HTTP method is required for API resources',
+  'sys.res.rule.requestMethodEnum':
+    'HTTP method must be uppercase GET/POST/PUT/DELETE/PATCH',
   'sys.res.field.componentPath': 'Component path',
   'sys.res.field.componentPath.tip': 'File path under src/pages/',
   'sys.res.field.resourceType': 'Type',
@@ -77,7 +94,11 @@ export default {
   'sys.res.field.displayOrder': 'Display order',
   'sys.res.field.displayOrder.tip': 'Smaller numbers appear first',
   'sys.res.field.requestMethod': 'HTTP method',
-  'sys.res.field.requestMethod.tip': 'HTTP verb',
+  'sys.res.field.requestMethod.tip':
+    'Must exactly match the backend Controller (GET/POST/PUT/DELETE, uppercase). ' +
+    'Auth matches by method + path together; a wrong method makes this resource never hit: ' +
+    'strict-mode OFF -> any logged-in user passes (security gap), ' +
+    'strict-mode ON  -> legitimate users get 403.',
   'sys.res.field.target': 'Open target',
   'sys.res.field.target.tip': 'How links open',
   'sys.res.field.app': 'Application',

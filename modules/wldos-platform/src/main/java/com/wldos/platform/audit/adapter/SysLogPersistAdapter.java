@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  * <p>{@link SystemEvent} → {@link WoSysLog} 字段映射；同名同类型字段走 {@link BeanCopier}，
  * {@code severity}（enum → String）与源端不存在的字段（id/createdAt）手工补齐；雪花 ID 在适配器侧生成。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

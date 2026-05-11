@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.service;
@@ -28,7 +28,7 @@ import com.wldos.platform.calendar.vo.HolidayItem;
  * <p>每年 11~12 月外部数据稳定后，应通过管理端"同步外部 API"或"手工编辑"维护新一年数据；
  * 兜底常量仅在首发 / 离线落地时保险用，不替代日常维护。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

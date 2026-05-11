@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -27,14 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * 标准实体基础controller，用于收口业务系统请求、响应边界。
- * 非实体controller基础上增加CRUD方法。
+ * 标准实体基础 controller，用于收口业务系统请求、响应边界。
+ * 非实体 controller 基础上增加 CRUD 方法。
+ *
+ * <p>平台能力（{@code this.store} 等）与 Web 层注入的索引见 {@link NonEntityController}。</p>
  *
  * @param <S> 实体service
  * @param <E> 拥有数据库表的实体
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021-04-16
  * @version 1.0
+ * @see NonEntityController
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class EntityController<S extends EntityService, E> extends NonEntityController<S> {

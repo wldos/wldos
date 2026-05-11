@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -23,7 +23,7 @@ import java.sql.ResultSet;
  * H2 使用 init-h2.sql，MySQL 使用 init.sql
  * 当 platform 核心库未就绪（见 {@link #needsInit()}）时执行初始化脚本。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2023/4/9
  * @version 1.0
  */
@@ -76,11 +76,22 @@ public class PlatformDataSourceInitializer implements DatabaseInitializationCust
 
 	private boolean tableExists(String tableName) {
 		try (java.sql.Connection conn = dataSource.getConnection()) {
-			// H2 表名可能为大写，尝试多种写法
+			String catalog = conn.getCatalog();
 			String[] variants = {tableName, tableName.toUpperCase(), tableName.toLowerCase()};
 			for (String name : variants) {
-				try (ResultSet rs = conn.getMetaData().getTables(null, null, name, new String[]{"TABLE"})) {
-					if (rs.next()) return true;
+				if (catalog != null && !catalog.isEmpty()) {
+					try (ResultSet rs = conn.getMetaData().getTables(catalog, null, name, new String[]{"TABLE"})) {
+						if (rs.next()) {
+							return true;
+						}
+					}
+				}
+				else {
+					try (ResultSet rs = conn.getMetaData().getTables(null, null, name, new String[]{"TABLE"})) {
+						if (rs.next()) {
+							return true;
+						}
+					}
 				}
 			}
 			return false;

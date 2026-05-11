@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -25,7 +25,7 @@ import io.github.wldos.framework.support.audit.LoginEvent;
  * <p>容错原则：实现方必须捕获异常并对外抛出 {@link RuntimeException} 或自吞 + 内部 logback；
  * 默认实现侧会再做一层异常保护，不让落盘失败传播到业务请求线程。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

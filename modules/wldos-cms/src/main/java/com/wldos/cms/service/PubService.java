@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.wldos.cms.dao.PubDao;
-import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.entity.KStars;
 import com.wldos.cms.enums.PubStatusEnum;
@@ -29,6 +28,7 @@ import com.wldos.cms.vo.PubMember;
 import com.wldos.cms.vo.PubType;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.cms.vo.SPub;
+import com.wldos.framework.mvc.service.EntityService;
 import io.github.wldos.common.Constants;
 import io.github.wldos.common.dto.SQLTable;
 import io.github.wldos.common.res.PageQuery;
@@ -51,6 +51,7 @@ import com.wldos.platform.core.service.RegionService;
 import com.wldos.platform.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 发布内容service。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021/6/17
  * @version 1.0
  */
@@ -75,7 +76,9 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 
 	private final RegionService regionService;
 
-	public PubService(UserService userService, TermService termService, PubmetaService pubmetaService, RegionService regionService) {
+	@Autowired
+	public PubService(UserService userService, TermService termService, PubmetaService pubmetaService,
+			RegionService regionService) {
 		this.userService = userService;
 		this.termService = termService;
 		this.pubmetaService = pubmetaService;
@@ -155,7 +158,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			Map<String, String> meta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 			// 获取封面URL
-			String coverUrl = this.store.getFileUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
+			String coverUrl = this.store.getPublicUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
 
 			pub.setCover(coverUrl);
 
@@ -294,7 +297,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			Map<String, String> meta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 			// 获取封面URL
-			String coverUrl = this.store.getFileUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
+			String coverUrl = this.store.getPublicUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
 
 			pub.setCover(coverUrl);
 
@@ -360,7 +363,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			Map<String, String> meta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 			// 获取封面URL
-			String coverUrl = this.store.getFileUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
+			String coverUrl = this.store.getPublicUrl(meta.get(KModelMetaKey.PUB_META_KEY_COVER), this.defaultCover(count.getAndIncrement()));
 
 			pub.setCover(coverUrl);
 
@@ -475,7 +478,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 
 		int coverNum = covers.length;
 		// 偶数行正序使用封面，奇数行倒序使用封面
-		return this.store.getFileUrl(((count / coverNum) % 2 == 0 ? covers[count % coverNum] : covers[(coverNum - 1) - (count % coverNum)]), "");
+		return this.store.getPublicUrl(((count / coverNum) % 2 == 0 ? covers[count % coverNum] : covers[(coverNum - 1) - (count % coverNum)]), "");
 	}
 
 	/**

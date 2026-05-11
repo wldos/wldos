@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
-  ~ Created by 元悉宇宙 (306991142@qq.com)
+  ~ Created by Yuanxi Universe (306991142@qq.com)
   ~ Licensed under the Apache License, Version 2.0 or a commercial license.
   ~ For Apache License Version 2.0 see License in the project root for license information.
   ~ For commercial licenses see term.md or contact 306991142@qq.com
@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>2.5.0.0</version>
+		<version>2.5.1.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>wldos-platform</artifactId>
@@ -35,7 +35,7 @@
 		</license>
 	</licenses>
 	<properties>
-        <wldos.version>2.5.0.0</wldos.version>
+        <wldos.version>2.5.1.0</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<!--<javacv.version>1.5.8</javacv.version>

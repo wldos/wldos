@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  */
 package com.wldos.platform.calendar.service;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p>表内只记录"与默认周末日历不同"的日子，调用方按 weekday 兜底处理"普通工作日 / 普通周末"。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/04/30
  * @version 1.0
  */

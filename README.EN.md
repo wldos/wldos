@@ -9,7 +9,7 @@
     <a href="README.md">中文</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.5.0.0-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V2.5.1.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>

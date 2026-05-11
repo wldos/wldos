@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -22,12 +22,15 @@ import io.github.wldos.common.utils.TreeUtils;
 import io.github.wldos.common.vo.TreeSelectOption;
 import io.github.wldos.framework.support.audit.annotation.OpLog;
 import com.wldos.framework.mvc.controller.EntityController;
+import com.wldos.platform.core.service.ResourceProbeService;
 import com.wldos.platform.core.service.ResourceService;
 import com.wldos.platform.core.vo.AuthRes;
 import com.wldos.platform.core.vo.DomRes;
 import com.wldos.platform.core.vo.ResSimple;
 import com.wldos.platform.core.vo.Resource;
 import io.github.wldos.platform.support.resource.entity.WoResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import io.github.wldos.common.exception.BaseException;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +50,7 @@ import javax.validation.Valid;
 /**
  * 资源相关controller。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2021/5/2
  * @version 1.0
  */
@@ -55,6 +58,9 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("admin/sys/res")
 public class ResourceController extends EntityController<ResourceService, WoResource> {
+
+	@Autowired
+	private ResourceProbeService resourceProbeService;
 	/**
 	 * 支持查询、排序的分页查询
 	 *
@@ -142,6 +148,8 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 
 		long nextOrder = ObjectUtils.nvlToZero(order) + 1L;
 		resource.setDisplayOrder(Math.min(nextOrder, DISPLAY_ORDER_MAX));
+
+		this.assertResourceConfig(resource);
 	}
 
 	@Override
@@ -150,8 +158,48 @@ public class ResourceController extends EntityController<ResourceService, WoReso
 	}
 
 	@Override
+	protected void preUpdate(WoResource resource) {
+		this.assertResourceConfig(resource);
+	}
+
+	@Override
 	protected void postUpdate(WoResource resource) {
 		this.refreshAuth();
+	}
+
+	/**
+	 * 资源配置真值校验：失败抛 {@link BaseException} 拒绝保存。
+	 * <p>"建议提示"型反馈（与 Spring 端点等价但模板写法不同）作为 warn 日志记录但不拦截。
+	 */
+	private void assertResourceConfig(WoResource r) {
+		String msg = this.resourceProbeService.validate(
+				r.getResourceType(), r.getResourcePath(), r.getRequestMethod());
+		if (msg == null) return;
+		// 以"提示："开头的为弱提示（弱匹配建议），不阻断保存；其余视为错误
+		if (msg.startsWith("提示：")) {
+			return;
+		}
+		throw new BaseException(msg);
+	}
+
+	/**
+	 * 资源配置实时校验接口：前端 onChange / onBlur 调用，避免到保存才报错。
+	 *
+	 * @param body 含 {@code resourceType}、{@code resourcePath}、{@code requestMethod}
+	 * @return 通过返回 {@code Result.ok(true)}；不通过返回 {@code Result.ok(message)}（200 + 提示文案）
+	 */
+	@ApiOperation(value = "资源配置校验", notes = "校验 (resourcePath, requestMethod) 是否能命中真实 Controller 端点")
+	@PostMapping("probe")
+	public Result probe(@RequestBody Map<String, String> body) {
+		String type = body == null ? null : body.get("resourceType");
+		String path = body == null ? null : body.get("resourcePath");
+		String method = body == null ? null : body.get("requestMethod");
+		String msg = this.resourceProbeService.validate(type, path, method);
+		if (msg == null) {
+			return Result.ok(Boolean.TRUE);
+		}
+		// 用 ok + 文案，前端按 message 长度/内容显示警告，不阻塞输入流
+		return Result.ok(msg);
 	}
 
 	@Override

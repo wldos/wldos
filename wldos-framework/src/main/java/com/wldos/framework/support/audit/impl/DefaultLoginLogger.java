@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p><b>注意</b>：本类<b>不再</b>使用 {@code @Component} + {@code @ConditionalOnMissingBean}，
  * 因为 Spring Boot 官方仅在 {@code @Configuration} 的 {@code @Bean} 方法上保证条件评估顺序稳定。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/05/04
  * @version 1.0
  */

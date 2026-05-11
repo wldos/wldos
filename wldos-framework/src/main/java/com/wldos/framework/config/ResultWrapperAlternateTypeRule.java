@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -33,7 +33,7 @@ import java.util.List;
  * 可能触发 Springfox ModelContext.getGenericNamingStrategy 无限递归导致 StackOverflowError。
  * 若 Swagger 启动报错，可设置 wldos.framework.swagger.result-wrapper-rule.enabled=false 禁用。
  *
- * @author 元悉宇宙
+ * @author Yuanxi Universe
  * @date 2026/2/1
  * @version 1.0
  */

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -17,15 +17,29 @@ import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.ResultJson;
 
 import com.wldos.framework.mvc.service.NonEntityService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 /**
- * 抽象基础controller，不允许直接继承。
+ * 抽象基础 controller，不允许直接继承。
  *
- * @author 元悉宇宙
+ * <p><b>继承 {@link Base} 的平台能力</b>（均为 {@code protected}，在子类中用 {@code this.xxx} 访问；定义见 SDK 源码或依赖 Sources）：</p>
+ * <ul>
+ *   <li>存储：{@link io.github.wldos.framework.support.internal.Base#store}{@code （}{@link io.github.wldos.framework.support.storage.IStore}{@code ，可选注入）}，
+ *       如 {@code this.store.storeFileWithDigest(...)}、{@code this.store.getPublicUrl(...)}、读流 API 等（详见 {@link io.github.wldos.framework.support.storage.IStore}）。</li>
+ *   <li>缓存 / Hook / JWT：{@link io.github.wldos.framework.support.internal.Base#cache}、{@link io.github.wldos.framework.support.internal.Base#wsHook}、{@link io.github.wldos.framework.support.internal.Base#jwtTool}</li>
+ *   <li>主键 / Bean 解析：{@link io.github.wldos.framework.support.internal.Base#IDGen}、{@link io.github.wldos.framework.support.internal.Base#beanHelper}</li>
+ *   <li>Redis / JDBC：{@link io.github.wldos.framework.support.internal.Base#stringRedisTemplate}、{@link io.github.wldos.framework.support.internal.Base#jdbcAggTemplate}、{@link io.github.wldos.framework.support.internal.Base#namedParamJdbcTemplate}</li>
+ *   <li>运行与环境：{@link io.github.wldos.framework.support.internal.Base#webRoot}（{@code @PostConstruct} 初始化）、多租户/多域等配置字段见 {@link Base}</li>
+ * </ul>
+ *
+ * <p><b>本层（Controller）额外注入</b>：{@link #service}、{@link #request}、{@link #response}、{@link #resJson}、{@link #commonOperate}。</p>
+ *
+ * @author Yuanxi Universe
  * @date 2021/5/5
  * @version 1.0
+ * @see Base
  */
 public abstract class NonEntityController<S extends NonEntityService> extends Base {
 

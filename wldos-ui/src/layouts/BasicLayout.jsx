@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -51,10 +51,17 @@ const BasicLayout = (props) => {
       }));
   };
 
+  // 菜单 name 由后台 wo_resource.resource_name 直出（已是站点语言文案，如中文/英文），
+  // 不再走 ProLayout 的 i18n 二次解析。每项必须显式 locale: false，
+  // 否则 ProLayout 会拼出 `menu.${name}` 调 formatMessage 找翻译，
+  // 控制台刷出 `[React Intl] Missing message: "menu.创作"` 这类无意义 warn。
+  // 全局 menu={{ locale: false }} 也能压住，但顶布局会引发"刷新时多个齿轮效果"，
+  // 所以只在每个 item 上关，不全局关。
   const menuHandle = (menus) =>
     menus.map((item) => ({
       ...item,
       name: item.name,
+      locale: false,
       icon: renderIcon(item.icon),
       children: item.children && menuHandle(item.children),
     }));

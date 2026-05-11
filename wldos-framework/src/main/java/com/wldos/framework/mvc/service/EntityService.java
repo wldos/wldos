@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
- * Created by 元悉宇宙 (306991142@qq.com)
+ * Created by Yuanxi Universe (306991142@qq.com)
  * Licensed under the Apache License, Version 2.0 or a commercial license.
  * For Apache License Version 2.0 see License in the project root for license information.
  * For commercial licenses see term.md or contact 306991142@qq.com
@@ -24,16 +24,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * 实体基类service，NonEntity基础上添加 CRUD 方法，可以直接处理与数据库的交互。
- * 有唯一确定实体的公共顶层service，实现基础curd操作，固定service层与entityRepo层。
+ * 实体基类 service，NonEntity 基础上添加 CRUD 方法，可以直接处理与数据库的交互。
+ * 有唯一确定实体的公共顶层 service，实现基础 curd 操作，固定 service 层与 entityRepo 层。
  *
- * @author 元悉宇宙
+ * <p>继承 {@link Base} 的平台能力索引见 {@link NonEntityService}；本层典型注入为 {@link #entityRepo}。</p>
+ *
+ * @author Yuanxi Universe
  * @date 2021/5/5
  * @version 1.0
  * @param <R> 实体仓库
  * @param <E> 实体Bean
  * @param <PK> 实体主键类型
- *
+ * @see NonEntityService
  */
 @Slf4j
 @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
