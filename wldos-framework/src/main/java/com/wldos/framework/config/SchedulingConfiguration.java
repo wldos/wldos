@@ -41,7 +41,7 @@ public class SchedulingConfiguration {
     private String threadNamePrefix;    
 
     @Bean
-    public TaskScheduler taskScheduler() {
+    public TaskScheduler taskScheduler(SchedulingStartupGate schedulingStartupGate) {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(poolSize);
         scheduler.setThreadNamePrefix(threadNamePrefix);

@@ -8,13 +8,10 @@
 
 package com.wldos.gateway;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -28,23 +25,12 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
  */
 public class CustomMessageConverter extends MappingJackson2HttpMessageConverter {
 
-	public CustomMessageConverter() {
+	public CustomMessageConverter(ObjectMapper objectMapper) {
+		super(objectMapper);
 		List<MediaType> mediaTypes = new ArrayList<>();
 		mediaTypes.add(MediaType.APPLICATION_JSON);
 		mediaTypes.add(MediaType.TEXT_HTML);  //加入text/html类型的支持
 		mediaTypes.add(MediaType.TEXT_PLAIN);
 		setSupportedMediaTypes(mediaTypes);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		/*
-		 * 序列换成json时,将所有的long变成string
-		 * 因为js中得数字类型不能包含所有的java long值
-		 */
-		SimpleModule simpleModule = new SimpleModule();
-		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
-		simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
-		objectMapper.registerModule(simpleModule);
-		setObjectMapper(objectMapper);
 	}
 }

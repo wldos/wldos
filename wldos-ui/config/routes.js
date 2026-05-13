@@ -320,6 +320,7 @@ const routes = [
                 path: '/admin/cms/set',
                 component: './sys/category',
               },
+              { path: '/*', component: './admindynamicrouter', hideInMenu: true },
             ],
           },
           {
@@ -439,6 +440,61 @@ const routes = [
             path: '/info-author/:userId.html',
             component: './account/center/components/InfoAuthor'
           },
+          // 商业模块（社区版注释掉本段代码，不分发 commercial 目录）
+          {
+            path: '/product',
+            component: './commercial/products', name: '产品中心',
+          },
+          {
+            path: '/product-:id.html',
+            component: './commercial/products/detail',
+          },
+          {
+            path: '/product/trial',
+            component: './commercial/trial',
+            name: '试用申请',
+          },
+          {
+            path: '/agreement',
+            component: './commercial/agreement', name: '服务协议',
+          },
+          {
+            path: '/checkout',
+            component: './commercial/checkout', name: '结算页',
+          },
+          {
+            path: '/order/list',
+            component: './commercial/order', name: '我的订单',
+          },
+          {
+            path: '/order/:orderNo',
+            component: './commercial/order/detail'
+          },
+          {
+            path: '/license/list',
+            component: './commercial/license', name: '我的 License'
+          },
+          {
+            path: '/license/:id',
+            component: './commercial/license/detail'
+          },
+          {
+            path: '/ticket/list',
+            component: './commercial/ticket', name: '我的工单'
+          },
+          {
+            path: '/ticket/create',
+            component: './commercial/ticket/create'
+          },
+          {
+            path: '/ticket/:id',
+            component: './commercial/ticket/detail'
+          },
+          {
+            path: '/social-publish',
+            component: './commercial/social-publish',
+            name: '内容发布',
+          },
           {
             path: '/search',
             component: './search',
@@ -501,6 +557,11 @@ const routes = [
               {
                 path: '/account/settings',
                 component: './account/settings',
+              },
+              {
+                path: '/account/referral',
+                component: './commercial/referral',
+                name: '个人推荐中心',
               },
             ],
           },

@@ -10,6 +10,8 @@ package com.wldos.gateway;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -39,11 +41,12 @@ public class RestTemplateConfig {
 
 	@Bean
 	//@LoadBalanced
-	public RestTemplate restTemplate(ClientHttpRequestFactory simleClientHttpRequestFactory) {
+	public RestTemplate restTemplate(ClientHttpRequestFactory simleClientHttpRequestFactory,
+			ObjectMapper objectMapper) {
 		RestTemplate restTemplate = new RestTemplate();
 		//配置自定义的message转换器
 		List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
-		MappingJackson2HttpMessageConverter jsonConverter = new CustomMessageConverter();
+		MappingJackson2HttpMessageConverter jsonConverter = new CustomMessageConverter(objectMapper);
 
 		messageConverters.add(jsonConverter);
 		restTemplate.setMessageConverters(messageConverters);

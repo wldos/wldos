@@ -2,6 +2,9 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+# 前端以 Yarn/yarn.lock 为准（见各 pom 中的 frontend-maven-plugin）；勿提交 wldos-ui 的 npm 锁文件
+/wldos-ui/package-lock.json
+
 ### frontend ###
 .umi/
 .umi-production/

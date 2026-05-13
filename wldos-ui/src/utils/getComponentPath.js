@@ -22,7 +22,7 @@ export function getComponentPath(match, manifest = null) {
   // 返回格式：sys/plugins 或 tasks（和主应用本地组件一样）
   const normalizedPath = match.component.replace(/^\.\//, '').replace(/^\//, '');
   
-  // 返回规范化路径，供 AdminDynamicRouter 根据类型拼装
+  // 返回规范化路径，供 admindynamicrouter 页面根据类型拼装
   // 本地组件：@/pages/sys/plugins/index
   // 插件组件：/plugin-assets/{pluginCode}/{version}/dynamic-{path}-index.js
   return normalizedPath;

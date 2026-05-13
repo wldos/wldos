@@ -8,6 +8,8 @@
 
 package com.wldos.gateway;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ public class HttpMessageConverterConfig {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MappingJackson2HttpMessageConverter getMappingJJackson2HttpMessageConverter() {
-		return new CustomMessageConverter();
+	public MappingJackson2HttpMessageConverter getMappingJJackson2HttpMessageConverter(ObjectMapper objectMapper) {
+		return new CustomMessageConverter(objectMapper);
 	}
 }
