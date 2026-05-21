@@ -146,7 +146,7 @@ public class ResourceProbeService {
 		if (matched == null) {
 			return "未在系统中找到任何 Controller 端点匹配 (" + requestMethod + " " + path
 					+ ")，该资源永远不会被鉴权命中。请核对：(1) Controller 是否存在并已加载；"
-					+ "(2) 商业/插件模块是否启用；(3) 请求方法与后端 @PostMapping/@GetMapping 是否一致。";
+					+ "(2) 插件模块是否启用；(3) 请求方法与后端 @PostMapping/@GetMapping 是否一致。";
 		}
 		if (!matched.equals(path)) {
 			return "提示：与系统端点 '" + matched + "' 等价；建议直接使用该模板，便于后续维护";

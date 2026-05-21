@@ -44,4 +44,13 @@ public class PasswdModifyParams {
 	@ApiModelProperty(value = "确认密码", required = true, example = "newPassword123")
 	@NotBlank(message = "确认密码不能为空")
 	private String confirm;
+
+	@ApiModelProperty(value = "图形验证码（可选，与 captchaUuid 成对）。开启时前端拉码后随请求提交；不传则不校验验证码。")
+	private String captcha;
+
+	@ApiModelProperty(value = "图形验证码会话 ID（可选），与 captcha 同时存在时由服务端校验；单独传无效。")
+	private String captchaUuid;
+
+	@ApiModelProperty(value = "图形验证码（可选），4 位验证码 + uuid 直连拼接，与登录 verifyCode 规则一致；与 captcha/captchaUuid 二选一即可。")
+	private String verifyCode;
 }

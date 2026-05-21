@@ -8,6 +8,8 @@
 
 package com.wldos.framework.mvc.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +19,8 @@ import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.ResultJson;
 
 import com.wldos.framework.mvc.service.NonEntityService;
+import com.wldos.framework.support.storage.StoredFileDownloadSupport;
+import com.wldos.framework.support.web.annotation.NotResponseBody;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -27,7 +31,8 @@ import org.springframework.context.annotation.Lazy;
  * <p><b>继承 {@link Base} 的平台能力</b>（均为 {@code protected}，在子类中用 {@code this.xxx} 访问；定义见 SDK 源码或依赖 Sources）：</p>
  * <ul>
  *   <li>存储：{@link io.github.wldos.framework.support.internal.Base#store}{@code （}{@link io.github.wldos.framework.support.storage.IStore}{@code ，可选注入）}，
- *       如 {@code this.store.storeFileWithDigest(...)}、{@code this.store.getPublicUrl(...)}、读流 API 等（详见 {@link io.github.wldos.framework.support.storage.IStore}）。</li>
+ *       如 {@code this.store.storeFileWithDigest(...)}、{@code this.store.getPublicUrl(...)}、
+ *       {@link #downloadFile(String, String)} / {@link com.wldos.framework.support.storage.StoredFileDownloadSupport} 等（详见 {@link io.github.wldos.framework.support.storage.IStore}）。</li>
  *   <li>缓存 / Hook / JWT：{@link io.github.wldos.framework.support.internal.Base#cache}、{@link io.github.wldos.framework.support.internal.Base#wsHook}、{@link io.github.wldos.framework.support.internal.Base#jwtTool}</li>
  *   <li>主键 / Bean 解析：{@link io.github.wldos.framework.support.internal.Base#IDGen}、{@link io.github.wldos.framework.support.internal.Base#beanHelper}</li>
  *   <li>Redis / JDBC：{@link io.github.wldos.framework.support.internal.Base#stringRedisTemplate}、{@link io.github.wldos.framework.support.internal.Base#jdbcAggTemplate}、{@link io.github.wldos.framework.support.internal.Base#namedParamJdbcTemplate}</li>
@@ -170,5 +175,23 @@ public abstract class NonEntityController<S extends NonEntityService> extends Ba
 	 */
 	public boolean isCanTrust(Long userId) {
 		return this.commonOperate.isCanTrust(userId);
+	}
+
+	/**
+	 * 将 {@link io.github.wldos.framework.support.internal.Base#store} 中已存文件写出到 {@link #response}（附件下载）。
+	 * <p>请使用 {@code void} 返回值；框架对 {@code void} 方法不启用全局响应包装，一般无需再标 {@link NotResponseBody}。</p>
+	 *
+	 * @param logicalPath      逻辑路径（与 {@code IStore} 一致）
+	 * @param downloadFileName 下载文件名；{@code null} 或空则从路径末段推断
+	 */
+	protected void downloadFile(String logicalPath, String downloadFileName) throws IOException {
+		this.downloadFile(logicalPath, downloadFileName, false);
+	}
+
+	/**
+	 * 同 {@link #downloadFile(String, String)}，可选浏览器内联预览（{@code Content-Disposition: inline}）。
+	 */
+	protected void downloadFile(String logicalPath, String downloadFileName, boolean inline) throws IOException {
+		StoredFileDownloadSupport.writeToResponse(this.store, this.response, logicalPath, downloadFileName, inline);
 	}
 }

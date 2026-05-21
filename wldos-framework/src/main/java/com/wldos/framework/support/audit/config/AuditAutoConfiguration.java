@@ -26,9 +26,9 @@ import org.springframework.context.annotation.Configuration;
  * 评估顺序非确定可能导致默认实现未被注册（业务侧 {@code @Autowired(required=false)} 取到 null，
  * 日志静默丢失）。本类把三个默认 Logger 统一以 {@code @Bean} 方式装配，保证：
  * <ul>
- *   <li>无商业/插件覆盖时，{@link DefaultLoginLogger}/{@link DefaultOpLogger}/{@link DefaultSystemLogger}
+ *   <li>{@link DefaultLoginLogger}/{@link DefaultOpLogger}/{@link DefaultSystemLogger}
  *       一定被激活；</li>
- *   <li>商业模块或第三方提供同类型 {@code @Bean} 时，自动跳过默认实现。</li>
+ *   <li>模块或第三方提供同类型 {@code @Bean} 时，自动跳过默认实现。</li>
  * </ul>
  *
  * @author Yuanxi Universe

@@ -22,9 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 不包含工单商业模块时，管理端布局仍会轮询
  * {@code GET /admin/ticket/notices*}；此处提供空实现，避免 404 落入静态资源处理器。
- * <p>当 classpath 中存在商业工单控制器 {@code com.wldos.cms.customer.controller.TicketAdminController}
+ * <p>当 classpath 中存在工单控制器 {@code com.wldos.cms.customer.controller.TicketAdminController}
  * 时本类不注册；仅在该类不可见（未引入 {@code wldos-cms-customer} 等）时启用空实现。
  */
 @RestController

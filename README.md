@@ -9,7 +9,7 @@
     <a href="README.EN.md">English</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.5.1.0-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V3.0.0.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -57,9 +57,9 @@ cd wldos
 mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev"
 mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev"
 
-# 5. 启动前端
+# 5. 启动前端（与 wldos-ui/pom.xml 一致：frontend-maven-plugin 使用 Yarn，锁文件为 yarn.lock）
 cd wldos-ui
-yarn install && npm start
+yarn install && yarn start
 
 # 6. 访问 http://localhost:8000  账号：admin / admin
 ```
@@ -85,7 +85,7 @@ yarn install && npm start
 |------|------|
 | QQ群 | 830355512（群一已满） |
 | 公众号 | 元悉世界（id: yuanxiyuzhou） |
-| 演示站 | [www.wldos.com](http://www.wldos.com) |
+| 开源站 | [www.wldos.org](http://www.wldos.org) |
 
 ![元悉世界公众号](https://gitee.com/wldos/wldos/raw/master/wldos-web/store/dev/元悉世界公众号.jpg)
 
@@ -159,9 +159,9 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
    mvn clean package -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=prod" -P prod
 
 #### 启动前端： <br/>
-1.下载前端项目到本地后，打开项目，执行tyarn安装依赖js库。<br/>
-2.执行npm start启动前端项目。前端访问路径：http://localhost:8000  <br/>
-3.登录。超级管理员admin，密码同名称。
+1. 下载前端代码到本地，进入 `wldos-ui`，执行 `yarn install`（与 `wldos-ui/pom.xml` 一致）。本地 Node 若为 21+，项目内 `.yarnrc` 已设 `ignore-engines`。<br/>
+2. 执行 `yarn start`。访问地址与端口以终端输出为准（常见为 http://localhost:8000）。<br/>
+3. 登录：超级管理员 admin，密码与用户名相同。<br/>
 
 #### 部署到服务器: <br/>
     1.在服务器上安装好mysql5.7、tomcat9、apache2.4，数据库配置好DBA权限的用户，更新配置到platform/application*.properties中；  
@@ -217,9 +217,9 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 #### 联系方式
 
-- 商业授权：306991142@qq.com
+- 商业联系：306991142@qq.com
 - 开源社区：GitHub/Gitee
-- 官网：http://gitee.com/wldos or 306991142@qq.com
+- 开源官网：http://wldos.org
 
 详细条款请参见 [LICENSE](LICENSE) 和 [term.md](term.md)
 

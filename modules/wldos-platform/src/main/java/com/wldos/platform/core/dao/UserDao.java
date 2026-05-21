@@ -18,6 +18,7 @@ import com.wldos.platform.core.entity.WoUser;
 import io.github.wldos.platform.support.auth.vo.UserInfo;
 
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 用户仓库操作类。
@@ -68,4 +69,14 @@ public interface UserDao extends BaseDao<WoUser, Long>, UserJdbc {
 	 */
 	@Query("SELECT * FROM wo_user u WHERE u.delete_flag='normal' AND (u.status = 'normal' OR u.status = 'notActive') AND u.recommend_code = :recommendCode")
 	Optional<WoUser> findByRecommendCode(String recommendCode);
+
+	/**
+	 * 用户在主体认证链路上解析到的角色编码（wo_role.role_code），用于门户等按角色裁剪能力。
+	 */
+	@Query("SELECT DISTINCT r.role_code FROM wo_role r "
+			+ "INNER JOIN wo_subject_association sa ON sa.role_id = r.id AND sa.delete_flag = 'normal' AND sa.is_valid = '1' "
+			+ "INNER JOIN wo_subject_authentication a ON a.subject_type_id = sa.subject_type_id AND a.delete_flag = 'normal' "
+			+ "AND a.is_valid = '1' AND a.user_id = :userId "
+			+ "WHERE r.delete_flag = 'normal' AND r.is_valid = '1'")
+	List<String> findSubjectRoleCodesByUserId(@Param("userId") Long userId);
 }

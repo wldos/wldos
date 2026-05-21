@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  * </ul>
  *
  * <p>方式 B 的意义：业务模块完全无需注入日志组件 + 多 listener 可并行消费同一事件
- * （例如：默认 listener 写库；商业增强 listener 同时推送告警邮件）。
+ * （例如：默认 listener 写库；增强 listener 同时推送告警邮件）。
  *
  * <p>本监听器对 {@code SystemEvent} POJO 直接监听（Spring 4.2+ 支持发布任意对象，
  * 无需继承 {@code ApplicationEvent}）。

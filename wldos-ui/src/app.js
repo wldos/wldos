@@ -61,6 +61,8 @@ export async function onRouteChange({ location }) {
     }else if (code === '403') {
       // console.log('onRouteChange: 403 location=', pathname);
       history.push('404');
+    } else {
+      import('@/utils/portalMenuVisit').then((m) => m.tryRecordPortalMenuVisit(pathname));
     }
   });
 }

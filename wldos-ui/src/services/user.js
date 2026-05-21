@@ -28,6 +28,47 @@ export async function querySiteSeo() {
 export async function querySiteSlogan() {
   return request(`${prefix}/user/slogan`);
 }
+
+/** 门户顶栏搜索下拉提示，数据来自系统配置 portal_search_hints */
+export async function querySearchHints() {
+  return request(`${prefix}/user/searchHints`, { method: 'GET' });
+}
+
+/** 个人中心页签（仅登录会员；游客无账号返回空数组）；可见性由服务端按角色/资源等裁剪；用户端/管理端差异仅在前端需分端装配 Tab 时有意义 */
+export async function queryAccountCenterTabDefs() {
+  return request(`${prefix}/user/accountCenterTabDefs`, { method: 'GET' });
+}
+
+/** 当前用户登录日志分页（仅本人） */
+export async function queryMyLoginLogs(params) {
+  return request(`${prefix}/user/myLoginLogs`, { method: 'GET', params });
+}
+
+/** 当前用户操作日志分页（仅本人） */
+export async function queryMyOpLogs(params) {
+  return request(`${prefix}/user/myOpLogs`, { method: 'GET', params });
+}
+
+/** 门户个人中心「我的常用」列表（服务端持久化） */
+export async function queryMyShortcuts() {
+  return request(`${prefix}/user/myShortcuts`, { method: 'GET' });
+}
+
+export async function touchMyShortcut(data) {
+  return request(`${prefix}/user/myShortcuts/touch`, { method: 'POST', data });
+}
+
+export async function createMyShortcut(data) {
+  return request(`${prefix}/user/myShortcuts`, { method: 'POST', data });
+}
+
+export async function updateMyShortcut(id, data) {
+  return request(`${prefix}/user/myShortcuts/${encodeURIComponent(id)}`, { method: 'PUT', data });
+}
+
+export async function deleteMyShortcut(id) {
+  return request(`${prefix}/user/myShortcuts/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
 /**
  * 轻量轮询：仅取条数，用于角标与“是否有新消息”判断；不拉完整列表。
  */

@@ -14,9 +14,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wldos.platform.core.service.OptionsService;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.framework.support.notice.UserNoticesAggregator;
+import com.wldos.platform.audit.service.LoginLogService;
+import com.wldos.platform.audit.service.OpLogService;
+import com.wldos.platform.audit.vo.LoginLogItem;
+import com.wldos.platform.audit.vo.OpLogItem;
+import com.wldos.platform.core.vo.AccountCenterTabDef;
 import com.wldos.platform.auth.model.AccSecurity;
 import com.wldos.platform.auth.vo.AccountInfo;
 import com.wldos.framework.mvc.controller.EntityController;
@@ -25,6 +34,12 @@ import com.wldos.platform.core.vo.UserAuth;
 import io.github.wldos.platform.support.resource.vo.DynSet;
 import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.UserService;
+import com.wldos.platform.core.service.AccountCenterTabAccessService;
+import com.wldos.platform.core.service.UserPortalShortcutService;
+import com.wldos.platform.core.vo.MyShortcutCreateBody;
+import com.wldos.platform.core.vo.MyShortcutTouchBody;
+import com.wldos.platform.core.vo.MyShortcutUpdateBody;
+import com.wldos.platform.core.vo.PortalShortcutVo;
 import com.wldos.platform.core.vo.User;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.framework.support.audit.annotation.OpLog;
@@ -52,6 +67,22 @@ import javax.validation.Valid;
 @RestController
 public class UserController extends EntityController<UserService, WoUser> {
 
+
+	@Autowired
+	private OptionsService optionsService;
+
+	@Autowired
+	private AccountCenterTabAccessService accountCenterTabAccessService;
+
+	@Autowired
+	private LoginLogService loginLogService;
+
+	@Autowired
+	private OpLogService opLogService;
+
+	@Autowired
+	private UserPortalShortcutService userPortalShortcutService;
+
 	@Autowired(required = false)
 	private ObjectProvider<UserNoticesAggregator> userNoticesAggregatorProvider;
 
@@ -78,7 +109,7 @@ public class UserController extends EntityController<UserService, WoUser> {
 	 *
 	 * @return 用户信息
 	 */
-	@ApiOperation(value = "当前用户信息", notes = "通过用户访问token获取用户信息、权限和菜单")
+	@ApiOperation(value = "当前用户信息", notes = "通过 token 返回用户、门户菜单与权限。User.isManageSide 当前由 DTO 默认，前端按需区分用户端/管理端语境，不在此接口中计算")
 	@GetMapping("currentUser")
 	public User currentUser() {
 
@@ -231,7 +262,6 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 	/**
 	 * 统一通知列表（消息气泡：工单提醒、站内信、邮件等）
-	 * 商业版由消息中间件实现聚合；开源版无实现则返回空列表。点击气泡时再拉全量。
 	 */
 	@ApiOperation(value = "通知列表", notes = "消息气泡数据源，点击气泡时拉取")
 	@GetMapping("notices")
@@ -277,6 +307,113 @@ public class UserController extends EntityController<UserService, WoUser> {
 		String slogan = this.service.querySloganByDomain(this.getDomain());
 
 		return this.resJson.ok("slogan", slogan);
+	}
+
+	/**
+	 * 门户顶栏搜索下拉提示（读系统配置 portal_search_hints，支持 JSON 数组或换行分隔）。
+	 */
+	@ApiOperation(value = "门户搜索提示词", notes = "系统配置 portal_search_hints，JSON 字符串数组或每行一条")
+	@GetMapping("searchHints")
+	public Result<List<String>> portalSearchHints() {
+		return Result.ok(this.optionsService.findPortalSearchHints());
+	}
+
+	/**
+	 * 个人中心页签定义（系统配置 portal_account_center_tabs）；空列表时前端使用内置 CMS 默认页签。
+	 */
+	@ApiOperation(value = "个人中心页签", notes = "仅登录会员；游客无账号。优先域级 portal_account_center_tabs；列表按角色/资源/管理端能力裁剪")
+	@GetMapping("accountCenterTabDefs")
+	public Result<List<AccountCenterTabDef>> accountCenterTabDefs() {
+		if (this.service.isGuestUser(this.getUserId())) {
+			return Result.ok(Collections.emptyList());
+		}
+		List<AccountCenterTabDef> configured = this.optionsService.findPortalAccountCenterTabs(this.getDomainId());
+		if (configured.isEmpty()) {
+			return Result.ok(Collections.emptyList());
+		}
+		return Result.ok(this.accountCenterTabAccessService.filterVisibleForCurrentUser(this.getUserId(), this.getDomainId(),
+				this.getTenantId(), this.request, configured));
+	}
+
+	/**
+	 * 当前登录用户自己的登录日志分页；忽略请求中的 userId，非超级管理员按租户+域隔离。
+	 */
+	@ApiOperation(value = "我的登录日志", notes = "仅本人；分页参数同管理端登录日志")
+	@GetMapping("myLoginLogs")
+	public PageData<LoginLogItem> myLoginLogs(@RequestParam Map<String, Object> params) {
+		Long uid = this.getUserId();
+		if (uid == null) {
+			return new PageData<>(0L, 1, 10, new ArrayList<>(0));
+		}
+		PageQuery pageQuery = new PageQuery(params);
+		pageQuery.removeParam("userId");
+		pageQuery.pushParam("userId", uid);
+		if (!this.isAdmin(uid)) {
+			this.applyTenantFilter(pageQuery);
+			this.applyDomainFilter(pageQuery);
+		}
+		return this.loginLogService.queryList(pageQuery);
+	}
+
+	/**
+	 * 当前登录用户自己的操作日志分页；忽略请求中的 userId，非超级管理员按租户+域隔离。
+	 */
+	@ApiOperation(value = "我的操作记录", notes = "仅本人；分页参数同管理端操作日志")
+	@GetMapping("myOpLogs")
+	public PageData<OpLogItem> myOpLogs(@RequestParam Map<String, Object> params) {
+		Long uid = this.getUserId();
+		if (uid == null) {
+			return new PageData<>(0L, 1, 10, new ArrayList<>(0));
+		}
+		PageQuery pageQuery = new PageQuery(params);
+		pageQuery.removeParam("userId");
+		pageQuery.pushParam("userId", uid);
+		if (!this.isAdmin(uid)) {
+			this.applyTenantFilter(pageQuery);
+			this.applyDomainFilter(pageQuery);
+		}
+		return this.opLogService.queryList(pageQuery);
+	}
+
+	/**
+	 * 门户个人中心「我的常用」列表（当前用户 + 租户 + 域，按 display_order）。
+	 */
+	@ApiOperation(value = "我的常用列表", notes = "仅本人；服务端持久化，多终端一致")
+	@GetMapping("myShortcuts")
+	public Result<List<PortalShortcutVo>> myShortcuts() {
+		Long uid = this.getUserId();
+		Long comId = this.getTenantId();
+		Long domId = this.getDomainId();
+		if (uid == null || comId == null || domId == null) {
+			return Result.ok(Collections.emptyList());
+		}
+		return Result.ok(this.userPortalShortcutService.listVo(uid, comId, domId));
+	}
+
+	@ApiOperation(value = "新增我的常用", notes = "path 须为站内路径；服务端按 GET 校验路由可访问性")
+	@PostMapping("myShortcuts")
+	public Result<PortalShortcutVo> myShortcutsAdd(@Valid @RequestBody MyShortcutCreateBody body) {
+		return this.userPortalShortcutService.addMine(body, this.getUserId(), this.getTenantId(), this.getDomainId(), this.request);
+	}
+
+	@ApiOperation(value = "我的常用访问打点", notes = "浏览门户菜单时调用，累加次数并参与「我的常用」排序（未置顶按频次倒序）")
+	@PostMapping("myShortcuts/touch")
+	public Result<PortalShortcutVo> myShortcutsTouch(@Valid @RequestBody MyShortcutTouchBody body) {
+		return this.userPortalShortcutService.touchMine(body, this.getUserId(), this.getTenantId(), this.getDomainId(),
+				this.request);
+	}
+
+	@ApiOperation(value = "更新我的常用")
+	@PutMapping("myShortcuts/{id}")
+	public Result<PortalShortcutVo> myShortcutsUpdate(@PathVariable long id, @RequestBody MyShortcutUpdateBody body) {
+		return this.userPortalShortcutService.updateMine(id, body, this.getUserId(), this.getTenantId(), this.getDomainId(),
+				this.request);
+	}
+
+	@ApiOperation(value = "删除我的常用")
+	@DeleteMapping("myShortcuts/{id}")
+	public Result<Void> myShortcutsDelete(@PathVariable long id) {
+		return this.userPortalShortcutService.deleteMine(id, this.getUserId(), this.getTenantId(), this.getDomainId());
 	}
 
 

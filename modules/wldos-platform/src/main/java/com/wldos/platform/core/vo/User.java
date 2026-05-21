@@ -25,6 +25,8 @@ import lombok.Setter;
 /**
  * 登录后返回用户信息。
  *
+ * <p>{@code isManageSide} 语义上表示用户端 / 管理端产品语境（与 wldos 双端一致），便于前端差异化渲染；服务端当前不在 {@link com.wldos.platform.core.service.UserService#queryUser} 中计算，DTO 默认 0；是否出现在响应体视序列化配置。</p>
+ *
  * @author Yuanxi Universe
  * @date 2021-04-30
  * @version V1.0
@@ -49,6 +51,6 @@ public class User {
 	@ApiModelProperty(value = "认证令牌")
 	private Token token;
 
-	@ApiModelProperty(value = "是否为管理端，0=否，1=是", example = "0")
+	@ApiModelProperty(value = "用户端/管理端语境占位：0=用户端向，1=管理端向；由 wldos-ui 前端区分，服务端当前默认不计算", example = "0")
 	private int isManageSide = 0;
 }

@@ -64,7 +64,7 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 
 	/**
 	 * 登录日志记录器（契约接口，{@code wldos-framework} 提供默认异步实现，
-	 * 商业增强或插件可通过覆盖 {@link ILoginLogger} bean 替换实现）。
+	 * 增强或插件可通过覆盖 {@link ILoginLogger} bean 替换实现）。
 	 *
 	 * <p>{@code @Autowired(required=false)}：在裁剪部署或日志组件被禁用时，
 	 * 登录链路仍可正常工作（调用前判空），不强耦合。
@@ -253,7 +253,7 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 	@PostMapping("passwd")
 	@OpLog(module = "账号安全", action = "修改密码", resourceType = "user", resourceId = "#passwdModifyParams.id")
 	public Login changePasswd(@ApiParam(value = "修改密码参数", required = true) @Valid @RequestBody PasswdModifyParams passwdModifyParams,
-			@Value("${passwd.hexKey.code}") String hexKeyCode) {
+			@Value("${passwd.hexKey.code:}") String hexKeyCode) {
 
 		getLog().info("用户id: {} 密码修改 ", passwdModifyParams.getId());
 		Login user = this.service.changePasswd(passwdModifyParams, hexKeyCode);

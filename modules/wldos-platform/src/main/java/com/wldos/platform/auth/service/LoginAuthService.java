@@ -51,6 +51,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 /**
  * 登录相关认证、授权服务。
@@ -541,6 +542,9 @@ public class LoginAuthService extends NonEntityService {
 	 */
 	public Login changePasswd(PasswdModifyParams passwdModifyParams, String hexKeyCode) {
 		Login login = new Login();
+		if (!this.passOptionalGraphCaptchaForChangePasswd(passwdModifyParams, login)) {
+			return login;
+		}
 		// 验证原密码是否正确
 		boolean userInfo = this.validateOldPasswd(passwdModifyParams, hexKeyCode);
 		if (!userInfo) {
@@ -589,8 +593,57 @@ public class LoginAuthService extends NonEntityService {
 		if (woUser == null) {
 			return false;
 		}
+		String oldInput = passwdModifyParams.getOldPasswd();
+		if (ObjectUtils.isBlank(oldInput)) {
+			return false;
+		}
+		if (StringUtils.hasText(hexKeyCode)) {
+			return this.loginUtils.verify(woUser.getUsername(), oldInput, woUser.getPasswd(), hexKeyCode);
+		}
+		LoginUtils.PasswordVerifyResult verifyResult = this.loginUtils.verifyRSAWithMigrationCheck(oldInput, woUser.getPasswd());
+		if (!verifyResult.isVerified()) {
+			return false;
+		}
+		if (verifyResult.needsMigration() && verifyResult.getPlaintextPasswd() != null) {
+			this.migratePasswordToNewFormat(woUser.getId(), verifyResult.getPlaintextPasswd());
+		}
+		return true;
+	}
 
-		return loginUtils.verify(woUser.getUsername(), passwdModifyParams.getPassword(), woUser.getPasswd(), hexKeyCode);
+	/**
+	 * 修改密码时图形验证码为可选项：未传则跳过；传了则与登录/重置一致的规则校验。
+	 */
+	private boolean passOptionalGraphCaptchaForChangePasswd(PasswdModifyParams p, Login login) {
+		boolean hasMerged = StringUtils.hasText(p.getVerifyCode());
+		boolean hasCaptcha = StringUtils.hasText(p.getCaptcha());
+		boolean hasUuid = StringUtils.hasText(p.getCaptchaUuid());
+		if (!hasMerged && !hasCaptcha && !hasUuid) {
+			return true;
+		}
+		if (hasMerged) {
+			if (hasCaptcha || hasUuid) {
+				login.setStatus("error");
+				login.setNews("验证码请只使用 verifyCode 或 captcha+captchaUuid 一种方式");
+				return false;
+			}
+			if (!this.authCodeService.checkCode(p.getVerifyCode())) {
+				login.setStatus("error");
+				login.setNews("验证码错误");
+				return false;
+			}
+			return true;
+		}
+		if (!hasCaptcha || !hasUuid) {
+			login.setStatus("error");
+			login.setNews("验证码与验证码会话需同时填写");
+			return false;
+		}
+		if (!this.authCodeService.checkCode(p.getCaptcha(), p.getCaptchaUuid())) {
+			login.setStatus("error");
+			login.setNews("验证码错误");
+			return false;
+		}
+		return true;
 	}
 
 	/**

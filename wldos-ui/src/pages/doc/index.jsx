@@ -6,6 +6,7 @@ import {FolderOutlined, FileTextOutlined} from '@ant-design/icons';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import styles from '@/wldos.less';
 import { getHome, wldosHeader} from "@/utils/utils";
+import { setPortalMenuTree } from '@/utils/portalMenuVisit';
 import Document from "@/pages/doc/components/Document";
 
 const Doc = (props) => {
@@ -304,6 +305,11 @@ const Doc = (props) => {
           loading,
           // 支持层级结构
           ignoreFlatMenu: true,
+        }}
+        postMenuData={(menu) => {
+          const m = menu || [];
+          setPortalMenuTree(m);
+          return m;
         }}
         collapsed={collapsed}
         onCollapse={handleMenuCollapse}

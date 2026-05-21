@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p>Bean 装配：由 {@code com.wldos.framework.support.audit.config.AuditAutoConfiguration}
  * 通过 {@code @Bean + @ConditionalOnMissingBean(ILoginLogger.class)} 装配。
- * 商业增强或插件提供另一个 {@link ILoginLogger} {@code @Bean} 即可覆盖默认实现，业务侧调用代码不变。
+ * 增强或插件提供另一个 {@link ILoginLogger} {@code @Bean} 即可覆盖默认实现，业务侧调用代码不变。
  *
  * <p><b>注意</b>：本类<b>不再</b>使用 {@code @Component} + {@code @ConditionalOnMissingBean}，
  * 因为 Spring Boot 官方仅在 {@code @Configuration} 的 {@code @Bean} 方法上保证条件评估顺序稳定。

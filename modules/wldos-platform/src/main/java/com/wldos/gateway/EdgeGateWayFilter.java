@@ -30,12 +30,16 @@ import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.common.utils.http.IpUtils;
 import io.github.wldos.framework.support.audit.ISystemLogger;
 import io.github.wldos.framework.support.audit.SystemEvent;
+import com.wldos.framework.support.auth.AccountNotActivatedException;
 import io.github.wldos.framework.support.auth.JWTTool;
 import io.github.wldos.framework.support.auth.TokenForbiddenException;
 import io.github.wldos.framework.support.auth.TokenInvalidException;
 import com.wldos.platform.core.entity.WoDomain;
+import com.wldos.platform.core.entity.WoUser;
+import com.wldos.platform.core.enums.UserStatusEnum;
 import com.wldos.platform.core.service.AuthService;
 import com.wldos.platform.core.service.DomainService;
+import com.wldos.platform.core.service.UserService;
 import io.github.wldos.platform.support.auth.vo.AuthVerify;
 import io.github.wldos.framework.support.auth.vo.JWT;
 import io.github.wldos.platform.support.resource.vo.AuthInfo;
@@ -70,6 +74,8 @@ public class EdgeGateWayFilter implements Filter {
 	private DomainService domainService;
 
 	private AuthService authService;
+
+	private UserService userService;
 
 	private ResultJson resJson;
 
@@ -135,6 +141,7 @@ public class EdgeGateWayFilter implements Filter {
 		this.recLogUris = Arrays.asList(logUri.split(","));
 		this.domainService = ac.getBean(DomainService.class);
 		this.authService = ac.getBean(AuthService.class);
+		this.userService = ac.getBean(UserService.class);
 		this.edgeHandler = ac.getBean(EdgeHandler.class);
 		this.pluginApiGateway = ac.getBean(IPluginApiGateway.class);
 		this.jwtTool = ac.getBean(JWTTool.class);
@@ -234,6 +241,11 @@ public class EdgeGateWayFilter implements Filter {
 			else {
 				if (this.authService.isGuest(jwt.getUserId())) {
 					throw new TokenInvalidException("Forbidden, guest no auth!");
+				}
+				WoUser woUser = this.userService.findById(jwt.getUserId());
+				if (woUser != null && UserStatusEnum.notActive.getValue().equals(woUser.getStatus())) {
+					throw new AccountNotActivatedException(
+							"您的账号尚未激活，请先完成邮箱激活后再使用个人中心等功能。若未收到邮件，可在登录页尝试重新发送或联系管理员。");
 				}
 				throw new TokenForbiddenException("Forbidden,no auth!");
 			}

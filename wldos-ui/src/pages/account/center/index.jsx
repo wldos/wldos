@@ -5,66 +5,23 @@ import { GridContent } from '@ant-design/pro-layout';
 import { Link, connect } from 'umi';
 import InfoList from './components/InfoList';
 import styles from './Center.less';
-import Articles from "@/pages/account/center/components/Articles";
-import {saveTags} from "@/pages/account/center/service";
+import Articles from '@/pages/account/center/components/Articles';
+import { saveTags } from '@/pages/account/center/service';
+import { queryAccountCenterTabDefs } from '@/services/user';
+import {
+  AccountLoginLogsPanel,
+  AccountOpLogsPanel,
+  AccountPermissionsPanel,
+  AccountShortcutsPanel,
+  resolveTabTitle,
+} from '@/pages/account/center/components/AccountCenterPanels';
 
-const operationTabList = [
-  {
-    key: 'info',
-    tab: (
-      <span>
-        我的信息{' '}
-        <span
-          style={{
-            fontSize: 14,
-          }}
-        >
-        </span>
-      </span>
-    ),
-  },
-  {
-    key: 'book',
-    tab: (
-      <span>
-        我的作品{' '}
-        <span
-          style={{
-            fontSize: 14,
-          }}
-        >
-        </span>
-      </span>
-    ),
-  },
-  {
-    key: 'applications',
-    tab: (
-      <span>
-        我关注的{' '}
-        <span
-          style={{
-            fontSize: 14,
-          }}
-        >
-        </span>
-      </span>
-    ),
-  },
-  {
-    key: 'projects',
-    tab: (
-      <span>
-        我喜欢的{' '}
-        <span
-          style={{
-            fontSize: 14,
-          }}
-        >
-        </span>
-      </span>
-    ),
-  },
+/** 未配置 portal_account_center_tabs 时的默认 CMS 四页签 */
+const DEFAULT_CMS_TAB_DEFS = [
+  { key: 'info', type: 'info', title: '我的信息' },
+  { key: 'book', type: 'book', title: '我的作品' },
+  { key: 'applications', type: 'applications', title: '我关注的' },
+  { key: 'projects', type: 'projects', title: '我喜欢的' },
 ];
 
 const TagList = ({ tags }) => {
@@ -82,15 +39,16 @@ const TagList = ({ tags }) => {
     }
   };
 
-  const handleInputChange = (e) => { // 限制标签最大8个字符长度
+  const handleInputChange = (e) => {
+    // 限制标签最大8个字符长度
     setInputValue(e.target.value.slice(0, 8));
   };
 
   const delTag = async (key) => {
     let tempsTags = [];
 
-    const newTag = newTags.filter(tag => tag.key !== key);
-    const oldTag = tags.filter(tag => tag.key !== key);
+    const newTag = newTags.filter((tag) => tag.key !== key);
+    const oldTag = tags.filter((tag) => tag.key !== key);
 
     if (newTag.length > 0) {
       setNewTags(newTag);
@@ -107,10 +65,9 @@ const TagList = ({ tags }) => {
     const tempsTags = [...tags, ...newTags];
 
     if (inputValue && tempsTags.filter((tag) => tag.label === inputValue).length === 0) {
-
       const newTag = {
         key: `tag-${tempsTags.length}`,
-          label: inputValue,
+        label: inputValue,
       };
       tempsTags.push(newTag);
 
@@ -128,7 +85,9 @@ const TagList = ({ tags }) => {
     <div className={styles.tags}>
       <div className={styles.tagsTitle}>标签</div>
       {(tags || []).concat(newTags).map((item) => (
-        <Tag closable onClose={() => delTag(item.key)} key={item.key}>{item.label}</Tag>
+        <Tag closable onClose={() => delTag(item.key)} key={item.key}>
+          {item.label}
+        </Tag>
       ))}
       {inputVisible && (
         <Input
@@ -161,28 +120,51 @@ const TagList = ({ tags }) => {
 class Center extends Component {
   state = {
     tabKey: 'info',
+    tabDefs: DEFAULT_CMS_TAB_DEFS,
+    operationTabList: DEFAULT_CMS_TAB_DEFS.map((d) => ({
+      key: d.key,
+      tab: <span>{resolveTabTitle(d)}</span>,
+    })),
   };
-
-  input = undefined;
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
       type: 'account/fetchCurrent',
     });
-
     this.queryCategory(dispatch);
+    this.loadAccountCenterTabs();
+    dispatch({ type: 'user/fetchCurrent' });
   }
+
+  loadAccountCenterTabs = async () => {
+    let defs = DEFAULT_CMS_TAB_DEFS;
+    try {
+      const res = await queryAccountCenterTabDefs();
+      const raw = res?.data?.data ?? res?.data;
+      if (Array.isArray(raw) && raw.length > 0) {
+        defs = raw;
+      }
+    } catch (e) {
+      defs = DEFAULT_CMS_TAB_DEFS;
+    }
+    const operationTabList = defs.map((d) => ({
+      key: d.key,
+      tab: <span>{resolveTabTitle(d)}</span>,
+    }));
+    this.setState((prev) => {
+      const keepKey = defs.some((d) => d.key === prev.tabKey);
+      return {
+        tabDefs: defs,
+        operationTabList,
+        tabKey: keepKey ? prev.tabKey : defs[0]?.key || 'info',
+      };
+    });
+  };
 
   queryCategory = (dispatch) => {
     dispatch({
       type: 'bookSpace/fetchCategory',
-    });
-  };
-
-  queryTag = (dispatch) => {
-    dispatch({
-      type: 'bookSpace/fetchTag',
     });
   };
 
@@ -193,20 +175,40 @@ class Center extends Component {
   };
 
   renderChildrenByTabKey = (tabKey, u, categories, tagData) => {
-    if (tabKey === 'info') { // 展现发布的信息列表
-      return <InfoList count={16} id={u.id} pubType="info" categoryList={categories} tagData={tagData}/>;
+    const { tabDefs } = this.state;
+    const def = tabDefs.find((t) => t.key === tabKey);
+    const type = def?.type || tabKey;
+
+    if (type === 'info') {
+      return <InfoList count={16} id={u.id} pubType="info" categoryList={categories} tagData={tagData} />;
     }
 
-    if (tabKey === 'book') {
-      return <InfoList count={16} id={u.id} categoryList={categories} tagData={tagData}/>;
+    if (type === 'book') {
+      return <InfoList count={16} id={u.id} categoryList={categories} tagData={tagData} />;
     }
 
-    if (tabKey === 'projects') {
-      return <Articles count={16} url={`/archives-star/${u.id}.html`}/>;
+    if (type === 'projects') {
+      return <Articles count={16} url={`/archives-star/${u.id}.html`} />;
     }
 
-    if (tabKey === 'applications') {
-      return <Articles count={16} url={`/archives-like/${u.id}.html`}/>;
+    if (type === 'applications') {
+      return <Articles count={16} url={`/archives-like/${u.id}.html`} />;
+    }
+
+    if (type === 'permission') {
+      return <AccountPermissionsPanel userId={u.id} />;
+    }
+
+    if (type === 'shortcuts') {
+      return <AccountShortcutsPanel userId={u.id} />;
+    }
+
+    if (type === 'login_log') {
+      return <AccountLoginLogsPanel />;
+    }
+
+    if (type === 'op_log') {
+      return <AccountOpLogsPanel />;
     }
 
     return null;
@@ -236,33 +238,16 @@ class Center extends Component {
             marginRight: 8,
           }}
         />
-        {
-          (
-            currentUser.geographic || {
-              province: {
-                label: '',
-              },
-            }
-          ).province.label
-        }
-        {
-          (
-            currentUser.geographic || {
-              city: {
-                label: '',
-              },
-            }
-          ).city.label
-        }
+        {(currentUser.geographic || { province: { label: '' } }).province.label}
+        {(currentUser.geographic || { city: { label: '' } }).city.label}
       </p>
     </div>
   );
 
   render() {
-    const { tabKey } = this.state;
+    const { tabKey, operationTabList } = this.state;
     const { currentUser = {}, currentUserLoading, categories, tagData } = this.props;
-    if (!currentUser.id)
-      return '';
+    if (!currentUser.id) return '';
 
     const dataLoading = currentUserLoading || !(currentUser && Object.keys(currentUser).length);
     return (
@@ -298,7 +283,7 @@ class Center extends Component {
                       {currentUser.group &&
                         currentUser.group.map((item) => (
                           <Col key={item.id} lg={24} xl={12}>
-                            <Link to={'#'}>
+                            <Link to="#">
                               <Avatar size="small" src={item.orgLogo} />
                               {item.orgName}
                             </Link>

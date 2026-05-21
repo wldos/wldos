@@ -154,7 +154,7 @@ public abstract class NonEntityService extends Base {
 	}
 
 	/**
-	 * NamedParameterJdbcTemplate 分页执行：count + list + limit，含深分页反向查询优化（商业版）。
+	 * NamedParameterJdbcTemplate 分页执行：count + list + limit，含深分页反向查询优化。
 	 * 业务模块先使用 CommonOperation.appendConditionNamed/appendFilterNamed/appendOrderByNamed 拼装 sql+params，再调用此方法执行。
 	 *
 	 * @param sql         完整 SQL（含 where、order by，不含 limit）

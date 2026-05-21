@@ -9,7 +9,7 @@ const CreateForm = (props) => {
   const renderFooter = () => (
     <Space>
       <Button onClick={() => onCancel()}>取消</Button>
-      <Button type="primary" icon={<PlusOutlined />} onClick={() => onSubmit()}>
+      <Button type="primary" icon={<PlusOutlined />} onClick={() => onSubmit?.()}>
         创建用户
       </Button>
     </Space>

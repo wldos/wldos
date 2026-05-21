@@ -27,6 +27,8 @@ const UserList = (props) => {
   const intl = useIntl();
   const {orgId = '', archId = '', comId = '', addUser} = props;
 
+  const createFormRef = useRef();
+
   const handleAdd = useCallback(async (fields) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.add', defaultMessage: '正在添加' }));
 
@@ -44,7 +46,11 @@ const UserList = (props) => {
       return true;
     } catch (error) {
       hide();
-      message.error(intl.formatMessage({ id: 'sys.user.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      const desc = error?.response?.message;
+      const applied = createFormRef.current?.applyServerValidationErrors?.(desc);
+      if (!applied) {
+        message.error(intl.formatMessage({ id: 'sys.user.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      }
       return false;
     }
   }, [intl]);
@@ -430,9 +436,13 @@ const UserList = (props) => {
           <Button type="primary">{intl.formatMessage({ id: 'sys.user.footer.batchExport', defaultMessage: '批量导出' })}</Button>
         </FooterToolbar>
       )}
-      <CreateForm onCancel={() => handleModalVisible(false)}
-                  modalVisible={createModalVisible}>
+      <CreateForm
+        onCancel={() => handleModalVisible(false)}
+        modalVisible={createModalVisible}
+        onSubmit={() => createFormRef.current?.submit?.()}
+      >
         <CreateFormContent
+          ref={createFormRef}
           onSubmit={async (value) => {
             const success = await handleAdd(value);
 

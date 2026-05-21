@@ -9,7 +9,7 @@
     <a href="README.md">中文</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V2.5.1.0-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V3.0.0.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -85,7 +85,7 @@ Download the desktop installer, double-click to run. [Download](http://www.wldos
 |---------|------|
 | QQ Group | 830355512 |
 | WeChat | Yuanxi World (id: yuanxiyuzhou) |
-| Demo | [www.wldos.com](http://www.wldos.com) |
+| Site | [www.wldos.org](http://www.wldos.org) |
 
 ---
 
@@ -184,7 +184,7 @@ wldos/
 - ⚠️ Non-pure open source parts in wldos-platform
 - ⚠️ Commercial support available
 
-**Contact**: 306991142@qq.com
+**Contact**: yuanxiuniverse@outlook.com | 306991142@qq.com
 
 See [LICENSE](LICENSE) and [term.md](term.md) for details.
 

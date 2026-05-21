@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle } from 'react';
 import { Form, Input, Select, Button, Card, Space, Tooltip, Alert } from 'antd';
 import {
   UserOutlined,
@@ -26,21 +26,59 @@ const formLayout = {
   },
 };
 
-const CreateFormContent = (props) => {
+const CreateFormContent = forwardRef((props, ref) => {
   const [form] = Form.useForm();
   const {
     onSubmit: handleAdd,
     onCancel: handleCancel
   } = props;
 
-  const handleNext = async () => {
+  const applyServerValidationErrors = useCallback(
+    (msg) => {
+      if (!msg || typeof msg !== 'string') return false;
+      const fieldErrors = [];
+      for (const segment of msg.split(';')) {
+        const part = segment.trim();
+        if (!part) continue;
+        const idx = part.indexOf(':');
+        if (idx === -1) continue;
+        const name = part.slice(0, idx).trim();
+        const text = part.slice(idx + 1).trim();
+        if (name && text) {
+          fieldErrors.push({ name, errors: [text] });
+        }
+      }
+      if (fieldErrors.length) {
+        form.setFields(fieldErrors);
+        return true;
+      }
+      return false;
+    },
+    [form],
+  );
+
+  const handleNext = useCallback(async () => {
+    let fieldsValue;
     try {
-      const fieldsValue = await form.validateFields();
-      await handleAdd(fieldsValue);
-    } catch (error) {
-      console.log('表单验证失败:', error);
+      fieldsValue = await form.validateFields();
+    } catch {
+      return;
     }
-  };
+    const payload = { ...fieldsValue };
+    if (!payload.mobile || String(payload.mobile).trim() === '') {
+      delete payload.mobile;
+    }
+    await handleAdd(payload);
+  }, [form, handleAdd]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: handleNext,
+      applyServerValidationErrors,
+    }),
+    [handleNext, applyServerValidationErrors],
+  );
 
   const renderContent = () => {
     return (
@@ -83,14 +121,14 @@ const CreateFormContent = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入昵称，不能为空，最多60个字！',
-                max: 60,
+                message: '请输入昵称，不能为空，最多50个字！',
+                max: 50,
               },
             ]}
           >
             <Input
               prefix={<UserOutlined />}
-              placeholder="请输入昵称，最多60个字"
+              placeholder="请输入昵称，最多50个字"
             />
           </FormItem>
 
@@ -123,7 +161,7 @@ const CreateFormContent = (props) => {
             label={
               <Space>
                 登录密码
-                <Tooltip title="用户的登录密码，最多120位字符">
+                <Tooltip title="用户的登录密码，长度 6～100 个字符">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -131,14 +169,50 @@ const CreateFormContent = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入登录密码，不能为空，最多120位字符！',
-                max: 120,
+                message: '请输入登录密码！',
+              },
+              {
+                min: 6,
+                max: 100,
+                message: '密码长度必须在6-100之间',
               },
             ]}
           >
             <Input.Password
               prefix={<LockOutlined />}
-              placeholder="请输入登录密码，最多120位字符"
+              placeholder="请输入登录密码，6～100 个字符"
+            />
+          </FormItem>
+
+          <FormItem
+            name="confirm"
+            label={
+              <Space>
+                确认密码
+                <Tooltip title="请再次输入登录密码">
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            dependencies={['passwd']}
+            rules={[
+              {
+                required: true,
+                message: '确认密码不能为空',
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('passwd') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('两次输入的密码不一致'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="请再次输入登录密码"
             />
           </FormItem>
 
@@ -154,12 +228,12 @@ const CreateFormContent = (props) => {
             }
             rules={[
               {
-                type: 'email',
-                message: '请输入有效的邮箱地址！',
+                required: true,
+                message: '邮箱不能为空',
               },
               {
-                max: 100,
-                message: '邮箱地址最多100个字符！',
+                type: 'email',
+                message: '邮箱格式不正确',
               },
             ]}
           >
@@ -170,19 +244,23 @@ const CreateFormContent = (props) => {
           </FormItem>
 
           <FormItem
-            name="phone"
+            name="mobile"
             label={
               <Space>
                 手机号码
-                <Tooltip title="用户的手机号码，用于接收短信通知">
+                <Tooltip title="用户的手机号码，用于接收短信通知（选填，须 11 位）">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
             }
             rules={[
               {
-                pattern: /^1[3-9]\d{9}$/,
-                message: '请输入有效的手机号码！',
+                validator(_, value) {
+                  const v = value == null ? '' : String(value).trim();
+                  if (!v) return Promise.resolve();
+                  if (/^1[3-9]\d{9}$/.test(v)) return Promise.resolve();
+                  return Promise.reject(new Error('手机号必须是11位数字'));
+                },
               },
             ]}
           >
@@ -267,6 +345,8 @@ const CreateFormContent = (props) => {
       {renderContent()}
     </Form>
   );
-};
+});
+
+CreateFormContent.displayName = 'CreateFormContent';
 
 export default CreateFormContent;

@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 import io.github.wldos.common.exception.BaseException;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.common.res.ResultCode;
+import com.wldos.framework.support.auth.AccountNotActivatedException;
 import io.github.wldos.framework.support.auth.TokenForbiddenException;
 import io.github.wldos.framework.support.auth.TokenInvalidException;
 import io.github.wldos.framework.support.auth.UserInvalidException;
@@ -85,6 +86,16 @@ public class GlobalExceptionHandler {
 	protected Result tokenForbiddenExceptionHandler(HttpServletResponse response, TokenForbiddenException ex) {
 		response.setStatus(200); // HTTP状态码始终为200
 		log.error(ex.getMessage());
+		return Result.error(ex.getCode(), ex.getMessage());
+	}
+
+	/**
+	 * 处理账号未激活（已登录但未完成邮箱激活等）
+	 */
+	@ExceptionHandler(AccountNotActivatedException.class)
+	protected Result accountNotActivatedExceptionHandler(HttpServletResponse response, AccountNotActivatedException ex) {
+		response.setStatus(200);
+		log.warn("{}", ex.getMessage());
 		return Result.error(ex.getCode(), ex.getMessage());
 	}
 

@@ -136,6 +136,11 @@ const routes = [
                 name: '节假日日历',
               },
               {
+                path: '/admin/sys/domainOption',
+                component: './sys/domain-option',
+                name: '域级系统参数',
+              },
+              {
                 path: '/admin/sys/reg',
                 component: './sys/reg',
               },
@@ -148,6 +153,9 @@ const routes = [
                 path: '/admin/sys/oauth',
                 component: './sys/oauth'
               },
+              // 子分组动态占位：/admin/sys/* 中未在上方静态列出的菜单（如 sys/calendar 等后台动态资源），
+              // 由 admindynamicrouter 页面按 menu.component 动态加载本地组件。
+              // 必须在子级补兜底——React Router 嵌套匹配在父级前缀命中后不会回退到外层 `/*`。
               {
                 path: '/*',
                 component: './admindynamicrouter',
@@ -337,7 +345,12 @@ const routes = [
               { path: '/*', component: './admindynamicrouter', hideInMenu: true },
             ],
           },
-          // 管理端动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 AdminDynamicRouter 渲染）
+          {
+            path: '/admin/dev/wo-options',
+            component: './sys/wo-options',
+            name: '全局系统选项',
+          },
+          // 管理端动态占位路由：用于承载后端动态返回的页面（菜单融合显示，页面由 admindynamicrouter 渲染）
           {
             path: '/*',
             component: './admindynamicrouter',
@@ -439,61 +452,6 @@ const routes = [
           {
             path: '/info-author/:userId.html',
             component: './account/center/components/InfoAuthor'
-          },
-          // 商业模块（社区版注释掉本段代码，不分发 commercial 目录）
-          {
-            path: '/product',
-            component: './commercial/products', name: '产品中心',
-          },
-          {
-            path: '/product-:id.html',
-            component: './commercial/products/detail',
-          },
-          {
-            path: '/product/trial',
-            component: './commercial/trial',
-            name: '试用申请',
-          },
-          {
-            path: '/agreement',
-            component: './commercial/agreement', name: '服务协议',
-          },
-          {
-            path: '/checkout',
-            component: './commercial/checkout', name: '结算页',
-          },
-          {
-            path: '/order/list',
-            component: './commercial/order', name: '我的订单',
-          },
-          {
-            path: '/order/:orderNo',
-            component: './commercial/order/detail'
-          },
-          {
-            path: '/license/list',
-            component: './commercial/license', name: '我的 License'
-          },
-          {
-            path: '/license/:id',
-            component: './commercial/license/detail'
-          },
-          {
-            path: '/ticket/list',
-            component: './commercial/ticket', name: '我的工单'
-          },
-          {
-            path: '/ticket/create',
-            component: './commercial/ticket/create'
-          },
-          {
-            path: '/ticket/:id',
-            component: './commercial/ticket/detail'
-          },
-          {
-            path: '/social-publish',
-            component: './commercial/social-publish',
-            name: '内容发布',
           },
           {
             path: '/search',

@@ -16,6 +16,8 @@ import io.github.wldos.common.vo.SelectOption;
 import io.github.wldos.framework.support.plugins.core.AutoStartEnum;
 import io.github.wldos.framework.support.plugins.core.PluginStatus;
 import io.github.wldos.platform.support.resource.enums.ResourceEnum;
+import io.github.wldos.platform.support.system.enums.OptionAppCodeEnum;
+import io.github.wldos.platform.support.system.enums.OptionTypeEnum;
 import io.github.wldos.platform.support.web.enums.TemplateTypeEnum;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +59,24 @@ public class EnumController {
 	@GetMapping("select/resource")
 	public List<SelectOption> fetchEnumResType() {
 		return Arrays.stream(ResourceEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	/**
+	 * 全局系统选项：{@code wo_options.option_type}（与 {@link OptionTypeEnum} 一致）
+	 */
+	@ApiOperation(value = "系统选项类型", notes = "wo_options.option_type：auto_reload / normal")
+	@GetMapping("select/optionType")
+	public List<SelectOption> fetchEnumWoOptionType() {
+		return Arrays.stream(OptionTypeEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	/**
+	 * 全局系统选项：{@code wo_options.app_code}（与 {@link OptionAppCodeEnum} 一致）
+	 */
+	@ApiOperation(value = "系统选项应用编码", notes = "wo_options.app_code，空串表示未归属应用")
+	@GetMapping("select/optionAppCode")
+	public List<SelectOption> fetchEnumWoOptionAppCode() {
+		return Arrays.stream(OptionAppCodeEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 
 	/**

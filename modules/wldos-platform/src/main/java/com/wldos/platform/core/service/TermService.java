@@ -90,6 +90,11 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 		this.termObjectService = termObjectService;
 	}
 
+	@Override
+	public boolean isAdmin(Long userId) {
+		return this.commonOperate.isAdmin(userId);
+	}
+
 	/**
 	 * 通过实体bean、组合查询，查询分类树，支持分页、查询条件和排序
 	 *

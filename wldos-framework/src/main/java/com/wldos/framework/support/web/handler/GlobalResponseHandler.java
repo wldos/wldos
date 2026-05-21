@@ -9,10 +9,12 @@
 package com.wldos.framework.support.web.handler;
 
 import com.wldos.framework.autoconfigure.WldosFrameworkProperties;
+import com.wldos.framework.support.web.annotation.NotResponseBody;
 import io.github.wldos.framework.support.web.EdgeHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -38,6 +40,14 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+		if (returnType.hasMethodAnnotation(NotResponseBody.class)
+				|| AnnotatedElementUtils.hasAnnotation(returnType.getContainingClass(), NotResponseBody.class)) {
+			return false;
+		}
+		// void：无返回值可包装，多用于自行写 response（如 downloadFile）；免逐接口 @NotResponseBody
+		if (void.class == returnType.getParameterType()) {
+			return false;
+		}
 		// 检查Controller是否在配置的包路径下
 		String controllerPackage = returnType.getContainingClass().getPackage().getName();
 		String basePackage = properties.getBasePackage();

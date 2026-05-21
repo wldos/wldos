@@ -6,9 +6,11 @@ import {notifyDesktopEmbeddedSession} from '@/utils/desktopEmbeddedBridge';
 import {history} from "umi";
 import {stringify} from "querystring";
 
+/** 与 {@link com.wldos.framework.support.auth.AccountNotActivatedException#CODE} 一致 */
+const ACCOUNT_NOT_ACTIVATED_CODE = 460;
+
 /**
- * request 网络请求工具
- * 更详细的 api 文档: https://github.com/umijs/umi-request
+ * 业务 HTTP 状态码默认说明（优先展示服务端 message，缺省用此处文案）。
  */
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -22,11 +24,39 @@ const codeMessage = {
   406: '请求的格式不可得。',
   410: '请求的资源被永久删除，且不会再得到的。',
   422: '当创建一个对象时，发生一个验证错误。',
+  [ACCOUNT_NOT_ACTIVATED_CODE]: '请先完成邮箱激活后再使用个人中心等功能。',
   500: '服务器发生错误，请检查服务器。',
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
+
+/**
+ * 对特定业务码覆盖全局通知样式（缺省：{@code error} + 标题「请求异常」）。
+ * 新增业务码时只改此处与 {@link codeMessage}，不必改 errorHandler。
+ */
+const codeNotifyByCode = {
+  [ACCOUNT_NOT_ACTIVATED_CODE]: { level: 'warning', message: '账号未激活' },
+};
+
+const notifyApiByLevel = {
+  warning: (config) => notification.warning(config),
+  error: (config) => notification.error(config),
+};
+
+/**
+ * 业务 code ≠ 200 时的统一提示（422 由调用方处理，不弹全局通知）。
+ */
+function notifyByBusinessCode(code, serverMessage) {
+  if (code === 422) {
+    return;
+  }
+  const description = serverMessage || codeMessage[code] || '未知异常';
+  const spec = codeNotifyByCode[code];
+  const level = spec && notifyApiByLevel[spec.level] ? spec.level : 'error';
+  const title = (spec && spec.message) || '请求异常';
+  notifyApiByLevel[level]({ message: title, description });
+}
 
 /**
  * 异常处理程序
@@ -47,10 +77,7 @@ const errorHandler = (error) => {
         });
       }
     } else if (code !== 200) {
-      notification.error({
-        message: '请求异常',
-        description: message || codeMessage[code] || '未知异常',
-      });
+      notifyByBusinessCode(code, message);
     }
   } else if (!response) {
     notification.error({

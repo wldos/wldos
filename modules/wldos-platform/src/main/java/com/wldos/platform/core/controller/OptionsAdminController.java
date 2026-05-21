@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.wldos.framework.mvc.controller.EntityController;
+import com.wldos.platform.config.PropertiesReader;
 import com.wldos.platform.core.service.OptionsService;
+import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.framework.support.audit.ISystemLogger;
 import io.github.wldos.framework.support.audit.SystemEvent;
 import io.github.wldos.platform.support.system.entity.WoOptions;
@@ -22,10 +25,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 系统配置相关controller。
@@ -38,6 +46,7 @@ import io.swagger.annotations.ApiOperation;
  * @date 2021/5/2
  * @version 1.0
  */
+@Slf4j
 @Api(tags = "系统配置管理（后台）")
 @RestController
 @RequestMapping("admin/sys/options")
@@ -46,10 +55,60 @@ public class OptionsAdminController extends EntityController<OptionsService, WoO
 	@Autowired(required = false)
 	private ISystemLogger systemLogger;
 
-	@ApiOperation(value = "所有系统配置", notes = "获取所有系统配置")
+	@Autowired
+	private PropertiesReader propertiesReader;
+
+	@Override
+	protected void postAdd(WoOptions entity) {
+		refreshWoOptionsRuntime();
+	}
+
+	@Override
+	protected void postUpdate(WoOptions entity) {
+		refreshWoOptionsRuntime();
+	}
+
+	@Override
+	protected void postDelete(WoOptions entity) {
+		refreshWoOptionsRuntime();
+	}
+
+	@Override
+	protected void postDeletes(List<Object> ids) {
+		refreshWoOptionsRuntime();
+	}
+
+	/**
+	 * 与 {@link com.wldos.platform.core.controller.OptionsController#refresh()} 一致：把库中
+	 * {@code option_type = auto_reload} 的项重载进 Spring Environment，{@code @Value} / 动态配置立即生效。
+	 */
+	private void refreshWoOptionsRuntime() {
+		try {
+			this.propertiesReader.reLoadDBPropsSrc();
+		}
+		catch (Exception e) {
+			log.warn("全局 wo_options 变更后重载运行时配置失败（库已落库，可稍后调 GET system/options/refresh）: {}", e.getMessage());
+		}
+	}
+
+	@ApiOperation(value = "所有系统配置", notes = "获取所有系统配置（不分页，兼容旧调用）")
 	@GetMapping("")
 	public List<WoOptions> fetchAllOptions() {
 		return this.service.findAll();
+	}
+
+	@ApiOperation(value = "系统配置分页", notes = "全局 wo_options 表；可按 optionKey、optionType、appCode 等条件过滤（与 PageQuery 列名一致）")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "current", value = "当前页码", paramType = "query"),
+			@ApiImplicitParam(name = "pageSize", value = "每页条数", paramType = "query"),
+			@ApiImplicitParam(name = "optionKey", value = "配置键", paramType = "query"),
+			@ApiImplicitParam(name = "optionType", value = "配置类型", paramType = "query"),
+			@ApiImplicitParam(name = "appCode", value = "应用编码", paramType = "query"),
+	})
+	@GetMapping("query")
+	public PageData<WoOptions> queryPage(@RequestParam Map<String, Object> params) {
+		PageQuery pageQuery = new PageQuery(params);
+		return this.service.execQueryForPage(new WoOptions(), new WoOptions(), pageQuery);
 	}
 
 	/**

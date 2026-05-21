@@ -84,3 +84,126 @@
     }
   }
 }
+
+/* 与「我的信息 / 我的作品」等 ProList 区一致：透明底、分区标题线、无额外灰底或主色块 */
+.accountCenterPane {
+  min-height: 360px;
+  padding: 0;
+  background: transparent;
+}
+
+.accountCenterPaneInner {
+  width: 100%;
+}
+
+/* 与同页 ProList 无数据一致：简图 +「暂无数据」，居中占位 */
+.accountCenterEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  padding: 32px 24px 48px;
+
+  :global(.ant-empty-description) {
+    color: @text-color-secondary;
+  }
+}
+
+.accountNativeSection {
+  margin-bottom: 28px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.accountNativeSectionTitle {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  color: @heading-color;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.4;
+  border-bottom: 1px solid @border-color-split;
+}
+
+.accountNativeSectionBody {
+  padding-top: 0;
+}
+
+/* 与同页「标签」区及 Chapters 内 Tag 一致：默认灰边，不使用暖/红色底 */
+.accountCenterTag {
+  margin-bottom: 8px !important;
+  color: @text-color !important;
+  background: @component-background !important;
+  border-color: @border-color-base !important;
+}
+
+.accountCenterTable {
+  :global {
+    .ant-table-thead > tr > th {
+      background: @component-background;
+      font-weight: 500;
+    }
+  }
+}
+
+/* 「我的常用」与「我的权限」同为分区 + Tag；悬停显示置顶/删除角标 */
+.accountShortcutMatrixItem {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.accountShortcutMatrixLink {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  color: inherit;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+
+  &:hover {
+    color: @primary-color;
+  }
+}
+
+.accountShortcutMatrixHover {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  z-index: 2;
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 2px;
+  line-height: 1;
+  background: @component-background;
+  border: 1px solid @border-color-base;
+  border-radius: @border-radius-base;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.accountShortcutMatrixItem:hover .accountShortcutMatrixHover {
+  display: inline-flex;
+}
+
+.accountShortcutMatrixIconBtn,
+.accountShortcutMatrixCloseBtn {
+  width: 22px !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  padding: 0 !important;
+  color: @text-color-secondary !important;
+}
+
+.accountShortcutMatrixCloseBtn {
+  color: @text-color-secondary !important;
+
+  &:hover {
+    color: @error-color !important;
+  }
+}

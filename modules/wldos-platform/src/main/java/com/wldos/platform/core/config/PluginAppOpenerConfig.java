@@ -16,7 +16,6 @@ import io.github.wldos.platform.support.plugins.IPluginAppOpener;
 
 /**
  * Platform 侧 IPluginAppOpener 配置。
- * 当不存在商业实现（Agent）时激活，委托 AppService 执行。
  *
  * @author Yuanxi Universe
  */

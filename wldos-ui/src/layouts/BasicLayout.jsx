@@ -14,6 +14,7 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import WldosFooterDom from '@/layouts/foot';
 import styles from '@/wldos.less';
 import { renderIcon } from '@/utils/iconLibrary';
+import { setPortalMenuTree } from '@/utils/portalMenuVisit';
 import {getHome, wldosHeader} from "@/utils/utils";
 
 
@@ -156,8 +157,10 @@ const BasicLayout = (props) => {
         footerRender={() => (isHome || tdk?.pubType === 'page') && <WldosFooterDom/>} // 如果组件内使用了connect，这里需要返回react组件(首字母大写)，否则直接返回组件变量
         rightContentRender={() => <RightContent />}
         postMenuData={(menu) => { // 在显示前对菜单数据进行查看，修改不会触发重新渲染
-          menuDataRef.current = menu || [];
-          return menu || [];
+          const m = menu || [];
+          menuDataRef.current = m;
+          setPortalMenuTree(m);
+          return m;
         }}
       >
         {children}

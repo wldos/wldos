@@ -7,5 +7,6 @@
 /**
  * 文件存储与 {@link io.github.wldos.framework.support.internal.Base#store}（{@link io.github.wldos.framework.support.storage.IStore}）对齐：
  * 上传、URL 解析、落盘摘要、本地读流等均以契约为准；业务在 Controller / Service 中通过基类字段 {@code store} 调用即可。
+ * 附件下载建议在 Controller 中使用 {@link com.wldos.framework.support.storage.StoredFileDownloadSupport} 或 {@link com.wldos.framework.mvc.controller.NonEntityController NonEntityController} 的 {@code downloadFile}。
  */
 package com.wldos.framework.support.storage;

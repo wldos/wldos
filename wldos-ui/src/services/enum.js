@@ -9,6 +9,14 @@ export async function queryEnumTemplate() {
 export async function queryEnumResource() {
   return request(`${prefix}/enum/select/resource`);
 }
+/** wo_options.option_type */
+export async function fetchEnumWoOptionType() {
+  return request(`${prefix}/enum/select/optionType`);
+}
+/** wo_options.app_code */
+export async function fetchEnumWoOptionAppCode() {
+  return request(`${prefix}/enum/select/optionAppCode`);
+}
 export async function fetchEnumPubStatus() {
   return request(`${prefix}/enum/select/pubStatus`);
 }

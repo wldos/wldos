@@ -24,6 +24,14 @@ public enum SysOptionEnum {
 	OAUTH_LOGIN_WECHAT("社会化登录微信", Constants.OAUTH_SETTINGS_PREFIX + OAuthTypeEnum.WeChat.getValue()),
 	OAUTH_LOGIN_QQ("社会化登录QQ", Constants.OAUTH_SETTINGS_PREFIX + OAuthTypeEnum.QQ.getValue()),
 	OAUTH_LOGIN_WEIBO("社会化登录微博", Constants.OAUTH_SETTINGS_PREFIX + OAuthTypeEnum.WeiBo.getValue()),
+	/** 门户顶栏搜索下拉提示：值为 JSON 字符串数组，如 ["热词1","热词2"]；也可用纯文本每行一条；在后台「系统配置」维护 optionKey=portal_search_hints */
+	PORTAL_SEARCH_HINTS("门户首页搜索下拉提示", "portal_search_hints"),
+	/**
+	 * 门户个人中心页签 JSON（全局 {@code wo_options}）；可由 {@code wo_domain_option} 按域覆盖，键同为 {@code portal_account_center_tabs}。
+	 * type 允许：info、book、applications、projects、permission、shortcuts、login_log、op_log。
+	 * 全局与域级均无有效配置时，前端使用内置 CMS 默认四个页签。
+	 */
+	PORTAL_ACCOUNT_CENTER_TABS("门户个人中心页签", "portal_account_center_tabs"),
 	OTHER("其他", "other");
 
 	private final String title;

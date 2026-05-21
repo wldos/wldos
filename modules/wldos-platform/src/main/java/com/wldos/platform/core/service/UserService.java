@@ -177,6 +177,13 @@ public class UserService extends EntityService<UserDao, WoUser, Long> {
 	}
 
 	/**
+	 * 是否未登录或为游客。游客仅有统一身份 token，无账号实体，不提供个人中心等登录会员能力。
+	 */
+	public boolean isGuestUser(Long userId) {
+		return userId == null || this.authService.isGuest(userId);
+	}
+
+	/**
 	 * 查询游客权限
 	 *
 	 * @param domainId 域名id

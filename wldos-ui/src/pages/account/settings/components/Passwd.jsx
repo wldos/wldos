@@ -40,7 +40,7 @@ const PasswdChange = (props) => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    const value = {...values, ...fieldsValue};
+    const value = { ...values, ...fieldsValue, encryptKey };
     handleUpdate(value);
   };
 

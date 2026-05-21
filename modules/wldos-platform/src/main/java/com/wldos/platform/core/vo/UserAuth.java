@@ -45,6 +45,6 @@ public class UserAuth {
 	@ApiModelProperty(value = "当前用户权限列表")
 	private List<String> currentAuthority;
 
-	@ApiModelProperty(value = "是否为管理端，0=否，1=是", example = "0")
+	@ApiModelProperty(value = "与 {@link User} 中字段语义一致：用户端/管理端语境，前端区分；服务端当前默认 0", example = "0")
 	private int isManageSide = 0;
 }

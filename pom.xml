@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>2.5.1.0</version>
+	<version>3.0.0.0</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<!-- WLDOS 版本号 - 统一管理，修改此处即可更新所有地方的版本号 -->
-		<wldos.version>2.5.1.0</wldos.version>
+		<wldos.version>3.0.0.0</wldos.version>
 	</properties>
 	<url>http://www.gitee.com/wldos/wldos</url>
 	<licenses>
@@ -42,7 +42,7 @@
 	</licenses>
 	<developers>
 		<developer>
-			<name>Yuanxi Universe(Yuanxi Universe)</name>
+			<name>Yuanxi Universe</name>
 			<email>306991142@qq.com</email>
 			<roles>
 				<role>leader</role>
@@ -241,7 +241,7 @@
 
 	<build>
 		<plugins>
-			<!-- plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
@@ -256,12 +256,12 @@
 						</packageingExcludes>
 					</excludes>
 				</configuration>
-			</plugin -->
-			<plugin> <!--// 使用maven打包，如果要使用springboot放开这里关闭maven插件 -->
+			</plugin>
+			<!--<plugin> &lt;!&ndash;// 使用maven打包，如果要使用springboot放开这里关闭maven插件 &ndash;&gt;
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<!-- 库模块（common、framework 等）跳过 repackage，否则 JAR 结构变为 BOOT-INF/classes/，作为依赖时找不到包 -->
+					&lt;!&ndash; 库模块（common、framework 等）跳过 repackage，否则 JAR 结构变为 BOOT-INF/classes/，作为依赖时找不到包 &ndash;&gt;
 					<skip>true</skip>
 					<excludes>
 						<exclude>
@@ -270,7 +270,7 @@
 						</exclude>
 					</excludes>
 				</configuration>
-			</plugin>
+			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
