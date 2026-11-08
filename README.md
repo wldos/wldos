@@ -1,7 +1,7 @@
 <div align="center">
   <img alt="WLDOS" src="http://gitee.com/wldos/wldos/raw/master/modules/wldos-platform/src/main/resources/resources/store/logo.png" width="100" height="100">
   <h1>WLDOS 云应用支撑平台</h1>
-  <p><strong>5分钟构建企业级多租户 SaaS 应用</strong> · 上层产品：<strong>个人数字管家</strong>（桌面客户端）</p>
+  <p><strong>5分钟构建企业级多租户 SaaS 应用</strong></p>
   <p>
     <a href="http://www.wldos.com">🎬 在线演示</a> •
     <a href="#-快速开始">🚀 快速开始</a> •
@@ -57,16 +57,16 @@ cd wldos
 mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev"
 mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev"
 
-# 5. 启动前端（商业版 / 数字管家）
+# 5. 启动前端（与 wldos-ui/pom.xml 一致：frontend-maven-plugin 使用 Yarn，锁文件为 yarn.lock）
 cd wldos-ui
-yarn install && npm start
+yarn install && yarn start
 
 # 6. 访问 http://localhost:8000  账号：admin / admin
 ```
 
 ### 方式二：桌面版安装（Windows）
 
-下载桌面安装包，双击运行，开箱即用。[下载地址](http://www.wldos.org)
+下载桌面安装包，双击运行，开箱即用。
 
 ## 📸 功能截图
 
@@ -126,7 +126,7 @@ WLDOS是个软件家族，目前由开发框架、支撑平台和内容付费三
 ### 模块介绍
 
 wldos-sdk-api：sdk契约模块  
-wldos-framework：wldos开发框架，已经连同common包发布到maven中央仓库，建议在项目中直接依赖，防止与官方版本产生分歧 
+wldos-framework：wldos开发框架，已经连同common包发布到maven中央仓库，建议在项目中直接依赖，防止与官方版本产生分歧
 ````
 <dependencies>
    <dependency>
@@ -150,7 +150,7 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 3. 设置文件存储位置。  <br/>
    默认:${project-root}\\wldos-web\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  <br/><br/>
-4. 项目更新maven库。开发环境服务器端口默认 **8088**（见 `application-dev.properties`）。<br/><br/>
+4. 项目更新maven库。服务器端口号默认8080。<br/><br/>
 5. 安装项目；  <br/>
    mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev" -P dev <br/><br/>
    启动项目：    
@@ -160,21 +160,8 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 #### 启动前端： <br/>
 1. 下载前端代码到本地，进入 `wldos-ui`，执行 `yarn install`（与 `wldos-ui/pom.xml` 一致）。本地 Node 若为 21+，项目内 `.yarnrc` 已设 `ignore-engines`。<br/>
-2. **社区版**：`yarn start` 或 `yarn start:community:dev`。<br/>
-   **商业版 / 数字管家桌面联调**：`npm start`（`APP_FLAVOR` 默认 commercial，含 `pages/commercial` 与 `commercial/desktop-app`）。社区分支用 `npm run start:community:dev`。<br/>
-   访问地址与端口以终端输出为准（常见为 http://localhost:8000）。<br/>
+2. 执行 `yarn start`。访问地址与端口以终端输出为准（常见为 http://localhost:8000）。<br/>
 3. 登录：超级管理员 admin，密码与用户名相同。<br/>
-
-#### 数字管家桌面壳联调（Electron，三进程）<br/>
-演进地图：[`docs/wldos-living/README.md`](docs/wldos-living/README.md)。构建细节：[`桌面壳Electron构建与开发指南.md`](docs/wldos3.0/内容发布-自媒体助手/桌面壳Electron构建与开发指南.md)。<br/>
-
-| 进程 | 命令 |
-|------|------|
-| 后端 | `mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev" -P dev`（端口 8088） |
-| 前端 | `cd wldos-ui && npm start`（端口 8000，默认商业路由，代理 `/api` → 8088） |
-| Electron | `cd commercial/wldos-commercial/wldos-desktop-electron && npm run dev` |
-
-**量产（按需，非每次启动）**：改 `auth-core/wldos-agent` → `mvn -pl auth-core/wldos-license exec:java@release-batch`；仅改 `commercial/` 下 Java → `exec:java@commercial-release-batch`（须先跑过 agent 量产）。**只改 Electron / wldos-ui 不需要量产。** 说明见 `auth-core/wldos-license/readme.txt` 第二、四节。<br/>
 
 #### 部署到服务器: <br/>
     1.在服务器上安装好mysql5.7、tomcat9、apache2.4，数据库配置好DBA权限的用户，更新配置到platform/application*.properties中；  
