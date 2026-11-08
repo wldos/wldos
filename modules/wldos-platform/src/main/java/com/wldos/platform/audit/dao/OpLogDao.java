@@ -14,7 +14,7 @@ import com.wldos.platform.audit.entity.WoOpLog;
  * 操作日志 Repository。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 public interface OpLogDao extends BaseDao<WoOpLog, Long> {

@@ -7,26 +7,52 @@
  */
 
 import React, { useState } from 'react';
-import { Descriptions, Tag, Button, Space, Modal, message, Popconfirm } from 'antd';
-import { useIntl } from 'umi';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import CompanyEditForm from './CompanyEditForm';
-import SystemCreateForm from './SystemCreateForm';
+import { Descriptions, Tag, Button, Space, message, Popconfirm } from 'antd';
+import { useIntl, connect } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
+import { canProvisionCompany } from '@/utils/orgCreateUserDomain';
+import moment from 'moment';
+import { EditOutlined, DeleteOutlined, PlusOutlined, UserAddOutlined } from '@ant-design/icons';
+import ComUpdateForm from '@/pages/sys/com/components/UpdateForm';
+import ComCreateForm from '@/pages/sys/com/components/CreateForm';
+import ComCreateFormContent from '@/pages/sys/com/components/CreateFormContent';
+import AddAdminForm from '@/pages/sys/com/components/AddAdminForm';
+import ArchCreateForm from '@/pages/sys/arch/components/CreateForm';
+import ArchCreateFormContent from '@/pages/sys/arch/components/CreateFormContent';
+import { addComAdmin } from '@/pages/sys/com/service';
+import {
+  canDeleteCompanyRecord,
+  companyDeleteBlockReason,
+  VIRTUAL_PLATFORM_COM_ID,
+} from '@/pages/sys/com/companyDeleteGuard';
 
-const CompanyDetail = ({ company, onCompanyUpdate, onSystemAdd, onCompanyDelete }) => {
+const TOP_COM_ID = VIRTUAL_PLATFORM_COM_ID;
+
+const CompanyDetail = ({
+  company,
+  onCompanyUpdate,
+  onCompanyAdd,
+  onSystemAdd,
+  onCompanyDelete,
+  comOptions = [],
+  parentCompanyName,
+  currentUser,
+  isAdmin,
+  isTenantAdmin,
+}) => {
   const intl = useIntl();
+  const canManageCompanyStructure = canProvisionCompany(isAdmin, isTenantAdmin);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [systemModalVisible, setSystemModalVisible] = useState(false);
-  const [editLoading, setEditLoading] = useState(false);
-  const [systemLoading, setSystemLoading] = useState(false);
+  const [comCreateVisible, setComCreateVisible] = useState(false);
+  const [comCreateParentId, setComCreateParentId] = useState('0');
+  const [addAdminVisible, setAddAdminVisible] = useState(false);
 
-  const handleEditCompany = () => {
-    setEditModalVisible(true);
-  };
-
-  const handleAddSystem = () => {
-    setSystemModalVisible(true);
-  };
+  const isPlatformAdmin = String(currentUser?.tenantId ?? '') === TOP_COM_ID;
+  const isTopLevelCompany = company.parentId == null || String(company.parentId) === TOP_COM_ID;
+  const parentDisplay = isTopLevelCompany
+    ? (isPlatformAdmin ? intl.formatMessage({ id: 'component.organizationTree.company.detail.platform' }) : '-')
+    : (parentCompanyName || '-');
 
   const handleDeleteCompany = async () => {
     try {
@@ -37,55 +63,82 @@ const CompanyDetail = ({ company, onCompanyUpdate, onSystemAdd, onCompanyDelete 
         message.info(intl.formatMessage({ id: 'component.organizationTree.company.msg.deleteTodo' }));
       }
     } catch (error) {
-      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.deleteFail' }));
+      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.updateFail' }));
     }
   };
 
   const handleEditSubmit = async (values) => {
-    setEditLoading(true);
-    try {
-      if (onCompanyUpdate) {
-        await onCompanyUpdate({ id: company.id, ...values });
-        setEditModalVisible(false);
-      } else {
-        setEditModalVisible(false);
-      }
-    } catch (error) {
-      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.updateFail' }));
-    } finally {
-      setEditLoading(false);
+    if (onCompanyUpdate) {
+      await onCompanyUpdate({ id: company.id, ...values });
     }
+    setEditModalVisible(false);
   };
 
   const handleSystemSubmit = async (values) => {
-    setSystemLoading(true);
-    try {
-      if (onSystemAdd) {
-        await onSystemAdd(company.id, values);
-        // 不在这里显示成功消息，由父组件统一处理
-        setSystemModalVisible(false);
-      } else {
-        message.info(intl.formatMessage({ id: 'component.organizationTree.system.msg.addTodo' }));
-        setSystemModalVisible(false);
+    if (onSystemAdd) {
+      await onSystemAdd(company.id, values);
+    } else {
+      message.info(intl.formatMessage({ id: 'component.organizationTree.system.msg.addTodo' }));
+    }
+    setSystemModalVisible(false);
+  };
+
+  const openComCreate = (parentId) => {
+    setComCreateParentId(parentId);
+    setComCreateVisible(true);
+  };
+
+  const handleComCreateSubmit = async (values) => {
+    if (onCompanyAdd) {
+      const ok = await onCompanyAdd({ ...values, parentId: comCreateParentId });
+      if (ok !== false) {
+        setComCreateVisible(false);
       }
-    } catch (error) {
-      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.addFail' }));
-    } finally {
-      setSystemLoading(false);
+    } else {
+      message.info(intl.formatMessage({ id: 'component.organizationTree.company.msg.addTodo' }));
     }
   };
 
+  const addTAdmin = async (value = { ids: [], userComId: '' }) => {
+    if (!value || value.ids?.length === 0) {
+      message.info(intl.formatMessage({ id: 'component.organizationTree.company.msg.selectAdmin' }));
+      return false;
+    }
+    const hide = message.loading(intl.formatMessage({ id: 'component.organizationTree.common.msg.submitting' }));
+    try {
+      const res = await addComAdmin({
+        userIds: value.ids,
+        userComId: value.userComId,
+      });
+      hide();
+      if (res?.data !== '') {
+        message.warn(res.data);
+      } else {
+        message.success(intl.formatMessage({ id: 'component.organizationTree.company.msg.adminOk' }));
+      }
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.adminFail' }));
+      return false;
+    }
+  };
+
+  const siblingParentId = company.parentId == null || String(company.parentId) === TOP_COM_ID
+    ? TOP_COM_ID
+    : company.parentId;
+
   return (
     <div>
-      <Descriptions title={intl.formatMessage({ id: 'component.organizationTree.company.detail.title' })} bordered column={2}>
+      <Descriptions bordered column={2}>
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.name' })}>
           {company.comName || company.name || '-'}
         </Descriptions.Item>
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.code' })}>
           {company.comCode || company.code || '-'}
         </Descriptions.Item>
-        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.desc' })} span={2}>
-          {company.comDesc || company.description || '-'}
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.parent' })}>
+          {parentDisplay}
         </Descriptions.Item>
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.displayOrder' })}>
           {company.displayOrder || '-'}
@@ -97,59 +150,96 @@ const CompanyDetail = ({ company, onCompanyUpdate, onSystemAdd, onCompanyDelete 
               : intl.formatMessage({ id: 'component.organizationTree.common.status.invalid' })}
           </Tag>
         </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.createTime' })}>
+          {company.createTime ? moment(company.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.company.detail.desc' })} span={2}>
+          {company.comDesc || company.description || '-'}
+        </Descriptions.Item>
       </Descriptions>
 
-      <div style={{ marginTop: 16 }}>
-        <Space>
-          <Button type="primary" icon={<EditOutlined />} onClick={handleEditCompany}>
-            {intl.formatMessage({ id: 'component.organizationTree.company.action.edit' })}
-          </Button>
-          <Button icon={<PlusOutlined />} onClick={handleAddSystem}>
-            {intl.formatMessage({ id: 'component.organizationTree.system.action.add' })}
-          </Button>
-          <Popconfirm
-            title={intl.formatMessage({ id: 'component.organizationTree.company.confirm.deleteTitle' })}
-            description={intl.formatMessage({ id: 'component.organizationTree.common.confirm.deleteDesc' })}
-            onConfirm={handleDeleteCompany}
-          >
-            <Button danger icon={<DeleteOutlined />}>
+      <Space wrap style={{ marginTop: 16 }}>
+        <Button type="primary" icon={<EditOutlined />} onClick={() => setEditModalVisible(true)}>
+          {intl.formatMessage({ id: 'component.organizationTree.company.action.edit' })}
+        </Button>
+        {canManageCompanyStructure ? (
+          <>
+            <Button icon={<PlusOutlined />} onClick={() => openComCreate(company.id)}>
+              {intl.formatMessage({ id: 'component.organizationTree.common.action.addChild' })}
+            </Button>
+            <Button icon={<PlusOutlined />} onClick={() => openComCreate(siblingParentId)}>
+              {intl.formatMessage({ id: 'component.organizationTree.common.action.addSibling' })}
+            </Button>
+          </>
+        ) : null}
+        <Button icon={<PlusOutlined />} onClick={() => setSystemModalVisible(true)}>
+          {intl.formatMessage({ id: 'component.organizationTree.system.action.add' })}
+        </Button>
+        <Button icon={<UserAddOutlined />} onClick={() => setAddAdminVisible(true)}>
+          {intl.formatMessage({ id: 'component.organizationTree.company.action.setAdmin' })}
+        </Button>
+        {canManageCompanyStructure ? (
+          canDeleteCompanyRecord(company) ? (
+            <Popconfirm
+              title={intl.formatMessage({ id: 'component.organizationTree.company.confirm.deleteTitle' })}
+              description={intl.formatMessage({ id: 'component.organizationTree.common.confirm.deleteDesc' })}
+              onConfirm={handleDeleteCompany}
+            >
+              <Button danger icon={<DeleteOutlined />}>
+                {intl.formatMessage({ id: 'component.organizationTree.company.action.delete' })}
+              </Button>
+            </Popconfirm>
+          ) : (
+            <Button danger icon={<DeleteOutlined />} disabled title={companyDeleteBlockReason(company)}>
               {intl.formatMessage({ id: 'component.organizationTree.company.action.delete' })}
             </Button>
-          </Popconfirm>
-        </Space>
-      </div>
+          )
+        ) : null}
+      </Space>
 
-      {/* 编辑公司模态框 */}
-      <Modal
-        title={intl.formatMessage({ id: 'component.organizationTree.company.modal.editTitle' })}
-        open={editModalVisible}
+      <ComUpdateForm
+        onSubmit={handleEditSubmit}
         onCancel={() => setEditModalVisible(false)}
-        footer={null}
-        width={600}
-      >
-        <CompanyEditForm
-          company={company}
-          onSubmit={handleEditSubmit}
-          loading={editLoading}
-        />
-      </Modal>
+        updateModalVisible={editModalVisible}
+        values={company}
+        roles={comOptions}
+      />
 
-      {/* 添加体系模态框 */}
-      <Modal
-        title={intl.formatMessage({ id: 'component.organizationTree.system.modal.addTitle' })}
-        open={systemModalVisible}
-        onCancel={() => setSystemModalVisible(false)}
-        footer={null}
-        width={600}
+      <ComCreateForm
+        modalVisible={comCreateVisible}
+        onCancel={() => setComCreateVisible(false)}
       >
-        <SystemCreateForm
-          companyId={company.id}
-          onSubmit={handleSystemSubmit}
-          loading={systemLoading}
+        <ComCreateFormContent
+          key={`com-create-${comCreateParentId}`}
+          onSubmit={handleComCreateSubmit}
+          onCancel={() => setComCreateVisible(false)}
+          roles={comOptions}
+          defaultParentId={comCreateParentId}
         />
-      </Modal>
+      </ComCreateForm>
+
+      <AddAdminForm
+        onCancel={() => setAddAdminVisible(false)}
+        addAdminModalVisible={addAdminVisible}
+        values={company}
+        addTAdmin={addTAdmin}
+      />
+
+      <ArchCreateForm
+        modalVisible={systemModalVisible}
+        onCancel={() => setSystemModalVisible(false)}
+      >
+        <ArchCreateFormContent
+          onSubmit={handleSystemSubmit}
+          onCancel={() => setSystemModalVisible(false)}
+          fixedComId={company.id}
+        />
+      </ArchCreateForm>
     </div>
   );
 };
 
-export default CompanyDetail;
+export default connect(({ user }) => ({
+  currentUser: user.currentUser || {},
+  ...buildAuthorityHelper(user, '/admin'),
+}))(CompanyDetail);

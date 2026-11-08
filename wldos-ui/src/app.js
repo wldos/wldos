@@ -7,6 +7,8 @@ import {autoLoginManager} from "@/utils/autoLogin";
 // 导入 pluginRequest 以确保 window.pluginRequest 被暴露
 import '@/utils/pluginRequest';
 import { resolveRuntimeLocale, getMomentLocaleTag } from '@/utils/runtimeLocale';
+import { bootstrapDesktopEmbeddedApp, isDesktopEmbedded, getDesktopShellBranding, DESKTOP_DEFAULT_ENTRY_PATH, consumeDesktopShellBootRoute } from '@/utils/desktopEmbeddedBridge';
+import DarkThemeBootstrap from '@/components/DarkTheme/DarkThemeBootstrap';
 
 /** 统一语言解析：仅 zh-CN / zh-TW / en-US，避免匹配到 pt-BR 等片段 locale */
 export const locale = {
@@ -22,7 +24,21 @@ export async function render(oldRender) {
   await import('moment/locale/zh-tw');
   const tag = getMomentLocaleTag(resolveRuntimeLocale());
   m.locale(tag);
+  bootstrapDesktopEmbeddedApp(history);
+  if (typeof window !== 'undefined') {
+    const { readDarkMode, syncDarkTheme } = await import('@/components/DarkTheme/darkMode');
+    syncDarkTheme(readDarkMode());
+  }
   oldRender();
+}
+
+export function rootContainer(container) {
+  return (
+    <>
+      <DarkThemeBootstrap />
+      {container}
+    </>
+  );
 }
 
 // 主应用暴露 React 到全局，供插件运行时复用（类似 Java 类加载器机制）
@@ -36,33 +52,42 @@ if (typeof window !== 'undefined') {
 // 应用启动时的自动登录检测
 export async function onRouteChange({ location }) {
   const {pathname} = location;
-  
+
   // 如果是登录页，检查是否已有有效登录状态
   if (pathname === '/user/login') {
     const isLoggedIn = await autoLoginManager.checkLoginStatus();
     if (isLoggedIn) {
-      // 用户已登录，重定向到首页
-      history.push('/');
+      const home = isDesktopEmbedded()
+        ? (getDesktopShellBranding()?.entryPath || DESKTOP_DEFAULT_ENTRY_PATH)
+        : '/';
+      history.push(home);
       return;
     }
     return;
   }
   
-  if (pathname === '404') {
-    return;
+  if (isDesktopEmbedded()) {
+    const entry =
+      consumeDesktopShellBootRoute()
+      || getDesktopShellBranding()?.entryPath
+      || DESKTOP_DEFAULT_ENTRY_PATH;
+    if (pathname === '/' || pathname === '/index.html') {
+      history.replace(entry);
+      return;
+    }
   }
   
-  // 权限验证
-  isAuth({route: pathname}).then((res) => {
-    const code = res?.data;
-    if (code === '401') {
-      // console.log('onRouteChange: 401 location=', pathname);
-      history.push('/user/login');
-    }else if (code === '403') {
-      // console.log('onRouteChange: 403 location=', pathname);
-      history.push('404');
-    } else {
-      import('@/utils/portalMenuVisit').then((m) => m.tryRecordPortalMenuVisit(pathname));
-    }
-  });
+  if (pathname === '/404') {
+    return;
+  }
+
+  const authRes = await isAuth({ route: pathname });
+  const code = authRes?.data;
+  if (code === '401') {
+    history.push('/user/login');
+  } else if (code === '403') {
+    history.push('/404');
+  } else if (authRes?.code === 200) {
+    import('@/utils/portalMenuVisit').then((m) => m.tryRecordPortalMenuVisit(pathname));
+  }
 }

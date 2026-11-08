@@ -22,6 +22,7 @@ import com.wldos.cms.enums.ApproveStatusEnum;
 import com.wldos.cms.vo.AuditComment;
 import com.wldos.cms.vo.Comment;
 import io.github.wldos.common.Constants;
+import io.github.wldos.common.exception.BaseException;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.utils.ObjectUtils;
@@ -50,6 +51,9 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 	@Value("${wldos_cms_comment_audit:false}")
 	private String auditFlag;
 
+	@Value("${wldos_cms_comment_enabled:true}")
+	private String commentEnabledFlag;
+
 	private final UserService userService;
 
 	private final PubService pubService;
@@ -61,6 +65,20 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 
 	private final BeanCopier kCopier = BeanCopier.create(KComments.class, Comment.class, false);
 
+	public boolean isCommentEnabled() {
+		if (ObjectUtils.isBlank(this.commentEnabledFlag)) {
+			return true;
+		}
+		String v = this.commentEnabledFlag.trim();
+		return !"false".equalsIgnoreCase(v) && !"0".equals(v);
+	}
+
+	private void assertCommentEnabled() {
+		if (!this.isCommentEnabled()) {
+			throw new BaseException("站点已关闭评论功能");
+		}
+	}
+
 	/**
 	 * 查询发布内容评论
 	 *
@@ -70,6 +88,9 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 	 * @return 评论列表
 	 */
 	public List<Comment> queryPubComments(Long pubId, String delFlag, String appStatus) {
+		if (!this.isCommentEnabled()) {
+			return new ArrayList<>();
+		}
 		List<KComments> comments = this.entityRepo.queryCommentsByPubId(pubId, delFlag, appStatus);
 
 		if (ObjectUtils.isBlank(comments))
@@ -104,6 +125,7 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 	 * @return 评论主键id
 	 */
 	public Long comment(KComments entity, Long curUserId, String userIp) {
+		this.assertCommentEnabled();
 
 		entity.setApproved("true".equals(this.auditFlag) /* 开启评论审核 */
 				? ApproveStatusEnum.APPROVING.getValue() : ApproveStatusEnum.APPROVED.getValue());
@@ -122,6 +144,7 @@ public class CommentService extends EntityService<CommentDao, KComments, Long> {
 	 * @param entity 评论数据
 	 */
 	public void deleteComment(KComments entity) {
+		this.assertCommentEnabled();
 		KComments comment = this.findById(entity.getId());
 		this.delete(entity);
 		Long pId = comment.getPubId();

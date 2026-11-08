@@ -18,7 +18,7 @@ import org.springframework.data.repository.query.Param;
  * 节假日表 Repository。
  *
  * @author Yuanxi Universe
- * @date 2026/04/30
+ * @date 2025/04/30
  * @version 1.0
  */
 public interface HolidayDao extends BaseDao<WoCalendarHoliday, Long> {
@@ -30,11 +30,11 @@ public interface HolidayDao extends BaseDao<WoCalendarHoliday, Long> {
 
 	/** 按年返回全部条目（按日期升序），用于客户端拉取与管理端按年展示 */
 	@Query("select h.* from wo_calendar_holiday h " +
-			"where h.delete_flag='normal' and h.year=:year order by h.holiday_date asc")
+			"where h.delete_flag='normal' and h.`year`=:year order by h.holiday_date asc")
 	List<WoCalendarHoliday> findByYear(@Param("year") int year);
 
 	/** 该年是否已有任何条目（用于 seed 与外部同步时跳过已存在年份） */
 	@Query("select count(1) from wo_calendar_holiday h " +
-			"where h.delete_flag='normal' and h.year=:year")
+			"where h.delete_flag='normal' and h.`year`=:year")
 	long countByYear(@Param("year") int year);
 }

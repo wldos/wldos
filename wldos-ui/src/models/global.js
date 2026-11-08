@@ -12,6 +12,8 @@ import {
   queryAdminTicketNoticesCount,
   queryAdminTicketNotices,
 } from '@/services/user';
+import wldosStorage from '@/utils/wldostorage';
+import { guest } from '@/utils/utils';
 
 const GlobalModel = {
   namespace: 'global',
@@ -24,6 +26,10 @@ const GlobalModel = {
   effects: {
     /** 轻量轮询：只更新角标，有新增未读时可选桌面提醒；管理端为工单待处理数 */
     *fetchNoticesCount(_, { call, put, select }) {
+      const accessToken = wldosStorage.get('accessToken');
+      if (!accessToken || accessToken === guest) {
+        return;
+      }
       const noticeMode = yield select((state) => state.global?.noticeMode || 'user');
       const prevUnread = yield select((state) => state.user?.currentUser?.unreadCount ?? 0);
       const api = noticeMode === 'adminTicket' ? queryAdminTicketNoticesCount : queryNoticesCount;

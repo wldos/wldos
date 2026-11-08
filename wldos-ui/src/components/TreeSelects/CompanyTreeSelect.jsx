@@ -23,6 +23,7 @@ export default function CompanyTreeSelect({
   treeCheckable = false,
   treeDefaultExpandAll = false,
   usePaged = false, // true: 使用分页懒加载
+  disabled = false,
 }) {
   const [treeData, setTreeData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -89,6 +90,9 @@ export default function CompanyTreeSelect({
       treeDefaultExpandAll={treeDefaultExpandAll}
       loadData={usePaged ? onLoadData : undefined}
       loading={loading}
+      disabled={disabled}
+      showSearch
+      treeNodeFilterProp="title"
       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
     />
   );

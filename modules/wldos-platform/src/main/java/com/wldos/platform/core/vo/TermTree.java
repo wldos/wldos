@@ -59,4 +59,13 @@ public class TermTree extends TreeNode<TermTree> {
 
 	@ApiModelProperty(value = "关联数量", example = "10")
 	private Long count;
+
+	@ApiModelProperty(value = "归属租户（0=平台共享）", example = "0")
+	private Long comId;
+
+	@ApiModelProperty(value = "归属站点（空=租户内全站共享）", example = "1533544727530094592")
+	private Long domainId;
+
+	@ApiModelProperty(value = "当前操作者是否可改写本行（平台/租户共享行对下级层级只读并集可见）", example = "true")
+	private Boolean writable;
 }

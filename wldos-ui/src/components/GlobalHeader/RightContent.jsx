@@ -13,7 +13,7 @@ import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
 import {Button, Switch} from "antd";
-import updateDarkTheme from "@/components/DarkTheme/UpdateTheme";
+import useDarkMode from '@/components/DarkTheme/useDarkMode';
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { querySearchHints } from '@/services/user';
 
@@ -48,7 +48,7 @@ const GlobalHeaderRight = (props) => {
     const intl = useIntl();
 
     const {module} = route && route['/'] || '';
-    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
+    const [darkMode, switchDarkMode] = useDarkMode();
     const [hintItems, setHintItems] = useState([]);
 
     useEffect(() => {
@@ -69,19 +69,6 @@ const GlobalHeaderRight = (props) => {
       })();
       return () => { cancelled = true; };
     }, []);
-
-    const switchDarkMode = () => {
-      localStorage.setItem("darkMode", darkMode ? "0" : "1");
-      let temp = !darkMode;
-      setDarkMode(temp);
-      updateDarkTheme(temp).then();
-    };
-
-    useEffect(() => {
-     if (darkMode) {
-       updateDarkTheme(true).then();
-     }
-    });
 
     let className = styles.right;
 
@@ -112,7 +99,14 @@ const GlobalHeaderRight = (props) => {
       () =>
         hints.map((text) => ({
           label: (
-            <a onClick={() => search('/search', text)} href="#" rel="nofollow">
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                search('/search', text);
+              }}
+              href="#"
+              rel="nofollow"
+            >
               {text}
             </a>
           ),
@@ -127,7 +121,6 @@ const GlobalHeaderRight = (props) => {
                 key={hintItems.length ? `hints-${hintItems.join('\u001f')}` : 'hints-i18n'}
                 className={`${styles.action} ${styles.search}`}
                 placeholder={intl.formatMessage({ id: 'component.globalHeader.search' })}
-                defaultValue={hints[0]}
                 options={searchOptions}
                 onSearch={value => search(`/search`, value)}
             />
@@ -137,7 +130,7 @@ const GlobalHeaderRight = (props) => {
             <Avatar menu avatarMenu={collectAvatarMenuItems(menuData)}/>
             <LanguageSwitcher className={styles.action} />
             <span className={styles.action}>
-              <Switch checkedChildren="🌙" unCheckedChildren="☀" onClick={switchDarkMode} defaultChecked={darkMode} size={"small"} />
+              <Switch checkedChildren="🌙" unCheckedChildren="☀" checked={darkMode} onChange={switchDarkMode} size="small" />
             </span>
           {module === 'category' && <span className={styles.action}>
             <Button

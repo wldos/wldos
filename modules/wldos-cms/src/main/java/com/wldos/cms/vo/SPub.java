@@ -33,4 +33,10 @@ public class SPub {
 
 	@ApiModelProperty(value = "发布类型", example = "POST")
 	private String pubType;
+
+	@ApiModelProperty(value = "试查命中通道，取值见 SearchMatchChannel")
+	private String matchChannel;
+
+	@ApiModelProperty(value = "检索融合分或相关性分")
+	private Double matchScore;
 }

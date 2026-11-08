@@ -17,10 +17,10 @@ import org.springframework.context.annotation.FilterType;
 @SpringBootApplication
 @ComponentScan(
     basePackages =  {"com.wldos", "${wldos.framework.base-package:com.wldos.never}"},
-    excludeFilters = @ComponentScan.Filter(
-        type = FilterType.REGEX,
-        pattern = "com\\.wldos\\.plugin\\..*"
-    )
+    excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.wldos\\.plugin\\..*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.wldos\\.platform\\.trial\\..*")
+    }
 )
 public class WldosApplication {
 

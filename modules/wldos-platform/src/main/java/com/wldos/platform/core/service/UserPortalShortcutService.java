@@ -142,9 +142,10 @@ public class UserPortalShortcutService extends EntityService<UserPortalShortcutD
 		while (this.entityRepo.countActive(userId, comId, domainId) >= MAX_SHORTCUTS_PER_SCOPE) {
 			Long evictId = this.entityRepo.findEvictUnpinnedId(userId, comId, domainId);
 			if (evictId == null) {
-				return Result.error(ResultCode.BAD_REQUEST, "记录已达上限，请先取消置顶或删除部分历史记录");
+				evictId = this.entityRepo.findEvictPinnedId(userId, comId, domainId);
+				getLog().warn("常用记录已达上限并且全部置顶，将删除部分置顶记录");
 			}
-			this.deleteById(evictId);
+			this.deletePhysicalByIds(evictId);
 		}
 		WoUserPortalShortcut e = new WoUserPortalShortcut();
 		e.setUserId(userId);

@@ -4,6 +4,7 @@ import React, {useRef, useState} from 'react';
 import {FooterToolbar} from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {querySelectPage} from "@/pages/sys/user/service";
+import OrgTreeSelect from "@/components/TreeSelects/OrgTreeSelect";
 
 const AddUserList = (props) => {
   const {
@@ -11,17 +12,22 @@ const AddUserList = (props) => {
     onSubmit: addUser,
     modalVisible,
     onCancel,
+    title = '添加成员',
+    submitText = '添加成员',
+    extraContent,
   } = props;
   const actionRef = useRef();
   const [selectedRowsState, setSelectedRows] = useState([]);
-  const {orgId = '', archId = '', comId = ''} = values;
+  const { orgId = '', archId = '', comId = '', domainId, scopeComId: scopeComIdProp } = values;
+  const candidateScopeComId = scopeComIdProp || comId;
 
   const handleAdd = async (selectedRows) => {
-    await addUser({
+    return addUser({
       ids: selectedRows.map((row) => row.id),
       orgId,
       archId,
-      comId
+      comId,
+      ...(domainId ? { domainId } : {}),
     });
   };
 
@@ -85,12 +91,18 @@ const AddUserList = (props) => {
         }
       },
     },
+    {
+      title: '所属组织',
+      dataIndex: 'filterOrgId',
+      hideInTable: true,
+      renderFormItem: () => <OrgTreeSelect comId={comId || undefined} allowClear placeholder="按组织筛选" />,
+    },
   ];
   return (
     <FullscreenModal
       width={"fit-content"}
       destroyOnClose
-      title="添加成员"
+      title={title}
       visible={modalVisible}
       onCancel={() => onCancel()}
       footer={null}
@@ -98,6 +110,7 @@ const AddUserList = (props) => {
         padding: '24px'
       }}
     >
+      {extraContent}
       <ProTable
         headerTitle="用户清单"
         actionRef={actionRef}
@@ -109,7 +122,11 @@ const AddUserList = (props) => {
           const res = await querySelectPage({
             ...params,
             sorter,
-            filter
+            filter,
+            scopeComId: candidateScopeComId || undefined,
+            ...(domainId ? { domainId } : {}),
+            filterOrgId: params.filterOrgId || undefined,
+            ...(orgId ? { candidateProfile: 'orgMember', excludeOrgId: orgId } : {}),
           });
           return Promise.resolve({
             total: res?.data?.total || 0,
@@ -141,12 +158,16 @@ const AddUserList = (props) => {
         >
           <Button
             onClick={async () => {
-              await handleAdd(selectedRowsState);
+              const ok = await handleAdd(selectedRowsState);
+              if (ok === false) {
+                return;
+              }
               setSelectedRows([]);
               actionRef.current?.reloadAndRest?.();
+              onCancel?.();
             }}
           >
-            添加成员
+            {submitText}
           </Button>
         </FooterToolbar>
       )}

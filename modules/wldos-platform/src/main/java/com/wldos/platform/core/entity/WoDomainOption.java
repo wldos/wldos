@@ -4,9 +4,11 @@
  */
 package com.wldos.platform.core.entity;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import com.wldos.framework.mvc.entity.BaseEntity;
+
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +18,8 @@ import lombok.Setter;
 @Table("wo_domain_option")
 @Getter
 @Setter
-public class WoDomainOption {
-
-	@Id
-	private Long id;
+@RbacRowScope(comId = true, domainId = true)
+public class WoDomainOption extends BaseEntity {
 
 	private Long domainId;
 

@@ -27,7 +27,8 @@ import {
   EditOutlined,
   StopOutlined,
   GithubOutlined,
-  SyncOutlined
+  SyncOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { connect, useIntl } from 'umi';
 import moment from 'moment';
@@ -127,22 +128,8 @@ const StoreReview = ({ dispatch }) => {
   // 使用桌面端粘性布局
   useDesktopSticky(actionRef);
 
-  // 监听容器宽度变化
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const updateWidth = () => {
-      if (containerRef.current) {
-        // 宽度监听逻辑
-      }
-    };
-
-    updateWidth();
-    const resizeObserver = new ResizeObserver(updateWidth);
-    resizeObserver.observe(containerRef.current);
-
-    return () => resizeObserver.disconnect();
-  }, []);
+  const storeReviewTableMinWidth = 1890;
+  const scrollX = mobile ? undefined : storeReviewTableMinWidth;
 
   // 表格列配置
   const columns = [
@@ -319,7 +306,7 @@ const StoreReview = ({ dispatch }) => {
     {
       title: intl.formatMessage({ id: 'sys.storeReview.col.action', defaultMessage: '操作' }),
       key: 'action',
-      width: 280,
+      width: 320,
       fixed: mobile ? undefined : 'right',
       render: (_, record) => {
         // 未上架发布的插件状态：待审核、已拒绝、已下架
@@ -412,7 +399,20 @@ const StoreReview = ({ dispatch }) => {
                   </Popconfirm>
                 </Tooltip>
               </>
-)}
+            )}
+            {['PENDING', 'REJECTED', 'OFFLINE'].includes(record.reviewStatus) && (
+              <Tooltip title={intl.formatMessage({ id: 'sys.storeReview.tooltip.delete', defaultMessage: '删除记录' })}>
+                <Popconfirm
+                  title={intl.formatMessage({
+                    id: 'sys.storeReview.delete.confirmContent',
+                    defaultMessage: '确定要删除插件「{name}」吗？',
+                  }, { name: record.pluginName || record.pluginCode })}
+                  onConfirm={() => handleDeleteConfirm(record)}
+                >
+                  <Button type="link" size="small" danger icon={<DeleteOutlined />} />
+                </Popconfirm>
+              </Tooltip>
+            )}
           </Space>
         );
       },
@@ -431,26 +431,18 @@ const StoreReview = ({ dispatch }) => {
     setFormVisible(true);
   };
 
-  // 删除插件
-  const handleDelete = (record) => {
-    Modal.confirm({
-      title: intl.formatMessage({ id: 'sys.storeReview.delete.confirmTitle', defaultMessage: '确认删除' }),
-      content: intl.formatMessage(
-        { id: 'sys.storeReview.delete.confirmContent', defaultMessage: '确定要删除插件「{name}」吗？' },
-        { name: record.pluginName || record.pluginCode },
-      ),
-      onOk: async () => {
-        try {
-          await deleteStorePlugin(record.id);
-          message.success(intl.formatMessage({ id: 'sys.storeReview.delete.success', defaultMessage: '删除成功' }));
-          if (actionRef.current) {
-            actionRef.current.reload();
-          }
-        } catch (error) {
-          message.error(intl.formatMessage({ id: 'sys.storeReview.delete.failed', defaultMessage: '删除失败' }));
-        }
-      },
-    });
+  const handleDeleteConfirm = async (record) => {
+    try {
+      const res = await deleteStorePlugin(record.id);
+      if (res?.code !== 200 || res?.success === false) {
+        message.error(res?.message || intl.formatMessage({ id: 'sys.storeReview.delete.failed', defaultMessage: '删除失败' }));
+        return;
+      }
+      message.success(intl.formatMessage({ id: 'sys.storeReview.delete.success', defaultMessage: '删除成功' }));
+      actionRef.current?.reload();
+    } catch (error) {
+      message.error(intl.formatMessage({ id: 'sys.storeReview.delete.failed', defaultMessage: '删除失败' }));
+    }
   };
 
   // 新增插件
@@ -646,15 +638,13 @@ const StoreReview = ({ dispatch }) => {
     setUploading(true);
     try {
       const response = await uploadPluginFile(file);
-      // WLDOS 统一返回格式：{ code: 200, message: "ok" 或 "错误消息", data: "...", success: true }
-      // 如果 message 不是 "ok"，说明有错误消息
-      if (response?.success) {
-        message.error(response.message);
-      } else {
-        message.success(intl.formatMessage({ id: 'sys.storeReview.upload.successPending', defaultMessage: '插件上传成功，等待审核' }));
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
+      if (response?.code !== 200 || response?.success === false) {
+        message.error(response?.message || intl.formatMessage({ id: 'sys.storeReview.upload.failed', defaultMessage: '上传失败' }));
+        return;
+      }
+      message.success(intl.formatMessage({ id: 'sys.storeReview.upload.successPending', defaultMessage: '插件上传成功，等待审核' }));
+      if (actionRef.current) {
+        actionRef.current.reload();
       }
     } catch (error) {
       // 从响应中提取错误消息
@@ -710,7 +700,11 @@ const StoreReview = ({ dispatch }) => {
         buildTimeoutSeconds: values.buildTimeoutSeconds || 600,
       };
 
-      await syncFromGitHub(syncData);
+      const res = await syncFromGitHub(syncData);
+      if (res?.code !== 200 || res?.success === false) {
+        message.error(res?.message || intl.formatMessage({ id: 'sys.storeReview.sync.failed', defaultMessage: '同步失败' }));
+        return;
+      }
       message.success(intl.formatMessage({ id: 'sys.storeReview.sync.success', defaultMessage: '插件同步成功' }));
       setSyncVisible(false);
       if (actionRef.current) {
@@ -915,6 +909,8 @@ const StoreReview = ({ dispatch }) => {
                 { start: range[0], end: range[1], total },
               ),
           }}
+          tableLayout={mobile ? undefined : 'fixed'}
+          scroll={mobile ? undefined : { x: scrollX }}
         />
       </div>
 
@@ -1046,7 +1042,28 @@ const StoreReview = ({ dispatch }) => {
           <Form.Item
             name="branch"
             label={intl.formatMessage({ id: 'sys.storeReview.modalSync.branch', defaultMessage: '分支名' })}
-            tooltip={intl.formatMessage({ id: 'sys.storeReview.modalSync.branchTooltip', defaultMessage: '要同步的分支，默认为 main' })}
+            tooltip={intl.formatMessage({
+              id: 'sys.storeReview.modalSync.branchTooltip',
+              defaultMessage: '填分支名如 main、master，不要填浏览器里的 blob/zip 链接',
+            })}
+            rules={[
+              {
+                validator: (_, value) => {
+                  const v = (value || '').trim();
+                  if (!v || !/^https?:\/\//i.test(v)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(
+                      intl.formatMessage({
+                        id: 'sys.storeReview.modalSync.branchNotUrl',
+                        defaultMessage: '请填分支名（如 master），不要填文件或网页地址',
+                      }),
+                    ),
+                  );
+                },
+              },
+            ]}
           >
             <Input
               placeholder={intl.formatMessage({ id: 'sys.storeReview.modalSync.branchPlaceholder', defaultMessage: 'main' })}

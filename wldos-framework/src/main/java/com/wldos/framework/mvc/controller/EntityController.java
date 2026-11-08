@@ -16,6 +16,8 @@ import com.wldos.framework.mvc.service.EntityService;
 import io.github.wldos.common.Constants;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.framework.support.audit.annotation.OpLog;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
+import io.github.wldos.platform.support.rbac.WriteScopeTarget;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,9 +59,10 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	 *
 	 * <p><b>覆写注意</b>：子类如显式覆写本方法，**必须**重新声明 {@code @OpLog}；
 	 * Java 方法注解默认不被覆写所继承（参见 {@code 02-OpLog-API覆盖清单.md § 1.3}）。
+	 * 若实体含 {@code comId} 语义（跨租户场景），覆写时应比照本方法追加 {@code targetComId = "#entity.comId"}。
 	 */
 	@PostMapping("add")
-	@OpLog(action = "新增", resourceId = "#entity.id")
+	@OpLog(action = "新增", resourceId = "#entity.id", targetComId = "#entity.comId")
 	public String addEntity(@RequestBody E entity) {
 		this.preAdd(entity);
 		service.saveOrUpdate(entity);  // 统一使用 saveOrUpdate() 方法，自动判断 insert/update
@@ -68,11 +71,34 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	}
 
 	/**
-	 * 新增实体时，对实体二次处理的hook
+	 * 新增实体时，对实体二次处理的hook。默认按 {@link RbacRowScope} 反射判定归属轴并调用
+	 * {@link #applyWriteScope(Object, WriteScopeTarget)} 打标 {@code comId}/{@code domainId}
+	 * ——与 {@link #assertEntityRowScope(Object)} 的"默认 comId=true"语义对称，三重校验点的
+	 * 写入侧不再需要业务子类逐个手写。子类需要额外业务校验或自定义归属轴时应 {@code @Override}
+	 * 并自行调用等价打标（覆写后不会再触发本默认逻辑）。
 	 *
 	 * @param entity 实体bean的实例
 	 */
 	protected void preAdd(E entity) {
+		this.stampWriteScopeIfEligible(entity);
+	}
+
+	/**
+	 * 按实体是否声明 {@link RbacRowScope} 以及声明内容，推断归属轴目标并打标；
+	 * 未声明该注解时按"默认 comId=true"处理（与 {@code DataScopeEntityAssert.assertRow} 一致），
+	 * 实体既无 {@code getComId}/{@code setComId} 时打标动作本身安全 no-op，不会报错。
+	 */
+	private void stampWriteScopeIfEligible(Object entity) {
+		if (entity == null) {
+			return;
+		}
+		RbacRowScope scope = entity.getClass().getAnnotation(RbacRowScope.class);
+		if (scope != null && !scope.comId()) {
+			return; // 显式声明不参与租户轴（平台目录型实体），跳过
+		}
+		WriteScopeTarget target = (scope != null && scope.domainId())
+				? WriteScopeTarget.SITE_AXIS : WriteScopeTarget.TENANT_AXIS;
+		this.applyWriteScope(entity, target);
 	}
 
 	/**
@@ -84,10 +110,11 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	/**
 	 * 标准实体更新。审计语义与 {@link #addEntity(Object)} 一致；详见类上方说明与 {@code @OpLog}。
 	 *
-	 * <p>子类如覆写本方法（如解决 Ambiguous mapping），<b>必须</b>重新贴 {@code @OpLog} 注解。
+	 * <p>子类如覆写本方法（如解决 Ambiguous mapping），<b>必须</b>重新贴 {@code @OpLog} 注解，
+	 * 若实体含 {@code comId} 语义（跨租户场景），应比照本方法追加 {@code targetComId = "#entity.comId"}。
 	 */
 	@PostMapping("update")
-	@OpLog(action = "更新", resourceId = "#entity.id")
+	@OpLog(action = "更新", resourceId = "#entity.id", targetComId = "#entity.comId")
 	public String updateEntity(@RequestBody E entity) {
 		this.preUpdate(entity);
 		service.saveOrUpdate(entity);  // 统一使用 saveOrUpdate() 方法，自动判断 insert/update
@@ -96,11 +123,15 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	}
 
 	/**
-	 * 更新实体时，对实体二次处理的hook
+	 * 更新实体时，对实体二次处理的hook。默认按请求体 id 回查现有行做行级校验（三重校验点之一，
+	 * 跨边界行禁止 UPDATE，见 {@link #assertEntityRowScope(Object)}）——不能只信任请求体自带的归属字段，
+	 * 否则客户端清空 comId/domainId 即可绕过。子类需要额外业务校验（如角色可管理性、层守卫）时应
+	 * {@code @Override} 并自行调用等价校验。
 	 *
 	 * @param entity 实体bean的实例
 	 */
 	protected void preUpdate(E entity) {
+		this.assertEntityRowScope(this.loadExistingRowForScope(entity));
 	}
 
 	/**
@@ -125,11 +156,12 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	}
 
 	/**
-	 * 删除实体时，对实体二次处理的hook
+	 * 删除实体时，对实体二次处理的hook。默认按请求体 id 回查现有行做行级校验，语义同 {@link #preUpdate(Object)}。
 	 *
 	 * @param entity 实体bean的实例
 	 */
 	protected void preDelete(E entity) {
+		this.assertEntityRowScope(this.loadExistingRowForScope(entity));
 	}
 
 	/**
@@ -161,11 +193,52 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	}
 
 	/**
-	 * 批量删除实体时，对实体二次处理的hook
+	 * 批量删除实体时，对实体二次处理的hook。默认逐条回查现有行做行级校验，语义同 {@link #preUpdate(Object)}。
 	 *
 	 * @param ids 实例ids
 	 */
 	protected void preDeletes(List<Object> ids) {
+		if (ids == null) {
+			return;
+		}
+		for (Object raw : ids) {
+			this.assertEntityRowScope(this.service.findById(this.parseIdForScope(raw)));
+		}
+	}
+
+	/** 批量删除请求体 ids 多为 JSON 反序列化后的 String/Integer，统一转为 Long 再回查，避免 PK 类型不匹配。 */
+	private Object parseIdForScope(Object raw) {
+		if (raw instanceof Number) {
+			return ((Number) raw).longValue();
+		}
+		try {
+			return Long.parseLong(raw.toString());
+		}
+		catch (NumberFormatException ex) {
+			return raw;
+		}
+	}
+
+	/**
+	 * 按请求体自带 id 回查数据库中的现有行，用于 {@link #preUpdate(Object)}/{@link #preDelete(Object)}
+	 * 的行级校验——绝不能直接校验请求体本身（客户端可清空归属字段绕过）。
+	 */
+	@SuppressWarnings("unchecked")
+	private E loadExistingRowForScope(E entity) {
+		if (entity == null) {
+			return null;
+		}
+		Object id = readEntityId(entity);
+		return id != null ? (E) this.service.findById(id) : null;
+	}
+
+	private Object readEntityId(Object entity) {
+		try {
+			return entity.getClass().getMethod("getId").invoke(entity);
+		}
+		catch (ReflectiveOperationException ignored) {
+			return null;
+		}
 	}
 
 	/**
@@ -174,21 +247,49 @@ public abstract class EntityController<S extends EntityService, E> extends NonEn
 	protected void postDeletes(List<Object> ids) {
 	}
 
+	/**
+	 * 标准详情查询：默认即按 {@link #assertEntityRowScope(Object)} 做行级校验（三重校验点之一，
+	 * 详情/ID 直查/外键引用不可用）；子类需要额外业务校验（如角色可管理性）时应 {@code @Override}
+	 * 并显式调用 {@code assertEntityRowScope}，不能静默跳过。
+	 */
+	@SuppressWarnings("unchecked")
 	@GetMapping("get")
 	public Object getEntityById(@RequestParam long id) {
-		return service.findById(id);
+		E entity = (E) service.findById(id);
+		if (entity != null) {
+			this.assertEntityRowScope(entity);
+		}
+		return entity;
 	}
 
 	@GetMapping("all")
 	public List<E> allEntities() {
-		if (this.isMultiTenancy() && !this.service.isAdmin(this.getUserId())) {
-			Map<String, Object> cond = new HashMap<>();
-			Class<E> clazz = this.service.getEntityClass(1);
-			cond.put(clazz.getSimpleName().equals(Constants.CLASS_NAME_COMPANY) ? "id" : Constants.COMMON_KEY_TENANT_COLUMN, this.getTenantId());
-			return this.doFilter(this.service.findAllWithCond(clazz, cond));
-		}
-		else
+		Class<E> clazz = this.service.getEntityClass(1);
+		if (!this.isMultiTenancy() || this.service.isAdmin(this.getUserId()) || !this.isTenantScopedListEntity(clazz)) {
 			return this.doFilter(service.findAll());
+		}
+		Map<String, Object> cond = new HashMap<>();
+		Long comId = this.getWorkComId();
+		if (comId == null) {
+			comId = this.getTenantId();
+		}
+		cond.put(clazz.getSimpleName().equals(Constants.CLASS_NAME_COMPANY) ? "id" : Constants.COMMON_KEY_TENANT_COLUMN, comId);
+		return this.doFilter(this.service.findAllWithCond(clazz, cond));
+	}
+
+	/** {@code /all} 下拉/label 用途：仅对带租户轴的实体按 workComId 过滤；平台全局目录（如 wo_resource）不过滤。 */
+	private boolean isTenantScopedListEntity(Class<?> clazz) {
+		RbacRowScope scope = clazz.getAnnotation(RbacRowScope.class);
+		if (scope != null) {
+			return scope.comId();
+		}
+		try {
+			clazz.getMethod("getComId");
+			return true;
+		}
+		catch (NoSuchMethodException ex) {
+			return false;
+		}
 	}
 
 	/**

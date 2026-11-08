@@ -59,3 +59,15 @@ export async function updatePasswd4admin(params) {
     data: params,
   });
 }
+export async function setUserPrimaryOrg(params) {
+  return request(`${prefix}/admin/sys/user/org/primary`, {
+    method: 'POST',
+    data: params,
+  });
+}
+export async function setUserPrimaryCompany(params) {
+  return request(`${prefix}/admin/sys/user/com/primary`, {
+    method: 'POST',
+    data: params,
+  });
+}

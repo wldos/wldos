@@ -33,6 +33,10 @@ public interface TermObjectDao extends BaseDao<KTermObject, Long> {
 	@Query("select o.* from k_term_object o where o.term_type_id=:termTypeId")
 	List<KTermObject> findAllByTermTypeId(@Param("termTypeId") Long termTypeId);
 
+	@Modifying
+	@Query("delete from k_term_object where term_type_id = :termTypeId")
+	void deleteAllByTermTypeId(@Param("termTypeId") Long termTypeId);
+
 	/**
 	 * 根据对象id查询归属的分类关系列表，这混合了所有分类法关系，如果你想按分类法类型查询，请移步<code>TermRepo#findAllByObjectAndClassType</code>
 	 *

@@ -22,7 +22,9 @@ const Info = (props) => {
     slugTerm, // 分类别名：${match.slugCategory}|${match.slugTag}
     id,
     pubType,
-    match
+    match,
+    pageOneUrl,
+    paginationRoot,
   } = props;
 
   let path;
@@ -43,7 +45,20 @@ const Info = (props) => {
     }
   }, [url]);
 
-  const body = (<Chapters title={title} slugTerm={slugTerm}  path={path} pubType={pubType} url={url} count={count} page={page} pageUrl={pageUrl}/>);
+  const body = (
+    <Chapters
+      title={title}
+      slugTerm={slugTerm}
+      path={path}
+      pubType={pubType}
+      url={url}
+      count={count}
+      page={page}
+      pageUrl={pageUrl}
+      pageOneUrl={pageOneUrl}
+      paginationRoot={paginationRoot}
+    />
+  );
 
   return (
     url === '/' ? body : (<PageContainer title={false} breadcrumb={false}>{body}</PageContainer>)

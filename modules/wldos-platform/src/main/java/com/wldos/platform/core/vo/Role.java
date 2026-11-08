@@ -38,6 +38,16 @@ public class Role extends TreeNode<Role> {
 	@ApiModelProperty(value = "角色类型", example = "system")
 	private String roleType;
 
+	@ApiModelProperty(value = "数据策略", example = "ORG_SUBTREE",
+			allowableValues = "SELF,ORG,ORG_SUBTREE,TENANT,DOMAIN,TENANT_DOMAIN,ALL")
+	private String dataPolicy;
+
+	@ApiModelProperty(value = "租户公司ID", example = "0")
+	private Long comId;
+
+	@ApiModelProperty(value = "站点域ID", example = "1")
+	private Long domainId;
+
 	@ApiModelProperty(value = "父角色ID", example = "0")
 	private Long parentId;
 
@@ -67,6 +77,21 @@ public class Role extends TreeNode<Role> {
 
 	@ApiModelProperty(value = "删除标志", hidden = true)
 	private String deleteFlag;
+
+	@ApiModelProperty(value = "是否可改角色定义（false=仅可配三权）", example = "true")
+	private Boolean managed;
+
+	@ApiModelProperty(value = "是否可授权/配管理范围", example = "true")
+	private Boolean assignable;
+
+	@ApiModelProperty(value = "是否系统内置会员角色（编码不可改，可配授权）", example = "false")
+	private Boolean systemBuiltIn;
+
+	@ApiModelProperty(value = "平台模板行（com_id=0 且 domain_id 为空）", example = "false")
+	private Boolean kindTemplate;
+
+	@ApiModelProperty(value = "是否允许物理删除", example = "true")
+	private Boolean deletable;
 
 	@ApiModelProperty(value = "版本号", hidden = true)
 	private Long versions;

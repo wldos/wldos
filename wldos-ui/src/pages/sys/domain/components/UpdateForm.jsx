@@ -1,16 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, message, Select, Card, Space, Tooltip, Row, Col} from 'antd';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Button, Form, Input, message, Select, Card, Space, Tooltip, Row, Col, Divider} from 'antd';
 import {useIntl} from 'umi';
+import { DISPLAY_ORDER_PATTERN_STRING } from '@/utils/displayOrder';
 import FullscreenModal from '@/components/FullscreenModal';
+import AdminHomeTargetSelect from './AdminHomeTargetSelect';
+import { buildAdminHomeConfig, parseAdminHomeConfig } from './adminHomeConfig';
 import {
   GlobalOutlined,
   PictureOutlined,
   SearchOutlined,
   SettingOutlined,
   InfoCircleOutlined,
-  LinkOutlined,
   FileTextOutlined,
   CrownOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import {UploadView, upParams} from "@/components/FileUpload";
 
@@ -40,6 +43,11 @@ const UpdateForm = (props) => {
 
   const [logoUrl, setLogoUrl] = useState(values?.siteLogo);
   const [iconUrl, setIconUrl] = useState(values?.favicon);
+
+  const adminHomeInitial = useMemo(
+    () => parseAdminHomeConfig(values?.adminHomeConfig),
+    [values?.adminHomeConfig],
+  );
 
   useEffect(async () => {
     const {siteLogo, favicon} = values;
@@ -82,7 +90,8 @@ const UpdateForm = (props) => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    const value = {...values, ...fieldsValue};
+    const adminHomeConfig = buildAdminHomeConfig(fieldsValue);
+    const value = {...values, ...fieldsValue, adminHomeConfig};
     handleUpdate(value);
   };
 
@@ -172,7 +181,10 @@ const UpdateForm = (props) => {
                 label={
                   <Space>
                     {intl.formatMessage({ id: 'sys.domain.update.field.secondDomain', defaultMessage: '个性域名' })}
-                    <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.secondDomain.tip', defaultMessage: '用于生成个性访问地址' })}>
+                    <Tooltip title={intl.formatMessage(
+                      { id: 'sys.domain.update.field.secondDomain.tip', defaultMessage: '平台子域快捷入口，完整地址为 前缀.{platDomain}，与主站域名独立' },
+                      { platDomain: platDomain || '' },
+                    )}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -492,83 +504,14 @@ const UpdateForm = (props) => {
         <Card
           title={
             <Space>
-              <SettingOutlined style={{ color: '#722ed1' }} />
-              {intl.formatMessage({ id: 'sys.domain.update.card.advanced', defaultMessage: '高级设置' })}
-            </Space>
-          }
-          size="small"
-          style={{ marginBottom: '16px' }}
-          extra={
-            <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.card.advanced.tip', defaultMessage: '网站的高级配置选项' })}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          }
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <FormItem
-                name="displayOrder"
-                label={
-                  <Space>
-                    {intl.formatMessage({ id: 'sys.domain.update.field.displayOrder', defaultMessage: '展示顺序' })}
-                    <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.displayOrder.tip', defaultMessage: '数字越小排序越靠前，范围1-100' })}>
-                      <InfoCircleOutlined style={{ color: '#999' }} />
-                    </Tooltip>
-                  </Space>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: intl.formatMessage({ id: 'sys.domain.update.rule.displayOrder', defaultMessage: '展示顺序1~100！' }),
-                    pattern: '^([1-9]|[1-9]\\d|100)$',
-                    max: 3,
-                  },
-                ]}
-              >
-                <Input
-                  placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.displayOrder', defaultMessage: '请输入展示顺序，1-100' })}
-                  prefix="🔢"
-                />
-              </FormItem>
-            </Col>
-
-            <Col span={12}>
-              <FormItem
-                name="isValid"
-                label={
-                  <Space>
-                    {intl.formatMessage({ id: 'sys.domain.update.field.isValid', defaultMessage: '状态' })}
-                    <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.isValid.tip', defaultMessage: '网站是否启用' })}>
-                      <InfoCircleOutlined style={{ color: '#999' }} />
-                    </Tooltip>
-                  </Space>
-                }
-              >
-                <Select
-                  style={{
-                    width: '100%',
-                  }}
-                  placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.isValid', defaultMessage: '请选择状态' })}
-                >
-                  <Option value="1">{intl.formatMessage({ id: 'sys.domain.status.valid', defaultMessage: '有效' })}</Option>
-                  <Option value="0">{intl.formatMessage({ id: 'sys.domain.status.invalid', defaultMessage: '无效' })}</Option>
-                </Select>
-              </FormItem>
-            </Col>
-          </Row>
-        </Card>
-
-        <Card
-          title={
-            <Space>
               <FileTextOutlined style={{ color: '#13c2c2' }} />
-              {intl.formatMessage({ id: 'sys.domain.update.card.content', defaultMessage: '内容设置' })}
+              {intl.formatMessage({ id: 'sys.domain.update.card.footer', defaultMessage: '底部装修' })}
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.card.content.tip', defaultMessage: '网站页面内容相关设置' })}>
+            <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.card.footer.tip', defaultMessage: '门户页脚与友情链接' })}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -629,6 +572,130 @@ const UpdateForm = (props) => {
               placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.copy', defaultMessage: '请输入版权信息，支持HTML格式' })}
             />
           </FormItem>
+
+          <Divider style={{ margin: '12px 0' }} />
+
+          <FormItem
+            name="portalQrUrl"
+            label={
+              <Space>
+                {intl.formatMessage({ id: 'sys.domain.update.field.portalQrUrl', defaultMessage: '页脚二维码' })}
+                <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.portalQrUrl.tip', defaultMessage: '社区/客服等外链，留空不展示页脚二维码' })}>
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            labelCol={{ span: 3 }}
+            wrapperCol={{ span: 21 }}
+          >
+            <Input placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.portalQrUrl', defaultMessage: '页脚二维码链接' })} />
+          </FormItem>
+
+          <FormItem
+            name="portalFooterI18n"
+            label={
+              <Space>
+                {intl.formatMessage({ id: 'sys.domain.update.field.portalFooterI18n', defaultMessage: '多语言页脚' })}
+                <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.portalFooterI18n.tip', defaultMessage: '按语言覆盖上方内容，留空沿用默认' })}>
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            labelCol={{ span: 3 }}
+            wrapperCol={{ span: 21 }}
+          >
+            <Input.TextArea
+              rows={4}
+              placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.portalFooterI18n', defaultMessage: 'JSON，如 {"zh-CN":{"foot":"","flink":"","copy":""}}' })}
+            />
+          </FormItem>
+        </Card>
+
+        <Card
+          title={
+            <Space>
+              <HomeOutlined style={{ color: '#eb2f96' }} />
+              {intl.formatMessage({ id: 'sys.domain.update.card.adminHome', defaultMessage: '管理端首页' })}
+            </Space>
+          }
+          size="small"
+          style={{ marginBottom: '16px' }}
+          extra={
+            <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.card.adminHome.tip', defaultMessage: '管理后台 /admin 首页' })}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+        >
+          <AdminHomeTargetSelect domainId={values?.id} form={form} />
+        </Card>
+
+        <Card
+          title={
+            <Space>
+              <SettingOutlined style={{ color: '#722ed1' }} />
+              {intl.formatMessage({ id: 'sys.domain.update.card.advanced', defaultMessage: '高级设置' })}
+            </Space>
+          }
+          size="small"
+          style={{ marginBottom: '16px' }}
+          extra={
+            <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.card.advanced.tip', defaultMessage: '网站的高级配置选项' })}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <FormItem
+                name="displayOrder"
+                label={
+                  <Space>
+                    {intl.formatMessage({ id: 'sys.domain.update.field.displayOrder', defaultMessage: '展示顺序' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.displayOrder.tip', defaultMessage: '数字越小排序越靠前，范围1-9999' })}>
+                      <InfoCircleOutlined style={{ color: '#999' }} />
+                    </Tooltip>
+                  </Space>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: intl.formatMessage({ id: 'sys.domain.update.rule.displayOrder', defaultMessage: '展示顺序1~9999！' }),
+                    pattern: DISPLAY_ORDER_PATTERN_STRING,
+                    max: 3,
+                  },
+                ]}
+              >
+                <Input
+                  placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.displayOrder', defaultMessage: '请输入展示顺序，1-9999' })}
+                  prefix="🔢"
+                />
+              </FormItem>
+            </Col>
+
+            <Col span={12}>
+              <FormItem
+                name="isValid"
+                label={
+                  <Space>
+                    {intl.formatMessage({ id: 'sys.domain.update.field.isValid', defaultMessage: '状态' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.domain.update.field.isValid.tip', defaultMessage: '网站是否启用' })}>
+                      <InfoCircleOutlined style={{ color: '#999' }} />
+                    </Tooltip>
+                  </Space>
+                }
+              >
+                <Select
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder={intl.formatMessage({ id: 'sys.domain.update.ph.isValid', defaultMessage: '请选择状态' })}
+                >
+                  <Option value="1">{intl.formatMessage({ id: 'sys.domain.status.valid', defaultMessage: '有效' })}</Option>
+                  <Option value="0">{intl.formatMessage({ id: 'sys.domain.status.invalid', defaultMessage: '无效' })}</Option>
+                </Select>
+              </FormItem>
+            </Col>
+          </Row>
         </Card>
       </div>
     );
@@ -682,7 +749,15 @@ const UpdateForm = (props) => {
           cnameDomain: values.cnameDomain,
           foot: values.foot,
           flink: values.flink,
-          copy: values.copy
+          copy: values.copy,
+          portalQrUrl: values.portalQrUrl || '',
+          portalFooterI18n: values.portalFooterI18n || '',
+          adminHomePreset: adminHomeInitial.preset,
+          adminHomeModule: adminHomeInitial.module || 'component',
+          adminHomeUrl: adminHomeInitial.url || '',
+          adminHomeMenuPath: adminHomeInitial.menuResourcePath,
+          adminHomeTitle: adminHomeInitial.title || '',
+          adminHomeExtraProps: adminHomeInitial.extraProps || '{}',
         }}
       >
         {renderContent()}

@@ -8,6 +8,7 @@ import styles from "@/pages/book/detail/style.less";
 import {Helmet} from "react-helmet";
 import {JSEncrypt} from "jsencrypt";
 import wldosStorage from "@/utils/wldostorage";
+import { isDesktopEmbedded } from "@/utils/desktopEmbeddedBridge";
 import BookClass from "@/pages/book/detail/components/BookClass";
 export const guest = "guest";
 
@@ -78,6 +79,9 @@ export const redirectReq = (path) => { // 请求后重定向回来
 
 export function getDomain() {
   if (!isServer()) {
+    if (typeof window !== 'undefined' && window.__WLDOS_DESKTOP_BRANDING__?.domainName) {
+      return String(window.__WLDOS_DESKTOP_BRANDING__.domainName).trim();
+    }
     return window.location.hostname;
   }
   return ''; // 仅对于web端，对于app请用app_key实现
@@ -181,14 +185,51 @@ export const genAvatars = (id = '', members = []) => {
   }
   return temp;
 };
-// AES加密用户密码(其实是RSA)
+/** 从 /login/encrypt 响应解析公钥（标准 Result.data 为 Base64 SPKI）。 */
+export function resolveLoginEncryptPublicKey(res) {
+  if (res == null) {
+    return '';
+  }
+  if (typeof res === 'string') {
+    return res.trim();
+  }
+  const layer = res.data;
+  if (typeof layer === 'string') {
+    return layer.trim();
+  }
+  if (layer && typeof layer.data === 'string') {
+    return layer.data.trim();
+  }
+  return '';
+}
+
+function toRsaPublicKeyPem(keyMaterial) {
+  const raw = (keyMaterial || '').trim();
+  if (!raw) {
+    return '';
+  }
+  if (raw.includes('BEGIN PUBLIC KEY')) {
+    return raw;
+  }
+  const b64 = raw.replace(/\s+/g, '');
+  const lines = b64.match(/.{1,64}/g);
+  return `-----BEGIN PUBLIC KEY-----\n${(lines || [b64]).join('\n')}\n-----END PUBLIC KEY-----`;
+}
+
+// 登录密码 RSA 加密（历史函数名 encryptByAES）
 export const encryptByAES = (ps, encryptKey) => {
+  const pem = toRsaPublicKeyPem(encryptKey);
+  if (!pem || ps == null || ps === '') {
+    return '';
+  }
   const enc = new JSEncrypt();
-  enc.setPublicKey(encryptKey);
-  const encrypted = enc.encrypt(ps);
-  return encrypted.toString();
+  enc.setPublicKey(pem);
+  const encrypted = enc.encrypt(String(ps));
+  return encrypted ? encrypted.toString() : '';
 };
-// 下拉列表转枚举对象
+/**
+ * 后端 `[{ label, value }]` → ProTable valueEnum。Select 可直接用 res.data。
+ */
 export const selectToEnum = (selList = [{label:"", value:""},]) => {
   const data = {};
   for (let i = 0, len = selList.length; i < len; i += 1) { // 经测试优化for比forEach快10倍左右
@@ -243,6 +284,17 @@ export const redirect = () => {
   const query = getPageQuery();
 
   let {redirect: _redirect} = query;
+  if (!_redirect && typeof window !== 'undefined') {
+    try {
+      const stored = sessionStorage.getItem('wldos_post_login_redirect');
+      if (stored) {
+        _redirect = stored;
+        sessionStorage.removeItem('wldos_post_login_redirect');
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
 
   if (_redirect) {
     if (_redirect.startsWith('/')) {
@@ -264,10 +316,16 @@ export const redirect = () => {
   }
   window.location.href = _redirect || urlParams.origin + '/';
 };
-/** 每次调用返回当前请求头（从 storage 读 token），避免 401 清权后仍带过期 token；使用处请写 headerFix() */
+/**
+ * 每次调用返回当前请求头（从 storage 读 token），避免 401 清权后仍带过期 token；使用处请写 headerFix()。
+ * 桌面壳嵌入环境额外带上 X-Wldos-Terminal: desktop——后端 AuthOpenerImpl 据此按
+ * wo_resource.terminals 内存过滤菜单资源（如后台管理菜单的桌面端精简），web 门户不带此头，
+ * 后端未收到该头时维持现状行为，不影响任何存量场景。
+ */
 export const headerFix = () => ({
   'X-CU-AccessToken-WLDOS': wldosStorage.get('accessToken') || guest,
   'domain-wldos': getDomain(),
+  ...(isDesktopEmbedded() ? { 'X-Wldos-Terminal': 'desktop' } : {}),
 });
 
 export const typeEnum = {'doc': '文档', 'info': '信息', 'book': '合集', 'post': '文章'};

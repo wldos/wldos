@@ -1,25 +1,33 @@
-import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
+import {PlusOutlined, QuestionCircleOutlined, ReloadOutlined} from '@ant-design/icons';
+import {Button, Divider, Drawer, message, notification, Popconfirm, Space, Tag, Tooltip, Switch} from 'antd';
 import React, {useEffect, useRef, useState, useMemo, useCallback} from 'react';
 import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
+import BatchSettingModal from './components/BatchSettingModal';
+import CheckApiCoverage from './components/CheckApiCoverage';
 import {
   addEntity,
   getAppList, getMenuTree,
+  getEntity,
   getResList,
   queryPage,
   removeEntity,
   removeEntitys,
-  updateEntity
+  updateEntity,
+  probeResourceConfig,
+  refreshAuthCache,
 } from './service';
-import {queryEnumResource} from "@/services/enum";
+import {queryEnumResource, queryEnumResourceTerminal, queryEnumResourceMenuRegion, queryEnumMenuNodeKind, queryEnumScopeLevel} from "@/services/enum";
 import {renderIcon} from "@/utils/iconLibrary";
+import {selectToEnum} from '@/utils/utils';
+import {isSiteOwnedNavDir, filterTreeHideSiteNavDir} from './siteNavDirUtils';
 
 const ResourceList = () => {
   const intl = useIntl();
@@ -43,22 +51,7 @@ const ResourceList = () => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingConfig', defaultMessage: '正在配置' }));
 
     try {
-      await updateEntity({
-        resourceName: fields.resourceName,
-        resourcePath: fields.resourcePath,
-        resourceCode: fields.resourceCode,
-        resourceType: fields.resourceType,
-        componentPath: fields.componentPath,
-        icon: fields.icon,
-        requestMethod: fields.requestMethod,
-        target: fields.target,
-        appId: fields.appId,
-        isValid: fields.isValid,
-        id: fields.id,
-        parentId: fields.parentId,
-        remark: fields.remark,
-        displayOrder: fields.displayOrder,
-      });
+      await updateEntity(fields);
       hide();
       message.success(intl.formatMessage({ id: 'sys.res.msg.configSuccess', defaultMessage: '配置成功' }));
       return true;
@@ -72,6 +65,11 @@ const ResourceList = () => {
   const handleRemove = useCallback(async (selectedRows) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingDelete', defaultMessage: '正在删除' }));
     if (!selectedRows) return true;
+    if (selectedRows.some((row) => isSiteOwnedNavDir(row))) {
+      hide();
+      message.warning('所选资源含站点自建菜单分组，请在「站点管理 → 菜单布局」中维护');
+      return false;
+    }
     try {
       await removeEntitys({
         ids: selectedRows.map((row) => row.id),
@@ -81,13 +79,18 @@ const ResourceList = () => {
       return true;
     } catch (error) {
       hide();
-      message.error(intl.formatMessage({ id: 'sys.res.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      message.error(error?.response?.message || error?.message || intl.formatMessage({ id: 'sys.res.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
       return false;
     }
   }, [intl]);
 
   const handleRemoveOne = useCallback(async (fields) => {
     if (!fields) return true;
+
+    if (isSiteOwnedNavDir(fields)) {
+      message.warning('站点自建菜单分组请在「站点管理 → 菜单布局」中维护');
+      return false;
+    }
 
     if (fields.children) {
       message.info(intl.formatMessage({ id: 'sys.res.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
@@ -103,7 +106,7 @@ const ResourceList = () => {
       return true;
     } catch (error) {
       hide();
-      message.error(intl.formatMessage({ id: 'sys.res.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
+      message.error(error?.response?.message || error?.message || intl.formatMessage({ id: 'sys.res.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
       return false;
     }
   }, [intl]);
@@ -125,6 +128,78 @@ const ResourceList = () => {
   const [apps, setApps] = useState([]);
   const [resTypes, setResTypes] = useState({});
   const [resTypeOptions, setResTypeOptions] = useState([]);
+  const [scopeLevels, setScopeLevels] = useState({});
+  const [scopeLevelOptions, setScopeLevelOptions] = useState([]);
+  const [terminalTypes, setTerminalTypes] = useState({});
+  const [terminalOptions, setTerminalOptions] = useState([]);
+  const [menuRegionTypes, setMenuRegionTypes] = useState({});
+  const [menuRegionOptions, setMenuRegionOptions] = useState([]);
+  const [menuNodeKindOptions, setMenuNodeKindOptions] = useState([]);
+  const [menuNodeKindTypes, setMenuNodeKindTypes] = useState({});
+  const [hideSiteNavDir, setHideSiteNavDir] = useState(true);
+  const [batchSettingVisible, setBatchSettingVisible] = useState(false);
+  const [checkModalVisible, setCheckModalVisible] = useState(false);
+  const [createPresetValues, setCreatePresetValues] = useState(null);
+  const coverageRef = useRef(null);
+  const pendingCoverageItemRef = useRef(null);
+
+  const handleCoverageQuickCreate = useCallback(async (item) => {
+    pendingCoverageItemRef.current = item;
+    try {
+      const probeRes = await probeResourceConfig({
+        resourceType: item.suggestedResourceType,
+        resourcePath: item.apiPath,
+        requestMethod: item.apiMethod,
+        appId: item.appId,
+      });
+      const probeMsg = probeRes?.data;
+      if (probeMsg && probeMsg !== true && typeof probeMsg === 'string' && !probeMsg.startsWith('提示：')) {
+        notification.warning({
+          message: '资源配置校验未通过',
+          description: probeMsg,
+          duration: 6,
+        });
+      }
+    } catch (e) {
+      // probe 失败不阻断，保存时仍会校验
+    }
+    setParentId(item.sourceMenuId);
+    setSourceRecord({
+      id: item.sourceMenuId,
+      appId: item.appId,
+      resourceType: item.sourceMenuResourceType,
+    });
+    setAddMode('child');
+    setCreatePresetValues({
+      parentId: item.sourceMenuId,
+      appId: item.appId,
+      resourceType: item.suggestedResourceType,
+      resourcePath: item.apiPath,
+      requestMethod: item.apiMethod,
+      resourceName: item.apiName || item.suggestedResourceName,
+      resourceCode: item.suggestedResourceCode,
+      isValid: '1',
+      scopeLevel: 'all',
+      displayOrder: 1,
+    });
+    handleModalVisible(true);
+  }, []);
+
+  const handleBatchSetting = useCallback(async (patch) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.res.msg.loadingBatchSetting', defaultMessage: '正在批量设置' }));
+    try {
+      await Promise.all(
+        selectedRowsState.map(({ children, ...row }) => updateEntity({ ...row, ...patch })),
+      );
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.res.msg.batchSettingSuccess', defaultMessage: '批量设置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.res.msg.batchSettingFail', defaultMessage: '批量设置失败，请重试' }));
+      return false;
+    }
+  }, [intl, selectedRowsState]);
 
   const mobile = isMobile();
 
@@ -176,6 +251,55 @@ const ResourceList = () => {
     setResTypes(data);
     setResTypeOptions(arr);
 
+    const scopeRes = await queryEnumScopeLevel();
+    data = {};
+    arr = scopeRes?.data ?? [];
+    for (let i = 0, len = arr.length; i < len; i += 1) {
+      const item = arr[i];
+      data[item.value] = {
+        text: item.label,
+        value: item.value,
+      };
+    }
+    setScopeLevels(data);
+    setScopeLevelOptions(arr);
+
+    const terminalRes = await queryEnumResourceTerminal();
+    data = {};
+    arr = terminalRes?.data ?? [];
+    for (let i = 0, len = arr.length; i < len; i += 1) {
+      const item = arr[i];
+      data[item.value] = {
+        text: item.label,
+        value: item.value,
+      };
+    }
+    setTerminalTypes(data);
+    setTerminalOptions(arr);
+
+    const menuRegionRes = await queryEnumResourceMenuRegion();
+    data = {
+      '': {
+        text: intl.formatMessage({ id: 'sys.res.menuRegion.default', defaultMessage: '默认主导航' }),
+        value: '',
+      },
+    };
+    arr = menuRegionRes?.data ?? [];
+    for (let i = 0, len = arr.length; i < len; i += 1) {
+      const item = arr[i];
+      data[item.value] = {
+        text: item.label,
+        value: item.value,
+      };
+    }
+    setMenuRegionTypes(data);
+    setMenuRegionOptions(arr);
+
+    const menuNodeKindRes = await queryEnumMenuNodeKind();
+    const menuNodeKindData = menuNodeKindRes?.data ?? [];
+    setMenuNodeKindOptions(menuNodeKindData);
+    setMenuNodeKindTypes(selectToEnum(menuNodeKindData));
+
     const menuRes = await getMenuTree();
     if (menuRes?.data)
       setMenus(menuRes.data);
@@ -196,7 +320,7 @@ const ResourceList = () => {
 
     return () => resizeObserver.disconnect();
   }, []);
-  const totalColsWidth = 1500;
+  const totalColsWidth = 1750;
   const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
 
   const columns = useMemo(() => [
@@ -222,7 +346,14 @@ const ResourceList = () => {
         ],
       },
       render: (dom, entity) => {
-        return <a onClick={() => setRow(entity)}>{dom}</a>;
+        return (
+          <Space size={4}>
+            <a onClick={() => setRow(entity)}>{dom}</a>
+            {isSiteOwnedNavDir(entity) ? (
+              <Tag color="purple">站点分组</Tag>
+            ) : null}
+          </Space>
+        );
       },
     },
     {
@@ -298,11 +429,59 @@ const ResourceList = () => {
       },
     },
     {
+      title: '节点形态',
+      dataIndex: 'menuNodeKind',
+      hideInSearch: true,
+      filters: true,
+      onFilter: false,
+      valueEnum: menuNodeKindTypes,
+      render: (text) => menuNodeKindTypes[text]?.text || text || '-',
+    },
+    {
       title: intl.formatMessage({ id: 'sys.res.col.resourceType', defaultMessage: '资源类型' }),
       dataIndex: 'resourceType',
       filters: true,
       onFilter: false,
       valueEnum: resTypes,
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.res.col.menuRegion', defaultMessage: '展示区域' }),
+      dataIndex: 'menuRegion',
+      hideInSearch: true,
+      filters: true,
+      onFilter: false,
+      valueEnum: menuRegionTypes,
+      render: (text) => {
+        if (!text) {
+          return menuRegionTypes['']?.text || menuRegionTypes.nav_main?.text || '-';
+        }
+        return menuRegionTypes[text]?.text || text || '-';
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.res.col.terminals', defaultMessage: '可见终端' }),
+      dataIndex: 'terminals',
+      filters: true,
+      onFilter: false,
+      valueEnum: terminalTypes,
+      render: (_, record) => {
+        const raw = record.terminals;
+        if (!raw) {
+          return terminalTypes['']?.text || intl.formatMessage({ id: 'sys.res.terminals.all', defaultMessage: '全部终端' });
+        }
+        return raw.split(',').map((item) => {
+          const key = item.trim();
+          return terminalTypes[key]?.text || key;
+        }).join('、');
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.res.col.scopeLevel', defaultMessage: '授权层级' }),
+      dataIndex: 'scopeLevel',
+      filters: true,
+      onFilter: false,
+      valueEnum: scopeLevels,
+      render: (text) => scopeLevels[text || 'all']?.text || text || scopeLevels.all?.text || '-',
     },
     {
       title: intl.formatMessage({ id: 'sys.res.col.requestMethod', defaultMessage: '请求方法' }),
@@ -405,14 +584,31 @@ const ResourceList = () => {
           }}>{intl.formatMessage({ id: 'sys.res.action.sibling', defaultMessage: '同级' })}</a>
           <Divider type="vertical"/>
           <a
-            onClick={() => {
+            onClick={async () => {
+              const hide = message.loading('加载配置…');
+              try {
+                const detailRes = await getEntity({ id: record.id });
+                hide();
+                if (detailRes?.code === 200 && detailRes?.data) {
+                  setStepFormValues(detailRes.data);
+                } else {
+                  setStepFormValues(record);
+                }
+              } catch (e) {
+                hide();
+                setStepFormValues(record);
+              }
               handleUpdateModalVisible(true);
-              setStepFormValues(record);
             }}
           >
             {intl.formatMessage({ id: 'sys.res.action.config', defaultMessage: '配置' })}
           </a>
           <Divider type="vertical"/>
+          {isSiteOwnedNavDir(record) ? (
+            <Tooltip title="站点自建菜单分组请在「站点管理 → 菜单布局」中维护">
+              <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>{intl.formatMessage({ id: 'sys.res.action.delete', defaultMessage: '删除' })}</span>
+            </Tooltip>
+          ) : (
           <Popconfirm
             title={intl.formatMessage({ id: 'sys.res.confirm.delete', defaultMessage: '您确定要删除？' })}
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
@@ -423,22 +619,14 @@ const ResourceList = () => {
           >
             <a>{intl.formatMessage({ id: 'sys.res.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
+          )}
         </>
       ),
     },
-  ], [intl, mobile, resTypes, appList, resList, handleRemoveOne]);
+  ], [intl, mobile, resTypes, terminalTypes, menuRegionTypes, scopeLevels, appList, resList, handleRemoveOne, menuNodeKindTypes]);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle={intl.formatMessage({ id: 'sys.res.list.title', defaultMessage: '资源清单' })}
@@ -446,6 +634,10 @@ const ResourceList = () => {
           rowKey="id"
           search={{
             labelWidth: 120,
+          }}
+          expandable={{
+            defaultExpandAllRows: false,
+            childrenColumnName: 'children',
           }}
           toolBarRender={() => [
             <Button key={0} type="primary" onClick={() => {
@@ -456,6 +648,39 @@ const ResourceList = () => {
             }}>
               <PlusOutlined/> {intl.formatMessage({ id: 'sys.res.toolbar.new', defaultMessage: '新建' })}
             </Button>,
+            <Button key={1} onClick={() => setCheckModalVisible(true)}>
+              {intl.formatMessage({ id: 'sys.res.toolbar.checkApi', defaultMessage: '检查遗漏 API' })}
+            </Button>,
+            <Popconfirm
+              key="refreshAuth"
+              title={intl.formatMessage({
+                id: 'sys.res.confirm.refreshAuth',
+                defaultMessage: '清双层鉴权缓存？下一次请求将按最新授权重新编译',
+              })}
+              onConfirm={async () => {
+                const res = await refreshAuthCache();
+                if (res?.code === 200) {
+                  message.success(intl.formatMessage({
+                    id: 'sys.res.msg.refreshAuthOk',
+                    defaultMessage: '鉴权缓存已刷新',
+                  }));
+                }
+              }}
+            >
+              <Button icon={<ReloadOutlined />}>
+                {intl.formatMessage({ id: 'sys.res.toolbar.refreshAuth', defaultMessage: '刷新鉴权缓存' })}
+              </Button>
+            </Popconfirm>,
+            <span key={2} style={{ marginLeft: 8 }}>
+              <Switch
+                checked={hideSiteNavDir}
+                onChange={(checked) => {
+                  setHideSiteNavDir(checked);
+                  actionRef.current?.reload();
+                }}
+              />
+              <span style={{ marginLeft: 8 }}>隐藏站点分组</span>
+            </span>,
           ]}
           request={async (params, sorter, filter) => {
             const res = await queryPage({
@@ -463,9 +688,13 @@ const ResourceList = () => {
               sorter: {...sorter, 'displayOrder': 'ascend',},
               filter
             });
+            let rows = res?.data?.rows || [];
+            if (hideSiteNavDir) {
+              rows = filterTreeHideSiteNavDir(rows);
+            }
             return Promise.resolve({
-              total: res?.data?.total || 0,
-              data: res?.data?.rows || [],
+              total: hideSiteNavDir ? rows.length : (res?.data?.total || 0),
+              data: rows,
               success: true,
             });
           }
@@ -475,8 +704,8 @@ const ResourceList = () => {
             onChange: (_, selectedRows) => setSelectedRows(selectedRows),
           }}
           pagination={{
-            defaultPageSize: 15,
-            pageSizeOptions: ['10', '15', '20', '30', '50'],
+            defaultPageSize: 50,
+            pageSizeOptions: ['10', '15', '20', '30', '50', '100', '150', '200'],
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) =>
@@ -501,16 +730,13 @@ const ResourceList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              {intl.formatMessage({ id: 'sys.res.footer.items', defaultMessage: '项' })}&nbsp;&nbsp;
-              <span>
-                {intl.formatMessage(
-                  { id: 'sys.res.footer.callTotal', defaultMessage: '应用调用次数总计 {n} 万' },
-                  { n: selectedRowsState.reduce((pre, item) => pre + item.callNo, 0) },
-                )}
-              </span>
+              {intl.formatMessage({ id: 'sys.res.footer.items', defaultMessage: '项' })}
             </div>
           }
         >
+          <Button onClick={() => setBatchSettingVisible(true)}>
+            {intl.formatMessage({ id: 'sys.res.batch.setting', defaultMessage: '批量设置' })}
+          </Button>
           <Popconfirm
             title={intl.formatMessage({ id: 'sys.res.confirm.delete', defaultMessage: '您确定要删除？' })}
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
@@ -533,6 +759,12 @@ const ResourceList = () => {
             setParentId('0');
             setSourceRecord(null);
             setAddMode(null);
+            setCreatePresetValues(null);
+            const pending = pendingCoverageItemRef.current;
+            if (pending) {
+              coverageRef.current?.resolveItem(pending.apiMethod, pending.apiPath);
+              pendingCoverageItemRef.current = null;
+            }
             if (actionRef.current) {
               actionRef.current.reload();
             }
@@ -543,14 +775,21 @@ const ResourceList = () => {
           setParentId('0');
           setSourceRecord(null);
           setAddMode(null);
+          setCreatePresetValues(null);
+          pendingCoverageItemRef.current = null;
         }}
         modalVisible={createModalVisible}
         apps={apps}
         menus={menus}
         resTypeOptions={resTypeOptions}
+        scopeLevelOptions={scopeLevelOptions}
+        terminalOptions={terminalOptions}
+        menuRegionOptions={menuRegionOptions}
+        menuNodeKindOptions={menuNodeKindOptions}
         parentId={parentId}
         sourceRecord={sourceRecord}
         addMode={addMode}
+        presetValues={createPresetValues}
       />}
       {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm
@@ -575,8 +814,39 @@ const ResourceList = () => {
           apps={apps}
           menus={menus}
           resTypeOptions={resTypeOptions}
+        scopeLevelOptions={scopeLevelOptions}
+        terminalOptions={terminalOptions}
+        menuRegionOptions={menuRegionOptions}
+        menuNodeKindOptions={menuNodeKindOptions}
         />
       ) : null}
+
+      <BatchSettingModal
+        visible={batchSettingVisible}
+        onCancel={() => setBatchSettingVisible(false)}
+        onSubmit={async (patch) => {
+          const success = await handleBatchSetting(patch);
+          if (success) {
+            setBatchSettingVisible(false);
+            setSelectedRows([]);
+            actionRef.current?.reloadAndRest?.();
+          }
+        }}
+        menuRegionOptions={menuRegionOptions}
+        menuNodeKindOptions={menuNodeKindOptions}
+        terminalOptions={terminalOptions}
+        scopeLevelOptions={scopeLevelOptions}
+        apps={apps}
+        menus={menus}
+        selectedCount={selectedRowsState.length}
+      />
+
+      <CheckApiCoverage
+        ref={coverageRef}
+        modalVisible={checkModalVisible}
+        onCancel={() => setCheckModalVisible(false)}
+        onQuickCreate={handleCoverageQuickCreate}
+      />
 
       <Drawer
         width={600}

@@ -18,6 +18,9 @@ import ElementList from "@/pages/book/read/list";
  * @constructor
  */
 const count = 16;
+/** 与创作台章节列表一致：display_order 正序 */
+const chapterListSorter = { displayOrder: 'ascend', id: 'ascend' };
+
 const Read = (props) => {
   const { dispatch, match, } = props;
   const { params = {} } = match;
@@ -44,7 +47,7 @@ const Read = (props) => {
       pageSize: data.pageSize,
       current: 1,
       pubType: 'chapter',
-      sorter: {"createTime":"ascend"},
+      sorter: chapterListSorter,
       path
     });
     setLoading(false);
@@ -65,7 +68,7 @@ const Read = (props) => {
       pageSize: data.pageSize,
       current: num,
       pubType: 'chapter',
-      sorter: {"createTime":"ascend"},
+      sorter: chapterListSorter,
       path
     });
     setLoading(false);

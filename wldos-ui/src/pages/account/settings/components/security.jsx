@@ -12,6 +12,7 @@ import Mobile from "@/pages/account/settings/components/Mobile";
 import Email from "@/pages/account/settings/components/Email";
 import SecQuest from "@/pages/account/settings/components/SecQuest";
 import {fetchEncryptKey} from "@/services/login";
+import {parseLoginActionResult} from '@/utils/loginResult';
 
 const passwordStrength = {
   strong: (
@@ -40,12 +41,12 @@ const changePasswd = async (values) => {
       oldPasswd: aesPassword, id, password, confirm
     });
 
-    if (res && res.data) {
-      const {status, news} = res.data;
-      if (status === 'error'){
-        message.error(news);
-        return false;
+    const outcome = parseLoginActionResult(res);
+    if (!outcome.ok) {
+      if (outcome.news) {
+        message.error(outcome.news);
       }
+      return false;
     }
     message.info(formatMessage({ id: 'account.security.message.password-success-relogin' }));
     return true;

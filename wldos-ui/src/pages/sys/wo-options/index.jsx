@@ -9,6 +9,7 @@ import {
 import { Alert, Button, Card, Divider, Form, Input, message, Popconfirm, Select, Space } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { FooterToolbar, PageContainer } from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
@@ -440,21 +441,7 @@ const WoOptionsAdmin = () => {
 
   return (
 
-    <PageContainer style={{ padding: 0, margin: 0 }} bodyStyle={{ padding: '24px', margin: 0 }}>
-
-      <Alert
-
-        type="warning"
-
-        showIcon
-
-        style={{ marginBottom: 16 }}
-
-        message="全平台通用默认参数"
-
-        description="此处配置对所有站点生效；生效节奏由各项的「生效方式」决定。请在确认含义后再修改；仅个别站点需要差异化时，请使用「站点系统参数」覆盖。"
-
-      />
+    <PageContainer {...adminListPageContainerProps}>
 
       <ProTableX
 

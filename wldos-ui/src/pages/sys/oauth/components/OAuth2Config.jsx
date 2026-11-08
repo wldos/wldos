@@ -1,4 +1,4 @@
-import {Button, Form, Input, Card, Space, Alert, Tooltip, Divider, Typography } from 'antd';
+import {Button, Form, Input, Card, Space, Tooltip, Divider, Typography } from 'antd';
 import {connect, FormattedMessage} from 'umi';
 import React, {Component} from 'react';
 import {
@@ -105,31 +105,6 @@ class OAuth2Config extends Component {
             </div>
           </Space>
         </Card>
-
-        {/* 帮助信息 */}
-        <Alert
-          message="配置说明"
-          description={
-            <div>
-              <p>请先在对应平台申请应用，获取以下配置信息：</p>
-              <ul style={{ marginBottom: 0 }}>
-                <li><strong>AppID/AppKey</strong>：应用唯一标识</li>
-                <li><strong>AppSecret</strong>：应用密钥，请妥善保管</li>
-                <li><strong>回调地址</strong>：用户授权后的回调地址</li>
-                <li><strong>授权域</strong>：应用请求的权限范围</li>
-              </ul>
-              <p style={{ marginTop: '8px', marginBottom: 0 }}>
-                <a href={platformInfo.helpUrl} target="_blank" rel="noopener noreferrer">
-                  查看{platformInfo.name}官方文档 →
-                </a>
-              </p>
-            </div>
-          }
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         <Form
           layout="vertical"
           onFinish={this.handleFinish}

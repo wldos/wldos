@@ -21,6 +21,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 /**
  * pub原义为酒吧，本平台指一个内容发布，引申为publish(发布、出版、发表)、public(大众的、公共的、平民的)，指代一切可线上化或关联的分享。
@@ -29,6 +30,7 @@ import lombok.Setter;
 @Table
 @Getter
 @Setter
+@RbacRowScope(domainId = true, comId = true)
 public class KPubs {
 
 	@Id
@@ -49,6 +51,10 @@ public class KPubs {
 	private String pubName;
 
 	private Long parentId;
+
+	/** 草稿快照对应的正式行 id；NULL 表示正式行。 */
+	@Column("origin_pub_id")
+	private Long originPubId;
 
 	private String pubType;
 
@@ -90,4 +96,8 @@ public class KPubs {
 	/** 可发现性：PUBLIC_LISTED / UNLISTED / INTERNAL_ONLY；空等价 PUBLIC_LISTED。 */
 	@Column("visibility_scope")
 	private String visibilityScope;
+
+	/** 同级展示顺序，越小越靠前；空时排序回退为 id。 */
+	@Column("display_order")
+	private Integer displayOrder;
 }

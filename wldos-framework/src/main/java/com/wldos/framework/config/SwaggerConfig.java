@@ -21,6 +21,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.wldos.framework.support.mp.web.MpListQueryArgumentResolver;
 import com.wldos.framework.support.web.resolver.PageQueryMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
@@ -164,6 +165,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new PageQueryMethodArgumentResolver());
+        resolvers.add(new MpListQueryArgumentResolver());
     }
 
     /**

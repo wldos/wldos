@@ -20,6 +20,9 @@ import lombok.Setter;
 @Setter
 public class Domain {
 
+	@ApiModelProperty(value = "站点 ID", example = "1533544727530094592")
+	private Long id;
+
 	@ApiModelProperty(value = "站点域名", example = "example.com")
 	private String siteDomain;
 
@@ -52,6 +55,12 @@ public class Domain {
 
 	@ApiModelProperty(value = "版权信息", example = "版权所有")
 	private String copy;
+
+	@ApiModelProperty(value = "页脚二维码 URL")
+	private String portalQrUrl;
+
+	@ApiModelProperty(value = "页脚 i18n JSON（locale → foot/flink/copy）")
+	private String portalFooterI18n;
 
 	@ApiModelProperty(value = "平台版本号", example = Constants.WLDOS_VERSION)
 	private String version;

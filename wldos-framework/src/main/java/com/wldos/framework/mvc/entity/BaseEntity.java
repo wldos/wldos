@@ -24,6 +24,9 @@ import org.springframework.data.annotation.Version;
 /**
  * 抽象实体，用于定义公共字段对应的公共属性。
  * 位于 framework 层，供业务实体继承。
+ * <p>
+ * 第三方 MyBatis-Plus栈：继承本类即可使用 MP 审计/逻辑删/乐观锁注解；Spring Data JDBC 注解供平台内部 JDBC栈可选共用，非 MP 必选。
+ * </p>
  *
  * @author Yuanxi Universe
  * @date 2021-02-11

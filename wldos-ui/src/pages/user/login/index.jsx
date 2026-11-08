@@ -11,14 +11,14 @@ import ProForm, {
   ProFormCheckbox,
   ProFormText
 } from '@ant-design/pro-form';
-import {connect, FormattedMessage, useIntl, Link, history} from 'umi';
+import { connect, FormattedMessage, useIntl, Link, history, useLocation } from 'umi';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import {encryptByAES, redirect} from "@/utils/utils";
+import {encryptByAES, redirect, resolveLoginEncryptPublicKey} from "@/utils/utils";
 import VerifyCode from "@/pages/user/components/VerifyCode";
 import {queryCurrent} from "@/services/user";
 import {checkCaptcha, fetchEncryptKey, queryCaptchaMobile} from "@/services/login";
-import { getAgreementByType, getAgreementListByType, getAgreementDetail } from './agreement';
+import { getAgreementListByType, getAgreementDetail } from './agreement';
 import {autoLoginManager} from "@/utils/autoLogin";
 import qq from "@/assets/qq-icon.svg";
 import wb from "@/assets/weibo-icon.svg";
@@ -45,11 +45,24 @@ const Login = (props) => {
   const [mobileIsNull, setMobileStatus] = useState(true);
   const [uuid, setUuid] = useState('');
   const [encryptKey, setEncryptKey] = useState('');
+  /** pending：尚未拉取；ready：已有公钥；unavailable：本次拉取失败（后台未就绪等） */
+  const [encryptKeyStatus, setEncryptKeyStatus] = useState('pending');
+  const encryptKeyFetchRef = useRef(null);
+  const encryptKeyRef = useRef('');
   const [autoLoginPreference, setAutoLoginPreference] = useState(false);
   const [loginAgreements, setLoginAgreements] = useState([]);
   const [agreementModal, setAgreementModal] = useState({ visible: false, title: '', content: '', loading: false });
   const formRef = useRef();
   const intl = useIntl();
+  const location = useLocation();
+  const trialSandboxId = React.useMemo(() => {
+    const raw = location?.query?.trialSandboxId;
+    if (raw == null || raw === '') {
+      return undefined;
+    }
+    const text = String(raw).trim();
+    return text || undefined;
+  }, [location?.query?.trialSandboxId]);
 
   const openAgreementModal = (e, agreement) => {
     if (e) e.preventDefault();
@@ -85,38 +98,66 @@ const Login = (props) => {
     }
   }, []);
 
-  useEffect(() => { // 登录失败时
-      if (status === 'error' && userLogin.news) {
-        message.error(userLogin.news).then(() => setRefresh(refresh+1));
-      }
-  }, [submitting]);
-
-  useEffect(async () => {
-    const res = await fetchEncryptKey();
-    if (res?.data) {
-      setEncryptKey(res.data);
+  const loadEncryptKey = async (force = false) => {
+    if (!force && encryptKeyRef.current) {
+      return encryptKeyRef.current;
     }
-  }, []);
+    if (encryptKeyFetchRef.current) {
+      return encryptKeyFetchRef.current;
+    }
+    setEncryptKeyStatus('pending');
+    const task = (async () => {
+      try {
+        const res = await fetchEncryptKey();
+        const key = resolveLoginEncryptPublicKey(res);
+        if (key) {
+          encryptKeyRef.current = key;
+          setEncryptKey(key);
+          setEncryptKeyStatus('ready');
+          return key;
+        }
+      } catch (e) {
+        // skipErrorHandler：后台未启动时为网络错误，不重复刷页
+      }
+      setEncryptKeyStatus('unavailable');
+      return '';
+    })();
+    encryptKeyFetchRef.current = task;
+    try {
+      return await task;
+    } finally {
+      encryptKeyFetchRef.current = null;
+    }
+  };
 
   useEffect(() => {
-    // 优先用 list 接口拿到数组；失败时用 by-type 单条并包装成数组
-    getAgreementListByType('LOGIN')
-      .then((list) => {
-        if (Array.isArray(list) && list.length > 0) {
-          setLoginAgreements(list);
-          return;
-        }
-        return getAgreementByType('LOGIN').then((res) => {
-          const data = res?.data;
-          if (data && Array.isArray(data)) setLoginAgreements(data);
-          else if (data && data.id) setLoginAgreements([data]);
-        });
-      })
-      .catch(() => setLoginAgreements([]));
+    loadEncryptKey();
   }, []);
 
-  const handleSubmit = (values, encryptKey) => {
+  useEffect(() => { // 登录失败时
+    if (status === 'error' && userLogin.news) {
+      message.error(userLogin.news).then(() => {
+        setRefresh(refresh + 1);
+        loadEncryptKey(true);
+      });
+    }
+  }, [submitting]);
+
+  useEffect(() => {
+    getAgreementListByType('LOGIN').then((list) => {
+      setLoginAgreements(Array.isArray(list) ? list : []);
+    });
+  }, []);
+
+  const handleSubmit = async (values, currentEncryptKey) => {
     if (verify !== 'ok') {
+      return;
+    }
+    let keyMaterial = currentEncryptKey || encryptKey;
+    if (!keyMaterial) {
+      keyMaterial = await loadEncryptKey(true);
+    }
+    if (!keyMaterial) {
       return;
     }
     if (loginAgreements.length > 0 && !values.agreementConsent) {
@@ -134,16 +175,60 @@ const Login = (props) => {
     const {password, verifyCode, mobile, captcha, agreementConsent: _omit, ...rest} = values;
     const agreementIds = loginAgreements.map((a) => a.id);
     if (loginType === 'mobile') {
-      const aesPassword = encryptByAES(captcha, encryptKey);
+      const aesPassword = encryptByAES(captcha, keyMaterial);
+      if (!aesPassword) {
+        const retryKey = await loadEncryptKey(true);
+        if (!retryKey) {
+          return;
+        }
+        const retryCipher = encryptByAES(captcha, retryKey);
+        if (!retryCipher) {
+          return;
+        }
+        dispatch({
+          type: 'login/mobile',
+          payload: {...rest, password: retryCipher, type, mobile, captcha, agreementIds},
+        });
+        return;
+      }
       dispatch({
         type: 'login/mobile',
         payload: {...rest, password: aesPassword, type, mobile, captcha, agreementIds},
       });
     } else {
-      const aesPassword = encryptByAES(password, encryptKey);
+      const aesPassword = encryptByAES(password, keyMaterial);
+      if (!aesPassword) {
+        const retryKey = await loadEncryptKey(true);
+        if (!retryKey) {
+          return;
+        }
+        const retryCipher = encryptByAES(password, retryKey);
+        if (!retryCipher) {
+          return;
+        }
+        dispatch({
+          type: 'login/login',
+          payload: {
+            ...rest,
+            password: retryCipher,
+            type,
+            verifyCode: `${verifyCode}${code}`,
+            agreementIds,
+            ...(trialSandboxId ? { trialSandboxId } : {}),
+          },
+        });
+        return;
+      }
       dispatch({
         type: 'login/login',
-        payload: {...rest, password: aesPassword, type, verifyCode: `${verifyCode}${code}`, agreementIds},
+        payload: {
+          ...rest,
+          password: aesPassword,
+          type,
+          verifyCode: `${verifyCode}${code}`,
+          agreementIds,
+          ...(trialSandboxId ? { trialSandboxId } : {}),
+        },
       });
     }
   };

@@ -44,6 +44,9 @@ public class Resource extends TreeNode<Resource> {
 	@ApiModelProperty(value = "资源类型", example = "menu")
 	private String resourceType;
 
+	@ApiModelProperty(value = "菜单节点形态：nav_dir/route/link/menu_root 等", example = "nav_dir")
+	private String menuNodeKind;
+
 	@ApiModelProperty(value = "请求方法", example = "GET")
 	private String requestMethod;
 
@@ -61,6 +64,12 @@ public class Resource extends TreeNode<Resource> {
 
 	@ApiModelProperty(value = "菜单展示区域：nav_main=主导航，nav_avatar=头像下拉", example = "nav_main")
 	private String menuRegion;
+
+	@ApiModelProperty(value = "资源可见终端，逗号分隔（desktop/mobile），空=全部终端可见", example = "desktop")
+	private String terminals;
+
+	@ApiModelProperty(value = "授权层级：platform/tenant/domain/org/all，空或 all=全部", example = "all")
+	private String scopeLevel;
 
 	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;

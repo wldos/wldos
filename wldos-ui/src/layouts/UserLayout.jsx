@@ -12,6 +12,7 @@ import React, {useEffect, useState,} from 'react';
 import wldosFooterDom from '@/layouts/footAdmin';
 import styles from './UserLayout.less';
 import {querySiteSlogan} from "@/services/user";
+import { isDesktopEmbedded, mergeDesktopShellSite } from '@/utils/desktopEmbeddedBridge';
 
 const UserLayout = (props) => {
   const {
@@ -39,11 +40,14 @@ const UserLayout = (props) => {
     }
   }, []);
 
+  const displaySite = isDesktopEmbedded() ? mergeDesktopShellSite(site) : site;
+  const loginTitle = displaySite?.siteTitle || '请登录';
+
   return (
     <HelmetProvider>
       <Helmet>
-        <title>{`登录-${site.siteTitle || '请登录'}`}</title>
-        <meta name="description" content={site.siteDescription} />
+        <title>{`登录-${loginTitle}`}</title>
+        <meta name="description" content={displaySite?.siteDescription || site.siteDescription} />
       </Helmet>
 
       <div className={styles.container}>
@@ -54,8 +58,13 @@ const UserLayout = (props) => {
           <div className={styles.top}>
             <div className={styles.header}>
               <Link to="/">
-                {site.siteLogo && <img alt="logo" className={styles.logo} src={site.siteLogo} />}
-                {/* site.siteName && <span className={styles.title}>{site.siteName}</span> */}
+                {displaySite?.siteLogo ? (
+                  <img alt="logo" className={styles.logo} src={displaySite.siteLogo} />
+                ) : (
+                  isDesktopEmbedded() && displaySite?.siteTitle ? (
+                    <span className={styles.title}>{displaySite.siteTitle}</span>
+                  ) : null
+                )}
               </Link>
             </div>
             <div className={styles.desc}>{slogan}</div>

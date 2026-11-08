@@ -27,6 +27,12 @@ public class DomRes extends TreeNode<DomRes> {
 	@ApiModelProperty(value = "资源名称", example = "用户管理")
 	private String resourceName;
 
+	@ApiModelProperty(value = "资源路径", example = "/admin/sys/user")
+	private String resourcePath;
+
+	@ApiModelProperty(value = "应用ID", example = "1")
+	private Long appId;
+
 	@ApiModelProperty(value = "是否有效", example = "1")
 	private String isValid;
 

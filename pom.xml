@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>com.wldos</groupId>
 	<artifactId>wldos-parent</artifactId>
-	<version>3.0.0.0</version>
+	<version>3.0.3.0</version>
 	<packaging>pom</packaging>
 	<name>wldos-parent</name>
 	<description>
@@ -31,7 +31,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<!-- WLDOS 版本号 - 统一管理，修改此处即可更新所有地方的版本号 -->
-		<wldos.version>3.0.0.0</wldos.version>
+		<wldos.version>3.0.3.0</wldos.version>
+		<!-- Java8 加固：JWT / 构建插件 -->
+		<jjwt.version>0.12.6</jjwt.version>
+		<fastjson2.version>2.0.63</fastjson2.version>
+		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 	</properties>
 	<url>http://www.gitee.com/wldos/wldos</url>
 	<licenses>
@@ -104,15 +108,45 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- starter-tomcat 传递 embed-el 常为 compile，瘦 WAR 会进 WEB-INF/lib；外置 Tomcat 已带 EL -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-el</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-		<dependency><!-- // java-jwt免费版仅支持7000用户在线和2个第三方登录认证，使用apache2.0许可的jjwt -->
+		<!-- JJWT 0.12.x（Java8 加固，Apache 2.0） -->
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.coobird</groupId>
@@ -177,11 +211,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 			<exclusions>
@@ -209,10 +238,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
+		<!-- 对象/Map 高并发 JSON（PageQuery、Token 日志等）；HTTP API 仍由 Spring/Jackson 负责 -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.2.71_noneautotype</version>
+			<groupId>com.alibaba.fastjson2</groupId>
+			<artifactId>fastjson2</artifactId>
+			<version>${fastjson2.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -244,7 +274,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -302,11 +332,9 @@
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
-					<!-- 忽略警告 -->
+					<doclint>none</doclint>
 					<failOnError>false</failOnError>
-					<additionalOptions>
-						<additionalOption>-Xdoclint:none</additionalOption>
-					</additionalOptions>
+					<failOnWarnings>false</failOnWarnings>
 				</configuration>
 			</plugin>
 		</plugins>

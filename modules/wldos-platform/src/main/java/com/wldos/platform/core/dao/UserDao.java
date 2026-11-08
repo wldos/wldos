@@ -9,6 +9,7 @@
 package com.wldos.platform.core.dao;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,27 +30,36 @@ import org.springframework.data.repository.query.Param;
  */
 public interface UserDao extends BaseDao<WoUser, Long>, UserJdbc {
 
-	boolean existsByLoginName(String loginName);
-
-	boolean existsByEmail(String email);
-
-	@Query("select count(1) from wo_user u where u.email=:email and u.delete_flag=:deleteFlag")
-	boolean existsByEmailAndDeleteFlag(String email, String deleteFlag);
-
-	boolean existsByEmailAndDeleteFlagAndStatus(String email, String deleteFlag, String status);
-
-	boolean existsByEmailAndLoginNameAndDeleteFlag(String email, String loginName, String deleteFlag);
+	/**
+	 * 租户范围内登录名是否已存在（含已删除用户）。
+	 */
+	@Query("SELECT COUNT(1) FROM wo_user u WHERE u.main_com_id IN (:comIds) AND u.login_name = :loginName")
+	boolean existsByComsAndLoginName(@Param("comIds") Collection<Long> comIds, @Param("loginName") String loginName);
 
 	/**
-	 * 按用户登录名查询用户
+	 * 租户范围内邮箱是否已被未删除用户占用。
+	 */
+	@Query("SELECT COUNT(1) FROM wo_user u WHERE u.main_com_id IN (:comIds) AND u.email = :email AND u.delete_flag = 'normal'")
+	boolean existsNormalByComsAndEmail(@Param("comIds") Collection<Long> comIds, @Param("email") String email);
+
+	/**
+	 * 租户范围内按邮箱查未删除用户。
+	 */
+	@Query("SELECT * FROM wo_user u WHERE u.email = :email AND u.delete_flag = 'normal' AND u.main_com_id IN (:comIds) ORDER BY u.id")
+	List<WoUser> listNormalByEmailInComs(@Param("email") String email, @Param("comIds") Collection<Long> comIds);
+
+	/**
+	 * 租户范围内按登录名查询可登录用户（正常或待激活）。
 	 *
 	 * @param username 登陆名
+	 * @param comIds 租户范围
 	 * @return 用户信息
 	 */
-	@Query("SELECT u.* FROM wo_user u WHERE u.delete_flag='normal' AND (u.status = 'normal' OR u.status = 'notActive') AND u.login_name=:username")
-	WoUser findByLoginName(String username);
+	@Query("SELECT u.* FROM wo_user u WHERE u.delete_flag='normal' AND (u.status = 'normal' OR u.status = 'notActive') AND u.login_name=:username AND u.main_com_id IN (:comIds) ORDER BY u.id LIMIT 1")
+	WoUser findByLoginNameInComs(@Param("username") String username, @Param("comIds") Collection<Long> comIds);
 
 	@Query("select o.* from wo_org o where o.is_valid='1' and o.delete_flag='normal' and o.org_code=(select t.option_value from wo_options t where t.option_key=:optionName )")
+	@Deprecated
 	WoOrg queryOrgByDefaultRole(String optionName);
 
 	/**
@@ -60,6 +70,12 @@ public interface UserDao extends BaseDao<WoUser, Long>, UserJdbc {
 	 */
 	@Query("SELECT u.id, u.username, u.nickname, u.remark, u.avatar FROM wo_user u WHERE u.delete_flag='normal' AND (u.status = 'normal' OR u.status = 'notActive') AND u.id in (:userIds)")
 	List<UserInfo> queryUsersInfo(List<Long> userIds);
+
+	@Query("SELECT * FROM wo_user WHERE id IN (:userIds) AND delete_flag = 'normal'")
+	List<WoUser> findByIdsActive(@Param("userIds") Collection<Long> userIds);
+
+	@Query("SELECT COUNT(1) FROM wo_user u WHERE u.domain_id = :domainId AND u.delete_flag = 'normal'")
+	long countNormalUsersByDomainId(@Param("domainId") Long domainId);
 
 	/**
 	 * 按推荐码查询用户（用于推荐码校验，仅正常状态用户）

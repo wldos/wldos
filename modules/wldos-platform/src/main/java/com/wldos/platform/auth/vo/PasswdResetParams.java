@@ -32,11 +32,17 @@ public class PasswdResetParams {
 	@NotBlank(message = "登录名不能为空")
 	private String loginName;
 
-	@ApiModelProperty(value = "验证码", example = "1234")
+	@ApiModelProperty(value = "验证码", required = true, example = "123456")
+	@NotBlank(message = "验证码不能为空")
 	private String captcha;
 
-	@ApiModelProperty(value = "验证码UUID", example = "550e8400-e29b-41d4-a716-446655440000")
+	@ApiModelProperty(value = "验证码UUID", required = true, example = "550e8400-e29b-41d4-a716-446655440000")
+	@NotBlank(message = "验证码标识不能为空")
 	private String uuid;
+
+	@ApiModelProperty(value = "找回密码发码凭证", required = true)
+	@NotBlank(message = "请先获取邮箱验证码")
+	private String forgetProof;
 
 	@ApiModelProperty(value = "状态", hidden = true)
 	private String status;
@@ -50,7 +56,8 @@ public class PasswdResetParams {
 	@NotBlank(message = "确认密码不能为空")
 	private String confirm;
 
-	@ApiModelProperty(value = "邮箱地址", example = "user@example.com")
+	@ApiModelProperty(value = "邮箱地址", required = true, example = "user@example.com")
+	@NotBlank(message = "邮箱不能为空")
 	@Email(message = "邮箱格式不正确")
 	private String email;
 }

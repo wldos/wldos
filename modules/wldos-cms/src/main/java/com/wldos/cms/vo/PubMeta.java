@@ -32,6 +32,12 @@ public class PubMeta {
 	@ApiModelProperty(value = "内容ID", example = "1")
 	private Long id;
 
+	@ApiModelProperty(value = "正式行 ID（对外 pub_id）")
+	private Long canonicalPubId;
+
+	@ApiModelProperty(value = "是否存在未合并的活跃草稿")
+	private Boolean hasPendingDraft;
+
 	@ApiModelProperty(value = "内容正文", example = "内容正文内容...")
 	private String pubContent;
 

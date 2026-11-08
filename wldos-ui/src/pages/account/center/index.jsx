@@ -1,5 +1,5 @@
 import { PlusOutlined, HomeOutlined, ContactsOutlined, ClusterOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, Divider, Input, Row, Tag } from 'antd';
+import { Avatar, Card, Col, Divider, Input, Row, Space, Tag } from 'antd';
 import React, { Component, useState, useRef } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { Link, connect } from 'umi';
@@ -15,6 +15,10 @@ import {
   AccountShortcutsPanel,
   resolveTabTitle,
 } from '@/pages/account/center/components/AccountCenterPanels';
+
+import AccountMembershipRow from '@/pages/commercial/_shared/AccountMembershipRow';
+
+const COMMERCIAL_FLAVOR = (process.env.APP_FLAVOR || 'commercial') !== 'community';
 
 /** 未配置 portal_account_center_tabs 时的默认 CMS 四页签 */
 const DEFAULT_CMS_TAB_DEFS = [
@@ -115,6 +119,13 @@ const TagList = ({ tags }) => {
       )}
     </div>
   );
+};
+
+const CATEGORY_TAG_COLOR = {
+  membership: 'blue',
+  identity: 'gold',
+  subject: 'purple',
+  org: 'cyan',
 };
 
 class Center extends Component {
@@ -267,6 +278,7 @@ class Center extends Component {
                     <img alt="" src={currentUser.avatar} />
                     <div className={styles.name}>{currentUser.nickname}</div>
                     <div>{currentUser.remark}</div>
+                    {COMMERCIAL_FLAVOR ? <AccountMembershipRow /> : null}
                   </div>
                   {this.renderUserInfo(currentUser)}
                   <Divider dashed />
@@ -279,17 +291,30 @@ class Center extends Component {
                   />
                   <div className={styles.team}>
                     <div className={styles.teamTitle}>类别</div>
-                    <Row gutter={36}>
-                      {currentUser.group &&
-                        currentUser.group.map((item) => (
-                          <Col key={item.id} lg={24} xl={12}>
-                            <Link to="#">
-                              <Avatar size="small" src={item.orgLogo} />
-                              {item.orgName}
-                            </Link>
-                          </Col>
+                    {(currentUser.categoryTags || []).length > 0 ? (
+                      <Space wrap size={[8, 8]}>
+                        {currentUser.categoryTags.map((item) => (
+                          <Tag
+                            key={`${item.kind}-${item.code || item.label}`}
+                            color={CATEGORY_TAG_COLOR[item.kind] || 'default'}
+                          >
+                            {item.label}
+                          </Tag>
                         ))}
-                    </Row>
+                      </Space>
+                    ) : (
+                      <Row gutter={36}>
+                        {currentUser.group &&
+                          currentUser.group.map((item) => (
+                            <Col key={item.id} lg={24} xl={12}>
+                              <Link to="#">
+                                <Avatar size="small" src={item.orgLogo} />
+                                {item.orgName}
+                              </Link>
+                            </Col>
+                          ))}
+                      </Row>
+                    )}
                   </div>
                 </div>
               )}

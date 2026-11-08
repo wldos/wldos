@@ -32,7 +32,7 @@ import java.util.Map;
  * 基于现有 k_term_type 表，不创建新表
  *
  * @author Yuanxi Universe
- * @date 2025/12/07
+ * @date 2025/2/07
  * @version 1.0
  */
 @Api(tags = "分类类型元数据管理")

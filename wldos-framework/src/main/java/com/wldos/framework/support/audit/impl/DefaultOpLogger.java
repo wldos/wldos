@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
  * 通过 {@code @Bean + @ConditionalOnMissingBean(IOpLogger.class)} 装配，理由参见 {@link DefaultLoginLogger}。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Slf4j

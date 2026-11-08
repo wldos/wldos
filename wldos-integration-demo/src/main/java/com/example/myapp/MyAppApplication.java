@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 
  * 启动后访问：
  * - API 文档：http://localhost:8080/doc.html
- * - 健康检查：http://localhost:8080/api/users/list
+ * - MP 列表：http://localhost:8080/api/articles/mp-list?current=1&pageSize=10
  */
 @SpringBootApplication
 public class MyAppApplication {

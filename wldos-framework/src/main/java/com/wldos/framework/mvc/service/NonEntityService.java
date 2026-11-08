@@ -18,6 +18,7 @@ import io.github.wldos.common.dto.SQLTable;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.ResultJson;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -305,6 +306,11 @@ public abstract class NonEntityService extends Base {
 		return this.commonOperate.getTenantId();
 	}
 
+	/** 管理 2级 工作租户 id（workComId）。 */
+	protected Long getWorkComId() {
+		return this.commonOperate.getWorkComId();
+	}
+
 	/**
 	 * 获取平台根域名
 	 */
@@ -352,10 +358,24 @@ public abstract class NonEntityService extends Base {
 	}
 
 	/**
-	 * token超期时间
-	 *
-	 * @return expireTime
+	 * 门户/用户端 CMS：仅请求站点 domainId。
 	 */
+	protected void applyPortalDomainScope(PageQuery pageQuery) {
+		this.commonOperate.applyPortalDomainScope(pageQuery);
+	}
+
+	/**
+	 * 按 API Profile 注入数据范围。
+	 *
+	 * @param pageQuery 分页查询
+	 * @param profile 数据范围配置
+	 * @param entityClass 实体类
+	 */
+	protected void applyScope(PageQuery pageQuery, DataScopeProfile profile,
+			Class<?> entityClass) {
+		this.commonOperate.applyScope(pageQuery, profile, entityClass);
+	}
+
 	protected long getTokenExpTime() {
 		return this.commonOperate.getTokenExpTime();
 	}

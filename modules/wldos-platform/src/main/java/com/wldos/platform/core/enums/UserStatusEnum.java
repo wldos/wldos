@@ -8,6 +8,8 @@
 
 package com.wldos.platform.core.enums;
 
+import io.github.wldos.common.enums.BaseEnum;
+
 /**
  * 用户状态枚举。
  *
@@ -15,11 +17,11 @@ package com.wldos.platform.core.enums;
  * @date 2021/4/27
  * @version 1.0
  */
-public enum UserStatusEnum {
+public enum UserStatusEnum implements BaseEnum {
 
-	notActive("未激活的", "notActive"),
+	notActive("未激活", "notActive"),
 	locked("已锁定", "locked"),
-	cancelled("cancelled", "cancelled"),
+	cancelled("已注销", "cancelled"),
 	normal("正常", "normal");
 
 	private final String label;

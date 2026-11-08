@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button, Form, Input, Select, TreeSelect, Space, Typography, Row, Col, Card, Divider, Tooltip, Alert, Radio} from 'antd';
+import {Button, Form, Input, Select, TreeSelect, Space, Typography, Row, Col, Card, Divider, Tooltip, Radio} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {
   SettingOutlined,
@@ -110,15 +110,6 @@ const SimpleForm = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="模板菜单创建"
-          description="通过预定义模板快速创建菜单，系统将根据模板自动配置相关参数，简化菜单创建流程。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息分组 */}
         <Card
           title={

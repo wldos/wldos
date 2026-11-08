@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import {Button, Tag, Space, Modal, message, Tooltip, Badge, Popconfirm, Drawer} from 'antd';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
@@ -30,12 +31,10 @@ const PluginList = ({ dispatch }) => {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [pluginStatusEnum, setPluginStatusEnum] = useState({});
   const [autoStartEnum, setAutoStartEnum] = useState({});
-  
+
   // 移动端检测
   const mobile = isMobile();
   
-  // 容器宽度监听
-  const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
   
   // 使用桌面端粘性布局
@@ -61,26 +60,9 @@ const PluginList = ({ dispatch }) => {
     }
   }, []);
 
-  // 监听容器宽度变化
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-    
-    updateWidth();
-    const resizeObserver = new ResizeObserver(updateWidth);
-    resizeObserver.observe(containerRef.current);
-    
-    return () => resizeObserver.disconnect();
-  }, []);
-
-  // 计算列总宽度
-  const totalColsWidth = 1200; // 估算总宽度
-  const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
+  // 固定列场景须始终设置 scroll.x（≥列宽之和），否则窄屏时创建时间会被操作列盖住
+  const totalColsWidth = 1430;
+  const scrollX = mobile ? undefined : totalColsWidth;
 
   // 表格列配置
   const columns = [
@@ -252,28 +234,32 @@ const PluginList = ({ dispatch }) => {
             </Popconfirm>
           )}
 
-          <Popconfirm
-            title={
-              <div>
-                <div style={{ marginBottom: 8, fontWeight: 'bold' }}>确定要卸载这个插件吗？</div>
-                <div style={{ fontSize: 12, color: '#666' }}>
-                  {record.pluginStatus === 'ENABLED'
-                    ? '该插件当前已启用，卸载时会自动停止插件并删除所有相关数据。此操作不可恢复，请谨慎操作。'
-                    : '卸载后将删除插件的所有相关数据。此操作不可恢复，请谨慎操作。'}
-                </div>
-              </div>
-            }
-            onConfirm={() => handleUninstall(record)}
-          >
-            <Tooltip title="卸载插件">
-              <Button
-                type="link"
-                size="small"
-                danger
-                icon={<DeleteOutlined />}
-              />
+          {record.pluginStatus === 'ENABLED' ? (
+            <Tooltip title="请先禁用插件后再卸载">
+              <Button type="link" size="small" danger icon={<DeleteOutlined />} disabled />
             </Tooltip>
-          </Popconfirm>
+          ) : (
+            <Popconfirm
+              title={
+                <div>
+                  <div style={{ marginBottom: 8, fontWeight: 'bold' }}>确定要卸载这个插件吗？</div>
+                  <div style={{ fontSize: 12, color: '#666' }}>
+                    卸载后将删除插件的所有相关数据。此操作不可恢复，请谨慎操作。
+                  </div>
+                </div>
+              }
+              onConfirm={() => handleUninstall(record)}
+            >
+              <Tooltip title="卸载插件">
+                <Button
+                  type="link"
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                />
+              </Tooltip>
+            </Popconfirm>
+          )}
         </Space>
       ),
     },
@@ -373,16 +359,7 @@ const PluginList = ({ dispatch }) => {
   const actionRef = React.useRef();
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="插件管理"
@@ -407,18 +384,6 @@ const PluginList = ({ dispatch }) => {
               sorter,
               filter
             });
-
-            if (res?.data?.rows && res.data.rows.length > 0) {
-              res.data.rows.forEach((plugin, index) => {
-                console.log(`插件${index + 1}:`, {
-                  pluginCode: plugin.pluginCode,
-                  pluginName: plugin.pluginName,
-                  errorMessage: plugin.errorMessage,
-                  errorMessageType: typeof plugin.errorMessage,
-                  pluginStatus: plugin.pluginStatus
-                });
-              });
-            }
 
             return Promise.resolve({
               total: res?.data?.total || 0,

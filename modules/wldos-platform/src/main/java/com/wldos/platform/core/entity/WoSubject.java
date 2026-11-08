@@ -18,7 +18,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
-@Table("WO_SUBJECT_DEFINE")
+@Table("wo_subject_define")
 @Getter
 @Setter
 public class WoSubject {

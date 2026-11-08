@@ -7,26 +7,38 @@
  */
 
 import React, { useState } from 'react';
-import { Descriptions, Tag, Button, Space, Modal, message, Popconfirm } from 'antd';
-import { useIntl } from 'umi';
+import { Descriptions, Tag, Button, Space, message, Popconfirm } from 'antd';
+import { useIntl, connect } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
+import { resolveTenantScopeComId } from '@/utils/orgCreateUserDomain';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import SystemEditForm from './SystemEditForm';
-import OrganizationCreateForm from './OrganizationCreateForm';
+import ArchUpdateForm from '@/pages/sys/arch/components/UpdateForm';
+import ArchCreateForm from '@/pages/sys/arch/components/CreateForm';
+import ArchCreateFormContent from '@/pages/sys/arch/components/CreateFormContent';
+import OrgCreateForm from '@/pages/sys/org/components/CreateForm';
+import OrgCreateFormContent from '@/pages/sys/org/components/CreateFormContent';
 
-const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, onSystemDelete }) => {
+const SystemDetail = ({
+  system,
+  companyName,
+  parentSystemName,
+  onSystemUpdate,
+  onSystemAdd,
+  onOrganizationAdd,
+  onSystemDelete,
+  comOptions = [],
+  orgTypeOptions = [],
+  archOptionsForOrg = [],
+  orgOptionsForParent = [],
+  isTenantAdmin,
+  currentUser,
+}) => {
   const intl = useIntl();
+  const tenantFixedComId = isTenantAdmin ? resolveTenantScopeComId(currentUser) : undefined;
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [orgModalVisible, setOrgModalVisible] = useState(false);
-  const [editLoading, setEditLoading] = useState(false);
-  const [orgLoading, setOrgLoading] = useState(false);
-
-  const handleEditSystem = () => {
-    setEditModalVisible(true);
-  };
-
-  const handleAddOrganization = () => {
-    setOrgModalVisible(true);
-  };
+  const [archCreateVisible, setArchCreateVisible] = useState(false);
+  const [archCreateParentId, setArchCreateParentId] = useState('0');
 
   const handleDeleteSystem = async () => {
     try {
@@ -42,44 +54,50 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
   };
 
   const handleEditSubmit = async (values) => {
-    setEditLoading(true);
-    try {
-      if (onSystemUpdate) {
-        await onSystemUpdate(system.id, values);
-        // 不在这里显示成功消息，由父组件统一处理
-        setEditModalVisible(false);
-      } else {
-        message.info(intl.formatMessage({ id: 'component.organizationTree.system.msg.updateTodo' }));
-        setEditModalVisible(false);
-      }
-    } catch (error) {
-      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.updateFail' }));
-    } finally {
-      setEditLoading(false);
+    if (onSystemUpdate) {
+      await onSystemUpdate(system.id, values);
     }
+    setEditModalVisible(false);
   };
 
   const handleOrgSubmit = async (values) => {
-    setOrgLoading(true);
-    try {
-      if (onOrganizationAdd) {
-        await onOrganizationAdd(system.id, values);
-        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.addOk' }));
-        setOrgModalVisible(false);
-      } else {
-        message.info(intl.formatMessage({ id: 'component.organizationTree.org.msg.addTodo' }));
-        setOrgModalVisible(false);
-      }
-    } catch (error) {
-      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.addFail' }));
-    } finally {
-      setOrgLoading(false);
+    if (onOrganizationAdd) {
+      await onOrganizationAdd(system.id, values);
+    } else {
+      message.info(intl.formatMessage({ id: 'component.organizationTree.org.msg.addTodo' }));
     }
+    setOrgModalVisible(false);
   };
+
+  const openArchCreate = (parentId) => {
+    setArchCreateParentId(parentId);
+    setArchCreateVisible(true);
+  };
+
+  const handleArchCreateSubmit = async (values) => {
+    if (onSystemAdd) {
+      await onSystemAdd(system.comId, { ...values, parentId: archCreateParentId });
+    } else {
+      message.info(intl.formatMessage({ id: 'component.organizationTree.system.msg.addTodo' }));
+    }
+    setArchCreateVisible(false);
+  };
+
+  const siblingParentId = system.parentId == null || String(system.parentId) === '0'
+    ? '0'
+    : system.parentId;
+
+  const parentOrgOptions = [
+    { label: intl.formatMessage({ id: 'component.organizationTree.org.detail.parent.top', defaultMessage: '顶级组织' }), value: '0' },
+    ...(orgOptionsForParent || []).filter(
+      (item) => String(item.archId) === String(system.archId ?? system.id)
+        && String(item.comId) === String(system.comId),
+    ),
+  ];
 
   return (
     <div>
-      <Descriptions title={intl.formatMessage({ id: 'component.organizationTree.system.detail.title' })} bordered column={2}>
+      <Descriptions bordered column={2}>
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.name' })}>
           {system.archName || '-'}
         </Descriptions.Item>
@@ -89,11 +107,11 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.company' })}>
           {companyName || '-'}
         </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.parent' })}>
+          {parentSystemName || '-'}
+        </Descriptions.Item>
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.displayOrder' })}>
           {system.displayOrder || '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.desc' })} span={2}>
-          {system.archDesc || system.description || '-'}
         </Descriptions.Item>
         <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.status' })}>
           <Tag color={system.isValid === '1' ? 'green' : 'red'}>
@@ -102,60 +120,75 @@ const SystemDetail = ({ system, companyName, onSystemUpdate, onOrganizationAdd, 
               : intl.formatMessage({ id: 'component.organizationTree.common.status.invalid' })}
           </Tag>
         </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.system.detail.desc' })} span={2}>
+          {system.archDesc || system.description || '-'}
+        </Descriptions.Item>
       </Descriptions>
 
-      <div style={{ marginTop: 16 }}>
-        <Space>
-          <Button type="primary" icon={<EditOutlined />} onClick={handleEditSystem}>
-            {intl.formatMessage({ id: 'component.organizationTree.system.action.edit' })}
+      <Space wrap style={{ marginTop: 16 }}>
+        <Button type="primary" icon={<EditOutlined />} onClick={() => setEditModalVisible(true)}>
+          {intl.formatMessage({ id: 'component.organizationTree.system.action.edit' })}
+        </Button>
+        <Button icon={<PlusOutlined />} onClick={() => openArchCreate(system.id)}>
+          {intl.formatMessage({ id: 'component.organizationTree.common.action.addChild' })}
+        </Button>
+        <Button icon={<PlusOutlined />} onClick={() => openArchCreate(siblingParentId)}>
+          {intl.formatMessage({ id: 'component.organizationTree.common.action.addSibling' })}
+        </Button>
+        <Button icon={<PlusOutlined />} onClick={() => setOrgModalVisible(true)}>
+          {intl.formatMessage({ id: 'component.organizationTree.org.action.add' })}
+        </Button>
+        <Popconfirm
+          title={intl.formatMessage({ id: 'component.organizationTree.system.confirm.deleteTitle' })}
+          description={intl.formatMessage({ id: 'component.organizationTree.common.confirm.deleteDesc' })}
+          onConfirm={handleDeleteSystem}
+        >
+          <Button danger icon={<DeleteOutlined />}>
+            {intl.formatMessage({ id: 'component.organizationTree.system.action.delete' })}
           </Button>
-          <Button icon={<PlusOutlined />} onClick={handleAddOrganization}>
-            {intl.formatMessage({ id: 'component.organizationTree.org.action.add' })}
-          </Button>
-          <Popconfirm
-            title={intl.formatMessage({ id: 'component.organizationTree.system.confirm.deleteTitle' })}
-            description={intl.formatMessage({ id: 'component.organizationTree.common.confirm.deleteDesc' })}
-            onConfirm={handleDeleteSystem}
-          >
-            <Button danger icon={<DeleteOutlined />}>
-              {intl.formatMessage({ id: 'component.organizationTree.system.action.delete' })}
-            </Button>
-          </Popconfirm>
-        </Space>
-      </div>
+        </Popconfirm>
+      </Space>
 
-      {/* 编辑体系模态框 */}
-      <Modal
-        title={intl.formatMessage({ id: 'component.organizationTree.system.modal.editTitle' })}
-        open={editModalVisible}
+      <ArchUpdateForm
+        onSubmit={handleEditSubmit}
         onCancel={() => setEditModalVisible(false)}
-        footer={null}
-        width={600}
-      >
-        <SystemEditForm
-          system={system}
-          onSubmit={handleEditSubmit}
-          loading={editLoading}
-        />
-      </Modal>
+        updateModalVisible={editModalVisible}
+        values={system}
+        lockComId={tenantFixedComId}
+      />
 
-      {/* 添加机构模态框 */}
-      <Modal
-        title={intl.formatMessage({ id: 'component.organizationTree.org.modal.addTitle' })}
-        open={orgModalVisible}
-        onCancel={() => setOrgModalVisible(false)}
-        footer={null}
-        width={600}
+      <ArchCreateForm
+        modalVisible={archCreateVisible}
+        onCancel={() => setArchCreateVisible(false)}
       >
-        <OrganizationCreateForm
-          systemId={system.id}
-          companyId={system.comId}
-          onSubmit={handleOrgSubmit}
-          loading={orgLoading}
+        <ArchCreateFormContent
+          key={`arch-create-${archCreateParentId}`}
+          onSubmit={handleArchCreateSubmit}
+          onCancel={() => setArchCreateVisible(false)}
+          fixedComId={system.comId}
+          defaultParentId={archCreateParentId}
         />
-      </Modal>
+      </ArchCreateForm>
+
+      <OrgCreateForm
+        modalVisible={orgModalVisible}
+        onCancel={() => setOrgModalVisible(false)}
+      >
+        <OrgCreateFormContent
+          onSubmit={handleOrgSubmit}
+          onCancel={() => setOrgModalVisible(false)}
+          orgTypes={orgTypeOptions}
+          comList={comOptions}
+          archs={archOptionsForOrg}
+          roles={parentOrgOptions}
+          currentRecord={{ comId: system.comId, archId: system.id, parentId: '0' }}
+        />
+      </OrgCreateForm>
     </div>
   );
 };
 
-export default SystemDetail;
+export default connect(({ user }) => ({
+  currentUser: user.currentUser || {},
+  ...buildAuthorityHelper(user, '/admin'),
+}))(SystemDetail);

@@ -45,6 +45,18 @@ public class UserAuth {
 	@ApiModelProperty(value = "当前用户权限列表")
 	private List<String> currentAuthority;
 
+	@ApiModelProperty(value = "权限解析域 ID")
+	private Long authDomainId;
+
+	@ApiModelProperty(value = "权限解析公司 ID（0 表示平台门户轴，非具体租户公司）")
+	private Long authComId;
+
+	@ApiModelProperty(value = "权限解析域名称")
+	private String authDomainName;
+
+	@ApiModelProperty(value = "权限解析公司名称（com_id=0 时为平台门户）")
+	private String authComName;
+
 	@ApiModelProperty(value = "与 {@link User} 中字段语义一致：用户端/管理端语境，前端区分；服务端当前默认 0", example = "0")
 	private int isManageSide = 0;
 }

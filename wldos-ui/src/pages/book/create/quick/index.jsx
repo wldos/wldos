@@ -25,6 +25,9 @@ import {queryLayerCategory} from "@/pages/sys/category/service";
 import {queryTagSelect} from "@/pages/sys/tag/service";
 import {upParams} from "@/components/FileUpload";
 import {loadTinyMCE} from "@/utils/loadTinyMCE";
+import { formContent } from '@/pages/book/create/components/Step2';
+import { useBookFormPrivacyExtra } from '@/hooks/usePubVisibilityScopeEnum';
+import ContentAccessPolicyPanel from '@/pages/commercial/cms-access/components/ContentAccessPolicyPanel';
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -184,146 +187,6 @@ const validatorGeographic = (_, value) => {
   return Promise.resolve();
 };
 
-export const formContent = (privacyEnum, tProps, tagProps, privacyExtra = {}) => {
-  const { rewardStatus, onPrivacyChange } = privacyExtra;
-  return (
-  <>
-    <Form.Item name="cover" noStyle>
-      <Input hidden/>
-    </Form.Item>
-    <Form.Item name="mainPic1" noStyle>
-      <Input hidden/>
-    </Form.Item>
-    <Form.Item name="mainPic2" noStyle>
-      <Input hidden/>
-    </Form.Item>
-    <Form.Item name="mainPic3" noStyle>
-      <Input hidden/>
-    </Form.Item>
-    <Form.Item name="mainPic4" noStyle>
-      <Input hidden/>
-    </Form.Item>
-    <Form.Item
-      label="标题"
-      name="pubTitle"
-      rules={[
-        {
-          required: true,
-          message: '请输入标题',
-        },
-        {
-          max: 50,
-          type: 'string',
-          message: '最多50个汉字'
-        },
-      ]}
-    >
-      <Input placeholder="请输入标题"/>
-    </Form.Item>
-    <Form.Item
-      label="价格"
-      name="ornPrice"
-      rules={[
-        {
-          required: false,
-          message: '请输入价格',
-        },
-        {
-          pattern: /^(\d+)((?:\.\d+)?)$/,
-          message: '请输入合法金额数字',
-        },
-      ]}
-    >
-      <Input prefix="￥" placeholder="请输入价格"/>
-    </Form.Item>
-    <Form.Item
-      name="geographic"
-      label="地区"
-      rules={[
-        {
-          required: false,
-          message: '请输入地区'
-        },
-        {
-          validator: validatorGeographic,
-        },
-      ]}
-    >
-      <GeographicView/>
-    </Form.Item>
-    <Form.Item
-      name="contact"
-      label="联系人"
-      rules={[
-        {
-          required: false,
-          message: '请输入联系人姓名'
-        },
-        {
-          max: 10,
-          type: 'string',
-          message: '姓名最多10个汉字！',
-        },
-      ]}
-    >
-      <Input/>
-    </Form.Item>
-    <Form.Item
-      name="telephone"
-      label="联系电话"
-      rules={[
-        {
-          required: false,
-          message: '请输入电话'
-        },
-        {
-          pattern: /^1\d{10}$/,
-          message: '手机号格式错误！',
-        },
-      ]}
-    >
-      <Input/>
-    </Form.Item>
-    <Form.Item label="分类" name="termTypeIds"
-               rules={[
-                 {
-                   required: true,
-                   message: '请设置分类'
-                 },
-               ]}
-    >
-      <TreeSelect {...tProps} />
-    </Form.Item>
-    <Form.Item label="标签" name="tagIds">
-      <Select mode="tags" {...tagProps} />
-    </Form.Item>
-    <Form.Item name="visibilityScope" label="发现范围" tooltip="主表可发现性；与「查看方式」独立">
-      <Select allowClear placeholder="默认：前台可发现" options={[
-        { value: 'PUBLIC_LISTED', label: '前台可发现' },
-        { value: 'UNLISTED', label: '仅链接访问（不参与列表/搜索）' },
-        { value: 'INTERNAL_ONLY', label: '仅内部可见' },
-      ]}
-      />
-    </Form.Item>
-    <Form.Item name="privacyLevel" label="查看方式" tooltip="访问与付费策略（存 meta）；与「发现范围」独立">
-      <Radio.Group options={privacyEnum} onChange={onPrivacyChange} />
-    </Form.Item>
-    {rewardStatus ? (
-      <Form.Item
-        label="打赏金额"
-        name="reward"
-        rules={[
-          { required: true, message: '请输入打赏金额' },
-          { pattern: /^(\d+)((?:\.\d+)?)$/, message: '请输入合法金额数字' },
-        ]}
-      >
-        <Input prefix="￥" placeholder="请输入打赏金额" />
-      </Form.Item>
-    ) : null}
-  </>
-  );
-};
-
 const picHandle = (coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url) =>
   (<Row gutter={2}>
     <Col key={0}>
@@ -355,9 +218,10 @@ const picHandle = (coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, 
 
 let blobFile = null;
 // @todo 按照Pro Antd分步表单的方式，实现分片式信息表单，突出内容信息、交易信息。
-const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
+const Step2 = ({data, dispatch, submitting, privacyEnum = [], showVisibilityScope = false}) => {
   const [form] = Form.useForm();
   const editorRef = useRef(null);
+  const policyRef = useRef(null);
   const [coverUrl, setCoverUrl] = useState(undefined);
   const [pic1Url, setPic1Url] = useState(undefined);
   const [pic2Url, setPic2Url] = useState(undefined);
@@ -376,7 +240,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   // TinyMCE 按需加载状态
   const [tinymceReady, setTinymceReady] = useState(false);
   const [EditorComponent, setEditorComponent] = useState(null);
-  const [rewardStatus, setReward] = useState(false);
+  const privacyExtra = useBookFormPrivacyExtra(showVisibilityScope);
 
   // TinyMCE 按需加载
   useEffect(() => {
@@ -396,10 +260,6 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
     initTinyMCE();
     return () => { mounted = false; };
   }, []);
-
-  useEffect(() => {
-    setReward(data?.privacyLevel === 'reward');
-  }, [data?.id, data?.privacyLevel]);
 
   useEffect(async () => {
     const resData = await fetchEnumMap();
@@ -462,6 +322,13 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
       province: geographic?.province?.key?? '',
       city: geographic?.city?.key?? '',
       ...otherValues
+    }
+
+    if (data.id && policyRef.current?.save) {
+      const policyOk = await policyRef.current.save();
+      if (policyOk === false) {
+        return;
+      }
     }
 
     if (dispatch) {
@@ -603,13 +470,14 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
             <Form.Item label="封面与主图" className={styles.main}>
               {picHandle(coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url)}
             </Form.Item>
-            {formContent(privacyEnum, typeProps, tagProps, {
-              rewardStatus,
-              onPrivacyChange: (e) => {
-                if (e?.target?.value === 'reward') setReward(true);
-                else setReward(false);
-              },
-            })}
+            {formContent(typeProps, tagProps, undefined, privacyExtra)}
+            <ContentAccessPolicyPanel
+              ref={policyRef}
+              pubId={data.id}
+              rootPubId={data.parentId || data.id}
+              parentPubId={data.parentId}
+              showSaveButton={false}
+            />
             <Form.Item name="pubContent" noStyle>
               <textarea hidden
                     value={content} onChange={(e) => setContent(e.target.value)}/>
@@ -686,8 +554,11 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   );
 };
 
-export default connect(({bookInfo, loading}) => ({
+import {canManageVisibilityScope} from '@/utils/userPrivilege';
+
+export default connect(({bookInfo, loading, user}) => ({
   submitting: loading.effects['bookInfo/submitStepForm'],
   data: bookInfo.step,
   privacyEnum: bookInfo.privacyEnum,
+  showVisibilityScope: canManageVisibilityScope(user),
 }))(Step2);

@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 /**
  * 登录/账号安全事件日志，对应表 {@code wo_login_log}。
@@ -38,12 +39,13 @@ import lombok.Setter;
  * </ul>
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true, domainId = true)
 public class WoLoginLog implements Persistable<Long> {
 
 	@Id

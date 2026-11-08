@@ -15,6 +15,7 @@ import {
   bindMyPublishAccount as bindAssistantPublishAccount,
   queryMyPublishAccounts as queryAssistantPublishAccounts,
   querySupportedPlatforms as queryAssistantPlatforms,
+  removeMyPublishAccount as removeAssistantPublishAccount,
 } from '@book-publish-ext/service';
 import {
   DEFAULT_SCHEDULE_POLICY,
@@ -25,7 +26,7 @@ import {
 } from '@book-publish-ext/assistantPublishCore';
 import { submitCmsReviewFromBookEditor, applyWebBookPublishRequest } from '@/pages/book/utils/cmsReviewPublish';
 import config from "@/utils/config";
-import { isDesktopEmbedded } from '@/utils/desktopEmbeddedBridge';
+import { isDesktopEmbedded, purgeDesktopExternalAccount } from '@/utils/desktopEmbeddedBridge';
 import MarkdownImage from '@/components/MarkdownImage';
 import PublishSettingsDrawer from '@book-publish-ext/components/PublishSettingsDrawer';
 import AccountManageModal from '@book-publish-ext/components/AccountManageModal';
@@ -2551,6 +2552,14 @@ const BookView = ({
           }
         }}
         onRefresh={loadAssistantAccounts}
+        onRemoveAccount={async (accountId) => {
+          await removeAssistantPublishAccount(accountId);
+          if (isDesktopEmbedded()) {
+            purgeDesktopExternalAccount(accountId).catch(() => {});
+          }
+          setAssistantAccountsForUi((prev) => (prev || []).filter((a) => String(a.id) !== String(accountId)));
+          await loadAssistantAccounts();
+        }}
       />
       <PublishRecordModal
         open={immersiveRecordOpen}

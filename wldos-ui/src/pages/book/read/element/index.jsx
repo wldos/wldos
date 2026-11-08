@@ -14,11 +14,14 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import '@/styles/markdown.css';
 import MarkdownImage from '@/components/MarkdownImage';
+import ContentAccessFooter from '@/pages/commercial/cms-access/components/ContentAccessFooter';
+import ContentAccessPubBody from '@/pages/commercial/cms-access/components/ContentAccessPubBody';
+import ContentTipBlock from '@/pages/commercial/cms-access/components/ContentTipBlock';
 
 const {Text} = Typography;
 
 const Element = (props) => {
-  const {dispatch, match, } = props;
+  const {dispatch, match, currentUser} = props;
   const [article, setArticle] = useState(undefined);
   const [toc, setToc] = useState([]);
   const [activeId, setActiveId] = useState('');
@@ -384,83 +387,91 @@ const Element = (props) => {
       <div className={styles.articleContent}>
         <Typography>
           <Title level={1} style={titleStyle}>{article.pubTitle}</Title>
-          <div 
+          <ContentAccessPubBody
+            pubId={article.id}
+            pubContent={article.pubContent}
+            pubMimeType={article.pubMimeType}
+            fullHtmlContent={article.pubMimeType === 'text/markdown' ? undefined : processedContent}
+            contentAccess={article.contentAccess}
+            currentUser={currentUser}
             className={styles.entry}
             style={{
-              '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none'
+              '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none',
             }}
-          >
-            {article.pubMimeType === 'text/markdown' ? (
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]} 
-                rehypePlugins={[rehypeRaw]} 
+            renderMarkdown={(text, key) => (
+              <ReactMarkdown
+                key={key}
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
                 className="markdown-body"
                 components={{
                   h1: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h1 id={id} {...props}>{children}</h1>;
                   },
                   h2: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h2 id={id} {...props}>{children}</h2>;
                   },
                   h3: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h3 id={id} {...props}>{children}</h3>;
                   },
                   h4: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h4 id={id} {...props}>{children}</h4>;
                   },
                   h5: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h5 id={id} {...props}>{children}</h5>;
                   },
                   h6: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h6 id={id} {...props}>{children}</h6>;
                   },
-                  img({src, alt, title, ...props}) {
+                  img({ src, alt, title, ...props }) {
                     return (
-                      <MarkdownImage 
-                        src={src} 
-                        alt={alt} 
-                        title={title} 
+                      <MarkdownImage
+                        src={src}
+                        alt={alt}
+                        title={title}
                         content={article.pubContent}
                         {...props}
                       />
                     );
                   },
-                  code({node, inline, className, children, ...props}) {
+                  code({ node, inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '');
-                    
+
                     return !inline && match ? (
-                      <div style={{ 
-                        backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                        borderRadius: '6px',
-                        padding: '16px',
-                        margin: '16px 0',
-                        overflow: 'auto'
-                      }}>
+                      <div
+                        style={{
+                          backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                          borderRadius: '6px',
+                          padding: '16px',
+                          margin: '16px 0',
+                          overflow: 'auto',
+                        }}
+                      >
                         <SyntaxHighlighter
                           style={isDarkMode ? vscDarkPlus : vs}
                           language={match[1]}
                           PreTag="div"
                           showLineNumbers={false}
-                          wrapLines={true}
-                          wrapLongLines={true}
+                          wrapLines
+                          wrapLongLines
                           customStyle={{
                             background: 'transparent',
                             margin: 0,
                             padding: 0,
                             border: 'none',
-                            borderRadius: 0
+                            borderRadius: 0,
                           }}
                           {...props}
                         >
@@ -472,18 +483,28 @@ const Element = (props) => {
                         {children}
                       </code>
                     );
-                  }
+                  },
                 }}
               >
-                {article.pubContent}
+                {text}
               </ReactMarkdown>
-            ) : (
-              <div 
+            )}
+            renderHtml={(html, key) => (
+              <div
+                key={key}
                 className="rich-text-content"
-                dangerouslySetInnerHTML={{ __html: processedContent }} 
+                dangerouslySetInnerHTML={{ __html: html }}
               />
             )}
-          </div>
+          />
+          <ContentAccessFooter
+            pubId={article.id}
+            contentAccess={article.contentAccess}
+            currentUser={currentUser}
+            pubContent={article.pubContent}
+            pubMimeType={article.pubMimeType}
+          />
+          <ContentTipBlock pubId={article.id} contentAccess={article.contentAccess} currentUser={currentUser} />
           <div className={styles.pubPrevNext}>
             {article.prev && (<><strong>上一篇</strong>：<Link to={`/element-${article.prev.id}.html`} rel="prev">{article.prev.pubTitle}</Link><br/></>)}
             {article.next && (<><strong>下一篇</strong>：<Link to={`/element-${article.next.id}.html`} rel="next">{article.next.pubTitle}</Link></>)}
@@ -570,5 +591,6 @@ return (
 export default connect(({ user } ) => (
   {
     tdk: user.tdk,
+    currentUser: user.currentUser,
   }
 ))(Element);

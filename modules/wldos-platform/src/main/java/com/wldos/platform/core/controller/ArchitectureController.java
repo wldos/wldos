@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 import io.github.wldos.common.Constants;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
+import io.github.wldos.platform.support.rbac.DataScopeGuard;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
+import io.github.wldos.platform.support.rbac.WriteScopeTarget;
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.core.entity.WoArchitecture;
 import com.wldos.platform.core.enums.ArchTypeEnum;
@@ -62,21 +65,74 @@ public class ArchitectureController extends EntityController<ArchitectureService
 	})
 	@GetMapping("")
 	public PageData<Architecture> listQuery(@RequestParam Map<String, Object> params) {
+		this.assertNotSiteAdminForArch();
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		this.applyTenantFilter(pageQuery);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_TENANT, WoArchitecture.class);
 
 		return this.service.execQueryForTree(new Architecture(), new WoArchitecture(), pageQuery, Constants.TOP_ARCH_ID);
 	}
 
+	@GetMapping("get")
+	@Override
+	public Object getEntityById(@RequestParam long id) {
+		this.assertNotSiteAdminForArch();
+		WoArchitecture arch = this.service.findById(id);
+		if (arch != null) {
+			this.assertEntityRowScope(arch);
+		}
+		return arch;
+	}
+
+	@Override
+	protected void preUpdate(WoArchitecture entity) {
+		this.assertNotSiteAdminForArch();
+		if (entity != null && entity.getId() != null) {
+			WoArchitecture existing = this.service.findById(entity.getId());
+			if (existing != null) {
+				this.assertEntityRowScope(existing);
+				if (!this.isAdmin(this.getUserId()) && this.isMultiTenancy()) {
+					DataScopeGuard.assertComIdImmutable(existing.getComId(), entity.getComId());
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void preDelete(WoArchitecture entity) {
+		this.assertNotSiteAdminForArch();
+		if (entity != null && entity.getId() != null) {
+			WoArchitecture existing = this.service.findById(entity.getId());
+			if (existing != null) {
+				this.assertEntityRowScope(existing);
+			}
+		}
+	}
+
+	@Override
+	protected void preDeletes(List<Object> ids) {
+		this.assertNotSiteAdminForArch();
+		if (ids == null) {
+			return;
+		}
+		for (Object raw : ids) {
+			WoArchitecture existing = this.service.findById(Long.parseLong(raw.toString()));
+			if (existing != null) {
+				this.assertEntityRowScope(existing);
+			}
+		}
+	}
+
 	/**
-	 * 新增体系时，带上公司，这里的公司是指租户管理员的主公司
+	 * 新增体系时按操作者层级补默认归属（平台超管落 comId=0，租户/站点管理员落其主公司），与
+	 * {@code OrgController}/{@code RoleController}/{@code AppController} 统一写法。
 	 *
 	 * @param entity 体系实体
 	 */
 	@Override
 	protected void preAdd(WoArchitecture entity) {
-		entity.setComId(this.getTenantId());
+		this.assertNotSiteAdminForArch();
+		this.applyWriteScope(entity, WriteScopeTarget.TENANT_AXIS);
 	}
 
 	/**
@@ -87,6 +143,10 @@ public class ArchitectureController extends EntityController<ArchitectureService
 	 */
 	@Override
 	protected List<WoArchitecture> doFilter(List<WoArchitecture> res) {
+		Long userId = this.getUserId();
+		if (!this.isAdmin(userId) && !this.isPlatformAdmin(this.getTenantId())) {
+			res.removeIf(a -> a.getComId() == null || a.getComId() == Constants.TOP_COM_ID);
+		}
 
 		if (this.isPlatformAdmin(this.getTenantId())) {
 			WoArchitecture plat = new WoArchitecture(Constants.TOP_ARCH_ID, "平台");
@@ -110,7 +170,7 @@ public class ArchitectureController extends EntityController<ArchitectureService
 	@ApiOperation(value = "体系结构类型枚举", notes = "获取组织体系结构类型枚举列表")
 	@GetMapping("type")
 	public List<Map<String, Object>> fetchEnumAppType() {
-
+		this.assertNotSiteAdminForArch();
 		return Arrays.stream(ArchTypeEnum.values()).map(item -> {
 			Map<String, Object> em = new HashMap<>();
 			em.put("label", item.getLabel());

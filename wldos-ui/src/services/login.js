@@ -60,8 +60,9 @@ export async function resetPassword(params) {
 export async function refreshTokenService() {
   return request(`${prefix}/login/refresh`);
 }
+
 export async function fetchEncryptKey() {
-  return request(`${prefix}/login/encrypt`);
+  return request(`${prefix}/login/encrypt`, { method: 'GET', skipErrorHandler: true });
 }
 
 

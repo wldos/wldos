@@ -11,7 +11,9 @@ package com.wldos.platform.core.service;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,13 +37,27 @@ import io.github.wldos.common.utils.TreeUtils;
 import io.github.wldos.common.vo.SelectOption;
 import io.github.wldos.common.vo.TreeNode;
 import io.github.wldos.common.vo.TreeSelectOption;
+import io.github.wldos.common.exception.BaseException;
+import io.github.wldos.platform.support.rbac.AdminScopeLevel;
+import io.github.wldos.platform.support.rbac.AdminWriteScopeStamper;
+import io.github.wldos.platform.support.rbac.AxisLayerGuard;
+import io.github.wldos.platform.support.rbac.DataScopeQueryHelper;
+import io.github.wldos.platform.support.rbac.DataScopeResolver;
+import io.github.wldos.platform.support.rbac.RbacScopeSqlFragments;
+import io.github.wldos.platform.support.rbac.WriteScopeTarget;
+import io.github.wldos.platform.support.resource.entity.WoResource;
+import com.wldos.platform.core.dao.DomainDao;
+import com.wldos.platform.core.dao.DomainResourceDao;
+import com.wldos.platform.core.dao.ResourceDao;
 import com.wldos.platform.core.dao.TermDao;
 import com.wldos.platform.core.dao.TermObjectDao;
 import com.wldos.platform.core.dao.TermTypeDao;
+import com.wldos.platform.core.dao.TermmetaDao;
 import com.wldos.platform.core.dto.TermObject;
 import com.wldos.platform.core.entity.KTermObject;
 import com.wldos.platform.core.entity.KTermType;
 import com.wldos.platform.core.entity.KTerms;
+import com.wldos.platform.core.entity.WoDomain;
 import com.wldos.platform.core.vo.Category;
 import com.wldos.platform.core.vo.TermTree;
 import io.github.wldos.platform.support.term.ITermDataOpener;
@@ -84,10 +100,24 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 
 	private final TermObjectService termObjectService;
 
-	public TermService(TermTypeDao termTypeRepo, TermObjectDao termObjectRepo, TermObjectService termObjectService) {
+	private final DomainResourceDao domainResourceRepo;
+
+	private final TermmetaDao termmetaRepo;
+
+	private final ResourceDao resourceRepo;
+
+	private final DomainDao domainDao;
+
+	public TermService(TermTypeDao termTypeRepo, TermObjectDao termObjectRepo, TermObjectService termObjectService,
+	                   DomainResourceDao domainResourceRepo, TermmetaDao termmetaRepo, ResourceDao resourceRepo,
+	                   DomainDao domainDao) {
 		this.termTypeRepo = termTypeRepo;
 		this.termObjectRepo = termObjectRepo;
 		this.termObjectService = termObjectService;
+		this.domainResourceRepo = domainResourceRepo;
+		this.termmetaRepo = termmetaRepo;
+		this.resourceRepo = resourceRepo;
+		this.domainDao = domainDao;
 	}
 
 	@Override
@@ -113,7 +143,10 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 		List<Object> params = new ArrayList<>(); // @todo 此处应考虑term metadata扩展
 		StringBuilder sql = new StringBuilder(50).append("select a.*, o.id term_type_id, o.class_type, o.description,")
 				.append(" o.parent_id, o.count from k_terms a join k_term_type o on a.id=o.term_id where 1=1 ");
-		if (!condition.isEmpty()) {
+		if (RbacScopeSqlFragments.hasScopeHints(condition)) {
+			RbacScopeSqlFragments.consumeScopeHints(sql, params, condition, "a");
+		}
+		if (condition != null && !condition.isEmpty()) {
 			StringBuilder finalSql1 = new StringBuilder();
 			condition.forEach((key, value) -> {
 				if (ObjectUtils.isBlank(value))
@@ -155,18 +188,20 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 		}
 
 		if (filter != null && !filter.isEmpty()) {
-			StringBuffer finalSql = new StringBuffer();
+			StringBuilder filterSql = new StringBuilder();
 			filter.forEach((key, value) -> {
-				finalSql.append(" and o.").append(NameConvert.humpToUnderLine(key)).append(" in (");
+				if (value == null || value.isEmpty()) {
+					return;
+				}
+				filterSql.append(" and o.").append(NameConvert.humpToUnderLine(key)).append(" in (");
 				value.forEach(item -> {
-					finalSql.append("?,");
+					filterSql.append("?,");
 					params.add(item);
 				});
+				filterSql.deleteCharAt(filterSql.length() - 1);
+				filterSql.append(")");
 			});
-
-			sql.append(finalSql).delete(sql.length() - 1, sql.length());
-
-			sql.append(")");
+			sql.append(filterSql);
 		}
 
 		List<Map<String, Object>> all = this.commonOperate.getJdbcOperations()
@@ -179,6 +214,12 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 					temp.append(NameConvert.humpToUnderLine(s.getProperty())).append(" ").append(s.isAscending() ? "" : " desc ")
 			);
 			sql.append(temp);
+		}
+		else if (isPage) {
+			// 分类树（isPage=false）一次性取出全部匹配行，无需默认排序也全量可见；
+			// 标签走真分页，若不给默认排序，新增行落在哪一页由数据库返回顺序决定，
+			// 存量较多时新增项很容易不在第 1 页，表现为"新增成功但看不到"。
+			sql.append(" order by a.id desc ");
 		}
 
 		List<TermTree> list;
@@ -408,6 +449,163 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	}
 
 	/**
+	 * 解析站点归属租户，供超管仅传 domainId 时的分类/标签并集读。
+	 */
+	public Long resolveComIdForDomain(Long domainId) {
+		if (domainId == null || domainId <= 0) {
+			return null;
+		}
+		return this.domainDao.findById(domainId).map(WoDomain::getComId).orElse(null);
+	}
+
+	/**
+	 * 在已注入 scope hint 的 {@link PageQuery} 下构建父级选择树（不走全平台 Redis 缓存）。
+	 */
+	public List<TreeSelectOption> queryTreeSelectForClassType(String classType, PageQuery pageQuery) {
+		pageQuery.setCurrent(1);
+		pageQuery.setPageSize(10000);
+		if (pageQuery.getCondition() == null || ObjectUtils.isBlank(pageQuery.getCondition().get("classType"))) {
+			pageQuery.pushParam("classType", classType);
+		}
+		PageData<TermTree> page = this.queryTermForTree(new KTerms(), pageQuery, false);
+		List<TermTree> built = page.getRows();
+		List<TreeSelectOption> flat = this.flattenTermTreeToSelect(built);
+		String topTermId = String.valueOf(Constants.TOP_TERM_ID);
+		TreeSelectOption root = TreeSelectOption.of(
+				Constants.TOP_TERM_ID, Constants.TOP_VIR_ID, "根分类", topTermId, topTermId, 0L);
+		if (flat.isEmpty()) {
+			List<TreeSelectOption> onlyRoot = new ArrayList<>();
+			onlyRoot.add(root);
+			return onlyRoot;
+		}
+		flat.add(0, root);
+		return TreeUtils.build(flat, Constants.TOP_VIR_ID);
+	}
+
+	/**
+	 * 用户态（门户/创作）：当前站并集读（平台共享 ∪ 租户共享 ∪ 指定站），与域管运营 lens 一致。
+	 */
+	public List<TreeSelectOption> queryPortalLayerCategoryTree(String classType, Long domainId) {
+		PageQuery pageQuery = this.newPortalUnionReadQuery(classType, domainId);
+		if (pageQuery == null) {
+			return Collections.emptyList();
+		}
+		return this.queryTreeSelectForClassType(classType, pageQuery);
+	}
+
+	/**
+	 * 信息发布 Step1：在并集读基础上仅保留 {@code infoFlag=是} 的两级矮树。
+	 */
+	public List<Category> queryPortalInfoFlatCategoryTree(Long domainId) {
+		return this.buildPortalFlatCategoryTree(domainId, true);
+	}
+
+	/**
+	 * 门户分类矮树（含 info 关闭项），仍限当前站并集读。
+	 */
+	public List<Category> queryPortalFlatCategoryTree(Long domainId) {
+		return this.buildPortalFlatCategoryTree(domainId, false);
+	}
+
+	public List<SelectOption> queryPortalFlatTags(Long domainId) {
+		List<TermTree> rows = this.queryPortalTermForest(TermTypeEnum.TAG.toString(), domainId);
+		if (rows.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return this.flattenTermForest(rows).stream()
+				.map(term -> SelectOption.of(term.getName(), term.getName()))
+				.collect(Collectors.toList());
+	}
+
+	private List<Category> buildPortalFlatCategoryTree(Long domainId, boolean infoFlagOnly) {
+		List<TermTree> rows = this.queryPortalTermForest(TermTypeEnum.CATEGORY.toString(), domainId);
+		if (rows.isEmpty()) {
+			return Collections.emptyList();
+		}
+		List<Category> viewNodes = this.flattenTermForest(rows).stream()
+				.filter(v -> !infoFlagOnly || BoolEnum.YES.toString().equals(v.getInfoFlag()))
+				.map(res -> Category.of(
+						res.getTermTypeId(),
+						res.getParentId(),
+						res.getName(),
+						res.getTermTypeId().toString(),
+						res.getSlug(),
+						res.getDisplayOrder()))
+				.collect(Collectors.toList());
+		viewNodes = TreeUtils.buildFlatTree(viewNodes, Constants.TOP_TERM_ID);
+		return viewNodes.parallelStream().filter(v -> v.getChildren() != null).collect(Collectors.toList());
+	}
+
+	private List<TermTree> queryPortalTermForest(String classType, Long domainId) {
+		PageQuery pageQuery = this.newPortalUnionReadQuery(classType, domainId);
+		if (pageQuery == null) {
+			return Collections.emptyList();
+		}
+		pageQuery.setCurrent(1);
+		pageQuery.setPageSize(10000);
+		PageData<TermTree> page = this.queryTermForTree(new KTerms(), pageQuery, false);
+		return page.getRows() == null ? Collections.emptyList() : page.getRows();
+	}
+
+	private PageQuery newPortalUnionReadQuery(String classType, Long domainId) {
+		if (domainId == null || domainId <= 0) {
+			return null;
+		}
+		Long comId = this.resolveComIdForDomain(domainId);
+		if (comId == null) {
+			return null;
+		}
+		PageQuery pageQuery = new PageQuery(new HashMap<>());
+		pageQuery.pushParam("classType", classType);
+		DataScopeQueryHelper.applySharedDomainAdminRead(pageQuery, comId, Collections.singletonList(domainId));
+		return pageQuery;
+	}
+
+	private List<TermTree> flattenTermForest(List<TermTree> roots) {
+		List<TermTree> out = new ArrayList<>();
+		if (roots == null) {
+			return out;
+		}
+		for (TermTree node : roots) {
+			if (node == null) {
+				continue;
+			}
+			out.add(node);
+			if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+				out.addAll(this.flattenTermForest(node.getChildren()));
+			}
+		}
+		return out;
+	}
+
+	private List<TreeSelectOption> flattenTermTreeToSelect(List<TermTree> nodes) {
+		List<TreeSelectOption> out = new ArrayList<>();
+		if (nodes == null) {
+			return out;
+		}
+		for (TermTree term : nodes) {
+			if (term == null) {
+				continue;
+			}
+			Long termTypeId = term.getTermTypeId();
+			if (termTypeId == null) {
+				continue;
+			}
+			out.add(TreeSelectOption.of(
+					termTypeId,
+					term.getParentId(),
+					term.getName(),
+					termTypeId.toString(),
+					termTypeId.toString(),
+					term.getDisplayOrder()));
+			if (term.getChildren() != null && !term.getChildren().isEmpty()) {
+				out.addAll(this.flattenTermTreeToSelect(term.getChildren()));
+			}
+		}
+		return out;
+	}
+
+	/**
 	 * 根据父分类id查询子分类（含自身）
 	 *
 	 * @param parentId 父分类id
@@ -624,7 +822,12 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 
 		Map<Long, List<KTermObject>> collect = termObjects.parallelStream().collect(Collectors.groupingBy(KTermObject::getObjectId));
 		return collect.entrySet().parallelStream().map(c -> {
-			List<Term> termList = c.getValue().parallelStream().map(o -> termMap.get(o.getTermTypeId())).collect(Collectors.toList());
+			// 关联记录引用的 termTypeId 在当前 findAllCategory/findAllTag 结果集里找不到时（分类/标签已被删除但
+			// k_term_object 关联未级联清理），termMap.get 返回 null——必须过滤掉，否则下游按 Term 取字段会 NPE。
+			List<Term> termList = c.getValue().parallelStream()
+					.map(o -> termMap.get(o.getTermTypeId()))
+					.filter(Objects::nonNull)
+					.collect(Collectors.toList());
 			return new TermObject(c.getKey(), termList);
 		}).collect(Collectors.toList());
 	}
@@ -638,20 +841,63 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 */
 	public String addTerm(Term term, Long userId, String userIp) {
 
-		if (this.entityRepo.existsTermBySlugOrName(term.getName(), term.getSlug()))
-			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
-
-		// 新增term
 		KTerms kTerm = new KTerms();
 		this.termCopier.copy(term, kTerm, null);
+		if (this.isAdmin(userId)) {
+			Long domainId = kTerm.getDomainId();
+			Long resolvedComId = domainId != null && domainId > 0
+					? this.domainDao.findById(domainId).map(WoDomain::getComId).orElse(null)
+					: null;
+			AdminWriteScopeStamper.ensureComIdFromDomain(kTerm, domainId, resolvedComId);
+		}
+
+		Long effectiveComId = this.resolveEffectiveComId(userId, kTerm);
+		if (this.entityRepo.existsTermBySlugOrName(term.getName(), term.getSlug(), term.getClassType(), effectiveComId))
+			return "同名或同别名的分类项已存在"; // 分类和标签各自独立命名空间；同一租户（含平台共享）内不能重名，不同租户互不影响
+
+		AdminWriteScopeStamper.stamp(
+				kTerm,
+				DataScopeResolver.resolveOperatorLevel(
+						this.isAdmin(userId),
+						this.commonOperate.isTenantAdmin(userId),
+						this.commonOperate.isDomainAdmin(userId),
+						this.commonOperate.getPrimaryOrgId(userId) != null),
+				this.getTenantId(),
+				this.commonOperate.getOperatorComId(userId),
+				this.getDomainId(),
+				WriteScopeTarget.SITE_AXIS);
 		this.saveOrUpdate(kTerm);
 		// 新增term type
 		KTermType termType = new KTermType();
 		this.termTypeCopier.copy(term, termType, null);
 		termType.setId(kTerm.getId());
 		termType.setTermId(kTerm.getId());
+		if (termType.getDomainId() == null) {
+			termType.setDomainId(kTerm.getDomainId());
+		}
+		if (termType.getComId() == null) {
+			termType.setComId(kTerm.getComId());
+		}
 		this.saveOtherEntity(termType, SaveOptions.forImport());
 		return "ok";
+	}
+
+	/** 与 {@link AdminWriteScopeStamper#stampComId} 同口径解算归属租户，供新增前的重名校验使用。 */
+	private Long resolveEffectiveComId(Long userId, KTerms draft) {
+		if (draft != null && draft.getComId() != null && draft.getComId() > 0
+				&& !Objects.equals(draft.getComId(), Constants.TOP_COM_ID)) {
+			return draft.getComId();
+		}
+		if (this.isAdmin(userId)) {
+			return Constants.TOP_COM_ID;
+		}
+		Long operatorComId = this.commonOperate.getOperatorComId(userId);
+		Long comId = operatorComId != null ? operatorComId : this.getTenantId();
+		return comId != null ? comId : Constants.TOP_COM_ID;
+	}
+
+	private Long resolveEffectiveComId(Long userId) {
+		return resolveEffectiveComId(userId, null);
 	}
 
 	/**
@@ -662,8 +908,13 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 * @param userIp 操作人ip
 	 */
 	public String updateTerm(Term term, Long userId, String userIp) {
-		if (this.entityRepo.existsDifTermByNameOrSlugAndId(term.getName(), term.getSlug(), term.getId()))
-			return "同名或同别名的分类项已存在"; // 简单处理：分类和标签也不能重名，无论名字还是别名
+		KTermType existingType = this.entityRepo.queryTermTypeById(term.getId());
+		String classType = existingType != null ? existingType.getClassType() : term.getClassType();
+		Long comId = existingType != null && existingType.getComId() != null
+				? existingType.getComId() : this.resolveEffectiveComId(userId);
+		if (this.entityRepo.existsDifTermByNameOrSlugAndId(term.getName(), term.getSlug(), term.getId(), classType, comId))
+			return "同名或同别名的分类项已存在"; // 隔离规则同 addTerm：按 classType + 归属租户判重，不跨租户互相拦截
+		this.assertTermMutable(term.getId() != null ? this.findById(term.getId()) : null, userId);
 		KTerms kTerms = new KTerms();
 		this.termCopier.copy(term, kTerms, null);
 		this.saveOrUpdate(kTerms);
@@ -706,34 +957,100 @@ public class TermService extends EntityService<TermDao, KTerms, Long> implements
 	 * 删除分类
 	 *
 	 * @param term 分类项
+	 * @param userId 操作人id
 	 */
-	public void deleteTerm(Term term) {
-		// 包含下级分类，不允许删除
+	public void deleteTerm(Term term, Long userId) {
+		if (term == null || term.getTermTypeId() == null) {
+			throw new BaseException("分类参数无效");
+		}
 		if (this.entityRepo.existsTermByTermTypeId(term.getTermTypeId())) {
-			getLog().warn("包含下级分类，不允许删除，请确定是合法请求：termId={}", term.getId());
-		}
-		// 类目或标签下的内容关联关系级联删除，相关内容如果没有其他分类，将默认按未分类处理，归属‘未分类’目录
-		List<KTermObject> termObjects = this.termObjectRepo.findAllByTermTypeId(term.getTermTypeId());
-		if (!ObjectUtils.isBlank(termObjects)) {
-			this.deleteByEntityAndIds(termObjects.get(0), false, termObjects.parallelStream().map(KTermObject::getId).toArray());
+			throw new BaseException("包含下级分类，请先删除子分类");
 		}
 
-		// 删除term
-		this.deleteByEntityAndIds(new KTerms(), false, term.getId());
+		Long termTypeId = term.getTermTypeId();
+		Long termId = term.getId();
+		this.assertTermMutable(termId != null ? this.findById(termId) : null, userId);
+		String slug = this.resolveTermSlug(term);
 
-		// 删除term type
-		this.deleteByEntityAndIds(new KTermType(), false, term.getTermTypeId());
+		this.termObjectRepo.deleteAllByTermTypeId(termTypeId);
+
+		if (termId != null) {
+			this.termmetaRepo.deleteByTermId(termId);
+		}
+
+		if (termTypeId > Constants.TOP_TERM_ID) {
+			this.domainResourceRepo.resetTermTypeIdByTermTypeId(termTypeId);
+			this.cache.removeByPrefix(RedisKeyEnum.WLDOS_DOMAIN_RES.toString());
+		}
+
+		boolean menuRemoved = this.unlinkCategoryMenuResources(slug);
+
+		this.deleteByEntityAndIds(new KTerms(), false, termId);
+		this.deleteByEntityAndIds(new KTermType(), false, termTypeId);
+
+		if (menuRemoved) {
+			this.refreshAuth();
+		}
+	}
+
+	private String resolveTermSlug(Term term) {
+		if (!ObjectUtils.isBlank(term.getSlug())) {
+			return term.getSlug();
+		}
+		if (term.getId() != null) {
+			KTerms kTerm = this.findById(term.getId());
+			if (kTerm != null && !ObjectUtils.isBlank(kTerm.getSlug())) {
+				return kTerm.getSlug();
+			}
+		}
+		Term loaded = this.entityRepo.queryTermByTermTypeId(term.getTermTypeId());
+		return loaded != null ? loaded.getSlug() : null;
+	}
+
+	/**
+	 * 逻辑删除由分类模板生成的门户菜单（路径含 /category/{slug}）。
+	 */
+	private boolean unlinkCategoryMenuResources(String slug) {
+		if (ObjectUtils.isBlank(slug)) {
+			return false;
+		}
+		List<WoResource> menus = this.resourceRepo.findAllByCategorySlugInPath(slug);
+		if (ObjectUtils.isBlank(menus)) {
+			return false;
+		}
+		List<Long> resourceIds = menus.stream().map(WoResource::getId).collect(Collectors.toList());
+		this.domainResourceRepo.logicDeleteByResourceIds(resourceIds);
+		this.deleteByEntityAndIds(new WoResource(), true, resourceIds.toArray());
+		return true;
 	}
 
 	/**
 	 * 批量删除分类
 	 *
 	 * @param terms 分类项集合
+	 * @param userId 操作人id
 	 */
-	public void deleteTerms(List<Term> terms) {
+	public void deleteTerms(List<Term> terms, Long userId) {
 		for (Term term : terms) {
-			this.deleteTerm(term);
+			this.deleteTerm(term, userId);
 		}
+	}
+
+	/**
+	 * 共享行写入层守卫：平台/租户模板行（{@code domain_id} 为空或 0）只能由不低于其所在层级的操作者改写，
+	 * 站点管理员对租户共享分类只读并集可见，不得 UPDATE/DELETE 母行。
+	 */
+	private void assertTermMutable(KTerms existing, Long userId) {
+		if (existing == null || this.isAdmin(userId)) {
+			return;
+		}
+		AdminScopeLevel operatorLevel = DataScopeResolver.resolveOperatorLevel(
+				this.isAdmin(userId),
+				this.commonOperate.isTenantAdmin(userId),
+				this.commonOperate.isDomainAdmin(userId),
+				this.commonOperate.getPrimaryOrgId(userId) != null);
+		AdminScopeLevel rowLayer = AxisLayerGuard.resolveAxisLayer(existing.getComId(), existing.getDomainId());
+		AxisLayerGuard.assertMutable(operatorLevel, rowLayer);
 	}
 
 	/**

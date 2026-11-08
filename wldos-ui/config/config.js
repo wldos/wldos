@@ -42,6 +42,17 @@ export default defineConfig({
   theme: {
     'primary-color': defaultSettings.primaryColor,
   },
+  /*
+   * umi dev（webpack-dev-server）默认对代理响应也开 gzip 压缩中间件；SSE（/api/ai/invoke/stream）
+   * 走同一条 /api/ 代理时，压缩中间件按内部缓冲区攒够数据才 flush 给浏览器，会把"逐 token 到达"
+   * 的流式响应重新攒批成"等一段时间后一次性吐一大块"，前端表现为打字机光标不动、只看到 loading
+   * 转圈，等一整段攒够了才突然出现一堆文字——与生产 nginx 缓冲同类问题，只是发生在本地开发代理层。
+   * 生产环境 AiInvokeController 已加 X-Accel-Buffering 响应头；webpack-dev-server 压缩中间件不认该头，
+   * dev 须单独关 compress，本地才能看到流式效果。内网 dev 关压缩无实际代价。
+   */
+  devServer: {
+    compress: false,
+  },
   title: false,
   ignoreMomentLocale: true,
   proxy: proxy[REACT_APP_ENV || 'dev'],

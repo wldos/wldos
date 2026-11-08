@@ -35,6 +35,13 @@ public class DomainAppService extends EntityService<DomainAppDao, WoDomainApp, L
 		return this.entityRepo.existsByAppIdAndDomainId(appId, domainId);
 	}
 
+	public WoDomainApp findMount(Long domainId, Long appId) {
+		if (domainId == null || appId == null) {
+			return null;
+		}
+		return this.entityRepo.findByDomainIdAndAppId(domainId, appId);
+	}
+
 	public void removeDomainApp(List<Long> ids, Long domainId) {
 		this.entityRepo.removeDomainApp(ids, domainId);
 	}
@@ -44,5 +51,12 @@ public class DomainAppService extends EntityService<DomainAppDao, WoDomainApp, L
 				this.entityRepo.queryAllByDomainIdAndIsValidAndDeleteFlag(domainId, ValidStatusEnum.VALID.toString(), DeleteFlagEnum.NORMAL.toString());
 
 		return domainApps.parallelStream().map(WoDomainApp::getAppId).collect(Collectors.toList());
+	}
+
+	public void updateMountVisibility(Long domainId, List<Long> appIds, String isValid, Long operatorId, String operatorIp) {
+		if (domainId == null || appIds == null || appIds.isEmpty()) {
+			return;
+		}
+		this.entityRepo.updateVisibilityByDomainAndAppIds(domainId, appIds, isValid, operatorId, operatorIp);
 	}
 }

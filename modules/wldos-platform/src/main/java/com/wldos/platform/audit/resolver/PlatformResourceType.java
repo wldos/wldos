@@ -35,7 +35,7 @@ import io.github.wldos.framework.support.audit.ResourceTypeDict;
  * 与审计表 {@code wo_op_log.resource_type} 列严格一致。
  *
  * @author Yuanxi Universe
- * @date 2026/05/05
+ * @date 2025/05/05
  * @version 1.0
  */
 public enum PlatformResourceType {

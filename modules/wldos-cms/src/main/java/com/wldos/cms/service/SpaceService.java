@@ -18,9 +18,12 @@ import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Pub;
+import com.wldos.cms.vo.WorkbenchListScope;
+import io.github.wldos.common.Constants;
 import io.github.wldos.common.utils.DateUtils;
 import io.github.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.service.TermService;
+import io.github.wldos.platform.support.cms.dto.ContModelDto;
 import io.github.wldos.platform.support.cms.dto.PubTypeExt;
 import io.github.wldos.platform.support.term.dto.Term;
 import io.github.wldos.platform.support.term.enums.TermTypeEnum;
@@ -51,10 +54,14 @@ public class SpaceService extends NonEntityService {
 
 	private final KCMSService kcmsService;
 
-	public SpaceService(PubService pubService, TermService termService, KCMSService kcmsService) {
+	private final WorkbenchPolicySupport workbenchPolicySupport;
+
+	public SpaceService(PubService pubService, TermService termService, KCMSService kcmsService,
+			WorkbenchPolicySupport workbenchPolicySupport) {
 		this.pubService = pubService;
 		this.termService = termService;
 		this.kcmsService = kcmsService;
+		this.workbenchPolicySupport = workbenchPolicySupport;
 	}
 
 	/**
@@ -64,12 +71,24 @@ public class SpaceService extends NonEntityService {
 	 * @return chapter info
 	 */
 	public Chapter queryChapter(Long chapterId) {
-		KPubs pub = this.pubService.findById(chapterId);
-
-		if (pub == null)
+		Long canonicalId = this.pubService.resolveCanonicalId(chapterId);
+		if (canonicalId == null) {
 			return null;
-
-		return Chapter.of(pub);
+		}
+		ContModelDto body = this.pubService.queryWorkingContModel(canonicalId);
+		if (body == null) {
+			return null;
+		}
+		Chapter chapter = Chapter.of(
+				body.getId(),
+				ObjectUtils.string(body.getPubTitle()),
+				ObjectUtils.string(body.getPubContent()),
+				body.getPubMimeType(),
+				body.getParentId(),
+				body.getPubStatus());
+		chapter.setCanonicalPubId(canonicalId);
+		chapter.setHasPendingDraft(this.pubService.hasActiveDraft(canonicalId));
+		return chapter;
 	}
 
 	/**
@@ -81,7 +100,9 @@ public class SpaceService extends NonEntityService {
 	 * @return chapter info
 	 */
 	public Chapter createChapter(Pub chapter, Long curUserId, String userIp) {
-		chapter.setPubTitle(DateUtils.format(new Date(), DateUtils.TIME_PATTER));
+		if (chapter.getPubTitle() == null || chapter.getPubTitle().trim().isEmpty()) {
+			chapter.setPubTitle(DateUtils.format(new Date(), DateUtils.TIME_PATTER));
+		}
 
 		// 元素直接发布，为继承状态，作品不发布元素不会被读取
 		chapter.setPubStatus(PubStatusEnum.INHERIT.toString());
@@ -126,10 +147,17 @@ public class SpaceService extends NonEntityService {
 	 */
 	public Long insertChapter(Pub pub, Long userId, String userIp) {
 
+		this.workbenchPolicySupport.assertCreateChapter(userId, pub.getDomainId(), pub.getComId(), pub.getParentId(),
+				pub.getPubType());
+
 		// 为便于结构化处理，对于图片等附件的处理，要在上传文件和编辑文件时将设置数据存储到pub metadata中，在发布内容渲染时再读出
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
+		pubs.setOriginPubId(null);
+		if (pubs.getDisplayOrder() == null && pubs.getParentId() != null) {
+			pubs.setDisplayOrder(this.pubService.allocateNextDisplayOrder(pubs.getParentId()));
+		}
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
@@ -148,5 +176,17 @@ public class SpaceService extends NonEntityService {
 		this.kcmsService.createPubMeta(pubTypeExt, id);
 
 		return id;
+	}
+
+	public void reorderWorks(List<Long> orderedIds, Long userId, Long domainId, WorkbenchListScope scope) {
+		this.pubService.reorderSiblingPageSegment(orderedIds, userId, null, domainId, scope);
+	}
+
+	public void reorderChapters(Long bookId, List<Long> orderedIds, Long userId, WorkbenchListScope scope) {
+		this.pubService.reorderSiblingPageSegment(orderedIds, userId, bookId, null, scope);
+	}
+
+	public void shiftDisplayOrder(Long id, int step, Long userId, Long domainId, WorkbenchListScope scope) {
+		this.pubService.shiftSiblingOrder(id, step, userId, domainId, scope);
 	}
 }

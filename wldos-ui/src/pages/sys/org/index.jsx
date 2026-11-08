@@ -1,8 +1,10 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
+import {Button, Divider, Drawer, message, Popconfirm, Select, Space, Tag, Tooltip} from 'antd';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useIntl} from 'umi';
+import {useIntl, connect} from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
@@ -23,12 +25,49 @@ import {
 } from './service';
 import AuthRes from "@/pages/sys/org/components/AuthRole";
 import AddUserForm from "@/pages/sys/org/components/AddUserForm";
-import {getComSelectOption} from "@/pages/sys/com/service";
-import {getArchList} from "@/pages/sys/arch/service";
+import UserCreateForm from '@/pages/sys/user/components/CreateForm';
+import UserCreateFormContent from '@/pages/sys/user/components/CreateFormContent';
+import { addEntity as registerUser4admin } from '@/pages/sys/user/service';
 import {selectToEnum} from "@/utils/utils";
+import useOperationalScope from '@/hooks/useOperationalScope';
+import {
+  needsTargetSiteSelection,
+  resolveCreateUserDomainId,
+  isPlatformScopeComId,
+  isToolbarScopeComId,
+  isValidScopeComId,
+  canPickMemberScopeInModal,
+  mergeToolbarWriteScope,
+  comLabelText,
+} from '@/utils/orgCreateUserDomain';
+import { canDeleteOrgRecord, orgDeleteBlockReason } from './orgDeleteGuard';
 
-const OrgList = () => {
+const OrgList = ({ hasAuthority, currentUser, isAdmin, fixedCategory = 'staff', listTitle }) => {
   const intl = useIntl();
+  const isSegmentCategory = fixedCategory === 'segment';
+
+  const {
+    defaultComId,
+    targetComId,
+    onTargetComChange,
+    targetDomainId,
+    setTargetDomainId,
+    effectiveComId,
+    comListArray,
+    comLabelEnum,
+    domainOptions,
+    allDomainRows,
+    domainLabelMap,
+    showDomainSelect,
+    showDomainSelectInToolbar,
+    listScopeReady,
+  } = useOperationalScope({
+    isAdmin,
+    currentUser,
+    intl,
+    adminDefaultAxis: isSegmentCategory ? 'tenant-required' : 'platform',
+    allowPlatformScopeInToolbar: isAdmin,
+  });
 
   const handleAdd = useCallback(async (fields) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.add', defaultMessage: '正在添加' }));
@@ -90,16 +129,19 @@ const OrgList = () => {
   const handleRemoveOne = useCallback(async (fields) => {
     if (!fields) return true;
 
-    if (fields.children) {
-      message.info(intl.formatMessage({ id: 'sys.org.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
-      return true;
+    if (!canDeleteOrgRecord(fields)) {
+      message.info(orgDeleteBlockReason(fields) || intl.formatMessage({ id: 'sys.org.msg.cannotDelete', defaultMessage: '当前组织不可删除' }));
+      return false;
     }
     const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.delete', defaultMessage: '正在删除' }));
     try {
-      await removeEntity({
+      const res = await removeEntity({
         id: fields.id,
       });
       hide();
+      if (res?.code !== 200) {
+        return false;
+      }
       message.success(intl.formatMessage({ id: 'sys.org.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
       return true;
     } catch (error) {
@@ -135,6 +177,40 @@ const OrgList = () => {
     }
   }, [intl]);
 
+  const [createModalVisible, handleModalVisible] = useState(false);
+  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [authModalVisible, handleAuthModalVisible] = useState(false);
+  const [stepFormValues, setStepFormValues] = useState({});
+  const actionRef = useRef();
+  const [row, setRow] = useState();
+  const [selectedRowsState, setSelectedRows] = useState([]);
+  const [parentId, setParentId] = useState(undefined);
+  const [currentRecord, setCurrentRecord] = useState(null);
+  const [roleList, setRoleList] = useState({});
+  const [roles, setRoles] = useState([]);
+  // 上级组织下拉专用：仅当后端列表本身没有 id=0 的行时才补虚拟根节点。
+  // 平台超管列表会注入 id=0、名称为「平台」的虚拟根节点
+  // （代表顶级），此时 roles 已含 value='0' 的选项，不能再叠加，否则下拉里「根组织（顶级）」与「平台」重复；
+  // 租户/站点管理员视角后端不注入该行，才需要这里补上，使 parentId='0' 有可读标签而非裸值或空。
+  const hasBackendRootOption = useMemo(() => roles.some((item) => String(item.value) === '0'), [roles]);
+  const parentOrgOptions = useMemo(() => (hasBackendRootOption ? roles : [{
+    label: intl.formatMessage({ id: 'sys.org.parentId.top', defaultMessage: '根组织（顶级）' }),
+    value: '0',
+  }, ...roles]), [roles, intl, hasBackendRootOption]);
+  const [resTree, setResTree] = useState([]);
+  const [existRes, setAuthRes] = useState([]);
+  const [authRoleValues, setAuthRoleValues] = useState({});
+  const [orgTypeEnum, setOrgType] = useState({});
+  const [orgTypes, setOrgTypeList] = useState([]);
+  const [addUserModalVisible, handleAddUserModalVisible] = useState(false);
+  const [addUserValues, setAddUserValues] = useState({});
+  const [createUserVisible, setCreateUserVisible] = useState(false);
+  const [createUserOrgRecord, setCreateUserOrgRecord] = useState(null);
+  const createUserFormRef = useRef();
+  const orgCategory = fixedCategory;
+  const segmentWriteReady = !isSegmentCategory
+    || (isValidScopeComId(effectiveComId) && !!targetDomainId);
+
   const addUser = useCallback(async (value={ids: [], orgId: '', archId: '', comId: ''}) => {
     if (!!value && value.ids?.length === 0) {
       message.info(intl.formatMessage({ id: 'sys.org.msg.selectMembers', defaultMessage: '请选择要添加的成员！' }));
@@ -144,13 +220,23 @@ const OrgList = () => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.org.msg.loading.add', defaultMessage: '正在添加' }));
 
     try {
+      const scoped = mergeToolbarWriteScope(
+        { comId: value.comId, domainId: value.domainId },
+        { effectiveComId, targetDomainId },
+      );
       const res = await addOrgUser({
         userIds: value.ids,
         orgId: value.orgId,
         archId: value.archId,
-        comId: value.comId
+        comId: scoped.comId != null ? scoped.comId : value.comId,
+        userComId: value.userComId,
+        domainId: scoped.domainId,
       });
       hide();
+      if (res?.code !== 200) {
+        message.error(res?.message || intl.formatMessage({ id: 'sys.org.msg.addMemberFail', defaultMessage: '添加失败请重试！' }));
+        return false;
+      }
       if (res?.data !== '')
         message.warn(res.data);
       else
@@ -162,30 +248,7 @@ const OrgList = () => {
       return false;
     }
 
-  }, [intl]);
-
-  const [createModalVisible, handleModalVisible] = useState(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [authModalVisible, handleAuthModalVisible] = useState(false);
-  const [stepFormValues, setStepFormValues] = useState({});
-  const actionRef = useRef();
-  const [row, setRow] = useState();
-  const [selectedRowsState, setSelectedRows] = useState([]);
-  const [parentId, setParentId] = useState('0');
-  const [currentRecord, setCurrentRecord] = useState(null);
-  const [roleList, setRoleList] = useState({});
-  const [roles, setRoles] = useState([]);
-  const [resTree, setResTree] = useState([]);
-  const [existRes, setAuthRes] = useState([]);
-  const [authRoleValues, setAuthRoleValues] = useState({});
-  const [comList, setComList] = useState({});
-  const [comListArray, setComListArray] = useState([]);
-  const [orgTypeEnum, setOrgType] = useState({});
-  const [orgTypes, setOrgTypeList] = useState([]);
-  const [archList, setArchList] = useState({});
-  const [archs, setArchs] = useState([]);
-  const [addUserModalVisible, handleAddUserModalVisible] = useState(false);
-  const [addUserValues, setAddUserValues] = useState({});
+  }, [intl, effectiveComId, targetDomainId]);
 
   const mobile = isMobile();
 
@@ -194,53 +257,105 @@ const OrgList = () => {
 
   useDesktopSticky(actionRef);
 
-  useEffect(async () => {
-    const roleData = await getOrgList();
-
-    let data = {};
-    let temp = [];
-    let arr = roleData?.data?? [];
-    for (let i = 0, len = arr.length; i < len; i += 1) {
-      const item = arr[i];
-      data[item.id] = {
-        text: item.orgName,
-      }
-      temp.push({label: item.orgName, value: item.id});
+  const handleCreateUserInOrg = useCallback(async (fields) => {
+    if (!createUserOrgRecord) {
+      return false;
     }
-    setRoleList(data);
-    setRoles(temp);
-
-    const comData = await getComSelectOption();
-    arr = comData?.data?? [];
-    setComList(selectToEnum(arr));
-    setComListArray(arr);
-
-    const orgType = await fetchOrgType();
-    data = {};
-    arr = orgType?.data?? [];
-    for (let i = 0, len = arr.length; i < len; i += 1) {
-      const item = arr[i];
-      data[item.value] = {
-        text: item.label,
-      }
+    const domainId = resolveCreateUserDomainId(createUserOrgRecord, {
+      targetDomainId,
+      domainOptions,
+    });
+    if (needsTargetSiteSelection(createUserOrgRecord, {
+      showDomainSelect,
+      targetDomainId,
+      domainOptions,
+    })) {
+      message.error(intl.formatMessage({
+        id: 'sys.org.msg.selectTargetSite',
+        defaultMessage: '请选择目标站点',
+      }));
+      return false;
     }
-    setOrgType(data);
-    setOrgTypeList(orgType.data);
-
-    const archData = await getArchList();
-    data = {};
-    temp = [];
-    arr = archData?.data?? [];
-    for (let i = 0, len = arr.length; i < len; i += 1) {
-      const item = arr[i];
-      data[item.id] = {
-        text: item.archName,
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.add', defaultMessage: '正在添加' }));
+    try {
+      const rowComId = createUserOrgRecord.comId;
+      const useToolbarCom = rowComId == null || rowComId === '' || String(rowComId) === '0';
+      const payload = mergeToolbarWriteScope({
+        ...fields,
+        orgId: createUserOrgRecord.id,
+        archId: createUserOrgRecord.archId,
+        comId: useToolbarCom && isValidScopeComId(effectiveComId)
+          ? effectiveComId
+          : createUserOrgRecord.comId,
+        domainId: domainId || targetDomainId,
+      }, { effectiveComId, targetDomainId });
+      const res = await registerUser4admin(payload);
+      if (res?.data) {
+        const { status, news } = res.data;
+        if (status === 'error') {
+          hide();
+          message.error(news);
+          return false;
+        }
       }
-      temp.push({label: item.archName, value: item.id});
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.addSuccess', defaultMessage: '添加成功' }));
+      actionRef.current?.reload?.();
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
     }
-    setArchList(data);
-    setArchs(temp);
-  }, []);
+  }, [intl, createUserOrgRecord, targetDomainId, domainOptions, showDomainSelect, effectiveComId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const orgListParams = isAdmin && isToolbarScopeComId(effectiveComId) ? { comId: effectiveComId } : undefined;
+      const [roleData, orgType] = await Promise.all([getOrgList(orgListParams), fetchOrgType()]);
+      if (cancelled) {
+        return;
+      }
+
+      let data = {
+        0: { text: intl.formatMessage({ id: 'sys.org.parentId.top', defaultMessage: '根组织（顶级）' }) },
+      };
+      let temp = [];
+      let arr = roleData?.data ?? [];
+      if (defaultComId) {
+        arr = arr.filter((item) => item.comId == null || String(item.comId) === String(defaultComId));
+      } else if (isAdmin && isPlatformScopeComId(targetComId)) {
+        arr = arr.filter((item) => item.comId == null || String(item.comId) === '0');
+      } else if (isAdmin && isValidScopeComId(targetComId)) {
+        arr = arr.filter((item) => item.comId == null || String(item.comId) === '0'
+          || String(item.comId) === String(targetComId));
+      }
+      for (let i = 0, len = arr.length; i < len; i += 1) {
+        const item = arr[i];
+        data[item.id] = {
+          text: item.orgName,
+        };
+        temp.push({ label: item.orgName, value: item.id });
+      }
+      setRoleList(data);
+      setRoles(temp);
+
+      data = {};
+      arr = orgType?.data ?? [];
+      for (let i = 0, len = arr.length; i < len; i += 1) {
+        const item = arr[i];
+        data[item.value] = {
+          text: item.label,
+        };
+      }
+      setOrgType(data);
+      setOrgTypeList(orgType.data);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [intl, isAdmin, defaultComId, targetComId, effectiveComId]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -258,13 +373,25 @@ const OrgList = () => {
     return () => resizeObserver.disconnect();
   }, []);
 
-  const queryExistRes = async (orgId) => {
-    return getExistRes({orgId});
+  const queryExistRes = async (orgId, record) => {
+    const params = { orgId };
+    const domainId = resolveCreateUserDomainId(record, { targetDomainId, domainOptions });
+    if (domainId) {
+      params.domainId = domainId;
+    }
+    return getExistRes(params);
   };
+
+  useEffect(() => {
+    if (!listScopeReady) {
+      return;
+    }
+    actionRef.current?.reload?.();
+  }, [listScopeReady, targetDomainId, effectiveComId, orgCategory]);
 
   const columns = useMemo(() => [
     {
-      title: intl.formatMessage({ id: 'sys.org.col.orgName', defaultMessage: '组织名称' }),
+      title: intl.formatMessage({ id: 'sys.org.col.orgName', defaultMessage: isSegmentCategory ? '分群名称' : '组织名称' }),
       dataIndex: 'orgName',
       tip: intl.formatMessage({ id: 'sys.org.col.orgName.tip', defaultMessage: '组织是业务域运营的人员管理' }),
       fixed: mobile ? undefined : 'left',
@@ -281,10 +408,30 @@ const OrgList = () => {
           },
         ],
       },
-      render: (dom, entity) => {
-        return <a onClick={() => setRow(entity)}>{dom}</a>;
-      },
+      render: (dom, entity) => (
+        <span>
+          <a onClick={() => setRow(entity)}>{dom}</a>
+          {entity?.systemBuiltIn ? (
+            <Tag color="blue" style={{ marginLeft: 8 }}>系统内置</Tag>
+          ) : null}
+          {entity?.kindTemplate ? (
+            <Tag color="default" style={{ marginLeft: 8 }}>平台模板</Tag>
+          ) : null}
+        </span>
+      ),
       width: '17%'
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.org.col.domainId', defaultMessage: '所属站点' }),
+      dataIndex: 'domainId',
+      hideInSearch: true,
+      hideInTable: !isAdmin || !showDomainSelectInToolbar,
+      render: (_, entity) => {
+        if (entity?.domainId == null || entity.domainId === '' || Number(entity.domainId) <= 0) {
+          return '全局';
+        }
+        return domainLabelMap[String(entity.domainId)] || String(entity.domainId);
+      },
     },
     {
       title: intl.formatMessage({ id: 'sys.org.col.orgCode', defaultMessage: '组织编码' }),
@@ -306,9 +453,15 @@ const OrgList = () => {
     {
       title: intl.formatMessage({ id: 'sys.org.col.orgType', defaultMessage: '组织类型' }),
       dataIndex: 'orgType',
-      filters: true,
+      filters: isSegmentCategory ? false : true,
       onFilter: false,
       valueEnum: orgTypeEnum,
+      render: (_, entity) => {
+        if (entity?.systemBuiltIn || entity?.orgType === 'segment') {
+          return intl.formatMessage({ id: 'sys.org.tab.segment', defaultMessage: '会员分群' });
+        }
+        return orgTypeEnum[entity?.orgType]?.text || entity?.orgType || '-';
+      },
     },
     {
       title: intl.formatMessage({ id: 'sys.org.col.parentId', defaultMessage: '上级组织' }),
@@ -323,15 +476,18 @@ const OrgList = () => {
       filters: true,
       onFilter: false,
       hideInForm: true,
-      valueEnum: comList,
-      width: '17%'
-    },
-    {
-      title: intl.formatMessage({ id: 'sys.org.col.archId', defaultMessage: '归属体系' }),
-      dataIndex: 'archId',
-      filters: true,
-      onFilter: false,
-      valueEnum: archList,
+      valueEnum: comLabelEnum,
+      width: '17%',
+      render: (_, record) => {
+        const label = comLabelText(comLabelEnum, record.comId);
+        if (label) {
+          return label;
+        }
+        if (record.comId == null || String(record.comId) === '0') {
+          return '-';
+        }
+        return record.comId;
+      },
     },
     {
       title: intl.formatMessage({ id: 'sys.org.col.displayOrder', defaultMessage: '展示顺序' }),
@@ -363,6 +519,8 @@ const OrgList = () => {
       fixed: mobile ? undefined : 'right',
       render: (_, record) => (
         <>
+          {!isSegmentCategory && (
+          <>
           <a
             onClick={() => {
               setCurrentRecord({
@@ -386,6 +544,10 @@ const OrgList = () => {
             });
             handleModalVisible(true);
           }}>{intl.formatMessage({ id: 'sys.org.action.sibling', defaultMessage: '同级' })}</a>
+          </>
+          )}
+          {hasAuthority('org:update') && (
+          <>
           <Divider type="vertical"/>
           <a
             onClick={() => {
@@ -395,10 +557,25 @@ const OrgList = () => {
           >
             {intl.formatMessage({ id: 'sys.org.action.config', defaultMessage: '配置' })}
           </a>
+          </>
+          )}
+          {hasAuthority('org:auth') && (
+          <>
           <Divider type="vertical"/>
           <a
             onClick={() => {
-              queryExistRes(record.id).then(res => {
+              if (needsTargetSiteSelection(record, {
+                showDomainSelect: showDomainSelectInToolbar,
+                targetDomainId,
+                domainOptions,
+              }) && !canPickMemberScopeInModal(record)) {
+                message.error(intl.formatMessage({
+                  id: 'sys.org.msg.selectTargetSite',
+                  defaultMessage: '请选择目标站点',
+                }));
+                return;
+              }
+              queryExistRes(record.id, record).then(res => {
                 if (res && res.data && res.data.authRes) {
                   const {orgRole = [], authRes = []} = res.data;
                   const temp = orgRole.map(item => item.id);
@@ -413,66 +590,152 @@ const OrgList = () => {
           >
             {intl.formatMessage({ id: 'sys.org.action.auth', defaultMessage: '授权' })}
           </a>
+          </>
+          )}
+          {hasAuthority('org:addUser') && (
+          <>
           <Divider type="vertical"/>
           <a
             onClick={() => {
+              if (needsTargetSiteSelection(record, {
+                showDomainSelect: showDomainSelectInToolbar,
+                targetDomainId,
+                domainOptions,
+              }) && !canPickMemberScopeInModal(record)) {
+                message.error(intl.formatMessage({
+                  id: 'sys.org.msg.selectTargetSite',
+                  defaultMessage: '请选择目标站点',
+                }));
+                return;
+              }
               handleAddUserModalVisible(true);
               setAddUserValues(record);
             }}
           >
             {intl.formatMessage({ id: 'sys.org.action.staff', defaultMessage: '人员' })}
           </a>
+          </>
+          )}
+          {hasAuthority('user:create') && (
+          <>
           <Divider type="vertical"/>
-          <Popconfirm title={intl.formatMessage({ id: 'sys.org.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-           onConfirm={async () => {
-             await handleRemoveOne(record);
-             actionRef.current?.reloadAndRest?.();
-           }}
+          <a
+            onClick={() => {
+              if (needsTargetSiteSelection(record, {
+                showDomainSelect: showDomainSelectInToolbar,
+                targetDomainId,
+                domainOptions,
+              })) {
+                message.error(intl.formatMessage({
+                  id: 'sys.org.msg.selectTargetTenantSite',
+                  defaultMessage: '请先选择目标租户与目标站点',
+                }));
+                return;
+              }
+              setCreateUserOrgRecord(record);
+              setCreateUserVisible(true);
+            }}
           >
-            <a>{intl.formatMessage({ id: 'sys.org.action.delete', defaultMessage: '删除' })}</a>
-          </Popconfirm>
+            {intl.formatMessage({ id: 'sys.user.toolbar.new', defaultMessage: '新增用户' })}
+          </a>
+          </>
+          )}
+          {hasAuthority('org:delete') && (
+          <>
+          <Divider type="vertical"/>
+          {canDeleteOrgRecord(record) ? (
+            <Popconfirm title={intl.formatMessage({ id: 'sys.org.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+             onConfirm={async () => {
+               const ok = await handleRemoveOne(record);
+               if (ok) {
+                 actionRef.current?.reloadAndRest?.();
+               }
+             }}
+            >
+              <a>{intl.formatMessage({ id: 'sys.org.action.delete', defaultMessage: '删除' })}</a>
+            </Popconfirm>
+          ) : (
+            <Tooltip title={orgDeleteBlockReason(record)}>
+              <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>{intl.formatMessage({ id: 'sys.org.action.delete', defaultMessage: '删除' })}</span>
+            </Tooltip>
+          )}
+          </>
+          )}
         </>
       ),
     },
-  ], [intl, mobile, orgTypeEnum, roleList, comList, archList, handleRemoveOne]);
+  ], [intl, mobile, orgTypeEnum, roleList, comLabelEnum, domainLabelMap, handleRemoveOne, hasAuthority, isSegmentCategory, showDomainSelectInToolbar, targetDomainId, domainOptions]);
 
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
-          headerTitle={intl.formatMessage({ id: 'sys.org.headerTitle', defaultMessage: '组织清单' })}
+          headerTitle={listTitle || intl.formatMessage({ id: 'sys.org.headerTitle', defaultMessage: '组织清单' })}
           actionRef={actionRef}
+          manualRequest={!listScopeReady}
           rowKey="id"
           search={{
             labelWidth: 120,
           }}
           toolBarRender={() => [
+            isAdmin && comListArray.length > 0 ? (
+              <Space key="com-select" size={8}>
+                <span>目标租户</span>
+                <Select
+                  style={{ minWidth: 180 }}
+                  allowClear
+                  placeholder="选择租户"
+                  options={comListArray}
+                  value={effectiveComId}
+                  onChange={onTargetComChange}
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Space>
+            ) : null,
+            showDomainSelectInToolbar ? (
+              <Space key="domain-select" size={8}>
+                <span>{intl.formatMessage({ id: 'sys.role.domain.targetSite', defaultMessage: '目标站点' })}</span>
+                <Select
+                  style={{ minWidth: 200 }}
+                  allowClear
+                  placeholder="选择站点"
+                  options={domainOptions}
+                  value={targetDomainId}
+                  onChange={(value) => setTargetDomainId(value || undefined)}
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Space>
+            ) : null,
+            hasAuthority('org:create') && segmentWriteReady ? (
             <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> {intl.formatMessage({ id: 'sys.org.toolbar.new', defaultMessage: '新建' })}
-            </Button>,
+              <PlusOutlined/> {intl.formatMessage({ id: 'sys.org.toolbar.new', defaultMessage: isSegmentCategory ? '新建分群' : '新建' })}
+            </Button>
+            ) : null,
           ]}
           request={async (params, sorter, filter) => {
-            const res = await queryPage({
+            const queryParams = {
               ...params,
               sorter: {...sorter, 'displayOrder': 'ascend',},
-              filter
-            });
+              filter,
+              category: orgCategory,
+            };
+            if (targetDomainId) {
+              queryParams.domainId = targetDomainId;
+            }
+            if (isAdmin && isToolbarScopeComId(effectiveComId)) {
+              queryParams.comId = effectiveComId;
+            }
+            const res = await queryPage(queryParams);
+            const rows = res?.data?.rows || [];
 
             return Promise.resolve({
               total: res?.data?.total || 0,
-              data: res?.data?.rows || [],
+              data: rows,
               success: true,
             });
           }
@@ -526,15 +789,21 @@ const OrgList = () => {
         </FooterToolbar>
       )}
       <CreateForm onCancel={() => handleModalVisible(false)}
-                  modalVisible={createModalVisible}>
+                  modalVisible={createModalVisible}
+                  segmentMode={isSegmentCategory}>
         <CreateFormContent
+          segmentMode={isSegmentCategory}
           onSubmit={async (value) => {
-            const finalParentId = currentRecord?.parentId || parentId;
-            const success = await handleAdd({...value, parentId: finalParentId});
+            const finalParentId = currentRecord?.parentId ?? parentId;
+            const payload = { ...value };
+            if (finalParentId != null && finalParentId !== '') {
+              payload.parentId = finalParentId;
+            }
+            const success = await handleAdd(mergeToolbarWriteScope(payload, { effectiveComId, targetDomainId }));
 
             if (success) {
               handleModalVisible(false);
-              setParentId('0');
+              setParentId(undefined);
               setCurrentRecord(null);
 
               if (actionRef.current) {
@@ -544,14 +813,14 @@ const OrgList = () => {
           }}
           onCancel={() => {
             handleModalVisible(false);
-            setParentId('0');
+            setParentId(undefined);
             setCurrentRecord(null);
           }}
-          roles={roles}
-          archs={archs}
+          roles={parentOrgOptions}
           orgTypes={orgTypes}
           comList={comListArray}
           currentRecord={currentRecord}
+          defaultComId={effectiveComId}
         />
       </CreateForm>
       {stepFormValues && Object.keys(stepFormValues).length ? (
@@ -574,8 +843,7 @@ const OrgList = () => {
           }}
           updateModalVisible={updateModalVisible}
           values={stepFormValues}
-          roles={roles}
-          archs={archs}
+          roles={parentOrgOptions}
           orgTypes={orgTypes}
         />
       ) : null}
@@ -616,7 +884,38 @@ const OrgList = () => {
         addUserModalVisible={addUserModalVisible}
         values={addUserValues}
         addUser={addUser}
+        comList={comListArray}
+        domainOptions={domainOptions}
+        allDomainRows={allDomainRows}
+        showDomainSelect={showDomainSelect}
+        effectiveComId={effectiveComId}
+        listDomainId={resolveCreateUserDomainId(addUserValues, { targetDomainId, domainOptions })}
+        listComId={effectiveComId}
       /> : null}
+
+      <UserCreateForm
+        modalVisible={createUserVisible}
+        onCancel={() => {
+          setCreateUserVisible(false);
+          setCreateUserOrgRecord(null);
+        }}
+        onSubmit={() => createUserFormRef.current?.submit?.()}
+      >
+        <UserCreateFormContent
+          ref={createUserFormRef}
+          onSubmit={async (values) => {
+            const success = await handleCreateUserInOrg(values);
+            if (success) {
+              setCreateUserVisible(false);
+              setCreateUserOrgRecord(null);
+            }
+          }}
+          onCancel={() => {
+            setCreateUserVisible(false);
+            setCreateUserOrgRecord(null);
+          }}
+        />
+      </UserCreateForm>
 
       <Drawer
         width={600}
@@ -644,4 +943,11 @@ const OrgList = () => {
   );
 };
 
-export default OrgList;
+export default connect(({ user, loading }) => {
+  const auth = buildAuthorityHelper(user, '/admin');
+  return {
+    ...auth,
+    currentUser: user.currentUser,
+    loading: loading.effects['user/fetchAdminAuthorities'],
+  };
+})(OrgList);

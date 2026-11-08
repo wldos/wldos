@@ -29,6 +29,10 @@ public class WoAuthRole extends BaseEntity {
 
 	private Long appId;
 
+	private Long domainId;
+
+	private Long comId;
+
 	public WoAuthRole() {
 	}
 

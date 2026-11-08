@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * 3. 需要自定义响应格式的接口
  * 
  * @author Yuanxi Universe
- * @date 2025/9/6
+ * @date 2025/7/6
  * @version 1.0
  */
 @Target({ElementType.METHOD, ElementType.TYPE})

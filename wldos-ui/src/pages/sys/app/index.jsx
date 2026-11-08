@@ -2,6 +2,7 @@ import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -17,6 +18,7 @@ import {
   removeEntity,
   removeEntities,
   removeDomainApp,
+  setDomainAppVisibility,
   updateEntity,
   installPlugin
 } from './service';
@@ -121,6 +123,31 @@ const handleRemove = async (selectedRows) => {
 /**
  *  取消域应用关联
  */
+const SITE_HIDDEN_ENUM = {
+  0: { text: '是', status: 'Default' },
+  1: { text: '否', status: 'Success' },
+};
+
+const setAppMountVisible = async (domainId, appIds, visible) => {
+  const hide = message.loading(visible ? '正在显示' : '正在隐藏');
+  try {
+    const res = await setDomainAppVisibility({
+      domainId,
+      appIds: appIds.map((id) => String(id)),
+      visible,
+    });
+    hide();
+    if (res?.code !== 200) {
+      return false;
+    }
+    message.success(visible ? '已恢复展示' : '已隐藏');
+    return true;
+  } catch (e) {
+    hide();
+    return false;
+  }
+};
+
 const cancelDomainApp = async (selectedRows, domainId) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
@@ -251,6 +278,7 @@ const AppList = (props) => {
       filters: true,
       onFilter: false,
       valueEnum: comList,
+      render: (val) => comList?.[val]?.text ?? (String(val) === '0' ? '平台' : val),
     },
     {
       title: '应用编码',
@@ -306,6 +334,16 @@ const AppList = (props) => {
       },
     },
     {
+      title: '是否隐藏',
+      dataIndex: 'mountValid',
+      hideInForm: true,
+      hideInSearch: true,
+      hideInTable: domainId === '',
+      filters: true,
+      onFilter: false,
+      valueEnum: SITE_HIDDEN_ENUM,
+    },
+    {
       title: '创建时间',
       dataIndex: 'createTime',
       sorter: true,
@@ -329,11 +367,36 @@ const AppList = (props) => {
       dataIndex: 'option',
       valueType: 'option',
       fixed: isMobile ? undefined : 'right',
-      hideInTable: domainId !== '',
-      width: 200,
+      width: domainId !== '' ? 120 : 200,
       render: (_, record) => {
+        if (domainId !== '') {
+          return record.mountValid === '0' || record.mountValid === 0 ? (
+            <a
+              onClick={async () => {
+                const ok = await setAppMountVisible(domainId, [record.id], true);
+                if (ok) {
+                  actionRef.current?.reload();
+                }
+              }}
+            >
+              显示
+            </a>
+          ) : (
+            <Popconfirm
+              title="确定隐藏该应用？将同步隐藏本站同应用下的资源挂载。"
+              icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              onConfirm={async () => {
+                const ok = await setAppMountVisible(domainId, [record.id], false);
+                if (ok) {
+                  actionRef.current?.reload();
+                }
+              }}
+            >
+              <a>隐藏</a>
+            </Popconfirm>
+          );
+        }
         const isPlugin = record.appOrigin === 'plugin';
-        
         return (
           <div style={isMobile ? undefined : { whiteSpace: 'nowrap' }}>
             <a
@@ -349,7 +412,6 @@ const AppList = (props) => {
               <>
                 <a
                   onClick={() => {
-                    // 跳转到插件管理页面
                     window.open('/admin/plugins', '_parent');
                   }}
                 >
@@ -390,16 +452,7 @@ const AppList = (props) => {
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = isMobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={tableWrapRef}>
       <ProTableX
         headerTitle="应用清单"
@@ -470,6 +523,42 @@ const AppList = (props) => {
             </div>
           }
         >
+          {domainId !== '' ? (
+            <>
+              <Popconfirm
+                title="确定批量隐藏所选应用？将同步隐藏各应用在本站下的资源挂载。"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={async () => {
+                  const ok = await setAppMountVisible(
+                    domainId,
+                    selectedRowsState.map((r) => r.id),
+                    false,
+                  );
+                  if (ok) {
+                    setSelectedRows([]);
+                    actionRef.current?.reloadAndRest?.();
+                  }
+                }}
+              >
+                <Button>批量隐藏</Button>
+              </Popconfirm>
+              <Button
+                onClick={async () => {
+                  const ok = await setAppMountVisible(
+                    domainId,
+                    selectedRowsState.map((r) => r.id),
+                    true,
+                  );
+                  if (ok) {
+                    setSelectedRows([]);
+                    actionRef.current?.reloadAndRest?.();
+                  }
+                }}
+              >
+                批量显示
+              </Button>
+            </>
+          ) : null}
           <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         // eslint-disable-next-line no-unused-expressions

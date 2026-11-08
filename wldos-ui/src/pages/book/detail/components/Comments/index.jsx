@@ -3,6 +3,7 @@ import {connect} from "umi";
 import {Avatar, Button, Comment, Form, Input, List, Tooltip} from 'antd';
 import moment from 'moment';
 import {doComment, queryComment, delComment} from "@/pages/book/detail/service";
+import useCmsCommentEnabled from '@/pages/book/detail/useCmsCommentEnabled';
 
 
 const {TextArea} = Input;
@@ -73,18 +74,31 @@ const CommentList = ({comments, setReply, replyId, currentUser, handleChange, ha
 
 const Comments = (props) => {
   const {id, currentUser = {}} = props;
+  const commentEnabled = useCmsCommentEnabled();
   const [comments, setComments] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [value, setValue] = useState('');
   const [replyId, setReplyId] = useState(undefined);
 
-  useEffect(async () => {
-    const res = await queryComment({id});
-
-    if (res?.data) {
-      setComments(res.data);
+  useEffect(() => {
+    if (!commentEnabled || !id) {
+      return undefined;
     }
-  }, []);
+    let cancelled = false;
+    (async () => {
+      const res = await queryComment({ id });
+      if (!cancelled && res?.data) {
+        setComments(res.data);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [commentEnabled, id]);
+
+  if (!commentEnabled) {
+    return null;
+  }
 
   const handleChange = e => {
     setValue(e.target.value);

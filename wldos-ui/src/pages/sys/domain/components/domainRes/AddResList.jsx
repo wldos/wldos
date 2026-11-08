@@ -1,9 +1,10 @@
 import {Button, message} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
-import React, {useRef, useState, useMemo, useCallback} from 'react';
+import React, {useRef, useState, useMemo, useCallback, useEffect} from 'react';
 import {FooterToolbar} from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {querySelectPage} from "@/pages/sys/res/service";
+import {queryDomainPage} from '@/pages/sys/app/service';
 
 
 const AddResList = (props) => {
@@ -16,8 +17,34 @@ const AddResList = (props) => {
   const actionRef = useRef();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [allData, setAllData] = useState([]);
+  const [appList, setAppList] = useState({});
   const lastSelectTimeRef = useRef(0); // 记录最后一次 onSelect 的时间
   const {domainId = ''} = values;
+
+  useEffect(() => {
+    if (!modalVisible || !domainId) {
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const res = await queryDomainPage({ current: 1, pageSize: 500, domainId });
+      if (cancelled) {
+        return;
+      }
+      const rows = res?.data?.rows || [];
+      const next = {};
+      rows.forEach((item) => {
+        next[item.id] = {
+          text: item.appName,
+          value: item.id,
+        };
+      });
+      setAppList(next);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [modalVisible, domainId]);
 
   const handleAdd = async (selectedRows) => {
     await addRes({
@@ -131,6 +158,19 @@ const AddResList = (props) => {
     return result;
   }, []);
 
+  // 收集从当前节点到根路径上的全部祖先 ID（不含已挂载节点）
+  const collectAncestorIds = useCallback((nodeId) => {
+    const ids = [];
+    let parent = getParentNode(nodeId, allData);
+    while (parent) {
+      if (parent.selected !== true) {
+        ids.push(parent.id);
+      }
+      parent = getParentNode(parent.id, allData);
+    }
+    return ids;
+  }, [getParentNode, allData]);
+
   // 处理节点选择
   const handleSelect = useCallback((record, selected) => {
     // 记录选择时间，用于在 onChange 中判断是否忽略
@@ -159,6 +199,13 @@ const AddResList = (props) => {
             newKeys.push(childId);
           }
         });
+
+        // 选中子节点时默认勾选全部祖先，便于一次性挂载完整菜单链；祖先仍可手动取消
+        collectAncestorIds(record.id).forEach((ancestorId) => {
+          if (!newKeys.includes(ancestorId)) {
+            newKeys.push(ancestorId);
+          }
+        });
       } else {
         // 取消选中节点：只移除当前节点，不移除子节点
         newKeys = newKeys.filter(key => key !== record.id);
@@ -166,7 +213,7 @@ const AddResList = (props) => {
 
       return newKeys;
     });
-  }, [collectAllChildrenIds, getNodeChildren, allData]);
+  }, [collectAllChildrenIds, collectAncestorIds, getNodeChildren, allData]);
 
   // 计算 indeterminate 状态（部分选中状态）
   const getIndeterminateKeys = useMemo(() => {
@@ -214,16 +261,49 @@ const AddResList = (props) => {
     return flatData.filter(item => selectedRowKeys.includes(item.id));
   }, [allData, selectedRowKeys, flattenTree]);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: '资源名称',
       dataIndex: 'resourceName',
     },
     {
+      title: '资源路径',
+      dataIndex: 'resourcePath',
+      ellipsis: true,
+      copyable: true,
+    },
+    {
+      title: '站点挂载',
+      dataIndex: 'domainMounted',
+      hideInTable: true,
+      valueType: 'select',
+      valueEnum: {
+        1: { text: '已添加' },
+        0: { text: '未添加' },
+      },
+    },
+    {
+      title: '挂载状态',
+      dataIndex: 'selected',
+      hideInSearch: true,
+      valueEnum: {
+        true: { text: '已添加', status: 'Success' },
+        false: { text: '未添加', status: 'Default' },
+      },
+    },
+    {
+      title: '归属应用',
+      dataIndex: 'appId',
+      valueType: 'select',
+      filters: true,
+      onFilter: false,
+      valueEnum: appList,
+    },
+    {
       title: '资源描述',
       dataIndex: 'remark',
       valueType: 'textarea',
-      width: '50%'
+      width: '40%',
     },
     {
       title: '资源状态',
@@ -242,7 +322,7 @@ const AddResList = (props) => {
         },
       },
     },
-  ];
+  ], [appList]);
   return (
     <FullscreenModal
       width={"fit-content"}
@@ -304,9 +384,8 @@ const AddResList = (props) => {
               setSelectedRowKeys(selectedKeys);
             }
           },
-          onSelect: (record, selected, selectedRows, nativeEvent) => {
-            // 自定义选择逻辑：选中父节点时自动选中所有子节点
-            // 取消子节点时，父节点保持选中状态（显示为部分选中）
+          onSelect: (record, selected) => {
+            // 选中：当前节点 + 子节点 + 祖先链；取消：仅当前节点（祖先/兄弟可手动调整）
             handleSelect(record, selected);
           },
           getCheckboxProps: (record) => ({

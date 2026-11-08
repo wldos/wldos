@@ -11,6 +11,8 @@ export default {
   'app.settings.menuMap.security': 'Security Settings',
   'app.settings.menuMap.binding': 'Account Binding',
   'app.settings.menuMap.notification': 'New Message Notification',
+  'app.settings.menuMap.creatorPayee': 'Creator payout',
+  'app.settings.menuMap.creatorWechatMp': 'WeChat MP & codes',
   'app.settings.basic.avatar': 'Avatar',
   'app.settings.basic.change-avatar': 'Change avatar',
   'app.settings.basic.email': 'Email',

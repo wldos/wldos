@@ -1,24 +1,60 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, Popconfirm} from 'antd';
-import React, {useRef, useState} from 'react';
+import {Button, Divider, Drawer, message, Popconfirm, Select, Space, Tag, Tooltip} from 'antd';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {connect, useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
+import useOperationalScope from '@/hooks/useOperationalScope';
 import {
+  addEntity,
   queryPage,
 } from './service';
 import {
-  handleAdd,
-  handleInfoFlag,
   handleRemove,
   handleRemoveOne,
-  handleUpdate
+  handleUpdate,
+  resolveTermScope,
+  TERM_SCOPE_COLOR,
 } from "@/pages/sys/category";
+import {
+  mergeToolbarWriteScope,
+  buildTermListQueryScope,
+  isTermAdminListScopeReady,
+  isPlatformScopeComId,
+} from '@/utils/orgCreateUserDomain';
 
-const CategoryList = () => {
+/**
+ * 新增标签。不可复用 sys/category 的 handleAdd——那个函数内部固定调用
+ * category/service.js 的 addEntity（POST /admin/cms/category/add），
+ * 后端该接口会强制把 classType 落成 category，导致标签被存成分类，标签列表永远看不到。
+ * @param fields
+ */
+const handleAdd = async (fields) => {
+  const hide = message.loading('正在添加');
+
+  try {
+    const res = await addEntity({...fields});
+    hide();
+    if (res?.code !== 200 || (res?.data && res.data !== 'ok')) {
+      message.error(res?.message || res?.data || '添加失败');
+      return false;
+    }
+    message.success('添加成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('添加失败请重试！');
+    return false;
+  }
+};
+
+const TagList = ({ isAdmin, currentUser }) => {
+  const intl = useIntl();
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -29,6 +65,39 @@ const CategoryList = () => {
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? (window.innerWidth || document.documentElement.clientWidth) < 768 : false);
   const tableWrapRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
+
+  const {
+    effectiveComId,
+    targetDomainId,
+    setTargetDomainId,
+    onTargetComChange,
+    comListArray,
+    domainOptions,
+    domainLabelMap,
+    showDomainSelectInToolbar,
+    listScopeReady,
+  } = useOperationalScope({
+    isAdmin,
+    currentUser,
+    intl,
+    adminDefaultAxis: 'platform',
+    allowPlatformScopeInToolbar: isAdmin,
+  });
+  const termListScopeReady = useMemo(
+    () => isTermAdminListScopeReady(isAdmin, listScopeReady, effectiveComId, targetDomainId),
+    [isAdmin, listScopeReady, effectiveComId, targetDomainId],
+  );
+  const listScopeParams = useMemo(
+    () => buildTermListQueryScope({ isAdmin, effectiveComId, targetDomainId }),
+    [isAdmin, effectiveComId, targetDomainId],
+  );
+
+  useEffect(() => {
+    if (!termListScopeReady) {
+      return;
+    }
+    actionRef.current?.reload?.();
+  }, [termListScopeReady, effectiveComId, targetDomainId]);
 
   useDesktopSticky(actionRef);
 
@@ -114,20 +183,14 @@ const CategoryList = () => {
       hideInSearch: true
     },
     {
-      title: '信息发布状态',
-      dataIndex: 'infoFlag',
-      width: 120,
-      filters: true,
-      onFilter: false,
-      valueEnum: {
-        '0': {
-          text: '关',
-          status: 'invalid',
-        },
-        '1': {
-          text: '开',
-          status: 'valid',
-        },
+      title: '范围',
+      dataIndex: 'domainId',
+      width: 140,
+      hideInForm: true,
+      hideInSearch: true,
+      render: (_, record) => {
+        const scope = resolveTermScope(record, domainOptions, domainLabelMap);
+        return <Tag color={TERM_SCOPE_COLOR[scope.level]}>{scope.text}</Tag>;
       },
     },
     {
@@ -136,8 +199,11 @@ const CategoryList = () => {
       valueType: 'option',
       fixed: isMobile ? undefined : 'right',
       width: 200,
-      render: (_, record) => (
+      render: (_, record) => {
+        const writable = record.writable !== false;
+        return (
         <>
+          {writable ? (
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
@@ -146,7 +212,13 @@ const CategoryList = () => {
           >
             配置
           </a>
+          ) : (
+          <Tooltip title="平台/租户共享数据，仅归属层级可改，本站只读">
+            <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>配置</span>
+          </Tooltip>
+          )}
           <Divider type="vertical"/>
+          {writable ? (
           <Popconfirm title={`您确定要删除[${record.count > 0 ? '标签下存在内容' : ''}]？`} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemoveOne(record);
@@ -154,8 +226,14 @@ const CategoryList = () => {
                       }}>
             <a>删除</a>
           </Popconfirm>
+          ) : (
+          <Tooltip title="平台/租户共享数据，仅归属层级可改，本站只读">
+            <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>删除</span>
+          </Tooltip>
+          )}
         </>
-      ),
+        );
+      },
     },
   ];
 
@@ -175,21 +253,13 @@ const CategoryList = () => {
   const scrollX = isMobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={tableWrapRef}>
       <ProTableX
         headerTitle="标签列表"
         actionRef={actionRef}
         rowKey="id"
+        manualRequest={!termListScopeReady}
         tableLayout={isMobile ? undefined : 'fixed'}
         scroll={isMobile ? undefined : { x: scrollX }}
         options={{ density: true, fullScreen: !isMobile, setting: true, reload: true }}
@@ -202,15 +272,50 @@ const CategoryList = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
+          isAdmin && comListArray.length > 0 ? (
+            <Space key="com-select" size={8}>
+              <span>目标租户</span>
+              <Select
+                style={{ minWidth: 180 }}
+                allowClear
+                placeholder="选择租户"
+                options={comListArray}
+                value={effectiveComId}
+                onChange={onTargetComChange}
+                showSearch
+                optionFilterProp="label"
+              />
+            </Space>
+          ) : null,
+          isAdmin && !isPlatformScopeComId(effectiveComId) && (showDomainSelectInToolbar || domainOptions.length === 1) ? (
+            <Space key="domain-select" size={8}>
+              <span>目标站点</span>
+              <Select
+                style={{ minWidth: 200 }}
+                placeholder="选择站点"
+                options={domainOptions}
+                value={targetDomainId}
+                onChange={(value) => setTargetDomainId(value || undefined)}
+                showSearch
+                optionFilterProp="label"
+                disabled={domainOptions.length <= 1}
+              />
+            </Space>
+          ) : null,
+          <Button key={0} type="primary" disabled={!termListScopeReady} onClick={() => handleModalVisible(true)}>
             <PlusOutlined/> 新建
           </Button>,
         ]}
         request={async (params, sorter, filter) => {
+          if (!termListScopeReady) {
+            return { total: 0, data: [], success: true };
+          }
+          const scope = listScopeParams || {};
           const res = await queryPage({
             ...params,
-            sorter: {...sorter, 'displayOrder': 'ascend',},
-            filter
+            sorter: { ...sorter, displayOrder: 'ascend' },
+            filter,
+            ...scope,
           });
           return Promise.resolve({
             total: res?.data?.total || 0,
@@ -254,19 +359,12 @@ const CategoryList = () => {
                       }}>
             <Button>批量删除</Button>
           </Popconfirm>
-          <Popconfirm title="您确定取反信息发布状态[开、关状态互换]？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                      onConfirm={async () => {
-                        await handleInfoFlag(selectedRowsState);
-                        actionRef.current?.reloadAndRest?.();
-                      }}>
-            <Button>批量取反信息发布状态</Button>
-          </Popconfirm>
           <Button type="primary">批量导出</Button>
         </FooterToolbar>
       )}
       {createModalVisible && <CreateForm
         onSubmit={async (value) => {
-          const success = await handleAdd(value);
+          const success = await handleAdd(mergeToolbarWriteScope(value, { effectiveComId, targetDomainId }));
 
           if (success) {
             handleModalVisible(false);
@@ -332,4 +430,7 @@ const CategoryList = () => {
   );
 };
 
-export default CategoryList;
+export default connect(({ user }) => ({
+  isAdmin: !!user.sessionFlags?.isAdmin,
+  currentUser: user.currentUser,
+}))(TagList);

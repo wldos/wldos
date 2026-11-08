@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>3.0.0.0</version>
+		<version>3.0.3.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>wldos-platform</artifactId>
@@ -35,7 +35,7 @@
 		</license>
 	</licenses>
 	<properties>
-        <wldos.version>3.0.0.0</wldos.version>
+        <wldos.version>3.0.3.0</wldos.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<!--<javacv.version>1.5.8</javacv.version>
@@ -67,6 +67,15 @@
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacv</artifactId>
 			<version>${javacv.version}</version>
+			<!-- 排除 JavaFX（javacv 传递依赖 openjfx 11=Java11 字节码）：wldos 跑 JDK8 且不用 JavaFX。
+			     否则 Hibernate Validator 的 ValueExtractorManager 探测到 classpath 有 JavaFX 后加载其值提取器，
+			     在 JDK8 下抛 UnsupportedClassVersionError → 静态初始化失败 → 所有校验器 bean 连环 NoClassDefFoundError。 -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.openjfx</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.bytedeco</groupId>

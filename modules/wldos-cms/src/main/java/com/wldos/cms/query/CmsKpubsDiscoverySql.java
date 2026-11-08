@@ -39,6 +39,11 @@ public final class CmsKpubsDiscoverySql {
 	}
 
 	/** 写入主表前归一：非法值回落为 {@link #SCOPE_PUBLIC_LISTED}；空为 null。 */
+	/** 列表/别名路由仅认正式行（排除草稿快照行）。 */
+	public static void appendCanonicalPubsOnly(StringBuilder sql, String tableAlias) {
+		sql.append(" AND ").append(tableAlias).append(".origin_pub_id IS NULL ");
+	}
+
 	public static String normalizeScopeForSave(String raw) {
 		if (ObjectUtils.isBlank(raw)) {
 			return null;

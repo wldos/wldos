@@ -1,47 +1,52 @@
-import React, { Component } from 'react';
-import { FormattedMessage, connect } from 'umi';
+import React, { Component, Suspense } from 'react';
+import { FormattedMessage, connect, history } from 'umi';
 import { GridContent } from '@ant-design/pro-layout';
-import { Menu } from 'antd';
+import { Menu, Spin } from 'antd';
 import BaseView from './components/base';
 import BindingView from './components/binding';
 import NotificationView from './components/notification';
 import SecurityView from './components/security';
+import {
+  resolveVisibleSettingsTabs,
+  settingsTabFromQuery,
+  settingsTabToQuery,
+} from './settingsTabRegistry';
+import { fetchCmsCreatorCapabilitiesEnabled } from '@/pages/commercial/_shared/cmsCreatorCapabilities';
 import styles from './style.less';
 
+const CreatorPayeeSettingsView = React.lazy(() => import('./components/CreatorPayeeSettingsView'));
+const CreatorWechatMpSettingsView = React.lazy(() => import('./components/CreatorWechatMpSettingsView'));
+
 const { Item } = Menu;
+
+function buildMenuMap(cmsCreatorCapabilities) {
+  const map = {};
+  resolveVisibleSettingsTabs({ cmsCreatorCapabilities }).forEach((tab) => {
+    const defaultMessage =
+      tab.key === 'creatorPayee' ? 'Creator payout' : tab.key;
+    map[tab.key] = (
+      <FormattedMessage id={tab.i18nId} defaultMessage={defaultMessage} />
+    );
+  });
+  return map;
+}
+
+function initialSelectKeyFromLocation() {
+  const fromQuery = settingsTabFromQuery(history.location?.query?.tab);
+  return fromQuery || 'base';
+}
 
 class Settings extends Component {
   main = undefined;
 
   constructor(props) {
     super(props);
-    const menuMap = {
-      base: (
-        <FormattedMessage id="account.menuMap.basic" defaultMessage="Basic Settings" />
-      ),
-      security: (
-        <FormattedMessage
-          id="account.menuMap.security"
-          defaultMessage="Security Settings"
-        />
-      ),
-      binding: (
-        <FormattedMessage
-          id="account.menuMap.binding"
-          defaultMessage="Account Binding"
-        />
-      ),
-      notification: (
-        <FormattedMessage
-          id="account.menuMap.notification"
-          defaultMessage="New Message Notification"
-        />
-      ),
-    };
     this.state = {
       mode: 'inline',
-      menuMap,
-      selectKey: 'base',
+      menuMap: buildMenuMap(false),
+      selectKey: initialSelectKeyFromLocation(),
+      cmsCreatorCapabilities: false,
+      capabilitiesLoaded: false,
     };
   }
 
@@ -50,12 +55,31 @@ class Settings extends Component {
     dispatch({
       type: 'account/fetchCurrent',
     });
+    fetchCmsCreatorCapabilitiesEnabled().then((enabled) => {
+      const cmsCreatorCapabilities = enabled === true;
+      const menuMap = buildMenuMap(cmsCreatorCapabilities);
+      let selectKey = this.state.selectKey;
+      if (!menuMap[selectKey]) {
+        selectKey = 'base';
+      }
+      this.setState({ cmsCreatorCapabilities, capabilitiesLoaded: true, menuMap, selectKey });
+    });
     window.addEventListener('resize', this.resize);
+    this.unlistenHistory = history.listen(({ location }) => {
+      const fromQuery = settingsTabFromQuery(location?.query?.tab);
+      if (fromQuery == null || fromQuery === this.state.selectKey) {
+        return;
+      }
+      this.setState({ selectKey: fromQuery });
+    });
     this.resize();
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
+    if (this.unlistenHistory) {
+      this.unlistenHistory();
+    }
   }
 
   getMenu = () => {
@@ -69,8 +93,11 @@ class Settings extends Component {
   };
 
   selectKey = (key) => {
-    this.setState({
-      selectKey: key,
+    this.setState({ selectKey: key });
+    const queryTab = settingsTabToQuery(key);
+    history.replace({
+      pathname: '/account/settings',
+      query: queryTab ? { tab: queryTab } : {},
     });
   };
 
@@ -116,6 +143,20 @@ class Settings extends Component {
 
       case 'notification':
         return <NotificationView currentUser={u}/>;
+
+      case 'creatorPayee':
+        return (
+          <Suspense fallback={<Spin />}>
+            <CreatorPayeeSettingsView />
+          </Suspense>
+        );
+
+      case 'creatorWechatMp':
+        return (
+          <Suspense fallback={<Spin />}>
+            <CreatorWechatMpSettingsView />
+          </Suspense>
+        );
 
       default:
         break;

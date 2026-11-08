@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip, Alert, InputNumber} from 'antd';
+import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip, InputNumber} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {FolderOutlined, KeyOutlined, SettingOutlined, InfoCircleOutlined, EditOutlined} from '@ant-design/icons';
 import { useIntl } from 'umi';
@@ -51,15 +51,6 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <>
-        {/* 页面说明 */}
-        <Alert
-          message={`编辑${termType?.name || '分类'}`}
-          description={getDescription()}
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -202,14 +193,14 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: intl.formatMessage({ id: 'sys.termType.displayOrderRequired', defaultMessage: '请输入展示顺序，范围1-100！' }),
+                message: intl.formatMessage({ id: 'sys.termType.displayOrderRequired', defaultMessage: '请输入展示顺序，范围1-9999！' }),
               },
             ]}
           >
             <InputNumber
               min={1}
-              max={100}
-              placeholder={intl.formatMessage({ id: 'sys.termType.displayOrderPlaceholder', defaultMessage: '请输入展示顺序，范围1-100' })}
+              max={9999}
+              placeholder={intl.formatMessage({ id: 'sys.termType.displayOrderPlaceholder', defaultMessage: '请输入展示顺序，范围1-9999' })}
               style={{ width: '100%' }}
             />
           </FormItem>

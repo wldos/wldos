@@ -25,15 +25,13 @@ import {queryLayerCategory} from "@/pages/sys/category/service";
 import {queryTagSelect} from "@/pages/sys/tag/service";
 import {upParams} from "@/components/FileUpload";
 import {loadTinyMCE} from "@/utils/loadTinyMCE";
+import {
+  PUB_VISIBILITY_SCOPE_FALLBACK,
+  useBookFormPrivacyExtra,
+} from '@/hooks/usePubVisibilityScopeEnum';
+import ContentAccessPolicyPanel from '@/pages/commercial/cms-access/components/ContentAccessPolicyPanel';
 
 const { SHOW_PARENT } = TreeSelect;
-
-/** 与后端 k_pubs.visibility_scope 取值一致（见 CMS Pub 保存） */
-export const VISIBILITY_SCOPE_OPTIONS = [
-  { value: 'PUBLIC_LISTED', label: '前台可发现' },
-  { value: 'UNLISTED', label: '仅链接访问（不参与列表/搜索）' },
-  { value: 'INTERNAL_ONLY', label: '仅内部可见' },
-];
 
 export const formItemLayout = {
   labelCol: {
@@ -200,13 +198,11 @@ const validatorGeographic = (_, value) => {
 };
 
 /**
- * 作品基本信息字段片段（标题、分类、发现范围、查看方式等）。
+ * 作品基本信息字段片段（标题、分类、发现范围等）。
  * - visibilityScope：主表 k_pubs.visibility_scope
- * - privacyLevel：meta 扩展（查看方式）
- * privacyExtra：打赏与 Radio 联动；与上两字段无关。
+ * privacyExtra：发现范围等扩展项。
  */
 export const formContent = (
-  privacyEnum,
   tProps,
   tagProps,
   intl = {
@@ -214,7 +210,12 @@ export const formContent = (
   },
   privacyExtra = {},
 ) => {
-  const { rewardStatus, onPrivacyChange } = privacyExtra;
+  const {
+    showVisibilityScope = false,
+    visibilityScopeOptions = [],
+  } = privacyExtra;
+  const scopeSelectOptions =
+    visibilityScopeOptions.length > 0 ? visibilityScopeOptions : PUB_VISIBILITY_SCOPE_FALLBACK;
   return (
   <>
     <Form.Item name="cover" noStyle>
@@ -326,12 +327,13 @@ export const formContent = (
     <Form.Item label={intl.formatMessage({ id: 'book.create.step2.field.tags.label', defaultMessage: '标签' })} name="tagIds">
       <Select mode="tags" {...tagProps} />
     </Form.Item>
+    {showVisibilityScope ? (
     <Form.Item
       name="visibilityScope"
       label={intl.formatMessage({ id: 'book.create.step2.field.visibilityScope.label', defaultMessage: '发现范围' })}
       tooltip={intl.formatMessage({
         id: 'book.create.step2.field.visibilityScope.tooltip',
-        defaultMessage: '是否出现在前台列表/搜索；与「查看方式」独立',
+        defaultMessage: '是否出现在前台列表/搜索',
       })}
     >
       <Select
@@ -340,9 +342,10 @@ export const formContent = (
           id: 'book.create.step2.field.visibilityScope.placeholder',
           defaultMessage: '默认：前台可发现',
         })}
-        options={VISIBILITY_SCOPE_OPTIONS}
+        options={scopeSelectOptions}
       />
     </Form.Item>
+    ) : null}
     <Form.Item label={intl.formatMessage({ id: 'book.create.step2.field.watermark.label', defaultMessage: '水印设置' })}>
       <Row gutter={8}>
         <Col span={16}>
@@ -360,35 +363,6 @@ export const formContent = (
         </Col>
       </Row>
     </Form.Item>
-    <Form.Item
-      name="privacyLevel"
-      label={intl.formatMessage({
-        id: 'book.create.step2.field.privacyLevel.label',
-        defaultMessage: '查看方式',
-      })}
-      tooltip={intl.formatMessage({
-        id: 'book.create.step2.field.privacyLevel.tooltip',
-        defaultMessage: '访问与付费策略（存扩展 meta）；与「发现范围」独立',
-      })}
-      rules={[{ required: false, message: intl.formatMessage({ id: 'book.create.step2.field.privacyLevel.required', defaultMessage: '请设置查看方式' }) }]}
-    >
-      <Radio.Group options={privacyEnum} onChange={onPrivacyChange} />
-    </Form.Item>
-    {rewardStatus ? (
-      <Form.Item
-        label={intl.formatMessage({ id: 'book.create.step2.field.reward.label', defaultMessage: '打赏金额' })}
-        name="reward"
-        rules={[
-          { required: true, message: intl.formatMessage({ id: 'book.create.step2.field.reward.required', defaultMessage: '请输入打赏金额' }) },
-          { pattern: /^(\d+)((?:\.\d+)?)$/, message: intl.formatMessage({ id: 'book.create.step2.field.reward.invalid', defaultMessage: '请输入合法金额数字' }) },
-        ]}
-      >
-        <Input
-          prefix="￥"
-          placeholder={intl.formatMessage({ id: 'book.create.step2.field.reward.placeholder', defaultMessage: '请输入打赏金额' })}
-        />
-      </Form.Item>
-    ) : null}
   </>
   );
 };
@@ -424,10 +398,11 @@ const picHandle = (coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, 
 
 let blobFile = null;
 // @todo 按照Pro Antd分步表单的方式，实现分片式信息表单，突出内容信息、交易信息。
-const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
+const Step2 = ({data, dispatch, submitting, privacyEnum = [], showVisibilityScope = false}) => {
   const intl = useIntl();
   const [form] = Form.useForm();
   const editorRef = useRef(null);
+  const policyRef = useRef(null);
   const [coverUrl, setCoverUrl] = useState(undefined);
   const [pic1Url, setPic1Url] = useState(undefined);
   const [pic2Url, setPic2Url] = useState(undefined);
@@ -446,7 +421,7 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   // TinyMCE 按需加载状态
   const [tinymceReady, setTinymceReady] = useState(false);
   const [EditorComponent, setEditorComponent] = useState(null);
-  const [rewardStatus, setReward] = useState(false);
+  const privacyExtra = useBookFormPrivacyExtra(showVisibilityScope);
 
   // TinyMCE 按需加载
   useEffect(() => {
@@ -492,10 +467,6 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   }, []);
 
   useEffect(() => {
-    setReward(data?.privacyLevel === 'reward');
-  }, [data?.id, data?.privacyLevel]);
-
-  useEffect(() => {
     form.setFieldsValue({pubContent: content});
   }, [content, form]);
 
@@ -532,6 +503,13 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
       province: geographic?.province?.key?? '',
       city: geographic?.city?.key?? '',
       ...otherValues
+    }
+
+    if (data.id && policyRef.current?.save) {
+      const policyOk = await policyRef.current.save();
+      if (policyOk === false) {
+        return;
+      }
     }
 
     if (dispatch) {
@@ -676,13 +654,14 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
             >
               {picHandle(coverUrl, beforeUp, handleChange, pic1Url, pic2Url, pic3Url, pic4Url)}
             </Form.Item>
-            {formContent(privacyEnum, typeProps, tagProps, intl, {
-              rewardStatus,
-              onPrivacyChange: (e) => {
-                if (e?.target?.value === 'reward') setReward(true);
-                else setReward(false);
-              },
-            })}
+            {formContent(typeProps, tagProps, intl, privacyExtra)}
+            <ContentAccessPolicyPanel
+              ref={policyRef}
+              pubId={data.id}
+              rootPubId={data.parentId || data.id}
+              parentPubId={data.parentId}
+              showSaveButton={false}
+            />
             <Form.Item name="pubContent" noStyle>
               <textarea hidden
                     value={content} onChange={(e) => setContent(e.target.value)}/>
@@ -771,8 +750,11 @@ const Step2 = ({data, dispatch, submitting, privacyEnum = []}) => {
   );
 };
 
-export default connect(({bookInfo, loading}) => ({
+import {canManageVisibilityScope} from '@/utils/userPrivilege';
+
+export default connect(({bookInfo, loading, user}) => ({
   submitting: loading.effects['bookInfo/submitStepForm'],
   data: bookInfo.step,
   privacyEnum: bookInfo.privacyEnum,
+  showVisibilityScope: canManageVisibilityScope(user),
 }))(Step2);

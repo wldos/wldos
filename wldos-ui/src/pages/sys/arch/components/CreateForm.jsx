@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import FullscreenModal from '@/components/FullscreenModal';
 
 const CreateForm = (props) => {
-  const { modalVisible, onCancel, onSubmit } = props;
+  const { modalVisible, onCancel } = props;
   const formRef = useRef();
   
   const handleSubmit = () => {
@@ -39,7 +39,7 @@ const CreateForm = (props) => {
         padding: '24px'
       }}
     >
-      {React.cloneElement(props.children, { ref: formRef, onSubmit: onSubmit })}
+      {React.cloneElement(props.children, { ref: formRef })}
     </FullscreenModal>
   );
 };

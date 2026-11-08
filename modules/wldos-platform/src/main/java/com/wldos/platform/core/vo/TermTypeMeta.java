@@ -18,7 +18,7 @@ import lombok.Setter;
  * 分类类型元数据 VO
  *
  * @author Yuanxi Universe
- * @date 2025/12/07
+ * @date 2025/2/07
  * @version 1.0
  */
 @ApiModel(description = "分类类型元数据")
@@ -54,5 +54,15 @@ public class TermTypeMeta {
 	
 	@ApiModelProperty(value = "是否在数据库中存在", example = "true")
 	private Boolean existsInDb;
+
+	/** 统一字典 API dictCode（业务字典迁移绑定） */
+	@ApiModelProperty(value = "统一字典编码", example = "agreementType")
+	private String dictCode;
+
+	/**
+	 * 为 true 时列表不展示「关联内容数」：计数仅维护 k_term_object，字典类 Term 不适用。
+	 */
+	@ApiModelProperty(value = "是否隐藏关联内容数列", example = "true")
+	private Boolean hideReferenceCount;
 }
 

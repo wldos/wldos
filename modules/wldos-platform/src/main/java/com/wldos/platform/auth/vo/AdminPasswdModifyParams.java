@@ -23,7 +23,7 @@ import lombok.Setter;
  * 用于管理员后台直接设置新密码，覆盖原密码
  *
  * @author Yuanxi Universe
- * @date 2026/01/10
+ * @date 2025/01/10
  * @version 1.0
  */
 @ApiModel(description = "管理员修改密码参数（不需要原密码）")

@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>职责与 {@link LoginLogService} 同构：写入（异步消费侧）+ 管理端列表查询。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Slf4j

@@ -10,14 +10,14 @@ import * as service from '@/services/user';
 import { setAuthority} from "@/utils/authority";
 import { loadPluginManifest } from '@/services/pluginManifest';
 
-let _fetchCurrentCallIndex = 0;
-
 const UserModel = {
   namespace: 'user',
   state: {
     currentUser: {},
+    sessionFlags: { isAdmin: false, canTrust: false, tenantAdmin: false },
     menuData: [],
     adminMenu: [],
+    adminAuthorities: [],
     route: {}, // 首页动态模板，不是动态路由
     site: {},
     tdk: {},
@@ -36,54 +36,28 @@ const UserModel = {
     },
 
     * fetchSite(_, {call, put, select}) {
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
         const state = yield select(s => s.user);
-        // 若 site 已有数据（含 siteDomain 或 siteTitle），跳过请求
-        if (state.site && (state.site.siteDomain || state.site.siteTitle)) {
+        const cachedHost = state.site?._resolvedHost;
+        if (state.site && (state.site.siteDomain || state.site.siteTitle) && cachedHost === hostname) {
           return;
         }
         const res = yield call(service.querySiteSeo);
         if (res && res.data) {
           yield put({
             type: 'saveSite',
-            payload: res.data,
+            payload: { ...res.data, _resolvedHost: hostname },
           });
         }
     },
 
     * fetchCurrent(_, {call, put, select}) {
-      const state = yield select(s => s.user);
-      const hasData = state.route && Object.keys(state.route).length > 0;
-      if (hasData) {
-        _fetchCurrentCallIndex += 1;
-        if (_fetchCurrentCallIndex % 2 === 0) {
-          _fetchCurrentCallIndex = 0; // 跳过时清零，避免无限增大
-          return; // 偶数次跳过，请求量减半
-        }
-      }
-
       const response = yield call(service.queryCurrent);
-      const dyn = yield call(service.fetchDynRoutes);
-
-      // 同时加载插件 manifest（用户端和管理端共享）
-      // 检查是否已加载，避免重复加载
-      const stateNow = yield select(s => s.user);
-      if (!stateNow.pluginManifest) {
-        try {
-          const manifest = yield call(loadPluginManifest);
-          yield put({
-            type: 'savePluginManifest',
-            payload: manifest,
-          });
-        } catch (error) {
-          // manifest 加载失败不影响用户信息加载
-          console.warn('[UserModel] 加载 pluginManifest 失败:', error);
-        }
-      }
 
       if (response && response.data) {
         yield put({
           type: 'saveCurrentUser',
-          payload: {...response.data, route: dyn?.data},
+          payload: response.data,
         });
       } else {
         yield put({
@@ -95,13 +69,58 @@ const UserModel = {
           },
         });
       }
+
+      const stateNow = yield select(s => s.user);
+      if (!stateNow.pluginManifest) {
+        // 同 namespace 异步触发，不阻塞 fetchCurrent（fork 不接受字符串 effect 名）
+        yield put({ type: 'fetchPluginManifest' });
+      }
     },
+
+    /** 插件 UI manifest：后台异步拉取，不阻塞 currentUser / 菜单 */
+    * fetchPluginManifest(_, {call, put, select}) {
+      const state = yield select(s => s.user);
+      if (state.pluginManifest) {
+        return state.pluginManifest;
+      }
+      try {
+        const manifest = yield call(loadPluginManifest);
+        yield put({
+          type: 'savePluginManifest',
+          payload: manifest,
+        });
+        return manifest;
+      } catch (error) {
+        console.warn('[UserModel] 加载 pluginManifest 失败:', error);
+        return null;
+      }
+    },
+
     * fetchAdminMenu({payload}, {call, put}) {
       const menus = yield call(service.queryMenu, payload);
       yield put({
         type: 'saveMenu',
         payload: menus.data || [],
       });
+    },
+
+    * fetchAdminAuthorities(_, { call, put }) {
+      try {
+        const res = yield call(service.queryAdminAuthorities);
+        const list = Array.isArray(res?.data) ? res.data : [];
+        yield put({
+          type: 'saveAdminAuthorities',
+          payload: list,
+        });
+        return list;
+      } catch (error) {
+        console.warn('[UserModel] 加载 adminAuthorities 失败:', error);
+        yield put({
+          type: 'saveAdminAuthorities',
+          payload: [],
+        });
+        return [];
+      }
     },
     * getDomainRoute({callback}, { select }) {
       const res = yield select((state) => state.user);
@@ -133,10 +152,19 @@ const UserModel = {
     saveCurrentUser(state, {payload}) {
       if (payload)
         setAuthority(payload);
+      const userInfo = payload?.userInfo || {};
       return {
-        ...state, currentUser: payload.userInfo,
-        menuData: payload.menu || [],
-        route: payload.route || state.route || {},
+        ...state, currentUser: userInfo,
+        sessionFlags: {
+          // Jackson 对 boolean isAdmin 可能序列化为 admin，兼容两种字段名
+          isAdmin: !!(payload?.isAdmin ?? payload?.admin),
+          canTrust: !!payload?.canTrust,
+          tenantAdmin: !!payload?.tenantAdmin,
+          operatorComId: userInfo?.operatorComId,
+          workComId: userInfo?.workComId,
+        },
+        menuData: payload?.menu || [],
+        route: payload?.route || state.route || {},
       };
     },
 
@@ -144,6 +172,13 @@ const UserModel = {
       return {
         ...state,
         adminMenu: action.payload || []
+      };
+    },
+
+    saveAdminAuthorities(state, action) {
+      return {
+        ...state,
+        adminAuthorities: action.payload || [],
       };
     },
 

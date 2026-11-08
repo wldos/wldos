@@ -10,13 +10,15 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 /**
- * 门户个人中心「我的常用」持久化条目（按用户 + 租户 + 域隔离）。
+ * 门户个人中心「我的常用」持久化条目（按用户 + 租户 + 域隔离）。USER_SCOPED：非本人数据不可见、不可用、不可改。
  */
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true, domainId = true, userId = true)
 public class WoUserPortalShortcut extends BaseEntity {
 
 	private Long userId;

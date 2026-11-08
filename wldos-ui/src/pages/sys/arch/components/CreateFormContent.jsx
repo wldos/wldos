@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { Form, Input, Select, Button, Card, Space, Tooltip, Alert, InputNumber } from 'antd';
+import { Form, Input, Select, Button, Card, Space, Tooltip, InputNumber } from 'antd';
 import CompanyTreeSelect from '@/components/TreeSelects/CompanyTreeSelect';
 import ArchTreeSelect from '@/components/TreeSelects/ArchTreeSelect';
 import {
@@ -28,12 +28,14 @@ const formLayout = {
 
 const CreateFormContent = forwardRef((props, ref) => {
   const [form] = Form.useForm();
-  const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const {
     onSubmit: handleAdd,
     onCancel: handleCancel,
     onFormSubmit,
+    fixedComId,
+    defaultParentId,
   } = props;
+  const [selectedCompanyId, setSelectedCompanyId] = useState(fixedComId ?? null);
 
   // 处理公司选择变化
   const handleCompanyChange = (value) => {
@@ -63,15 +65,6 @@ const CreateFormContent = forwardRef((props, ref) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="新建体系"
-          description="创建新的体系架构，配置体系的基本信息、层级关系和状态设置。体系是组织架构的基础单位。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -193,6 +186,7 @@ const CreateFormContent = forwardRef((props, ref) => {
               placeholder="请选择归属公司" 
               onChange={handleCompanyChange}
               usePaged={true}
+              disabled={!!fixedComId}
             />
           </FormItem>
 
@@ -220,7 +214,7 @@ const CreateFormContent = forwardRef((props, ref) => {
             label={
               <Space>
                 展示顺序
-                <Tooltip title="体系在列表中的显示顺序，1-100">
+                <Tooltip title="体系在列表中的显示顺序，1-9999">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -228,7 +222,7 @@ const CreateFormContent = forwardRef((props, ref) => {
             rules={[
               {
                 required: true,
-                message: '请输入展示顺序，1-100！',
+                message: '请输入展示顺序，1-9999！',
               },
               {
                 type: 'number',
@@ -240,9 +234,9 @@ const CreateFormContent = forwardRef((props, ref) => {
           >
             <InputNumber
               prefix={<NumberOutlined />}
-              placeholder="请输入数字，1-100"
+              placeholder="请输入数字，1-9999"
               min={1}
-              max={100}
+              max={9999}
               style={{ width: '100%' }}
             />
           </FormItem>
@@ -278,7 +272,8 @@ const CreateFormContent = forwardRef((props, ref) => {
       initialValues={{
         isValid: '1',
         displayOrder: 1,
-        parentId: 0
+        parentId: defaultParentId ?? 0,
+        comId: fixedComId,
       }}
     >
       {renderContent()}

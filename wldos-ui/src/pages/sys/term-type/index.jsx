@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import { Card, List, Typography, Space, Tag, Empty, message, Button, Modal, Form, Input, Select, Pagination } from 'antd';
 import {
   FolderOutlined,
@@ -12,7 +13,7 @@ import {
 import { queryTermTypes, saveTermType, deleteTermType } from './service';
 import CategoryManagement from './components/CategoryManagement';
 import styles from './index.less';
-import { useIntl } from 'umi';
+import { connect, useIntl } from 'umi';
 
 const { Title, Text } = Typography;
 
@@ -24,7 +25,7 @@ const iconMap = {
   SettingOutlined: SettingOutlined,
 };
 
-const TermTypeManagement = () => {
+const TermTypeManagement = ({ isAdmin, currentUser }) => {
   const [termTypes, setTermTypes] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -107,16 +108,7 @@ const TermTypeManagement = () => {
   }, [searchKeyword]);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0',
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0',
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div className={styles.container}>
         {/* 左侧：类型列表 */}
         <div className={styles.typeList}>
@@ -319,6 +311,8 @@ const TermTypeManagement = () => {
               key={selectedType.code}
               termType={selectedType}
               onRefresh={loadTermTypes}
+              isAdmin={isAdmin}
+              currentUser={currentUser}
             />
           ) : (
             <Card>
@@ -443,5 +437,8 @@ const TermTypeManagement = () => {
   );
 };
 
-export default TermTypeManagement;
+export default connect(({ user }) => ({
+  isAdmin: !!user.sessionFlags?.isAdmin,
+  currentUser: user.currentUser,
+}))(TermTypeManagement);
 

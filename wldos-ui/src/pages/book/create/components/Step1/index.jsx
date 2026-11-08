@@ -41,38 +41,29 @@ const Step1 = ({dispatch, bookInfo: {list = [],}, loading}) => {
   }, [dispatch]);
 
   const rendItem = useCallback((item) => {
-    if (!item.children) return "";
-    
-    const len = Math.min(item.children.length, 4);
-    const mLen = Math.min(item.children.length, 3);
+    if (!item.children?.length) return null;
 
-    return item.children && (
-      <div className={styles.subCategoryContainer}>
-        <List
-          className={styles.itemList}
-          dataSource={item.children || []}
-          grid={{ 
-            gutter: [12, 12], 
-            xs: 1, 
-            sm: 2, 
-            md: len, 
-            lg: len, 
-            xl: len, 
-            xxl: len 
-          }}
-          renderItem={(it) => (
-            <List.Item>
-              <Button 
-                type="text" 
-                block 
-                className={styles.subCategoryBtn}
-                onClick={() => finishCategory(it.key, it.title)}
-              >
-                {it.title}
-              </Button>
-            </List.Item>
-          )}
-        />
+    const count = item.children.length;
+    const columns = count <= 6 ? 2 : 3;
+    const scrollable = count > 12;
+
+    return (
+      <div
+        className={`${styles.subCategoryContainer}${scrollable ? ` ${styles.subCategoryScrollable}` : ''}`}
+        style={{ '--sub-cols': columns }}
+      >
+        {item.children.map((it) => (
+          <Button
+            key={it.key}
+            type="text"
+            block
+            className={styles.subCategoryBtn}
+            title={it.title}
+            onClick={() => finishCategory(it.key, it.title)}
+          >
+            {it.title}
+          </Button>
+        ))}
       </div>
     );
   }, [finishCategory]);
@@ -104,7 +95,7 @@ const Step1 = ({dispatch, bookInfo: {list = [],}, loading}) => {
                 title={item.title} 
                 content={rendItem(item)} 
                 trigger="click"
-                overlayClassName={styles.mobilePopover}
+                overlayClassName="mobilePopover"
               >
                 <Button type="primary" block className={styles.categoryBtn}>
                   {item.title}
@@ -116,7 +107,8 @@ const Step1 = ({dispatch, bookInfo: {list = [],}, loading}) => {
                 title={item.title} 
                 content={rendItem(item)} 
                 trigger="hover"
-                overlayClassName={styles.desktopPopover}
+                mouseEnterDelay={0.15}
+                overlayClassName="desktopPopover"
               >
                 <Button type="primary" block className={styles.categoryBtn}>
                   {item.title}

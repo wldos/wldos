@@ -2,13 +2,16 @@ import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Drawer, message, Popconfirm, TreeSelect} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTable from '@ant-design/pro-table';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import {
   getAppList,
   getResList,
-  queryPage, removeDomainRes,
-  updateEntity
+  queryPage,
+  removeDomainRes,
+  setDomainResVisibility,
+  updateEntity,
 } from './service';
 import UpdateForm from './UpdateForm';
 import AddResList from "@/pages/sys/domain/components/domainRes/AddResList";
@@ -31,6 +34,9 @@ const handleUpdate = async (fields) => {
       url: fields.url,
       termTypeId: fields.termTypeId,
       extraProps: fields.extraProps,
+      overlayParentId: fields.overlayParentId,
+      overlayDisplayOrder: fields.overlayDisplayOrder,
+      overlayLabel: fields.overlayLabel,
     });
     hide();
     message.success('配置成功');
@@ -47,6 +53,31 @@ const handleUpdate = async (fields) => {
  * @param selectedRows 选中的资源
  * @param domainId 域id
  */
+const SITE_HIDDEN_ENUM = {
+  0: { text: '是', status: 'Default' },
+  1: { text: '否', status: 'Success' },
+};
+
+const setResMountVisible = async (domainId, resourceIds, visible) => {
+  const hide = message.loading(visible ? '正在显示' : '正在隐藏');
+  try {
+    const res = await setDomainResVisibility({
+      domainId,
+      resourceIds: resourceIds.map((id) => String(id)),
+      visible,
+    });
+    hide();
+    if (res?.code !== 200) {
+      return false;
+    }
+    message.success(visible ? '已恢复展示' : '已隐藏');
+    return true;
+  } catch (e) {
+    hide();
+    return false;
+  }
+};
+
 const cancelDomainRes = async (selectedRows, domainId) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
@@ -66,7 +97,7 @@ const cancelDomainRes = async (selectedRows, domainId) => {
 };
 
 const DomResList = (props) => {
-  const {domainId = '', addRes} = props;
+  const {domainId = '', addRes, onMenuLayout} = props;
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
@@ -127,10 +158,10 @@ const DomResList = (props) => {
     if (resData.data)
       setTemplates(resData.data);
 
-    setTempType(selectToEnum(resData));
+    setTempType(selectToEnum(resData.data));
 
     const resTypes = await queryEnumResource() || [];
-    setResType(selectToEnum(resTypes))
+    setResType(selectToEnum(resTypes.data))
   }, []);
 
   const columns = [
@@ -266,9 +297,10 @@ const DomResList = (props) => {
       valueType: 'textarea',
     },
     {
-      title: '资源状态',
+      title: '平台资源状态',
       dataIndex: 'isValid',
       hideInForm: true,
+      hideInSearch: true,
       filters: true,
       onFilter: false,
       valueEnum: {
@@ -281,6 +313,15 @@ const DomResList = (props) => {
           status: 'valid',
         },
       },
+    },
+    {
+      title: '是否隐藏',
+      dataIndex: 'mountValid',
+      hideInForm: true,
+      hideInSearch: true,
+      filters: true,
+      onFilter: false,
+      valueEnum: SITE_HIDDEN_ENUM,
     },
     {
       title: '动态模板',
@@ -327,21 +368,49 @@ const DomResList = (props) => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => (
+      render: (_, record) => [
         <a
+          key="conf"
           onClick={() => {
             handleUpdateModalVisible(true);
             setStepFormValues(record);
           }}
         >
           配置
-        </a>
-      ),
+        </a>,
+        record.mountValid === '0' || record.mountValid === 0 ? (
+          <a
+            key="show"
+            onClick={async () => {
+              const ok = await setResMountVisible(domainId, [record.resourceId], true);
+              if (ok) {
+                actionRef.current?.reload();
+              }
+            }}
+          >
+            显示
+          </a>
+        ) : (
+          <Popconfirm
+            key="hide"
+            title="确定隐藏该资源在本站的菜单展示？"
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            onConfirm={async () => {
+              const ok = await setResMountVisible(domainId, [record.resourceId], false);
+              if (ok) {
+                actionRef.current?.reload();
+              }
+            }}
+          >
+            <a>隐藏</a>
+          </Popconfirm>
+        ),
+      ],
     },
   ];
 
   return (
-    <PageContainer>
+    <PageContainer {...adminListPageContainerProps}>
       <ProTable
         headerTitle="资源清单"
         actionRef={actionRef}
@@ -349,7 +418,15 @@ const DomResList = (props) => {
         search={{
           labelWidth: 120,
         }}
+        expandable={{
+          defaultExpandAllRows: true,
+        }}
         toolBarRender={() => [
+          onMenuLayout ? (
+            <a key="menu-layout" onClick={() => onMenuLayout()}>
+              菜单布局
+            </a>
+          ) : null,
           <Button key={1} type="primary" onClick={() => handleAddModalVisible(true)}>
             <PlusOutlined/> 添加
           </Button>,
@@ -389,6 +466,38 @@ const DomResList = (props) => {
             </div>
           }
         >
+          <Popconfirm
+            title="确定批量隐藏所选资源在本站的菜单展示？"
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            onConfirm={async () => {
+              const ok = await setResMountVisible(
+                domainId,
+                selectedRowsState.map((r) => r.resourceId),
+                false,
+              );
+              if (ok) {
+                setSelectedRows([]);
+                actionRef.current?.reloadAndRest?.();
+              }
+            }}
+          >
+            <Button>批量隐藏</Button>
+          </Popconfirm>
+          <Button
+            onClick={async () => {
+              const ok = await setResMountVisible(
+                domainId,
+                selectedRowsState.map((r) => r.resourceId),
+                true,
+              );
+              if (ok) {
+                setSelectedRows([]);
+                actionRef.current?.reloadAndRest?.();
+              }
+            }}
+          >
+            批量显示
+          </Button>
           <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await cancelDomainRes(selectedRowsState, domainId);

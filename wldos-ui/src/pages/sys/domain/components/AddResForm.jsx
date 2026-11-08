@@ -7,7 +7,8 @@ const AddResForm = (props) => {
     onCancel: handleAddResModalVisible,
     addResModalVisible,
     values,
-    addRes
+    addRes,
+    onMenuLayout,
   } = props;
 
   return (
@@ -18,11 +19,16 @@ const AddResForm = (props) => {
       }}
       destroyOnClose
       visible={addResModalVisible}
-      title={values.siteName}
+      title={`${values.siteName || ''}资源管理`}
       footer={null}
       onCancel={() => handleAddResModalVisible()}
     >
-      <DomResList  domainId={values.id} addRes={addRes}/>
+      <DomResList
+        domainId={values.id}
+        addRes={addRes}
+        values={values}
+        onMenuLayout={onMenuLayout ? () => onMenuLayout(values) : undefined}
+      />
     </FullscreenModal>
   );
 };

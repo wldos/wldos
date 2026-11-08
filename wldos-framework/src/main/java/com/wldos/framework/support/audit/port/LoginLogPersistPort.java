@@ -26,7 +26,7 @@ import io.github.wldos.framework.support.audit.LoginEvent;
  * 默认实现侧会再做一层异常保护，不让落盘失败传播到业务请求线程。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 public interface LoginLogPersistPort {

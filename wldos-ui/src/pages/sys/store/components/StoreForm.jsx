@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Switch, Upload, Button, message, Card, Space, Tooltip, Alert, Row, Col, Divider, TreeSelect } from 'antd';
+import { Form, Input, Select, Switch, Upload, Button, message, Card, Space, Tooltip, Row, Col, Divider, TreeSelect } from 'antd';
 import { 
   UploadOutlined, 
   PlusOutlined, 
@@ -25,6 +25,7 @@ import FullscreenModal from '@/components/FullscreenModal';
 import { queryPluginCategory } from '@/pages/sys/category/service';
 import config from '@/utils/config';
 import { headerFix } from '@/utils/utils';
+import { uploadPluginPackage } from '../service';
 import './StoreForm.less';
 
 const { TextArea } = Input;
@@ -36,6 +37,7 @@ const StoreForm = ({ visible, onCancel, onSubmit, initialValues, dispatch }) => 
   const [form] = Form.useForm();
   const [categoryTree, setCategoryTree] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [packageUploading, setPackageUploading] = useState(false);
 
   // 加载插件分类树
   useEffect(() => {
@@ -166,15 +168,6 @@ const StoreForm = ({ visible, onCancel, onSubmit, initialValues, dispatch }) => 
       destroyOnClose
     >
       <div className="plugin-form">
-        {/* 页面说明 */}
-        <Alert
-          message="插件信息配置"
-          description="填写插件的详细信息，包括基本信息、技术参数、统计数据和审核状态等。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         <Form
           form={form}
           layout="vertical"
@@ -571,20 +564,79 @@ const StoreForm = ({ visible, onCancel, onSubmit, initialValues, dispatch }) => 
               label={
                 <Space>
                   下载地址
-                  <Tooltip title="插件的下载链接">
+                  <Tooltip title="本地上传后自动写入相对路径；也可填 Git raw 等外链">
                     <InfoCircleOutlined style={{ color: '#999' }} />
                   </Tooltip>
                 </Space>
               }
               rules={[
-                { type: 'url', message: '请输入有效的URL地址' },
+                {
+                  validator: (_, value) => {
+                    const v = (value || '').trim();
+                    if (!v || v.startsWith('/') || /^https?:\/\//i.test(v)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('请输入有效 URL，或以 / 开头的本地上传路径'));
+                  },
+                },
               ]}
             >
-              <Input 
+              <Input
                 prefix={<LinkOutlined />}
-                placeholder="下载地址，如：https://github.com/wldos/plugins/raw/main/plugins/airdrop/airdrop-2.0.0.zip" 
+                placeholder="本地上传后自动填充，或填写外链 zip 地址"
               />
             </Form.Item>
+            {initialValues?.pluginCode ? (
+              <Form.Item
+                label={
+                  <Space>
+                    安装包
+                    <Tooltip title="上传 zip 替换商店内该插件的安装包；包内 plugin.yml 的 code 须与本插件编码一致">
+                      <InfoCircleOutlined style={{ color: '#999' }} />
+                    </Tooltip>
+                  </Space>
+                }
+              >
+                <Upload
+                  accept=".zip"
+                  showUploadList={false}
+                  beforeUpload={(file) => {
+                    if (!file.name.toLowerCase().endsWith('.zip')) {
+                      message.error('请上传 .zip 插件包');
+                      return Upload.LIST_IGNORE;
+                    }
+                    setPackageUploading(true);
+                    uploadPluginPackage(initialValues.pluginCode, file)
+                      .then((res) => {
+                        if (res?.code !== 200 || res?.success === false) {
+                          message.error(res?.message || '安装包上传失败');
+                          return;
+                        }
+                        const plugin = res?.data;
+                        if (plugin?.pluginUrl) {
+                          form.setFieldsValue({
+                            downloadUrl: plugin.pluginUrl,
+                            version: plugin.version || form.getFieldValue('version'),
+                          });
+                        }
+                        if (plugin?.version) {
+                          form.setFieldsValue({ version: plugin.version });
+                        }
+                        message.success('安装包已更新，保存表单后生效');
+                      })
+                      .catch(() => {
+                        message.error('安装包上传失败');
+                      })
+                      .finally(() => setPackageUploading(false));
+                    return false;
+                  }}
+                >
+                  <Button icon={<UploadOutlined />} loading={packageUploading}>
+                    重新上传安装包
+                  </Button>
+                </Upload>
+              </Form.Item>
+            ) : null}
           </Card>
 
           {/* 统计数据分组 */}

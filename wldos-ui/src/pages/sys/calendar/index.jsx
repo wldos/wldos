@@ -257,19 +257,6 @@ const Calendar = () => {
         margin: '0'
       }}
     >
-      <Alert
-        type="info"
-        showIcon
-        style={{ marginBottom: 12 }}
-        message={'日历仅记录“与默认周末日历不同的日子”。普通工作日/周末由调用方按 weekday 兜底，无需入表。'}
-        description={
-          <span>
-            手工维护（MANUAL）优先级最高，外部同步不会覆盖。客户端通过独立接口
-            <code> GET /api/svc/sync/calendar?year=YYYY </code>
-            按年拉取本表数据，与守护策略解耦。
-          </span>
-        }
-      />
 
       <Card bordered={false} bodyStyle={{ padding: 16 }}>
         <Table

@@ -11,6 +11,8 @@ export default {
   'app.settings.menuMap.security': '安全設置',
   'app.settings.menuMap.binding': '賬號綁定',
   'app.settings.menuMap.notification': '新消息通知',
+  'app.settings.menuMap.creatorPayee': '創作與收款',
+  'app.settings.menuMap.creatorWechatMp': '公眾號與查看碼',
   'app.settings.basic.avatar': '頭像',
   'app.settings.basic.change-avatar': '更換頭像',
   'app.settings.basic.email': '郵箱',

@@ -1,13 +1,38 @@
 import ProLayout from '@ant-design/pro-layout';
 import React, {useEffect, useRef, useState} from 'react';
 import {connect, history, Link, useIntl} from 'umi';
-import {BackTop, message} from 'antd';
+import {BackTop, Spin} from 'antd';
 import {FolderOutlined, FileTextOutlined} from '@ant-design/icons';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import styles from '@/wldos.less';
 import { getHome, wldosHeader} from "@/utils/utils";
 import { setPortalMenuTree } from '@/utils/portalMenuVisit';
 import Document from "@/pages/doc/components/Document";
+
+const isDocEntryPath = (pathname) =>
+  pathname === '/doc' || pathname === '/doc/' || pathname === '/doc/book';
+
+/** 仅书本页、尚无 chapter 段（需跳到首章） */
+const isBookOnlyPathname = (pathname) =>
+  /\/doc\/book\/\d+\.html$/.test(pathname) && !/\/chapter\//.test(pathname);
+
+const chapterPath = (bookId, chapterId) =>
+  `/doc/book/${bookId}/chapter/${chapterId}.html`;
+
+const bookPath = (bookId) => `/doc/book/${bookId}.html`;
+
+const parseBookIdFromPathname = (pathname) => {
+  const m = pathname.match(/\/doc\/book\/(\d+)(?:\.html|\/)/);
+  return m ? m[1] : null;
+};
+
+const needsRouteResolve = (pathname) =>
+  isDocEntryPath(pathname) || isBookOnlyPathname(pathname);
+
+const dispatchAction = (dispatch, type, payload) =>
+  new Promise((resolve) => {
+    dispatch({ type, payload, callback: resolve });
+  });
 
 const Doc = (props) => {
   const {
@@ -27,6 +52,9 @@ const Doc = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [redirecting, setRedirecting] = useState(() =>
+    needsRouteResolve(typeof window !== 'undefined' ? window.location.pathname : '/doc'),
+  );
 
   const queryDoc = (dispatch, callback) => {
     if (dataLoaded) {
@@ -42,7 +70,7 @@ const Doc = (props) => {
       payload: {
         current: 1,
         pageSize: 50, // 默认50个文档
-        sorter: {"createTime":"ascend"}
+        sorter: { displayOrder: 'ascend', id: 'ascend' },
       },
       callback: async (res) => {
         // 使用 success 判断 API 是否成功
@@ -90,87 +118,85 @@ const Doc = (props) => {
     });
   };
 
-  const callback4Chapter = (dispatch, resp) => {
-    // 使用 success 判断 API 是否成功
-    if (resp?.success) {
-      const {id: bookId, chapter} = resp.data;
-      if (chapter?.length > 0) {
-        const {id: chapterId} = chapter[0];
-        history.push({
-          pathname: `/doc/book/${bookId}/chapter/${chapterId}.html`,
-        });
-      } else {
-        queryCurrentChapter(dispatch, {bookId, chapterId: ''});
-      }
+  /** 一次 replace 落到首章，避免 /doc → /doc/book → book.html → chapter 多次抖动 */
+  const navigateToFirstChapter = async (targetBookId, { showLoading = true } = {}) => {
+    if (!dispatch) {
+      setRedirecting(false);
+      return;
     }
+    if (showLoading) {
+      setRedirecting(true);
+    }
+    let bookId = targetBookId;
+    if (!bookId) {
+      const listRes = await dispatchAction(dispatch, 'doc/fetchDoc', {
+        current: 1,
+        pageSize: 50,
+        sorter: { displayOrder: 'ascend', id: 'ascend' },
+      });
+      const rows = listRes?.data?.rows ?? [];
+      if (!rows.length) {
+        setRedirecting(false);
+        return;
+      }
+      bookId = rows[0].id;
+      setDataLoaded(true);
+    } else if (menuData.length === 0) {
+      await dispatchAction(dispatch, 'doc/fetchDoc', {
+        current: 1,
+        pageSize: 50,
+        sorter: { displayOrder: 'ascend', id: 'ascend' },
+      });
+      setDataLoaded(true);
+    }
+
+    const bookRes = await dispatchAction(dispatch, 'doc/fetchCurrentDoc', { bookId });
+    if (!bookRes?.success) {
+      setRedirecting(false);
+      return;
+    }
+    const chapters = bookRes?.data?.chapter ?? [];
+    if (chapters.length > 0) {
+      const chapterId = chapters[0].id;
+      const target = chapterPath(bookId, chapterId);
+      if (location.pathname !== target) {
+        history.replace(target);
+      }
+      await dispatchAction(dispatch, 'doc/fetchCurrentChapter', { bookId, chapterId });
+    } else {
+      const target = bookPath(bookId);
+      if (location.pathname !== target) {
+        history.replace(target);
+      }
+      queryCurrentChapter(dispatch, { bookId, chapterId: '' });
+    }
+    setRedirecting(false);
+  };
+
+  const loadChapterRoute = (params) => {
+    if (menuData.length === 0) {
+      queryDoc(dispatch, null);
+    }
+    const bookId = params?.bookId;
+    if (bookId && (!currentDoc.id || String(currentDoc.id) !== String(bookId))) {
+      queryCurrentDoc(dispatch, params, null);
+    }
+    queryCurrentChapter(dispatch, params);
+    setRedirecting(false);
   };
 
   const query = (dispatch, params, path) => {
-    // 处理 /doc 路径，确保重定向到第一个文档
-    if (path === '/doc' || path === '/doc/') {
-      if (menuData.length === 0) {
-        queryDoc(dispatch, (res) => {
-          const {data: {rows = [],},} = res;
-          if (rows?.length > 0) {
-            history.replace({
-              pathname: `/doc/book/${rows[0].id}.html`,
-            });
-          }
-        });
-      } else {
-        // 如果已有菜单数据，直接跳转到第一个文档
-        const firstDoc = menuData[0];
-        if (firstDoc) {
-          history.replace({
-            pathname: `/doc/book/${firstDoc.id}.html`,
-          });
-        }
-      }
-      return;
+    if (path === '/doc/book/:bookId/chapter/:chapterId.html') {
+      loadChapterRoute(params);
     }
-    
-    if (path === '/doc/book') {
-      // 只有在没有菜单数据时才查询
-      if (menuData.length === 0) {
-        queryDoc(dispatch, (res) => {
-          const {data: {rows = [],},} = res;
-          if (rows?.length > 0) {
-            history.push({
-              pathname: `/doc/book/${rows[0].id}.html`,
-            });
-          }
-        });
-      } else {
-        // 如果已有菜单数据，直接跳转到第一个文档
-        const firstDoc = menuData[0];
-        if (firstDoc) {
-          history.push({
-            pathname: `/doc/book/${firstDoc.id}.html`,
-          });
-        }
-      }
-    } else if (path === '/doc/book/:bookId/chapter/:chapterId.html') {
-      if (menuData.length === 0) {
-        queryDoc(dispatch, null);
-      }
-      if (!currentDoc.id || currentDoc.chapter.length <= 1) {
-        queryCurrentDoc(dispatch, params, null);
-      }
-      queryCurrentChapter(dispatch, params);
-    } else { // match '/doc/book/:bookId'
-      if (menuData.length === 0) {
-        queryDoc(dispatch, null);
-      }
-      queryCurrentDoc(dispatch, params, (res) => callback4Chapter(dispatch, res), );
-    }
-  }
+  };
 
   const docClick = (key, props) => {
-    const {dispatch, curId, curLen} = props;
+    const { dispatch: d, curId, curLen } = props;
     if (curId !== key || curLen <= 1) {
-      queryCurrentDoc(dispatch, {bookId: key}, (res) => callback4Chapter(dispatch, res), );
+      navigateToFirstChapter(String(key), { showLoading: false });
     }
-  }
+  };
 
   const menuHandle = (menus, parentId, isChapter, props) =>
     menus.map((item) => {
@@ -202,39 +228,27 @@ const Doc = (props) => {
   }, []);
 
   useEffect(() => {
-    const { match: {path, params, url} } = props;
-    
-    // 处理生产环境 /doc 路径问题：如果访问 /doc 或 /doc/，直接重定向到第一个文档
-    // 这解决了生产环境路由重定向可能失败的问题
-    // 原因：开发环境 webpack-dev-server 的 historyApiFallback 会直接返回 index.html
-    // 生产环境 Nginx 的 try_files 可能会先检查目录，导致路由重定向失败
-    if ((location.pathname === '/doc' || location.pathname === '/doc/') && 
-        path !== '/doc/book' && 
-        path !== '/doc/book/:bookId.html' && 
-        path !== '/doc/book/:bookId/chapter/:chapterId.html') {
-      if (menuData.length > 0) {
-        const firstDoc = menuData[0];
-        if (firstDoc) {
-          history.replace(`/doc/book/${firstDoc.id}.html`);
-          return;
-        }
-      } else if (dispatch) {
-        queryDoc(dispatch, (res) => {
-          const {data: {rows = [],},} = res;
-          if (rows?.length > 0) {
-            history.replace(`/doc/book/${rows[0].id}.html`);
-          }
-        });
-        return;
-      }
-    }
-    
-    if (url !== localStorage?.getItem('docUrl') || !currentDoc.id) {
-      if (dispatch) {
+    const {
+      match: { path, params, url },
+    } = props;
+    const pathname = location.pathname;
 
-        query(dispatch, params, path);
-        localStorage.setItem('docUrl', url);
-      }
+    if (!dispatch) {
+      return;
+    }
+
+    if (needsRouteResolve(pathname)) {
+      const bookId = parseBookIdFromPathname(pathname);
+      navigateToFirstChapter(bookId || undefined);
+      localStorage.setItem('docUrl', url);
+      return;
+    }
+
+    if (url !== localStorage?.getItem('docUrl') || !currentDoc.id) {
+      query(dispatch, params, path);
+      localStorage.setItem('docUrl', url);
+    } else {
+      setRedirecting(false);
     }
   }, [location.pathname]);
 
@@ -279,6 +293,18 @@ const Doc = (props) => {
   };
 
   const {formatMessage} = useIntl();
+
+  if (redirecting) {
+    return (
+      <>
+        {wldosHeader(seo)}
+        <div className={styles.docRouteLoading}>
+          <Spin size="large" />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       {wldosHeader(seo)}

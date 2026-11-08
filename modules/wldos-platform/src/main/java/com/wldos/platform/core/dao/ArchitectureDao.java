@@ -10,6 +10,8 @@ package com.wldos.platform.core.dao;
 
 import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.WoArchitecture;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 体系结构仓库操作类。
@@ -19,4 +21,7 @@ import com.wldos.platform.core.entity.WoArchitecture;
  * @version 1.0
  */
 public interface ArchitectureDao extends BaseDao<WoArchitecture, Long> {
+
+	@Query("SELECT * FROM wo_architecture WHERE com_id = :comId AND delete_flag = 'normal' AND is_valid = '1' ORDER BY display_order ASC, id ASC LIMIT 1")
+	WoArchitecture findFirstByComIdAndDeleteFlagAndIsValid(@Param("comId") Long comId);
 }

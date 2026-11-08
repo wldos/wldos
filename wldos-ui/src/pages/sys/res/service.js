@@ -3,6 +3,11 @@ import config from '@/utils/config';
 
 const { prefix } = config;
 
+export async function getEntity(params) {
+  return request(`${prefix}/admin/sys/res/get`, {
+    params,
+  });
+}
 export async function queryPage(params) {
   return request(`${prefix}/admin/sys/res`, {
     params,
@@ -57,4 +62,19 @@ export async function querySelectPage(params) {
   return request(`${prefix}/admin/sys/res/select`, {
     params,
   });
+}
+export async function checkApiCoverage(params) {
+  return request(`${prefix}/admin/sys/res/api-coverage-check`, {
+    params,
+  });
+}
+export async function probeResourceConfig(data) {
+  return request(`${prefix}/admin/sys/res/probe`, {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function refreshAuthCache() {
+  return request(`${prefix}/admin/sys/res/auth-cache/refresh`, { method: 'POST' });
 }

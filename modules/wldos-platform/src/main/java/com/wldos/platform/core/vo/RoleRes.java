@@ -31,6 +31,12 @@ public class RoleRes {
 	@ApiModelProperty(value = "是否继承", example = "true")
 	private boolean inherit;
 
+	@ApiModelProperty(value = "资源名称（展示用）")
+	private String resourceName;
+
+	@ApiModelProperty(value = "是否超出当前操作者可授范围（既有直接授权，只读展示）")
+	private boolean outOfGrantScope;
+
 	@Override
 	public String toString() {
 		return "{id: " + id.toString() + ", inherit: " + inherit + "}";

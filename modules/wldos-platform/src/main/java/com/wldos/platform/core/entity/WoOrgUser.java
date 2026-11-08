@@ -12,12 +12,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 import lombok.Getter;
 import lombok.Setter;
 
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true, orgId = true)
 public class WoOrgUser {
 	@Id
 	private Long id;

@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  * 无需继承 {@code ApplicationEvent}）。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Slf4j

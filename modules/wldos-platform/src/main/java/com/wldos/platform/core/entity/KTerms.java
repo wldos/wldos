@@ -17,10 +17,12 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 @Table
 @Getter
 @Setter
+@RbacRowScope(domainId = true, comId = true, domainSharedRead = true)
 public class KTerms {
 	@Id
 	private Long id;
@@ -30,6 +32,10 @@ public class KTerms {
 	private String slug;
 
 	private String infoFlag;
+
+	private Long domainId;
+
+	private Long comId;
 
 	private Long displayOrder;
 

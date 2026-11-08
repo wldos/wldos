@@ -18,7 +18,7 @@ const AddAppForm = (props) => {
       }}
       destroyOnClose
       visible={addAppModalVisible}
-      title={values.siteName}
+      title={`${values.siteName || ''}应用管理`}
       footer={null}
       onCancel={() => handleAddAppModalVisible()}
     >

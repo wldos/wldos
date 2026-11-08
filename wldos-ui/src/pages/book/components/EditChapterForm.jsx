@@ -1,21 +1,19 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  Button, Col,
+  Button,
+  Card,
+  Col,
   Form, Input,
   message,
-  Radio, Row, Select, Space, TreeSelect,
+  Row, Select, Space, TreeSelect, Typography,
 } from 'antd';
-import {EditOutlined} from '@ant-design/icons';
+import {EditOutlined, PictureOutlined} from '@ant-design/icons';
 import FullscreenModal from '@/components/FullscreenModal';
 import styles from "@/pages/book/create/components/Step2/index.less";
-import {fetchEnumMap} from "@/pages/book/create/service";
-import {
-  AvatarView,
-  picModal,
-} from "@/pages/book/create/components/Step2";
+import {picModal} from "@/pages/book/create/components/Step2";
+import ImageUpload from '@/pages/book/components/ImageUpload';
 import {upParams} from "@/components/FileUpload";
-
-const RadioGroup = Radio.Group;
+import ContentAccessPolicyPanel from '@/pages/commercial/cms-access/components/ContentAccessPolicyPanel';
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -23,12 +21,14 @@ let blobFile = null;
 
 const formLayout = {
   labelCol: {
-    span: 5,
+    span: 6,
   },
   wrapperCol: {
-    span: 19,
+    span: 18,
   },
 };
+
+const { Text } = Typography;
 
 const UpdateForm = (props) => {
   const [form] = Form.useForm();
@@ -42,22 +42,16 @@ const UpdateForm = (props) => {
   } = props;
   const [coverUrl, setCoverUrl] = useState(undefined);
   const [aspect, setAspect] = useState(1);
-  const [rewardStatus, setReward] = useState(false);
+  const policyRef = useRef(null);
   const cropRef = useRef(null);
   const [cropVisible, setCropVisible] = useState(false);
   const [cropSrc, setCropSrc] = useState('');
   const [type, setFileType] = useState(undefined);
-  const [privacyEnum, setPrivacy] = useState({});
   const [termValue, setTermValue] = useState([]);
   const [tagValue, setTagValue] = useState([]);
 
-  useEffect(async () => {
-    const resData = await fetchEnumMap();
-    if (resData && resData.data) {
-      setPrivacy(resData.data);
-    }
-
-    const {cover, ossUrl} = values;
+  useEffect(() => {
+    const { cover, ossUrl } = values;
     setCoverUrl(`${ossUrl}${cover}`);
   }, []);
 
@@ -131,13 +125,17 @@ const UpdateForm = (props) => {
       message.error(`上传失败！`, 2);
     }
   };
-  const mainCover = {xs: 24, sm: 24, md: 24, lg: 24, xl: 24,};
-
   const handleNext = async () => {
     const formValues = await validateFields();
     if (!formValues.cover) {
       message.error("请上传封面！");
       return;
+    }
+    if (policyRef.current?.save) {
+      const policyOk = await policyRef.current.save();
+      if (policyOk === false) {
+        return;
+      }
     }
     updateChapter({...values, ...formValues});
   };
@@ -170,19 +168,44 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <>
-        <div className={styles.baseView}>
-          <div className={styles.left}>
-            <Form
-              {...formLayout}
-              form={form}
-              layout="horizontal"
-              className={styles.stepForm}
-              hideRequiredMark
-              initialValues={values}
-            >
-              <Form.Item name="cover" noStyle>
-                <Input hidden/>
-              </Form.Item>
+        <Form
+          {...formLayout}
+          form={form}
+          layout="horizontal"
+          className={styles.stepForm}
+          style={{ maxWidth: '100%', marginTop: 0 }}
+          hideRequiredMark
+          initialValues={values}
+        >
+          <Form.Item name="cover" noStyle>
+            <Input hidden/>
+          </Form.Item>
+          <Row gutter={24} align="top">
+            <Col xs={24} lg={9}>
+              <Card
+                size="small"
+                title={
+                  <Space>
+                    <PictureOutlined style={{ color: '#1890ff' }} />
+                    <span>章节封面</span>
+                  </Space>
+                }
+                className={styles.uploadCard}
+              >
+                <ImageUpload
+                  avatar={coverUrl}
+                  params={upParams(532, 320)}
+                  beforeUp={(file) => beforeUp(file, 133 / 80)}
+                  onChange={(info) => handleChange(info, 1)}
+                  label="上传封面"
+                  type="cover"
+                />
+                <Text type="secondary" style={{ display: 'block', marginTop: 12, fontSize: 12 }}>
+                  列表与阅读页展示，建议 133:80；提交前须已上传封面。
+                </Text>
+              </Card>
+            </Col>
+            <Col xs={24} lg={15}>
               <Form.Item
                 label="别名"
                 name="pubName"
@@ -194,49 +217,22 @@ const UpdateForm = (props) => {
                 label="摘要"
                 rules={[
                   {
-                    max: 1500,
+                    max: 150,
                     type: 'string',
-                    message: '最多1500个字'
+                    message: '最多150个字'
                   },
                   {
-                    min: 150,
+                    min: 15,
                     type: 'string',
-                    message: '最少150个字'
+                    message: '最少15个字'
                   }
                 ]}
               >
                 <Input.TextArea
-                  placeholder="请描述内容概要，不少于150字。"
+                  placeholder="请描述内容概要，不少于15字。"
                   rows={4}
                 />
               </Form.Item>
-              <Form.Item
-                name="privacyLevel"
-                label="查看方式"
-              >
-                <RadioGroup
-                  options={privacyEnum}
-                  onChange={(e) => {
-                    if (e.target.value === 'reward') setReward(true); else setReward(false);
-                  }}
-                />
-              </Form.Item>
-              {rewardStatus && <Form.Item
-                label="打赏金额"
-                name="reward"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入打赏金额',
-                  },
-                  {
-                    pattern: /^(\d+)((?:\.\d+)?)$/,
-                    message: '请输入合法金额数字',
-                  },
-                ]}
-              >
-                <Input prefix="￥" placeholder="请输入打赏金额"/>
-              </Form.Item>}
               <Form.Item label="分类" name="termTypeIds"
                rules={[
                  {
@@ -250,18 +246,16 @@ const UpdateForm = (props) => {
               <Form.Item label="标签" name="tagIds">
                 <Select mode="tags" {...tagProps} />
               </Form.Item>
-            </Form>
-          </div>
-          <div className={styles.right}>
-            <Row gutter={2}>
-              <Col key={0} {...mainCover}>
-                <AvatarView avatar={coverUrl} params={upParams(532, 320)}
-                            beforeUp={(file) => beforeUp(file, 133 / 80)}
-                            onChange={(info) => handleChange(info, 1)} style="avatar"/>
-              </Col>
-            </Row>
-          </div>
-        </div>
+            </Col>
+          </Row>
+        </Form>
+        <ContentAccessPolicyPanel
+          ref={policyRef}
+          pubId={values?.id}
+          rootPubId={values?.parentId}
+          parentPubId={values?.parentId}
+          showSaveButton={false}
+        />
         {picModal(cropVisible, setCropVisible, cropRef, cropSrc, aspect, setAspectRatio, setRotateTo, saveCropper, type)}
       </>
     );

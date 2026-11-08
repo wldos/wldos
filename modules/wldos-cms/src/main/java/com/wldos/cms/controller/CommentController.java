@@ -43,6 +43,11 @@ import javax.validation.Valid;
 @RestController
 public class CommentController extends EntityController<CommentService, KComments> {
 
+	@ApiOperation(value = "站点评论是否开启", notes = "全站开关 wldos_cms_comment_enabled，关闭时不展示列表且不可发表")
+	@GetMapping("enabled")
+	public Boolean queryCommentEnabled() {
+		return this.service.isCommentEnabled();
+	}
 
 	@ApiOperation(value = "查询评论列表", notes = "根据内容ID查询评论列表")
 	@GetMapping("/{pubId:\\d+}")

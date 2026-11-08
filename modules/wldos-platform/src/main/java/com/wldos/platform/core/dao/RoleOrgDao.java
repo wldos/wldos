@@ -28,7 +28,20 @@ public interface RoleOrgDao extends BaseDao<WoRoleOrg, Long> {
 	@Query("select r.* from wo_role_org r where r.delete_flag='normal' and r.is_valid='1' and r.org_id=:orgId")
 	List<WoRoleOrg> queryRoleByOrgId(@Param("orgId") Long orgId);
 
+	@Query("select r.* from wo_role_org r where r.delete_flag='normal' and r.is_valid='1' and r.org_id in (:orgIds)")
+	List<WoRoleOrg> queryRoleByOrgIds(@Param("orgIds") List<Long> orgIds);
+
+	@Query("select r.* from wo_role_org r where r.delete_flag='normal' and r.is_valid='1'")
+	List<WoRoleOrg> findAllValid();
+
 	@Modifying
 	@Query("delete from wo_role_org where org_id=:orgId and arch_id=:archId and com_id=:comId")
 	void deleteByOrgIdAndArchIdAndComId(@Param("orgId") Long orgId, @Param("archId") Long archId, @Param("comId") Long comId);
+
+	@Query("select count(1) from wo_role_org r where r.delete_flag='normal' and r.is_valid='1' and r.org_id=:orgId")
+	long countValidByOrgId(@Param("orgId") Long orgId);
+
+	@Modifying
+	@Query("delete from wo_role_org where role_id=:roleId")
+	void deleteByRoleId(@Param("roleId") Long roleId);
 }

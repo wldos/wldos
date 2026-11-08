@@ -1,6 +1,6 @@
-import React, { forwardRef, useCallback, useImperativeHandle } from 'react';
-import { Form, Input, Select, Button, Card, Space, Tooltip, Alert } from 'antd';
-import {
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react';
+import { Form, Input, Select, Card, Space, Tooltip } from 'antd';
+import { fetchEnumUserStatus } from '@/services/enum';import {
   UserOutlined,
   KeyOutlined,
   MailOutlined,
@@ -15,7 +15,8 @@ import {
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
-const { Option } = Select;
+
+const DEFAULT_USER_STATUS = 'normal';
 
 const formLayout = {
   labelCol: {
@@ -28,10 +29,27 @@ const formLayout = {
 
 const CreateFormContent = forwardRef((props, ref) => {
   const [form] = Form.useForm();
+  const [statusOptions, setStatusOptions] = useState([]);
   const {
     onSubmit: handleAdd,
     onCancel: handleCancel
   } = props;
+
+  useEffect(() => {
+    fetchEnumUserStatus().then((res) => {
+      if (!res?.data?.length) {
+        return;
+      }
+      setStatusOptions(res.data);
+      const current = form.getFieldValue('status');
+      if (!current) {
+        const hasNormal = res.data.some((item) => item.value === DEFAULT_USER_STATUS);
+        form.setFieldsValue({
+          status: hasNormal ? DEFAULT_USER_STATUS : res.data[0].value,
+        });
+      }
+    });
+  }, [form]);
 
   const applyServerValidationErrors = useCallback(
     (msg) => {
@@ -64,9 +82,17 @@ const CreateFormContent = forwardRef((props, ref) => {
     } catch {
       return;
     }
-    const payload = { ...fieldsValue };
-    if (!payload.mobile || String(payload.mobile).trim() === '') {
-      delete payload.mobile;
+    const payload = {
+      nickname: fieldsValue.nickname?.trim(),
+      loginName: fieldsValue.loginName?.trim(),
+      email: fieldsValue.email?.trim(),
+      passwd: fieldsValue.passwd,
+      confirm: fieldsValue.confirm,
+      status: fieldsValue.status,
+      remark: fieldsValue.remark,
+    };
+    if (fieldsValue.mobile && String(fieldsValue.mobile).trim() !== '') {
+      payload.mobile = String(fieldsValue.mobile).trim();
     }
     await handleAdd(payload);
   }, [form, handleAdd]);
@@ -83,15 +109,6 @@ const CreateFormContent = forwardRef((props, ref) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="新建用户"
-          description="创建新的用户账户，配置用户的基本信息、登录凭证和状态设置。用户是系统的主要使用者。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -324,10 +341,8 @@ const CreateFormContent = forwardRef((props, ref) => {
             <Select
               placeholder="请选择用户状态"
               style={{ width: '100%' }}
-            >
-              <Option value="1">正常</Option>
-              <Option value="0">禁用</Option>
-            </Select>
+              options={statusOptions}
+            />
           </FormItem>
         </Card>
       </div>
@@ -339,7 +354,7 @@ const CreateFormContent = forwardRef((props, ref) => {
       {...formLayout}
       form={form}
       initialValues={{
-        status: '1'
+        status: DEFAULT_USER_STATUS,
       }}
     >
       {renderContent()}

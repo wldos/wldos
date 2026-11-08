@@ -1,4 +1,4 @@
-import {Button, Card, Col, Divider, List, Row, Typography, message, Tooltip} from 'antd';
+import {Button, Card, Col, Divider, List, Row, Typography, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {GridContent, PageContainer} from '@ant-design/pro-layout';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -16,43 +16,59 @@ import {
   genTdkCrumbs, typeUrl,
 } from "@/utils/utils";
 import TelCode from "@/pages/book/detail/components/TelCode";
+import ContentAccessFooter from '@/pages/commercial/cms-access/components/ContentAccessFooter';
+import ContentAccessPubBody from '@/pages/commercial/cms-access/components/ContentAccessPubBody';
+import ContentTipBlock from '@/pages/commercial/cms-access/components/ContentTipBlock';
+import useCmsCommentEnabled from '@/pages/book/detail/useCmsCommentEnabled';
 
 const getKey = (id, index) => `${id}-${index}`;
 
-const operTabList = (cNum) => [
-  {
-    key: 'info',
-    tab: (
-      <span> 详情{' '}
-        <span style={{ fontSize: 14, }} > </span>
-      </span>
-    ),
-  },
-  {
-    key: 'comments',
-    tab: (
-      <span> 评论{' '}
-        <span
-          style={{
-            fontSize: 14,
-            fontStyle: 'italic',
-            color: 'red',
-          }}
-        >
-          {cNum === '0' ? '抢沙发!' : cNum}
+const operTabList = (cNum, commentEnabled) => {
+  const tabs = [
+    {
+      key: 'info',
+      tab: (
+        <span> 详情{' '}
+          <span style={{ fontSize: 14, }} > </span>
         </span>
-      </span>
-    ),
-  },
-];
+      ),
+    },
+  ];
+  if (commentEnabled) {
+    tabs.push({
+      key: 'comments',
+      tab: (
+        <span> 评论{' '}
+          <span
+            style={{
+              fontSize: 14,
+              fontStyle: 'italic',
+              color: 'red',
+            }}
+          >
+            {cNum === '0' ? '抢沙发!' : cNum}
+          </span>
+        </span>
+      ),
+    });
+  }
+  return tabs;
+};
 
 const Product = (props) => {
-  const {match: {params={}, url}, dispatch} = props;
+  const { match: { params = {}, url }, dispatch, currentUser } = props;
+  const commentEnabled = useCmsCommentEnabled();
   const [product, setProduct] = useState({});
   const [mainPic, setMainPic] = useState(undefined);
   const [list, setList] = useState(undefined);
   const [listRight, setListRight] = useState(undefined);
   const [tabKey, setTabKey] = useState('info');
+
+  useEffect(() => {
+    if (!commentEnabled && tabKey === 'comments') {
+      setTabKey('info');
+    }
+  }, [commentEnabled, tabKey]);
   const [listRel, setListRel] = useState(undefined);
   const [visible, setVisible] = useState(false);
 
@@ -171,15 +187,6 @@ const Product = (props) => {
           <Link to={`/book-${product.id}.html` /* 购买后，变为阅读，可读内容由后端决定 */} target="_blank" rel="noopener">试读</Link>
         </Button>
         </Tooltip>
-        <Tooltip title="推广期 免费试读，无需购买！" color="orange">
-          <Button size="small" type="primary"
-                  onClick={async () => {message.success('推广期免费全文试读，无需购买！');
-                  /* @todo 付费设置检查，如果免费，价格一栏显示免费，查看直接打开阅读页，如果收费，查看时需要付款，付款成功打开阅读页；如果打赏可见，显示打赏按钮 */
-                  }}>
-            购买
-          </Button>
-        </Tooltip>
-        {product.reward && <Button size="small" type="primary">打赏</Button>}
       </div>
       <Divider
         style={{margin: '40px 0 24px',}}/>
@@ -292,11 +299,41 @@ const Product = (props) => {
           <Col xs={24} sm={24} md={24} lg={24} xl={24}>
             <Card className={styles.tabsCard}
                   bordered={true}
-                  tabList={operTabList(product?.commentCount)}
+                  tabList={operTabList(product?.commentCount, commentEnabled)}
                   activeTabKey={tabKey}
                   onTabChange={(a) => setTabKey(a)}
             >
-              {tabKey === 'info' ? (<>{bodyContentBook(product?.pubContent, product?.id) || '没有内容'}<Divider style={{ margin: '40px 0 24px', }} /></>) : <Comments id={product?.id}/>}
+              {tabKey !== 'comments' ? (
+                <>
+                  {product?.pubContent ? (
+                    <ContentAccessPubBody
+                      pubId={product?.id}
+                      pubContent={product.pubContent}
+                      pubMimeType={product?.pubMimeType}
+                      contentAccess={product?.contentAccess}
+                      currentUser={currentUser}
+                      renderHtml={(html, key) => (
+                        <React.Fragment key={key}>
+                          {bodyContentBook(html, product?.id)}
+                        </React.Fragment>
+                      )}
+                    />
+                  ) : (
+                    '没有内容'
+                  )}
+                  <ContentAccessFooter
+                    pubId={product?.id}
+                    contentAccess={product?.contentAccess}
+                    currentUser={currentUser}
+                    pubContent={product?.pubContent}
+                    pubMimeType={product?.pubMimeType}
+                  />
+                  <ContentTipBlock pubId={product?.id} contentAccess={product?.contentAccess} currentUser={currentUser} />
+                  <Divider style={{ margin: '40px 0 24px', }} />
+                </>
+              ) : (
+                <Comments id={product?.id} />
+              )}
             </Card>
           </Col>
         </Row>
@@ -322,6 +359,7 @@ const Product = (props) => {
   );
 };
 
-export default connect(({user}) => ({
+export default connect(({ user }) => ({
   tdk: user.tdk,
+  currentUser: user.currentUser,
 }))(Product);

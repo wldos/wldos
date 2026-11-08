@@ -16,8 +16,37 @@ export async function queryCurAccount() {
 export async function queryMenu() {
   return request(`${prefix}/admin/sys/user/adminMenu`);
 }
+
+/** 管理端操作权限（admin_button resourceCode 列表；超管含 "*"） */
+export async function queryAdminAuthorities() {
+  return request(`${prefix}/admin/sys/user/adminAuthorities`, { method: 'GET' });
+}
+
+/** 管理端首页（/admin Tab）；可选 domainId 预览指定站点 */
+export async function queryAdminHome(domainId) {
+  return request(`${prefix}/admin/sys/user/adminHome`, {
+    method: 'GET',
+    params: domainId != null && domainId !== '' ? { domainId } : undefined,
+  });
+}
+
+/** 管理端顶栏「使用文档」开关与链接 */
+export async function queryAdminHeaderHelp() {
+  return request(`${prefix}/admin/sys/user/adminHeaderHelp`, { method: 'GET' });
+}
+
+/** @deprecated 工作组织切换已废弃，保留空实现兼容旧引用 */
+export async function queryWorkOrgs() {
+  return { code: 200, data: [], success: true };
+}
+
+/** @deprecated 工作组织切换已废弃 */
+export async function switchWorkOrg() {
+  return { code: 200, data: true, success: true };
+}
+
 export async function queryUserMenu(userId) {
-  return request(`${prefix}/user/menu/${userId}`);
+  return request(`${prefix}/admin/sys/user/menu/${userId}`);
 }
 export async function queryUserAdminMenu(userId) {
   return request(`${prefix}/admin/sys/user/adminMenu/${userId}`);
@@ -39,6 +68,14 @@ export async function queryAccountCenterTabDefs() {
   return request(`${prefix}/user/accountCenterTabDefs`, { method: 'GET' });
 }
 
+/** 当前用户是否匹配指定插槽目标角色（未登录为 matched=false） */
+export async function fetchUserSlotMembership(slotCode) {
+  return request(`${prefix}/user/slotMembership`, {
+    method: 'GET',
+    params: slotCode ? { slotCode } : undefined,
+  });
+}
+
 /** 当前用户登录日志分页（仅本人） */
 export async function queryMyLoginLogs(params) {
   return request(`${prefix}/user/myLoginLogs`, { method: 'GET', params });
@@ -55,7 +92,37 @@ export async function queryMyShortcuts() {
 }
 
 export async function touchMyShortcut(data) {
-  return request(`${prefix}/user/myShortcuts/touch`, { method: 'POST', data });
+  return request(`${prefix}/user/myShortcuts/touch`, { method: 'POST', data, skipErrorHandler: true });
+}
+
+/** 用户归属组织及每个组织授予的角色（权限查看「归属与角色」页签） */
+export async function queryUserOrgRoles(userId) {
+  return request(`${prefix}/admin/sys/user/orgRoles/${userId}`);
+}
+
+/** 用户角色四来源：组织角色 + 直挂角色 + 主体角色 + 身份角色 */
+export async function queryUserRoleSources(userId) {
+  return request(`${prefix}/admin/sys/user/role/list`, { params: { userId } });
+}
+
+/** 人直挂角色 */
+export async function bindUserRole(data) {
+  return request(`${prefix}/admin/sys/user/role/bind`, { method: 'POST', data });
+}
+
+/** 解绑直挂角色 */
+export async function unbindUserRole(data) {
+  return request(`${prefix}/admin/sys/user/role/unbind`, { method: 'POST', data });
+}
+
+/** 把人加入组织（角色经组织挂接到人） */
+export async function addOrgStaff(data) {
+  return request(`${prefix}/admin/sys/org/user`, { method: 'POST', data });
+}
+
+/** 把人移出组织 */
+export async function removeOrgStaff(data) {
+  return request(`${prefix}/admin/sys/org/staffDel`, { method: 'DELETE', data });
 }
 
 export async function createMyShortcut(data) {

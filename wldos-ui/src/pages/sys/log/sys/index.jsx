@@ -1,23 +1,17 @@
-/**
- * 系统日志列表页（系统设置 → 安全审计 → 系统日志）。
- *
- * 数据维度：
- *   - 由业务侧通过 ISystemLogger / ApplicationEventPublisher 触发；
- *   - 涵盖配置变更（CONFIG_CHANGE）、调度任务（HOLIDAY_SYNC_*、TASK_*）、
- *     关键异常（EXCEPTION）等"运维事件"；
- *   - 一次写入不可改、不可删；详情含 metadata（自由 JSON）。
- *
- * 操作能力：
- *   - 按 来源模块 / 事件类型 / 严重级别 / 触发者 过滤；
- *   - 默认按 occur_at 倒序，行点击展开详情抽屉。
- */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { connect, useLocation } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
 import { PageContainer } from '@ant-design/pro-layout';
+import { auditComDomainFilterColumns } from '@/pages/sys/log/_shared/auditLogFilterColumns';
+import { useAuditLogListMeta } from '@/pages/sys/log/_shared/auditLogListMeta';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import { Drawer, Tag, Typography } from 'antd';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
+import { fetchEnumSysLogActorKind } from '@/services/enum';
+import { selectToEnum } from '@/utils/utils';
 import { queryPage } from './service';
 
 const { Text, Paragraph } = Typography;
@@ -29,15 +23,60 @@ const SEVERITY_TAG = {
   CRITICAL: { color: 'magenta', text: '严重' },
 };
 
-const SysLogList = () => {
+const emptyDash = (v) => (v === 0 || v === '0' ? v : v || '-');
+
+const URL_SEARCH_KEYS = [
+  'sourceModule', 'eventType', 'severity', 'ip', 'requestUri', 'requestMethod', 'actorKind', 'operatorUserId',
+];
+
+function parseSearchFromLocation(search) {
+  const raw = search && search.startsWith('?') ? search.slice(1) : (search || '');
+  if (!raw) return {};
+  const params = new URLSearchParams(raw);
+  const initial = {};
+  URL_SEARCH_KEYS.forEach((key) => {
+    const v = params.get(key);
+    if (v != null && v !== '') {
+      initial[key] = v;
+    }
+  });
+  return initial;
+}
+
+const SysLogList = ({ isAdmin, isTenantAdmin, currentUser }) => {
+  const location = useLocation();
   const actionRef = useRef();
+  const listMeta = useAuditLogListMeta({ isAdmin, isTenantAdmin, currentUser });
+  const { domainLabelMap, showDomainColumn } = listMeta;
+  const formRef = useRef();
   const [row, setRow] = useState(null);
+  const [actorKindEnum, setActorKindEnum] = useState({});
+  const initialSearch = useMemo(
+    () => parseSearchFromLocation(location.search),
+    [location.search],
+  );
 
   const mobile = isMobile();
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
 
   useDesktopSticky(actionRef);
+
+  useEffect(() => {
+    fetchEnumSysLogActorKind().then((res) => {
+      if (res?.data) {
+        setActorKindEnum(selectToEnum(res.data));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!formRef.current || !Object.keys(initialSearch).length) {
+      return;
+    }
+    formRef.current.setFieldsValue(initialSearch);
+    actionRef.current?.reload();
+  }, [initialSearch]);
 
   useEffect(() => {
     if (!containerRef.current) return undefined;
@@ -53,6 +92,7 @@ const SysLogList = () => {
   }, []);
 
   const columns = useMemo(() => [
+    ...auditComDomainFilterColumns(listMeta),
     {
       title: '事件类型',
       dataIndex: 'eventType',
@@ -99,17 +139,61 @@ const SysLogList = () => {
       hideInSearch: true,
     },
     {
+      title: 'IP',
+      dataIndex: 'ip',
+      width: 130,
+      ellipsis: true,
+      hideInSearch: true,
+      render: (_, r) => emptyDash(r.ip),
+    },
+    {
+      title: 'IP',
+      dataIndex: 'ip',
+      hideInTable: true,
+    },
+    {
+      title: '请求路径',
+      dataIndex: 'requestUri',
+      width: 280,
+      ellipsis: true,
+      hideInSearch: true,
+      render: (_, r) => emptyDash(r.requestUri),
+    },
+    {
+      title: 'Method',
+      dataIndex: 'requestMethod',
+      width: 80,
+      hideInSearch: true,
+      render: (_, r) => emptyDash(r.requestMethod),
+    },
+    {
+      title: '来源分类',
+      dataIndex: 'actorKind',
+      width: 120,
+      ellipsis: true,
+      valueType: 'select',
+      valueEnum: actorKindEnum,
+      render: (_, r) => {
+        const v = r.actorKind;
+        if (!v) return '-';
+        return actorKindEnum[v]?.text || v;
+      },
+    },
+    {
       title: '触发者ID',
       dataIndex: 'operatorUserId',
       width: 180,
       ellipsis: true,
+      render: (_, r) => emptyDash(r.operatorUserId),
     },
     {
-      title: '域ID',
+      title: '站点',
       dataIndex: 'domainId',
-      width: 120,
+      width: 140,
+      ellipsis: true,
       hideInSearch: true,
-      hideInTable: true,
+      hideInTable: !showDomainColumn,
+      render: (_, record) => domainLabelMap[String(record.domainId)] || record.domainId || '-',
     },
     {
       title: '扩展信息',
@@ -123,20 +207,19 @@ const SysLogList = () => {
       hideInTable: true,
       hideInSearch: true,
     },
-  ], [mobile]);
+  ], [mobile, actorKindEnum, domainLabelMap, showDomainColumn, listMeta]);
 
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{ padding: '0', margin: '0' }}
-      bodyStyle={{ padding: '24px', margin: '0' }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="系统日志"
           actionRef={actionRef}
+          formRef={formRef}
+          form={{ initialValues: initialSearch }}
           rowKey="id"
           search={{ labelWidth: 120 }}
           request={async (params, sorter, filter) => {
@@ -190,7 +273,17 @@ const SysLogList = () => {
                   },
                 },
                 { title: '描述', dataIndex: 'message' },
-                { title: '触发者ID', dataIndex: 'operatorUserId' },
+                { title: 'IP', dataIndex: 'ip', render: (v) => emptyDash(v) },
+                { title: '请求路径', dataIndex: 'requestUri', render: (v) => emptyDash(v) },
+                { title: 'Method', dataIndex: 'requestMethod', render: (v) => emptyDash(v) },
+                { title: 'Host', dataIndex: 'requestHost', render: (v) => emptyDash(v) },
+                {
+                  title: '来源分类',
+                  dataIndex: 'actorKind',
+                  render: (v) => (v ? (actorKindEnum[v]?.text || v) : '-'),
+                },
+                { title: '聚合次数', dataIndex: 'aggregateCount', render: (v) => emptyDash(v) },
+                { title: '触发者ID', dataIndex: 'operatorUserId', render: (v) => emptyDash(v) },
                 { title: '域ID', dataIndex: 'domainId' },
                 { title: '公司ID', dataIndex: 'comId' },
               ]}
@@ -221,4 +314,7 @@ const SysLogList = () => {
   );
 };
 
-export default SysLogList;
+export default connect(({ user }) => ({
+  currentUser: user.currentUser || {},
+  ...buildAuthorityHelper(user, '/admin'),
+}))(SysLogList);

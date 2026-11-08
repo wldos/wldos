@@ -68,4 +68,45 @@ public interface DomainResourceDao extends BaseDao<WoDomainResource, Long>, Doma
     @Modifying
     @Query("delete from wo_domain_resource where app_id=:appId")
     void deleteByAppId(@Param("appId") Long appId);
+
+	/**
+	 * 分类删除后，解除域资源对已删 term_type_id 的引用，避免动态路由加载失败。
+	 */
+	@Modifying
+	@Query("update wo_domain_resource set term_type_id = 0 where term_type_id = :termTypeId and delete_flag = 'normal'")
+	int resetTermTypeIdByTermTypeId(@Param("termTypeId") Long termTypeId);
+
+	@Modifying
+	@Query("update wo_domain_resource set delete_flag = 'deleted' where resource_id in (:resourceIds) and delete_flag = 'normal'")
+	int logicDeleteByResourceIds(@Param("resourceIds") List<Long> resourceIds);
+
+	@Query("SELECT COUNT(1) FROM wo_domain_resource WHERE domain_id = :domainId AND delete_flag = 'normal'")
+	long countByDomainId(@Param("domainId") Long domainId);
+
+	@Query("SELECT DISTINCT domain_id FROM wo_domain_resource WHERE resource_id = :resourceId AND delete_flag = 'normal'")
+	List<Long> listDomainIdsByResourceId(@Param("resourceId") Long resourceId);
+
+	@Modifying
+	@Query("UPDATE wo_domain_resource SET app_id = :newAppId WHERE resource_id = :resourceId AND delete_flag = 'normal'")
+	int updateAppIdByResourceId(@Param("resourceId") Long resourceId, @Param("newAppId") Long newAppId);
+
+	@Modifying
+	@Query("update wo_domain_resource set is_valid=:isValid, update_by=:updateBy, update_ip=:updateIp, update_time=current_timestamp "
+			+ "where domain_id=:domainId and resource_id in (:resourceIds) and delete_flag='normal'")
+	int updateVisibilityByDomainAndResourceIds(
+			@Param("domainId") Long domainId,
+			@Param("resourceIds") List<Long> resourceIds,
+			@Param("isValid") String isValid,
+			@Param("updateBy") Long updateBy,
+			@Param("updateIp") String updateIp);
+
+	@Modifying
+	@Query("update wo_domain_resource set is_valid=:isValid, update_by=:updateBy, update_ip=:updateIp, update_time=current_timestamp "
+			+ "where domain_id=:domainId and app_id in (:appIds) and delete_flag='normal'")
+	int updateVisibilityByDomainAndAppIds(
+			@Param("domainId") Long domainId,
+			@Param("appIds") List<Long> appIds,
+			@Param("isValid") String isValid,
+			@Param("updateBy") Long updateBy,
+			@Param("updateIp") String updateIp);
 }

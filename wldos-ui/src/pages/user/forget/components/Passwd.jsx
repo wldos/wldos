@@ -26,7 +26,6 @@ const PasswdReset = (props) => {
     onCancel: handleModalVisible,
     modalVisible,
     values,
-    hideOld,
   } = props;
 
   const handleNext = async () => {
@@ -67,6 +66,10 @@ const PasswdReset = (props) => {
 
     setPopover(!popover);
 
+    if (value.length < 8) {
+      return promise.reject('请设置8位以上密码（字母、数字、特殊字符至少两种）');
+    }
+
     if (value && confirmDirty) {
       form.validateFields(['confirm']);
     }
@@ -77,31 +80,6 @@ const PasswdReset = (props) => {
   const renderContent = () => {
     return (
       <>
-        <FormItem
-          name="loginName"
-          label="用户名"
-          hidden={hideOld}
-          className={
-            form.getFieldValue('loginName') &&
-            form.getFieldValue('loginName').length > 0 &&
-            styles.password
-          }
-          rules={[
-            {
-              required: !hideOld,
-              message: intl.formatMessage({
-                id: 'userRegister.password.required',
-              }),
-            },
-          ]}
-        >
-          <Input
-            size="large"
-            placeholder={intl.formatMessage({
-              id: 'userRegister.password.placeholder',
-            })}
-          />
-        </FormItem>
         <FormItem
           name="password"
           label="新密码"

@@ -15,7 +15,7 @@ import styles from '@/wldos.less';
 import { renderIcon } from '@/utils/iconLibrary';
 import {wldosHeader} from "@/utils/utils";
 import { routeTitleByPath } from '../../config/routes.index';
-
+import { isDesktopEmbedded, mergeDesktopShellSite, resolveDesktopProLayoutBrand } from '@/utils/desktopEmbeddedBridge';
 const AdminLayout = (props) => {
   const {
     dispatch,
@@ -32,14 +32,24 @@ const AdminLayout = (props) => {
 
   const [collapsed, setCollapsed] = useState(false);
   const adminHomePath = '/admin';
+  /** 首页激活时 Tabs 占位 key，避免 undefined 导致上一 Tab 仍呈选中态 */
+  const tabsNoneKey = '__wldos_no_tab__';
+
+  const normalizeTabPath = useCallback((path) => {
+    const p = (path || '').replace(/\/$/, '') || adminHomePath;
+    if (p === '/admin/sys') return adminHomePath;
+    return p;
+  }, [adminHomePath]);
   /** 未在菜单中配置的路由，从路由配置的 name 取标签标题（通用，无硬编码） */
   const pathTitleFallback = routeTitleByPath || {};
   const [tabs, setTabs] = useState([
     { key: adminHomePath, path: adminHomePath, title: '首页', closable: false }
   ]); // 存储标签信息，首页不可关闭
   const [activeKey, setActiveKey] = useState(location?.pathname || adminHomePath);
+  const [brandingRev, setBrandingRev] = useState(0);
   // 记录折叠状态以便全屏退出后还原
   const prevCollapsedRef = useRef(false);
+  const adminTabsRef = useRef(null);
 
   /**
    * 因为权限已经在后端过滤，返回的都是有权限菜单，不必检查权限。
@@ -71,6 +81,9 @@ const AdminLayout = (props) => {
         type: 'user/fetchAdminMenu',
       });
       dispatch({
+        type: 'user/fetchAdminAuthorities',
+      });
+      dispatch({
         type: 'user/fetchSite',
       });
     }
@@ -89,15 +102,35 @@ const AdminLayout = (props) => {
     };
   }, [dispatch]);
 
-  // 从 Redux site 派生展示用 site（复用 curDomain 缓存）
-  const site = userSite
+  useEffect(() => {
+    const onBranding = () => setBrandingRev((v) => v + 1);
+    window.addEventListener('wldos:desktop-branding-ready', onBranding);
+    return () => window.removeEventListener('wldos:desktop-branding-ready', onBranding);
+  }, []);
+
+  // 从 Redux site 派生展示用 site（复用 curDomain 缓存）；桌面壳内用壳品牌覆盖云端 WLDOS 站点名
+  const desktopEmbedded = isDesktopEmbedded();
+  const proBrand = resolveDesktopProLayoutBrand(userSite);
+  const mergedSite = desktopEmbedded ? mergeDesktopShellSite(userSite || {}) : userSite;
+  const site = desktopEmbedded
     ? {
-        title: `${userSite.siteTitle || ''}_${userSite.siteDescription || ''}`,
-        logo: userSite.siteLogo,
-        favicon: userSite.favicon,
-        version: userSite.version,
+        title: proBrand.title,
+        logo: proBrand.logo,
+        favicon: mergedSite?.favicon,
+        version: mergedSite?.version,
+        keywords: mergedSite?.siteKeyword || '',
+        description: mergedSite?.siteDescription || '',
       }
-    : { title: '', logo: '', favicon: '', version: '' };
+    : mergedSite
+      ? {
+          title: mergedSite.siteTitle || mergedSite.siteName || 'WLDOS',
+          logo: mergedSite.siteLogo,
+          favicon: mergedSite.favicon,
+          version: mergedSite.version,
+        }
+      : { title: '', logo: '', favicon: '', version: '' };
+  // brandingRev 触发壳品牌注入后重算 proBrand（eslint 依赖 intentionally 含 brandingRev）
+  void brandingRev;
 
   const handleMenuCollapse = (payload) => {
     setCollapsed(payload);
@@ -123,6 +156,12 @@ const AdminLayout = (props) => {
     }
     return '';
   }, [menuData]);
+
+  const resolvePageTitle = useCallback((path) => {
+    const normalized = (path || '').replace(/\/$/, '') || adminHomePath;
+    return findTitleFromMenu(menuData, normalized) || pathTitleFallback[normalized] || '';
+  }, [menuData, findTitleFromMenu, pathTitleFallback, adminHomePath]);
+
   // 标题提取工具：兼容多种字段
   const extractTitle = (menuItem, fallbackPath) => {
     if (!menuItem) return fallbackPath;
@@ -157,21 +196,32 @@ const AdminLayout = (props) => {
 
   // 监听路由变化：新增或激活标签
   useEffect(() => {
-    const path = location.pathname || adminHomePath;
+    const path = normalizeTabPath(location.pathname);
+    const fromAdminHome = !!location.state?.fromAdminHome;
+
+    // 首页 redirect 到业务路径：保持首页 Tab 激活，不新增 Tab（仅依赖 state，不扩大「首页视图」判定）
+    if (fromAdminHome && path !== adminHomePath) {
+      setActiveKey(adminHomePath);
+      return;
+    }
+
+    if (path === adminHomePath) {
+      setActiveKey(adminHomePath);
+      setTabs((prev) => prev.map((t) => (t.key === adminHomePath ? { ...t, title: '首页' } : t)));
+      return;
+    }
+
     setActiveKey(path);
     setTabs((prev) => {
-      // 如果标签已存在，更新其标题（防止刷新后标题丢失）
       if (prev.some((t) => t.key === path)) {
         return prev.map(t => {
           if (t.key === path) {
-            // 直接从最新 menuData 里获取；若未就绪则保持为空，避免显示路径
             const title = findTitleFromMenu(menuData, t.path || path) || pathTitleFallback[t.path || path] || t.title || '';
             return { ...t, title };
           }
           return t;
         });
       }
-      // 新增标签
       const title = findTitleFromMenu(menuData, path) || pathTitleFallback[path] || '';
       const newTab = {
         key: path,
@@ -181,7 +231,7 @@ const AdminLayout = (props) => {
       };
       return [...prev, newTab];
     });
-  }, [location.pathname, menuData, findTitleFromMenu]);
+  }, [location.pathname, location.state, menuData, findTitleFromMenu, normalizeTabPath, adminHomePath]);
 
   // 进入/退出全屏时自动折叠或还原侧边菜单
   useEffect(() => {
@@ -265,17 +315,21 @@ const AdminLayout = (props) => {
   // 切换标签
   const onChangeTab = (key) => {
     setActiveKey(key);
-    if (key !== location.pathname) history.push(key);
+    const normPath = normalizeTabPath(location.pathname);
+    const onHomeRedirect = !!location.state?.fromAdminHome;
+    // 首页 redirect 后 URL 可能仍停在来源页，或 Tabs 仍记上一 Tab；须强制导航并清 state
+    if (key !== normPath || onHomeRedirect || activeKey === adminHomePath) {
+      history.push({ pathname: key, state: {} });
+    }
   };
 
-  // 处理首页标签点击
+  // 首页 Tab 固定走 /admin；redirect 内容由 admin/home 处理，不另开 Tab
   const handleHomeClick = () => {
     setActiveKey(adminHomePath);
-    if (adminHomePath !== location.pathname) {
-      history.push(adminHomePath);
-    }
-    // 强制触发其他标签的重新渲染，确保焦点状态正确更新
-    setTabs(prev => [...prev]);
+    history.push({
+      pathname: adminHomePath,
+      state: { fromAdminHome: true },
+    });
   };
 
   // Tab 右键菜单动作
@@ -337,6 +391,30 @@ const AdminLayout = (props) => {
 
   // 暂时取消 ErrorBoundary，避免潜在的重复挂载导致的请求循环
 
+  const syncAdminChromeTopVar = useCallback(() => {
+    const tabsH = adminTabsRef.current?.offsetHeight ?? 40;
+    document.documentElement.style.setProperty('--wldos-admin-chrome-top', `${48 + tabsH}px`);
+  }, []);
+
+  useEffect(() => {
+    syncAdminChromeTopVar();
+    const el = adminTabsRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(syncAdminChromeTopVar);
+    ro.observe(el);
+    window.addEventListener('resize', syncAdminChromeTopVar);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', syncAdminChromeTopVar);
+    };
+  }, [syncAdminChromeTopVar, tabs.length]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [location.pathname, location.search]);
+
   // 激活标签滚动到可见区域
   useEffect(() => {
     // 容器：Tabs 外层的滚动区域，就是我们渲染 items 的父 div
@@ -361,10 +439,16 @@ const AdminLayout = (props) => {
       {wldosHeader(site)}
       <ProLayout
         className={styles.slideNavWldos}
-        logo={site.logo}
+        logo={site.logo || false}
         title={site.title || ''}
+        pageTitleRender={() => resolvePageTitle(location.pathname) || ''}
         formatMessage={formatMessage}
-        contentStyle={{ background: '#fff', paddingBottom: 0, marginBottom: 0, minHeight: 'calc(100vh - 48px)' }}
+        contentStyle={{
+          background: '#fff',
+          paddingBottom: 0,
+          marginBottom: 0,
+          minHeight: 'auto',
+        }}
         menuDataRender={(md) => {
           // 确保 menuData 是数组，如果为空则使用空数组
           const baseMenu = Array.isArray(menuData) ? menuData : [];
@@ -454,7 +538,6 @@ const AdminLayout = (props) => {
             </div>
           );
         }}
-        // pageTitleRender={(props) => { return 'wldos'; }}
         footerRender={() => null}
         rightContentRender={() => <RightContent/>}
         postMenuData={(menu) => { // 在显示前对菜单数据进行查看
@@ -478,9 +561,12 @@ const AdminLayout = (props) => {
           return list;
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 48px)', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
         {/* 多标签页区域 - 首页固定 + 其他可滚动 */}
-        <div style={{
+        <div
+          ref={adminTabsRef}
+          data-wldos-admin-tabs
+          style={{
           position: 'sticky',
           top: 48, // 固定在顶栏下方（与 headerHeight 保持一致）
           zIndex: 100,
@@ -502,7 +588,8 @@ const AdminLayout = (props) => {
           // 覆盖全局样式
           lineHeight: '1',
           fontSize: '14px'
-        }}>
+        }}
+        >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {/* 固定首页标签 - 使用与其他标签一致的样式 */}
             {(() => {
@@ -539,7 +626,7 @@ const AdminLayout = (props) => {
                 type="editable-card"
                 hideAdd
                 size="small"
-                activeKey={activeKey}
+                activeKey={activeKey === adminHomePath ? tabsNoneKey : activeKey}
                 onChange={onChangeTab}
                 onEdit={onEditTab}
                 onMouseDown={(e) => {
@@ -552,8 +639,6 @@ const AdminLayout = (props) => {
                     closeCurrentTab(key);
                   }
                 }}
-                // 强制重新渲染，确保焦点状态正确
-                key={`tabs-${activeKey}`}
                 items={tabs.filter(t => t.key !== adminHomePath).map(t => {
                   const m = pathToMenu.current[t.path] || pathToMenu.current[t.key] || {};
                   const title = t.title || m.name || m.title || pathTitleFallback[t.path] || pathTitleFallback[t.key] || '';
@@ -598,8 +683,8 @@ const AdminLayout = (props) => {
         <div style={{
           padding: 0,
           background: '#fff',
-          minHeight: 'calc(100vh - 48px)',
           flex: 1,
+          minHeight: 0,
         }}>
           {/* 去除错误边界，保留骨架屏 */}
           <React.Suspense fallback={
@@ -619,7 +704,7 @@ const AdminLayout = (props) => {
                   background: '#fff',
                   borderRadius: 0,
                   width: '100%',
-                  minHeight: 'calc(100vh - 48px)',
+                  minHeight: 0,
                 }}
               >
         {children}

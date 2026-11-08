@@ -66,4 +66,7 @@ public final class AccountConfigKey {
 
 	/** 待办消息设置 */
 	public static final String MES_KEY_TODO_MES_STATUS = "todoMesStatus";
+
+	/** 管理端当前工作组织 */
+	public static final String ADMIN_WORKING_ORG_ID = "adminWorkingOrgId";
 }

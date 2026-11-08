@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Switch, Spin, message } from 'antd';
+import { Button, message, Descriptions, Tag, Typography, Space } from 'antd';
 import { useIntl } from 'umi';
 import { fetchUsersByOrganization } from '@/services/organization';
 import CompanyDetail from './CompanyDetail';
@@ -15,51 +15,62 @@ import SystemDetail from './SystemDetail';
 import OrganizationDetailContent from './OrganizationDetailContent';
 import UserList from './UserList';
 
+const { Title } = Typography;
+
 const OrganizationDetail = ({
   selectedNode,
   treeData,
   onCompanyUpdate,
+  onCompanyAdd,
   onSystemAdd,
   onCompanyDelete,
   onSystemUpdate,
   onOrganizationAdd,
   onSystemDelete,
   onOrganizationUpdate,
-  onUserAdd,
-  onPermissionSettings,
-  onOrganizationDelete
+  onMembersChanged,
+  onOrganizationDelete,
+  comOptions,
+  orgTypeOptions,
+  archOptionsForOrg,
+  orgOptionsForParent,
+  hasAuthority = () => true,
+  targetDomainId,
+  domainOptions = [],
+  showDomainSelect = false,
+  onTargetDomainChange,
+  allDomainRows = [],
 }) => {
   const intl = useIntl();
   const [showUsers, setShowUsers] = useState(false);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [usersLoaded, setUsersLoaded] = useState(false);
+  useEffect(() => {
+    setShowUsers(false);
+    setUsers([]);
+    setUsersLoaded(false);
+  }, [selectedNode?.type, selectedNode?.id]);
 
-  // 当选中机构节点时，加载用户数据
   useEffect(() => {
     if (selectedNode && selectedNode.type === 'organization' && showUsers) {
       loadUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, showUsers]);
 
   if (!selectedNode) {
     return (
-      <Card>
-        <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}>
-          {intl.formatMessage({ id: 'component.organizationTree.detail.selectNode' })}
-        </div>
-      </Card>
+      <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}>
+        {intl.formatMessage({ id: 'component.organizationTree.detail.selectNode' })}
+      </div>
     );
   }
 
   const loadUsers = async () => {
     setLoading(true);
     try {
-      console.log('开始加载用户数据，组织ID:', selectedNode.id, '组织名称:', selectedNode.orgName || selectedNode.name);
       const response = await fetchUsersByOrganization(selectedNode.id);
-      console.log('用户数据响应:', response);
-
-      // 确保数据是数组格式
       let userData = [];
       if (response && response.data) {
         if (Array.isArray(response.data)) {
@@ -68,24 +79,9 @@ const OrganizationDetail = ({
           userData = response.data.rows;
         }
       }
-
-      console.log('处理后的用户数据:', userData);
-      console.log('用户数据数量:', userData.length);
-
-      // 检查用户数据是否属于当前组织
-      if (userData.length > 0) {
-        console.log('第一个用户的组织信息:', {
-          userId: userData[0].id,
-          userName: userData[0].userName,
-          organizationId: userData[0].organizationId,
-          currentOrgId: selectedNode.id
-        });
-      }
-
       setUsers(userData);
       setUsersLoaded(true);
     } catch (error) {
-      console.error('加载用户数据失败:', error);
       message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadUsersFail' }));
       setUsersLoaded(false);
     } finally {
@@ -93,23 +89,21 @@ const OrganizationDetail = ({
     }
   };
 
-  const handleAddUser = (data) => {
-    console.log('添加用户功能被调用:', data);
-    // TODO: 实现添加用户的具体逻辑
-    // 这里可以打开添加用户的模态框或跳转到用户管理页面
-    message.info(intl.formatMessage({ id: 'component.organizationTree.detail.userAddTodo' }));
-  };
-
-  const handleShowUsers = () => {
-    console.log('显示用户按钮被点击');
-    setUsersLoaded(false); // 重置用户数据加载状态
+  const handleToggleShowUsers = () => {
+    setUsersLoaded(false);
     setShowUsers(true);
   };
 
-  // 根据ID查找公司名称
+  const handleMembersChanged = () => {
+    if (onMembersChanged) onMembersChanged();
+    if (showUsers) {
+      setUsersLoaded(false);
+      loadUsers();
+    }
+  };
+
   const findCompanyName = (comId) => {
     if (!treeData || !comId) return '-';
-
     for (const company of treeData) {
       if (company.id === comId) {
         return company.comName || company.name || '-';
@@ -118,92 +112,36 @@ const OrganizationDetail = ({
     return '-';
   };
 
-  // 根据ID查找体系名称
   const findSystemName = (archId) => {
-    console.log('查找体系名称，archId:', archId, 'treeData:', treeData);
     if (!treeData || !archId) return '-';
-
     for (const company of treeData) {
-      console.log('检查公司:', company.comName, 'children:', company.children);
       if (company.children) {
         for (const system of company.children) {
-          console.log('检查体系:', system.archName, 'id:', system.id, '匹配archId:', archId);
           if (system.id === archId) {
-            console.log('找到匹配的体系:', system.archName);
             return system.archName || system.name || '-';
           }
         }
       }
     }
-    console.log('未找到匹配的体系');
     return '-';
   };
 
-  const renderDetail = () => {
-    switch (selectedNode.type) {
-      case 'company':
-        return (
-          <CompanyDetail
-            company={selectedNode}
-            onCompanyUpdate={onCompanyUpdate}
-            onSystemAdd={onSystemAdd}
-            onCompanyDelete={onCompanyDelete}
-          />
-        );
-      case 'system':
-        console.log('渲染体系详情，selectedNode:', selectedNode);
-        console.log('comId:', selectedNode.comId);
-        const systemCompanyName = findCompanyName(selectedNode.comId);
-        console.log('体系解析结果 - 公司名称:', systemCompanyName);
-        return (
-          <SystemDetail
-            system={selectedNode}
-            companyName={systemCompanyName}
-            onSystemUpdate={onSystemUpdate}
-            onOrganizationAdd={onOrganizationAdd}
-            onSystemDelete={onSystemDelete}
-          />
-        );
-      case 'organization':
-        console.log('渲染机构详情，selectedNode:', selectedNode);
-        console.log('comId:', selectedNode.comId, 'archId:', selectedNode.archId);
-        const companyName = findCompanyName(selectedNode.comId);
-        const systemName = findSystemName(selectedNode.archId);
-        console.log('解析结果 - 公司名称:', companyName, '体系名称:', systemName);
-        return (
-          <div>
-            <OrganizationDetailContent
-              organization={selectedNode}
-              onAddUser={handleShowUsers}
-              companyName={companyName}
-              systemName={systemName}
-              userCount={users.length}
-              showUsers={showUsers}
-              usersLoaded={usersLoaded}
-              onOrganizationUpdate={onOrganizationUpdate}
-              onUserAdd={onUserAdd}
-              onPermissionSettings={onPermissionSettings}
-              onOrganizationDelete={onOrganizationDelete}
-            />
-            {showUsers && (
-              <div style={{ marginTop: 16 }}>
-                <UserList
-                  users={users}
-                  loading={loading}
-                  organizationId={selectedNode.id}
-                />
-              </div>
-            )}
-          </div>
-        );
-      case 'user':
-        return <UserDetail user={selectedNode} />;
-      default:
-        return <div>{intl.formatMessage({ id: 'component.organizationTree.unknown.type' })}</div>;
+  const findOrgName = (orgId) => {
+    if (!treeData || !orgId) return '-';
+    for (const company of treeData) {
+      if (!company.children) continue;
+      for (const system of company.children) {
+        if (!system.children) continue;
+        for (const org of system.children) {
+          if (org.id === orgId) {
+            return org.orgName || org.name || '-';
+          }
+        }
+      }
     }
+    return '-';
   };
 
-  // 获取节点显示名称
   const getNodeDisplayName = (node) => {
     switch (node.type) {
       case 'company':
@@ -219,24 +157,151 @@ const OrganizationDetail = ({
     }
   };
 
+  const getNodeTypeLabel = (type) => {
+    const keyMap = {
+      company: 'component.organizationTree.nodeType.company',
+      system: 'component.organizationTree.nodeType.system',
+      organization: 'component.organizationTree.nodeType.organization',
+      user: 'component.organizationTree.nodeType.user',
+    };
+    return intl.formatMessage({ id: keyMap[type] || 'component.organizationTree.unknown.default' });
+  };
+
+  const renderDetail = () => {
+    switch (selectedNode.type) {
+      case 'company':
+        return (
+          <CompanyDetail
+            company={selectedNode}
+            onCompanyUpdate={onCompanyUpdate}
+            onCompanyAdd={onCompanyAdd}
+            onSystemAdd={onSystemAdd}
+            onCompanyDelete={onCompanyDelete}
+            comOptions={comOptions}
+            parentCompanyName={findCompanyName(selectedNode.parentId)}
+          />
+        );
+      case 'system': {
+        const systemCompanyName = findCompanyName(selectedNode.comId);
+        const isTopSystem = selectedNode.parentId == null || String(selectedNode.parentId) === '0';
+        const parentSystemName = isTopSystem
+          ? intl.formatMessage({ id: 'component.organizationTree.system.detail.parent.top' })
+          : findSystemName(selectedNode.parentId);
+        return (
+          <SystemDetail
+            system={selectedNode}
+            companyName={systemCompanyName}
+            parentSystemName={parentSystemName}
+            onSystemUpdate={onSystemUpdate}
+            onSystemAdd={onSystemAdd}
+            onOrganizationAdd={onOrganizationAdd}
+            onSystemDelete={onSystemDelete}
+            comOptions={comOptions}
+            orgTypeOptions={orgTypeOptions}
+            archOptionsForOrg={archOptionsForOrg}
+            orgOptionsForParent={orgOptionsForParent}
+          />
+        );
+      }
+      case 'organization': {
+        const companyName = findCompanyName(selectedNode.comId);
+        const systemName = findSystemName(selectedNode.archId);
+        const isTopOrg = selectedNode.parentId == null || String(selectedNode.parentId) === '0';
+        const parentOrgName = isTopOrg
+          ? intl.formatMessage({ id: 'component.organizationTree.org.detail.parent.top' })
+          : findOrgName(selectedNode.parentId);
+        return (
+          <>
+            <OrganizationDetailContent
+              organization={selectedNode}
+              onToggleShowUsers={handleToggleShowUsers}
+              companyName={companyName}
+              systemName={systemName}
+              parentOrgName={parentOrgName}
+              userCount={users.length}
+              showUsers={showUsers}
+              usersLoaded={usersLoaded}
+              onOrganizationUpdate={onOrganizationUpdate}
+              onOrganizationAdd={onOrganizationAdd}
+              onMembersChanged={handleMembersChanged}
+              onOrganizationDelete={onOrganizationDelete}
+              orgTypeOptions={orgTypeOptions}
+              archOptionsForOrg={archOptionsForOrg}
+              orgOptionsForParent={orgOptionsForParent}
+              comOptions={comOptions}
+              hasAuthority={hasAuthority}
+              targetDomainId={targetDomainId}
+              domainOptions={domainOptions}
+              showDomainSelect={showDomainSelect}
+              onTargetDomainChange={onTargetDomainChange}
+              allDomainRows={allDomainRows}
+            />
+            {showUsers && (
+              <div style={{ marginTop: 16 }}>
+                <UserList
+                  users={users}
+                  loading={loading}
+                  organizationId={selectedNode.id}
+                  onMembersChanged={handleMembersChanged}
+                  hasAuthority={hasAuthority}
+                />
+              </div>
+            )}
+          </>
+        );
+      }
+      case 'user':
+        return (
+          <Descriptions bordered column={2}>
+            <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.userList.col.nickname' })}>
+              {selectedNode.nickname || selectedNode.account || '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.userList.col.loginName' })}>
+              {selectedNode.login_name || selectedNode.account || '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.userList.col.email' })}>
+              {selectedNode.email || '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label={intl.formatMessage({ id: 'component.organizationTree.userList.col.status' })}>
+              <Tag color={selectedNode.status === '正常' || selectedNode.status === 'normal' ? 'green' : 'red'}>
+                {selectedNode.status || '-'}
+              </Tag>
+            </Descriptions.Item>
+          </Descriptions>
+        );
+      default:
+        return <div>{intl.formatMessage({ id: 'component.organizationTree.unknown.type' })}</div>;
+    }
+  };
+
   return (
-    <Card
-      title={`${getNodeDisplayName(selectedNode)} - ${intl.formatMessage({ id: 'component.organizationTree.detail.manage' })}`}
-      extra={
-        selectedNode.type === 'organization' && (
-          <Button
-            type="primary"
-            onClick={() => setShowUsers(!showUsers)}
-          >
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: 12,
+          marginBottom: 16,
+        }}
+      >
+        <Space align="center" wrap>
+          <Title level={5} style={{ margin: 0 }}>
+            {getNodeDisplayName(selectedNode)}
+          </Title>
+          <Tag>{getNodeTypeLabel(selectedNode.type)}</Tag>
+        </Space>
+        {selectedNode.type === 'organization' && (
+          <Button type="primary" onClick={() => setShowUsers(!showUsers)}>
             {showUsers
               ? intl.formatMessage({ id: 'component.organizationTree.detail.hideUsers' })
               : intl.formatMessage({ id: 'component.organizationTree.detail.showUsers' })}
           </Button>
-        )
-      }
-    >
+        )}
+      </div>
       {renderDetail()}
-    </Card>
+    </div>
   );
 };
 

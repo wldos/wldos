@@ -1,5 +1,5 @@
 import {Avatar, Card, Typography, Affix, Space, Button} from 'antd';
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {GridContent, PageContainer} from '@ant-design/pro-layout';
 import {connect, Link} from 'umi';
 import styles from './style.less';
@@ -13,20 +13,18 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import '@/styles/markdown.css';
 import MarkdownImage from '@/components/MarkdownImage';
+import ContentAccessFooter from '@/pages/commercial/cms-access/components/ContentAccessFooter';
+import ContentAccessPubBody from '@/pages/commercial/cms-access/components/ContentAccessPubBody';
+import ContentTipBlock from '@/pages/commercial/cms-access/components/ContentTipBlock';
 
 const Page = (props) => {
-  const {dispatch, match, data} = props;
+  const {dispatch, match, data, currentUser} = props;
   const [article, setArticle] = useState(undefined);
   const [toc, setToc] = useState([]);
   const [activeId, setActiveId] = useState('');
   const [tocCollapsed, setTocCollapsed] = useState(false);
   const [showTocPreview, setShowTocPreview] = useState(false);
-  const [mobileTocOpen, setMobileTocOpen] = useState(false);
-  const [tocHovered, setTocHovered] = useState(false);
-  const [tocPinned, setTocPinned] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState(null);
-  
-  // 移动端目录状态
   const [mobileTocVisible, setMobileTocVisible] = useState(false);
   
   // 水印相关状态
@@ -96,6 +94,37 @@ const Page = (props) => {
     return toc;
   }, []);
 
+  // 从 HTML 富文本生成目录
+  const generateTocFromHtml = useCallback((htmlContent) => {
+    if (!htmlContent) return [];
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const items = [];
+
+    headings.forEach((heading, index) => {
+      items.push({
+        level: parseInt(heading.tagName.charAt(1), 10),
+        text: heading.textContent.trim(),
+        id: `heading-${index}`,
+      });
+    });
+
+    return items;
+  }, []);
+
+  const processedHtmlContent = useMemo(() => {
+    if (!article?.pubContent || article.pubMimeType === 'text/markdown') return '';
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = article.pubContent;
+    tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading, index) => {
+      heading.id = `heading-${index}`;
+    });
+    return tempDiv.innerHTML;
+  }, [article?.pubContent, article?.pubMimeType]);
+
   // 处理滚动事件
   const handleScroll = useCallback(() => {
     if (!toc.length) return;
@@ -129,16 +158,16 @@ const Page = (props) => {
         setWatermarkEnabled(data.watermarkEnabled === 'true' || data.watermarkEnabled === true);
       }
       
-      // 生成目录（智能判断是否需要目录）
-      if (data.pubMimeType === 'text/markdown') {
-        const generatedToc = generateToc(data.pubContent);
-        // 只有超过3个标题时才显示目录
-        if (generatedToc.length >= 3) {
-          setToc(generatedToc);
-        }
+      // 生成目录（Markdown / HTML 均支持，标题 ≥3 才展示）
+      if (data.pubContent) {
+        const generatedToc =
+          data.pubMimeType === 'text/markdown'
+            ? generateToc(data.pubContent)
+            : generateTocFromHtml(data.pubContent);
+        setToc(generatedToc.length >= 3 ? generatedToc : []);
       }
     }
-  }, [match.url, generateToc]);
+  }, [match.url, generateToc, generateTocFromHtml, data, dispatch]);
 
   // 监听滚动事件
   useEffect(() => {
@@ -146,34 +175,40 @@ const Page = (props) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // 悬停处理函数
+  // 悬停处理（与 doc 目录一致）
   const handleMouseEnter = useCallback(() => {
     if (hoverTimeout) {
       clearTimeout(hoverTimeout);
       setHoverTimeout(null);
     }
-    setTocHovered(true);
     setShowTocPreview(true);
   }, [hoverTimeout]);
 
   const handleMouseLeave = useCallback(() => {
     const timeout = setTimeout(() => {
-      setTocHovered(false);
       setShowTocPreview(false);
-    }, 300); // 增加延时到300ms
+    }, 150);
     setHoverTimeout(timeout);
   }, []);
 
-  // 键盘快捷键支持
+  // 键盘快捷键支持（与 doc 目录一致）
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 't' || e.key === 'T') {
-        e.preventDefault();
-        setTocCollapsed(!tocCollapsed);
+    const handleKeyPress = (e) => {
+      if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        const activeElement = document.activeElement;
+        const isInputFocused = activeElement && (
+          activeElement.tagName === 'INPUT'
+          || activeElement.tagName === 'TEXTAREA'
+          || activeElement.contentEditable === 'true'
+        );
+        if (!isInputFocused) {
+          e.preventDefault();
+          setTocCollapsed(!tocCollapsed);
+        }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
   }, [tocCollapsed]);
 
   // 清理悬停超时
@@ -185,28 +220,34 @@ const Page = (props) => {
     };
   }, [hoverTimeout]);
 
-  // 目录组件
+  // 目录组件（与 doc 目录 UI/UE 一致）
   const tocComponent = toc.length > 0 && (
     <>
-      {!tocCollapsed ? (
+      {!tocCollapsed && (
         <Affix offsetTop={80}>
-          <Card 
-            title="目录" 
-            size="small" 
+          <Card
+            title={(
+              <Space>
+                <MenuOutlined />
+                <span>目录</span>
+                <span
+                  className={styles.tocToggle}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTocCollapsed(true);
+                  }}
+                >
+                  收起
+                </span>
+              </Space>
+            )}
+            size="small"
             className={styles.tocCard}
-            extra={
-              <Button 
-                type="text" 
-                size="small" 
-                icon={<MenuOutlined />}
-                onClick={() => setTocCollapsed(true)}
-              />
-            }
           >
             <div className={styles.tocList}>
-              {toc.map((item, index) => (
+              {toc.map((item) => (
                 <div
-                  key={index}
+                  key={item.id}
                   className={`${styles.tocItem} ${activeId === item.id ? styles.active : ''}`}
                   style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
                   onClick={() => {
@@ -215,61 +256,77 @@ const Page = (props) => {
                       const headerHeight = window.innerWidth <= 1024 ? 60 : 80;
                       window.scrollTo({
                         top: element.offsetTop - headerHeight,
-                        behavior: 'smooth'
+                        behavior: 'smooth',
                       });
                     }
                   }}
                 >
-                  {item.text}
+                  <span
+                    style={{
+                      fontSize: item.level === 1 ? '14px' : '13px',
+                      fontWeight: item.level <= 2 ? '500' : '400',
+                    }}
+                  >
+                    {item.text}
+                  </span>
                 </div>
               ))}
             </div>
           </Card>
         </Affix>
-      ) : (
-        <div 
+      )}
+
+      {tocCollapsed && (
+        <div
           className={styles.floatingTocButton}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Button 
-            type="primary" 
-            shape="circle" 
+          <Button
+            type="primary"
+            shape="circle"
             icon={<MenuOutlined />}
+            size="large"
             onClick={() => setTocCollapsed(false)}
             className={styles.floatingTocBtn}
             title="展开目录 (快捷键: T)"
           />
-          
-          {/* 桌面端悬停预览 */}
+
           {showTocPreview && (
-            <div 
+            <div
               className={styles.tocPreview}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <div className={styles.tocPreviewHeader}>
-                <span>目录</span>
+                <span>目录预览</span>
                 <span className={styles.tocPreviewHint}>滚动查看全部</span>
               </div>
               <div className={styles.tocPreviewList}>
-                {toc.map((item, index) => (
+                {toc.map((item) => (
                   <div
-                    key={index}
+                    key={item.id}
                     className={`${styles.tocPreviewItem} ${activeId === item.id ? styles.active : ''}`}
-                    style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
+                    style={{ paddingLeft: `${(item.level - 1) * 12}px` }}
                     onClick={() => {
                       const element = document.getElementById(item.id);
                       if (element) {
                         const headerHeight = window.innerWidth <= 1024 ? 60 : 80;
                         window.scrollTo({
                           top: element.offsetTop - headerHeight,
-                          behavior: 'smooth'
+                          behavior: 'smooth',
                         });
                       }
                     }}
                   >
-                    {item.text}
+                    <span
+                      style={{
+                        fontSize: item.level === 1 ? '13px' : '12px',
+                        fontWeight: item.level <= 2 ? '500' : '400',
+                      }}
+                    >
+                      {item.text}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -284,83 +341,91 @@ const Page = (props) => {
     <div className={styles.articleContainer}>
       <div className={styles.articleContent}>
         <Typography>
-          <div 
+          <ContentAccessPubBody
+            pubId={article.id}
+            pubContent={article.pubContent}
+            pubMimeType={article.pubMimeType}
+            fullHtmlContent={processedHtmlContent || article.pubContent}
+            contentAccess={article.contentAccess}
+            currentUser={currentUser}
             className={styles.entry}
             style={{
-              '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none'
+              '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none',
             }}
-          >
-            {article.pubMimeType === 'text/markdown' ? (
+            renderMarkdown={(text, key) => (
               <ReactMarkdown
+                key={key}
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeRaw]}
-                className={"markdown-body"}
+                className="markdown-body"
                 components={{
                   h1: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h1 id={id} {...props}>{children}</h1>;
                   },
                   h2: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h2 id={id} {...props}>{children}</h2>;
                   },
                   h3: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h3 id={id} {...props}>{children}</h3>;
                   },
                   h4: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h4 id={id} {...props}>{children}</h4>;
                   },
                   h5: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h5 id={id} {...props}>{children}</h5>;
                   },
                   h6: ({ children, ...props }) => {
-                    const text = children.toString();
-                    const id = `heading-${toc.findIndex(item => item.text === text)}`;
+                    const textContent = children.toString();
+                    const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
                     return <h6 id={id} {...props}>{children}</h6>;
                   },
-                  img({src, alt, title, ...props}) {
+                  img({ src, alt, title, ...props }) {
                     return (
-                      <MarkdownImage 
-                        src={src} 
-                        alt={alt} 
-                        title={title} 
+                      <MarkdownImage
+                        src={src}
+                        alt={alt}
+                        title={title}
                         content={article.pubContent}
                         {...props}
                       />
                     );
                   },
-                  code({node, inline, className, children, ...props}) {
+                  code({ node, inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '');
-                    
+
                     return !inline && match ? (
-                      <div style={{ 
-                        backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                        borderRadius: '6px',
-                        padding: '16px',
-                        margin: '16px 0',
-                        overflow: 'auto'
-                      }}>
+                      <div
+                        style={{
+                          backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                          borderRadius: '6px',
+                          padding: '16px',
+                          margin: '16px 0',
+                          overflow: 'auto',
+                        }}
+                      >
                         <SyntaxHighlighter
                           style={isDarkMode ? vscDarkPlus : vs}
                           language={match[1]}
                           PreTag="div"
                           showLineNumbers={false}
-                          wrapLines={true}
-                          wrapLongLines={true}
+                          wrapLines
+                          wrapLongLines
                           customStyle={{
                             background: 'transparent',
                             margin: 0,
                             padding: 0,
                             border: 'none',
-                            borderRadius: 0
+                            borderRadius: 0,
                           }}
                           {...props}
                         >
@@ -372,15 +437,24 @@ const Page = (props) => {
                         {children}
                       </code>
                     );
-                  }
+                  },
                 }}
               >
-                {article.pubContent}
+                {text}
               </ReactMarkdown>
-            ) : (
-              <div dangerouslySetInnerHTML={{ __html: article.pubContent}} />
             )}
-          </div>
+            renderHtml={(html, key) => (
+              <div key={key} dangerouslySetInnerHTML={{ __html: html }} />
+            )}
+          />
+          <ContentAccessFooter
+            pubId={article.id}
+            contentAccess={article.contentAccess}
+            currentUser={currentUser}
+            pubContent={article.pubContent}
+            pubMimeType={article.pubMimeType}
+          />
+          <ContentTipBlock pubId={article.id} contentAccess={article.contentAccess} currentUser={currentUser} />
           <div className={styles.clearfix}/>
           <div className={styles.pubMeta}>
             累计 {article.views}次浏览
@@ -389,18 +463,20 @@ const Page = (props) => {
       </div>
       {tocComponent}
 
-      {/* 移动端目录按钮 */}
-      <div className={styles.mobileToolbar}>
-        <div
-          className={styles.mobileToolbarButton}
-          onClick={() => setMobileTocVisible(!mobileTocVisible)}
-        >
-          <MenuOutlined />
+      {/* 移动端目录按钮：仅在有目录时展示，避免与「无导航」页面类型混淆 */}
+      {toc.length > 0 && (
+        <div className={styles.mobileToolbar}>
+          <div
+            className={styles.mobileToolbarButton}
+            onClick={() => setMobileTocVisible(!mobileTocVisible)}
+          >
+            <MenuOutlined />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 移动端目录遮罩 */}
-      {mobileTocVisible && (
+      {toc.length > 0 && mobileTocVisible && (
         <div
           className={styles.mobileTocOverlay}
           onClick={() => setMobileTocVisible(false)}
@@ -419,9 +495,9 @@ const Page = (props) => {
               </span>
             </div>
             <div className={styles.mobileTocList}>
-              {toc.map((item, index) => (
+              {toc.map((item) => (
                 <div
-                  key={index}
+                  key={item.id}
                   className={`${styles.mobileTocItem} ${activeId === item.id ? styles.active : ''}`}
                   style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
                   onClick={() => {
@@ -465,5 +541,6 @@ return (
 export default connect(({ user } ) => (
   {
     tdk: user.tdk,
+    currentUser: user.currentUser,
   }
 ))(Page);

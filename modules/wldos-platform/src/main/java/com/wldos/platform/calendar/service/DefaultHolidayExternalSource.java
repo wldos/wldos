@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@code @ConditionalOnMissingBean} 的"自匹配"陷阱。
  *
  * @author Yuanxi Universe
- * @date 2026/04/30
+ * @date 2025/04/30
  * @version 1.0
  */
 @Slf4j

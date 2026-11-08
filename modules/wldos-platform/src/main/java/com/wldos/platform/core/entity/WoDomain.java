@@ -17,10 +17,12 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true, primaryKeyAsDomainId = true)
 public class WoDomain {
 	@Id
 	private Long id;
@@ -52,6 +54,12 @@ public class WoDomain {
 	private String flink;
 
 	private String copy;
+
+	private String portalQrUrl;
+
+	private String portalFooterI18n;
+
+	private String adminHomeConfig;
 
 	private Long parentId;
 

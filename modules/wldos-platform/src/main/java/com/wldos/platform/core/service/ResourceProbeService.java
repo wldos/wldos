@@ -16,13 +16,22 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import com.wldos.gateway.GateWayHelper;
+import com.wldos.platform.core.dao.AppDao;
+import com.wldos.platform.core.entity.WoApp;
 import io.github.wldos.common.utils.ObjectUtils;
+import io.github.wldos.platform.support.resource.enums.MenuNodeKindEnum;
+import io.github.wldos.platform.support.resource.enums.ResourceEnum;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -57,13 +66,16 @@ public class ResourceProbeService {
 			"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"));
 
 	/** API 类资源（参与鉴权路由匹配） */
-	private static final Set<String> API_TYPES = new HashSet<>(Arrays.asList(
-			"button", "admin_button", "plugin_button", "admin_plugin_button"));
+	private static final Set<String> API_TYPES = ResourceEnum.buttonTypes();
 
 	private static final AntPathMatcher MATCHER = new AntPathMatcher();
 
 	@Autowired
 	private ApplicationContext applicationContext;
+
+	@Autowired
+	@Lazy
+	private AppDao appDao;
 
 	private volatile RequestMappingHandlerMapping mainHandlerMapping;
 
@@ -89,6 +101,30 @@ public class ResourceProbeService {
 	 * @return null 表示通过；非 null 为提示文案
 	 */
 	public String validate(String resourceType, String resourcePath, String requestMethod) {
+		return this.validate(resourceType, resourcePath, requestMethod, null);
+	}
+
+	public String validate(String resourceType, String resourcePath, String requestMethod, String menuNodeKind) {
+		return this.validate(resourceType, resourcePath, requestMethod, menuNodeKind, null);
+	}
+
+	/**
+	 * 附带 appId 时，额外校验 API 类资源路径首段与其所属 {@code wo_app.app_code} 是否一致
+	 * （如 {@code /space/book} 挂在 {@code book} app 下却写成 {@code space} 首段）。
+	 * 不一致时返回 {@code "提示："} 前缀的弱提示，不阻断保存——鉴权侧已有
+	 * {@code AuthOpener#resolveAuthAppCode} 域挂载反查兜底，但首段与归属 app 一致仍是推荐配置。
+	 */
+	public String validate(String resourceType, String resourcePath, String requestMethod, String menuNodeKind,
+			Long appId) {
+		if (MenuNodeKindEnum.isNavDir(menuNodeKind)) {
+			return null;
+		}
+		if ("other".equalsIgnoreCase(resourceType)) {
+			if (ObjectUtils.isBlank(resourcePath)) {
+				return "模块目录资源路径不能为空";
+			}
+			return null;
+		}
 		if (ObjectUtils.isBlank(resourcePath)) {
 			return "资源路径不能为空";
 		}
@@ -151,11 +187,70 @@ public class ResourceProbeService {
 		if (!matched.equals(path)) {
 			return "提示：与系统端点 '" + matched + "' 等价；建议直接使用该模板，便于后续维护";
 		}
+
+		String appCodeHint = this.checkAppCodeConsistency(path, appId);
+		if (appCodeHint != null) {
+			return appCodeHint;
+		}
+		return null;
+	}
+
+	/**
+	 * API 类资源路径首段与所属 {@code wo_app.app_code} 不一致时的弱提示；appId 未提供或首段无法解析时跳过。
+	 */
+	private String checkAppCodeConsistency(String path, Long appId) {
+		if (appId == null || appId <= 0) {
+			return null;
+		}
+		String pathAppCode = GateWayHelper.appCode(path);
+		if (ObjectUtils.isBlank(pathAppCode) || "/".equals(pathAppCode)) {
+			return null;
+		}
+		WoApp app = this.appDao.findById(appId).orElse(null);
+		if (app == null || ObjectUtils.isBlank(app.getAppCode())) {
+			return null;
+		}
+		if (pathAppCode.equalsIgnoreCase(app.getAppCode())) {
+			return null;
+		}
+		return "提示：路径首段 " + pathAppCode + " 与所属应用编码 " + app.getAppCode() + " 不一致；"
+				+ "鉴权依赖运行时按域挂载资源反查兜底，建议首段与所属应用一致或确认该差异符合预期";
+	}
+
+	/**
+	 * 按 path 解析可命中 Spring 端点的 HTTP 方法；preferred 优先，否则依次尝试常见方法。
+	 */
+	public String resolveHttpMethod(String path, String preferredMethod) {
+		if (ObjectUtils.isBlank(path)) {
+			return null;
+		}
+		String normalizedPath = path.trim();
+		if (!ObjectUtils.isBlank(preferredMethod)) {
+			String preferred = preferredMethod.trim().toUpperCase();
+			if (METHOD_ENUM.contains(preferred) && matchAgainstSpringEndpoints(normalizedPath, preferred) != null) {
+				return preferred;
+			}
+		}
+		for (String method : Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH")) {
+			if (method.equalsIgnoreCase(preferredMethod)) {
+				continue;
+			}
+			if (matchAgainstSpringEndpoints(normalizedPath, method) != null) {
+				return method;
+			}
+		}
 		return null;
 	}
 
 	/** 仅做语法校验（不做真值匹配），用于离线脚本/批量校验场景 */
 	public String validateSyntax(String resourceType, String resourcePath, String requestMethod) {
+		return this.validateSyntax(resourceType, resourcePath, requestMethod, null);
+	}
+
+	public String validateSyntax(String resourceType, String resourcePath, String requestMethod, String menuNodeKind) {
+		if (MenuNodeKindEnum.isNavDir(menuNodeKind)) {
+			return null;
+		}
 		if (ObjectUtils.isBlank(resourcePath)) return "资源路径不能为空";
 		String path = resourcePath.trim();
 		if (path.contains("${")) return "禁止 ${...}（JS 模板写法）";
@@ -175,11 +270,34 @@ public class ResourceProbeService {
 	}
 
 	/**
+	 * 按 path + method 解析 Controller 方法上的 {@link ApiOperation#value()}。
+	 */
+	public String resolveApiOperationName(String path, String method) {
+		if (ObjectUtils.isBlank(path) || ObjectUtils.isBlank(method)) {
+			return null;
+		}
+		EndpointMatch match = this.findEndpointMatch(path.trim(), method.trim().toUpperCase());
+		if (match == null || match.handlerMethod == null) {
+			return null;
+		}
+		ApiOperation apiOperation = AnnotationUtils.findAnnotation(match.handlerMethod.getMethod(), ApiOperation.class);
+		if (apiOperation != null && !ObjectUtils.isBlank(apiOperation.value())) {
+			return apiOperation.value().trim();
+		}
+		return null;
+	}
+
+	/**
 	 * 在所有 {@link RequestMappingHandlerMapping}（主应用 + 插件子上下文）里查找匹配。
 	 *
 	 * @return 命中的 pattern；返回 null 表示无命中
 	 */
 	private String matchAgainstSpringEndpoints(String path, String method) {
+		EndpointMatch match = this.findEndpointMatch(path, method);
+		return match != null ? match.pattern : null;
+	}
+
+	private EndpointMatch findEndpointMatch(String path, String method) {
 		RequestMethod rm;
 		try {
 			rm = RequestMethod.valueOf(method);
@@ -191,34 +309,37 @@ public class ResourceProbeService {
 		Map<String, RequestMappingHandlerMapping> beans =
 				applicationContext.getBeansOfType(RequestMappingHandlerMapping.class);
 
-		// 探针 URI：把 {var} 占位符替换为 1，** 替换为 a/b/c
 		String probeUri = buildProbeUri(path);
-
-		String exactMatch = null;
-		String wildcardMatch = null;
+		EndpointMatch fuzzyMatch = null;
 
 		for (RequestMappingHandlerMapping mapping : beans.values()) {
-			Map<RequestMappingInfo, ?> all;
+			Map<RequestMappingInfo, HandlerMethod> all;
 			try {
 				all = mapping.getHandlerMethods();
 			}
 			catch (Exception e) {
 				continue;
 			}
-			for (RequestMappingInfo info : all.keySet()) {
-				if (!methodMatches(info, rm)) continue;
+			for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : all.entrySet()) {
+				RequestMappingInfo info = entry.getKey();
+				if (!methodMatches(info, rm)) {
+					continue;
+				}
 				Collection<String> patterns = patternsOf(info);
-				if (patterns == null) continue;
+				if (patterns == null) {
+					continue;
+				}
 				for (String p : patterns) {
-					if (p == null) continue;
-					if (p.equals(path)) {
-						return p; // 模板完全等价，最强证据
+					if (p == null) {
+						continue;
 					}
-					if (exactMatch == null) {
+					if (p.equals(path)) {
+						return new EndpointMatch(p, entry.getValue());
+					}
+					if (fuzzyMatch == null) {
 						try {
 							if (MATCHER.match(p, probeUri)) {
-								// 弱匹配：保存第一个，作为提示用
-								exactMatch = p;
+								fuzzyMatch = new EndpointMatch(p, entry.getValue());
 							}
 						}
 						catch (IllegalArgumentException ignore) {
@@ -228,7 +349,17 @@ public class ResourceProbeService {
 				}
 			}
 		}
-		return exactMatch != null ? exactMatch : wildcardMatch;
+		return fuzzyMatch;
+	}
+
+	private static final class EndpointMatch {
+		private final String pattern;
+		private final HandlerMethod handlerMethod;
+
+		private EndpointMatch(String pattern, HandlerMethod handlerMethod) {
+			this.pattern = pattern;
+			this.handlerMethod = handlerMethod;
+		}
 	}
 
 	private static boolean methodMatches(RequestMappingInfo info, RequestMethod method) {

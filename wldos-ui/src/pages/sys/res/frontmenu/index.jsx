@@ -2,6 +2,7 @@ import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
@@ -474,16 +475,7 @@ const ResourceList = () => {
   ];
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="资源清单"
@@ -527,8 +519,8 @@ const ResourceList = () => {
             onChange: (_, selectedRows) => setSelectedRows(selectedRows),
           }}
           pagination={{
-            defaultPageSize: 15,
-            pageSizeOptions: ['10', '15', '20', '30', '50'],
+            defaultPageSize: 50,
+            pageSizeOptions: ['10', '15', '20', '30', '50', '100', '150', '200'],
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
@@ -549,10 +541,7 @@ const ResourceList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项&nbsp;&nbsp;
-              <span>
-                应用调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)} 万
-              </span>
+              项
             </div>
           }
         >

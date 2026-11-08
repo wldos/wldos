@@ -119,4 +119,7 @@ public class AccountInfo {
 
 	@ApiModelProperty(value = "群组，根据用户所属系统会员组获取")
 	private List<Group> group;
+
+	@ApiModelProperty(value = "个人中心类别只读标签（会员分组+身份+主体+组织角色，仅本人 curAccount）")
+	private List<AccountCategoryTag> categoryTags;
 }

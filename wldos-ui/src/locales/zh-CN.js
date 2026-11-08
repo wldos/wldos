@@ -13,6 +13,7 @@ import pwa from './zh-CN/pwa';
 import settingDrawer from './zh-CN/settingDrawer';
 import settings from './zh-CN/settings';
 import pages from './zh-CN/pages';
+import portalOrg from './zh-CN/portalOrg';
 import flavorLocale from '@flavor-locales/zh-CN';
 export default {
   'navBar.lang': '语言',
@@ -23,6 +24,7 @@ export default {
   'app.welcome.link.fetch-blocks': '获取全部区块',
   'app.welcome.link.block-list': '基于 block 开发，快速构建标准页面',
   ...pages,
+  ...portalOrg,
   ...flavorLocale,
   ...globalHeader,
   ...menu,

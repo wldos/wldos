@@ -46,6 +46,12 @@ public class Chapter {
 	@ApiModelProperty(value = "发布状态", example = "PUBLISH")
 	private String pubStatus;
 
+	@ApiModelProperty(value = "章节正式行 ID")
+	private Long canonicalPubId;
+
+	@ApiModelProperty(value = "是否存在未合并的活跃草稿")
+	private Boolean hasPendingDraft;
+
 	public Chapter() {
 	}
 

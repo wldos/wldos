@@ -10,15 +10,21 @@ package com.wldos.platform.core.entity;
 
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
+/**
+ * 应用定义（TENANT_SCOPED）：租户级共享，站点只读挂载（{@code wo_domain_app}），不可管理定义本体。
+ */
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true)
 public class WoApp {
 	@Id
 	private Long id;
@@ -53,6 +59,14 @@ public class WoApp {
 	private String updateIp;
 
 	private String deleteFlag;
+
+	/** 本站 wo_domain_app.is_valid，仅域应用列表联查填充 */
+	@Transient
+	private String mountValid;
+
+	/** 域应用选择列表：是否已挂载到当前站点 */
+	@Transient
+	private Boolean selected;
 
 	@Version
 	private Integer versions;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Upload, message, Card, Space, Alert, Divider, Typography, Tooltip } from 'antd';
+import { Button, Upload, message, Card, Space, Divider, Typography, Tooltip } from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {
   UploadOutlined,
@@ -108,15 +108,6 @@ const UploadPlugin = ({ visible, onCancel, onSuccess }) => {
       ]}
     >
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="插件安装"
-          description="上传插件包文件，系统将自动解析并安装插件。请确保插件包格式正确且符合系统要求。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 文件上传区域 */}
         <Card
           title={

@@ -9,6 +9,18 @@ export async function queryEnumTemplate() {
 export async function queryEnumResource() {
   return request(`${prefix}/enum/select/resource`);
 }
+export async function queryEnumScopeLevel() {
+  return request(`${prefix}/enum/select/scopeLevel`);
+}
+export async function queryEnumResourceTerminal() {
+  return request(`${prefix}/enum/select/resourceTerminal`);
+}
+export async function queryEnumResourceMenuRegion() {
+  return request(`${prefix}/enum/select/resourceMenuRegion`);
+}
+export async function queryEnumMenuNodeKind() {
+  return request(`${prefix}/enum/select/menuNodeKind`);
+}
 /** wo_options.option_type */
 export async function fetchEnumWoOptionType() {
   return request(`${prefix}/enum/select/optionType`);
@@ -27,6 +39,11 @@ export async function fetchEnumPubType() {
   return request(`${prefix}/enum/select/pubType`);
 }
 
+/** k_pubs.visibility_scope（CMS 可发现性） */
+export async function fetchEnumPubVisibilityScope() {
+  return request(`${prefix}/enum/select/pubVisibilityScope`);
+}
+
 // 插件相关枚举
 export async function fetchEnumPluginStatus() {
   return request(`${prefix}/enum/select/pluginStatus`);
@@ -35,5 +52,11 @@ export async function fetchEnumAutoStart() {
   return request(`${prefix}/enum/select/autoStart`);
 }
 
-// 注：商业模块枚举（订单状态 / 佣金状态等）放在 `pages/commercial/_shared/enums.js`，
-// 与开源核心枚举隔离（详见 .cursor/rules/wldos-knowledge-base.mdc § 5.3.0.3 末段「商业模块隔离」）。
+export async function fetchEnumUserStatus() {
+  return request(`${prefix}/enum/select/userStatus`);
+}
+
+/** wo_sys_log metadata.actorKind 中文（列表展示；平台 EnumController，与是否安装网关商业模块无关） */
+export async function fetchEnumSysLogActorKind() {
+  return request(`${prefix}/enum/select/sysLogActorKind`);
+}

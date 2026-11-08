@@ -39,4 +39,20 @@ public interface ResourceDao extends BaseDao<WoResource, Long>, ResourceJdbc {
 	@Modifying
 	@Query("delete from wo_resource where app_id=:appId")
 	void deleteByAppId(@Param("appId") Long appId);
+
+	@Query("select r.* from wo_resource r where r.app_id=:appId and r.resource_code=:resourceCode and r.delete_flag='normal' limit 1")
+	WoResource findByAppIdAndResourceCode(@Param("appId") Long appId, @Param("resourceCode") String resourceCode);
+
+	@Query("select r.* from wo_resource r where r.app_id=:appId and r.delete_flag='normal'")
+	List<WoResource> findAllByAppId(@Param("appId") Long appId);
+
+	@Query("select r.* from wo_resource r where r.delete_flag='normal' and r.is_valid='1' and r.resource_path=:path "
+			+ "and upper(r.request_method)=upper(:method) limit 1")
+	WoResource findActiveByPathAndMethod(@Param("path") String path, @Param("method") String method);
+
+	/**
+	 * 按「模板菜单」路径规则查找分类关联菜单（addSimpleMenu：/{模板}/category/{slug}）。
+	 */
+	@Query("select r.* from wo_resource r where r.delete_flag='normal' and r.resource_path like concat('%/category/', :slug)")
+	List<WoResource> findAllByCategorySlugInPath(@Param("slug") String slug);
 }

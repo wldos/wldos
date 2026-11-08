@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useImperativeHandle, useState, forwardRef} from 'react';
+import { DISPLAY_ORDER_PATTERN_STRING } from '@/utils/displayOrder';
 import {Button, Form, Input, message, Select, Card, Space, Divider, Typography, Tooltip, Row, Col} from 'antd';
 import {
   GlobalOutlined,
@@ -25,7 +26,7 @@ const formLayout = {
   },
 };
 
-const CreateFormContent = (props) => {
+const CreateFormContent = forwardRef((props, ref) => {
   const [form] = Form.useForm();
   const {
     onSubmit: handleAdd,
@@ -70,8 +71,12 @@ const CreateFormContent = (props) => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    handleAdd(fieldsValue);
+    handleAdd?.(fieldsValue);
   };
+
+  useImperativeHandle(ref, () => ({
+    submit: () => handleNext(),
+  }));
 
   const renderContent = () => {
     return (
@@ -160,7 +165,7 @@ const CreateFormContent = (props) => {
                 label={
                   <Space>
                     个性域名
-                    <Tooltip title="用于生成个性访问地址">
+                    <Tooltip title={`平台子域快捷入口，完整地址为 前缀.${platDomain}，与主站域名独立`}>
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -509,7 +514,7 @@ const CreateFormContent = (props) => {
                 label={
                   <Space>
                     展示顺序
-                    <Tooltip title="数字越小排序越靠前，范围1-100">
+                    <Tooltip title="数字越小排序越靠前，范围1-9999">
                       <InfoCircleOutlined style={{ color: '#999' }} />
                     </Tooltip>
                   </Space>
@@ -517,14 +522,14 @@ const CreateFormContent = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: '展示顺序1~100！',
-                    pattern: '^([1-9]|[1-9]\\d|100)$',
+                    message: '展示顺序1~9999！',
+                    pattern: DISPLAY_ORDER_PATTERN_STRING,
                     max: 3,
                   },
                 ]}
               >
                 <Input 
-                  placeholder="请输入展示顺序，1-100"
+                  placeholder="请输入展示顺序，1-9999"
                   prefix="🔢"
                 />
               </FormItem>
@@ -557,18 +562,18 @@ const CreateFormContent = (props) => {
           </Row>
         </Card>
 
-        {/* 内容设置分组 */}
+        {/* 底部装修 */}
         <Card 
           title={
             <Space>
               <FileTextOutlined style={{ color: '#13c2c2' }} />
-              内容设置
+              底部装修
             </Space>
           }
           size="small"
           style={{ marginBottom: '16px' }}
           extra={
-            <Tooltip title="网站页面内容相关设置">
+            <Tooltip title="门户页脚与友情链接">
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -646,6 +651,8 @@ const CreateFormContent = (props) => {
       {renderContent()}
     </Form>
   );
-};
+});
+
+CreateFormContent.displayName = 'CreateFormContent';
 
 export default CreateFormContent;

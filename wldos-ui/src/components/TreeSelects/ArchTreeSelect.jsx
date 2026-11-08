@@ -102,6 +102,8 @@ export default function ArchTreeSelect({
       treeDefaultExpandAll={treeDefaultExpandAll}
       loadData={usePaged ? onLoadData : undefined}
       loading={loading}
+      showSearch
+      treeNodeFilterProp="title"
       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
     />
   );

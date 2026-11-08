@@ -1,15 +1,12 @@
-import request from '@/utils/request';
-import config from '@/utils/config';
 // 统一转调现有模块化 service，避免破坏以往实现
 import * as comService from '@/pages/sys/com/service';
 import * as archService from '@/pages/sys/arch/service';
 import * as orgService from '@/pages/sys/org/service';
 import * as userService from '@/pages/sys/user/service';
 
-const { prefix } = config;
-
 // 暴露与原页面一致的更新/新增/删除函数，直接转调原有 service
 export const updateCompany = comService.updateEntity;
+export const addCompany = comService.addEntity;
 export const addSystem = archService.addEntity;
 export const deleteCompany = comService.removeEntity;
 export const updateSystem = archService.updateEntity;
@@ -59,10 +56,22 @@ export async function fetchOrganizationData() {
 
 // 按组织机构获取用户数据
 export async function fetchUsersByOrganization(organizationId) {
-  console.log('调用fetchUsersByOrganization，组织ID:', organizationId);
-  const response = await userService.queryOrgPage({ orgId: organizationId });
-  console.log('用户服务响应:', response);
-  return response;
+  return userService.queryOrgPage({ orgId: organizationId });
+}
+
+// 公司/体系/机构管理接口均按自身父子关系返回嵌套树（父节点.children = 子节点），
+// 组织架构树把它们各自单独当作一个层级（公司-体系-机构-用户）逐级按需加载，
+// 这里先拍平为一维列表，否则下面重新挂载下一层 children 时会整体覆盖、丢失原始子节点（如子公司/子体系/子部门）。
+function flattenTree(nodes) {
+  const flat = [];
+  (nodes || []).forEach((node) => {
+    const { children, ...rest } = node;
+    flat.push(rest);
+    if (Array.isArray(children) && children.length) {
+      flat.push(...flattenTree(children));
+    }
+  });
+  return flat;
 }
 
 // 按需加载公司的体系数据
@@ -77,7 +86,7 @@ export async function loadSystemsByCompany(companyId) {
     }
 
     // 构建体系节点，不加载子级数据
-    return systems.map(system => ({
+    return flattenTree(systems).map(system => ({
       ...system,
       type: 'system',
       children: [] // 子级数据按需加载
@@ -99,13 +108,8 @@ export async function loadOrganizationsBySystem(systemId) {
       return [];
     }
 
-    // 构建机构节点，不加载用户数据
-    return organizations.map(org => ({
-      ...org,
-      type: 'organization',
-      userCount: 0, // 初始用户数量为0
-      children: [] // 用户数据按需加载
-    }));
+    // 构建机构节点，按 parentId 组装为本体系下的子树
+    return buildOrgTreeUnderSystem(organizations);
   } catch (error) {
     console.error('获取机构数据失败:', error);
     return [];
@@ -116,8 +120,7 @@ export async function loadOrganizationsBySystem(systemId) {
 export async function queryCompanies() {
   try {
     const response = await comService.queryPage({ pageSize: 1000 });
-    console.log('公司API响应:', response);
-    return response.data?.rows || [];
+    return flattenTree(response.data?.rows || []);
   } catch (error) {
     console.error('获取公司列表失败:', error);
     return [];
@@ -143,7 +146,6 @@ export async function querySystemsByCompany(companyId) {
       pageSize: 1000,
       comId: companyId
     });
-    console.log('体系API响应:', response);
     return response.data?.rows || [];
   } catch (error) {
     console.error('获取体系列表失败:', error);
@@ -151,19 +153,42 @@ export async function querySystemsByCompany(companyId) {
   }
 }
 
-// 根据体系ID获取机构列表
+// 根据体系ID获取机构列表（走 /all 拍平再筛 archId，避免树形分页 query 漏掉 parent 挂在平台根下的机构）
 export async function queryOrganizationsBySystem(systemId) {
   try {
-    const response = await orgService.queryPage({
-      pageSize: 1000,
-      archId: systemId
-    });
-    console.log('机构API响应:', response);
-    return response.data?.rows || [];
+    const response = await orgService.getOrgList();
+    const all = Array.isArray(response?.data) ? response.data : [];
+    return all.filter((org) => String(org.archId) === String(systemId));
   } catch (error) {
     console.error('获取机构列表失败:', error);
     return [];
   }
+}
+
+function buildOrgTreeUnderSystem(flatOrgs) {
+  if (!flatOrgs?.length) {
+    return [];
+  }
+  const idSet = new Set(flatOrgs.map((org) => String(org.id)));
+  const nodeMap = new Map();
+  flatOrgs.forEach((org) => {
+    nodeMap.set(String(org.id), {
+      ...org,
+      type: 'organization',
+      userCount: 0,
+      children: [],
+    });
+  });
+  const roots = [];
+  nodeMap.forEach((node) => {
+    const parentId = node.parentId;
+    if (parentId != null && String(parentId) !== '0' && idSet.has(String(parentId))) {
+      nodeMap.get(String(parentId)).children.push(node);
+    } else {
+      roots.push(node);
+    }
+  });
+  return roots;
 }
 
 // 按组织统计用户数量
@@ -192,25 +217,3 @@ export async function queryUserCountsByOrganization() {
     return {};
   }
 }
-
-// 兼容旧接口：为机构添加用户
-export async function addUserToOrganization(params) {
-  return request(`${prefix}/admin/sys/org/user`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 兼容旧接口：更新机构权限
-export async function updateOrganizationPermissions(params) {
-  return request(`${prefix}/admin/sys/org/permissions`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 组织架构聚合数据（用于刷新左侧树）
-export async function getOrganizationArchitecture() {
-  return request(`${prefix}/admin/sys/organization/architecture`);
-}
-

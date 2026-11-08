@@ -102,4 +102,19 @@ public class PropertiesReader {
 			throw new RuntimeException(e);
 		}
 	}
+
+	/**
+	 * Mesh 等基础设施组件专用的轻量属性传播：不重算业务默认值兜底，只叠加给定 key 并刷新，
+	 * 供高频后台周期性同步场景（如 Mesh 集群策略 gossip）使用，避免每次都牵动全量业务属性重算。
+	 * 与 {@link #dynSetPropsSrc}（面向管理端一次性、低频的业务参数变更）分开，语义不混用。
+	 */
+	public void applyMeshPolicyProps(Map<String, String> propertyMap) {
+		try {
+			this.propsDyn.applyMeshPolicyProps(this.env, propertyMap, this.propertyName, this.contextRefresher);
+		}
+		catch (Exception e) {
+			log.error("Error during mesh policy props apply {}", ObjectUtils.string(e.getMessage()));
+			throw new RuntimeException(e);
+		}
+	}
 }

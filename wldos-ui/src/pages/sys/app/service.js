@@ -42,6 +42,12 @@ export async function removeDomainApp(params) {
     data: params,
   });
 }
+export async function setDomainAppVisibility(params) {
+  return request(`${prefix}/admin/sys/domain/appVisibility`, {
+    method: 'POST',
+    data: params,
+  });
+}
 export async function addEntity(params) {
   return request(`${prefix}/admin/sys/app/add`, {
     method: 'POST',

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.myapp.mapper.ArticleMapper">
+
+    <sql id="ArticlePageWhere">
+        FROM demo_article
+        WHERE delete_flag = 'normal'
+        <if test="param.author != null and param.author != ''">
+            AND author = #{param.author}
+        </if>
+        <if test="param.status != null">
+            AND status = #{param.status}
+        </if>
+        <if test="param.keyword != null and param.keyword != ''">
+            AND title LIKE CONCAT('%', #{param.keyword}, '%')
+        </if>
+    </sql>
+
+    <select id="countArticlePage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="ArticlePageWhere"/>
+    </select>
+
+    <select id="selectArticlePage" resultType="com.example.myapp.result.ArticlePageResult">
+        SELECT id, title, author, views, status, create_time AS createTime
+        <include refid="ArticlePageWhere"/>
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+</mapper>

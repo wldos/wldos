@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wldos.framework.mvc.controller.NonEntityController;
 import com.wldos.cms.enums.PubStatusEnum;
+import com.wldos.cms.enums.PubVisibilityScopeEnum;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.vo.Article;
 import com.wldos.cms.vo.PubUnit;
@@ -73,7 +74,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryWorksList(pageQuery);
 	}
@@ -91,7 +92,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryWorksList(pageQuery);
 	}
@@ -119,7 +120,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		pageQuery.pushParam("pubType", pubType);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryWorksList(pageQuery);
 	}
@@ -146,7 +147,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryArchivesDomain(pageQuery);
 	}
@@ -171,7 +172,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryArchivesCategory(slugCategory, pageQuery);
 	}
@@ -196,7 +197,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryArchivesTag(slugTag, pageQuery);
 	}
@@ -221,7 +222,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		pageQuery.pushParam("createBy", userId);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryArchivesDomain(pageQuery);
 	}
@@ -282,7 +283,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		pageQuery.pushParam("userId", userId);
 		pageQuery.pushParam("likes", "1");
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryArchivesUserDomain(this.getDomainId(), pageQuery);
 	}
@@ -308,7 +309,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 		pageQuery.pushParam("userId", userId);
 		pageQuery.pushParam("stars", "1");
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryArchivesUserDomain(this.getDomainId(), pageQuery);
 	}
@@ -345,7 +346,7 @@ public class KCMSController extends NonEntityController<KCMSService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.INHERIT.toString()); // 对于子类型来说继承就是发布
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryBookChapter(bookId, pageQuery);
 	}
@@ -432,5 +433,13 @@ public class KCMSController extends NonEntityController<KCMSService> {
 	public List<SelectOption> fetchEnumPubType() {
 		return Arrays.stream(PubTypeEnum.values()).filter(PubTypeEnum::isMainType)
 		.map(item -> SelectOption.of(item.getLabel(), item.getName())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "内容可发现性枚举", notes = "k_pubs.visibility_scope：PUBLIC_LISTED / UNLISTED / INTERNAL_ONLY")
+	@GetMapping("enum/select/pubVisibilityScope")
+	public List<SelectOption> fetchEnumPubVisibilityScope() {
+		return Arrays.stream(PubVisibilityScopeEnum.values())
+				.map(item -> SelectOption.of(item.getLabel(), item.getValue()))
+				.collect(Collectors.toList());
 	}
 }

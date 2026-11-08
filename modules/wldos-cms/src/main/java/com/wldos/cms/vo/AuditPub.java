@@ -75,4 +75,7 @@ public class AuditPub {
 
 	@ApiModelProperty(value = "发布状态", example = "PUBLISH")
 	private String pubStatus;
+
+	@ApiModelProperty(value = "是否存在待审/编辑中草稿改稿")
+	private Boolean hasPendingDraft;
 }

@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>3.0.0.0</version>
+		<version>3.0.3.0</version>
 	</parent>
 	<artifactId>wldos-web</artifactId>
 	<packaging>jar</packaging>
@@ -30,7 +30,7 @@
 		 如果构建清理后调试启动提示找不到包，idea整个项目reload mvn 注意多个ide之间文件锁
 	-->
 	<profiles>
-		<!-- dev/prod：全量依赖（不含 license、collector、agent） -->
+		<!-- dev/prod：全量依赖 -->
 		<profile>
 			<id>dev</id>
 			<activation>
@@ -98,6 +98,16 @@
 	<dependencies>
 		<!-- 基础依赖（所有 profile 共享，cms 已包含在 profile 中） -->
 		<!-- 注意：desktop/community 仅含 cms，dev/prod 含全量 -->
+
+		<!--
+			Tomcat（与上方 <packaging> 一致；父 POM 中 spring-boot-starter-tomcat 为 provided）：
+			- 所有 profile 均为瘦 WAR（wldos.spring-boot.repackage.skip=true），部署到外置 Tomcat；本地调试请 spring-boot:run / IDE。
+			- 若需可执行 WAR：单次构建加 -Dwldos.spring-boot.repackage.skip=false（不推荐量产）。
+			- packaging=jar：须将 <packaging> 改为 jar，并取消下面 dependency 注释，否则缺少内嵌 Tomcat。-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+		</dependency>
 	</dependencies>
 	<build><!-- 构建不带版本号的包 -->
 		<finalName>${projectName}</finalName>

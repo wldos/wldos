@@ -1,12 +1,15 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import {Button, Divider, Drawer, message, Popconfirm, Select, Space, Tag, Tooltip} from 'antd';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {connect, useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
+import useOperationalScope from '@/hooks/useOperationalScope';
 import {
   addEntity, infoFlag,
   queryLayerCategory,
@@ -15,6 +18,41 @@ import {
   removeEntities,
   updateEntity
 } from './service';
+import {
+  mergeToolbarWriteScope,
+  buildTermListQueryScope,
+  isTermAdminListScopeReady,
+  isPlatformScopeComId,
+} from '@/utils/orgCreateUserDomain';
+
+/**
+ * 归属范围文案：与后端 AxisLayerGuard.resolveAxisLayer 同一判断顺序——domainId 落到具体站点才算「站点专属」，
+ * 否则再看 comId 是否为平台（0）。分类、标签的列表都是平台共享/租户共享/站点专属三层的并集展示，
+ * 不看这一列，光看名称分不出哪条是共享哪条是本站自己建的。
+ * @param record 行数据（需带 comId、domainId）
+ * @param domainOptions 当前已加载的站点选项（用于把 domainId 换成可读站名，找不到时退化为不带站名的泛称）
+ * @param domainLabelMap 全量站点 id→名称（与工具栏筛选无关）
+ */
+export const resolveTermScope = (record, domainOptions, domainLabelMap) => {
+  const domainId = record?.domainId;
+  const hasDomain = domainId != null && String(domainId) !== '0';
+  if (hasDomain) {
+    const matched = domainOptions?.find((item) => String(item.value) === String(domainId));
+    const label = matched?.label || domainLabelMap?.[String(domainId)];
+    return { level: 'domain', text: label ? `站点专属：${label}` : '站点专属' };
+  }
+  const comId = record?.comId;
+  if (comId == null || String(comId) === '0') {
+    return { level: 'platform', text: '平台共享' };
+  }
+  return { level: 'tenant', text: '租户共享（全站）' };
+};
+
+export const TERM_SCOPE_COLOR = {
+  platform: 'gold',
+  tenant: 'blue',
+  domain: 'default',
+};
 
 /**
  * 添加节点
@@ -26,8 +64,8 @@ export const handleAdd = async (fields) => {
   try {
     const res = await addEntity({...fields});
     hide();
-    if (res?.data !== 'ok'){
-      message.error(res.data);
+    if (res?.code !== 200 || (res?.data && res.data !== 'ok')) {
+      message.error(res?.message || res?.data || '添加失败');
       return false;
     }
     message.success('添加成功');
@@ -59,8 +97,8 @@ export const handleUpdate = async (fields) => {
       infoFlag: fields.infoFlag
     });
     hide();
-    if (res?.data !== 'ok'){
-      message.error(res.data);
+    if (res?.code !== 200 || (res?.data && res.data !== 'ok')) {
+      message.error(res?.message || res?.data || '配置失败');
       return false;
     }
     message.success('配置成功');
@@ -142,7 +180,8 @@ export const handleInfoFlag = async (selectedRows) => {
   }
 };
 
-const CategoryList = () => {
+const CategoryList = ({ isAdmin, currentUser }) => {
+  const intl = useIntl();
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -157,12 +196,50 @@ const CategoryList = () => {
   const tableWrapRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
 
-  useEffect(async () => {
+  const {
+    effectiveComId,
+    targetDomainId,
+    setTargetDomainId,
+    onTargetComChange,
+    comListArray,
+    domainOptions,
+    domainLabelMap,
+    showDomainSelectInToolbar,
+    listScopeReady,
+  } = useOperationalScope({
+    isAdmin,
+    currentUser,
+    intl,
+    adminDefaultAxis: 'platform',
+    allowPlatformScopeInToolbar: isAdmin,
+  });
+  const termListScopeReady = useMemo(
+    () => isTermAdminListScopeReady(isAdmin, listScopeReady, effectiveComId, targetDomainId),
+    [isAdmin, listScopeReady, effectiveComId, targetDomainId],
+  );
+  const listScopeParams = useMemo(
+    () => buildTermListQueryScope({ isAdmin, effectiveComId, targetDomainId }),
+    [isAdmin, effectiveComId, targetDomainId],
+  );
 
-    const resData = await queryLayerCategory();
-    if (resData?.data)
-      setCategoryList(resData.data);
-  }, []);
+  useEffect(() => {
+    if (!termListScopeReady) {
+      return;
+    }
+    const treeParams = listScopeParams || {};
+    queryLayerCategory(treeParams).then((resData) => {
+      if (resData?.data) {
+        setCategoryList(resData.data);
+      }
+    });
+  }, [termListScopeReady, listScopeParams]);
+
+  useEffect(() => {
+    if (!termListScopeReady) {
+      return;
+    }
+    actionRef.current?.reload?.();
+  }, [termListScopeReady, effectiveComId, targetDomainId]);
 
   useDesktopSticky(actionRef);
   const columns = [
@@ -255,6 +332,17 @@ const CategoryList = () => {
       hideInSearch: true
     },
     {
+      title: '范围',
+      dataIndex: 'domainId',
+      width: 140,
+      hideInForm: true,
+      hideInSearch: true,
+      render: (_, record) => {
+        const scope = resolveTermScope(record, domainOptions, domainLabelMap);
+        return <Tag color={TERM_SCOPE_COLOR[scope.level]}>{scope.text}</Tag>;
+      },
+    },
+    {
       title: '信息发布状态',
       dataIndex: 'infoFlag',
       width: 120,
@@ -277,7 +365,9 @@ const CategoryList = () => {
       valueType: 'option',
       fixed: isMobile ? undefined : 'right',
       width: 200,
-      render: (_, record) => (
+      render: (_, record) => {
+        const writable = record.writable !== false;
+        return (
         <>
           <a
             onClick={() => {
@@ -293,6 +383,7 @@ const CategoryList = () => {
             setParentId(record.parentId);
           }}>同级</a>
           <Divider type="vertical"/>
+          {writable ? (
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
@@ -301,7 +392,13 @@ const CategoryList = () => {
           >
             配置
           </a>
+          ) : (
+          <Tooltip title="平台/租户共享数据，仅归属层级可改，本站只读">
+            <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>配置</span>
+          </Tooltip>
+          )}
           <Divider type="vertical"/>
+          {writable ? (
           <Popconfirm title={`您确定要删除[${record.count > 0 ? '分类下存在内容' : ''}]？`} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemoveOne(record);
@@ -309,8 +406,14 @@ const CategoryList = () => {
                       }}>
             <a>删除</a>
           </Popconfirm>
+          ) : (
+          <Tooltip title="平台/租户共享数据，仅归属层级可改，本站只读">
+            <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>删除</span>
+          </Tooltip>
+          )}
         </>
-      ),
+        );
+      },
     },
   ];
 
@@ -331,21 +434,13 @@ const CategoryList = () => {
   const scrollX = isMobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={tableWrapRef}>
       <ProTableX
         headerTitle="分类目录"
         actionRef={actionRef}
         rowKey="id"
+        manualRequest={!termListScopeReady}
         pagination={{
           pageSize,
           showSizeChanger: true,
@@ -359,15 +454,50 @@ const CategoryList = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
+          isAdmin && comListArray.length > 0 ? (
+            <Space key="com-select" size={8}>
+              <span>目标租户</span>
+              <Select
+                style={{ minWidth: 180 }}
+                allowClear
+                placeholder="选择租户"
+                options={comListArray}
+                value={effectiveComId}
+                onChange={onTargetComChange}
+                showSearch
+                optionFilterProp="label"
+              />
+            </Space>
+          ) : null,
+          isAdmin && !isPlatformScopeComId(effectiveComId) && (showDomainSelectInToolbar || domainOptions.length === 1) ? (
+            <Space key="domain-select" size={8}>
+              <span>目标站点</span>
+              <Select
+                style={{ minWidth: 200 }}
+                placeholder="选择站点"
+                options={domainOptions}
+                value={targetDomainId}
+                onChange={(value) => setTargetDomainId(value || undefined)}
+                showSearch
+                optionFilterProp="label"
+                disabled={domainOptions.length <= 1}
+              />
+            </Space>
+          ) : null,
+          <Button key={0} type="primary" disabled={!termListScopeReady} onClick={() => handleModalVisible(true)}>
             <PlusOutlined/> 新建
           </Button>,
         ]}
         request={async (params, sorter, filter) => {
+          if (!termListScopeReady) {
+            return { total: 0, data: [], success: true };
+          }
+          const scope = listScopeParams || {};
           const res = await queryPage({
             ...params,
-            sorter: {...sorter, 'displayOrder': 'ascend',},
-            filter
+            sorter: { ...sorter, displayOrder: 'ascend' },
+            filter,
+            ...scope,
           });
           return Promise.resolve({
             total: res?.data?.total || 0,
@@ -423,7 +553,7 @@ const CategoryList = () => {
       )}
       {createModalVisible && <CreateForm
         onSubmit={async (value) => {
-          const success = await handleAdd(value);
+          const success = await handleAdd(mergeToolbarWriteScope(value, { effectiveComId, targetDomainId }));
 
           if (success) {
             handleModalVisible(false);
@@ -491,4 +621,7 @@ const CategoryList = () => {
   );
 };
 
-export default CategoryList;
+export default connect(({ user }) => ({
+  isAdmin: !!user.sessionFlags?.isAdmin,
+  currentUser: user.currentUser,
+}))(CategoryList);

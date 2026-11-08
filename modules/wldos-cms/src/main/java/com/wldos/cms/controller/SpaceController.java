@@ -24,10 +24,18 @@ import com.wldos.cms.enums.PubStatusEnum;
 import com.wldos.cms.query.CmsKpubsDiscoverySql;
 import com.wldos.cms.service.KCMSService;
 import com.wldos.cms.service.SpaceService;
+import com.wldos.cms.service.WorkbenchPolicySupport;
 import com.wldos.cms.vo.Book;
 import com.wldos.cms.vo.Chapter;
 import com.wldos.cms.vo.Pub;
 import com.wldos.cms.vo.PubUnit;
+import com.wldos.cms.vo.SpaceReorderVO;
+import com.wldos.cms.vo.SpaceShiftVO;
+import com.wldos.cms.vo.WorkbenchListScope;
+import com.wldos.cms.vo.WorkbenchPolicyLimitItemVO;
+import com.wldos.cms.vo.WorkbenchPolicyLimitsVO;
+import com.wldos.cms.policy.WorkbenchActionLimit;
+import com.wldos.cms.policy.WorkbenchLimitsSnapshot;
 import io.github.wldos.common.Constants;
 import io.github.wldos.common.enums.DeleteFlagEnum;
 import io.github.wldos.common.enums.ThumbTypeEnum;
@@ -77,8 +85,29 @@ public class SpaceController extends NonEntityController<SpaceService> {
 
 	private final KCMSService kcmsService;
 
-	public SpaceController(KCMSService kcmsService) {
+	private final WorkbenchPolicySupport workbenchPolicySupport;
+
+	public SpaceController(KCMSService kcmsService, WorkbenchPolicySupport workbenchPolicySupport) {
 		this.kcmsService = kcmsService;
+		this.workbenchPolicySupport = workbenchPolicySupport;
+	}
+
+	@ApiOperation(value = "创作权益快照", notes = "作品数与当前书章节数已用/上限；供工作台展示")
+	@ApiImplicitParam(name = "bookId", value = "当前编辑的作品 id，传则返回该书章节配额", dataTypeClass = Long.class, paramType = "query")
+	@GetMapping("space/workbench/policy-limits")
+	public WorkbenchPolicyLimitsVO workbenchPolicyLimits(
+			@ApiParam("当前作品 id") @RequestParam(required = false) Long bookId) {
+		WorkbenchLimitsSnapshot snapshot = this.workbenchPolicySupport.resolveWorkbenchLimits(this.getUserId(),
+				this.getDomainId(), this.getTenantId(), bookId);
+		WorkbenchPolicyLimitsVO vo = new WorkbenchPolicyLimitsVO();
+		for (WorkbenchActionLimit limit : snapshot.getLimits()) {
+			WorkbenchPolicyLimitItemVO item = new WorkbenchPolicyLimitItemVO();
+			item.setAction(limit.getAction());
+			item.setUsed(limit.getUsed());
+			item.setMax(limit.getMax());
+			vo.getItems().add(item);
+		}
+		return vo;
 	}
 
 	/**
@@ -93,7 +122,8 @@ public class SpaceController extends NonEntityController<SpaceService> {
 		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
 		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
-		@ApiImplicitParam(name = "contType", value = "内容类型", dataTypeClass = String.class, paramType = "query")
+		@ApiImplicitParam(name = "contType", value = "内容类型", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "keyword", value = "标题/正文模糊搜索", dataTypeClass = String.class, paramType = "query")
 	})
 	@GetMapping("space/book")
 	public PageData<PubUnit> bookListByAuthor(@RequestParam Map<String, Object> params) {
@@ -104,7 +134,7 @@ public class SpaceController extends NonEntityController<SpaceService> {
 		// 工作台列表需展示作者全部作品（含 INTERNAL_ONLY / UNLISTED）
 		pageQuery.pushParam(CmsKpubsDiscoverySql.CONDITION_INCLUDE_UNLISTED, Boolean.TRUE);
 		pageQuery.pushFilter("parentId", Constants.TOP_PUB_ID); // 父id为0的都是主类型
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.kcmsService.queryWorksListWithPage(pageQuery);
 	}
@@ -116,9 +146,76 @@ public class SpaceController extends NonEntityController<SpaceService> {
 	 * @return 作品实体
 	 */
 	@ApiOperation(value = "作品详情", notes = "根据ID查询作品详情")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "chapterCurrent", value = "章节列表页码", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+		@ApiImplicitParam(name = "chapterPageSize", value = "章节每页条数", dataTypeClass = Integer.class, paramType = "query", example = "30"),
+		@ApiImplicitParam(name = "chapterSorter", value = "章节排序 JSON", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "chapterKeyword", value = "章节标题/正文模糊搜索", dataTypeClass = String.class, paramType = "query")
+	})
 	@GetMapping("space/book/{bookId:\\d+}")
-	public Book curBookByAuthorAndBkId(@ApiParam(value = "作品ID", required = true) @PathVariable Long bookId) {
-		return this.kcmsService.queryBook(bookId);
+	public Book curBookByAuthorAndBkId(@ApiParam(value = "作品ID", required = true) @PathVariable Long bookId,
+			@RequestParam Map<String, Object> params) {
+		Map<String, Object> chapterParams = new HashMap<>();
+		chapterParams.put("current", params.getOrDefault("chapterCurrent", 1));
+		chapterParams.put("pageSize", params.getOrDefault("chapterPageSize", 30));
+		if (params.get("chapterSorter") != null) {
+			chapterParams.put("sorter", params.get("chapterSorter"));
+		} else {
+			chapterParams.put("sorter", "{\"displayOrder\":\"ascend\",\"id\":\"ascend\"}");
+		}
+		if (params.get("chapterKeyword") != null && !ObjectUtils.isBlank(params.get("chapterKeyword").toString())) {
+			chapterParams.put("keyword", params.get("chapterKeyword"));
+		}
+		PageQuery chapterPage = new PageQuery(chapterParams);
+		return this.kcmsService.queryBook(bookId, chapterPage);
+	}
+
+	@ApiOperation(value = "作品列表排序", notes = "当前页 orderedIds 在全量作品序中须为连续一段，合并后一次性写 display_order")
+	@PostMapping("space/book/reorder")
+	@OpLog(action = "作品排序", resourceType = "book")
+	public Result<String> reorderWorks(@RequestBody SpaceReorderVO body) {
+		this.service.reorderWorks(body.getOrderedIds(), this.getUserId(), this.getDomainId(),
+				this.toWorkbenchListScope(body.getPubTypes(), body.getKeyword()));
+		return Result.ok("ok");
+	}
+
+	@ApiOperation(value = "章节列表排序", notes = "当前页 orderedIds 在全量章节序中须为连续一段，合并后一次性写 display_order")
+	@PostMapping("space/book/{bookId:\\d+}/reorderChapters")
+	@OpLog(action = "章节排序", resourceType = "chapter")
+	public Result<String> reorderChapters(@ApiParam(value = "作品ID", required = true) @PathVariable Long bookId,
+			@RequestBody SpaceReorderVO body) {
+		this.service.reorderChapters(bookId, body.getOrderedIds(), this.getUserId(),
+				this.toWorkbenchListScope(null, body.getKeyword()));
+		return Result.ok("ok");
+	}
+
+	@ApiOperation(value = "作品顺序微调", notes = "step=-1 上移，1 下移")
+	@PostMapping("space/book/shift")
+	@OpLog(action = "作品顺序微调", resourceType = "book")
+	public Result<String> shiftWork(@RequestBody SpaceShiftVO body) {
+		this.service.shiftDisplayOrder(body.getId(), body.getStep(), this.getUserId(), this.getDomainId(),
+				this.toWorkbenchListScope(body.getPubTypes(), body.getKeyword()));
+		return Result.ok("ok");
+	}
+
+	@ApiOperation(value = "章节顺序微调", notes = "step=-1 上移，1 下移")
+	@PostMapping("space/book/{bookId:\\d+}/chapters/shift")
+	@OpLog(action = "章节顺序微调", resourceType = "chapter")
+	public Result<String> shiftChapter(@ApiParam(value = "作品ID", required = true) @PathVariable Long bookId,
+			@RequestBody SpaceShiftVO body) {
+		this.service.shiftDisplayOrder(body.getId(), body.getStep(), this.getUserId(), null,
+				this.toWorkbenchListScope(null, body.getKeyword()));
+		return Result.ok("ok");
+	}
+
+	private WorkbenchListScope toWorkbenchListScope(List<String> pubTypes, String keyword) {
+		WorkbenchListScope scope = new WorkbenchListScope();
+		scope.setPubTypes(pubTypes);
+		if (keyword != null) {
+			String trimmed = keyword.trim();
+			scope.setKeyword(trimmed.isEmpty() ? null : trimmed);
+		}
+		return scope;
 	}
 
 	/**
@@ -152,9 +249,9 @@ public class SpaceController extends NonEntityController<SpaceService> {
 			return this.resJson.ok(ResultCode.VALIDATION_ERROR.getCode(), "内容超过一万字");
 		// 检查分类是否归属同一个类型
 		List<SelectOption> typeIds = pub.getTermTypeIds();
-		if (typeIds != null) {
+		if (typeIds != null && !typeIds.isEmpty()) {
 			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-			if (!this.kcmsService.isValidTerm(termTypeIds))
+			if (!termTypeIds.isEmpty() && !this.kcmsService.isValidTerm(termTypeIds))
 				return this.resJson.ok(ResultCode.VALIDATION_ERROR.getCode(), "使用了不可识别的分类数据");
 		}
 		// 检查标签

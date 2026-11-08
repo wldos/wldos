@@ -72,6 +72,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,13 +115,17 @@ public class KCMSService extends NonEntityService {
 
 	private final RegionService regionService;
 
+	private final WorkbenchPolicySupport workbenchPolicySupport;
+
 	public KCMSService(PubService pubService, PubmetaService pubmetaService,
-			PubTypeExtService pubTypeExtService, TermService termService, RegionService regionService) {
+			PubTypeExtService pubTypeExtService, TermService termService, RegionService regionService,
+			WorkbenchPolicySupport workbenchPolicySupport) {
 		this.pubService = pubService;
 		this.pubmetaService = pubmetaService;
 		this.pubTypeExtService = pubTypeExtService;
 		this.termService = termService;
 		this.regionService = regionService;
+		this.workbenchPolicySupport = workbenchPolicySupport;
 	}
 
 	/**
@@ -170,6 +175,11 @@ public class KCMSService extends NonEntityService {
 	 */
 	public Long insertSelective(Pub pub, String pubType, Long userId, String userIp, Long domainId) {
 
+		Long parentKey = pub.getParentId() != null ? pub.getParentId() : Constants.TOP_PUB_ID;
+		if (Objects.equals(parentKey, Constants.TOP_PUB_ID)) {
+			this.workbenchPolicySupport.assertCreateRootWork(userId, domainId, pub.getComId(), pubType);
+		}
+
 		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(pub.getId())) // 创建标题别名
 			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));
 
@@ -177,14 +187,18 @@ public class KCMSService extends NonEntityService {
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
-		this.applyVisibilityScopeFromRequest(pub, pubs);
+		this.applyVisibilityScopeIfAllowed(pub, pubs, userId);
 		// 存在别名，自动加1设置不重复别名
 		if (!ObjectUtils.isBlank(pubs.getPubName()))
 			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
 
 		pubs.setPubType(pubType);
+		pubs.setOriginPubId(null);
+		if (pubs.getDisplayOrder() == null) {
+			pubs.setDisplayOrder(this.pubService.allocateNextDisplayOrder(parentKey));
+		}
 		// 属于可信者用户组的会员跳过审核直接发布
-		pubs.setPubStatus(this.pubService.isCanTrust(userId) ? PubStatusEnum.PUBLISH.toString() : PubStatusEnum.IN_REVIEW.toString());
+		pubs.setPubStatus(this.isCanTrust(userId) ? PubStatusEnum.PUBLISH.toString() : PubStatusEnum.IN_REVIEW.toString());
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("savePub", pubs);
 
@@ -192,8 +206,11 @@ public class KCMSService extends NonEntityService {
 		Long id = pubs.getId();
 
 		// 批量关联发布内容分类并计数
-		List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-		this.termService.saveTermObject(termTypeIds, id);
+		if (pub.getTermTypeIds() != null && !pub.getTermTypeIds().isEmpty()) {
+			List<Long> termTypeIds = pub.getTermTypeIds().stream().map(o -> Long.parseLong(o.getValue()))
+					.collect(Collectors.toList());
+			this.termService.saveTermObject(termTypeIds, id);
+		}
 
 		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
@@ -223,14 +240,21 @@ public class KCMSService extends NonEntityService {
 	 * @param userIp user ip
 	 */
 	public void update(Pub pub, Long userId, String userIp, Long domainId) {
-		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(pub.getId()))
+		KPubs existing = this.pubService.findById(pub.getId());
+		if (existing == null) {
+			throw new IllegalArgumentException("内容不存在");
+		}
+		Long canonicalId = existing.getOriginPubId() != null ? existing.getOriginPubId() : existing.getId();
+		KPubs canonical = existing.getOriginPubId() != null ? this.pubService.findById(canonicalId) : existing;
+
+		if (ObjectUtils.isBlank(pub.getPubName()) && this.pubService.pubNameIsNull(canonicalId))
 			pub.setPubName(ChineseUtils.hanZi2Pinyin(pub.getPubTitle(), true));  // 创建标题别名
 
 		List<PubTypeExt> pubTypeExt = pub.getPubTypeExt();
 
 		if (!ObjectUtils.isBlank(pubTypeExt)) {
 			// @todo 考虑嵌入过滤器hook：pubTypeExt = applyFilter("updatePubTypeExt", pubTypeExt); 图片等扩展属性需要特殊处理
-			List<KPubmeta> pubMetas = this.pubmetaService.queryPubMetaByPubId(pub.getId());
+			List<KPubmeta> pubMetas = this.pubmetaService.queryPubMetaByPubId(canonicalId);
 			// 需要根据pubId+metaKey取出可能存在的pubMeta.id，如果不存在，以新属性创建
 			Map<String, Long> keyMap = pubMetas.parallelStream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getId));
 			// 保存扩展属性
@@ -240,7 +264,7 @@ public class KCMSService extends NonEntityService {
 				String value = ext.getMetaValue();
 				if (ObjectUtils.isBlank(value))
 					return null;
-				return KPubmeta.of(keyMap.get(key), pub.getId(), key, value);
+				return KPubmeta.of(keyMap.get(key), canonicalId, key, value);
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 
 			List<KPubmeta> pubMetasU = pubMetas.parallelStream().filter(p -> p.getId() != null).collect(Collectors.toList());
@@ -256,24 +280,40 @@ public class KCMSService extends NonEntityService {
 		List<SelectOption> tIds = pub.getTermTypeIds();
 		if (tIds != null) {
 			List<Long> termTypeIds = tIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-			this.termService.updateTermObject(termTypeIds, pub.getId(), TermTypeEnum.CATEGORY.toString());
+			this.termService.updateTermObject(termTypeIds, canonicalId, TermTypeEnum.CATEGORY.toString());
 		}
 
 		List<String> tagIds = pub.getTagIds();
 		if (tagIds != null) {
 			List<Long> newTagIds = this.termService.handleTag(tagIds, userId, userIp);
-			this.termService.updateTermObject(newTagIds, pub.getId(), TermTypeEnum.TAG.toString());
+			this.termService.updateTermObject(newTagIds, canonicalId, TermTypeEnum.TAG.toString());
+		}
+
+		if (this.pubService.isDraftEligibleCanonical(canonical)
+				&& this.pubService.isPublishedCanonical(canonical)) {
+			this.applyCanonicalRowMetadata(canonical, pub, domainId, userId);
+			if (this.isCanTrust(userId)) {
+				this.pubService.mergeTrustedEdit(canonical, pub, userId, userIp);
+			}
+			else if (this.hasDraftableBodyChange(pub)) {
+				this.pubService.upsertActiveDraft(canonical, pub, userId, userIp);
+			}
+			this.pubService.saveOrUpdate(canonical);
+			return;
 		}
 
 		KPubs pubs = new KPubs();
 		this.pubCopier.copy(pub, pubs, null);
-		this.applyVisibilityScopeFromRequest(pub, pubs);
+		this.applyVisibilityScopeIfAllowed(pub, pubs, userId);
+		pubs.setOriginPubId(existing.getOriginPubId());
 
 		// @todo 考虑嵌入过滤器hook：pubs = applyFilter("updatePub", pubs);
 
-		// 设置不重复的别名
-		if (!ObjectUtils.isBlank(pubs.getPubName()))
+		// 草稿行不占别名；正式行设置不重复别名
+		if (pubs.getOriginPubId() == null && !ObjectUtils.isBlank(pubs.getPubName()))
 			pubs.setPubName(this.pubService.existsAutoDiffPubName(domainId, pubs.getPubName(), pubs.getId()));
+		else if (pubs.getOriginPubId() != null)
+			pubs.setPubName(null);
 
 		this.pubService.saveOrUpdate(pubs);
 	}
@@ -305,7 +345,13 @@ public class KCMSService extends NonEntityService {
 	 */
 	public Product productInfo(Long pid, boolean isPreview, Long domainId) {
 		//@todo 发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
-		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid) : this.pubService.queryContModel(pid, domainId);
+		Long canonicalId = this.pubService.resolveCanonicalId(pid);
+		if (canonicalId == null) {
+			return null;
+		}
+		ContModelDto contBody = isPreview
+				? (domainId == null ? this.pubService.queryWorkingContModel(canonicalId) : this.pubService.queryWorkingContModel(canonicalId, domainId))
+				: (domainId == null ? this.pubService.queryContModel(canonicalId) : this.pubService.queryContModel(canonicalId, domainId));
 		if (contBody == null)
 			return null;
 
@@ -313,16 +359,16 @@ public class KCMSService extends NonEntityService {
 			return null;
 		}
 
-		this.updatePubMeta(pid);
+		this.updatePubMeta(canonicalId);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(canonicalId);
 
 		// 合并主体信息
 		Product product = new Product();
 		this.contCopier.copy(contBody, product, null);
 		// 处理分类和标签
-		this.termAndTagHandle(product, pid);
+		this.termAndTagHandle(product, canonicalId);
 
 		// 生成seo和面包屑数据
 		List<Long> tIds = product.getTermTypeIds();
@@ -371,8 +417,31 @@ public class KCMSService extends NonEntityService {
 		this.cmsUtils.populateMeta(product, pubMeta, this.regionService);
 	}
 
+	/**
+	 * 与商业模块约定的 WSHook 扩展名；Handler 由 wldos-cms-access 注册，无 JAR 时 no-op。
+	 */
+	public static final String HOOK_AFTER_LOAD_CONTENT = "cms.afterLoadContent";
+
 	public IMeta handleContent(IMeta iMeta, List<KPubmeta> metas, ContModelDto contBody, Long pid) {
-		return this.cmsUtils.handleContent(iMeta, metas, contBody, pid, this.pubTypeExtService, this.pubService, this.pubmetaService);
+		return this.handleContent(iMeta, metas, contBody, pid, false);
+	}
+
+	public IMeta handleContent(IMeta iMeta, List<KPubmeta> metas, ContModelDto contBody, Long pid, boolean preview) {
+		iMeta = this.cmsUtils.handleContent(iMeta, metas, contBody, pid, this.pubTypeExtService, this.pubService,
+				this.pubmetaService);
+		invokeAfterLoadContentHook(iMeta, contBody, pid, preview);
+		return iMeta;
+	}
+
+	private void invokeAfterLoadContentHook(IMeta iMeta, ContModelDto contBody, Long pid, boolean preview) {
+		if (this.wsHook == null || iMeta == null || contBody == null) {
+			return;
+		}
+		try {
+			this.wsHook.applyHandler(HOOK_AFTER_LOAD_CONTENT, iMeta, contBody, pid, preview);
+		}
+		catch (Exception ignored) {
+		}
 	}
 
 	public MainPicture exact(List<KPubmeta> metas, String pic) {
@@ -415,14 +484,40 @@ public class KCMSService extends NonEntityService {
 	 * @return a works info
 	 */
 	public Book queryBook(Long bookId) {
-		KPubs pub = this.pubService.findById(bookId);
-		if (pub == null)
-			return null;
+		return this.queryBook(bookId, this.defaultWorkbenchChapterPageQuery());
+	}
 
-		// 单体结构直接查询自身填充Chapter
-		List<Chapter> chapters = PubTypeEnum.isSingle(pub.getPubType()) ? this.pubService.queryChapterBySinglePubId(bookId)
-				: this.pubService.queryChapterByParentId(bookId, DeleteFlagEnum.NORMAL.toString());
-		return Book.of(pub.getId(), pub.getPubTitle(), pub.getPubType(), pub.getPubStatus(), chapters);
+	public Book queryBook(Long bookId, PageQuery chapterPage) {
+		KPubs pub = this.pubService.findById(bookId);
+		if (pub == null) {
+			return null;
+		}
+
+		if (PubTypeEnum.isSingle(pub.getPubType())) {
+			List<Chapter> chapters = this.pubService.queryChapterBySinglePubId(bookId);
+			Book book = Book.of(pub.getId(), pub.getPubTitle(), pub.getPubType(), pub.getPubStatus(), chapters);
+			book.setChapterTotal(chapters != null ? (long) chapters.size() : 0L);
+			return book;
+		}
+
+		PageQuery pageQuery = chapterPage != null ? chapterPage : this.defaultWorkbenchChapterPageQuery();
+		pageQuery.pushParam("parentId", bookId);
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		PageData<PubUnit> page = this.pubService.queryArchives(pageQuery);
+		List<Chapter> chapters = page.getRows().stream()
+				.map(unit -> Chapter.of(unit.getId(), unit.getPubTitle(), null, null, bookId, null))
+				.collect(Collectors.toList());
+		Book book = Book.of(pub.getId(), pub.getPubTitle(), pub.getPubType(), pub.getPubStatus(), chapters);
+		book.setChapterTotal(page.getTotal());
+		return book;
+	}
+
+	private PageQuery defaultWorkbenchChapterPageQuery() {
+		PageQuery pageQuery = new PageQuery();
+		pageQuery.setCurrent(1);
+		pageQuery.setPageSize(50);
+		pageQuery.setSorter(Sort.by(Sort.Order.asc("displayOrder"), Sort.Order.asc("id")));
+		return pageQuery;
 	}
 
 	/**
@@ -716,7 +811,13 @@ public class KCMSService extends NonEntityService {
 	public Article queryArticle(Long pid, boolean isPreview, Long domainId) {
 		//@todo 已删除或发布状态不是已发布（子类型不是继承或者父类不是已发布），一律返回空。在发布阶段，可信用户（角色为可信用户）无需审核，默认都是已发布，并且修改次数不限制 （后期实现）
 
-		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid): this.pubService.queryContModel(pid, domainId);
+		Long canonicalId = this.pubService.resolveCanonicalId(pid);
+		if (canonicalId == null) {
+			return null;
+		}
+		ContModelDto contBody = isPreview
+				? (domainId == null ? this.pubService.queryWorkingContModel(canonicalId) : this.pubService.queryWorkingContModel(canonicalId, domainId))
+				: (domainId == null ? this.pubService.queryContModel(canonicalId) : this.pubService.queryContModel(canonicalId, domainId));
 
 		if (contBody == null)
 			return null;
@@ -725,35 +826,35 @@ public class KCMSService extends NonEntityService {
 			return null;
 		}
 
-		this.updatePubMeta(pid);
+		this.updatePubMeta(canonicalId);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(canonicalId);
 
 		// 合并主体信息
 		Article article = new Article();
 		this.artCopier.copy(contBody, article, null);
 
 		// 查询作者
-		PubMember member = this.pubService.queryMemberByPubId(pid);
+		PubMember member = this.pubService.queryMemberByPubId(canonicalId);
 		article.setMember(member);
 
 		// 处理分类和标签
-		this.termAndTagHandle(article, pid);
+		this.termAndTagHandle(article, canonicalId);
 
 		// 生成seo和面包屑数据
 		List<Long> tIds = article.getTermTypeIds();
 		this.genSeoAndCrumbs(article, tIds.get(0)); // 多者取首
 
 		// 查询上下篇、相关篇章
-		this.setPrevNextAndRelated(pid, article);
+		this.setPrevNextAndRelated(canonicalId, article);
 
 		// 析取独立公共扩展属性
 		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 		this.populateMeta(article, pubMeta);
 
-		return (Article) this.handleContent(article, metas, contBody, pid);
+		return (Article) this.handleContent(article, metas, contBody, canonicalId, isPreview);
 	}
 
 	/**
@@ -816,9 +917,14 @@ public class KCMSService extends NonEntityService {
 	 * @return 元素
 	 */
 	public Article readElement(Long pid, boolean isPreview) {
-		//@todo 检查付费设置，需要付费的灰色不可继续读取
 
-		ContModelDto contBody = this.pubService.queryContModel(pid);
+		Long canonicalId = this.pubService.resolveCanonicalId(pid);
+		if (canonicalId == null) {
+			return null;
+		}
+		ContModelDto contBody = isPreview
+				? this.pubService.queryWorkingContModel(canonicalId)
+				: this.pubService.queryContModel(canonicalId);
 
 		if (contBody == null)
 			return null;
@@ -827,35 +933,35 @@ public class KCMSService extends NonEntityService {
 			return null;
 		}
 
-		this.updatePubMeta(pid);
+		this.updatePubMeta(canonicalId);
 
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(canonicalId);
 
 		// 合并主体信息
 		Article article = new Article();
 		this.artCopier.copy(contBody, article, null);
 
 		// 查询作者
-		PubMember member = this.pubService.queryMemberByPubId(pid);
+		PubMember member = this.pubService.queryMemberByPubId(canonicalId);
 		article.setMember(member);
 
 		// 处理分类和标签
-		this.termAndTagHandle(article, pid);
+		this.termAndTagHandle(article, canonicalId);
 
 		// 生成seo和面包屑数据
 		List<Long> tIds = article.getTermTypeIds();
 		this.genSeoAndCrumbs(article, tIds.get(0)); // 多者取首
 
 		// 查询上下篇、相关篇章
-		this.setPrevNextAndRelated(pid, article);
+		this.setPrevNextAndRelated(canonicalId, article);
 
 		// 析取独立公共扩展属性
 		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
 
 		this.populateMeta(article, pubMeta);
 
-		return (Article) this.handleContent(article, metas, contBody, pid);
+		return (Article) this.handleContent(article, metas, contBody, canonicalId, isPreview);
 	}
 
 	public List<PubTypeExt> getPubTypeExt(List<PubTypeExt> pubTypeExt, List<KPubmeta> metas) {
@@ -935,19 +1041,33 @@ public class KCMSService extends NonEntityService {
 	 * @return 内容信息
 	 */
 	public PubMeta pubInfo(Long pid, Long domainId) {
-		ContModelDto contBody = domainId == null ? this.pubService.queryContModel(pid) : this.pubService.queryContModel(pid, domainId);
+		Long canonicalId = this.pubService.resolveCanonicalId(pid);
+		if (canonicalId == null) {
+			return null;
+		}
+		ContModelDto contBody = domainId == null
+				? this.pubService.queryWorkingContModel(canonicalId)
+				: this.pubService.queryWorkingContModel(canonicalId, domainId);
 
 		if (contBody == null)
 			return null;
 
+		KPubs canonical = this.pubService.findById(canonicalId);
+
 		// 查询内容主体的扩展属性值（含公共扩展(1封面、4主图)和自定义扩展）
-		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(pid);
+		List<KPubmeta> metas = this.pubmetaService.queryPubMetaByPubId(canonicalId);
 
 		// 合并主体信息
 		PubMeta pub = new PubMeta();
 		this.pubMetaCopier.copy(contBody, pub, null);
+		pub.setCanonicalPubId(canonicalId);
+		pub.setHasPendingDraft(this.pubService.hasActiveDraft(canonicalId));
+		if (canonical != null) {
+			pub.setPubName(canonical.getPubName());
+			pub.setVisibilityScope(canonical.getVisibilityScope());
+		}
 		// 取出分类和标签
-		this.termAndTagFromPub(pub, pid);
+		this.termAndTagFromPub(pub, canonicalId);
 
 		// 扩展属性 : 考虑静态模型 和 动态模型 的处理方式
 		Map<String, String> pubMeta = metas.stream().collect(Collectors.toMap(KPubmeta::getMetaKey, KPubmeta::getMetaValue, (k1, k2) -> k1));
@@ -1007,5 +1127,29 @@ public class KCMSService extends NonEntityService {
 	 */
 	private void applyVisibilityScopeFromRequest(Pub pub, KPubs pubs) {
 		pubs.setVisibilityScope(CmsKpubsDiscoverySql.normalizeScopeForSave(pub.getVisibilityScope()));
+	}
+
+	/** 仅管理员或可信者可修改可发现性。 */
+	private void applyVisibilityScopeIfAllowed(Pub pub, KPubs pubs, Long userId) {
+		if (pub.getVisibilityScope() == null) {
+			return;
+		}
+		if (!this.isAdmin(userId) && !this.isCanTrust(userId)) {
+			return;
+		}
+		this.applyVisibilityScopeFromRequest(pub, pubs);
+	}
+
+	/** 已发布作品的元数据（别名、可发现性）始终写正式行，不进草稿。 */
+	private void applyCanonicalRowMetadata(KPubs canonical, Pub pub, Long domainId, Long userId) {
+		this.applyVisibilityScopeIfAllowed(pub, canonical, userId);
+		if (canonical.getOriginPubId() == null && !ObjectUtils.isBlank(pub.getPubName())) {
+			canonical.setPubName(this.pubService.existsAutoDiffPubName(domainId, pub.getPubName(), canonical.getId()));
+		}
+	}
+
+	/** 请求携带正文/摘要时，才创建或更新内容草稿（作品配置不含 pubContent，不会误建草稿）。 */
+	private boolean hasDraftableBodyChange(Pub pub) {
+		return pub.getPubContent() != null || pub.getPubExcerpt() != null;
 	}
 }

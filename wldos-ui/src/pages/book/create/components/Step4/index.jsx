@@ -3,18 +3,18 @@ import React from 'react';
 import {connect, Link, FormattedMessage} from 'umi';
 import styles from './index.less';
 import GeographicView from "@/pages/account/settings/components/GeographicView";
-import { VISIBILITY_SCOPE_OPTIONS } from '@/pages/book/create/components/Step2';
 import {bodyContent} from "@/utils/utils";
+import { usePubVisibilityScopeEnum } from '@/hooks/usePubVisibilityScopeEnum';
 
 const Step4 = (props) => {
-  const {data, privacyEnum, geographic, dispatch} = props;
+  const { data, geographic, dispatch, showVisibilityScope = false } = props;
+  const { labelOf: visibilityScopeLabelOf } = usePubVisibilityScopeEnum();
   if (!data) {
     return null;
   }
 
-  const {pubTitle, subTitle, ornPrice, telephone, contact, pubContent, privacyLevel, visibilityScope, reward, id} = data;
-  const visibilityScopeLabel =
-    VISIBILITY_SCOPE_OPTIONS.find((e) => e.value === (visibilityScope || 'PUBLIC_LISTED'))?.label ?? '';
+  const { pubTitle, subTitle, ornPrice, telephone, contact, pubContent, visibilityScope, reward, id } = data;
+  const visibilityScopeLabel = visibilityScopeLabelOf(visibilityScope || 'PUBLIC_LISTED');
 
   const onFinish = () => {
     if (dispatch) {
@@ -36,8 +36,9 @@ const Step4 = (props) => {
         <Descriptions.Item label={<FormattedMessage id="book.create.step4.info.price" defaultMessage="查看价格" />}>
           <Statistic value={ornPrice} suffix={<FormattedMessage id="book.create.step4.info.price.unit" defaultMessage="元" />} />
         </Descriptions.Item>
-        <Descriptions.Item label={<FormattedMessage id="book.create.step4.info.privacy" defaultMessage="查看方式" />}> {privacyEnum?.find(e => e.value === privacyLevel)?.label || ''}</Descriptions.Item>
-        <Descriptions.Item label={<FormattedMessage id="book.create.step4.info.visibilityScope" defaultMessage="发现范围" />}>{visibilityScopeLabel}</Descriptions.Item>
+        {showVisibilityScope ? (
+          <Descriptions.Item label={<FormattedMessage id="book.create.step4.info.visibilityScope" defaultMessage="发现范围" />}>{visibilityScopeLabel}</Descriptions.Item>
+        ) : null}
         {reward && <Descriptions.Item label={<FormattedMessage id="book.create.step4.info.reward" defaultMessage="打赏金额" />}> {reward}</Descriptions.Item>}
         <Descriptions.Item label={<FormattedMessage id="book.create.step4.info.detail" defaultMessage="详情描述" />}> {bodyContent(pubContent)}</Descriptions.Item>
       </Descriptions>
@@ -64,8 +65,10 @@ const Step4 = (props) => {
   );
 };
 
-export default connect(({bookInfo}) => ({
+import {canManageVisibilityScope} from '@/utils/userPrivilege';
+
+export default connect(({ bookInfo, user }) => ({
   data: bookInfo.step,
-  privacyEnum: bookInfo.privacyEnum,
   geographic: bookInfo.geographic,
+  showVisibilityScope: canManageVisibilityScope(user),
 }))(Step4);

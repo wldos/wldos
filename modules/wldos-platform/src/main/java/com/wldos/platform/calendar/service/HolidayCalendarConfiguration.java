@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * 触发"已存在 bean"误判，反而导致默认实现被排除、容器里没有任何 HolidayExternalSource。
  *
  * @author Yuanxi Universe
- * @date 2026/04/30
+ * @date 2025/04/30
  * @version 1.0
  */
 @Configuration

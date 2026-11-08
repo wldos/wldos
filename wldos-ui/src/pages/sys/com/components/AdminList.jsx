@@ -152,11 +152,12 @@ const AdminList = (props) => {
           </Button>,
         ]}
         request={async (params, sorter, filter) => {
-          const res = await queryComPage({ // 查询租户管理员
+          const res = await queryComPage({
             ...params,
+            uComId: userComId,
             userComId,
             sorter,
-            filter
+            filter,
           });
           return Promise.resolve({
             total: res?.data?.total || 0,

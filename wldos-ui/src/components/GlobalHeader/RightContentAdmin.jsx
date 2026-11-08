@@ -10,6 +10,7 @@ import { Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
 import { connect, useIntl } from 'umi';
+import { queryAdminHeaderHelp } from '@/services/user';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
@@ -24,6 +25,7 @@ const GlobalHeaderRightAdmin = (props) => {
 
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? (window.innerWidth || document.documentElement.clientWidth) < 768 : false);
+    const [helpDoc, setHelpDoc] = useState(null);
 
     let className = styles.right;
 
@@ -83,21 +85,34 @@ const GlobalHeaderRightAdmin = (props) => {
         };
     }, []);
 
+    useEffect(() => {
+        queryAdminHeaderHelp()
+            .then((res) => {
+                const cfg = res?.data?.data ?? res?.data;
+                if (cfg?.enabled && cfg?.url) {
+                    setHelpDoc(cfg);
+                } else {
+                    setHelpDoc(null);
+                }
+            })
+            .catch(() => setHelpDoc(null));
+    }, []);
+
     return (
         <div className={className} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            { <Tooltip title={intl.formatMessage({ id: 'component.globalHeader.help' })}>
-                <a
-                    style={{
-                        color: 'inherit',
-                    }}
-                    target="_blank"
-                    href="http://www.wldos.org/doc"
-                    rel="noopener noreferrer"
-                    className={styles.action}
-                >
-                    <QuestionCircleOutlined/>
-                </a>
-            </Tooltip> }
+            {helpDoc?.url ? (
+                <Tooltip title={intl.formatMessage({ id: 'component.globalHeader.help' })}>
+                    <a
+                        style={{ color: 'inherit' }}
+                        target="_blank"
+                        href={helpDoc.url}
+                        rel="noopener noreferrer"
+                        className={styles.action}
+                    >
+                        <QuestionCircleOutlined />
+                    </a>
+                </Tooltip>
+            ) : null}
 
             {/* 全屏控件 - 仅桌面端显示 */}
             {!isMobile && (

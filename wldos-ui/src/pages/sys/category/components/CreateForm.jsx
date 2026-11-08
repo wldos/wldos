@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip, Alert} from 'antd';
+import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {
   FolderOutlined,
@@ -47,15 +47,6 @@ const CreateForm = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="新建分类"
-          description="创建新的内容分类，配置分类的基本信息、层级关系和发布状态。分类用于内容组织和导航。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={

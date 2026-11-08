@@ -12,10 +12,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.wldos.platform.audit.enums.SysLogActorKindEnum;
+import com.wldos.platform.core.enums.UserStatusEnum;
+
 import io.github.wldos.common.vo.SelectOption;
 import io.github.wldos.framework.support.plugins.core.AutoStartEnum;
 import io.github.wldos.framework.support.plugins.core.PluginStatus;
+import io.github.wldos.platform.support.rbac.DataScope;
+import io.github.wldos.platform.support.rbac.ResourceScopeLevel;
+import io.github.wldos.platform.support.resource.enums.MenuNodeKindEnum;
 import io.github.wldos.platform.support.resource.enums.ResourceEnum;
+import io.github.wldos.platform.support.resource.enums.ResourceMenuRegionEnum;
+import io.github.wldos.platform.support.resource.enums.ResourceTerminalEnum;
 import io.github.wldos.platform.support.system.enums.OptionAppCodeEnum;
 import io.github.wldos.platform.support.system.enums.OptionTypeEnum;
 import io.github.wldos.platform.support.web.enums.TemplateTypeEnum;
@@ -61,6 +69,36 @@ public class EnumController {
 		return Arrays.stream(ResourceEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "资源授权层级枚举", notes = "wo_resource.scope_level")
+	@GetMapping("select/scopeLevel")
+	public List<SelectOption> fetchEnumScopeLevel() {
+		return Arrays.stream(ResourceScopeLevel.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "资源可见终端枚举", notes = "wo_resource.terminals")
+	@GetMapping("select/resourceTerminal")
+	public List<SelectOption> fetchEnumResourceTerminal() {
+		return Arrays.stream(ResourceTerminalEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "菜单展示区域枚举", notes = "wo_resource.menu_region")
+	@GetMapping("select/resourceMenuRegion")
+	public List<SelectOption> fetchEnumResourceMenuRegion() {
+		return Arrays.stream(ResourceMenuRegionEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "菜单节点形态枚举", notes = "wo_resource.menu_node_kind")
+	@GetMapping("select/menuNodeKind")
+	public List<SelectOption> fetchEnumMenuNodeKind() {
+		return Arrays.stream(MenuNodeKindEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "角色数据策略枚举", notes = "wo_role.data_policy")
+	@GetMapping("select/dataPolicy")
+	public List<SelectOption> fetchEnumDataPolicy() {
+		return Arrays.stream(DataScope.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
 	/**
 	 * 全局系统选项：{@code wo_options.option_type}（与 {@link OptionTypeEnum} 一致）
 	 */
@@ -99,5 +137,19 @@ public class EnumController {
 	@GetMapping("select/autoStart")
 	public List<SelectOption> fetchEnumAutoStart() {
 		return Arrays.stream(AutoStartEnum.values()).map(item -> SelectOption.of(item.getDescription(), item.getEnumName())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "用户状态枚举", notes = "wo_user.status")
+	@GetMapping("select/userStatus")
+	public List<SelectOption> fetchEnumUserStatus() {
+		return Arrays.stream(UserStatusEnum.values()).map(item -> SelectOption.of(item.getLabel(), item.getValue())).collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "系统日志来源分类", notes = "wo_sys_log metadata.actorKind")
+	@GetMapping("select/sysLogActorKind")
+	public List<SelectOption> fetchEnumSysLogActorKind() {
+		return Arrays.stream(SysLogActorKindEnum.values())
+				.map(item -> SelectOption.of(item.getLabel(), item.getValue()))
+				.collect(Collectors.toList());
 	}
 }

@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.wldos.framework.mvc.controller.EntityController;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
 import com.wldos.cms.entity.KComments;
+import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.service.CommentService;
 import com.wldos.cms.vo.AuditComment;
 import io.github.wldos.common.enums.DeleteFlagEnum;
@@ -68,9 +70,7 @@ public class CommentAdminController extends EntityController<CommentService, KCo
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		// 业务对象需要作多租隔离处理：当前域-->所有分类 + 当前租户 => 当前管理员可管对象
-		this.applyTenantFilter(pageQuery);
-		// 应用域隔离
-		this.applyDomainFilter(pageQuery);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_DOMAIN, KPubs.class);
 
 		return this.service.queryAdminComments(pageQuery);
 	}

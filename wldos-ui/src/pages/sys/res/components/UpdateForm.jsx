@@ -17,6 +17,9 @@ import {
 import IconPickerModal from '@/components/IconPickerModal';
 import { renderIcon, iconMap } from '@/utils/iconLibrary';
 import { buildResourcePathValidator, buildRequestMethodValidator } from './resourcePathValidator';
+import { DISPLAY_ORDER_PATTERN } from '@/utils/displayOrder';
+import { isSiteOwnedNavDir } from '../siteNavDirUtils';
+import { isMenuRegionApplicable } from '@/pages/sys/res/menuFormRules';
 
 const FormItem = Form.Item;
 const {TextArea} = Input;
@@ -42,8 +45,14 @@ const UpdateForm = (props) => {
     values,
     apps,
     menus,
-    resTypeOptions
+    resTypeOptions,
+    scopeLevelOptions,
+    terminalOptions,
+    menuRegionOptions,
+    menuNodeKindOptions,
   } = props;
+
+  const siteOwned = isSiteOwnedNavDir(values);
 
   const [termValue, setTermValue] = useState(undefined);
   const [iconPickerVisible, setIconPickerVisible] = useState(false);
@@ -94,6 +103,9 @@ const UpdateForm = (props) => {
   };
 
   const handleNext = async () => {
+    if (siteOwned) {
+      return;
+    }
     const fieldsValue = await form.validateFields();
     // 处理图标字段为字符串
     let iconString = '';
@@ -107,7 +119,9 @@ const UpdateForm = (props) => {
 
     // 删除辅助字段，只保留后端需要的字段
     const { iconName, customIcon: ci, customUrl: cu, ...restFields } = fieldsValue;
-    const processedFields = { ...restFields, icon: iconString };
+    // 可见终端在表单里是多选数组（desktop/mobile），后端字段 terminals 是逗号分隔字符串
+    const terminalsStr = Array.isArray(restFields.terminals) ? restFields.terminals.join(',') : (restFields.terminals || '');
+    const processedFields = { ...restFields, icon: iconString, terminals: terminalsStr };
 
     const value = {...values, ...processedFields};
     handleUpdate(value);
@@ -193,62 +207,76 @@ const UpdateForm = (props) => {
 
             <Col span={12}>
               <FormItem
-                name="resourcePath"
-                label={
-                  <Space>
-                    {intl.formatMessage({ id: 'sys.res.field.resourcePath', defaultMessage: '资源路径' })}
-                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.resourcePath.tip', defaultMessage: '资源的访问路径' })}>
-                      <InfoCircleOutlined style={{ color: '#999' }} />
-                    </Tooltip>
-                  </Space>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: intl.formatMessage({ id: 'sys.res.rule.resourcePathRequired', defaultMessage: '资源路径为必填项' }),
-                  },
-                  {
-                    max: 250,
-                    type: 'string',
-                    message: intl.formatMessage({ id: 'sys.res.rule.max250', defaultMessage: '最多250个字符' }),
-                  },
-                  buildResourcePathValidator(
-                    () => form.getFieldValue('resourceType'),
-                    (id, def) => intl.formatMessage({ id, defaultMessage: def }),
-                  ),
-                ]}
+                noStyle
+                shouldUpdate={(prev, curr) => prev.menuNodeKind !== curr.menuNodeKind || prev.resourceType !== curr.resourceType}
               >
-                <Input
-                  placeholder={intl.formatMessage({ id: 'sys.res.ph.resourcePath', defaultMessage: '请输入英文或符号字符，最多250个字符' })}
-                  prefix="🔗"
-                />
-              </FormItem>
+                {({ getFieldValue }) => {
+                  const isNavDir = getFieldValue('menuNodeKind') === 'nav_dir';
+                  return (
+                    <>
+                      <FormItem
+                        name="resourcePath"
+                        label={
+                          <Space>
+                            {intl.formatMessage({ id: 'sys.res.field.resourcePath', defaultMessage: '资源路径' })}
+                            <Tooltip title={intl.formatMessage({ id: 'sys.res.field.resourcePath.tip', defaultMessage: '资源的访问路径' })}>
+                              <InfoCircleOutlined style={{ color: '#999' }} />
+                            </Tooltip>
+                          </Space>
+                        }
+                        rules={[
+                          ...(isNavDir ? [] : [{
+                            required: true,
+                            message: intl.formatMessage({ id: 'sys.res.rule.resourcePathRequired', defaultMessage: '资源路径为必填项' }),
+                          }]),
+                          {
+                            max: 250,
+                            type: 'string',
+                            message: intl.formatMessage({ id: 'sys.res.rule.max250', defaultMessage: '最多250个字符' }),
+                          },
+                          buildResourcePathValidator(
+                            () => form.getFieldValue('resourceType'),
+                            (id, def) => intl.formatMessage({ id, defaultMessage: def }),
+                          ),
+                        ]}
+                      >
+                        <Input
+                          disabled={isNavDir || siteOwned}
+                          placeholder={intl.formatMessage({ id: 'sys.res.ph.resourcePath', defaultMessage: '请输入英文或符号字符，最多250个字符' })}
+                          prefix="🔗"
+                        />
+                      </FormItem>
 
-              <FormItem
-                name="componentPath"
-                label={
-                  <Space>
-                    {intl.formatMessage({ id: 'sys.res.field.componentPath', defaultMessage: '组件路径' })}
-                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.componentPath.tip', defaultMessage: '组件文件路径，相对于src/pages/目录' })}>
-                      <InfoCircleOutlined style={{ color: '#999' }} />
-                    </Tooltip>
-                  </Space>
-                }
-                rules={[
-                  {
-                    required: false,
-                    message: intl.formatMessage({
-                      id: 'sys.res.rule.componentPathPattern',
-                      defaultMessage: '组件路径格式：pathX/xxx/xxx，相对于src/pages/目录',
-                    }),
-                    pattern: /^[a-zA-Z0-9\/\-_]+$/,
-                  },
-                ]}
-              >
-                <Input
-                  placeholder={intl.formatMessage({ id: 'sys.res.ph.componentPath', defaultMessage: '请输入组件路径，如：test，注意无需加/index' })}
-                  prefix="📁"
-                />
+                      <FormItem
+                        name="componentPath"
+                        label={
+                          <Space>
+                            {intl.formatMessage({ id: 'sys.res.field.componentPath', defaultMessage: '组件路径' })}
+                            <Tooltip title={intl.formatMessage({ id: 'sys.res.field.componentPath.tip', defaultMessage: '组件文件路径，相对于src/pages/目录' })}>
+                              <InfoCircleOutlined style={{ color: '#999' }} />
+                            </Tooltip>
+                          </Space>
+                        }
+                        rules={[
+                          {
+                            required: false,
+                            message: intl.formatMessage({
+                              id: 'sys.res.rule.componentPathPattern',
+                              defaultMessage: '组件路径格式：pathX/xxx/xxx，相对于src/pages/目录',
+                            }),
+                            pattern: /^[a-zA-Z0-9\/\-_]+$/,
+                          },
+                        ]}
+                      >
+                        <Input
+                          disabled={isNavDir || siteOwned}
+                          placeholder={intl.formatMessage({ id: 'sys.res.ph.componentPath', defaultMessage: '请输入组件路径，如：test，注意无需加/index' })}
+                          prefix="📁"
+                        />
+                      </FormItem>
+                    </>
+                  );
+                }}
               </FormItem>
             </Col>
           </Row>
@@ -370,41 +398,107 @@ const UpdateForm = (props) => {
                     message: intl.formatMessage({ id: 'sys.res.rule.displayOrderRequired', defaultMessage: '展示顺序为必填项' }),
                   },
                   {
-                    pattern: /^([1-9]|[1-9]\d|100)$/,
-                    message: intl.formatMessage({ id: 'sys.res.rule.displayOrderRange', defaultMessage: '请输入1-100之间的数字' }),
+                    pattern: DISPLAY_ORDER_PATTERN,
+                    message: intl.formatMessage({ id: 'sys.res.rule.displayOrderRange', defaultMessage: '请输入1-9999之间的数字' }),
                   },
                 ]}
               >
                 <Input
-                  placeholder={intl.formatMessage({ id: 'sys.res.ph.displayOrder', defaultMessage: '请输入数字，1-100' })}
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.displayOrder', defaultMessage: '请输入数字，1-9999' })}
                   prefix="🔢"
                 />
               </FormItem>
 
               <FormItem
                 noStyle
-                shouldUpdate={(prev, curr) => prev.resourceType !== curr.resourceType}
+                shouldUpdate={(prev, curr) =>
+                  prev.resourceType !== curr.resourceType || prev.menuNodeKind !== curr.menuNodeKind
+                }
               >
                 {({ getFieldValue }) =>
-                  (getFieldValue('resourceType') === 'menu' || getFieldValue('resourceType') === 'plugin_menu') ? (
+                  isMenuRegionApplicable(getFieldValue('resourceType'), getFieldValue('menuNodeKind')) ? (
                     <FormItem
                       name="menuRegion"
                       label={
                         <Space>
                           {intl.formatMessage({ id: 'sys.res.field.menuRegion', defaultMessage: '展示区域' })}
-                          <Tooltip title={intl.formatMessage({ id: 'sys.res.field.menuRegion.tip', defaultMessage: '主导航=顶部菜单，头像下拉=头像点击弹出的菜单' })}>
+                          <Tooltip title={intl.formatMessage({ id: 'sys.res.field.menuRegion.tip', defaultMessage: '主导航=Web 顶栏；头像下拉=用户菜单；桌面端首页=桌面壳首页卡片网格' })}>
                             <InfoCircleOutlined style={{ color: '#999' }} />
                           </Tooltip>
                         </Space>
                       }
                     >
-                      <Select placeholder={intl.formatMessage({ id: 'sys.res.field.menuRegion.placeholder', defaultMessage: '默认主导航' })} allowClear>
-                        <Option value="nav_main">{intl.formatMessage({ id: 'sys.res.menuRegion.navMain', defaultMessage: '主导航' })}</Option>
-                        <Option value="nav_avatar">{intl.formatMessage({ id: 'sys.res.menuRegion.navAvatar', defaultMessage: '头像下拉' })}</Option>
-                      </Select>
+                      <Select
+                        placeholder={intl.formatMessage({ id: 'sys.res.field.menuRegion.placeholder', defaultMessage: '默认主导航' })}
+                        allowClear
+                        options={menuRegionOptions || []}
+                      />
                     </FormItem>
                   ) : null
                 }
+              </FormItem>
+
+              <FormItem
+                noStyle
+                shouldUpdate={(prev, curr) => prev.resourceType !== curr.resourceType}
+              >
+                {({ getFieldValue }) => {
+                  const menuFamilyTypes = ['menu', 'plugin_menu', 'admin_menu', 'admin_plugin_menu'];
+                  return menuFamilyTypes.includes(getFieldValue('resourceType')) ? (
+                    <FormItem
+                      name="menuNodeKind"
+                      label={(
+                        <Space>
+                          节点形态
+                          <Tooltip title="导航目录不参与路由鉴权；页面/链接菜单需配置 path/component">
+                            <InfoCircleOutlined style={{ color: '#999' }} />
+                          </Tooltip>
+                        </Space>
+                      )}
+                    >
+                      <Select
+                        allowClear={!siteOwned}
+                        disabled={siteOwned}
+                        placeholder="留空=存量 legacy"
+                        options={menuNodeKindOptions || []}
+                        onChange={(kind) => {
+                          if (kind === 'route' || kind === 'nav_dir') {
+                            form.setFieldsValue({ menuRegion: undefined });
+                          }
+                        }}
+                      />
+                    </FormItem>
+                  ) : null;
+                }}
+              </FormItem>
+
+              <FormItem
+                noStyle
+                shouldUpdate={(prev, curr) => prev.resourceType !== curr.resourceType}
+              >
+                {({ getFieldValue }) => {
+                  const menuFamilyTypes = ['menu', 'plugin_menu', 'admin_menu', 'admin_plugin_menu'];
+                  return menuFamilyTypes.includes(getFieldValue('resourceType')) ? (
+                    <FormItem
+                      name="terminals"
+                      label={
+                        <Space>
+                          {intl.formatMessage({ id: 'sys.res.field.terminals', defaultMessage: '可见终端' })}
+                          <Tooltip title={intl.formatMessage({ id: 'sys.res.field.terminals.tip', defaultMessage: '不选=全部终端可见（默认，不影响存量资源）；勾选后仅在勾选的终端上展示该菜单，其它终端（如 web 门户）不受影响' })}>
+                            <InfoCircleOutlined style={{ color: '#999' }} />
+                          </Tooltip>
+                        </Space>
+                      }
+                    >
+                      <Select
+                        mode="multiple"
+                        allowClear
+                        placeholder={intl.formatMessage({ id: 'sys.res.field.terminals.placeholder', defaultMessage: '默认全部终端可见' })}
+                        options={(terminalOptions || []).filter((item) => item.value !== '')}
+                      />
+                    </FormItem>
+                  ) : null;
+                }}
               </FormItem>
             </Col>
           </Row>
@@ -545,6 +639,27 @@ const UpdateForm = (props) => {
               </FormItem>
             </Col>
           </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <FormItem
+                name="scopeLevel"
+                label={
+                  <Space>
+                    {intl.formatMessage({ id: 'sys.res.field.scopeLevel', defaultMessage: '授权层级' })}
+                    <Tooltip title={intl.formatMessage({ id: 'sys.res.field.scopeLevel.tip', defaultMessage: '低层级管理员不可向下授出高于此层级的资源' })}>
+                      <InfoCircleOutlined style={{ color: '#999' }} />
+                    </Tooltip>
+                  </Space>
+                }
+              >
+                <Select
+                  placeholder={intl.formatMessage({ id: 'sys.res.ph.selectScopeLevel', defaultMessage: '请选择授权层级' })}
+                  style={{ width: '100%' }}
+                  options={scopeLevelOptions}
+                />
+              </FormItem>
+            </Col>
+          </Row>
         </Card>
 
         {/* 描述信息分组 - 全宽显示 */}
@@ -610,9 +725,17 @@ const UpdateForm = (props) => {
         <Button onClick={() => handleUpdateModalVisible()}>
           {intl.formatMessage({ id: 'sys.res.common.cancel', defaultMessage: '取消' })}
         </Button>
-        <Button type="primary" onClick={() => handleNext()}>
-          {intl.formatMessage({ id: 'sys.res.update.save', defaultMessage: '保存配置' })}
-        </Button>
+        {siteOwned ? (
+          <Tooltip title="站点自建菜单分组请在「站点管理 → 菜单布局」中维护">
+            <Button type="primary" disabled>
+              {intl.formatMessage({ id: 'sys.res.update.save', defaultMessage: '保存配置' })}
+            </Button>
+          </Tooltip>
+        ) : (
+          <Button type="primary" onClick={() => handleNext()}>
+            {intl.formatMessage({ id: 'sys.res.update.save', defaultMessage: '保存配置' })}
+          </Button>
+        )}
       </Space>
     );
 
@@ -636,6 +759,7 @@ const UpdateForm = (props) => {
       <Form
         {...formLayout}
         form={form}
+        disabled={siteOwned}
         initialValues={{
           resourceName: props.values.resourceName,
           resourceCode: props.values.resourceCode,
@@ -648,14 +772,17 @@ const UpdateForm = (props) => {
             ? props.values.icon
             : props.values.icon?.name || props.values.icon?.value || '',
           resourceType: props.values.resourceType,
+          menuNodeKind: props.values.menuNodeKind,
           requestMethod: props.values.requestMethod,
           target: props.values.target,
           parentId: props.values.parentId,
           appId: props.values.appId,
           remark: props.values.remark,
           isValid: props.values.isValid,
+          scopeLevel: props.values.scopeLevel || 'all',
           displayOrder: props.values.displayOrder,
           menuRegion: props.values.menuRegion,
+          terminals: (props.values.terminals || '').split(',').map((t) => t.trim()).filter(Boolean),
         }}
       >
         {renderContent()}

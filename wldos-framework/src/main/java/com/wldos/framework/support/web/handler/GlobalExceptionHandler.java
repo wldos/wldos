@@ -13,8 +13,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import io.github.wldos.common.exception.BaseException;
+import io.github.wldos.common.exception.ValidationFieldException;
 import io.github.wldos.common.res.Result;
 import io.github.wldos.common.res.ResultCode;
+import io.github.wldos.common.res.ValidationFieldError;
+
+import java.util.Collections;
 import com.wldos.framework.support.auth.AccountNotActivatedException;
 import io.github.wldos.framework.support.auth.TokenForbiddenException;
 import io.github.wldos.framework.support.auth.TokenInvalidException;
@@ -169,6 +173,31 @@ public class GlobalExceptionHandler {
 		String message = "接口不存在: " + ex.getRequestURL();
 		log.warn(message);
 		return Result.error(ResultCode.NOT_FOUND, message);
+	}
+
+	@ExceptionHandler(ValidationFieldException.class)
+	protected Result handleValidationFieldException(HttpServletResponse response, ValidationFieldException ex) {
+		response.setStatus(200);
+		String message = ex.getMessage();
+		if (message == null || message.trim().isEmpty()) {
+			message = "参数错误";
+		}
+		log.warn("字段校验失败: {} — {}", ex.getField(), message);
+		return Result.error(
+				ResultCode.VALIDATION_ERROR,
+				message,
+				Collections.singletonList(ValidationFieldError.of(ex.getField(), message)));
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	protected Result handleIllegalArgumentException(HttpServletResponse response, IllegalArgumentException ex) {
+		response.setStatus(200);
+		String message = ex.getMessage();
+		if (message == null || message.trim().isEmpty()) {
+			message = "参数错误";
+		}
+		log.warn("非法参数: {}", message);
+		return Result.error(ResultCode.VALIDATION_ERROR, message);
 	}
 
 	/**

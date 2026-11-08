@@ -9,11 +9,13 @@
 package com.wldos.platform.auth.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.platform.auth.enums.PasswdStatusEnum;
+import com.wldos.platform.auth.support.LoginAuditFailReason;
 import com.wldos.platform.auth.vo.ActiveParams;
 import com.wldos.platform.auth.vo.BakEmailModifyParams;
 import com.wldos.platform.auth.vo.Login;
@@ -26,6 +28,7 @@ import com.wldos.platform.auth.vo.Register;
 import com.wldos.platform.auth.vo.SecQuestModifyParams;
 import com.wldos.framework.mvc.service.NonEntityService;
 import io.github.wldos.common.Constants;
+import io.github.wldos.common.exception.BaseException;
 import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.common.utils.http.IpUtils;
 import com.wldos.platform.core.dto.Tenant;
@@ -65,6 +68,8 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings({ "all" })
 @Transactional(rollbackFor = Exception.class)
 public class LoginAuthService extends NonEntityService {
+
+	private static final String CREDENTIAL_FAIL_USER_NEWS = "登陆失败，请重试！";
 	private final BeanCopier userCopier = BeanCopier.create(WoUser.class, UserInfo.class, false);
 
 	/** 是否开启邮箱注册激活开关，开启后注册用户需要从邮箱激活 */
@@ -84,11 +89,19 @@ public class LoginAuthService extends NonEntityService {
 
 	private final MailService mailService;
 
-	public LoginAuthService(AuthService authService, UserService userService, AuthCodeService authCodeService, MailService mailService) {
+	private final LoginHostAdmissionPolicy loginHostAdmissionPolicy;
+
+	public LoginAuthService(
+			AuthService authService,
+			UserService userService,
+			AuthCodeService authCodeService,
+			MailService mailService,
+			LoginHostAdmissionPolicy loginHostAdmissionPolicy) {
 		this.authService = authService;
 		this.userService = userService;
 		this.authCodeService = authCodeService;
 		this.mailService = mailService;
+		this.loginHostAdmissionPolicy = loginHostAdmissionPolicy;
 	}
 
 	/**
@@ -151,11 +164,25 @@ public class LoginAuthService extends NonEntityService {
 			return user;
 		}
 
-		UserInfo userInfo = this.validateLogin(loginAuthParams);
-		if (ObjectUtils.isBlank(userInfo)) {
+		Long lookupDomainId = this.loginHostAdmissionPolicy.resolveLoginLookupDomainId(domainId, loginAuthParams.getTrialSandboxId());
+		LoginValidation validation = this.validateLoginDetailed(loginAuthParams, lookupDomainId);
+		if (!validation.isOk()) {
 			this.cache.set(keyUser, ++count, 30, TimeUnit.MINUTES);
 			this.cache.set(keyIp, ++countIp, 30, TimeUnit.MINUTES);
-			return null;
+			return buildCredentialLoginFail(loginAuthParams, validation.getAuditFailReason());
+		}
+		UserInfo userInfo = validation.getUserInfo();
+
+		Long trialSandboxId = loginAuthParams.getTrialSandboxId();
+		try {
+			this.loginHostAdmissionPolicy.assertPasswordLoginAllowed(
+					userInfo.getId(), domainId, comId, trialSandboxId);
+		}
+		catch (BaseException ex) {
+			user.setStatus("error");
+			user.setNews(ex.getMessage());
+			user.setType(loginAuthParams.getType());
+			return user;
 		}
 
 		// 在限制次数内登录成功，解除计数，防止累计封锁ip，仅封锁同ip的错误的用户
@@ -166,13 +193,21 @@ public class LoginAuthService extends NonEntityService {
 
 		// 使用统一的Token生成方法
 		int tokenTimeoutMinutes = loginAuthParams.isAutoLogin() ? 60 * 24 * 15 : this.jwtTool.getTokenTimeout();
-		Token token = this.jwtTool.genToken(userInfo.getId(), userInfo.getTenantId(), domainId, tokenTimeoutMinutes);
+		Long jwtDomainId = this.loginHostAdmissionPolicy.resolvePasswordLoginTokenDomainId(
+				userInfo.getId(), domainId, comId, trialSandboxId);
+		if (jwtDomainId == null || jwtDomainId <= 0) {
+			jwtDomainId = domainId;
+		}
+		Long[] tokenComIds = this.resolvePortalTokenComIds(userInfo.getId(), jwtDomainId, comId);
+		Long homeComId = tokenComIds[0];
+		Long workComId = tokenComIds[1];
+		Token token = this.jwtTool.genToken(userInfo.getId(), homeComId, workComId, jwtDomainId, tokenTimeoutMinutes);
 		//token.setRefreshToken(refreshToken); // 不再使用刷新token，使用访问token加超时机制就可以实现刷新机制
 		user.setToken(token);
 
 		// 邮箱激活状态检查
 		if (this.isEmailAction) {
-			WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername());
+			WoUser woUser = this.userService.findById(userInfo.getId());
 			if (UserStatusEnum.notActive.getValue().equals(woUser.getStatus())) {
 				user.setStatus("notActive");
 				user.setNews("您的账号需要邮箱激活！");
@@ -180,7 +215,7 @@ public class LoginAuthService extends NonEntityService {
 			}
 		}
 
-		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, comId, userInfo.getId());
+		List<String> currentAuthority = this.authService.queryAuthorityButton(jwtDomainId, workComId, userInfo.getId());
 		user.setCurrentAuthority(currentAuthority);
 
 		// 登录用户信息审计、token记录
@@ -191,9 +226,9 @@ public class LoginAuthService extends NonEntityService {
 		return user;
 	}
 
-	private UserInfo validateLogin(LoginAuthParams loginAuthParams, String hexKeyCode) {
+	private UserInfo validateLogin(LoginAuthParams loginAuthParams, Long lookupDomainId, String hexKeyCode) {
 		UserInfo userInfo = new UserInfo(); // @todo 新增多次登录错误自动锁定用户或ip的功能，防止暴力破解
-		WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername());
+		WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername(), lookupDomainId);
 		if (woUser == null) {
 			return null;
 		}
@@ -208,31 +243,44 @@ public class LoginAuthService extends NonEntityService {
 		return null;
 	}
 
-	private UserInfo validateLogin(LoginAuthParams loginAuthParams) {
+	private LoginValidation validateLoginDetailed(LoginAuthParams loginAuthParams, Long lookupDomainId) {
 		UserInfo userInfo = new UserInfo();
-		WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername());
+		WoUser woUser = this.userService.findByLoginName(loginAuthParams.getUsername(), lookupDomainId);
 		if (woUser == null) {
-			return null;
+			return LoginValidation.fail(LoginAuditFailReason.ACCOUNT_NOT_FOUND);
 		}
 
-		// 使用带迁移检查的RSA验证方法，支持旧密码格式自动迁移
 		LoginUtils.PasswordVerifyResult verifyResult = loginUtils.verifyRSAWithMigrationCheck(
 				loginAuthParams.getPassword(), woUser.getPasswd());
-		
+
 		if (verifyResult.isVerified()) {
 			this.userCopier.copy(woUser, userInfo, null);
 			userInfo.setUsername(woUser.getLoginName());
 			Tenant tenant = this.userService.queryTenantInfoByTAdminId(userInfo.getId());
 			userInfo.setTenantId(tenant.getId());
-			
-			// 如果是旧格式密码，自动迁移到新格式（静默迁移，用户无感知）
+
 			if (verifyResult.needsMigration() && verifyResult.getPlaintextPasswd() != null) {
 				migratePasswordToNewFormat(woUser.getId(), verifyResult.getPlaintextPasswd());
 			}
-			
-			return userInfo;
+
+			return LoginValidation.ok(userInfo);
 		}
-		return null;
+		if (verifyResult.isDecryptFailed()) {
+			getLog().warn("login password decrypt failed for user {}", loginAuthParams.getUsername());
+			return LoginValidation.fail(LoginAuditFailReason.PASSWORD_DECRYPT_FAILED);
+		}
+		return LoginValidation.fail(LoginAuditFailReason.BAD_PASSWORD);
+	}
+
+	private static Login buildCredentialLoginFail(LoginAuthParams loginAuthParams, LoginAuditFailReason auditReason) {
+		Login user = new Login();
+		user.setStatus("error");
+		user.setNews(CREDENTIAL_FAIL_USER_NEWS);
+		user.setType(loginAuthParams.getType());
+		if (auditReason != null) {
+			user.setAuditFailReason(auditReason.getLogText());
+		}
+		return user;
 	}
 
 	/**
@@ -302,12 +350,12 @@ public class LoginAuthService extends NonEntityService {
 	 * @param account 登录账号（{@code wo_user.login_name}）
 	 * @return 用户 id；查不到返回 {@code null}
 	 */
-	public Long queryUserIdForAudit(String account) {
+	public Long queryUserIdForAudit(String account, Long domainId) {
 		if (account == null || account.isEmpty()) {
 			return null;
 		}
 		try {
-			com.wldos.platform.core.entity.WoUser wo = this.userService.findByLoginName(account);
+			com.wldos.platform.core.entity.WoUser wo = this.userService.findByLoginName(account, domainId);
 			return wo == null ? null : wo.getId();
 		}
 		catch (Exception ex) {
@@ -330,7 +378,7 @@ public class LoginAuthService extends NonEntityService {
 	 * @param request 请求实例
 	 * @return 登录实例
 	 */
-	public Login register(String domain, Long domainId, Register register, HttpServletRequest request) {
+	public Login register(String domain, Long domainId, Long contextComId, Register register, HttpServletRequest request) {
 
 		Login login = new Login();
 
@@ -349,9 +397,10 @@ public class LoginAuthService extends NonEntityService {
 			}
 		}
 
-		if (this.userService.existsByLoginName(register.getLoginName())) {
+		String identityError = this.checkRegisterIdentity(domainId, register);
+		if (identityError != null) {
 			login.setStatus("error");
-			login.setNews("注册邮箱已存在"); // 邮箱就是登录名
+			login.setNews(identityError);
 			return login;
 		}
 
@@ -389,24 +438,30 @@ public class LoginAuthService extends NonEntityService {
 
 		login.setStatus("ok");
 
-		// 使用统一的Token生成方法，新用户默认平台为主企业
-		Token token = this.jwtTool.genToken(user.getId(), Constants.TOP_COM_ID, domainId, this.jwtTool.getTokenTimeout());
+		Long[] tokenComIds = this.resolvePortalTokenComIds(user.getId(), domainId, contextComId);
+		Long homeComId = tokenComIds[0];
+		Long workComId = tokenComIds[1];
+		Token token = this.jwtTool.genToken(user.getId(), homeComId, workComId, domainId, this.jwtTool.getTokenTimeout());
 
 		login.setToken(token);
 
-		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, Constants.TOP_COM_ID, user.getId());
+		List<String> currentAuthority = this.authService.queryAuthorityButton(domainId, workComId, user.getId());
 		login.setCurrentAuthority(currentAuthority);
 
 		// 发激活邮件到注册邮箱，受全局配置开关控制，邮箱注册激活开关，用id、loginName、createTime创建verify token
 		if (this.isEmailAction) {
 			String actUrl = this.userService.getDomainUrlById(domainId) + "/user/active/verify=" + user.getId();
-			String activeEmail = "<!DOCTYPE html> <html lang=\"zh\"><head><meta charset=\"UTF-8\"/>"
-					+ "<title>账户激活</title></head><body>"
-					+ "您好，这是验证邮件，请点击下面的链接完成验证，</body></html>"
-					+ "<a href=\"" + actUrl + "\" target=\"_blank\">激活账号" + actUrl + "</a><br/>"
-					+ "如果以上链接无法点击，请将它复制到您的浏览器地址栏中进入访问，该链接24小时内有效。";
+			StringBuilder activeEmail = new StringBuilder();
+			activeEmail.append("<!DOCTYPE html><html lang=\"zh\"><head><meta charset=\"UTF-8\"/>");
+			activeEmail.append("<title>账户激活</title></head><body>");
+			activeEmail.append("您好，这是验证邮件，请点击下面的链接完成验证：<br/><br/>");
+			activeEmail.append("<a href=\"").append(actUrl).append("\" target=\"_blank\">激活账号</a><br/><br/>");
+			activeEmail.append("链接地址（可复制到浏览器访问）：<br/>");
+			activeEmail.append(actUrl).append("<br/><br/>");
+			activeEmail.append("如果以上链接无法点击，请复制上面的链接地址到浏览器地址栏中访问，该链接24小时内有效。");
+			activeEmail.append("</body></html>");
 			String subject = this.getPlatDomain() + "账号激活邮件";
-			this.mailService.sendMailHtml(register.getLoginName(), subject, activeEmail, user.getId(), user.getRegisterIp());
+			this.mailService.sendMailHtml(register.getLoginName(), subject, activeEmail.toString(), user.getId(), user.getRegisterIp());
 		}
 
 		// 登录用户信息审计、token记录
@@ -433,15 +488,19 @@ public class LoginAuthService extends NonEntityService {
 		// 更新状态，激活用户
 		if (exists) {
 			try {
+				WoUser existing = this.userService.findById(uId);
 				WoUser user = new WoUser();
 				user.setId(uId);
 				user.setStatus(UserStatusEnum.normal.getValue());
 				this.userService.saveOrUpdate(user, SaveOptions.forImport());
 
-				WoOrg orgUnActive = this.userService.queryUserOrg(SysOptionEnum.UN_ACTIVE_GROUP.getKey());
-				WoOrg orgActive = this.userService.queryUserOrg(SysOptionEnum.DEFAULT_GROUP.getKey());
-				// 切换用户组织
-				String res = this.userService.updateUserOrg(uId, orgUnActive.getId(), orgActive.getId());
+				Long domainId = existing != null ? existing.getDomainId() : null;
+				if (domainId == null || domainId <= 0) {
+					login.setNews("激活已失效");
+					login.setStatus("error");
+					return login;
+				}
+				String res = this.userService.promoteToMemberOrgWithResult(uId, domainId);
 
 				if ("invalid".equals(res)) {
 					login.setNews("激活已失效");
@@ -477,21 +536,35 @@ public class LoginAuthService extends NonEntityService {
 	 * @param hexKeyCode 16进制加密key
 	 * @return 修改信息
 	 */
-	public Login resetPasswd(PasswdResetParams resetParams) {
+	public Login resetPasswd(PasswdResetParams resetParams, Long requestDomainId, Long contextComId) {
 		Login login = new Login();
-		// 验证是否合法重置操作：验证验证码是否正确（有效期内）
-		boolean isValid = this.authCodeService.checkCode(resetParams.getCaptcha(), resetParams.getUuid());
-
-		if (!isValid) {
+		String email = ObjectUtils.string(resetParams.getEmail()).trim();
+		String captchaUuid = ObjectUtils.string(resetParams.getUuid()).trim();
+		String forgetProof = ObjectUtils.string(resetParams.getForgetProof()).trim();
+		if (!this.authCodeService.verifyForgetProofBinding(
+				forgetProof, captchaUuid, email, requestDomainId, contextComId)) {
+			login.setStatus("error");
+			login.setNews("请先获取邮箱验证码");
+			return login;
+		}
+		if (!this.authCodeService.verifyEmailCaptchaForReset(resetParams.getCaptcha(), captchaUuid, email)) {
 			login.setStatus("error");
 			login.setNews("验证码失效，请重试");
 			return login;
 		}
-		// 验证用户名和鉴权的邮箱是否绑定关系
-		boolean isExists = this.userService.existsByEmailAndLoginName(resetParams.getEmail(), resetParams.getLoginName());
-		if (!isExists) {
+		String loginName = ObjectUtils.string(resetParams.getLoginName()).trim();
+		if (ObjectUtils.isBlank(loginName)) {
 			login.setStatus("error");
-			login.setNews("使用了与邮箱不匹配的用户名");
+			login.setNews("登录名不能为空");
+			return login;
+		}
+		resetParams.setLoginName(loginName);
+		resetParams.setEmail(email);
+		WoUser user = this.userService.findByLoginName(loginName, requestDomainId);
+		if (!this.authCodeService.isForgetResetTarget(user, email, requestDomainId, contextComId)) {
+			boolean captchaVoid = this.authCodeService.recordResetLoginNameMismatch(captchaUuid);
+			login.setStatus("error");
+			login.setNews(captchaVoid ? "验证码已失效，请重新获取" : "登录账号与绑定邮箱不匹配，请填写注册时的登录账号");
 			return login;
 		}
 		// 验证新密码与确认密码是否一致
@@ -518,8 +591,8 @@ public class LoginAuthService extends NonEntityService {
 			return login;
 		}
 
+
 		// 更新密码强度
-		WoUser user = this.userService.findByLoginName(resetParams.getLoginName());
 		this.userService.updatePasswdStatus(passwd, user.getId());
 		// 保存新密码
 		passwd = loginUtils.encode(passwd);
@@ -528,6 +601,8 @@ public class LoginAuthService extends NonEntityService {
 		modifyParams.setId(user.getId());
 		this.userService.updateUser(modifyParams);
 
+		this.authCodeService.consumeEmailCaptcha(captchaUuid);
+		this.authCodeService.consumeForgetProof(forgetProof);
 		login.setStatus("ok");
 
 		return login;
@@ -720,13 +795,18 @@ public class LoginAuthService extends NonEntityService {
 	 * @param register 注册实例
 	 * @return 登录实例
 	 */
-	public Login addUser4admin(Long domainId, Register register) {
+	public Login addUser4admin(Long domainId, Long tenantId, Long creatorUserId, Register register) {
+		return this.addUser4admin(domainId, tenantId, creatorUserId, register, this.isEmailAction);
+	}
+
+	public Login addUser4admin(Long domainId, Long tenantId, Long creatorUserId, Register register, boolean emailActivation) {
 
 		Login login = new Login();
 
-		if (this.userService.existsByLoginName(register.getLoginName())) {
+		String identityError = this.checkRegisterIdentity(domainId, register);
+		if (identityError != null) {
 			login.setStatus("error");
-			login.setNews("注册邮箱已存在"); // 邮箱就是登录名
+			login.setNews(identityError);
 			return login;
 		}
 
@@ -735,7 +815,7 @@ public class LoginAuthService extends NonEntityService {
 		String passwd = loginUtils.encode(passwdPlain);
 		register.setPasswd(passwd);
 
-		WoUser user = this.userService.createUser(domainId, register, isEmailAction);
+		WoUser user = this.userService.createUser(domainId, register, emailActivation, creatorUserId, tenantId);
 
 		// 更新密码强度
 		this.userService.updatePasswdStatus(passwdPlain, user.getId());
@@ -745,7 +825,59 @@ public class LoginAuthService extends NonEntityService {
 		return login;
 	}
 
+	/**
+	 * 注册前预检：登录名、邮箱在目标租户内的唯一性；通过返回 null。
+	 */
+	private String checkRegisterIdentity(Long domainId, Register register) {
+		Long tenantComId = this.userService.resolveRegisterScopeComId(domainId, register);
+		if (this.userService.existsLoginNameInTenant(tenantComId, this.userService.resolveRegisterLoginName(register))) {
+			return "登录名已存在";
+		}
+		if (this.userService.existsNormalEmailInTenant(tenantComId, register.getEmail())) {
+			return "注册邮箱已存在";
+		}
+		return null;
+	}
+
 	public String passwdStatusCheck(String passwd) {
 		return PasswdStatusCheck.check(passwd).getStatus();
+	}
+
+	/**
+	 * 门户 JWT 的 home/work com：优先用户 main_com_id，其次请求域租户，避免误用 TOP_COM_ID 导致网关鉴权 403。
+	 */
+	private Long[] resolvePortalTokenComIds(Long userId, Long domainId, Long contextComId) {
+		return this.userService.resolvePortalTokenComIds(userId, domainId, contextComId);
+	}
+
+	private static final class LoginValidation {
+
+		private final UserInfo userInfo;
+		private final LoginAuditFailReason auditFailReason;
+
+		private LoginValidation(UserInfo userInfo, LoginAuditFailReason auditFailReason) {
+			this.userInfo = userInfo;
+			this.auditFailReason = auditFailReason;
+		}
+
+		static LoginValidation ok(UserInfo userInfo) {
+			return new LoginValidation(userInfo, null);
+		}
+
+		static LoginValidation fail(LoginAuditFailReason auditFailReason) {
+			return new LoginValidation(null, auditFailReason);
+		}
+
+		boolean isOk() {
+			return this.userInfo != null;
+		}
+
+		UserInfo getUserInfo() {
+			return this.userInfo;
+		}
+
+		LoginAuditFailReason getAuditFailReason() {
+			return this.auditFailReason;
+		}
 	}
 }

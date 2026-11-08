@@ -14,8 +14,10 @@ import com.wldos.framework.mvc.dao.BaseDao;
 import com.wldos.platform.core.entity.WoRegion;
 import io.github.wldos.platform.support.region.vo.City;
 import com.wldos.platform.core.vo.Prov;
+import com.wldos.platform.core.vo.RegionSearchRow;
 
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 行政区划仓库操作类。
@@ -49,4 +51,14 @@ public interface RegionDao extends BaseDao<WoRegion, Long> {
 			+ "where r.is_valid='1' and r.delete_flag='normal' and g.is_valid='1' and g.delete_flag='normal' "
 			+ "and r.`level`=:cityLevel and r.region_code=:cityCode ")
 	City queryCityByCode(String cityCode, String cityLevel);
+
+	@Query("select r.id, r.name from wo_region r where r.is_valid='1' and r.delete_flag='normal' "
+			+ "and r.`level`=:countyLevel and r.parent_id=:cityId order by r.display_order, r.id")
+	List<Prov> queryCounty(Long cityId, String countyLevel);
+
+	@Query("select r.id, r.name, r.`level`, r.parent_id from wo_region r "
+			+ "where r.is_valid='1' and r.delete_flag='normal' "
+			+ "and r.`level` in ('1','2','3') and r.name like CONCAT('%',:keyword,'%') "
+			+ "order by r.`level`, r.display_order, r.id limit :limit")
+	List<RegionSearchRow> searchByName(@Param("keyword") String keyword, @Param("limit") int limit);
 }

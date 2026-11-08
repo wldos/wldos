@@ -8,21 +8,29 @@
 
 package com.wldos.platform.core.controller;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import io.github.wldos.common.Constants;
+import io.github.wldos.common.exception.BaseException;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.Result;
+import io.github.wldos.common.res.ResultCode;
 import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.common.vo.SelectOption;
 import io.github.wldos.framework.support.audit.annotation.OpLog;
+import io.github.wldos.platform.support.rbac.DataScopeQueryHelper;
 import com.wldos.framework.mvc.controller.EntityController;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
 import com.wldos.platform.core.entity.WoCompany;
 import com.wldos.platform.core.service.CompanyService;
+import com.wldos.platform.core.service.PlatformOperatorSettingsService;
+import com.wldos.platform.core.service.TenantProvisionService;
+import com.wldos.platform.core.vo.TenantProvisionBody;
+import com.wldos.platform.core.vo.TenantProvisionResult;
 
 import com.wldos.platform.core.vo.Company;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +39,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
@@ -51,6 +60,17 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("admin/sys/com")
 public class CompanyController extends EntityController<CompanyService, WoCompany> {
+
+	private final TenantProvisionService tenantProvisionService;
+
+	private final PlatformOperatorSettingsService platformOperatorSettingsService;
+
+	public CompanyController(
+			TenantProvisionService tenantProvisionService,
+			@Lazy PlatformOperatorSettingsService platformOperatorSettingsService) {
+		this.tenantProvisionService = tenantProvisionService;
+		this.platformOperatorSettingsService = platformOperatorSettingsService;
+	}
 	/**
 	 * 支持查询、排序的分页查询
 	 *
@@ -69,16 +89,87 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	public PageData<Company> listQuery(@RequestParam Map<String, Object> params) {
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		return this.service.execQueryForTree(new Company(), new WoCompany(), pageQuery, Constants.TOP_COM_ID);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_TENANT, WoCompany.class);
+		DataScopeQueryHelper.remapTenantComIdToPrimaryId(pageQuery);
+		PageData<Company> pageData = this.service.execQueryForTree(new Company(), new WoCompany(), pageQuery, Constants.TOP_COM_ID);
+		this.platformOperatorSettingsService.applyTenantPickerVisibilityOnTree(pageData.getRows(), this.getUserId());
+		CompanyService.appendVirtualPlatformCompanyRootIfNeeded(pageData.getRows(), this.showVirtualPlatformCompanyCatalog());
+		return pageData;
+	}
+
+	@GetMapping("get")
+	@Override
+	public Object getEntityById(@RequestParam long id) {
+		WoCompany company = this.service.findById(id);
+		if (company != null) {
+			this.assertEntityRowScope(company);
+		}
+		return company;
+	}
+
+	@Override
+	protected void preAdd(WoCompany entity) {
+		this.assertNotSiteOnlyAdminForWrite();
+		this.assertSuperAdminOnlyForCompanyProvisioning();
+	}
+
+	@Override
+	protected void preUpdate(WoCompany entity) {
+		this.assertNotSiteOnlyAdminForWrite();
+		if (entity != null && entity.getId() != null) {
+			WoCompany existing = this.service.findById(entity.getId());
+			if (existing != null) {
+				this.assertEntityRowScope(existing);
+			}
+		}
+	}
+
+	@Override
+	protected void preDelete(WoCompany entity) {
+		this.assertNotSiteOnlyAdminForWrite();
+		this.assertSuperAdminOnlyForCompanyProvisioning();
+		if (entity != null && entity.getId() != null) {
+			if (Objects.equals(entity.getId(), Constants.TOP_COM_ID)) {
+				throw new BaseException("「平台」为虚拟树顶（id=0），不可删除", ResultCode.OPERATION_FAILED.getCode());
+			}
+			WoCompany existing = this.service.findById(entity.getId());
+			if (existing != null) {
+				this.assertEntityRowScope(existing);
+				this.service.assertDeletable(existing);
+			}
+		}
+	}
+
+	@Override
+	protected void preDeletes(List<Object> ids) {
+		this.assertNotSiteOnlyAdminForWrite();
+		this.assertSuperAdminOnlyForCompanyProvisioning();
+		if (ids == null) {
+			return;
+		}
+		for (Object raw : ids) {
+			long id = Long.parseLong(raw.toString());
+			if (Objects.equals(id, Constants.TOP_COM_ID)) {
+				throw new BaseException("「平台」为虚拟树顶（id=0），不可删除", ResultCode.OPERATION_FAILED.getCode());
+			}
+			WoCompany existing = this.service.findById(id);
+			if (existing != null) {
+				this.assertEntityRowScope(existing);
+				this.service.assertDeletable(existing);
+			}
+		}
 	}
 
 	/**
 	 * 支持多租户查询的公司下拉选项列表
 	 */
-	@ApiOperation(value = "公司下拉选项", notes = "支持多租户查询的公司下拉选项列表")
+	@ApiOperation(value = "公司下拉选项", notes = "客户租户代管/开通下拉默认排除 platform-operator；超管与平台主站站点管理员自动包含运营主体（展示名称与 scope）")
 	@GetMapping("select")
 	public List<SelectOption> queryComSelectOption() {
-		return this.allEntities().stream().map(com -> SelectOption.of(com.getComName(), com.getId().toString())).collect(Collectors.toList());
+		List<WoCompany> companies = this.allEntities();
+		return companies.stream()
+				.map(com -> SelectOption.of(com.getComName(), com.getId().toString()))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -99,6 +190,19 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 		String message = this.service.addTenantAdmin(userIds, userComId, curUserId, uip);
 
 		return Result.ok(message);
+	}
+
+	@ApiOperation(value = "租户入驻", notes = "单事务创建公司、体系、主站、bootstrap 与租户管理员")
+	@PostMapping("provision")
+	@OpLog(action = "租户入驻", resourceType = "company")
+	public Result<TenantProvisionResult> provisionTenant(
+			@ApiParam(value = "入驻参数", required = true) @RequestBody TenantProvisionBody body) {
+		if (!this.isAdmin(this.getUserId())) {
+			throw new BaseException("仅平台超管可执行租户入驻", ResultCode.FORBIDDEN.getCode());
+		}
+		TenantProvisionResult result = this.tenantProvisionService.provision(body, this.getUserId(), this.getUserIp());
+		this.refreshAuth();
+		return Result.ok(result);
 	}
 
 	@ApiOperation(value = "移除租户管理员", notes = "移除租户管理员")
@@ -124,19 +228,34 @@ public class CompanyController extends EntityController<CompanyService, WoCompan
 	 */
 	@Override
 	protected List<WoCompany> doFilter(List<WoCompany> res) {
-
-		if (this.isPlatformAdmin(this.getTenantId())) {
-			WoCompany plat = new WoCompany(Constants.TOP_COM_ID, Constants.TOP_COM_NAME);
-			if (res.isEmpty()) {
-				res.add(plat);
-			}
-			else {
-				res.add(plat);
-				res.sort(Comparator.comparing(WoCompany::getId));
-			}
-		}
-
+		res = this.platformOperatorSettingsService.applyTenantPickerVisibility(res, this.getUserId());
+		CompanyService.appendVirtualPlatformCompanyIfNeeded(res, this.showVirtualPlatformCompanyCatalog());
 		return res;
+	}
+
+	private boolean showVirtualPlatformCompanyCatalog() {
+		return this.isAdmin(this.getUserId()) || this.isPlatformAdmin(this.getTenantId());
+	}
+
+	private void assertNotSiteOnlyAdminForWrite() {
+		Long userId = this.getUserId();
+		if (userId == null || this.isAdmin(userId) || this.commonOperate.isTenantAdmin(userId)) {
+			return;
+		}
+		if (this.commonOperate.isDomainAdmin(userId)) {
+			throw new BaseException("站点管理员无权修改公司信息", ResultCode.FORBIDDEN.getCode());
+		}
+	}
+
+	/** 新建/删除公司（租户）仅平台超管；租户管理员仅可改本租户公司配置。 */
+	private void assertSuperAdminOnlyForCompanyProvisioning() {
+		Long userId = this.getUserId();
+		if (userId == null || this.isAdmin(userId)) {
+			return;
+		}
+		if (this.commonOperate.isTenantAdmin(userId)) {
+			throw new BaseException("租户管理员无权新建或删除公司", ResultCode.FORBIDDEN.getCode());
+		}
 	}
 
 }

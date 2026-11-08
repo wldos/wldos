@@ -2,12 +2,15 @@ import {extend} from 'umi-request';
 import {notification} from 'antd';
 import {clearAuthority, setAuthority} from "@/utils/authority";
 import {getPageQuery, headerFix, guest} from "@/utils/utils";
-import {notifyDesktopEmbeddedSession} from '@/utils/desktopEmbeddedBridge';
+import { isDesktopEmbedded, notifyDesktopEmbeddedSession } from '@/utils/desktopEmbeddedBridge';
 import {history} from "umi";
 import {stringify} from "querystring";
 
 /** 与 {@link com.wldos.framework.support.auth.AccountNotActivatedException#CODE} 一致 */
 const ACCOUNT_NOT_ACTIVATED_CODE = 460;
+/** 桌面壳叠层页：限制单次 HTTP 等待，避免 Tomcat 异常时渲染进程堆满挂起请求 */
+const DESKTOP_HTTP_TIMEOUT_MS = 15000;
+let desktopGlobalErrorNotifyAt = 0;
 
 /**
  * 业务 HTTP 状态码默认说明（优先展示服务端 message，缺省用此处文案）。
@@ -58,14 +61,29 @@ function notifyByBusinessCode(code, serverMessage) {
   notifyApiByLevel[level]({ message: title, description });
 }
 
+/** 桌面壳内 API 风暴时 Ant Notification 会拖死叠层 renderer，进而表现为整窗未响应 */
+function notifyByBusinessCodeForUi(code, serverMessage) {
+  if (isDesktopEmbedded()) {
+    const now = Date.now();
+    if (now - desktopGlobalErrorNotifyAt < 3000) {
+      return;
+    }
+    desktopGlobalErrorNotifyAt = now;
+  }
+  notifyByBusinessCode(code, serverMessage);
+}
+
 /**
  * 异常处理程序
  */
-const errorHandler = (error) => {
+const errorHandler = (error, opts) => {
+  if (opts?.skipErrorHandler) {
+    return error?.response ?? error;
+  }
   const {response} = error;
 
   if (response && response.code) {
-    const { code, message, status } = response;
+    const { code, status } = response;
     console.log('response====', response, code);
     if (code === 401 || status === 401) {
       clearAuthority();
@@ -76,13 +94,19 @@ const errorHandler = (error) => {
           search: stringify({redirect: window.location.href}),
         });
       }
-    } else if (code !== 200) {
-      notifyByBusinessCode(code, message);
     }
+    // 业务 code ≠ 200：不在此弹 Notification（422 原亦如此），由页面 message / 表单自行提示，避免与模块重复
   } else if (!response) {
+    if (isDesktopEmbedded()) {
+      const now = Date.now();
+      if (now - desktopGlobalErrorNotifyAt < 3000) {
+        return response;
+      }
+      desktopGlobalErrorNotifyAt = now;
+    }
     notification.error({
       message: '系统异常',
-      description: 'hold on! 您的请求未及响应！',
+      description: '您的请求未响应！',
     });
   }
 
@@ -94,7 +118,7 @@ const errorHandler = (error) => {
  */
 const req = extend({errorHandler});
 // 拦截请求后响应
-req.interceptors.response.use(async (res) => {
+req.interceptors.response.use(async (res, options) => {
   const { headers } = res;
   if (headers.get("token") && headers.get("refresh")) {
     setAuthority(
@@ -117,9 +141,15 @@ req.interceptors.response.use(async (res) => {
       const clonedRes = res.clone();
       const data = await clonedRes.json();
       
-      // 检查业务状态码，如果不是 200 则触发错误处理
       if (data && data.code !== 200) {
-        // 抛出错误，让 errorHandler 也能处理
+        if (options?.skipErrorHandler) {
+          notifyDesktopEmbeddedSession();
+          return new Response(JSON.stringify(data), {
+            status: res.status,
+            statusText: res.statusText,
+            headers: res.headers,
+          });
+        }
         return Promise.reject({
           response: data,
           message: data.message || codeMessage[data.code] || '未知异常'
@@ -159,6 +189,15 @@ const request = (url, params) => {
       // method可以为：POST、PATCH、PUT、DELETE
       data: params.data, // post方法数据域schema为data，表示要提交的数据，完整写法是：data: {key: value,...}
     });
+  }
+  // 静默打点类请求（如访问记录）跳过全局错误通知，由调用方自行消化非 200
+  if (params && params.skipErrorHandler) {
+    options.skipErrorHandler = true;
+  }
+  if (params && params.timeout != null) {
+    options.timeout = params.timeout;
+  } else if (isDesktopEmbedded()) {
+    options.timeout = DESKTOP_HTTP_TIMEOUT_MS;
   }
 
   return req(url, options);

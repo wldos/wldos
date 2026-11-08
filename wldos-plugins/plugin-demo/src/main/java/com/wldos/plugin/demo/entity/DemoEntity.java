@@ -17,7 +17,7 @@ import java.sql.Timestamp;
  * 作为插件开发者的参考示例
  *
  * @author WLDOS Team
- * @date 2025/12/12
+ * @date 2025/2/12
  */
 @Data
 public class DemoEntity implements Serializable {

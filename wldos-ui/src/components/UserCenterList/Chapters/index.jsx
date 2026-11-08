@@ -10,6 +10,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Tag, Radio, Select, Space, Divider} from 'antd';
 import ProList from '@ant-design/pro-list';
 import {Link, useIntl} from 'umi';
+import { isDesktopEmbedded } from '@/utils/desktopEmbeddedBridge';
 import styles from './index.less';
 import {
   queryCategoryFromPid,
@@ -179,7 +180,14 @@ const Chapters = (props) => {
                 }
                 handleUpdateVisible(true);
               }} >编辑</a> :
-                <Link to={`/space/book/${item.id}`} rel="noopener noreferrer" target="_blank">编辑</Link>
+                <Link
+                  to={`/space/book/${item.id}`}
+                  {...(isDesktopEmbedded()
+                    ? {}
+                    : { target: '_blank', rel: 'noopener noreferrer' })}
+                >
+                  编辑
+                </Link>
             ),
           },
           content: {

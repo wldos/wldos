@@ -8,6 +8,7 @@
 
 package com.wldos.framework.config;
 
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusPropertiesCustomizer;
 import com.baomidou.mybatisplus.extension.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
@@ -15,6 +16,9 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import io.github.wldos.framework.support.internal.MyJdbcRepository;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +27,10 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.data.jdbc.repository.config.MyBatisJdbcConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+
 /**
  * 配置mybatis-plus。
  *
@@ -42,8 +50,40 @@ import org.springframework.context.annotation.FilterType;
     ),
     repositoryBaseClass = MyJdbcRepository.class
 )
+@MapperScan(basePackages = {
+		"${wldos.framework.base-package:com.wldos.never}",
+		"com.wldos"
+}, annotationClass = Mapper.class) // 支持mp技术栈通用mapper
 @Import(MyBatisJdbcConfiguration.class)
 public class MyBatisPlusConfiguration {
+
+	/**
+	 * 与 {@code wldos.framework.base-package} 联动，追加包路径下 {@code mapping} 目录中的 Mapper XML。
+	 * base-package 为点分包名，classpath 须斜杠，故不能直接在 mapper-locations 写占位符。
+	 */
+	@Bean
+	public MybatisPlusPropertiesCustomizer basePackageMappingXmlLocations(
+			@Value("${wldos.framework.base-package:}") String basePackage) {
+		return properties -> {
+			if (!StringUtils.hasText(basePackage) || basePackage.contains(".never")) {
+				return;
+			}
+			String classpathPrefix = "classpath*:" + basePackage.replace('.', '/') + "/**/mapping/*.xml";
+			String[] current = properties.getMapperLocations();
+			if (current == null || current.length == 0) {
+				properties.setMapperLocations(new String[] { classpathPrefix });
+				return;
+			}
+			for (String loc : current) {
+				if (classpathPrefix.equals(loc)) {
+					return;
+				}
+			}
+			String[] merged = Arrays.copyOf(current, current.length + 1);
+			merged[current.length] = classpathPrefix;
+			properties.setMapperLocations(merged);
+		};
+	}
 
 	@Bean
 	public MybatisPlusInterceptor mybatisPlusInterceptor() {

@@ -1,5 +1,8 @@
 import React from 'react';
-import { Form, Input, Select, Button, Card, Space, Tooltip, Alert, InputNumber } from 'antd';
+import { Form, Input, Select, Button, Card, Space, Tooltip, InputNumber } from 'antd';
+import { useIntl } from 'umi';
+import { DISPLAY_ORDER_MAX } from '@/utils/displayOrder';
+import { DATA_POLICY_TIP_ID, DATA_POLICY_TIP_PROPS } from '../_shared/dataPolicyTip';
 import {
   UserOutlined,
   KeyOutlined,
@@ -25,12 +28,16 @@ const formLayout = {
 };
 
 const CreateFormContent = (props) => {
+  const intl = useIntl();
   const [form] = Form.useForm();
   const {
     onSubmit: handleAdd,
     onCancel: handleCancel,
     roles = [],
-    currentRecord = null // 接收当前记录信息
+    comList = [],
+    currentRecord = null,
+    isPlatformAdmin = false,
+    defaultComId,
   } = props;
 
   const handleNext = async () => {
@@ -45,15 +52,6 @@ const CreateFormContent = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="新建角色"
-          description="创建新的角色，配置角色的基本信息、类型和权限设置。角色是权限管理的基础单位。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -175,10 +173,57 @@ const CreateFormContent = (props) => {
               placeholder="请选择角色类型"
               style={{ width: '100%' }}
             >
-              <Option value="sys_role">系统角色</Option>
+              {isPlatformAdmin ? <Option value="sys_role">系统角色</Option> : null}
               <Option value="subject">社会主体</Option>
               <Option value="tal_role">租户角色</Option>
             </Select>
+          </FormItem>
+
+          <FormItem
+            name="dataPolicy"
+            label={
+              <Space>
+                数据策略
+                <Tooltip
+                  title={intl.formatMessage({ id: DATA_POLICY_TIP_ID })}
+                  {...DATA_POLICY_TIP_PROPS}
+                >
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+          >
+            <Select allowClear placeholder="默认按身份推断" style={{ width: '100%' }}>
+              <Option value="SELF">仅本人</Option>
+              <Option value="ORG">本组织</Option>
+              <Option value="ORG_SUBTREE">组织及下级</Option>
+              <Option value="TENANT">本租户</Option>
+              <Option value="TENANT_DOMAIN">本租户本站点</Option>
+              <Option value="DOMAIN">本站点</Option>
+              <Option value="ALL">全部</Option>
+            </Select>
+          </FormItem>
+
+          <FormItem
+            name="comId"
+            label={
+              <Space>
+                归属公司
+                <Tooltip title="角色所属的公司；不选择时超管创建落平台，租户管理员创建按自身所属租户">
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+          >
+            <Select
+              placeholder="请选择归属公司（不选默认平台/自身租户）"
+              style={{ width: '100%' }}
+              allowClear
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              options={comList}
+            />
           </FormItem>
 
           <FormItem 
@@ -195,9 +240,8 @@ const CreateFormContent = (props) => {
             <Select
               placeholder="请选择父角色"
               style={{ width: '100%' }}
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
+              showSearch
+              optionFilterProp="label"
               options={roles}
             />
           </FormItem>
@@ -207,7 +251,7 @@ const CreateFormContent = (props) => {
             label={
               <Space>
                 展示顺序
-                <Tooltip title="角色在列表中的显示顺序，1-100">
+                <Tooltip title="角色在列表中的显示顺序，1-9999">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -221,9 +265,9 @@ const CreateFormContent = (props) => {
           >
             <InputNumber
               prefix={<NumberOutlined />}
-              placeholder="请输入数字，1-100"
+              placeholder="请输入数字，1-9999"
               min={1}
-              max={100}
+              max={DISPLAY_ORDER_MAX}
               style={{ width: '100%' }}
             />
           </FormItem>
@@ -267,9 +311,9 @@ const CreateFormContent = (props) => {
       initialValues={{
         isValid: '1',
         displayOrder: 1,
-        // 根据当前记录设置初始值
         parentId: currentRecord?.parentId || '0',
-        roleType: currentRecord?.roleType || undefined
+        roleType: currentRecord?.roleType || undefined,
+        comId: currentRecord?.comId ?? defaultComId,
       }}
     >
       {renderContent()}

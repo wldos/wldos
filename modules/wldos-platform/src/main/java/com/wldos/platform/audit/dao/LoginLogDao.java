@@ -17,7 +17,7 @@ import com.wldos.platform.audit.entity.WoLoginLog;
  * 已内置租户/域过滤、关键字、排序、分页等通用能力），无自定义 {@code @Query}。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 public interface LoginLogDao extends BaseDao<WoLoginLog, Long> {

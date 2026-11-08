@@ -43,6 +43,11 @@ public class ResourceJdbcImpl implements ResourceJdbc {
 	}
 
 	@Override
+	public List<AuthInfo> queryAuthInfoIgnoreDomainVisibility(Long comId, String appCode, Long userId) {
+		return this.resourceOpener.queryAuthInfoIgnoreDomainVisibility(comId, appCode, userId);
+	}
+
+	@Override
 	public List<WoResource> queryResource(Long domainId, Long comId, String type, Long userId) {
 		return this.resourceOpener.queryResource(domainId, comId, type, userId);
 	}
@@ -68,6 +73,16 @@ public class ResourceJdbcImpl implements ResourceJdbc {
 	}
 
 	@Override
+	public List<AuthInfo> queryAuthInfoForGuestIgnoreDomainVisibility(Long domainId, String appCode) {
+		return this.resourceOpener.queryAuthInfoForGuestIgnoreDomainVisibility(domainId, appCode);
+	}
+
+	@Override
+	public boolean isResourceMountedOnDomain(Long domainId, String appCode, String resourceCode) {
+		return this.resourceOpener.isResourceMountedOnDomain(domainId, appCode, resourceCode);
+	}
+
+	@Override
 	public List<WoResource> queryResourceForGuest(Long domainId, String type) {
 		return this.resourceOpener.queryResourceForGuest(domainId, type);
 	}
@@ -75,5 +90,15 @@ public class ResourceJdbcImpl implements ResourceJdbc {
 	@Override
 	public List<WoResource> queryResourceForGuest(Long domainId, String[] types) {
 		return this.resourceOpener.queryResourceForGuest(domainId, types);
+	}
+
+	@Override
+	public List<WoResource> fillMountedMenuFolderAncestors(Long domainId, List<WoResource> authorizedMenus) {
+		return this.resourceOpener.fillMountedMenuFolderAncestors(domainId, authorizedMenus);
+	}
+
+	@Override
+	public String resolveAppCodeForMountedAuth(Long domainId, String reqUri, String reqMethod) {
+		return this.resourceOpener.resolveAppCodeForMountedAuth(domainId, reqUri, reqMethod);
 	}
 }

@@ -25,7 +25,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  *
  * @author Yuanxi Universe
  * @version 1.0
- * @date 2026/2/1
+ * @date 2025/2/1
  */
 @Configuration
 @EnableScheduling

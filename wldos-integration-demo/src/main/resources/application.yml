@@ -6,6 +6,18 @@ server:
 spring:
   application:
     name: wldos-integration-demo
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+# 与 wldos-web 一致，BaseEntity @TableLogic 使用 normal / deleted
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleteFlag
+      logic-not-delete-value: normal
+      logic-delete-value: deleted
 
 # ========== WLDOS 框架配置 ==========
 wldos:
@@ -51,6 +63,8 @@ wldos:
 
     # 加密key（必须是16进制数字0-9-a-f）
     encode-key: 1234567890
+    # 更换 encode-key 时填入旧值，登录/改密验证通过后会写回新 key；全员迁移后可删除
+    # previous-encode-key:
 
 # ========== 日志配置 ==========
 logging:

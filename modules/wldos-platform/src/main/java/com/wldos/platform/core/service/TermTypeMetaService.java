@@ -33,7 +33,7 @@ import java.util.List;
  * 基于现有表结构，不创建新表
  *
  * @author Yuanxi Universe
- * @date 2025/12/07
+ * @date 2025/2/07
  * @version 1.0
  */
 @Slf4j
@@ -147,7 +147,7 @@ public class TermTypeMetaService extends EntityService<TermTypeDao, KTermType, L
 
 		// 检查是否是系统类型
 		TermTypeEnum enumType = TermTypeEnum.getByCode(code);
-		if (enumType != null && enumType.getIsSystem()) {
+		if (enumType != null && Boolean.TRUE.equals(enumType.getIsSystem())) {
 			return "系统类型不允许修改";
 		}
 
@@ -193,7 +193,7 @@ public class TermTypeMetaService extends EntityService<TermTypeDao, KTermType, L
 
 		// 检查是否是系统类型
 		TermTypeEnum enumType = TermTypeEnum.getByCode(code);
-		if (enumType != null && "1".equals(enumType.getIsSystem())) {
+		if (enumType != null && Boolean.TRUE.equals(enumType.getIsSystem())) {
 			return "系统类型不允许删除";
 		}
 
@@ -248,6 +248,7 @@ public class TermTypeMetaService extends EntityService<TermTypeDao, KTermType, L
 		enumToVoCopier.copy(enumType, meta, null);
 		// existsInDb 字段枚举中没有，需要单独设置
 		meta.setExistsInDb(existsInDb);
+		applyBuiltInTermTypeExtensions(meta);
 		return meta;
 	}
 
@@ -270,6 +271,21 @@ public class TermTypeMetaService extends EntityService<TermTypeDao, KTermType, L
 		meta.setIsSystem(false);
 		meta.setExistsInDb(true);
 		return meta;
+	}
+
+	private void applyBuiltInTermTypeExtensions(TermTypeMeta meta) {
+		if (meta == null || ObjectUtils.isBlank(meta.getCode())) {
+			return;
+		}
+		if ("agreement_type".equals(meta.getCode())) {
+			meta.setDictCode("agreementType");
+			meta.setHideReferenceCount(Boolean.TRUE);
+			return;
+		}
+		if ("provision_scenario".equals(meta.getCode())) {
+			meta.setDictCode("provisionScenarioCode");
+			meta.setHideReferenceCount(Boolean.TRUE);
+		}
 	}
 }
 

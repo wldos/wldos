@@ -92,4 +92,36 @@ export function normalizeArchNode(item) {
   };
 }
 
+export function normalizeOrgNode(item) {
+  return {
+    title: item.orgName || item.label || item.name || item.title || String(item.id || item.value),
+    value: item.value != null ? item.value : item.id,
+    key: item.id != null ? item.id : item.value,
+    disabled: String(item.isValid) === '0',
+    isLeaf: Array.isArray(item.children) ? item.children.length === 0 : false,
+    raw: item,
+  };
+}
+
+export function normalizeRoleNode(item) {
+  return {
+    title: item.roleName || item.label || item.name || item.title || String(item.id || item.value),
+    value: item.value != null ? item.value : item.id,
+    key: item.id != null ? String(item.id) : String(item.value),
+    disabled: item.assignable === false,
+    raw: item,
+  };
+}
+
+/** 角色接口返回的嵌套树转 TreeSelect 数据 */
+export function mapRoleTreeToTreeSelect(nodes) {
+  if (!Array.isArray(nodes) || nodes.length === 0) return [];
+  return nodes.map((node) => ({
+    ...normalizeRoleNode(node),
+    children: Array.isArray(node.children) && node.children.length
+      ? mapRoleTreeToTreeSelect(node.children)
+      : undefined,
+  }));
+}
+
 

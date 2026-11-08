@@ -8,6 +8,7 @@
 
 package com.wldos.cms.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.wldos.framework.mvc.dao.BaseDao;
@@ -38,18 +39,26 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param pid 发布内容id
 	 * @return 内容信息
 	 */
-	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.id=:pid")
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.origin_pub_id is null and p.id=:pid")
 	ContModelDto queryContModel(Long pid);
 
 	/**
-	 * 根据发布内容id和域id查询发布内容信息
+	 * 根据发布内容id和域id查询正式行内容（排除草稿快照行）
 	 *
 	 * @param pid 发布内容id
 	 * @param domainId 要匹配的域id
 	 * @return 内容信息
 	 */
-	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.id=:pid and p.domain_id=:domainId")
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.origin_pub_id is null and p.id=:pid and p.domain_id=:domainId")
 	ContModelDto queryContModel(Long pid, Long domainId);
+
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.id=:pid")
+	ContModelDto queryContModelAny(Long pid);
+
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.origin_pub_id=:canonicalId and p.pub_status in ('draft','in_review') order by p.id desc limit 1")
+	ContModelDto queryActiveDraftByCanonicalId(Long canonicalId);
+
+	KPubs findFirstByOriginPubIdAndPubStatusInAndDeleteFlagOrderByIdDesc(Long originPubId, List<String> pubStatuses, String deleteFlag);
 
 	/**
 	 * 根据作品id、发布类型查询作品的某类子实体(图片附件、章节等)
@@ -58,7 +67,7 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param pubType 发布内容类型
 	 * @return 子类附件信息
 	 */
-	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.parent_id=:pid and p.pub_type=:pubType")
+	@Query("select p.* from k_pubs p where p.delete_flag='normal' and p.origin_pub_id is null and p.parent_id=:pid and p.pub_type=:pubType")
 	List<ContModelDto> queryContSubModel(Long pid, String pubType);
 
 	/**
@@ -96,7 +105,7 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param deleteFlag 是否删除：见DeleteFlagEnum
 	 * @return 章节列表
 	 */
-	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag=:deleteFlag and s.parent_id=:bookId and s.pub_type=:pubType")
+	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag=:deleteFlag and s.origin_pub_id is null and s.parent_id=:bookId and s.pub_type=:pubType order by COALESCE(s.display_order, 2147483647) asc, s.id asc")
 	List<Chapter> queryChapterByParentId(Long bookId, String pubType, String deleteFlag);
 
 	/**
@@ -107,7 +116,7 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param deleteFlag 是否删除：见DeleteFlagEnum
 	 * @return 文档章节列表
 	 */
-	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag=:deleteFlag and s.parent_id=:bookId and s.pub_type=:pubType")
+	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag=:deleteFlag and s.origin_pub_id is null and s.parent_id=:bookId and s.pub_type=:pubType order by COALESCE(s.display_order, 2147483647) asc, s.id asc")
 	List<DocItem> queryDocItemByParentId(Long bookId, String pubType, String deleteFlag);
 
 	/**
@@ -193,7 +202,7 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param parentId 作品集id
 	 * @return 上一章
 	 */
-	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='inherit' and t.parent_id=:parentId and t.id < :pid order by id desc limit 1)")
+	@Query("select s.* from k_pubs s where s.delete_flag='normal' and s.id = (select t.id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='inherit' and t.parent_id=:parentId and (COALESCE(t.display_order, 2147483647) < COALESCE((select display_order from k_pubs where id=:pid), 2147483647) or (COALESCE(t.display_order, 2147483647) = COALESCE((select display_order from k_pubs where id=:pid), 2147483647) and t.id < :pid)) order by COALESCE(t.display_order, 2147483647) desc, t.id desc limit 1)")
 	MiniPub queryPrevChapter(Long pid, Long parentId);
 
 	/**
@@ -203,8 +212,33 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param parentId 作品集id
 	 * @return 下一章
 	 */
-	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag='normal' and s.id = (select id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='inherit' and t.parent_id = :parentId and t.id > :pid order by id asc limit 1)")
+	@Query("select s.id, s.pub_title from k_pubs s where s.delete_flag='normal' and s.id = (select t.id from k_pubs t where t.delete_flag='normal' and t.pub_type='chapter' and t.pub_status='inherit' and t.parent_id = :parentId and (COALESCE(t.display_order, 2147483647) > COALESCE((select display_order from k_pubs where id=:pid), 2147483647) or (COALESCE(t.display_order, 2147483647) = COALESCE((select display_order from k_pubs where id=:pid), 2147483647) and t.id > :pid)) order by COALESCE(t.display_order, 2147483647) asc, t.id asc limit 1)")
 	MiniPub queryNextChapter(Long pid, Long parentId);
+
+	@Query("SELECT COALESCE(MAX(display_order), 0) FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND parent_id=:parentId")
+	Integer maxDisplayOrderByParent(@Param("parentId") Long parentId);
+
+	@Query("SELECT id FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND parent_id=:parentId AND pub_type=:pubType ORDER BY COALESCE(display_order, 2147483647) ASC, id ASC")
+	List<Long> listSiblingIdsByParentAndType(@Param("parentId") Long parentId, @Param("pubType") String pubType);
+
+	@Query("SELECT id FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND parent_id=:parentId AND create_by=:userId ORDER BY COALESCE(display_order, 2147483647) ASC, id ASC")
+	List<Long> listMainWorkIdsByAuthor(@Param("parentId") Long parentId, @Param("userId") Long userId);
+
+	@Query("SELECT id FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND parent_id=:parentId AND create_by=:userId AND domain_id=:domainId ORDER BY COALESCE(display_order, 2147483647) ASC, id ASC")
+	List<Long> listMainWorkIdsByAuthorAndDomain(@Param("parentId") Long parentId, @Param("userId") Long userId,
+			@Param("domainId") Long domainId);
+
+	@Query("SELECT id FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND parent_id=:parentId AND create_by=:userId AND pub_type IN (:pubTypes) ORDER BY COALESCE(display_order, 2147483647) ASC, id ASC")
+	List<Long> listMainWorkIdsByAuthorAndPubTypes(@Param("parentId") Long parentId, @Param("userId") Long userId,
+			@Param("pubTypes") Collection<String> pubTypes);
+
+	@Query("SELECT id FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND parent_id=:parentId AND create_by=:userId AND domain_id=:domainId AND pub_type IN (:pubTypes) ORDER BY COALESCE(display_order, 2147483647) ASC, id ASC")
+	List<Long> listMainWorkIdsByAuthorDomainAndPubTypes(@Param("parentId") Long parentId, @Param("userId") Long userId,
+			@Param("domainId") Long domainId, @Param("pubTypes") Collection<String> pubTypes);
+
+	@Query("SELECT COUNT(1) FROM k_pubs WHERE delete_flag='normal' AND origin_pub_id IS NULL AND create_by=:userId AND parent_id=:parentId AND pub_type=:pubType")
+	Long countCanonicalByAuthorParentAndType(@Param("userId") Long userId, @Param("parentId") Long parentId,
+			@Param("pubType") String pubType);
 
 	/**
 	 * 在指定标签或分类范围内查询相关发布
@@ -228,7 +262,7 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	 * @param pubName 内容别名
 	 * @return 是否
 	 */
-	@Query("select count(1) from k_pubs p where p.domain_id = :domainId and p.pub_name=:pubName and p.id != IFNULL(:pubId, 0)") /* IFNULL(:pubId, 0) 保证null值可以在mysql正确工作，新增时为null，将导致查询结果为0*/
+	@Query("select count(1) from k_pubs p where p.domain_id = :domainId and p.origin_pub_id is null and p.pub_name=:pubName and p.id != IFNULL(:pubId, 0)") /* IFNULL(:pubId, 0) 保证null值可以在mysql正确工作，新增时为null，将导致查询结果为0*/
 	boolean existsDifPubByNameAndId(Long domainId, String pubName, Long pubId);
 
 	/**
@@ -252,11 +286,21 @@ public interface PubDao extends BaseDao<KPubs, Long> {
 	@Query("select count(1) from k_pubs p where p.pub_name is null and p.id = :pubId")
 	boolean pubNameIsNull(Long pubId);
 
-	@Query("select p.id from k_pubs p where p.domain_id = :domainId and p.pub_name = :pubName")
+	@Query("select p.id from k_pubs p where p.domain_id = :domainId and p.origin_pub_id is null and p.pub_name = :pubName")
 	Long queryIdByPubName(Long domainId, @Param("pubName") String pubName);
 
-	@Query("select p.id, p.pub_type from k_pubs p where p.domain_id = :domainId and p.pub_name = :pubName and p.delete_flag = :deleteFlag limit 1")
+	@Query("select p.id, p.pub_type from k_pubs p where p.domain_id = :domainId and p.origin_pub_id is null and p.pub_name = :pubName and p.delete_flag = :deleteFlag limit 1")
 	PubType queryPubTypeByPubName(@Param("domainId") Long domainId, @Param("pubName") String pubName, @Param("deleteFlag") String deleteFlag);
 
 	boolean existsByIdAndPubStatusAndDeleteFlag(Long id, String pubStatus, String deleteFlag);
+
+	boolean existsByOriginPubIdAndPubStatusInAndDeleteFlag(Long originPubId, Collection<String> pubStatuses, String deleteFlag);
+
+	@Query("SELECT COUNT(1) FROM k_pubs p WHERE p.delete_flag = 'normal' AND p.origin_pub_id IS NULL "
+			+ "AND p.pub_status IN ('publish', 'inherit')")
+	long countIndexableCanonicals();
+
+	@Query("SELECT * FROM k_pubs p WHERE p.delete_flag = 'normal' AND p.origin_pub_id IS NULL "
+			+ "AND p.pub_status IN ('publish', 'inherit') ORDER BY p.id LIMIT :limit OFFSET :offset")
+	List<KPubs> pageIndexableCanonicals(@Param("limit") int limit, @Param("offset") long offset);
 }

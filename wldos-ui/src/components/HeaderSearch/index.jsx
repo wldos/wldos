@@ -69,6 +69,11 @@ const HeaderSearch = (props) => {
         }}
         options={restProps.options}
         onChange={setValue}
+        onSelect={(val) => {
+          if (restProps.onSearch) {
+            restProps.onSearch(val);
+          }
+        }}
       >
         <Input
           ref={inputRef}

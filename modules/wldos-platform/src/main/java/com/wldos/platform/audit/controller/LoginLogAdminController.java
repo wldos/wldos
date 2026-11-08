@@ -13,6 +13,7 @@ import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.NonEntityController;
+import com.wldos.platform.audit.entity.WoLoginLog;
 import com.wldos.platform.audit.service.LoginLogService;
 import com.wldos.platform.audit.vo.LoginLogItem;
 
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiOperation;
  * <p>权限：归属"系统管理员/安全审计"角色，与 {@code /admin/sys/*} 通行的鉴权策略一致。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Api(tags = "登录日志（后台）")
@@ -68,7 +69,9 @@ public class LoginLogAdminController extends NonEntityController<LoginLogService
 			@ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = Long.class, paramType = "query"),
 			@ApiImplicitParam(name = "eventType", value = "事件类型（ACCOUNT/MOBILE/OAUTH/...）", dataTypeClass = String.class, paramType = "query"),
 			@ApiImplicitParam(name = "result", value = "结果（SUCCESS/FAIL/...）", dataTypeClass = String.class, paramType = "query"),
-			@ApiImplicitParam(name = "ip", value = "客户端 IP", dataTypeClass = String.class, paramType = "query")
+			@ApiImplicitParam(name = "ip", value = "客户端 IP", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "comId", value = "目标租户 ID（超管 lens）", dataTypeClass = Long.class, paramType = "query"),
+			@ApiImplicitParam(name = "domainId", value = "目标站点 ID（按站点收窄）", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("")
 	public PageData<LoginLogItem> list(@RequestParam Map<String, Object> params) {
@@ -79,10 +82,7 @@ public class LoginLogAdminController extends NonEntityController<LoginLogService
 		// 权限分层：
 		// - 超级管理员：可查看全量操作日志（不做租户/域隔离）
 		// - 业务管理员（含租户管理员/域管理员）：按租户+域双隔离
-		if (!this.isAdmin(this.getUserId())) {
-			this.applyTenantFilter(pageQuery);
-			this.applyDomainFilter(pageQuery);
-		}
+		this.applyAuditLogListScope(pageQuery, WoLoginLog.class);
 		return this.service.queryList(pageQuery);
 	}
 

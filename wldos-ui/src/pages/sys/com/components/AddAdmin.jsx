@@ -4,6 +4,7 @@ import React, {useRef, useState} from 'react';
 import {FooterToolbar} from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {querySelectPage} from "@/pages/sys/user/service";
+import OrgTreeSelect from "@/components/TreeSelects/OrgTreeSelect";
 
 const AddAdminList = (props) => {
   const {
@@ -83,6 +84,12 @@ const AddAdminList = (props) => {
         }
       },
     },
+    {
+      title: '所属组织',
+      dataIndex: 'filterOrgId',
+      hideInTable: true,
+      renderFormItem: () => <OrgTreeSelect comId={userComId || undefined} allowClear placeholder="按组织筛选" />,
+    },
   ];
   return (
     <FullscreenModal
@@ -107,7 +114,9 @@ const AddAdminList = (props) => {
           const res = await querySelectPage({
             ...params,
             sorter,
-            filter
+            filter,
+            scopeComId: userComId || undefined,
+            filterOrgId: params.filterOrgId || undefined,
           });
           return Promise.resolve({
             total: res?.data?.total || 0,

@@ -13,7 +13,12 @@
  *   - 行点击展开详情抽屉（入参 / 错误 / UA 等长字段）。
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { connect } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
 import { PageContainer } from '@ant-design/pro-layout';
+import { auditComDomainFilterColumns } from '@/pages/sys/log/_shared/auditLogFilterColumns';
+import { useAuditLogListMeta } from '@/pages/sys/log/_shared/auditLogListMeta';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import { Drawer, Tag, Typography } from 'antd';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -32,9 +37,11 @@ const RESULT_TAG_COLOR = (code) => {
   return 'default';
 };
 
-const OpLogList = () => {
+const OpLogList = ({ isAdmin, isTenantAdmin, currentUser }) => {
   const actionRef = useRef();
   const [row, setRow] = useState(null);
+  const listMeta = useAuditLogListMeta({ isAdmin, isTenantAdmin, currentUser });
+  const { domainLabelMap, showDomainColumn } = listMeta;
 
   const mobile = isMobile();
   const [containerWidth, setContainerWidth] = useState(0);
@@ -56,6 +63,7 @@ const OpLogList = () => {
   }, []);
 
   const columns = useMemo(() => [
+    ...auditComDomainFilterColumns(listMeta),
     {
       title: '动作',
       dataIndex: 'action',
@@ -199,21 +207,21 @@ const OpLogList = () => {
       hideInSearch: true,
     },
     {
-      title: '域ID',
+      title: '站点',
       dataIndex: 'domainId',
-      hideInTable: true,
+      width: 140,
+      ellipsis: true,
       hideInSearch: true,
+      hideInTable: !showDomainColumn,
+      render: (_, record) => domainLabelMap[String(record.domainId)] || record.domainId || '-',
     },
-  ], [mobile]);
+  ], [mobile, domainLabelMap, showDomainColumn, listMeta]);
 
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{ padding: '0', margin: '0' }}
-      bodyStyle={{ padding: '24px', margin: '0' }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="操作日志"
@@ -338,4 +346,7 @@ const OpLogList = () => {
   );
 };
 
-export default OpLogList;
+export default connect(({ user }) => ({
+  currentUser: user.currentUser || {},
+  ...buildAuthorityHelper(user, '/admin'),
+}))(OpLogList);

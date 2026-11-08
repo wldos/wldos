@@ -16,10 +16,25 @@ import '@/styles/markdown.css';
 import {genTdkCrumbs, genTdkCrumbsFor404} from "@/utils/utils";
 import {MenuOutlined} from '@ant-design/icons';
 import MarkdownImage from '@/components/MarkdownImage';
+import ContentAccessFooter from '@/pages/commercial/cms-access/components/ContentAccessFooter';
+import ContentAccessPubBody from '@/pages/commercial/cms-access/components/ContentAccessPubBody';
+import ContentTipBlock from '@/pages/commercial/cms-access/components/ContentTipBlock';
+import useCmsCommentEnabled from '@/pages/book/detail/useCmsCommentEnabled';
 
-const Document = ({currentChapter = {id: '', parentId: '', pubTitle: '', pubContent: ''}, dispatch }) => {
-  const [article, setArticle] = useState(currentChapter?? {});
+const Document = ({
+  currentChapter = {id: '', parentId: '', pubTitle: '', pubContent: ''},
+  dispatch,
+  currentUser,
+}) => {
+  const commentEnabled = useCmsCommentEnabled();
+  const [article, setArticle] = useState(currentChapter ?? {});
   const [toc, setToc] = useState([]);
+
+  useEffect(() => {
+    if (currentChapter?.id) {
+      setArticle(currentChapter);
+    }
+  }, [currentChapter]);
   const [activeId, setActiveId] = useState('');
   const [tocCollapsed, setTocCollapsed] = useState(false);
   const [showTocPreview, setShowTocPreview] = useState(false);
@@ -465,109 +480,134 @@ const Document = ({currentChapter = {id: '', parentId: '', pubTitle: '', pubCont
       <div className={styles.articleContent}>
         <Typography>
           <Title level={1} className={styles.documentTitle}>{article.pubTitle}</Title>
-          {/* 移除原来的作者信息，将在底部显示 */}
-          <div 
-            className={styles.entry}
-            style={{
-              '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none'
-            }}
-          >
-            {(() => {
-              const detectedMimeType = detectContentType(article.pubContent);
-              const mimeType = article.pubMimeType || detectedMimeType;
+          {(() => {
+            const detectedMimeType = detectContentType(article.pubContent);
+            const mimeType = article.pubMimeType || detectedMimeType;
+            const isMarkdown = mimeType === 'text/markdown';
 
-              return mimeType === 'text/markdown' ? (
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeRaw]}
-                  className={"markdown-body"}
-                  components={{
-                    h1: ({ children, ...props }) => {
-                      const text = children.toString();
-                      const id = `heading-${toc.findIndex(item => item.text === text)}`;
-                      return <h1 id={id} {...props}>{children}</h1>;
-                    },
-                    h2: ({ children, ...props }) => {
-                      const text = children.toString();
-                      const id = `heading-${toc.findIndex(item => item.text === text)}`;
-                      return <h2 id={id} {...props}>{children}</h2>;
-                    },
-                    h3: ({ children, ...props }) => {
-                      const text = children.toString();
-                      const id = `heading-${toc.findIndex(item => item.text === text)}`;
-                      return <h3 id={id} {...props}>{children}</h3>;
-                    },
-                    h4: ({ children, ...props }) => {
-                      const text = children.toString();
-                      const id = `heading-${toc.findIndex(item => item.text === text)}`;
-                      return <h4 id={id} {...props}>{children}</h4>;
-                    },
-                    h5: ({ children, ...props }) => {
-                      const text = children.toString();
-                      const id = `heading-${toc.findIndex(item => item.text === text)}`;
-                      return <h5 id={id} {...props}>{children}</h5>;
-                    },
-                    h6: ({ children, ...props }) => {
-                      const text = children.toString();
-                      const id = `heading-${toc.findIndex(item => item.text === text)}`;
-                      return <h6 id={id} {...props}>{children}</h6>;
-                    },
-                    img({src, alt, title, ...props}) {
-                      return (
-                        <MarkdownImage 
-                          src={src} 
-                          alt={alt} 
-                          title={title} 
-                          content={article.pubContent}
-                          {...props}
-                        />
-                      );
-                    },
-                    code({node, inline, className, children, ...props}) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      
-                      return !inline && match ? (
-                        <div style={{ 
-                          backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                          borderRadius: '6px',
-                          padding: '16px',
-                          margin: '16px 0',
-                          overflow: 'auto'
-                        }}>
-                          <SyntaxHighlighter
-                            style={isDarkMode ? vscDarkPlus : vs}
-                            language={match[1]}
-                            PreTag="div"
-                            showLineNumbers={false}
-                            wrapLines={true}
-                            wrapLongLines={true}
-                            customStyle={{
-                              background: 'transparent',
-                              margin: 0,
-                              padding: 0,
-                              border: 'none',
-                              borderRadius: 0
-                            }}
-                            {...props}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        </div>
-                      ) : (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
-                      );
-                    }
+            return (
+              <>
+                <ContentAccessPubBody
+                  pubId={article.id}
+                  pubContent={article.pubContent}
+                  pubMimeType={isMarkdown ? 'text/markdown' : mimeType}
+                  fullHtmlContent={isMarkdown ? undefined : processedContent}
+                  contentAccess={article.contentAccess}
+                  currentUser={currentUser}
+                  className={styles.entry}
+                  style={{
+                    '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none',
                   }}
-                >
-                  {article.pubContent}
-                </ReactMarkdown>
-              ) : (
-                <div dangerouslySetInnerHTML={{ __html: processedContent }} />
-              );
-            })()}
-          </div>
+                  renderMarkdown={(text, key) => (
+                    <ReactMarkdown
+                      key={key}
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                      className="markdown-body"
+                      components={{
+                        h1: ({ children, ...props }) => {
+                          const textContent = children.toString();
+                          const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
+                          return <h1 id={id} {...props}>{children}</h1>;
+                        },
+                        h2: ({ children, ...props }) => {
+                          const textContent = children.toString();
+                          const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
+                          return <h2 id={id} {...props}>{children}</h2>;
+                        },
+                        h3: ({ children, ...props }) => {
+                          const textContent = children.toString();
+                          const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
+                          return <h3 id={id} {...props}>{children}</h3>;
+                        },
+                        h4: ({ children, ...props }) => {
+                          const textContent = children.toString();
+                          const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
+                          return <h4 id={id} {...props}>{children}</h4>;
+                        },
+                        h5: ({ children, ...props }) => {
+                          const textContent = children.toString();
+                          const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
+                          return <h5 id={id} {...props}>{children}</h5>;
+                        },
+                        h6: ({ children, ...props }) => {
+                          const textContent = children.toString();
+                          const id = `heading-${toc.findIndex((item) => item.text === textContent)}`;
+                          return <h6 id={id} {...props}>{children}</h6>;
+                        },
+                        img({ src, alt, title, ...props }) {
+                          return (
+                            <MarkdownImage
+                              src={src}
+                              alt={alt}
+                              title={title}
+                              content={article.pubContent}
+                              {...props}
+                            />
+                          );
+                        },
+                        code({ node, inline, className, children, ...props }) {
+                          const match = /language-(\w+)/.exec(className || '');
+
+                          return !inline && match ? (
+                            <div
+                              style={{
+                                backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                                borderRadius: '6px',
+                                padding: '16px',
+                                margin: '16px 0',
+                                overflow: 'auto',
+                              }}
+                            >
+                              <SyntaxHighlighter
+                                style={isDarkMode ? vscDarkPlus : vs}
+                                language={match[1]}
+                                PreTag="div"
+                                showLineNumbers={false}
+                                wrapLines
+                                wrapLongLines
+                                customStyle={{
+                                  background: 'transparent',
+                                  margin: 0,
+                                  padding: 0,
+                                  border: 'none',
+                                  borderRadius: 0,
+                                }}
+                                {...props}
+                              >
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            </div>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          );
+                        },
+                      }}
+                    >
+                      {text}
+                    </ReactMarkdown>
+                  )}
+                  renderHtml={(html, key) => (
+                    <div key={key} dangerouslySetInnerHTML={{ __html: html }} />
+                  )}
+                />
+                <ContentAccessFooter
+                  pubId={article.id}
+                  contentAccess={article.contentAccess}
+                  currentUser={currentUser}
+                  pubContent={article.pubContent}
+                  pubMimeType={isMarkdown ? 'text/markdown' : mimeType}
+                />
+              </>
+            );
+          })()}
+          <ContentTipBlock
+            pubId={article.id}
+            contentAccess={article.contentAccess}
+            currentUser={currentUser}
+          />
           {/* 底部信息布局 - 语雀风格 */}
           <div className={styles.articleFooter}>
             <div className={styles.articleMeta}>
@@ -621,11 +661,13 @@ const Document = ({currentChapter = {id: '', parentId: '', pubTitle: '', pubCont
             }
           </div>
           <div className={styles.clearfix}/>
-          <div className={styles.comment}>
-            <div className={styles.clearfix}/>
-            <h3>在线评论</h3>
-            <Comments id={article.id}/>
-          </div>
+          {commentEnabled && (
+            <div className={styles.comment}>
+              <div className={styles.clearfix}/>
+              <h3>在线评论</h3>
+              <Comments id={article.id}/>
+            </div>
+          )}
         </Typography>
       </div>
       {tocComponent}
@@ -714,5 +756,6 @@ const Document = ({currentChapter = {id: '', parentId: '', pubTitle: '', pubCont
 };
 
 export default connect(({ user }) => ({
-  tdk: user.tdk
+  tdk: user.tdk,
+  currentUser: user.currentUser,
 }))(Document);

@@ -48,27 +48,35 @@
 }
 
 .subCategoryContainer {
-  max-width: 400px;
-  max-height: 300px;
+  --sub-cols: 2;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  display: grid;
+  grid-template-columns: repeat(var(--sub-cols), minmax(0, 1fr));
+  gap: 6px;
+  overflow-x: hidden;
+}
+
+.subCategoryScrollable {
+  max-height: ~"min(420px, 70vh)";
   overflow-y: auto;
-  
-  .itemList {
-    .ant-list-item {
-      margin-bottom: 8px;
-    }
-  }
+  padding-right: 2px;
 }
 
 .subCategoryBtn {
-  height: 36px;
-  font-size: 14px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 13px;
+  line-height: 32px;
   border-radius: 4px;
   transition: all 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   
   &:hover {
     background-color: @primary-color;
     color: white;
-    transform: translateX(4px);
   }
 }
 
@@ -107,12 +115,15 @@
   }
   
   .subCategoryContainer {
-    max-width: 280px;
-    max-height: 250px;
+    width: 280px;
   }
-  
+
+  .subCategoryScrollable {
+    max-height: ~"min(360px, 60vh)";
+  }
+
   .subCategoryBtn {
-    height: 40px;
+    height: 36px;
     font-size: 13px;
   }
   
@@ -129,12 +140,28 @@
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
+
+    .ant-popover-inner-content {
+      overflow: visible;
+      padding: 10px 12px;
+    }
+
+    .ant-popover-title {
+      padding: 10px 12px 0;
+      min-height: auto;
+      font-size: 14px;
+    }
   }
   
   .mobilePopover {
     .ant-popover-inner {
       border-radius: 8px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .ant-popover-inner-content {
+      overflow: visible;
+      padding: 10px 12px;
     }
   }
 }

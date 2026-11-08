@@ -8,11 +8,23 @@
 
 package com.wldos.platform.core.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import io.github.wldos.common.Constants;
+import io.github.wldos.common.dto.SQLTable;
+import com.wldos.platform.core.support.AppCatalogPolicy;
+import io.github.wldos.common.exception.BaseException;
 import io.github.wldos.common.res.PageData;
+import io.github.wldos.common.res.ResultCode;
 import io.github.wldos.framework.common.AuditFields;
 import io.github.wldos.common.enums.DeleteFlagEnum;
 import io.github.wldos.common.enums.ValidStatusEnum;
 import io.github.wldos.common.res.PageQuery;
+import io.github.wldos.common.utils.ObjectUtils;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.dao.AppDao;
 import com.wldos.platform.core.dao.DomainResourceDao;
@@ -74,6 +86,107 @@ public class AppService extends EntityService<AppDao, WoApp, Long> {
 				.appendParam(AuditFields.IS_VALID, ValidStatusEnum.VALID.toString()); // 注意枚举类型必须转换为String，否则jdbc模板无法自动转换，会导致查询结果为空
 
 		return this.execQueryForPage(WoApp.class, WoDomainApp.class, "wo_app", "wo_domain_app", "app_id", pageQuery);
+	}
+
+	/**
+	 * 站点已订阅应用分页；mountValid 为 wo_domain_app.is_valid。
+	 */
+	public PageData<WoApp> queryDomainAppForPage(Long domainId, PageQuery pageQuery) {
+		if (domainId == null) {
+			throw new BaseException("domainId 不能为空", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		List<Object> mountFilter = pageQuery.pollFilter("mountValid");
+		pageQuery.appendParam(AuditFields.DELETE_FLAG, DeleteFlagEnum.NORMAL.toString());
+		StringBuilder sql = new StringBuilder();
+		sql.append("select a.*, da.is_valid as mount_valid from wo_app a ");
+		sql.append("inner join wo_domain_app da on a.id=da.app_id and da.domain_id=? and da.delete_flag='normal' ");
+		List<Object> params = new ArrayList<>();
+		params.add(domainId);
+		if (mountFilter == null || mountFilter.isEmpty()) {
+			sql.append("and da.is_valid='1' ");
+		}
+		else {
+			sql.append("and da.is_valid in (");
+			for (int i = 0; i < mountFilter.size(); i++) {
+				if (i > 0) {
+					sql.append(',');
+				}
+				sql.append('?');
+				params.add(ObjectUtils.string(mountFilter.get(i)));
+			}
+			sql.append(") ");
+		}
+		sql.append("where a.delete_flag='normal' ");
+		return this.commonOperate.execQueryForPage(
+				WoApp.class, sql.toString(), params, pageQuery, SQLTable.of(WoApp.class, "a"));
+	}
+
+	/**
+	 * 域应用选择列表：标记已挂载并支持按站点挂载状态筛选。
+	 */
+	public PageData<WoApp> queryAppsForDomainSelect(Long domainId, PageQuery pageQuery, Long viewerUserId) {
+		if (domainId == null) {
+			throw new BaseException("domainId 不能为空", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		if (this.domainAppDao == null) {
+			return new PageData<>();
+		}
+		boolean superAdminViewer = viewerUserId != null && this.isAdmin(viewerUserId);
+		if (this.isMultiTenancy() && !superAdminViewer) {
+			pageQuery.pushFilter(Constants.COMMON_KEY_APP_TYPE, AppTypeEnum.APP.toString(), AppTypeEnum.PRIVATE.toString());
+		}
+		Boolean domainMounted = pullDomainMountedFilter(pageQuery);
+		if (pageQuery.getCondition() != null) {
+			pageQuery.getCondition().remove("domainId");
+		}
+		pageQuery.appendParam(AuditFields.DELETE_FLAG, DeleteFlagEnum.NORMAL.toString());
+		PageData<WoApp> page = this.execQueryForPage(new WoApp(), pageQuery);
+		List<WoApp> rows = page.getRows();
+		if (rows == null) {
+			rows = Collections.emptyList();
+		}
+		Set<Long> bookedIds = new HashSet<>(this.domainAppDao.listAppIdsByDomainId(domainId));
+		List<WoApp> filtered = new ArrayList<>(rows.size());
+		for (WoApp row : rows) {
+			if (row == null || row.getId() == null) {
+				continue;
+			}
+			if (!AppCatalogPolicy.canSelectAppForDomainMount(row, superAdminViewer)) {
+				continue;
+			}
+			boolean added = bookedIds.contains(row.getId());
+			row.setSelected(added);
+			if (domainMounted != null && domainMounted.booleanValue() != added) {
+				continue;
+			}
+			filtered.add(row);
+		}
+		if (domainMounted != null) {
+			page.setTotal(filtered.size());
+		}
+		page.setRows(filtered);
+		return page;
+	}
+
+	private Boolean pullDomainMountedFilter(PageQuery pageQuery) {
+		if (pageQuery.getCondition() == null) {
+			return null;
+		}
+		Object raw = pageQuery.getCondition().remove("domainMounted");
+		if (raw == null) {
+			return null;
+		}
+		String value = ObjectUtils.string(raw).trim();
+		if (value.isEmpty()) {
+			return null;
+		}
+		if ("1".equals(value) || "true".equalsIgnoreCase(value)) {
+			return Boolean.TRUE;
+		}
+		if ("0".equals(value) || "false".equalsIgnoreCase(value)) {
+			return Boolean.FALSE;
+		}
+		return null;
 	}
 
     /**

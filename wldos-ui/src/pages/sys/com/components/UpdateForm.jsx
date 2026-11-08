@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, Select, Card, Space, Tooltip, Alert, InputNumber} from 'antd';
+import {Button, Form, Input, Select, Card, Space, Tooltip, InputNumber} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {
   BankOutlined,
@@ -48,15 +48,6 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="公司配置"
-          description="修改公司的基本信息、层级关系和状态设置。公司是平台上的独立运营单位。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -175,9 +166,11 @@ const UpdateForm = (props) => {
           >
             <Select
               placeholder="请选择父公司"
+              notFoundContent="暂无可选上级公司（需租户管理员权限或先创建根公司）"
               style={{ width: '100%' }}
+              showSearch
               filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                String(option?.label ?? option?.children ?? '').toLowerCase().includes(input.toLowerCase())
               }
               options={roles}
             />
@@ -188,7 +181,7 @@ const UpdateForm = (props) => {
             label={
               <Space>
                 展示顺序
-                <Tooltip title="公司在列表中的显示顺序，1-100">
+                <Tooltip title="公司在列表中的显示顺序，1-9999">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -202,9 +195,9 @@ const UpdateForm = (props) => {
           >
             <InputNumber
               prefix={<NumberOutlined />}
-              placeholder="请输入数字，1-100"
+              placeholder="请输入数字，1-9999"
               min={1}
-              max={100}
+              max={9999}
               style={{ width: '100%' }}
             />
           </FormItem>

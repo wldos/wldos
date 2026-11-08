@@ -17,7 +17,7 @@ package com.wldos.platform.calendar.enums;
  * 平日工作 / 周末休息属于默认行为，不入表，由调用方按 weekday 兜底。
  *
  * @author Yuanxi Universe
- * @date 2026/04/30
+ * @date 2025/04/30
  * @version 1.0
  */
 public enum DayKindEnum {

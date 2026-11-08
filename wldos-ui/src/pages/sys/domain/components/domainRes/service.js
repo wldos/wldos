@@ -26,6 +26,12 @@ export async function removeDomainRes(params) {
     data: params,
   });
 }
+export async function setDomainResVisibility(params) {
+  return request(`${prefix}/admin/sys/domain/resVisibility`, {
+    method: 'POST',
+    data: params,
+  });
+}
 export async function querySelectPage(params) {
   return request(`${prefix}/admin/sys/res/select`, {
     params,

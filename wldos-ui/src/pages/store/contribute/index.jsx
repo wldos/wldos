@@ -272,8 +272,8 @@ const PluginContribute = () => {
                     )}
                   />
                   <div style={{ marginTop: 16 }}>
-                    <Button 
-                      type="link" 
+                    <Button
+                      type="link"
                       icon={<LinkOutlined />}
                       href="https://github.com/wldos/wldos-plugins"
                       target="_blank"
@@ -472,9 +472,9 @@ const PluginContribute = () => {
                     </List.Item>
                   )}
                 />
-                
+
                 <Divider />
-                
+
                 <Title level={5}>
                   <FormattedMessage
                     id="store.contribute.spec.section2.title"
@@ -511,9 +511,9 @@ const PluginContribute = () => {
                     </List.Item>
                   )}
                 />
-                
+
                 <Divider />
-                
+
                 <Title level={5}>
                   <FormattedMessage
                     id="store.contribute.spec.section3.title"
@@ -550,9 +550,9 @@ const PluginContribute = () => {
                     </List.Item>
                   )}
                 />
-                
+
                 <Divider />
-                
+
                 <Title level={5}>
                   <FormattedMessage
                     id="store.contribute.spec.section4.title"
@@ -806,8 +806,8 @@ const PluginContribute = () => {
           style={{ marginTop: 24 }}
         >
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Button 
-              type="link" 
+            <Button
+              type="link"
               icon={<GithubOutlined />}
               href="https://github.com/wldos/wldos-plugins"
               target="_blank"
@@ -830,11 +830,11 @@ const PluginContribute = () => {
                 </Text>
               </div>
             </Button>
-            
-            <Button 
-              type="link" 
+
+            <Button
+              type="link"
               icon={<FileTextOutlined />}
-              href="https://github.com/wldos/wldos-plugins/blob/main/README.md"
+              href="https://github.com/wldos/wldos-plugins/blob/master/README.md"
               target="_blank"
               block
               style={{ textAlign: 'left', height: 'auto', padding: '8px 0' }}
@@ -855,9 +855,9 @@ const PluginContribute = () => {
                 </Text>
               </div>
             </Button>
-            
-            <Button 
-              type="link" 
+
+            <Button
+              type="link"
               icon={<QuestionCircleOutlined />}
               href="https://github.com/wldos/wldos-plugins/issues"
               target="_blank"

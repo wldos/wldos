@@ -1,5 +1,17 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Card, message, Button, Space, Tag, Drawer, Divider, Popconfirm } from 'antd';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, message, Button, Space, Tag, Drawer, Divider, Popconfirm, Select, Tooltip } from 'antd';
+import { useIntl } from 'umi';
+import useOperationalScope from '@/hooks/useOperationalScope';
+import {
+  buildTermListQueryScope,
+  isTermAdminListScopeReady,
+  mergeToolbarWriteScope,
+  isPlatformScopeComId,
+} from '@/utils/orgCreateUserDomain';
+import {
+  resolveTermScope,
+  TERM_SCOPE_COLOR,
+} from '@/pages/sys/category';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
@@ -20,7 +32,34 @@ import {
 import ProDescriptions from '@ant-design/pro-descriptions';
 import { FooterToolbar } from '@ant-design/pro-layout';
 
-const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
+const CategoryManagement = ({ termType, onRefresh, onRowClick, isAdmin, currentUser }) => {
+  const intl = useIntl();
+  const {
+    effectiveComId,
+    targetDomainId,
+    setTargetDomainId,
+    onTargetComChange,
+    comListArray,
+    domainOptions,
+    domainLabelMap,
+    showDomainSelectInToolbar,
+    listScopeReady,
+  } = useOperationalScope({
+    isAdmin,
+    currentUser,
+    intl,
+    adminDefaultAxis: 'platform',
+    allowPlatformScopeInToolbar: isAdmin,
+  });
+  const termListScopeReady = useMemo(
+    () => isTermAdminListScopeReady(isAdmin, listScopeReady, effectiveComId, targetDomainId),
+    [isAdmin, listScopeReady, effectiveComId, targetDomainId],
+  );
+  const listScopeParams = useMemo(
+    () => buildTermListQueryScope({ isAdmin, effectiveComId, targetDomainId }),
+    [isAdmin, effectiveComId, targetDomainId],
+  );
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -43,21 +82,21 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
       setCategoryTree([]);
       return;
     }
+    if (termType.structureType !== 'tree') {
+      setCategoryTree([]);
+      return;
+    }
+    if (isAdmin && !listScopeParams) {
+      setCategoryTree([]);
+      return;
+    }
+    const treeParams = listScopeParams || {};
     try {
       let res;
-      if (termType.structureType === 'tree') {
-        // 树形结构：使用通用接口查询指定类型的分类树
-        if (termType.code === 'category') {
-          // 内容分类使用原有接口（兼容性）
-          res = await queryLayerCategory();
-        } else {
-          // 其他树形类型（plugin, nav_menu 等）使用通用接口
-          res = await queryCategoryTreeByType(termType.code);
-        }
+      if (termType.code === 'category') {
+        res = await queryLayerCategory(treeParams);
       } else {
-        // 扁平结构（如tag）不需要树
-        setCategoryTree([]);
-        return;
+        res = await queryCategoryTreeByType(termType.code, treeParams);
       }
       if (res?.data) {
         setCategoryTree(res.data);
@@ -65,17 +104,15 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
     } catch (error) {
       console.error('加载分类树失败:', error);
     }
-  }, [termType]);
+  }, [termType, isAdmin, listScopeParams]);
 
   useEffect(() => {
-    if (termType && termType.code) {
-      loadCategoryTree();
-      // 刷新表格
-      if (actionRef.current) {
-        actionRef.current.reload();
-      }
+    if (!termType?.code || !termListScopeReady) {
+      return;
     }
-  }, [termType?.code, loadCategoryTree]);
+    loadCategoryTree();
+    actionRef.current?.reload?.();
+  }, [termType?.code, termListScopeReady, effectiveComId, targetDomainId, loadCategoryTree]);
 
   // 监听窗口大小变化
   useEffect(() => {
@@ -193,12 +230,24 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
       hideInSearch: true,
     },
     {
+      title: '范围',
+      dataIndex: 'domainId',
+      width: 140,
+      hideInForm: true,
+      hideInSearch: true,
+      render: (_, record) => {
+        const scope = resolveTermScope(record, domainOptions, domainLabelMap);
+        return <Tag color={TERM_SCOPE_COLOR[scope.level]}>{scope.text}</Tag>;
+      },
+    },
+    {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       fixed: isMobile ? undefined : 'right',
       width: termType.structureType === 'tree' ? 200 : 120,
       render: (_, record) => {
+        const writable = record.writable !== false;
         const handleDelete = async () => {
           if (record.children && record.children.length > 0) {
             message.info('存在子节点，请先删除子节点');
@@ -225,13 +274,40 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
           }
         };
 
+        const configLink = writable ? (
+          <a
+            onClick={() => {
+              handleUpdateModalVisible(true);
+              setStepFormValues(record);
+            }}
+          >
+            配置
+          </a>
+        ) : (
+          <Tooltip title="平台/租户共享数据，仅归属层级可改，本站只读">
+            <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>配置</span>
+          </Tooltip>
+        );
+        const deleteLink = writable ? (
+          <Popconfirm
+            title={`您确定要删除[${record.count > 0 ? '分类下存在内容' : ''}]？`}
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            onConfirm={handleDelete}
+          >
+            <a>删除</a>
+          </Popconfirm>
+        ) : (
+          <Tooltip title="平台/租户共享数据，仅归属层级可改，本站只读">
+            <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>删除</span>
+          </Tooltip>
+        );
+
         if (termType.structureType === 'tree') {
-          // 树形结构：子级、同级、配置、删除
           return (
             <>
               <a
                 onClick={() => {
-                  setParentId(record.id); // 子级：parentId 为当前记录的 id
+                  setParentId(record.id);
                   handleModalVisible(true);
                 }}
               >
@@ -240,60 +316,37 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
               <Divider type="vertical" />
               <a
                 onClick={() => {
-                  setParentId(record.parentId || '0'); // 同级：parentId 为当前记录的 parentId
+                  setParentId(record.parentId || '0');
                   handleModalVisible(true);
                 }}
               >
                 同级
               </a>
               <Divider type="vertical" />
-              <a
-                onClick={() => {
-                  handleUpdateModalVisible(true);
-                  setStepFormValues(record);
-                }}
-              >
-                配置
-              </a>
+              {configLink}
               <Divider type="vertical" />
-              <Popconfirm
-                title={`您确定要删除[${record.count > 0 ? '分类下存在内容' : ''}]？`}
-                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                onConfirm={handleDelete}
-              >
-                <a>删除</a>
-              </Popconfirm>
-            </>
-          );
-        } else {
-          // 扁平结构：配置、删除
-          return (
-            <>
-              <a
-                onClick={() => {
-                  handleUpdateModalVisible(true);
-                  setStepFormValues(record);
-                }}
-              >
-                配置
-              </a>
-              <Divider type="vertical" />
-              <Popconfirm
-                title={`您确定要删除[${record.count > 0 ? '分类下存在内容' : ''}]？`}
-                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                onConfirm={handleDelete}
-              >
-                <a>删除</a>
-              </Popconfirm>
+              {deleteLink}
             </>
           );
         }
+        return (
+          <>
+            {configLink}
+            <Divider type="vertical" />
+            {deleteLink}
+          </>
+        );
       },
     },
   ];
 
+  const hideReferenceCount = Boolean(termType?.hideReferenceCount);
+  const tableColumns = hideReferenceCount
+    ? columns.filter((col) => col.dataIndex !== 'count')
+    : columns;
+
   // 计算列总宽度
-  const totalColsWidth = columns.reduce((sum, col) => sum + (col.width || 100), 0);
+  const totalColsWidth = tableColumns.reduce((sum, col) => sum + (col.width || 100), 0);
   const scrollX = isMobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   // 如果 termType 不存在，显示提示
@@ -324,13 +377,45 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
           headerTitle={`${termType.name}分类项列表`}
           actionRef={actionRef}
           rowKey="id"
+          manualRequest={!termListScopeReady}
           toolBarRender={() => [
+            isAdmin && comListArray.length > 0 ? (
+              <Space key="com-select" size={8}>
+                <span>目标租户</span>
+                <Select
+                  style={{ minWidth: 180 }}
+                  allowClear
+                  placeholder="选择租户"
+                  options={comListArray}
+                  value={effectiveComId}
+                  onChange={onTargetComChange}
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Space>
+            ) : null,
+            isAdmin && !isPlatformScopeComId(effectiveComId) && (showDomainSelectInToolbar || domainOptions.length === 1) ? (
+              <Space key="domain-select" size={8}>
+                <span>目标站点</span>
+                <Select
+                  style={{ minWidth: 200 }}
+                  placeholder="选择站点"
+                  options={domainOptions}
+                  value={targetDomainId}
+                  onChange={(value) => setTargetDomainId(value || undefined)}
+                  showSearch
+                  optionFilterProp="label"
+                  disabled={domainOptions.length <= 1}
+                />
+              </Space>
+            ) : null,
             <Button
               type="primary"
               key="button"
               icon={<PlusOutlined />}
+              disabled={!termListScopeReady}
               onClick={() => {
-                setParentId('0'); // 表单外部的新建，parentId 为根目录 0
+                setParentId('0');
                 handleModalVisible(true);
               }}
             >
@@ -350,20 +435,24 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
             labelWidth: 120,
           }}
           request={async (params, sorter, filter) => {
+            if (!termListScopeReady) {
+              return { total: 0, data: [], success: true };
+            }
+            const scope = listScopeParams || {};
             const res = await queryTermPage({
               ...params,
-              classType: termType.code, // 传递类型编码
-              sorter: {...sorter, 'displayOrder': 'ascend',},
-              filter
+              ...scope,
+              classType: termType.code,
+              sorter: { ...sorter, displayOrder: 'ascend' },
+              filter,
             });
-            return Promise.resolve({
+            return {
               total: res?.data?.total || 0,
               data: res?.data?.rows || [],
               success: true,
-            });
-          }
-          }
-          columns={columns}
+            };
+          }}
+          columns={tableColumns}
           rowSelection={{
             onChange: (_, selectedRows) => setSelectedRows(selectedRows),
           }}
@@ -409,8 +498,8 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
             const hide = message.loading('正在添加');
             try {
               const res = await addTerm({
-                ...value,
-                classType: termType.code, // 确保传递类型编码
+                ...mergeToolbarWriteScope(value, { effectiveComId, targetDomainId }),
+                classType: termType.code,
               });
               hide();
               if (res?.data !== 'ok') {
@@ -498,15 +587,18 @@ const CategoryManagement = ({ termType, onRefresh, onRowClick }) => {
 };
 
 // Drawer 需要在 Card 外面，使用 React Fragment 包裹
-const CategoryManagementWithDrawer = ({ termType, onRefresh }) => {
+const CategoryManagementWithDrawer = ({ termType, onRefresh, isAdmin, currentUser }) => {
   const [row, setRow] = useState();
-  
+  const hideReferenceCount = Boolean(termType?.hideReferenceCount);
+
   return (
     <>
       <CategoryManagement
         termType={termType}
         onRefresh={onRefresh}
         onRowClick={setRow}
+        isAdmin={isAdmin}
+        currentUser={currentUser}
       />
       <Drawer
         width={600}
@@ -555,10 +647,14 @@ const CategoryManagementWithDrawer = ({ termType, onRefresh }) => {
                 dataIndex: 'description',
                 span: 2,
               },
-              {
-                title: '关联内容数',
-                dataIndex: 'count',
-              },
+              ...(hideReferenceCount
+                ? []
+                : [
+                    {
+                      title: '关联内容数',
+                      dataIndex: 'count',
+                    },
+                  ]),
             ]}
           />
         )}

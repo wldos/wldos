@@ -18,7 +18,7 @@ import lombok.Setter;
  * 管理端表单同样用此 VO，提交时按 day-precision 解析回 Date。
  *
  * @author Yuanxi Universe
- * @date 2026/04/30
+ * @date 2025/04/30
  * @version 1.0
  */
 @ApiModel("节假日条目")

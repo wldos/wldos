@@ -121,7 +121,7 @@ public class InfoController extends NonEntityController<InfoService> {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryInfoDomain(pageQuery);
 	}
@@ -147,7 +147,7 @@ public class InfoController extends NonEntityController<InfoService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryInfoCategory(slugCategory, pageQuery);
 	}
@@ -173,7 +173,7 @@ public class InfoController extends NonEntityController<InfoService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryInfoTag(slugTag, pageQuery);
 	}
@@ -200,7 +200,7 @@ public class InfoController extends NonEntityController<InfoService> {
 		pageQuery.pushParam("parentId", Constants.TOP_PUB_ID); // 查询作者的主类型发布：信息或其他作品
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryInfoDomain(pageQuery);
 	}
@@ -224,9 +224,9 @@ public class InfoController extends NonEntityController<InfoService> {
 			return Result.error(ResultCode.VALIDATION_ERROR, "内容超长，最多1万字");
 		// 检查分类是否归属同一个类型
 		List<SelectOption> typeIds = pub.getTermTypeIds();
-		if (typeIds != null) {
+		if (typeIds != null && !typeIds.isEmpty()) {
 			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-			if (!this.kcmsService.isValidTerm(termTypeIds))
+			if (!termTypeIds.isEmpty() && !this.kcmsService.isValidTerm(termTypeIds))
 				return Result.error(ResultCode.VALIDATION_ERROR, "使用了不可识别的分类数据");
 		}
 		// 检查标签
@@ -277,9 +277,9 @@ public class InfoController extends NonEntityController<InfoService> {
 			return Result.error(ResultCode.VALIDATION_ERROR, "内容超长，最多1万字");
 		// 检查分类是否归属同一个类型
 		List<SelectOption> typeIds = pub.getTermTypeIds();
-		if (typeIds != null) {
+		if (typeIds != null && !typeIds.isEmpty()) {
 			List<Long> termTypeIds = typeIds.stream().map(o -> Long.parseLong(o.getValue())).collect(Collectors.toList());
-			if (!this.kcmsService.isValidTerm(termTypeIds))
+			if (!termTypeIds.isEmpty() && !this.kcmsService.isValidTerm(termTypeIds))
 				return Result.error(ResultCode.VALIDATION_ERROR, "使用了不可识别的分类数据");
 		}
 		// 检查标签

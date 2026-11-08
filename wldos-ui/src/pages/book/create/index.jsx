@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, Steps, Alert, Space, Typography, Button, Modal } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Steps, Alert, Space, Typography } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { SaveOutlined, ExclamationCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import Step1 from './components/Step1';
 import Step2 from './components/Step2';
 import Step4 from './components/Step4';
@@ -54,11 +53,9 @@ const stepConfig = {
   }
 };
 
-const StepForm = ({ current, dispatch, stepData = {} }) => {
+const StepForm = ({ current, dispatch }) => {
   const [stepComponent, setStepComponent] = useState(<Step1 />);
   const [currentStep, setCurrentStep] = useState(1);
-  const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
     const { step, component } = getCurrentStepAndComponent(current);
@@ -66,44 +63,7 @@ const StepForm = ({ current, dispatch, stepData = {} }) => {
     setStepComponent(component);
     const crumbs = {seoCrumbs: {title: '发布信息', description: '', keywords: '', crumbs: []}};
     genTdkCrumbs(crumbs, dispatch, undefined,  '');
-  }, [current]);
-
-  // 保存草稿
-  const saveDraft = useCallback(() => {
-    if (dispatch) {
-      dispatch({
-        type: 'bookInfo/saveDraft',
-        payload: stepData,
-      });
-      setHasUnsavedChanges(false);
-    }
-  }, [dispatch, stepData]);
-
-  // 退出确认
-  const handleExit = useCallback(() => {
-    if (hasUnsavedChanges) {
-      setShowExitConfirm(true);
-    } else {
-      window.history.back();
-    }
-  }, [hasUnsavedChanges]);
-
-  // 确认退出
-  const confirmExit = useCallback(() => {
-    setShowExitConfirm(false);
-    window.history.back();
-  }, []);
-
-  // 取消退出
-  const cancelExit = useCallback(() => {
-    setShowExitConfirm(false);
-  }, []);
-
-  // 监听数据变化
-  useEffect(() => {
-    const hasData = Object.keys(stepData).length > 0;
-    setHasUnsavedChanges(hasData);
-  }, [stepData]);
+  }, [current, dispatch]);
 
   const currentStepInfo = stepConfig[currentStep];
 
@@ -112,23 +72,6 @@ const StepForm = ({ current, dispatch, stepData = {} }) => {
       title="发布信息" 
       content="选择分类，填写信息并发布。" 
       breadcrumb={false}
-      extra={
-        <Space>
-          <Button 
-            icon={<SaveOutlined />} 
-            onClick={saveDraft}
-            disabled={!hasUnsavedChanges}
-          >
-            保存草稿
-          </Button>
-          <Button 
-            icon={<ArrowLeftOutlined />} 
-            onClick={handleExit}
-          >
-            退出
-          </Button>
-        </Space>
-      }
     >
       <Card bordered={false}>
         {/* 步骤提示 */}
@@ -169,29 +112,10 @@ const StepForm = ({ current, dispatch, stepData = {} }) => {
         
         {stepComponent}
       </Card>
-
-      {/* 退出确认弹窗 */}
-      <Modal
-        title={
-          <Space>
-            <ExclamationCircleOutlined style={{ color: '#faad14' }} />
-            <span>确认退出</span>
-          </Space>
-        }
-        visible={showExitConfirm}
-        onOk={confirmExit}
-        onCancel={cancelExit}
-        okText="确认退出"
-        cancelText="继续编辑"
-      >
-        <p>您有未保存的草稿，确定要退出吗？</p>
-        <p>退出后，您的草稿将被保存，可以稍后继续编辑。</p>
-      </Modal>
     </PageContainer>
   );
 };
 
 export default connect(({ bookInfo }) => ({
   current: bookInfo.current,
-  stepData: bookInfo.step,
 }))(StepForm);

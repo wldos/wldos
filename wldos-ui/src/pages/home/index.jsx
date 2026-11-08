@@ -1,15 +1,16 @@
 import React, { Suspense, useState, useEffect, useMemo } from 'react';
 import {connect, history} from 'umi';
 import { Spin } from 'antd';
+import { isAuth } from '@/services/user';
 import Product from "@/pages/home/components/Product";
 import Archives from "@/pages/home/components/Archives";
 import Category from "@/pages/home/components/Category";
-import Admin from "@/pages/sys/monitor";
 
 const Index = (props) => {
   const {match, route, loading: routeLoading} = props;
   const [HomeComponent, setHomeComponent] = useState(null);
   const [componentLoading, setComponentLoading] = useState(false);
+  const [adminRedirecting, setAdminRedirecting] = useState(false);
 
   // 安全地解构 match 和 params
   const params = match?.params || {};
@@ -68,8 +69,38 @@ const Index = (props) => {
     loadHomeComponent();
   }, [stableModule, stableUrl]);
 
+  useEffect(() => {
+    if (stableModule !== 'admin') {
+      setAdminRedirecting(false);
+      return undefined;
+    }
+    let cancelled = false;
+    setAdminRedirecting(true);
+    isAuth({ route: '/admin' }).then((res) => {
+      if (cancelled) {
+        return;
+      }
+      const code = res?.data;
+      if (code === '200') {
+        history.replace('/admin');
+      } else if (code === '401') {
+        history.replace('/user/login');
+      } else {
+        history.replace('/404');
+      }
+    }).finally(() => {
+      if (!cancelled) {
+        setAdminRedirecting(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [stableModule]);
+
   // 如果正在加载路由数据或组件，显示加载状态
-  if (routeLoading || (stableModule === 'component' && stableUrl && componentLoading && !HomeComponent)) {
+  if (routeLoading || adminRedirecting || stableModule === 'admin'
+    || (stableModule === 'component' && stableUrl && componentLoading && !HomeComponent)) {
     return (
       <div style={{ padding: '100px', textAlign: 'center' }}>
         <Spin size="large" />
@@ -94,13 +125,7 @@ const Index = (props) => {
     'product': <Product {...state} />,
     'category': <Category {...state} />,
     'archives': <Archives {...state} count={8} pageName="all" />,
-    'admin': <Admin />,
   };
-
-  if (stableModule === 'admin') {
-    history.push('/admin');
-    return (<></>);
-  }
 
   const body = stableModule && moduleMap[stableModule];
   return (<>{body || moduleMap['archives']}</>);

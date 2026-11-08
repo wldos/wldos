@@ -8,6 +8,7 @@
 
 package com.wldos.framework.config;
 
+import com.wldos.framework.support.mp.web.MpListQueryArgumentResolver;
 import com.wldos.framework.support.web.resolver.PageQueryMethodArgumentResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -37,5 +38,6 @@ public class WldosWebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(new PageQueryMethodArgumentResolver());
+		resolvers.add(new MpListQueryArgumentResolver());
 	}
 }

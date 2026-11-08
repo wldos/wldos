@@ -48,6 +48,9 @@ public class Book {
 	@ApiModelProperty(value = "章节列表")
 	private List<Chapter> chapter;
 
+	@ApiModelProperty(value = "章节总数（分页时使用）")
+	private Long chapterTotal;
+
 	public Book() {
 	}
 

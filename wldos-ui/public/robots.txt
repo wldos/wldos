@@ -22,3 +22,5 @@ Allow: .css
 # Sitemap: http://domain.com/sitemap.xml
 # for baidu
 # Sitemap: http://domain.com/sitemap.html
+
+Sitemap: http://localhost:8000/sitemap.xml

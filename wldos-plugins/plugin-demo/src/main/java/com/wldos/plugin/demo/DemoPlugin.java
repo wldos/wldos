@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContext;
  * 作为插件开发者的基础框架和参考示例
  *
  * @author WLDOS Team
- * @date 2025/12/12
+ * @date 2025/2/12
  * @version 1.0.0
  */
 @Slf4j

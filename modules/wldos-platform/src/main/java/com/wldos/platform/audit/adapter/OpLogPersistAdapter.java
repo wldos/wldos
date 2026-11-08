@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
  * 名字一旦落库即"冻结"，业务命名后续变化不影响历史日志，满足合规级审计要求。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Slf4j

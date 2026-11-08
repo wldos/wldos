@@ -34,7 +34,7 @@ import java.util.List;
  * 若 Swagger 启动报错，可设置 wldos.framework.swagger.result-wrapper-rule.enabled=false 禁用。
  *
  * @author Yuanxi Universe
- * @date 2026/2/1
+ * @date 2025/2/1
  * @version 1.0
  */
 @Component

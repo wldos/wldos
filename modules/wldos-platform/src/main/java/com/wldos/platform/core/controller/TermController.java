@@ -8,17 +8,25 @@
 
 package com.wldos.platform.core.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.wldos.common.Constants;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.Result;
+import io.github.wldos.common.res.ResultCode;
 import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.framework.support.audit.annotation.OpLog;
 import io.github.wldos.common.vo.SelectOption;
 import io.github.wldos.common.vo.TreeSelectOption;
 import com.wldos.framework.mvc.controller.EntityController;
+import io.github.wldos.platform.support.rbac.AdminScopeLevel;
+import io.github.wldos.platform.support.rbac.AxisLayerGuard;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
+import io.github.wldos.platform.support.rbac.DataScopeQueryHelper;
+import io.github.wldos.platform.support.rbac.DataScopeResolver;
 import com.wldos.platform.core.entity.KTerms;
 import com.wldos.platform.core.service.TermService;
 import com.wldos.platform.core.vo.Category;
@@ -44,7 +52,8 @@ import javax.validation.Valid;
 
 /**
  * 分类管理controller。
- * 租户共享平台分类、标签设置，不具备管理权限。
+ * 租户/站点管理员可维护各自范围内的分类、标签（写入时按 {@link io.github.wldos.platform.support.rbac.AdminWriteScopeStamper}
+ * 归属租户/站点；未显式指定站点时默认租户内全站共享）；平台共享（com_id=0）分类、标签对所有租户可见。
  *
  * @author Yuanxi Universe
  * @date 2021/5/2
@@ -67,17 +76,28 @@ public class TermController extends EntityController<TermService, KTerms> {
 		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式，如：{\"createTime\":\"desc\"}", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "classType", value = "分类类型，默认为category", dataTypeClass = String.class, paramType = "query"),
-		@ApiImplicitParam(name = "name", value = "分类名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+		@ApiImplicitParam(name = "name", value = "分类名称（模糊查询）", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "comId", value = "目标租户 ID（超管跨租户查看）", dataTypeClass = Long.class, paramType = "query"),
+		@ApiImplicitParam(name = "domainId", value = "目标站点 ID（超管跨站点查看）", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("/admin/cms/category")
-	public PageData<TermTree> listCategory(@RequestParam Map<String, Object> params) {
+	public PageData<TermTree> listCategory(
+			@ApiParam(value = "目标租户 ID") @RequestParam(required = false) Long comId,
+			@ApiParam(value = "目标站点 ID") @RequestParam(required = false) Long domainId,
+			@RequestParam Map<String, Object> params) {
+		params.remove("comId");
+		params.remove("domainId");
 		// 如果参数中没有 classType，则默认为 category
 		if (!params.containsKey("classType") || ObjectUtils.isBlank(params.get("classType"))) {
 			params.put("classType", TermTypeEnum.CATEGORY.toString());
 		}
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		return this.service.queryTermForTree(new KTerms(), pageQuery, false);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_DOMAIN, KTerms.class);
+		this.applyAdminTermScope(pageQuery, comId, domainId);
+		PageData<TermTree> page = this.service.queryTermForTree(new KTerms(), pageQuery, false);
+		this.decorateWritable(page.getRows());
+		return page;
 	}
 
 	/**
@@ -92,14 +112,25 @@ public class TermController extends EntityController<TermService, KTerms> {
 		@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "10"),
 		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
-		@ApiImplicitParam(name = "name", value = "标签名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+		@ApiImplicitParam(name = "name", value = "标签名称（模糊查询）", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "comId", value = "目标租户 ID（超管跨租户查看）", dataTypeClass = Long.class, paramType = "query"),
+		@ApiImplicitParam(name = "domainId", value = "目标站点 ID（超管跨站点查看）", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("/admin/cms/tag")
-	public PageData<TermTree> listTag(@RequestParam Map<String, Object> params) {
+	public PageData<TermTree> listTag(
+			@ApiParam(value = "目标租户 ID") @RequestParam(required = false) Long comId,
+			@ApiParam(value = "目标站点 ID") @RequestParam(required = false) Long domainId,
+			@RequestParam Map<String, Object> params) {
+		params.remove("comId");
+		params.remove("domainId");
 		params.put("classType", TermTypeEnum.TAG.toString());
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		return this.service.queryTermForTree(new KTerms(), pageQuery, true);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_DOMAIN, KTerms.class);
+		this.applyAdminTermScope(pageQuery, comId, domainId);
+		PageData<TermTree> page = this.service.queryTermForTree(new KTerms(), pageQuery, true);
+		this.decorateWritable(page.getRows());
+		return page;
 	}
 
 	/**
@@ -111,7 +142,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@ApiOperation(value = "分类扁平树", notes = "获取分类树，用于信息发布")
 	@GetMapping("category/flatTree")
 	public List<Category> categoryFlatTree() {
-		return this.service.queryFlatCategoryTree();
+		return this.service.queryPortalFlatCategoryTree(this.getDomainId());
 	}
 
 	/**
@@ -123,7 +154,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@ApiOperation(value = "信息分类扁平树", notes = "信息发布获取分类树")
 	@GetMapping("info/flatTree")
 	public List<Category> infoFlatTree() {
-		return this.service.queryFlatCategoryTree();
+		return this.service.queryPortalInfoFlatCategoryTree(this.getDomainId());
 	}
 
 	/**
@@ -134,8 +165,13 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 */
 	@ApiOperation(value = "分类树状列表", notes = "获取分类树状列表")
 	@GetMapping("category/treeSelect")
-	public List<TreeSelectOption> categoryLayerTree() {
-		return this.service.queryLayerCategoryTree();
+	public List<TreeSelectOption> categoryLayerTree(
+			@ApiParam(value = "目标租户 ID") @RequestParam(required = false) Long comId,
+			@ApiParam(value = "目标站点 ID") @RequestParam(required = false) Long domainId) {
+		if (this.useScopedTermTree(comId, domainId)) {
+			return this.queryScopedTreeSelect(TermTypeEnum.CATEGORY.toString(), comId, domainId);
+		}
+		return this.service.queryPortalLayerCategoryTree(TermTypeEnum.CATEGORY.toString(), this.getDomainId());
 	}
 
 	/**
@@ -159,8 +195,14 @@ public class TermController extends EntityController<TermService, KTerms> {
 	 */
 	@ApiOperation(value = "通用分类树", notes = "通用分类树查询接口，支持所有类型")
 	@GetMapping("term/category/treeSelect")
-	public List<TreeSelectOption> termCategoryLayerTree(@ApiParam(value = "分类类型", required = true) @RequestParam String classType) {
-		return this.service.queryLayerCategoryTreeByType(classType);
+	public List<TreeSelectOption> termCategoryLayerTree(
+			@ApiParam(value = "分类类型", required = true) @RequestParam String classType,
+			@ApiParam(value = "目标租户 ID") @RequestParam(required = false) Long comId,
+			@ApiParam(value = "目标站点 ID") @RequestParam(required = false) Long domainId) {
+		if (this.useScopedTermTree(comId, domainId)) {
+			return this.queryScopedTreeSelect(classType, comId, domainId);
+		}
+		return this.service.queryPortalLayerCategoryTree(classType, this.getDomainId());
 	}
 
 	/**
@@ -206,7 +248,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@ApiOperation(value = "标签下拉列表", notes = "获取平台标签下拉列表")
 	@GetMapping("tag/select")
 	public List<SelectOption> queryFlatTags() {
-		return this.service.queryFlatTags();
+		return this.service.queryPortalFlatTags(this.getDomainId());
 	}
 
 	@ApiOperation(value = "添加分类", notes = "添加新的分类")
@@ -216,6 +258,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 		term.setClassType(TermTypeEnum.CATEGORY.toString());
 		this.handleDisplayOrder(term);
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
+		if (!"ok".equals(res)) {
+			return Result.error(ResultCode.VALIDATION_ERROR.getCode(), res);
+		}
 		this.service.refreshTerm();
 		return Result.ok(res);
 	}
@@ -225,6 +270,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@OpLog(action = "更新分类", resourceType = "category", resourceId = "#term.id")
 	public Result updateCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
 		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
+		if (!"ok".equals(res)) {
+			return Result.error(ResultCode.VALIDATION_ERROR.getCode(), res);
+		}
 		this.service.refreshTerm();
 		return Result.ok(res);
 	}
@@ -233,7 +281,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@DeleteMapping("/admin/cms/category/delete")
 	@OpLog(action = "删除分类", resourceType = "category", resourceId = "#term.id", recordParams = false)
 	public Result deleteCategory(@ApiParam(value = "分类信息", required = true) @Valid @RequestBody Term term) {
-		this.service.deleteTerm(term);
+		this.service.deleteTerm(term, this.getUserId());
 		this.service.refreshTerm();
 		return Result.ok("ok");
 	}
@@ -244,7 +292,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@OpLog(action = "批量删除分类", resourceType = "category")
 	public Boolean removeIds(@ApiParam(value = "分类列表", required = true) @RequestBody List<Term> terms) {
 		if (!ObjectUtils.isBlank(terms)) {
-			this.service.deleteTerms(terms);
+			this.service.deleteTerms(terms, this.getUserId());
 
 			this.service.refreshTerm();
 		}
@@ -259,6 +307,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 		term.setClassType(TermTypeEnum.TAG.toString());
 		this.handleDisplayOrder(term);
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
+		if (!"ok".equals(res)) {
+			return Result.error(ResultCode.VALIDATION_ERROR.getCode(), res);
+		}
 		this.service.appendCacheTag(term); // 新增标签追加缓存
 		return Result.ok(res);
 	}
@@ -277,10 +328,17 @@ public class TermController extends EntityController<TermService, KTerms> {
 		@ApiImplicitParam(name = "sorter", value = "排序规则，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "filter", value = "过滤条件，JSON格式", dataTypeClass = String.class, paramType = "query"),
 		@ApiImplicitParam(name = "classType", value = "分类类型（必填），如：category, tag, plugin, nav_menu 等", dataTypeClass = String.class, paramType = "query", required = true),
-		@ApiImplicitParam(name = "name", value = "分类项名称（模糊查询）", dataTypeClass = String.class, paramType = "query")
+		@ApiImplicitParam(name = "name", value = "分类项名称（模糊查询）", dataTypeClass = String.class, paramType = "query"),
+		@ApiImplicitParam(name = "comId", value = "目标租户 ID（超管跨租户查看）", dataTypeClass = Long.class, paramType = "query"),
+		@ApiImplicitParam(name = "domainId", value = "目标站点 ID（超管跨站点查看）", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("/admin/term-type/term")
-	public PageData<TermTree> listTerm(@RequestParam Map<String, Object> params) {
+	public PageData<TermTree> listTerm(
+			@ApiParam(value = "目标租户 ID") @RequestParam(required = false) Long comId,
+			@ApiParam(value = "目标站点 ID") @RequestParam(required = false) Long domainId,
+			@RequestParam Map<String, Object> params) {
+		params.remove("comId");
+		params.remove("domainId");
 		// classType 是必填参数
 		if (!params.containsKey("classType") || ObjectUtils.isBlank(params.get("classType"))) {
 			return new PageData<>(0L, 1, 15, new java.util.ArrayList<>());
@@ -289,7 +347,72 @@ public class TermController extends EntityController<TermService, KTerms> {
 		boolean isFlat = TermTypeEnum.TAG.toString().equals(params.get("classType"));
 		//查询列表数据
 		PageQuery pageQuery = new PageQuery(params);
-		return this.service.queryTermForTree(new KTerms(), pageQuery, isFlat);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_DOMAIN, KTerms.class);
+		this.applyAdminTermScope(pageQuery, comId, domainId);
+		PageData<TermTree> page = this.service.queryTermForTree(new KTerms(), pageQuery, isFlat);
+		this.decorateWritable(page.getRows());
+		return page;
+	}
+
+	/**
+	 * 超管代管视图：在传入目标租户/站点时按「平台共享 ∪ 租户共享 ∪ 目标站」并集读，与域管 {@code domainSharedRead} 一致。
+	 * 非超管由 {@code applyScope(ADMIN_DOMAIN)} 决定，忽略请求中的 comId/domainId。
+	 */
+	private void applyAdminTermScope(PageQuery pageQuery, Long comId, Long domainId) {
+		if (!this.commonOperate.isAdmin(this.getUserId())) {
+			return;
+		}
+		Long tenantForDomain = null;
+		if (domainId != null && domainId > 0 && (comId == null || comId <= 0)) {
+			tenantForDomain = this.service.resolveComIdForDomain(domainId);
+		}
+		DataScopeQueryHelper.applyAdminOperationalSharedRead(pageQuery, comId, domainId, tenantForDomain);
+	}
+
+	private boolean useScopedTermTree(Long comId, Long domainId) {
+		if (!this.commonOperate.isAdmin(this.getUserId())) {
+			return domainId != null && domainId > 0;
+		}
+		if (domainId != null && domainId > 0) {
+			return true;
+		}
+		return comId != null;
+	}
+
+	private List<TreeSelectOption> queryScopedTreeSelect(String classType, Long comId, Long domainId) {
+		PageQuery pageQuery = new PageQuery(new HashMap<>());
+		pageQuery.pushParam("classType", classType);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_DOMAIN, KTerms.class);
+		this.applyAdminTermScope(pageQuery, comId, domainId);
+		return this.service.queryTreeSelectForClassType(classType, pageQuery);
+	}
+
+	/**
+	 * 按行的归属层级（平台共享/租户共享/站点专属，见 {@link AxisLayerGuard#resolveAxisLayer}）标记当前操作者是否可改写，
+	 * 与 {@link com.wldos.platform.core.service.TermService#assertTermMutable} 的写保护规则一致，
+	 * 前端据此对不可改的共享行灰显「配置/删除」，避免点了才被 403 拒绝。递归处理分类树的子节点。
+	 */
+	private void decorateWritable(List<TermTree> rows) {
+		if (rows == null || rows.isEmpty()) {
+			return;
+		}
+		Long userId = this.getUserId();
+		boolean admin = this.isAdmin(userId);
+		AdminScopeLevel operatorLevel = admin ? AdminScopeLevel.PLATFORM : DataScopeResolver.resolveOperatorLevel(
+				false,
+				this.commonOperate.isTenantAdmin(userId),
+				this.commonOperate.isDomainAdmin(userId),
+				this.commonOperate.getPrimaryOrgId(userId) != null);
+		for (TermTree row : rows) {
+			if (row == null) {
+				continue;
+			}
+			AdminScopeLevel rowLayer = AxisLayerGuard.resolveAxisLayer(row.getComId(), row.getDomainId());
+			row.setWritable(admin || operatorLevel.getRank() >= rowLayer.getRank());
+			if (row.getChildren() != null && !row.getChildren().isEmpty()) {
+				this.decorateWritable(row.getChildren());
+			}
+		}
 	}
 
 	/**
@@ -309,6 +432,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 		}
 		this.handleDisplayOrder(term);
 		String res = this.service.addTerm(term, this.getUserId(), this.getUserIp());
+		if (!"ok".equals(res)) {
+			return Result.error(ResultCode.VALIDATION_ERROR.getCode(), res);
+		}
 		// 如果是标签类型，追加缓存
 		if (TermTypeEnum.TAG.toString().equals(term.getClassType())) {
 			this.service.appendCacheTag(term);
@@ -328,6 +454,9 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@OpLog(action = "更新分类项", resourceType = "term", resourceId = "#term.id")
 	public Result updateTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
 		String res = this.service.updateTerm(term, this.getUserId(), this.getUserIp());
+		if (!"ok".equals(res)) {
+			return Result.error(ResultCode.VALIDATION_ERROR.getCode(), res);
+		}
 		this.service.refreshTerm();
 		return Result.ok(res);
 	}
@@ -342,7 +471,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@DeleteMapping("/admin/term-type/term/delete")
 	@OpLog(action = "删除分类项", resourceType = "term", resourceId = "#term.id", recordParams = false)
 	public Result deleteTerm(@ApiParam(value = "分类项信息", required = true) @Valid @RequestBody Term term) {
-		this.service.deleteTerm(term);
+		this.service.deleteTerm(term, this.getUserId());
 		this.service.refreshTerm();
 		return Result.ok("ok");
 	}
@@ -359,7 +488,7 @@ public class TermController extends EntityController<TermService, KTerms> {
 	@OpLog(action = "批量删除分类项", resourceType = "term")
 	public Boolean removeTerms(@ApiParam(value = "分类项列表", required = true) @RequestBody List<Term> terms) {
 		if (!ObjectUtils.isBlank(terms)) {
-			this.service.deleteTerms(terms);
+			this.service.deleteTerms(terms, this.getUserId());
 			this.service.refreshTerm();
 		}
 		return Boolean.TRUE;
@@ -384,8 +513,8 @@ public class TermController extends EntityController<TermService, KTerms> {
 		return Boolean.TRUE;
 	}
 
-	/** 展示顺序上限，与前端校验规则 1-100 保持一致 */
-	private static final long DISPLAY_ORDER_MAX = 100L;
+	/** 展示顺序上限，见 {@link io.github.wldos.common.Constants#DISPLAY_ORDER_MAX} */
+	private static final long DISPLAY_ORDER_MAX = Constants.DISPLAY_ORDER_MAX;
 
 	private void handleDisplayOrder(Term term) {
 		Long parentId = term.getParentId();

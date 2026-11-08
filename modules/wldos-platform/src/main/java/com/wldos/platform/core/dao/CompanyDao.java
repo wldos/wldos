@@ -41,6 +41,15 @@ public interface CompanyDao extends BaseDao<WoCompany, Long> {
 	 * @param userId 用户id
 	 * @return 主企业信息
 	 */
-	@Query("SELECT c.* from wo_company c LEFT JOIN wo_com_user u on c.id=u.com_id where c.delete_flag='normal' and c.is_valid='1' and u.delete_flag='normal' and u.is_valid='1' and u.is_main='1' and u.user_id=:userId")
+	@Query("SELECT c.* from wo_company c LEFT JOIN wo_user u on c.id=u.main_com_id where c.delete_flag='normal' and c.is_valid='1' and u.delete_flag='normal' and u.id=:userId limit 1")
 	Tenant queryTenantInfoByTAdminId(@Param("userId") Long userId);
+
+	@Query("SELECT c.* from wo_company c LEFT JOIN wo_com_user cu on c.id=cu.com_id where c.delete_flag='normal' and c.is_valid='1' and cu.delete_flag='normal' and cu.is_valid='1' and cu.is_main='1' and cu.user_id=:userId limit 1")
+	Tenant queryTenantInfoByComUserMain(@Param("userId") Long userId);
+
+	@Query("SELECT * FROM wo_company WHERE com_code = :comCode AND delete_flag = 'normal' LIMIT 1")
+	WoCompany findFirstByComCode(@Param("comCode") String comCode);
+
+	@Query("SELECT COUNT(1) FROM wo_company WHERE parent_id = :parentId AND delete_flag = 'normal'")
+	long countNormalChildrenByParentId(@Param("parentId") Long parentId);
 }

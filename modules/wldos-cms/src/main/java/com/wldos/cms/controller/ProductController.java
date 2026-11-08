@@ -83,7 +83,7 @@ public class ProductController extends NonEntityController<KCMSService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryProductDomain(pageQuery);
 	}
@@ -109,7 +109,7 @@ public class ProductController extends NonEntityController<KCMSService> {
 
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryProductCategory(slugCategory, pageQuery);
 	}

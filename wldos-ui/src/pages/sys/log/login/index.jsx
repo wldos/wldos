@@ -12,7 +12,12 @@
  *   - 行点击展开详情（UA 等长字段），不暴露写操作。
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { connect } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
 import { PageContainer } from '@ant-design/pro-layout';
+import { auditComDomainFilterColumns } from '@/pages/sys/log/_shared/auditLogFilterColumns';
+import { useAuditLogListMeta } from '@/pages/sys/log/_shared/auditLogListMeta';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import { Drawer, Tag, Typography } from 'antd';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -54,9 +59,11 @@ const RESULT_TAG_COLOR = {
   MFA_REQUIRED: 'blue',
 };
 
-const LoginLogList = () => {
+const LoginLogList = ({ isAdmin, isTenantAdmin, currentUser }) => {
   const actionRef = useRef();
   const [row, setRow] = useState(null);
+  const listMeta = useAuditLogListMeta({ isAdmin, isTenantAdmin, currentUser });
+  const { domainLabelMap, showDomainColumn } = listMeta;
 
   const mobile = isMobile();
   const [containerWidth, setContainerWidth] = useState(0);
@@ -78,6 +85,7 @@ const LoginLogList = () => {
   }, []);
 
   const columns = useMemo(() => [
+    ...auditComDomainFilterColumns(listMeta),
     {
       title: '登录账号',
       dataIndex: 'loginAccount',
@@ -153,21 +161,21 @@ const LoginLogList = () => {
       hideInSearch: true,
     },
     {
-      title: '域ID',
+      title: '站点',
       dataIndex: 'domainId',
-      hideInTable: true,
+      width: 140,
+      ellipsis: true,
       hideInSearch: true,
+      hideInTable: !showDomainColumn,
+      render: (_, record) => domainLabelMap[String(record.domainId)] || record.domainId || '-',
     },
-  ], [mobile]);
+  ], [mobile, domainLabelMap, showDomainColumn, listMeta]);
 
   const totalColsWidth = columns.reduce((total, col) => total + (typeof col.width === 'number' ? col.width : 120), 0);
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{ padding: '0', margin: '0' }}
-      bodyStyle={{ padding: '24px', margin: '0' }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="登录日志"
@@ -239,4 +247,7 @@ const LoginLogList = () => {
   );
 };
 
-export default LoginLogList;
+export default connect(({ user }) => ({
+  currentUser: user.currentUser || {},
+  ...buildAuthorityHelper(user, '/admin'),
+}))(LoginLogList);

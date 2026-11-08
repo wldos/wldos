@@ -7,30 +7,43 @@
  */
 
 import React, { useState } from 'react';
-import { Table, Spin, Button, Space, Tag, Avatar, Input, Select, Row, Col } from 'antd';
-import { EditOutlined, DeleteOutlined, UserOutlined, EyeOutlined } from '@ant-design/icons';
+import { Space, Tag, Avatar, Input, Select, Row, Col, Popconfirm, message, Divider } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import ProTableX from '@/components/ProTableX';
 import { useIntl } from 'umi';
-import moment from 'moment';
 import UserPermissionView from '@/components/UserPermissionView';
+import UpdateForm from '@/pages/sys/user/components/UpdateForm';
+import { removeOrgStaff, updateEntity } from '@/pages/sys/user/service';
 
 const { Search } = Input;
 const { Option } = Select;
 
-const UserList = ({ users, loading, organizationId }) => {
+function normalizeUserRecord(record) {
+  if (!record) {
+    return record;
+  }
+  return {
+    ...record,
+    loginName: record.loginName || record.login_name || record.account,
+    login_name: record.login_name || record.loginName || record.account,
+  };
+}
+
+const UserList = ({ users, loading, organizationId, onMembersChanged, hasAuthority = () => true }) => {
   const intl = useIntl();
   const [permissionModalVisible, setPermissionModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [stepFormValues, setStepFormValues] = useState({});
 
-  // 删除重复的添加用户功能，因为上方已有添加用户按钮
-
-  // 过滤用户数据
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = !searchText ||
-      user.nickname?.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.login_name?.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchText.toLowerCase());
+  const filteredUsers = users.filter((user) => {
+    const loginName = user.loginName || user.login_name || user.account || '';
+    const matchesSearch = !searchText
+      || user.nickname?.toLowerCase().includes(searchText.toLowerCase())
+      || loginName.toLowerCase().includes(searchText.toLowerCase())
+      || user.email?.toLowerCase().includes(searchText.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
 
@@ -45,6 +58,56 @@ const UserList = ({ users, loading, organizationId }) => {
   const handleClosePermissionModal = () => {
     setPermissionModalVisible(false);
     setSelectedUser(null);
+  };
+
+  const handleRemoveMember = async (record) => {
+    try {
+      await removeOrgStaff({ ids: [record.id], orgId: organizationId });
+      message.success(intl.formatMessage({ id: 'component.organizationTree.userList.msg.removeOk' }));
+      if (onMembersChanged) onMembersChanged();
+    } catch (error) {
+      message.error(intl.formatMessage({ id: 'component.organizationTree.userList.msg.removeFail' }));
+    }
+  };
+
+  const handleUpdate = async (fields) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.config', defaultMessage: '正在配置' }));
+    try {
+      await updateEntity({
+        nickname: fields.nickname,
+        remark: fields.remark,
+        loginName: fields.loginName,
+        email: fields.email,
+        mobile: fields.mobile,
+        passwd: fields.passwd,
+        status: fields.status,
+        id: fields.id,
+      });
+      hide();
+      message.success(intl.formatMessage({ id: 'sys.user.msg.configSuccess', defaultMessage: '配置成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.user.msg.configFail', defaultMessage: '配置失败请重试！' }));
+      return false;
+    }
+  };
+
+  const renderStatusTag = (status) => {
+    const isNormal = status === '正常' || status === 'normal';
+    let label = status;
+    if (status === 'normal') {
+      label = intl.formatMessage({ id: 'component.organizationTree.userList.status.normal' });
+    } else if (status === 'notActive') {
+      label = intl.formatMessage({ id: 'component.organizationTree.userList.status.notActive' });
+    } else if (status === 'locked') {
+      label = intl.formatMessage({ id: 'sys.user.status.locked', defaultMessage: '已锁定' });
+    }
+    return (
+      <Tag color={isNormal ? 'green' : 'red'}>
+        {label}
+      </Tag>
+    );
   };
 
   const columns = [
@@ -70,65 +133,56 @@ const UserList = ({ users, loading, organizationId }) => {
       title: intl.formatMessage({ id: 'component.organizationTree.userList.col.loginName' }),
       dataIndex: 'login_name',
       key: 'login_name',
+      render: (_, record) => record.loginName || record.login_name || record.account || '-',
     },
     {
       title: intl.formatMessage({ id: 'component.organizationTree.userList.col.email' }),
       dataIndex: 'email',
       key: 'email',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({ id: 'component.organizationTree.userList.col.status' }),
       dataIndex: 'status',
       key: 'status',
-      render: (status) => (
-        <Tag color={status === '正常' || status === 'normal' ? 'green' : 'red'}>
-          {status === '正常' || status === 'normal'
-            ? intl.formatMessage({ id: 'component.organizationTree.userList.status.normal' })
-            : status === 'notActive'
-              ? intl.formatMessage({ id: 'component.organizationTree.userList.status.notActive' })
-              : status}
-        </Tag>
-      ),
+      render: (status) => renderStatusTag(status),
     },
     {
       title: intl.formatMessage({ id: 'component.organizationTree.userList.col.createTime' }),
       dataIndex: 'createTime',
       key: 'createTime',
-      render: (createTime) => {
-        if (!createTime) return '-';
-        // 处理时间戳（毫秒）
-        const timestamp = typeof createTime === 'string' ? parseInt(createTime) : createTime;
-        return moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
-      },
+      valueType: 'dateTime',
+      width: 168,
     },
     {
       title: intl.formatMessage({ id: 'component.organizationTree.userList.col.action' }),
       key: 'action',
+      valueType: 'option',
+      fixed: 'right',
+      width: 200,
       render: (_, record) => (
-        <Space size="small">
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            size="small"
+        <Space size={0} split={<Divider type="vertical" />}>
+          {hasAuthority('user:update') && (
+            <a
+              onClick={() => {
+                setStepFormValues(normalizeUserRecord(record));
+                setUpdateModalVisible(true);
+              }}
+            >
+              {intl.formatMessage({ id: 'sys.user.action.config', defaultMessage: '配置' })}
+            </a>
+          )}
+          {hasAuthority('user:update') && (
+            <a onClick={() => handleViewPermission(record)}>
+              {intl.formatMessage({ id: 'component.organizationTree.userList.action.permissionView' })}
+            </a>
+          )}
+          <Popconfirm
+            title={intl.formatMessage({ id: 'component.organizationTree.userList.confirm.removeTitle' })}
+            onConfirm={() => handleRemoveMember(record)}
           >
-            {intl.formatMessage({ id: 'component.organizationTree.userList.action.edit' })}
-          </Button>
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            size="small"
-            onClick={() => handleViewPermission(record)}
-          >
-            {intl.formatMessage({ id: 'component.organizationTree.userList.action.permissionView' })}
-          </Button>
-          <Button
-            type="link"
-            danger
-            icon={<DeleteOutlined />}
-            size="small"
-          >
-            {intl.formatMessage({ id: 'component.organizationTree.userList.action.delete' })}
-          </Button>
+            <a>{intl.formatMessage({ id: 'component.organizationTree.userList.action.delete' })}</a>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -142,7 +196,6 @@ const UserList = ({ users, loading, organizationId }) => {
         </h3>
       </div>
 
-      {/* 查询条件 */}
       <div style={{ marginBottom: 16 }}>
         <Row gutter={16}>
           <Col span={12}>
@@ -163,34 +216,51 @@ const UserList = ({ users, loading, organizationId }) => {
               placeholder={intl.formatMessage({ id: 'component.organizationTree.userList.filter.statusPlaceholder' })}
             >
               <Option value="all">{intl.formatMessage({ id: 'component.organizationTree.userList.filter.allStatus' })}</Option>
-              <Option value="正常">{intl.formatMessage({ id: 'component.organizationTree.userList.status.normal' })}</Option>
+              <Option value="normal">{intl.formatMessage({ id: 'component.organizationTree.userList.status.normal' })}</Option>
               <Option value="notActive">{intl.formatMessage({ id: 'component.organizationTree.userList.status.notActive' })}</Option>
+              <Option value="locked">{intl.formatMessage({ id: 'sys.user.status.locked', defaultMessage: '已锁定' })}</Option>
             </Select>
           </Col>
         </Row>
       </div>
 
-      <Spin spinning={loading}>
-        <Table
-          columns={columns}
-          dataSource={filteredUsers}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total) => intl.formatMessage({ id: 'component.organizationTree.userList.pagination.total' }, { total }),
-          }}
-          size="small"
-        />
-      </Spin>
+      <ProTableX
+        listLayout={false}
+        search={false}
+        options={false}
+        sticky={false}
+        scroll={{ x: 960 }}
+        columns={columns}
+        dataSource={filteredUsers}
+        rowKey="id"
+        loading={loading}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => intl.formatMessage({ id: 'component.organizationTree.userList.pagination.total' }, { total }),
+        }}
+        size="small"
+      />
 
-      {/* 权限查看弹窗 */}
       <UserPermissionView
         visible={permissionModalVisible}
         onCancel={handleClosePermissionModal}
         userId={selectedUser?.id}
         userName={selectedUser?.nickname || selectedUser?.login_name || selectedUser?.username}
+      />
+
+      <UpdateForm
+        onCancel={() => setUpdateModalVisible(false)}
+        updateModalVisible={updateModalVisible}
+        onSubmit={async (value) => {
+          const success = await handleUpdate(value);
+          if (success) {
+            setUpdateModalVisible(false);
+            if (onMembersChanged) onMembersChanged();
+          }
+        }}
+        values={stepFormValues}
       />
     </div>
   );

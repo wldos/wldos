@@ -35,7 +35,10 @@ import io.github.wldos.platform.support.resource.vo.DynSet;
 import com.wldos.platform.core.entity.WoUser;
 import com.wldos.platform.core.service.UserService;
 import com.wldos.platform.core.service.AccountCenterTabAccessService;
+import com.wldos.platform.core.service.SlotUserMembershipService;
 import com.wldos.platform.core.service.UserPortalShortcutService;
+import com.wldos.platform.core.vo.SlotMembershipVO;
+import io.github.wldos.platform.support.rbac.slot.BusinessSlot;
 import com.wldos.platform.core.vo.MyShortcutCreateBody;
 import com.wldos.platform.core.vo.MyShortcutTouchBody;
 import com.wldos.platform.core.vo.MyShortcutUpdateBody;
@@ -73,6 +76,9 @@ public class UserController extends EntityController<UserService, WoUser> {
 
 	@Autowired
 	private AccountCenterTabAccessService accountCenterTabAccessService;
+
+	@Autowired
+	private SlotUserMembershipService slotUserMembershipService;
 
 	@Autowired
 	private LoginLogService loginLogService;
@@ -335,9 +341,26 @@ public class UserController extends EntityController<UserService, WoUser> {
 				this.getTenantId(), this.request, configured));
 	}
 
-	/**
-	 * 当前登录用户自己的登录日志分页；忽略请求中的 userId，非超级管理员按租户+域隔离。
-	 */
+	@ApiOperation(value = "插槽成员判定", notes = "当前登录用户是否属于插槽解析出的目标角色；未登录返回 matched=false")
+	@GetMapping("slotMembership")
+	public Result<SlotMembershipVO> slotMembership(
+			@ApiParam("插槽编码，如 cms.creator_capabilities") @RequestParam(value = "slotCode", required = false) String slotCode) {
+		String code = slotCode;
+		if (code == null || code.trim().isEmpty()) {
+			code = BusinessSlot.CMS_CREATOR_CAPABILITIES.getSlotCode();
+		}
+		SlotMembershipVO vo = new SlotMembershipVO();
+		vo.setSlotCode(code);
+		Long userId = this.getUserId();
+		if (userId == null || this.service.isGuestUser(userId)) {
+			vo.setMatched(false);
+			return Result.ok(vo);
+		}
+		vo.setMatched(this.slotUserMembershipService.userMatchesSlot(userId, code, this.getTenantId(), this.getDomainId()));
+		return Result.ok(vo);
+	}
+
+	/** 当前登录用户自己的登录日志分页；服务端固定 userId。 */
 	@ApiOperation(value = "我的登录日志", notes = "仅本人；分页参数同管理端登录日志")
 	@GetMapping("myLoginLogs")
 	public PageData<LoginLogItem> myLoginLogs(@RequestParam Map<String, Object> params) {
@@ -348,16 +371,10 @@ public class UserController extends EntityController<UserService, WoUser> {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.removeParam("userId");
 		pageQuery.pushParam("userId", uid);
-		if (!this.isAdmin(uid)) {
-			this.applyTenantFilter(pageQuery);
-			this.applyDomainFilter(pageQuery);
-		}
 		return this.loginLogService.queryList(pageQuery);
 	}
 
-	/**
-	 * 当前登录用户自己的操作日志分页；忽略请求中的 userId，非超级管理员按租户+域隔离。
-	 */
+	/** 当前登录用户自己的操作日志分页；服务端固定 userId。 */
 	@ApiOperation(value = "我的操作记录", notes = "仅本人；分页参数同管理端操作日志")
 	@GetMapping("myOpLogs")
 	public PageData<OpLogItem> myOpLogs(@RequestParam Map<String, Object> params) {
@@ -368,10 +385,6 @@ public class UserController extends EntityController<UserService, WoUser> {
 		PageQuery pageQuery = new PageQuery(params);
 		pageQuery.removeParam("userId");
 		pageQuery.pushParam("userId", uid);
-		if (!this.isAdmin(uid)) {
-			this.applyTenantFilter(pageQuery);
-			this.applyDomainFilter(pageQuery);
-		}
 		return this.opLogService.queryList(pageQuery);
 	}
 

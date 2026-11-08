@@ -94,24 +94,34 @@ public interface TermDao extends BaseDao<KTerms, Long> {
 	Term queryTermBySlugTerm(@Param("slugTerm") String slugTerm);
 
 	/**
-	 * 是否存在同名或同别名的分类项，仅用于新增
+	 * 是否存在同名或同别名的分类项，仅用于新增。按 classType 隔离（分类、标签各自的命名空间不互相拦截），
+	 * 按 comId 隔离（平台共享 comId=0 的行对所有租户可见并参与冲突检测；租户自己范围内的行只与同租户比较，
+	 * 不同租户之间允许重名）。
 	 *
 	 * @param name 分类项名称
 	 * @param slug 分类项别名
+	 * @param classType 分类类型：分类目录、标签等
+	 * @param comId 归属租户（0=平台共享）
 	 * @return 是否存在
 	 */
-	@Query("select count(1) from k_terms t where t.name=:name or t.slug=:slug")
-	boolean existsTermBySlugOrName(@Param("name") String name, @Param("slug") String slug);
+	@Query("select count(1) from k_terms t join k_term_type o on t.id=o.term_id "
+			+ "where (t.name=:name or t.slug=:slug) and o.class_type=:classType and (t.com_id=0 or t.com_id=:comId)")
+	boolean existsTermBySlugOrName(@Param("name") String name, @Param("slug") String slug,
+			@Param("classType") String classType, @Param("comId") Long comId);
 
 	/**
-	 * 是否存在同名或同别名的其他分类项，用于更新时判断是否重名
+	 * 是否存在同名或同别名的其他分类项，用于更新时判断是否重名，隔离规则同 {@link #existsTermBySlugOrName}。
 	 *
 	 * @param name 分类项名称
 	 * @param id 分类项id
+	 * @param classType 分类类型：分类目录、标签等
+	 * @param comId 归属租户（0=平台共享）
 	 * @return 是否存在重名
 	 */
-	@Query("select count(1) from k_terms t where (t.name=:name or t.slug=:slug) and t.id!=:id")
-	boolean existsDifTermByNameOrSlugAndId(@Param("name") String name, @Param("slug") String slug, @Param("id") Long id);
+	@Query("select count(1) from k_terms t join k_term_type o on t.id=o.term_id "
+			+ "where (t.name=:name or t.slug=:slug) and t.id!=:id and o.class_type=:classType and (t.com_id=0 or t.com_id=:comId)")
+	boolean existsDifTermByNameOrSlugAndId(@Param("name") String name, @Param("slug") String slug,
+			@Param("id") Long id, @Param("classType") String classType, @Param("comId") Long comId);
 
 	/**
 	 * 用于新增分类项时判断是否与其他分类项别名重复，不区分分类法，仅用于新增

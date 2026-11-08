@@ -13,6 +13,7 @@ import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.NonEntityController;
+import com.wldos.platform.audit.entity.WoSysLog;
 import com.wldos.platform.audit.service.SysLogService;
 import com.wldos.platform.audit.vo.SysLogItem;
 
@@ -39,7 +40,7 @@ import io.swagger.annotations.ApiOperation;
  * {@code EntityController}，避免自动暴露 add / update / delete 通用端点，违反"一次写入不可改"的合规要求。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Api(tags = "系统日志（后台）")
@@ -47,7 +48,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/admin/sys/log/sys")
 public class SysLogAdminController extends NonEntityController<SysLogService> {
 
-	@ApiOperation(value = "系统日志分页", notes = "按 occur_at 倒序；支持 sourceModule/eventType/severity/operatorUserId 过滤")
+	@ApiOperation(value = "系统日志分页", notes = "按 occur_at 倒序；支持 sourceModule/eventType/severity/operatorUserId 及 metadata 内 requestUri/requestMethod/ip 过滤")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "current", value = "当前页码，从1开始", dataTypeClass = Integer.class, paramType = "query", example = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页条数", dataTypeClass = Integer.class, paramType = "query", example = "20"),
@@ -56,23 +57,39 @@ public class SysLogAdminController extends NonEntityController<SysLogService> {
 			@ApiImplicitParam(name = "sourceModule", value = "事件来源模块", dataTypeClass = String.class, paramType = "query"),
 			@ApiImplicitParam(name = "eventType", value = "事件类型", dataTypeClass = String.class, paramType = "query"),
 			@ApiImplicitParam(name = "severity", value = "严重级别（INFO/WARN/ERROR/CRITICAL）", dataTypeClass = String.class, paramType = "query"),
-			@ApiImplicitParam(name = "operatorUserId", value = "触发者用户ID", dataTypeClass = Long.class, paramType = "query")
+			@ApiImplicitParam(name = "operatorUserId", value = "触发者用户ID", dataTypeClass = Long.class, paramType = "query"),
+			@ApiImplicitParam(name = "requestUri", value = "请求路径（metadata.uri 子串匹配）", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "requestMethod", value = "HTTP 方法（metadata.method 精确匹配）", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "ip", value = "客户端 IP（metadata.ip 前缀匹配）", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "requestHost", value = "请求 Host（metadata.host 子串）", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "userAgent", value = "User-Agent 子串", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "actorKind", value = "来源分类", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "comId", value = "目标租户 ID（超管 lens）", dataTypeClass = Long.class, paramType = "query"),
+			@ApiImplicitParam(name = "domainId", value = "目标站点 ID（按站点收窄）", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("")
 	public PageData<SysLogItem> listQuery(@RequestParam Map<String, Object> params) {
+		Long domainId = parseOptionalLongParam(params.get("domainId"));
 		PageQuery pageQuery = new PageQuery(params);
-		// 权限分层：
-		// - 超级管理员：可查看全量系统日志（不做租户/域隔离）
-		// - 业务管理员（含租户管理员/域管理员）：按租户+域双隔离
-		if (!this.isAdmin(this.getUserId())) {
-			this.applyTenantFilter(pageQuery);
-			this.applyDomainFilter(pageQuery);
-		}
+		this.applyAuditLogListScope(pageQuery, WoSysLog.class);
+		this.applySysLogTenantAdminUnionScope(pageQuery, domainId);
 		return this.service.queryList(pageQuery);
 	}
 
-	@ApiOperation(value = "系统日志详情", notes = "按 ID 返回单条")
+	private static Long parseOptionalLongParam(Object raw) {
+		if (raw == null || raw.toString().trim().isEmpty()) {
+			return null;
+		}
+		try {
+			return Long.parseLong(raw.toString().trim());
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
 	@GetMapping("/{id}")
+	@ApiOperation(value = "系统日志详情", notes = "按 ID 返回单条")
 	public Result<SysLogItem> detail(@PathVariable("id") Long id) {
 		return Result.ok(this.service.detail(id));
 	}

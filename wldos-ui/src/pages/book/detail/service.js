@@ -15,6 +15,10 @@ export async function queryInfo(params) {
 export async function previewInfo(params) {
   return request(`${prefix}/info-${params.id}/${params.preview}`);
 }
+export async function fetchCmsCommentEnabled() {
+  return request(`${prefix}/cms/comment/enabled`);
+}
+
 export async function queryComment(params) {
   return request(`${prefix}/cms/comment/${params.id}`);
 }

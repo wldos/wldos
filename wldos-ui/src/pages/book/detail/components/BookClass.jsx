@@ -5,6 +5,9 @@ import {queryBookList} from "@/pages/home/service";
 import ElementList from "@/pages/book/read/list";
 
 const count = 8;
+/** 与创作台章节列表一致：display_order 正序 */
+const chapterListSorter = { displayOrder: 'ascend', id: 'ascend' };
+
 const BookClass = (props) => {
   const { bookId } = props;
   const path = `/book-${bookId}.html`;
@@ -19,7 +22,7 @@ const BookClass = (props) => {
       pageSize: data.pageSize,
       current: 1,
       pubType: 'chapter',
-      sorter: {"createTime":"ascend"},
+      sorter: chapterListSorter,
       path
     });
     setLoading(false);
@@ -40,7 +43,7 @@ const BookClass = (props) => {
       pageSize: data.pageSize,
       current: num,
       pubType: 'chapter',
-      sorter: {"createTime": "ascend"},
+      sorter: chapterListSorter,
       path
     });
     setLoading(false);

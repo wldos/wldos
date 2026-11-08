@@ -8,8 +8,10 @@ import BookList from "@/pages/book/components/booklist";
 import BookView from "@/pages/book/components/BookView";
 import EditBookForm from "@/pages/book/components/EditBookForm";
 import {addBook, addChapter} from "@/pages/book/service";
-import updateDarkTheme from "@/components/DarkTheme/UpdateTheme";
-import { isDesktopEmbedded } from '@/utils/desktopEmbeddedBridge';
+import WorkbenchInlineSearch from '@/pages/book/components/WorkbenchInlineSearch';
+import WorkbenchInlineTypeFilter from '@/pages/book/components/WorkbenchInlineTypeFilter';
+import { DARK_MODE_CHANGE_EVENT, readDarkMode, toggleDarkMode } from '@/components/DarkTheme/darkMode';
+import { isDesktopEmbedded, requestCloseShellContent } from '@/utils/desktopEmbeddedBridge';
 
 // 移动端三 pane 状态机（books/chapters/editor）收口函数：
 // - 优先使用显式传入的目标 pane（事件驱动）
@@ -25,18 +27,25 @@ const resolveMobilePane = ({forcedPane, match = {}, currentBook = {}, isSingleWo
 
 class Book extends Component {
   main = undefined;
-  darkMode = localStorage.getItem("darkMode") === "1";
-
   constructor(props) {
     super(props);
     this.state = {
       mode: 'inline',
       modalVisible: false,
       url: '',
-      darkMode: false,
+      darkMode: readDarkMode(),
       isPhone: false,
       mobilePane: null,
       assistantSettingsSignal: 0,
+      bookPage: { current: 1, pageSize: 30 },
+      chapterPage: { current: 1, pageSize: 30 },
+      bookSearchOpen: false,
+      bookKeyword: '',
+      bookKeywordApplied: '',
+      chapterSearchOpen: false,
+      chapterKeyword: '',
+      chapterKeywordApplied: '',
+      bookPubTypesApplied: [],
     };
   }
 
@@ -50,19 +59,21 @@ class Book extends Component {
     this.query();
     if (this.props.match)
       localStorage.setItem('bookUrl', this.props.match.url);
-    updateDarkTheme(this.darkMode).then();
-    this.setState({ darkMode: this.darkMode });
+    this.onDarkModeChange = (event) => {
+      this.setState({ darkMode: !!event.detail?.enabled });
+    };
+    window.addEventListener(DARK_MODE_CHANGE_EVENT, this.onDarkModeChange);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
+    if (this.onDarkModeChange) {
+      window.removeEventListener(DARK_MODE_CHANGE_EVENT, this.onDarkModeChange);
+    }
   }
 
   switchDarkMode = () => {
-    localStorage.setItem("darkMode", this.darkMode ? "0" : "1");
-    this.darkMode = !this.darkMode;
-    this.setState({darkMode: this.darkMode});
-    updateDarkTheme(this.darkMode).then();
+    this.setState({ darkMode: toggleDarkMode() });
   };
 
   query = () => {
@@ -126,27 +137,116 @@ class Book extends Component {
     }
   };
 
-  queryBooks = (dispatch, params, callback) => {
+  queryBooks = (dispatch, params, callback, pageOverride, keywordOverride) => {
+    const { bookPage, bookKeywordApplied, bookPubTypesApplied } = this.state;
+    const page = pageOverride || bookPage;
+    const keyword = keywordOverride !== undefined ? keywordOverride : bookKeywordApplied;
+    const payload = {
+      listStyle: 'archive',
+      current: page.current,
+      pageSize: page.pageSize,
+      sorter: { displayOrder: 'ascend', id: 'ascend' },
+    };
+    if (keyword) {
+      payload.keyword = keyword;
+    }
+    if (bookPubTypesApplied?.length) {
+      payload.filter = JSON.stringify({ pubType: bookPubTypesApplied });
+    }
     dispatch({
       type: 'bookSpace/fetchBook',
-      payload: {
-        listStyle: 'archive', // 查询详细属性
-        current: 1,
-        pageSize: 50, // 普通会员最多50个作品
-        sorter: {"createTime":"descend"}
-      },
+      payload,
       callback,
     });
   };
 
-  queryCurrentBook = (dispatch, params, callback) => {
+  queryCurrentBook = (dispatch, params, callback, chapterPageOverride, chapterKeywordOverride) => {
+    const { chapterPage, chapterKeywordApplied } = this.state;
+    const cp = chapterPageOverride || chapterPage;
+    const chapterKeyword = chapterKeywordOverride !== undefined ? chapterKeywordOverride : chapterKeywordApplied;
+    const payload = {
+      bookId: params.bookId,
+      chapterCurrent: cp.current,
+      chapterPageSize: cp.pageSize,
+      chapterSorter: JSON.stringify({ displayOrder: 'ascend', id: 'ascend' }),
+    };
+    if (chapterKeyword) {
+      payload.chapterKeyword = chapterKeyword;
+    }
     dispatch({
       type: 'bookSpace/fetchCurrentBook',
-      payload: {
-        bookId: params.bookId,
-      },
+      payload,
       callback,
     });
+  };
+
+  submitBookSearch = (text) => {
+    const keyword = (text || '').trim();
+    const bookPage = { ...this.state.bookPage, current: 1 };
+    this.setState({ bookKeywordApplied: keyword, bookKeyword: keyword, bookPage }, () => {
+      this.queryBooks(this.props.dispatch, this.props.match?.params, null, bookPage, keyword);
+    });
+  };
+
+  applyBookTypeFilter = (pubTypes) => {
+    const nextTypes = Array.isArray(pubTypes) ? pubTypes : [];
+    const bookPage = { ...this.state.bookPage, current: 1 };
+    this.setState({ bookPubTypesApplied: nextTypes, bookPage }, () => {
+      this.queryBooks(this.props.dispatch, this.props.match?.params, null, bookPage);
+    });
+  };
+
+  setBookSearchOpen = (open) => {
+    this.setState({ bookSearchOpen: open });
+  };
+
+  submitChapterSearch = (text) => {
+    const keyword = (text || '').trim();
+    const chapterPage = { ...this.state.chapterPage, current: 1 };
+    this.setState({ chapterKeywordApplied: keyword, chapterKeyword: keyword, chapterPage }, () => {
+      const bookId = this.props.currentBook?.id || this.props.match?.params?.bookId;
+      if (bookId) {
+        this.queryCurrentBook(this.props.dispatch, { bookId }, null, chapterPage, keyword);
+      }
+    });
+  };
+
+  onBookPageChange = (current, pageSize) => {
+    const prev = this.state.bookPage;
+    const nextSize = pageSize || prev.pageSize;
+    const bookPage = {
+      current: nextSize !== prev.pageSize ? 1 : current,
+      pageSize: nextSize,
+    };
+    this.setState({ bookPage }, () => {
+      this.queryBooks(this.props.dispatch, this.props.match?.params, null, bookPage);
+    });
+  };
+
+  onChapterPageChange = (current, pageSize) => {
+    const prev = this.state.chapterPage;
+    const nextSize = pageSize || prev.pageSize;
+    const chapterPage = {
+      current: nextSize !== prev.pageSize ? 1 : current,
+      pageSize: nextSize,
+    };
+    this.setState({ chapterPage }, () => {
+      const bookId = this.props.currentBook?.id || this.props.match?.params?.bookId;
+      if (bookId) {
+        this.queryCurrentBook(this.props.dispatch, { bookId }, null, chapterPage);
+      }
+    });
+  };
+
+  reloadBooks = () => {
+    this.queryBooks(this.props.dispatch, this.props.match?.params);
+  };
+
+  reloadChapters = () => {
+    const bookId = this.props.currentBook?.id || this.props.match?.params?.bookId;
+    if (bookId) {
+      this.queryCurrentBook(this.props.dispatch, { bookId });
+    }
   };
 
   queryCurrentChapter = (dispatch, params) => {
@@ -187,6 +287,14 @@ class Book extends Component {
       || prevChapterParam !== nextChapterParam;
 
     if (routeChanged) {
+      if (prevBookParam !== nextBookParam && nextBookParam) {
+        this.setState({
+          chapterPage: { ...this.state.chapterPage, current: 1 },
+          chapterKeyword: '',
+          chapterKeywordApplied: '',
+          chapterSearchOpen: false,
+        });
+      }
       this.query();
     }
 
@@ -239,18 +347,21 @@ class Book extends Component {
   };
 
   addChapter = async (currentBook) => {
-    const {dispatch} = this.props;
     const { id } = currentBook;
     if (!id) {
       message.info('请先创建作品').then();
+      return;
     }
-
-      dispatch({
-      type: 'bookSpace/addChapter',
-      payload: {
-        parentId: id,
-      },
-      });
+    try {
+      const res = await addChapter({ parentId: id });
+      const chapterId = res?.data?.id;
+      if (chapterId) {
+        this.reloadChapters();
+        history.push(`/space/book/${id}/chapter/${chapterId}`);
+      }
+    } catch (e) {
+      message.error('添加章节失败');
+    }
   };
 
   addBook = async (bookInfo) => {
@@ -305,7 +416,11 @@ class Book extends Component {
       match,
     } = this.props;
 
-    const {mode, modalVisible, darkMode, mobilePane, isPhone, assistantSettingsSignal} = this.state;
+    const {
+      mode, modalVisible, darkMode, mobilePane, isPhone, assistantSettingsSignal,
+      bookSearchOpen, bookKeyword, bookPubTypesApplied,
+      chapterSearchOpen, chapterKeyword,
+    } = this.state;
     let activeMobilePane = mobilePane ?? this.getMobilePane(this.props);
     const isSingleBook = this.isSingleWork(currentBook);
     const hasChapter = (currentBook?.chapter?.length || 0) > 0;
@@ -338,6 +453,31 @@ class Book extends Component {
               icon={<HomeOutlined />}
               className={styles.topIconBtn}
               aria-label="返回首页"
+              onClick={(e) => {
+                // 桌面壳工作台模式下，"首页"应回到管家原生首屏（卸载本内容叠层），不是站内
+                // 门户首页——门户首页在桌面嵌入场景下会被 bootstrapDesktopEmbeddedApp 的
+                // entryPath 重定向逻辑再次弹回工作台本身，点了跟没点一样（回应"主页图标地址
+                // 应该是返回管家首屏，而不是工作台"）。非桌面环境保留原有 href="/" 站内跳转。
+                if (isDesktopEmbedded()) {
+                  e.preventDefault();
+                  const dispatched = requestCloseShellContent();
+                  if (!dispatched && typeof window !== 'undefined' && window.history.length > 1) {
+                    window.history.back();
+                  }
+                }
+              }}
+            />
+            <WorkbenchInlineTypeFilter
+              value={bookPubTypesApplied}
+              onApply={this.applyBookTypeFilter}
+            />
+            <WorkbenchInlineSearch
+              open={bookSearchOpen}
+              onOpenChange={this.setBookSearchOpen}
+              value={bookKeyword}
+              onChange={(v) => this.setState({ bookKeyword: v })}
+              onSubmit={this.submitBookSearch}
+              placeholder="搜索作品"
             />
             <Button
               size="small"
@@ -405,6 +545,11 @@ class Book extends Component {
                 mode: listMode,
                 history,
                 onMobileBookSelected: this.onMobileBookSelected,
+                bookPage: this.state.bookPage,
+                onBookPageChange: this.onBookPageChange,
+                onReloadBooks: this.reloadBooks,
+                bookPubTypesApplied: this.state.bookPubTypesApplied,
+                bookKeywordApplied: this.state.bookKeywordApplied,
               }} />
             </div>
           )}
@@ -417,8 +562,17 @@ class Book extends Component {
               <div className={styles.main}>
                 {(!isPhone || activeMobilePane === 'chapters') && (
                   <div className={`${styles.leftMenu} ${styles.chapter}`}>
-                    <div>
+                    <div className={styles.chapterToolbar}>
                       <Button type="text" style={{ marginLeft: 2 }} onClick={() => this.addChapter(currentBook)}><PlusOutlined/>添加内容</Button>
+                      <WorkbenchInlineSearch
+                        compact
+                        open={chapterSearchOpen}
+                        onOpenChange={(open) => this.setState({ chapterSearchOpen: open })}
+                        value={chapterKeyword}
+                        onChange={(v) => this.setState({ chapterKeyword: v })}
+                        onSubmit={this.submitChapterSearch}
+                        placeholder="搜索章节"
+                      />
                     </div>
                     <div className={styles.itemList}>
                       {hasChapter ? <Chapter {...{
@@ -426,6 +580,10 @@ class Book extends Component {
                         match,
                         history,
                         onMobileChapterSelected: this.onMobileChapterSelected,
+                        chapterPage: this.state.chapterPage,
+                        onChapterPageChange: this.onChapterPageChange,
+                        onReloadChapters: this.reloadChapters,
+                        chapterKeywordApplied: this.state.chapterKeywordApplied,
                       }} /> : (
                         <div className={styles.emptyTips}>暂无章节，请先添加内容</div>
                       )}

@@ -35,6 +35,9 @@ public class CaptchaVO implements Serializable {
 	@NotBlank(message = "验证码UUID不能为空")
 	private String uuid;
 
+	@ApiModelProperty(value = "找回密码发码凭证（code4email 成功时下发，验码与 reset 必填）")
+	private String forgetProof;
+
 	@ApiModelProperty(value = "状态", hidden = true)
 	private String status;
 }

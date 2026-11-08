@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
  * </ul>
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Configuration

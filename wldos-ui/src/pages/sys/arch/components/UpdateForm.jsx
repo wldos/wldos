@@ -1,8 +1,9 @@
 import React from 'react';
-import {Button, Form, Input, Modal, Select, Card, Space, Tooltip, Alert} from 'antd';
+import {Button, Form, Input, Modal, Select, Card, Space, Tooltip} from 'antd';
 import CompanyTreeSelect from '@/components/TreeSelects/CompanyTreeSelect';
 import ArchTreeSelect from '@/components/TreeSelects/ArchTreeSelect';
 import FullscreenModal from '@/components/FullscreenModal';
+import { DISPLAY_ORDER_PATTERN_STRING } from '@/utils/displayOrder';
 import {
   EditOutlined,
   ApartmentOutlined,
@@ -46,15 +47,6 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="体系配置"
-          description="配置体系的基本信息、层级关系和状态设置。体系是组织架构的重要组成部分。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -173,9 +165,10 @@ const UpdateForm = (props) => {
             }
             rules={[{ required: true, message: '请选择归属公司！' }]}
           >
-            <CompanyTreeSelect 
-              placeholder="请选择归属公司" 
+            <CompanyTreeSelect
+              placeholder="请选择归属公司"
               usePaged={true}
+              disabled={!!props.lockComId}
             />
           </FormItem>
 
@@ -203,7 +196,7 @@ const UpdateForm = (props) => {
             label={
               <Space>
                 展示顺序
-                <Tooltip title="体系在列表中的显示顺序，1-100">
+                <Tooltip title="体系在列表中的显示顺序，1-9999">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -211,15 +204,15 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '展示顺序1~100！',
-                pattern: '^([1-9]|[1-9]\\d|100)$',
+                message: '展示顺序1~9999！',
+                pattern: DISPLAY_ORDER_PATTERN_STRING,
                 max: 3,
               },
             ]}
           >
             <Input 
               prefix={<NumberOutlined />}
-              placeholder="请输入数字，1-100"
+              placeholder="请输入数字，1-9999"
             />
           </FormItem>
 

@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 /**
  * 业务操作日志，对应表 {@code wo_op_log}。
@@ -29,12 +30,13 @@ import lombok.Setter;
  * </ul>
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true, domainId = true)
 public class WoOpLog implements Persistable<Long> {
 
 	@Id
@@ -59,6 +61,9 @@ public class WoOpLog implements Persistable<Long> {
 	private String resourceType;
 
 	private String resourceId;
+
+	/** 被操作对象所属租户 ID，跨租户写操作（如超管为其他企业配置资源）审计追溯用；无跨租户语义的操作为 null。 */
+	private Long targetComId;
 
 	/**
 	 * 资源人性化名称（事件发生时刻的快照）。

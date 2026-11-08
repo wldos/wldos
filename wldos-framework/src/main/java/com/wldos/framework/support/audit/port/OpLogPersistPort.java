@@ -18,7 +18,7 @@ import io.github.wldos.framework.support.audit.OpEvent;
  * platform 适配器实现本接口，绑定到 {@code wo_op_log} 表。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 public interface OpLogPersistPort {

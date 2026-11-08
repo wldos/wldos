@@ -36,6 +36,12 @@ public interface UserPortalShortcutDao extends BaseDao<WoUserPortalShortcut, Lon
 	Long findEvictUnpinnedId(@Param("userId") Long userId, @Param("comId") Long comId,
 			@Param("domainId") Long domainId);
 
+	@Query("select id from wo_user_portal_shortcut where user_id = :userId and com_id = :comId and domain_id = :domainId "
+			+ "and delete_flag = 'normal' and coalesce(pinned, '0') = '1' "
+			+ "order by coalesce(hit_count, 0) asc, coalesce(last_hit_at, create_time) asc limit 1")
+	Long findEvictPinnedId(@Param("userId") Long userId, @Param("comId") Long comId,
+							 @Param("domainId") Long domainId);
+
 	@Query("select coalesce(max(display_order), 0) from wo_user_portal_shortcut where user_id = :userId "
 			+ "and com_id = :comId and domain_id = :domainId and delete_flag = 'normal'")
 	int maxDisplayOrder(@Param("userId") Long userId, @Param("comId") Long comId, @Param("domainId") Long domainId);

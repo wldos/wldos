@@ -6,48 +6,208 @@
  * For commercial licenses see term.md or contact 306991142@qq.com
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Tree, Spin, Badge, message } from 'antd';
 import { useIntl } from 'umi';
 import { fetchOrganizationData, fetchUsersByOrganization, loadSystemsByCompany, loadOrganizationsBySystem } from '@/services/organization';
 
-const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeDataChange, externalTreeData }) => {
+function extractRows(res) {
+  if (!res) return [];
+  const data = res.data;
+  if (Array.isArray(data)) return data;
+  if (data?.rows && Array.isArray(data.rows)) return data.rows;
+  return [];
+}
+
+function parseExpandedNodeId(key, typePrefix) {
+  if (!key || !String(key).startsWith(`${typePrefix}-`)) return null;
+  return String(key).slice(typePrefix.length + 1);
+}
+
+function mergeChildrenIntoTree(nodes, parentId, children, parentType) {
+  return nodes.map((node) => {
+    const typeMatch = !parentType || node.type === parentType;
+    if (typeMatch && String(node.id) === String(parentId)) {
+      return { ...node, children };
+    }
+    if (node.children?.length) {
+      return { ...node, children: mergeChildrenIntoTree(node.children, parentId, children, parentType) };
+    }
+    return node;
+  });
+}
+
+function findTreeNodeRaw(nodes, type, id) {
+  if (!Array.isArray(nodes) || !nodes.length) {
+    return null;
+  }
+  for (const node of nodes) {
+    if (node.type === type && String(node.id) === String(id)) {
+      return node;
+    }
+    const found = findTreeNodeRaw(node.children, type, id);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
+}
+
+const OrganizationTree = ({
+  onSelect,
+  selectedKey,
+  showUsers = false,
+  onTreeDataChange,
+  reloadToken,
+  focusTarget,
+  onFocusApplied,
+}) => {
   const intl = useIntl();
   const [treeData, setTreeData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState([]);
+  const expandedKeysRef = useRef(expandedKeys);
+  const showUsersRef = useRef(showUsers);
+  const selectedKeyRef = useRef(selectedKey);
+  const focusAppliedRef = useRef(null);
+  const focusTargetRef = useRef(focusTarget);
+
+  expandedKeysRef.current = expandedKeys;
+  showUsersRef.current = showUsers;
+  selectedKeyRef.current = selectedKey;
+  focusTargetRef.current = focusTarget;
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (onTreeDataChange) {
+      onTreeDataChange(treeData);
+    }
+  }, [treeData, onTreeDataChange]);
 
-  // 监听外部数据变化
-  useEffect(() => {
-    if (externalTreeData) {
-      if (externalTreeData.length === 0) {
-        // 当外部数据为空数组时，重新加载数据
-        const currentExpandedKeys = expandedKeys;
-        loadData().then(() => {
-          // 重新加载后恢复展开状态
-          setExpandedKeys(currentExpandedKeys);
-        });
-      } else {
-        // 当外部数据不为空时，直接使用外部数据
-        setTreeData(externalTreeData);
+  const resolveBaseTreeForFocus = async (baseTree, target) => {
+    if (!target?.type || target.type === 'company' || target.comId == null) {
+      return baseTree;
+    }
+    if (findTreeNodeRaw(baseTree, 'company', target.comId)) {
+      return baseTree;
+    }
+    return fetchOrganizationData();
+  };
+
+  const applyFocusPath = async (baseTree, target) => {
+    if (!target?.type || target.id == null || target.id === '') {
+      return { tree: baseTree, expandKeys: null, selectNode: null };
+    }
+    let tree = await resolveBaseTreeForFocus(baseTree, target);
+    let expandKeys = null;
+    let selectNode = null;
+    if (target.type === 'organization' && target.comId != null && target.archId != null) {
+      const systems = await loadSystemsByCompany(target.comId);
+      tree = mergeChildrenIntoTree(tree, target.comId, systems, 'company');
+      const organizations = await loadOrganizationsBySystem(target.archId);
+      tree = mergeChildrenIntoTree(tree, target.archId, organizations, 'system');
+      expandKeys = [`company-${target.comId}`, `system-${target.archId}`];
+      selectNode = findTreeNodeRaw(tree, 'organization', target.id);
+    } else if (target.type === 'company') {
+      selectNode = findTreeNodeRaw(tree, 'company', target.id);
+    } else if (target.type === 'system' && target.comId != null) {
+      const systems = await loadSystemsByCompany(target.comId);
+      tree = mergeChildrenIntoTree(tree, target.comId, systems, 'company');
+      expandKeys = [`company-${target.comId}`];
+      selectNode = findTreeNodeRaw(tree, 'system', target.id);
+    }
+    return { tree, expandKeys, selectNode };
+  };
+
+  const commitFocusSelection = (target, selectNode, expandKeys) => {
+    if (expandKeys) {
+      setExpandedKeys(expandKeys);
+      expandedKeysRef.current = expandKeys;
+    }
+    if (selectNode && onSelect) {
+      onSelect([`${selectNode.type}-${selectNode.id}`], { node: { node: selectNode } });
+    } else if (target && !selectNode) {
+      message.warning(intl.formatMessage({ id: 'component.organizationTree.msg.focusNotFound' }));
+    }
+    if (target && selectNode) {
+      focusAppliedRef.current = `${target.type}-${target.id}`;
+    }
+    if (target && onFocusApplied) {
+      onFocusApplied();
+    }
+  };
+
+  const rehydrateExpandedChildren = async (baseTree, keys, loadUserNodes, activeSelectedKey) => {
+    let tree = baseTree;
+    const systemIdSet = new Set(
+      keys
+        .map((key) => parseExpandedNodeId(key, 'system'))
+        .filter((id) => id != null),
+    );
+    const selectedSystemId = parseExpandedNodeId(activeSelectedKey, 'system');
+    if (selectedSystemId) {
+      systemIdSet.add(selectedSystemId);
+    }
+    for (const systemId of systemIdSet) {
+      const organizations = await loadOrganizationsBySystem(systemId);
+      tree = mergeChildrenIntoTree(tree, systemId, organizations, 'system');
+    }
+    const orgIdSet = new Set(
+      keys
+        .map((key) => parseExpandedNodeId(key, 'organization'))
+        .filter((id) => id != null),
+    );
+    const selectedOrgId = parseExpandedNodeId(activeSelectedKey, 'organization');
+    if (selectedOrgId) {
+      orgIdSet.add(selectedOrgId);
+    }
+    if (loadUserNodes) {
+      for (const orgId of orgIdSet) {
+        const res = await fetchUsersByOrganization(orgId);
+        const users = extractRows(res).map((user) => ({
+          ...user,
+          type: 'user',
+          children: [],
+        }));
+        tree = mergeChildrenIntoTree(tree, orgId, users, 'organization');
       }
     }
-  }, [externalTreeData]);
+    return tree;
+  };
 
   const loadData = async () => {
     setLoading(true);
     try {
       const data = await fetchOrganizationData();
-      setTreeData(data);
-      // 通知父组件树形数据已更新
-      if (onTreeDataChange) {
-        onTreeDataChange(data);
+      const activeSelectedKey = selectedKeyRef.current;
+      const selectedSystemId = parseExpandedNodeId(activeSelectedKey, 'system');
+      let keysForRehydrate = expandedKeysRef.current;
+      if (selectedSystemId) {
+        const systemKey = `system-${selectedSystemId}`;
+        if (!keysForRehydrate.includes(systemKey)) {
+          keysForRehydrate = [...keysForRehydrate, systemKey];
+        }
       }
-      return data;
+      const hydrated = await rehydrateExpandedChildren(
+        data,
+        keysForRehydrate,
+        showUsersRef.current,
+        activeSelectedKey,
+      );
+      let tree = hydrated;
+      const target = focusTargetRef.current;
+      if (target) {
+        const focused = await applyFocusPath(hydrated, target);
+        tree = focused.tree;
+        setTreeData(tree);
+        commitFocusSelection(target, focused.selectNode, focused.expandKeys);
+      } else {
+        setTreeData(tree);
+      }
+      if (selectedSystemId && !target) {
+        const systemKey = `system-${selectedSystemId}`;
+        setExpandedKeys((prev) => (prev.includes(systemKey) ? prev : [...prev, systemKey]));
+      }
+      return tree;
     } catch (error) {
       message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadTreeFail' }));
       throw error;
@@ -56,57 +216,65 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
     }
   };
 
-  // 更新树形数据并通知父组件
-  const updateTreeData = (newData) => {
-    setTreeData(newData);
-    if (onTreeDataChange) {
-      onTreeDataChange(newData);
-    }
-  };
+  // reloadToken 每次变化都从后端重新拉取完整树；父级增删改后自增该值即可触发刷新
+  useEffect(() => {
+    focusAppliedRef.current = null;
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reloadToken]);
 
-  // 按需加载用户数据
+  useEffect(() => {
+    if (!focusTarget?.type || focusTarget.id == null || focusTarget.id === '') {
+      return undefined;
+    }
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const baseTree = await fetchOrganizationData();
+        if (cancelled) {
+          return;
+        }
+        const focused = await applyFocusPath(baseTree, focusTarget);
+        if (cancelled) {
+          return;
+        }
+        setTreeData(focused.tree);
+        commitFocusSelection(focusTarget, focused.selectNode, focused.expandKeys);
+      } catch (error) {
+        if (!cancelled) {
+          message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadTreeFail' }));
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusTarget]);
+
   const loadUsers = async (organizationId) => {
     try {
-      const users = await fetchUsersByOrganization(organizationId);
-      updateTreeWithUsers(organizationId, users);
+      const res = await fetchUsersByOrganization(organizationId);
+      const users = extractRows(res).map((user) => ({
+        ...user,
+        type: 'user',
+        children: [],
+      }));
+      setTreeData((prev) => mergeChildrenIntoTree(prev, organizationId, users, 'organization'));
     } catch (error) {
       message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadUsersFail' }));
     }
   };
 
-  // 更新树形数据，添加用户节点
-  const updateTreeWithUsers = (organizationId, users) => {
-    const updateNode = (nodes) => {
-      return nodes.map(node => {
-        if (node.type === 'organization' && node.id === organizationId) {
-          return {
-            ...node,
-            children: users.map(user => ({
-              ...user,
-              type: 'user',
-              children: []
-            }))
-          };
-        }
-        if (node.children) {
-          return {
-            ...node,
-            children: updateNode(node.children)
-          };
-        }
-        return node;
-      });
-    };
-
-    updateTreeData(updateNode(treeData));
-  };
-
   const getNodeIcon = (type) => {
     const iconMap = {
-      company: '🏢', // 公司 - 独立主体机构/系统租户
-      system: '🏭', // 业务体系 - 不同业务专业（市场部、项目部等）
-      organization: '🏛️', // 组织机构 - 部门组织树
-      user: '👤' // 员工
+      company: '🏢',
+      system: '🏭',
+      organization: '🏛️',
+      user: '👤',
     };
     return iconMap[type] || '📁';
   };
@@ -114,19 +282,18 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
   const renderTreeNode = (node) => {
     const icon = getNodeIcon(node.type);
 
-    // 根据节点类型获取正确的名称字段
-    const getNodeName = (node) => {
-      switch (node.type) {
+    const getNodeName = (nodeItem) => {
+      switch (nodeItem.type) {
         case 'company':
-          return node.comName || intl.formatMessage({ id: 'component.organizationTree.unknown.company' });
+          return nodeItem.comName || intl.formatMessage({ id: 'component.organizationTree.unknown.company' });
         case 'system':
-          return node.archName || intl.formatMessage({ id: 'component.organizationTree.unknown.system' });
+          return nodeItem.archName || intl.formatMessage({ id: 'component.organizationTree.unknown.system' });
         case 'organization':
-          return node.orgName || intl.formatMessage({ id: 'component.organizationTree.unknown.organization' });
+          return nodeItem.orgName || intl.formatMessage({ id: 'component.organizationTree.unknown.organization' });
         case 'user':
-          return node.nickname || node.account || node.name || intl.formatMessage({ id: 'component.organizationTree.unknown.user' });
+          return nodeItem.nickname || nodeItem.account || nodeItem.name || intl.formatMessage({ id: 'component.organizationTree.unknown.user' });
         default:
-          return node.name || intl.formatMessage({ id: 'component.organizationTree.unknown.default' });
+          return nodeItem.name || intl.formatMessage({ id: 'component.organizationTree.unknown.default' });
       }
     };
 
@@ -142,100 +309,45 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
     return {
       title,
       key: `${node.type}-${node.id}`,
-      node: node,
+      node,
       isLeaf: node.type === 'organization' && !showUsers,
       children: node.children ? node.children.map(renderTreeNode) : undefined,
     };
   };
 
-  const handleExpand = async (expandedKeys, { node }) => {
-    setExpandedKeys(expandedKeys);
+  const handleExpand = async (nextExpandedKeys, { node }) => {
+    setExpandedKeys(nextExpandedKeys);
 
-    console.log('展开节点:', node);
-
-    // 获取实际的节点数据
     const nodeData = node.node || node;
-    console.log('节点数据:', nodeData);
 
-    // 按需加载子级数据
     if (nodeData.type === 'company' && !nodeData.children?.length) {
-      console.log('加载公司的体系数据:', nodeData.id);
-      // 加载公司的体系数据
       await loadSystemsForCompany(nodeData.id);
     } else if (nodeData.type === 'system' && !nodeData.children?.length) {
-      console.log('加载体系的机构数据:', nodeData.id);
-      // 加载体系的机构数据
       await loadOrganizationsForSystem(nodeData.id);
     } else if (nodeData.type === 'organization' && showUsers && !nodeData.children?.length) {
-      console.log('加载机构的用户数据:', nodeData.id);
-      // 加载机构的用户数据
       await loadUsers(nodeData.id);
     }
   };
 
-  // 按需加载体系数据
   const loadSystemsForCompany = async (companyId) => {
     try {
-      console.log('开始加载体系数据，公司ID:', companyId);
       const systems = await loadSystemsByCompany(companyId);
-      console.log('获取到的体系数据:', systems);
-      updateTreeWithChildren(companyId, systems);
+      setTreeData((prev) => mergeChildrenIntoTree(prev, companyId, systems, 'company'));
     } catch (error) {
-      console.error('加载体系数据失败:', error);
       message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadSystemsFail' }));
     }
   };
 
-  // 按需加载机构数据
   const loadOrganizationsForSystem = async (systemId) => {
     try {
-      console.log('开始加载机构数据，体系ID:', systemId);
       const organizations = await loadOrganizationsBySystem(systemId);
-      console.log('获取到的机构数据:', organizations);
-      updateTreeWithChildren(systemId, organizations);
+      setTreeData((prev) => mergeChildrenIntoTree(prev, systemId, organizations, 'system'));
     } catch (error) {
-      console.error('加载机构数据失败:', error);
       message.error(intl.formatMessage({ id: 'component.organizationTree.msg.loadOrganizationsFail' }));
     }
   };
 
-  // 更新树形数据，添加子级节点
-  const updateTreeWithChildren = (parentId, children) => {
-    console.log('更新树形数据，父节点ID:', parentId, '子节点数据:', children);
-    console.log('当前树形数据:', treeData);
-
-    const updateNode = (nodes) => {
-      return nodes.map(node => {
-        console.log('检查节点:', node.id, '是否匹配父节点ID:', parentId);
-        if (node.id === parentId) {
-          console.log('找到匹配的父节点，添加子节点');
-          return {
-            ...node,
-            children: children
-          };
-        }
-        if (node.children) {
-          return {
-            ...node,
-            children: updateNode(node.children)
-          };
-        }
-        return node;
-      });
-    };
-
-    const newTreeData = updateNode(treeData);
-    console.log('更新后的树形数据:', newTreeData);
-    console.log('更新后的树形数据长度:', newTreeData.length);
-    console.log('第一个节点的子节点:', newTreeData[1]?.children);
-    updateTreeData([...newTreeData]); // 强制创建新数组引用
-  };
-
-  // 调试：检查树形数据
   const treeDataForRender = treeData.map(renderTreeNode);
-  console.log('渲染前的树形数据:', treeData);
-  console.log('渲染用的树形数据:', treeDataForRender);
-  console.log('展开的键:', expandedKeys);
 
   return (
     <Spin spinning={loading}>
@@ -247,7 +359,7 @@ const OrganizationTree = ({ onSelect, selectedKey, showUsers = false, onTreeData
         expandedKeys={expandedKeys}
         showLine
         showIcon
-        defaultExpandAll={false} // 默认不展开，避免一次性加载过多数据
+        defaultExpandAll={false}
       />
     </Spin>
   );

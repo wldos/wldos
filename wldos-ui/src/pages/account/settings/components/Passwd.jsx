@@ -3,6 +3,7 @@ import {Button, Form, Input, Modal} from 'antd';
 import styles from "@/pages/user/register/style.less";
 import { useIntl } from 'umi';
 import {fetchEncryptKey} from "@/services/login";
+import {resolveLoginEncryptPublicKey} from '@/utils/utils';
 
 const FormItem = Form.Item;
 
@@ -33,8 +34,9 @@ const PasswdChange = (props) => {
 
   useEffect(async () => {
     const res = await fetchEncryptKey();
-    if (res?.data) {
-      setEncryptKey(res.data);
+    const key = resolveLoginEncryptPublicKey(res);
+    if (key) {
+      setEncryptKey(key);
     }
   }, []);
 

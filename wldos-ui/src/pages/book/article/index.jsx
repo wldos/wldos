@@ -18,9 +18,14 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import '@/styles/markdown.css';
 import MarkdownImage from '@/components/MarkdownImage';
+import ContentAccessFooter from '@/pages/commercial/cms-access/components/ContentAccessFooter';
+import ContentAccessPubBody from '@/pages/commercial/cms-access/components/ContentAccessPubBody';
+import ContentTipBlock from '@/pages/commercial/cms-access/components/ContentTipBlock';
+import useCmsCommentEnabled from '@/pages/book/detail/useCmsCommentEnabled';
 
 const Article = (props) => {
-  const {dispatch, match, } = props;
+  const { dispatch, match, currentUser } = props;
+  const commentEnabled = useCmsCommentEnabled();
 
   const [article, setArticle] = useState(undefined);
   const [listSide, setList] = useState(undefined);
@@ -150,53 +155,60 @@ const Article = (props) => {
         <em>{moment(article.createTime).format('YYYY-MM-DD HH:mm')}</em>
         {' '}阅读 {article.views}
       </div>
-      <div 
+      <ContentAccessPubBody
+        pubId={article.id}
+        pubContent={article.pubContent}
+        pubMimeType={article.pubMimeType}
+        contentAccess={article.contentAccess}
+        currentUser={currentUser}
         className={styles.entry}
         style={{
-          '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none'
+          '--watermark-bg': watermarkEnabled ? generateWatermarkSVG(watermarkText) : 'none',
         }}
-      >
-        {article.pubMimeType === 'text/markdown' ? (
+        renderMarkdown={(text, key) => (
           <ReactMarkdown
+            key={key}
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
-            className={"markdown-body"}
+            className="markdown-body"
             components={{
-              img({src, alt, title, ...props}) {
+              img({ src, alt, title, ...props }) {
                 return (
-                  <MarkdownImage 
-                    src={src} 
-                    alt={alt} 
-                    title={title} 
+                  <MarkdownImage
+                    src={src}
+                    alt={alt}
+                    title={title}
                     content={article.pubContent}
                     {...props}
                   />
                 );
               },
-              code({node, inline, className, children, ...props}) {
+              code({ node, inline, className, children, ...props }) {
                 const match = /language-(\w+)/.exec(className || '');
-                
+
                 return !inline && match ? (
-                  <div style={{ 
-                    backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                    borderRadius: '6px',
-                    padding: '16px',
-                    margin: '16px 0',
-                    overflow: 'auto'
-                  }}>
+                  <div
+                    style={{
+                      backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                      borderRadius: '6px',
+                      padding: '16px',
+                      margin: '16px 0',
+                      overflow: 'auto',
+                    }}
+                  >
                     <SyntaxHighlighter
                       style={isDarkMode ? vscDarkPlus : vs}
                       language={match[1]}
                       PreTag="div"
                       showLineNumbers={false}
-                      wrapLines={true}
-                      wrapLongLines={true}
+                      wrapLines
+                      wrapLongLines
                       customStyle={{
                         background: 'transparent',
                         margin: 0,
                         padding: 0,
                         border: 'none',
-                        borderRadius: 0
+                        borderRadius: 0,
                       }}
                       {...props}
                     >
@@ -208,15 +220,24 @@ const Article = (props) => {
                     {children}
                   </code>
                 );
-              }
+              },
             }}
           >
-            {article.pubContent}
+            {text}
           </ReactMarkdown>
-        ) : (
-          <div dangerouslySetInnerHTML={{ __html: article.pubContent}} />
         )}
-      </div>
+        renderHtml={(html, key) => (
+          <div key={key} dangerouslySetInnerHTML={{ __html: html }} />
+        )}
+      />
+      <ContentAccessFooter
+        pubId={article.id}
+        contentAccess={article.contentAccess}
+        currentUser={currentUser}
+        pubContent={article.pubContent}
+        pubMimeType={article.pubMimeType}
+      />
+      <ContentTipBlock pubId={article.id} contentAccess={article.contentAccess} currentUser={currentUser} />
       <Share style={styles.share} title={article.pubTitle || '无标题'} src={'@/assets/log.svg'}/>
       <div className={styles.pubMetaBottom}>
         <div className={styles.tags}>
@@ -250,11 +271,13 @@ const Article = (props) => {
           }
         </div>
         <div className={styles.clearfix}/>
-        <div className={styles.comment}>
-          <div className={styles.clearfix}/>
-          <h3>在线评论</h3>
-          <Comments id={article.id}/>
-        </div>
+        {commentEnabled && (
+          <div className={styles.comment}>
+            <div className={styles.clearfix}/>
+            <h3>在线评论</h3>
+            <Comments id={article.id}/>
+          </div>
+        )}
     </Typography>
 );
 
@@ -279,8 +302,7 @@ return (
 );
 };
 
-export default connect(({ user } ) => (
-  {
-    tdk: user.tdk,
-  }
-))(Article);
+export default connect(({ user }) => ({
+  tdk: user.tdk,
+  currentUser: user.currentUser,
+}))(Article);

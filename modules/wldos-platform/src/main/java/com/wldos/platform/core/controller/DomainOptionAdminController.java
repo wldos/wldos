@@ -1,14 +1,18 @@
 /*
  * Copyright (c) 2020 yuanxiyuzhou. All rights reserved.
  * Licensed under the Apache License, Version 2.0 or a commercial license.
+ * For Apache License Version 2.0 see License in the project root for license information.
+ * For commercial licenses see term.md or contact 306991142@qq.com
  */
 package com.wldos.platform.core.controller;
 
 import java.util.Map;
 
+import io.github.wldos.common.enums.DeleteFlagEnum;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.PageQuery;
 import com.wldos.framework.mvc.controller.EntityController;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
 import com.wldos.platform.core.entity.WoDomainOption;
 import com.wldos.platform.core.service.DomainOptionService;
 
@@ -24,6 +28,10 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * 域级系统选项（后台）：维护 {@code wo_domain_option}，用于按站点覆盖全局 {@code wo_options}。
+ * 
+ * @author Yuanxi Universe
+ * @version 1.0
+ * @since 3.0
  */
 @Api(tags = "域级系统选项（后台）")
 @RestController
@@ -41,8 +49,9 @@ public class DomainOptionAdminController extends EntityController<DomainOptionSe
 	public PageData<WoDomainOption> list(@RequestParam Map<String, Object> params) {
 		PageQuery pageQuery = new PageQuery(params);
 		if (!this.isAdmin(this.getUserId())) {
-			this.applyTenantFilter(pageQuery);
+			this.applyScope(pageQuery, DataScopeProfile.ADMIN_DOMAIN, WoDomainOption.class);
 		}
+		pageQuery.appendParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		return this.service.execQueryForPage(new WoDomainOption(), new WoDomainOption(), pageQuery);
 	}
 

@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.wldos.platform.core.dao.DomainResourceDao;
 import com.wldos.platform.core.dao.ResourceDao;
+import com.wldos.gateway.GateWayHelper;
+import io.github.wldos.common.utils.ObjectUtils;
 import io.github.wldos.platform.support.auth.AuthOpener;
 import io.github.wldos.platform.support.auth.vo.AuthVerify;
 import io.github.wldos.framework.support.cache.ICache;
@@ -76,6 +78,14 @@ public class AuthService {
 		return this.authOpener.verifyReqAuth(domainId, appCode, userId, comId, reqUri, reqMethod);
 	}
 
+	public String resolveAuthAppCode(Long domainId, String reqUri, String reqMethod) {
+		String resolved = this.authOpener.resolveAuthAppCode(domainId, reqUri, reqMethod);
+		if (!ObjectUtils.isBlank(resolved)) {
+			return resolved;
+		}
+		return GateWayHelper.appCode(reqUri);
+	}
+
 	/**
 	 * 查询所有资源权限
 	 *
@@ -118,6 +128,13 @@ public class AuthService {
 	 */
 	public List<String> queryAuthorityButton(Long domainId, Long comId, Long id) {
 		return this.authOpener.queryAuthorityButton(domainId, comId, id, this.resourceRepo);
+	}
+
+	/**
+	 * 获取管理端页面操作权限（admin_button 资源码）。
+	 */
+	public List<String> queryAdminAuthorityButton(Long domainId, Long comId, Long id) {
+		return this.authOpener.queryAdminAuthorityButton(domainId, comId, id, this.resourceRepo);
 	}
 
 	/**

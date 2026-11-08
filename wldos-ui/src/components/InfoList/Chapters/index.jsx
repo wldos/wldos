@@ -16,11 +16,15 @@ import {queryBookList} from "@/pages/home/service";
 import {queryProvince, queryCity} from "@/pages/account/settings/service";
 import moment from "moment";
 import {createImageErrorHandler} from "@/utils/imageUtils";
+import { htmlFirstListPageHref } from '@/utils/authorListPagination';
 
 const {Group, Button} = Radio;
 const {Option} = Select;
 const Chapters = (props) => {
-  const {title, slugTerm,  path, pubType='info', url, count, page} = props;
+  const {
+    title, slugTerm, path, pubType = 'info', url, count, page, pageOneUrl, paginationRoot,
+  } = props;
+  const htmlFirst = pageOneUrl && paginationRoot ? { pageOneUrl, paginationRoot } : null;
   const intl = useIntl();
   const [categories, setCategories] = useState([]);
   const [prov, setProv] = useState([]);
@@ -40,25 +44,39 @@ const Chapters = (props) => {
   const actionRef = useRef();
   const [param, setParam] = useState({});
 
-  const [cur, setCur] = useState(page ? parseInt(page, 10) : 1);
+  const routePage = page ? parseInt(page, 10) : 1;
+  const [cur, setCur] = useState(routePage);
+
+  useEffect(() => {
+    setCur(routePage);
+  }, [routePage]);
   const [data, setData] = useState({total: 0, pageSize: count, });
 
   const onPageChange = useCallback((pNum) => {
     setCur(pNum);
-    if (pNum === 1)
+    if (htmlFirst) {
+      history.replace(htmlFirstListPageHref(htmlFirst.pageOneUrl, htmlFirst.paginationRoot, pNum));
+      return;
+    }
+    if (pNum === 1) {
       history.replace(url);
-    else
+    } else {
       history.replace(url === '/' ? `/page/${pNum}` : `${url.endsWith('/') ? url : `${url}/`}page/${pNum}`);
-  }, [url]);
+    }
+  }, [url, htmlFirst]);
 
   const itemRender = (current, type, originalElement) => {
+    if (htmlFirst) {
+      const to = htmlFirstListPageHref(htmlFirst.pageOneUrl, htmlFirst.paginationRoot, current);
+      if (type === 'page') return <Link to={to}>{current}</Link>;
+      if (type === 'prev') return <Link to={to}>&lt;</Link>;
+      if (type === 'next') return <Link to={to}>&gt;</Link>;
+      return originalElement;
+    }
     const target = url === '/' || url.endsWith('/') ? url : `${url  }/`;
-    if (type === 'page')
-      return <Link to={`${target}page/${current}`}>{current}</Link>
-    if (type === 'prev')
-      return <Link to={`${target}page/${current}`}>&lt;</Link>
-    if (type === 'next')
-      return <Link to={`${target}page/${current}`}>&gt;</Link>
+    if (type === 'page') return <Link to={`${target}page/${current}`}>{current}</Link>;
+    if (type === 'prev') return <Link to={`${target}page/${current}`}>&lt;</Link>;
+    if (type === 'next') return <Link to={`${target}page/${current}`}>&gt;</Link>;
     return originalElement;
   };
 

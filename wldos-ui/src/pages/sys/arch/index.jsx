@@ -1,7 +1,11 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import { connect } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
+import { resolveTenantScopeComId } from '@/utils/orgCreateUserDomain';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
@@ -113,7 +117,10 @@ const handleRemoveOne = async (fields) => {
   }
 };
 
-const ArchList = () => {
+const ArchList = ({ isTenantAdmin, currentUser }) => {
+  const tenantFixedComId = useMemo(() => (
+    isTenantAdmin ? resolveTenantScopeComId(currentUser) : undefined
+  ), [isTenantAdmin, currentUser]);
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -127,7 +134,7 @@ const ArchList = () => {
   
   // 移动端检测
   const mobile = isMobile();
-  
+
   // 容器宽度监听
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
@@ -306,16 +313,7 @@ const ArchList = () => {
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="体系清单"
@@ -406,6 +404,7 @@ const ArchList = () => {
             setParentId('0');
           }}
           archList={roles}
+          fixedComId={tenantFixedComId}
         />
       </CreateForm>
       {stepFormValues && Object.keys(stepFormValues).length ? (
@@ -429,6 +428,7 @@ const ArchList = () => {
           updateModalVisible={updateModalVisible}
           values={stepFormValues}
           roles={roles}
+          lockComId={tenantFixedComId}
         />
       ) : null}
 
@@ -458,4 +458,7 @@ const ArchList = () => {
   );
 };
 
-export default ArchList;
+export default connect(({ user }) => ({
+  currentUser: user.currentUser || {},
+  ...buildAuthorityHelper(user, '/admin'),
+}))(ArchList);

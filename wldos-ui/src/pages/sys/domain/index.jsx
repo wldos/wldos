@@ -1,8 +1,9 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, Form, Input, message, Popconfirm, Space} from 'antd';
+import {Button, Divider, Drawer, Form, Input, message, Popconfirm, Select, Space, Tag, Tooltip, Typography} from 'antd';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useIntl} from 'umi';
+import {useIntl, connect, Link} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
@@ -17,24 +18,38 @@ import {
   removeEntities,
   updateEntity,
   addDomainApp,
-  getPlatDomain, addDomainRes,
+  getPlatDomain,   addDomainRes,
+  bindDomainAdmins,
+  fetchProvisionScenarios,
 } from './service';
 import AddAppForm from "@/pages/sys/domain/components/AddAppForm";
 import AddResForm from "@/pages/sys/domain/components/AddResForm";
+import MenuLayoutModal from "@/pages/sys/domain/components/MenuLayoutModal";
+import DomainAdminForm from "@/pages/sys/domain/components/DomainAdminForm";
+import CloneSiteForm from './components/CloneSiteForm';
+import ProvisionScenarioModal from './components/ProvisionScenarioModal';
 import {getComSelectOption} from "@/pages/sys/com/service";
 import {fetchOssUrl} from "@/services/constant";
 import {UploadView, upParams} from "@/components/FileUpload";
 import {selectToEnum} from "@/utils/utils";
+import { fetchPlatformOperatorContext } from '@/pages/sys/platform-operator/service';
+import { canDeleteDomainRecord, domainDeleteBlockReason } from './domainDeleteGuard';
+import { adminComToolbarOptions } from '@/utils/orgCreateUserDomain';
 
-const DomainList = () => {
+const DomainList = ({ isAdmin }) => {
   const intl = useIntl();
 
   const handleAdd = useCallback(async (fields) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.add', defaultMessage: '正在添加' }));
 
     try {
-      await addEntity({...fields});
+      const res = await addEntity({...fields});
       hide();
+      // 域名/个性域名重名等业务失败走 BaseException，HTTP 200 + 非 200 业务码，全局 notification 已弹出具体原因，
+      // 这里必须判断 code 才能决定是否弹"添加成功"，否则会出现先弹成功再弹错误通知的矛盾提示。
+      if (res?.code !== 200) {
+        return false;
+      }
       message.success(intl.formatMessage({ id: 'sys.domain.msg.addSuccess', defaultMessage: '添加成功' }));
       return true;
     } catch (error) {
@@ -48,7 +63,7 @@ const DomainList = () => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.config', defaultMessage: '正在配置' }));
 
     try {
-      await updateEntity({
+      const res = await updateEntity({
         siteName: fields.siteName,
         siteDomain: fields.siteDomain,
         siteLogo: fields.siteLogo,
@@ -66,53 +81,20 @@ const DomainList = () => {
         foot: fields.foot,
         flink: fields.flink,
         copy: fields.copy,
+        portalQrUrl: fields.portalQrUrl,
+        portalFooterI18n: fields.portalFooterI18n,
+        adminHomeConfig: fields.adminHomeConfig || '',
         id: fields.id,
       });
       hide();
+      if (res?.code !== 200) {
+        return false;
+      }
       message.success(intl.formatMessage({ id: 'sys.domain.msg.configSuccess', defaultMessage: '配置成功' }));
       return true;
     } catch (error) {
       hide();
       message.error(intl.formatMessage({ id: 'sys.domain.msg.configFail', defaultMessage: '配置失败请重试！' }));
-      return false;
-    }
-  }, [intl]);
-
-  const handleRemove = useCallback(async (selectedRows) => {
-    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.delete', defaultMessage: '正在删除' }));
-    if (!selectedRows) return true;
-    try {
-      await removeEntities({
-        ids: selectedRows.map((row) => row.id),
-      });
-      hide();
-      message.success(intl.formatMessage({ id: 'sys.domain.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
-      return true;
-    } catch (error) {
-      hide();
-      message.error(intl.formatMessage({ id: 'sys.domain.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
-      return false;
-    }
-  }, [intl]);
-
-  const handleRemoveOne = useCallback(async (fields) => {
-    if (!fields) return true;
-
-    if (fields.children) {
-      message.info(intl.formatMessage({ id: 'sys.domain.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
-      return true;
-    }
-    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.delete', defaultMessage: '正在删除' }));
-    try {
-      await removeEntity({
-        id: fields.id,
-      });
-      hide();
-      message.success(intl.formatMessage({ id: 'sys.domain.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
-      return true;
-    } catch (error) {
-      hide();
-      message.error(intl.formatMessage({ id: 'sys.domain.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
       return false;
     }
   }, [intl]);
@@ -163,6 +145,29 @@ const DomainList = () => {
     }
   }, [intl]);
 
+  const bindAdmins = useCallback(async (value={userIds: [], domainId: ''}) => {
+    if (!!value && value.userIds?.length === 0) {
+      message.info(intl.formatMessage({ id: 'sys.domain.msg.selectAdmins', defaultMessage: '请选择要设置的用户！' }));
+      return false;
+    }
+
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.add', defaultMessage: '正在添加' }));
+
+    try {
+      const res = await bindDomainAdmins(value);
+      hide();
+      if (res?.data !== '')
+        message.warn(res.data);
+      else
+        message.success(intl.formatMessage({ id: 'sys.domain.msg.addSuccess', defaultMessage: '添加成功' }));
+      return true;
+    } catch (error) {
+      hide();
+      message.error(intl.formatMessage({ id: 'sys.domain.msg.addFail', defaultMessage: '添加失败请重试！' }));
+      return false;
+    }
+  }, [intl]);
+
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -170,10 +175,22 @@ const DomainList = () => {
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
   const [comList, setComList] = useState({});
+  const [comListArray, setComListArray] = useState([]);
+  const [targetComId, setTargetComId] = useState(undefined);
+  const [listScopeReady, setListScopeReady] = useState(!isAdmin);
   const [addAppModalVisible, handleAddAppModalVisible] = useState(false);
   const [addAppValues, setAddAppValues] = useState({});
   const [addResModalVisible, handleAddResModalVisible] = useState(false);
   const [addResValues, setAddResValues] = useState({});
+  const [menuLayoutModalVisible, setMenuLayoutModalVisible] = useState(false);
+  const [menuLayoutValues, setMenuLayoutValues] = useState({});
+  const [addAdminModalVisible, handleAddAdminModalVisible] = useState(false);
+  const [addAdminValues, setAddAdminValues] = useState({});
+  const [cloneModalVisible, setCloneModalVisible] = useState(false);
+  const [cloneSourceRecord, setCloneSourceRecord] = useState(null);
+  const [scenarioModalVisible, setScenarioModalVisible] = useState(false);
+  const [provisionScenarios, setProvisionScenarios] = useState([]);
+  const [operatorPrimaryDomainId, setOperatorPrimaryDomainId] = useState(undefined);
   const [platDomain, setPlatDomain] = useState('');
   const [ossUrl, setOssUrl] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
@@ -185,6 +202,92 @@ const DomainList = () => {
   const containerRef = useRef();
 
   useDesktopSticky(actionRef);
+
+  const reloadProvisionScenarios = useCallback(async () => {
+    if (!isAdmin) {
+      return;
+    }
+    try {
+      const res = await fetchProvisionScenarios();
+      if (res?.code === 200) {
+        setProvisionScenarios(res?.data || []);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [isAdmin]);
+
+  const templateScenarioMap = useMemo(() => {
+    const map = new Map();
+    (provisionScenarios || []).forEach((scenario) => {
+      const domainId = scenario?.templateDomainId != null ? String(scenario.templateDomainId) : '';
+      if (!domainId) {
+        return;
+      }
+      const prev = map.get(domainId) || [];
+      prev.push(scenario);
+      map.set(domainId, prev);
+    });
+    return map;
+  }, [provisionScenarios]);
+
+  const domainDeleteContext = useMemo(() => ({
+    primaryDomainId: operatorPrimaryDomainId,
+    templateScenarioMap,
+  }), [operatorPrimaryDomainId, templateScenarioMap]);
+
+  const handleRemove = useCallback(async (selectedRows) => {
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.delete', defaultMessage: '正在删除' }));
+    if (!selectedRows) return true;
+    const blocked = selectedRows.find((row) => !canDeleteDomainRecord(row, domainDeleteContext));
+    if (blocked) {
+      hide();
+      message.info(domainDeleteBlockReason(blocked, domainDeleteContext) || '所选站点含不可删除项');
+      return false;
+    }
+    try {
+      const res = await removeEntities({
+        ids: selectedRows.map((row) => row.id),
+      });
+      hide();
+      if (res?.code !== 200) {
+        return false;
+      }
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+  }, [intl, domainDeleteContext]);
+
+  const handleRemoveOne = useCallback(async (fields) => {
+    if (!fields) return true;
+
+    if (fields.children) {
+      message.info(intl.formatMessage({ id: 'sys.domain.msg.hasChildren', defaultMessage: '存在子节点，请先删除子节点' }));
+      return false;
+    }
+    if (!canDeleteDomainRecord(fields, domainDeleteContext)) {
+      message.info(domainDeleteBlockReason(fields, domainDeleteContext) || '当前站点不可删除');
+      return false;
+    }
+    const hide = message.loading(intl.formatMessage({ id: 'sys.domain.msg.loading.delete', defaultMessage: '正在删除' }));
+    try {
+      const res = await removeEntity({
+        id: fields.id,
+      });
+      hide();
+      if (res?.code !== 200) {
+        return false;
+      }
+      message.success(intl.formatMessage({ id: 'sys.domain.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+  }, [intl, domainDeleteContext]);
 
   const beforeUp = useCallback((file) => {
     const isGt50K = file.size / 1024 > 100;
@@ -210,21 +313,59 @@ const DomainList = () => {
     }
   }, [intl]);
 
-  useEffect(async () => {
-    const comData = await getComSelectOption();
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (isAdmin) {
+        setListScopeReady(false);
+      }
+      const comData = await getComSelectOption();
+      if (cancelled) {
+        return;
+      }
+      const arr = comData?.data ?? [];
+      const toolbarComOptions = isAdmin
+        ? adminComToolbarOptions(arr, intl.formatMessage, { allowPlatformScope: true })
+        : arr;
+      setComList(selectToEnum(toolbarComOptions));
+      setComListArray(toolbarComOptions);
 
-    const arr = comData?.data?? [];
-    setComList(selectToEnum(arr));
+      const tasks = [getPlatDomain(), fetchOssUrl()];
+      if (isAdmin) {
+        tasks.push(fetchPlatformOperatorContext().catch(() => null));
+      }
+      const results = await Promise.all(tasks);
+      const domain = results[0];
+      const oss = results[1];
+      const operatorCtx = isAdmin ? results[2] : null;
+      if (cancelled) {
+        return;
+      }
+      if (domain?.data) {
+        setPlatDomain(domain.data.platDomain);
+      }
+      if (oss?.data) {
+        setOssUrl(oss.data.ossUrl);
+      }
+      if (operatorCtx?.code === 200 && operatorCtx?.data?.primaryDomainId != null) {
+        setOperatorPrimaryDomainId(String(operatorCtx.data.primaryDomainId));
+      }
+      setListScopeReady(true);
+      if (isAdmin) {
+        reloadProvisionScenarios();
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isAdmin, reloadProvisionScenarios]);
 
-    const domain = await getPlatDomain();
-    if (domain && domain.data) {
-      setPlatDomain(domain.data.platDomain);
+  useEffect(() => {
+    if (!listScopeReady) {
+      return;
     }
-
-    const oss = await fetchOssUrl();
-    if (oss?.data)
-      setOssUrl(oss.data.ossUrl);
-  }, []);
+    actionRef.current?.reload?.();
+  }, [listScopeReady, targetComId]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -341,7 +482,7 @@ const DomainList = () => {
     "<a href=\"http://www.gitee.com/wldos/wldos/\" rel=\"nofollow\">WLDOS</a> 版权所有\n" +
     "</p>";
 
-  const totalColsWidth = 2000;
+  const totalColsWidth = 2180;
   const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
 
   const columns = useMemo(() => [
@@ -350,6 +491,21 @@ const DomainList = () => {
       dataIndex: 'displayOrder',
       hideInSearch: true,
       sorter: true,
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.domain.col.id', defaultMessage: '站点 ID' }),
+      dataIndex: 'id',
+      hideInSearch: true,
+      hideInForm: true,
+      width: 200,
+      ellipsis: true,
+      render: (_, record) => {
+        const id = record?.id;
+        if (id == null || id === '') {
+          return '-';
+        }
+        return <Typography.Text copyable>{String(id)}</Typography.Text>;
+      },
     },
     {
       title: intl.formatMessage({ id: 'sys.domain.col.siteName', defaultMessage: '名称' }),
@@ -370,7 +526,31 @@ const DomainList = () => {
         ],
       },
       render: (dom, entity) => {
-        return <a onClick={() => setRow(entity)}>{dom}</a>;
+        const linked = templateScenarioMap.get(String(entity.id)) || [];
+        return (
+          <Space size={4} wrap>
+            <a onClick={() => setRow(entity)}>{dom}</a>
+            {linked.map((scenario) => (
+              <Tag key={scenario.code} color={scenario.ready ? 'blue' : 'warning'}>
+                入驻模板·{scenario.label}
+              </Tag>
+            ))}
+          </Space>
+        );
+      },
+    },
+    {
+      title: '挂载',
+      dataIndex: 'mountSummary',
+      hideInSearch: true,
+      width: 120,
+      render: (_, entity) => {
+        const linked = templateScenarioMap.get(String(entity.id)) || [];
+        if (!linked.length) {
+          return '-';
+        }
+        const primary = linked[0];
+        return `资源 ${primary.resourceCount ?? 0} / 应用 ${primary.appCount ?? 0}`;
       },
     },
     {
@@ -435,58 +615,9 @@ const DomainList = () => {
     {
       title: intl.formatMessage({ id: 'sys.domain.col.secondDomain', defaultMessage: '个性域名' }),
       dataIndex: 'secondDomain',
-      tip: intl.formatMessage({ id: 'sys.domain.col.secondDomain.tip', defaultMessage: '个性域名.{platDomain}' }, { platDomain }),
-      renderFormItem: () => (
-        <Input.Group compact>
-            <span>
-            <Form.Item
-              noStyle
-              name="secondDomain"
-              rules={[
-                {
-                  required: true,
-                  message: intl.formatMessage({ id: 'sys.domain.rule.secondDomainRequired', defaultMessage: '个性域名为必填项' }),
-                },
-                {
-                  max: 10,
-                  type: 'string',
-                  message: intl.formatMessage({ id: 'sys.domain.rule.max10', defaultMessage: '最多10位' }),
-                },
-                {
-                  type: 'string',
-                  pattern: '^[a-z]+$',
-                  message: intl.formatMessage({ id: 'sys.domain.rule.lowercaseOnly', defaultMessage: '只能是小写字母' })
-                }
-              ]}
-            >
-              <Input
-                style={{
-                  width: 'calc(100% - 100px)',
-                }}
-                placeholder={intl.formatMessage({ id: 'sys.domain.ph.secondDomain', defaultMessage: '请输入个性域名，不能为空！' })}
-              />
-            </Form.Item>
-            .{platDomain}</span>
-        </Input.Group>
-      ),
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: intl.formatMessage({ id: 'sys.domain.rule.secondDomainRequired', defaultMessage: '个性域名为必填项' }),
-          },
-          {
-            max: 10,
-            type: 'string',
-            message: intl.formatMessage({ id: 'sys.domain.rule.max10', defaultMessage: '最多10位' }),
-          },
-          {
-            type: 'string',
-            pattern: '^[a-z]+$',
-            message: intl.formatMessage({ id: 'sys.domain.rule.lowercaseOnly', defaultMessage: '只能是小写字母' })
-          }
-        ],
-      },
+      tip: intl.formatMessage({ id: 'sys.domain.col.secondDomain.tip', defaultMessage: '平台子域快捷入口，完整地址为 前缀.{platDomain}，与主站域名独立' }, { platDomain }),
+      // 新建/编辑表单各自在 CreateFormContent.jsx / UpdateForm.jsx 内独立声明了必填校验；
+      // 此处 columns 同时驱动 ProTable 查询表单与详情 ProDescriptions，查询条件不应必填，故不放校验规则。
       render: (_, record) => (<span>{record.secondDomain}</span>),
     },
     {
@@ -667,51 +798,114 @@ const DomainList = () => {
             {intl.formatMessage({ id: 'sys.domain.action.res', defaultMessage: '资源' })}
           </a>
           <Divider type="vertical"/>
-          <Popconfirm title={intl.formatMessage({ id: 'sys.domain.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                      onConfirm={async () => {
-                        await handleRemoveOne(record);
-                        actionRef.current?.reloadAndRest?.();
-                      }}
+          <a
+            onClick={() => {
+              setMenuLayoutValues(record);
+              setMenuLayoutModalVisible(true);
+            }}
           >
-            <a>{intl.formatMessage({ id: 'sys.domain.action.delete', defaultMessage: '删除' })}</a>
-          </Popconfirm>
+            菜单布局
+          </a>
+          <Divider type="vertical"/>
+          <a
+            onClick={() => {
+              setAddAdminValues(record);
+              handleAddAdminModalVisible(true);
+            }}
+          >
+            {intl.formatMessage({ id: 'sys.domain.action.admin', defaultMessage: '设置管理员' })}
+          </a>
+          <Divider type="vertical"/>
+          <a
+            onClick={() => {
+              setCloneSourceRecord(record);
+              setCloneModalVisible(true);
+            }}
+          >
+            {intl.formatMessage({ id: 'sys.domain.action.clone', defaultMessage: '复制' })}
+          </a>
+          <Divider type="vertical"/>
+          {canDeleteDomainRecord(record, domainDeleteContext) ? (
+            <Popconfirm title={intl.formatMessage({ id: 'sys.domain.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                        onConfirm={async () => {
+                          const ok = await handleRemoveOne(record);
+                          if (ok) {
+                            actionRef.current?.reloadAndRest?.();
+                          }
+                        }}
+            >
+              <a>{intl.formatMessage({ id: 'sys.domain.action.delete', defaultMessage: '删除' })}</a>
+            </Popconfirm>
+          ) : (
+            <Tooltip title={domainDeleteBlockReason(record, domainDeleteContext)}>
+              <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>
+                {intl.formatMessage({ id: 'sys.domain.action.delete', defaultMessage: '删除' })}
+              </span>
+            </Tooltip>
+          )}
         </>
       ),
-      width: 250
+      width: 300
     },
-  ], [intl, mobile, comList, platDomain, handleRemoveOne, logoUrl, beforeUp, handleChange]);
+  ], [intl, mobile, comList, platDomain, handleRemoveOne, logoUrl, beforeUp, handleChange, templateScenarioMap, domainDeleteContext]);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle={intl.formatMessage({ id: 'sys.domain.headerTitle', defaultMessage: '域名清单' })}
           actionRef={actionRef}
+          manualRequest={!listScopeReady}
           rowKey="id"
           size={"small"}
           search={{
             labelWidth: 120,
           }}
           toolBarRender={() => [
-            <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
+            isAdmin && comListArray.length > 0 ? (
+              <Space key="com-select" size={8}>
+                <span>目标租户</span>
+                <Select
+                  style={{ minWidth: 180 }}
+                  allowClear
+                  placeholder="选择租户"
+                  options={comListArray}
+                  value={targetComId}
+                  onChange={(value) => setTargetComId(value || undefined)}
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Space>
+            ) : null,
+            isAdmin && String(targetComId) === '0' ? (
+              <Button key="scenarios" onClick={() => setScenarioModalVisible(true)}>
+                入驻场景
+              </Button>
+            ) : null,
+            <Button
+              key={0}
+              type="primary"
+              onClick={() => {
+                if (isAdmin && (targetComId == null || targetComId === '')) {
+                  message.warning('请先在工具栏选择目标租户；体验模板站须选「平台」');
+                  return;
+                }
+                handleModalVisible(true);
+              }}
+            >
               <PlusOutlined/> {intl.formatMessage({ id: 'sys.domain.toolbar.new', defaultMessage: '新建' })}
             </Button>,
           ]}
           request={async (params, sorter, filter) => {
-            const res = await queryPage({
+            const query = {
               ...params,
               sorter: {...sorter, 'displayOrder': 'ascend',},
               filter
-            });
+            };
+            if (isAdmin && targetComId) {
+              query.comId = targetComId;
+            }
+            const res = await queryPage(query);
 
             return Promise.resolve({
               total: res?.data?.total || 0,
@@ -778,7 +972,11 @@ const DomainList = () => {
       >
         <CreateFormContent
           onSubmit={async (value) => {
-            const success = await handleAdd({...value, siteLogo: logoPath});
+            const payload = { ...value, siteLogo: logoPath };
+            if (isAdmin && targetComId != null && targetComId !== '') {
+              payload.comId = targetComId;
+            }
+            const success = await handleAdd(payload);
 
             if (success) {
               handleModalVisible(false);
@@ -841,7 +1039,51 @@ const DomainList = () => {
           addResModalVisible={addResModalVisible}
           values={addResValues}
           addRes={addRes}
+          onMenuLayout={(record) => {
+            setMenuLayoutValues(record);
+            setMenuLayoutModalVisible(true);
+          }}
         /> : null}
+      {menuLayoutValues && Object.keys(menuLayoutValues).length ?
+        <MenuLayoutModal
+          onCancel={() => {
+            setMenuLayoutModalVisible(false);
+            setMenuLayoutValues({});
+          }}
+          modalVisible={menuLayoutModalVisible}
+          values={menuLayoutValues}
+        /> : null}
+      {addAdminValues && Object.keys(addAdminValues).length ?
+        <DomainAdminForm
+          onCancel={() => {
+            handleAddAdminModalVisible(false);
+            setAddAdminValues({});
+          }}
+          adminModalVisible={addAdminModalVisible}
+          values={addAdminValues}
+          bindAdmins={bindAdmins}
+        /> : null}
+      <CloneSiteForm
+        visible={cloneModalVisible}
+        sourceRecord={cloneSourceRecord}
+        onCancel={() => {
+          setCloneModalVisible(false);
+          setCloneSourceRecord(null);
+        }}
+        onSuccess={() => {
+          setCloneModalVisible(false);
+          setCloneSourceRecord(null);
+          actionRef.current?.reload?.();
+        }}
+      />
+      <ProvisionScenarioModal
+        visible={scenarioModalVisible}
+        onCancel={() => setScenarioModalVisible(false)}
+        onSuccess={() => {
+          setScenarioModalVisible(false);
+          reloadProvisionScenarios();
+        }}
+      />
 
       <Drawer
         width={600}
@@ -869,4 +1111,6 @@ const DomainList = () => {
   );
 };
 
-export default DomainList;
+export default connect(({ user }) => ({
+  isAdmin: !!user.sessionFlags?.isAdmin,
+}))(DomainList);

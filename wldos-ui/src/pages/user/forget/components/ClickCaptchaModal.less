@@ -1,0 +1,130 @@
+.card {
+  padding: 4px 0 0;
+}
+
+.cardTitle {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.imageWrap {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.captchaImage {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.marker {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  margin-top: -11px;
+  border-radius: 50%;
+  background: #f5222d;
+  color: #fff;
+  font-size: 12px;
+  line-height: 22px;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.imageError {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 12px;
+  background: rgba(245, 34, 45, 0.88);
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+  border-radius: 0 0 8px 8px;
+}
+
+.tileError {
+  margin: 0 0 12px;
+  color: #cf1322;
+  font-size: 13px;
+}
+
+.instruction {
+  margin: 12px 0 8px;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 1.6;
+}
+
+.highlight {
+  color: #cf1322;
+  font-weight: 600;
+  margin: 0 4px;
+}
+
+.refresh {
+  margin-top: 8px;
+  padding: 0;
+  color: #1890ff;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.refresh:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.hint {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.order {
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.tile {
+  min-width: 52px;
+  padding: 10px 14px;
+  font-size: 18px;
+  line-height: 1;
+  background: #fafafa;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tile:hover:not(:disabled) {
+  background: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.tile:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.progress {
+  margin-bottom: 0;
+  color: rgba(0, 0, 0, 0.45);
+  text-align: center;
+  font-size: 13px;
+}

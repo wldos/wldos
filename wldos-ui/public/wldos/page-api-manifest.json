@@ -1,0 +1,4167 @@
+{
+  "/user/register": {
+    "component": "user/register",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/login/register"
+      },
+      {
+        "method": "GET",
+        "path": "/login/passwd/status"
+      }
+    ]
+  },
+  "/user/forget": {
+    "component": "user/forget",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/authcode/checkEmail"
+      },
+      {
+        "method": "POST",
+        "path": "/authcode/check"
+      },
+      {
+        "method": "GET",
+        "path": "/authcode/forgetResetProfile"
+      },
+      {
+        "method": "GET",
+        "path": "/authcode/clickChallenge"
+      },
+      {
+        "method": "POST",
+        "path": "/authcode/clickVerify"
+      },
+      {
+        "method": "POST",
+        "path": "/authcode/forgetEmailAdmission"
+      },
+      {
+        "method": "GET",
+        "path": "/authcode/code4email"
+      },
+      {
+        "method": "POST",
+        "path": "/login/reset"
+      }
+    ]
+  },
+  "/space/book": {
+    "component": "book",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/user/currentUser"
+      },
+      {
+        "method": "GET",
+        "path": "/space/book"
+      },
+      {
+        "method": "GET",
+        "path": "/space/book/{params.bookId}"
+      },
+      {
+        "method": "GET",
+        "path": "/space/book/{params.bookId}/chapter/{params.chapterId}"
+      },
+      {
+        "method": "POST",
+        "path": "/space/book/add"
+      },
+      {
+        "method": "POST",
+        "path": "/space/book/newChapter"
+      },
+      {
+        "method": "POST",
+        "path": "/space/book/saveChapter"
+      },
+      {
+        "method": "POST",
+        "path": "/space/upload/chapter"
+      }
+    ]
+  },
+  "/doc": {
+    "component": "doc",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/doc"
+      },
+      {
+        "method": "GET",
+        "path": "/doc/book/{params.bookId}.html"
+      },
+      {
+        "method": "GET",
+        "path": "/doc/book/{params.bookId}/chapter/{params.chapterId}.html"
+      }
+    ]
+  },
+  "/doc/book": {
+    "component": "doc",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/doc"
+      },
+      {
+        "method": "GET",
+        "path": "/doc/book/{params.bookId}.html"
+      },
+      {
+        "method": "GET",
+        "path": "/doc/book/{params.bookId}/chapter/{params.chapterId}.html"
+      }
+    ]
+  },
+  "/admin/sys/options": {
+    "component": "sys/config",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/system/options/config"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/platOrg"
+      },
+      {
+        "method": "GET",
+        "path": "/system/options"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/sys/domainOption": {
+    "component": "sys/domain-option",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/options/query"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domainOption"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domainOption/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domainOption/update"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domainOption/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domainOption/deletes"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/resList"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/app"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/res"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/root"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/clone-site"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "GET",
+        "path": "/dict/select/provisionScenarioCode"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/sys/domain/provision-scenarios"
+      }
+    ]
+  },
+  "/admin/sys/scopeDimension": {
+    "component": "sys/scope-dimension",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dimension"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/scope/dimension/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/scope/dimension/update"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/scope/dimension/delete"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dict-sources"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/scope/dimension/batch"
+      }
+    ]
+  },
+  "/admin/sys/objectScopeBind": {
+    "component": "sys/object-scope-bind",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/object-bind"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/scope/object-bind/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/scope/object-bind/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dimension"
+      }
+    ]
+  },
+  "/admin/sys/seo": {
+    "component": "commercial/sys/seo",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/options/robots"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/options/robots"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/options/sitemap/status"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/options/sitemap/generate"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/resList"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/app"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/res"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/root"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/clone-site"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "GET",
+        "path": "/dict/select/provisionScenarioCode"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/sys/domain/provision-scenarios"
+      }
+    ]
+  },
+  "/admin/sys/robots": {
+    "component": "commercial/sys/seo",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/options/robots"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/options/robots"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/options/sitemap/status"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/options/sitemap/generate"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/resList"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/app"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/res"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/root"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/clone-site"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "GET",
+        "path": "/dict/select/provisionScenarioCode"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/sys/domain/provision-scenarios"
+      }
+    ]
+  },
+  "/admin/sys/reg": {
+    "component": "sys/reg",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/license"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/license/versionEnum"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/upload"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/pull-public-keystore"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/upload-oem-public-keystore"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/pull-oem-public-keystore"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/pull-license"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/license/server-info"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/license/application"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/license/application/{applicationId}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/license/application/{applicationId}/approve"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/application/{applicationId}/install-license"
+      }
+    ]
+  },
+  "/admin/sys/license-apply": {
+    "component": "sys/license-apply",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/license/server-info"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/license/application"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/license/application/{applicationId}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/license/application/{applicationId}/approve"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/application/{applicationId}/install-license"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/upload"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/pull-public-keystore"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/upload-oem-public-keystore"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/pull-oem-public-keystore"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/license/pull-license"
+      }
+    ]
+  },
+  "/admin/sys/oauth": {
+    "component": "sys/oauth",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/oauth/config/{oauthType}"
+      },
+      {
+        "method": "GET",
+        "path": "/oauth/fetch/{oauthType}"
+      }
+    ]
+  },
+  "/admin/sys/agreement": {
+    "component": "commercial/sys/agreement",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/agreement/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/agreement/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/agreement"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/agreement/update/{data.id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/agreement/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/agreement/{id}/active"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/resList"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/app"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/res"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/root"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/clone-site"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "GET",
+        "path": "/dict/select/provisionScenarioCode"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/sys/domain/provision-scenarios"
+      }
+    ]
+  },
+  "/admin/sys/trial": {
+    "component": "commercial/sys/trial",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/admin/trial/lead/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/trial/lead/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/trial/sandbox/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/trial/stats/summary"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/trial/portal-entry"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/trial/portal-entry"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/trial/lead/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/trial/lead/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/trial/sandbox/{id}/freeze"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/trial/sandbox/{id}/purge"
+      }
+    ]
+  },
+  "/admin/sys/product": {
+    "component": "commercial/sys/products",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/admin/product/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/product/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/product/add"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/product/update/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/product/delete/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/product/category-type"
+      },
+      {
+        "method": "GET",
+        "path": "/product/categories"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/info"
+      }
+    ]
+  },
+  "/admin/sys/order": {
+    "component": "commercial/sys/order",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/order/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/order/export"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/order/{orderNo}/refund"
+      }
+    ]
+  },
+  "/admin/sys/license": {
+    "component": "commercial/sys/license",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/admin/license/list"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/license/reissue"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/license/revoke"
+      }
+    ]
+  },
+  "/admin/sys/ticket": {
+    "component": "commercial/sys/ticket",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/ticket/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/ticket/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/ticket/{id}/reply"
+      }
+    ]
+  },
+  "/admin/sys/commission": {
+    "component": "commercial/sys/commission",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/marketing/commission/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/marketing/commission/summary"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/marketing/commission/{id}"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/marketing/commission/{id}/settled"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/marketing/commission/{id}/paid"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/marketing/commission/{id}/cancelled"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/marketing/commission/{id}/deducted"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/marketing/commission/report"
+      }
+    ]
+  },
+  "/admin/sys/marketing-rule": {
+    "component": "commercial/sys/marketing-rule",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/marketing/rule"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/marketing/rule"
+      }
+    ]
+  },
+  "/admin/sys/social-publish": {
+    "component": "commercial/sys/social-publish",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/accounts"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/social-publish/platforms"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/social-publish/platforms/config-summary"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/platforms/config"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/accounts/list"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/jobs/list"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/jobs/{jobId}/retry-failed"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/social-publish/accounts/{id}/wechat/oauth/start"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/accounts/{id}/wechat/oauth/callback"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/social-publish/accounts/{id}/wechat/material/thumb"
+      }
+    ]
+  },
+  "/admin/cms/social-publish-field": {
+    "component": "commercial/sys/social-publish-field",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platforms"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/media-assistant/capability"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/delegate/tasks/pending"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/complete"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "GET",
+        "path": "/info-{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/publish-now"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/retry-failed"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/list"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platform-fields"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/sync-review-data"
+      }
+    ]
+  },
+  "/admin/sys/ai": {
+    "component": "commercial/sys/ai",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/ai/providers"
+      },
+      {
+        "method": "POST",
+        "path": "/ai/providers"
+      },
+      {
+        "method": "PUT",
+        "path": "/ai/providers"
+      },
+      {
+        "method": "DELETE",
+        "path": "/ai/providers/{encodeURIComponent(id)}"
+      },
+      {
+        "method": "PUT",
+        "path": "/ai/providers/{encodeURIComponent(id)}/disable"
+      },
+      {
+        "method": "PUT",
+        "path": "/ai/providers/{encodeURIComponent(id)}/enable"
+      },
+      {
+        "method": "PUT",
+        "path": "/ai/providers/default"
+      },
+      {
+        "method": "GET",
+        "path": "/ai/agents"
+      },
+      {
+        "method": "POST",
+        "path": "/ai/agents"
+      },
+      {
+        "method": "PUT",
+        "path": "/ai/agents"
+      },
+      {
+        "method": "DELETE",
+        "path": "/ai/agents/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/ai/invoke"
+      },
+      {
+        "method": "GET",
+        "path": "/ai/usage/summary"
+      }
+    ]
+  },
+  "/admin/sys/ai/config": {
+    "component": "commercial/sys/ai/config",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/ai/capabilities"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/ai/capabilities"
+      }
+    ]
+  },
+  "/admin/sys/iot": {
+    "component": "commercial/sys/iot",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/iot/gateways"
+      },
+      {
+        "method": "GET",
+        "path": "/iot/gateways/{encodeURIComponent(gatewayId)}/devices"
+      },
+      {
+        "method": "GET",
+        "path": "/iot/devices/{encodeURIComponent(deviceId)}"
+      },
+      {
+        "method": "GET",
+        "path": "/iot/devices/{encodeURIComponent(deviceId)}/twin"
+      },
+      {
+        "method": "PUT",
+        "path": "/iot/devices/{encodeURIComponent(deviceId)}/twin/desired"
+      },
+      {
+        "method": "POST",
+        "path": "/iot/gateways"
+      },
+      {
+        "method": "PUT",
+        "path": "/iot/gateways/{encodeURIComponent(gatewayId)}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/iot/gateways/{encodeURIComponent(gatewayId)}"
+      },
+      {
+        "method": "POST",
+        "path": "/iot/devices"
+      },
+      {
+        "method": "DELETE",
+        "path": "/iot/devices/{encodeURIComponent(deviceId)}"
+      },
+      {
+        "method": "POST",
+        "path": "/iot/devices/{encodeURIComponent(deviceId)}/command"
+      },
+      {
+        "method": "GET",
+        "path": "/iot/billing/usage"
+      },
+      {
+        "method": "GET",
+        "path": "/iot/products/catalog"
+      },
+      {
+        "method": "GET",
+        "path": "/iot/connectivity/status"
+      },
+      {
+        "method": "POST",
+        "path": "/iot/connectivity/embedded/clients/{encodeURIComponent(clientId)}/disconnect"
+      }
+    ]
+  },
+  "/admin/sys/iot/config": {
+    "component": "commercial/sys/iot/config",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/iot/capabilities"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/iot/capabilities"
+      }
+    ]
+  },
+  "/admin/sys/mesh": {
+    "component": "commercial/sys/mesh",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/platform/mesh/status"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/members"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/cluster-state"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/assignments"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/reconcile"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/invoke-audit/recent"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/topology"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/consensus/federation/overview"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/data/scope/summary"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/compute/overview"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/tls-status"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/ingress/hint"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/scale-out/hint"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/leave"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/rejoin"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/consensus/federation/invite-token/generate"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/consensus/federation/invite-token/rotate"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/consensus/federation/members"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/consensus/federation/members/{encodeURIComponent(stationId)}/approve"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/consensus/federation/members/{encodeURIComponent(stationId)}/reject"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/scale-out/register"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/scale-out/registrations"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/members/{encodeURIComponent(nodeId)}/evict"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/peers/join"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/peers/join-bulk"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/peers/remove"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/peers"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment/{encodeURIComponent(nodeId)}"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment/by-plugin/{encodeURIComponent(pluginCode)}"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/plugin-assignment/matrix-page"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/plugin-assignment"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/plugin-assignment/bulk"
+      },
+      {
+        "method": "DELETE",
+        "path": "/platform/mesh/plugin-assignment/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment/health"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment/check"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment/coverage/{encodeURIComponent(pluginCode)}"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/plugins"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/zone/matrix-hints"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/zone"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/capability-catalog"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/capability-catalog/meta"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-catalog/scan-preview"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-catalog/reconcile-apply"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-catalog/manual"
+      },
+      {
+        "method": "PUT",
+        "path": "/platform/mesh/capability-catalog/overlay"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/capability-bundle"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-bundle"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/capability-bundle/{encodeURIComponent(bundleCode)}/members"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-bundle/members"
+      },
+      {
+        "method": "DELETE",
+        "path": "/platform/mesh/capability-bundle/members/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/capability-bundle/assignment"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-bundle/assignment/upsert"
+      },
+      {
+        "method": "DELETE",
+        "path": "/platform/mesh/capability-bundle/assignment/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/mesh/capability-assignment/matrix-page"
+      }
+    ]
+  },
+  "/admin/sys/orchestration-designer": {
+    "component": "commercial/sys/orchestration-designer",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/platform/orchestration/eligibility"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/orchestration/capabilities/orchestratable"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/orchestration/flows"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/orchestration/flows/{encodeURIComponent(flowId)}"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/orchestration/flows"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/orchestration/flows/{encodeURIComponent(flowId)}/delete"
+      },
+      {
+        "method": "POST",
+        "path": "/platform/orchestration/flows/{encodeURIComponent(flowId)}/publish"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/status"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/assignments"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/plugin-assignment/coverage/{encodeURIComponent(pluginCode)}"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/zone"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/zone/{encodeURIComponent(zoneCode)}/online-summary"
+      },
+      {
+        "method": "GET",
+        "path": "/platform/mesh/zone/matrix-hints"
+      }
+    ]
+  },
+  "/admin/sys/auth-pack": {
+    "component": "commercial/sys/auth-pack",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/auth-pack/catalog"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/auth-pack/parse"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/auth-pack/validate"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/auth-pack/diff"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/auth-pack/import"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/auth-pack/apply-catalog"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/auth-pack/export"
+      }
+    ]
+  },
+  "/admin/sys/identity": {
+    "component": "sys/identity",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/com"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/get"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/rmAdmin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/admin"
+      }
+    ]
+  },
+  "/admin/res/app": {
+    "component": "sys/app",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/app"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/domain"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/type"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/origins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/app/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/app/deletes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/appDel"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/appVisibility"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/app/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/app/update"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/plugin/install"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/get"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/rmAdmin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/admin"
+      }
+    ]
+  },
+  "/admin/res/res": {
+    "component": "sys/res",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/res/get"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/res"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/res/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/res/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/res/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/res/addSimple"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/res/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/all"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/res/all"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/res/treeSelect"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/resDel"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/res/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/res/api-coverage-check"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/res/probe"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/res/auth-cache/refresh"
+      }
+    ]
+  },
+  "/admin/res/front": {
+    "component": "sys/res/frontmenu",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/auth/role": {
+    "component": "sys/role",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/role"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/role/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/role/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/res/tree"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/role/res"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/auth"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/role/all"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dimensions/grantable"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dimensions/pickable"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/role/scopes/adopted"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/role/scopes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/scopes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/scopes/copy"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/scopes/batch"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/auth/batch/preview"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/auth/batch"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/role/auth/batch/rollback"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/role/auth/drift"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dimensions/{dimensionCode}/options"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dict/{dictCode}/options"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/dict/{dictCode}/tree-options"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/regions/children"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/scope/regions/paths"
+      }
+    ]
+  },
+  "/admin/organ/platform": {
+    "component": "sys/platform-operator",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/platform-operator/context"
+      }
+    ]
+  },
+  "/admin/organ/provision": {
+    "component": "sys/organ/provision",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/provision"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      }
+    ]
+  },
+  "/admin/organ/com": {
+    "component": "sys/com",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/com"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/get"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/rmAdmin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/admin"
+      }
+    ]
+  },
+  "/admin/organ/arch": {
+    "component": "sys/arch",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/arch/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/arch/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/arch/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/arch/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch/all"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch/type"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch/company/{companyId}"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/get"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/rmAdmin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/admin"
+      }
+    ]
+  },
+  "/admin/organ/architecture": {
+    "component": "sys/organ/architecture",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/com"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/get"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/rmAdmin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/admin"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/arch/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/arch/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/arch/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/arch/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch/all"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch/type"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/arch/company/{companyId}"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/org/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/org/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/role"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/auth"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/all"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/user"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/type"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/identity/registry"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/identity/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/identity/remove"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/resList"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/app"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/res"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/root"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/clone-site"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "GET",
+        "path": "/dict/select/provisionScenarioCode"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/sys/domain/provision-scenarios"
+      }
+    ]
+  },
+  "/admin/organ/org": {
+    "component": "sys/org",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/org"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/org/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/org/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/role"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/auth"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/all"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/org/user"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/org/type"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/identity/registry"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/identity/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/identity/remove"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/org"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/com"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/select"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/user/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/user/deletes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/org/staffDel"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/register4admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/update"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/passwd4admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/org/primary"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/com/primary"
+      }
+    ]
+  },
+  "/admin/organ/user": {
+    "component": "sys/user",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/user"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/org"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/com"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/user/select"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/user/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/user/deletes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/org/staffDel"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/register4admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/update"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/passwd4admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/org/primary"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/user/com/primary"
+      }
+    ]
+  },
+  "/admin/dom/category": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/dom/tag": {
+    "component": "sys/tag",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/tag"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/tag/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/tag/select"
+      }
+    ]
+  },
+  "/admin/dom/domain": {
+    "component": "sys/domain",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/resList"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/app"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/res"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/root"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/clone-site"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admin"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/admins"
+      },
+      {
+        "method": "GET",
+        "path": "/dict/select/provisionScenarioCode"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/domain/provision-scenarios/select"
+      },
+      {
+        "method": "PUT",
+        "path": "/admin/sys/domain/provision-scenarios"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/update"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/com/get"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/com/rmAdmin"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/com/admin"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/platform-operator/context"
+      }
+    ]
+  },
+  "/admin/book/model": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/book/lib": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/book/sale": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/book/audit": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/info/class": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/info/flow": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/info/order": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/info/audit": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/cms/pub/chapter": {
+    "component": "sys/article",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/chapter"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/publish"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/offline"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/deletes"
+      }
+    ]
+  },
+  "/admin/cms/pub/book": {
+    "component": "sys/book",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/book"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/chapter"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/publish"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/offline"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/deletes"
+      }
+    ]
+  },
+  "/admin/cms/pub/info": {
+    "component": "sys/info",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/info"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/chapter"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/publish"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/offline"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/deletes"
+      }
+    ]
+  },
+  "/admin/cms/comment": {
+    "component": "sys/comment",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/comment"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/comment/audit"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/comment/reject"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/comment/del"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/comment/delBatch"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/comment/spam"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/comment/trash"
+      }
+    ]
+  },
+  "/admin/cms/media": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/cms/page": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/cms/talk": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/cms/appear": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/cms/plugin": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/cms/set": {
+    "component": "sys/category",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/cms/category"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/category/deletes"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/category/update"
+      },
+      {
+        "method": "GET",
+        "path": "/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/category/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/info/flatTree"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPid/{params.termTypeId}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/fromPlug/{params.slugTerm}"
+      },
+      {
+        "method": "GET",
+        "path": "/category/select"
+      },
+      {
+        "method": "GET",
+        "path": "/plugin/category/treeSelect"
+      },
+      {
+        "method": "GET",
+        "path": "/term/category/treeSelect"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/term/infoFlags"
+      }
+    ]
+  },
+  "/admin/collector/list": {
+    "component": "sys/collector",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/collector/info/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/collector/info/srcCache/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/chapter"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/publish"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/offline"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/deletes"
+      }
+    ]
+  },
+  "/admin/collector/rule": {
+    "component": "sys/collector/rule",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/admin/collector/rule/list"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/cms/pub/chapter"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/publish"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/cms/pub/offline"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/cms/pub/deletes"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/domain"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/select"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/type"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/sys/app/origins"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/app/delete"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/app/deletes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/sys/domain/appDel"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/domain/appVisibility"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/app/add"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/sys/app/update"
+      },
+      {
+        "method": "POST",
+        "path": "/admin/plugin/install"
+      }
+    ]
+  },
+  "/": {
+    "component": "home",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/cms/listSideCar/{params.pageName}"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/seoCrumbs"
+      }
+    ]
+  },
+  "/product": {
+    "component": "commercial/products",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/product/list"
+      },
+      {
+        "method": "GET",
+        "path": "/product/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/product/category-type"
+      },
+      {
+        "method": "GET",
+        "path": "/product/categories"
+      },
+      {
+        "method": "GET",
+        "path": "/product/options"
+      }
+    ]
+  },
+  "/product/trial": {
+    "component": "commercial/trial",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/trial/send-email-code"
+      },
+      {
+        "method": "POST",
+        "path": "/trial/check-email-code"
+      },
+      {
+        "method": "POST",
+        "path": "/trial/apply"
+      },
+      {
+        "method": "GET",
+        "path": "/trial/entry-context"
+      }
+    ]
+  },
+  "/checkout": {
+    "component": "commercial/checkout",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/agreement/by-type/{type}"
+      },
+      {
+        "method": "POST",
+        "path": "/order/create"
+      },
+      {
+        "method": "GET",
+        "path": "/product/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/user/referral/validate"
+      },
+      {
+        "method": "GET",
+        "path": "/order/{orderNo}"
+      },
+      {
+        "method": "GET",
+        "path": "/order/list"
+      },
+      {
+        "method": "GET",
+        "path": "/order/referral/eligible"
+      },
+      {
+        "method": "POST",
+        "path": "/order/{orderNo}/cancel"
+      },
+      {
+        "method": "POST",
+        "path": "/order/{orderNo}/pay"
+      },
+      {
+        "method": "GET",
+        "path": "/order/policy/content"
+      }
+    ]
+  },
+  "/order/list": {
+    "component": "commercial/order",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/order/create"
+      },
+      {
+        "method": "GET",
+        "path": "/order/{orderNo}"
+      },
+      {
+        "method": "GET",
+        "path": "/order/list"
+      },
+      {
+        "method": "GET",
+        "path": "/order/referral/eligible"
+      },
+      {
+        "method": "POST",
+        "path": "/order/{orderNo}/cancel"
+      },
+      {
+        "method": "POST",
+        "path": "/order/{orderNo}/pay"
+      },
+      {
+        "method": "GET",
+        "path": "/order/policy/content"
+      }
+    ]
+  },
+  "/license/list": {
+    "component": "commercial/license",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/license/list"
+      },
+      {
+        "method": "GET",
+        "path": "/license/{id}"
+      }
+    ]
+  },
+  "/ticket/list": {
+    "component": "commercial/ticket",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/ticket"
+      },
+      {
+        "method": "GET",
+        "path": "/ticket/list"
+      },
+      {
+        "method": "GET",
+        "path": "/ticket/{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/ticket/{id}/reply"
+      }
+    ]
+  },
+  "/social-publish": {
+    "component": "commercial/social-publish",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platforms"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/media-assistant/capability"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/delegate/tasks/pending"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/complete"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "GET",
+        "path": "/info-{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/publish-now"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/retry-failed"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/list"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platform-fields"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/sync-review-data"
+      }
+    ]
+  },
+  "/desktop-app/media-assistant/compose": {
+    "component": "commercial/desktop-app/media-assistant/compose",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platforms"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/media-assistant/capability"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/delegate/tasks/pending"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/complete"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "GET",
+        "path": "/info-{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/publish-now"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/retry-failed"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/list"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platform-fields"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/sync-review-data"
+      }
+    ]
+  },
+  "/desktop-app/media-assistant/records": {
+    "component": "commercial/desktop-app/media-assistant/records",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platforms"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/media-assistant/capability"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/delegate/tasks/pending"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/complete"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/accounts"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/cms/social-publish/accounts/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "GET",
+        "path": "/info-{id}"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/preference"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/publish-now"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/{id}/retry-failed"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/jobs/list"
+      },
+      {
+        "method": "GET",
+        "path": "/cms/social-publish/platform-fields"
+      },
+      {
+        "method": "POST",
+        "path": "/cms/social-publish/delegate/tasks/{taskId}/sync-review-data"
+      }
+    ]
+  },
+  "/search": {
+    "component": "search",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/cms/pub/search"
+      }
+    ]
+  },
+  "/info/pub/create": {
+    "component": "book/create",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/info/add"
+      },
+      {
+        "method": "GET",
+        "path": "/info/enum/privacy"
+      },
+      {
+        "method": "GET",
+        "path": "/info-{params.id}"
+      },
+      {
+        "method": "POST",
+        "path": "/info/update"
+      },
+      {
+        "method": "DELETE",
+        "path": "/info/delete"
+      }
+    ]
+  },
+  "/account/center": {
+    "component": "account/center",
+    "apis": [
+      {
+        "method": "POST",
+        "path": "/user/conf/tags"
+      }
+    ]
+  },
+  "/account/settings": {
+    "component": "account/settings",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/region/prov"
+      },
+      {
+        "method": "GET",
+        "path": "/region/city/{province}"
+      },
+      {
+        "method": "GET",
+        "path": "/region/info/{city}"
+      },
+      {
+        "method": "POST",
+        "path": "/user/conf"
+      },
+      {
+        "method": "POST",
+        "path": "/login/passwd"
+      },
+      {
+        "method": "POST",
+        "path": "/login/mobile"
+      },
+      {
+        "method": "POST",
+        "path": "/login/secQuest"
+      },
+      {
+        "method": "POST",
+        "path": "/login/bakEmail"
+      },
+      {
+        "method": "POST",
+        "path": "/login/mfa"
+      }
+    ]
+  },
+  "/account/referral": {
+    "component": "commercial/referral",
+    "apis": [
+      {
+        "method": "GET",
+        "path": "/marketing/referral/info"
+      },
+      {
+        "method": "GET",
+        "path": "/user/curAccount"
+      },
+      {
+        "method": "GET",
+        "path": "/marketing/referral/summary"
+      }
+    ]
+  }
+}

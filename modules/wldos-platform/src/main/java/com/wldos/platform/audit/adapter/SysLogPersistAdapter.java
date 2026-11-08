@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * {@code severity}（enum → String）与源端不存在的字段（id/createdAt）手工补齐；雪花 ID 在适配器侧生成。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Component

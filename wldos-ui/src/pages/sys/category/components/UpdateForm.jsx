@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip, Alert, InputNumber} from 'antd';
+import {Button, Form, Input, Select, TreeSelect, Card, Space, Tooltip, InputNumber} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import {FolderOutlined, KeyOutlined, SettingOutlined, InfoCircleOutlined, EditOutlined} from '@ant-design/icons';
 
@@ -35,15 +35,6 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <>
-        {/* 页面说明 */}
-        <Alert
-          message="分类配置"
-          description="编辑分类信息，修改分类的基本信息、层级关系和发布状态。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -184,14 +175,14 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入展示顺序，范围1-100！',
+                message: '请输入展示顺序，范围1-9999！',
               },
             ]}
           >
             <InputNumber
               min={1}
-              max={100}
-              placeholder="请输入展示顺序，范围1-100"
+              max={9999}
+              placeholder="请输入展示顺序，范围1-9999"
               style={{ width: '100%' }}
             />
           </FormItem>

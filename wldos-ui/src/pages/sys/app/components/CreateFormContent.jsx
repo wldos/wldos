@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, message, Select, Card, Space, Divider, Typography, Tooltip, Alert} from 'antd';
+import {Button, Form, Input, message, Select, Card, Space, Divider, Typography, Tooltip} from 'antd';
 import {
   AppstoreOutlined,
   FileTextOutlined,
@@ -228,20 +228,12 @@ const CreateFormContent = React.forwardRef((props, ref) => {
             </Tooltip>
           }
         >
-          <Alert
-            message="重要提示"
-            description="应用编码全局唯一，应用暴露的资源必须以此编码为URL前缀：/appCode/resName/subResName"
-            type="warning"
-            showIcon
-            style={{ marginBottom: '16px' }}
-          />
-          
-          <FormItem
+<FormItem
             name="appCode"
             label={
               <Space>
                 应用编码
-                <Tooltip title="应用的唯一标识码，用于URL前缀">
+                <Tooltip title="应用的唯一标识码，全局唯一；暴露的资源 URL 前缀为 /appCode/resName/subResName">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>

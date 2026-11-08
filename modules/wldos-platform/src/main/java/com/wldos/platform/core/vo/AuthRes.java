@@ -36,18 +36,34 @@ public class AuthRes extends TreeNode<AuthRes> {
 	@ApiModelProperty(value = "是否禁用", example = "false")
 	private boolean disabled;
 
+	@ApiModelProperty(value = "资源编码", example = "adminMenu")
+	private String resourceCode;
+
+	@ApiModelProperty(value = "资源路径（鉴权路由）", example = "/admin/sys/user/adminMenu")
+	private String resourcePath;
+
+	@ApiModelProperty(value = "请求方法", example = "GET")
+	private String requestMethod;
+
+	@ApiModelProperty(value = "资源类型 wo_resource.resource_type", example = "admin_menu")
+	private String resourceType;
+
+	@ApiModelProperty(value = "菜单节点形态 menu_node_kind", example = "nav_dir")
+	private String menuNodeKind;
+
 	public AuthRes() {
 	}
 
-	private AuthRes(String title, String key, Long id, Long parentId) {
+	private AuthRes(String title, String key, Long id, Long parentId, Long displayOrder) {
 		this.title = title;
 		this.key = key;
 		this.id = id;
 		this.parentId = parentId;
+		this.displayOrder = displayOrder;
 	}
 
-	public static AuthRes of(String title, String key, Long id, Long parentId) {
-		return new AuthRes(title, key, id, parentId);
+	public static AuthRes of(String title, String key, Long id, Long parentId, Long displayOrder) {
+		return new AuthRes(title, key, id, parentId, displayOrder);
 	}
 
 	@Override

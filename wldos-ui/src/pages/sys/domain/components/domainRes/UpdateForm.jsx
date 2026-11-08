@@ -2,6 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, Select, TreeSelect, Typography} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
 import PortalStaticExtraPropsEditor from './PortalStaticExtraPropsEditor';
+import PortalStaticOrgExtraPropsEditor from './PortalStaticOrgExtraPropsEditor';
+import {
+  PORTAL_STATIC_HOME_URL_COM,
+  PORTAL_STATIC_HOME_URL_ORG,
+  resolvePortalStaticHomeKind,
+  isPortalStaticHomeResource,
+} from './portalStaticHomeKind';
 
 const FormItem = Form.Item;
 
@@ -50,8 +57,8 @@ const UpdateForm = (props) => {
     setModuleNameWatch(v);
   };
 
-  const isPortalStaticHome =
-    moduleNameWatch === 'component' && String(urlWatch || '').trim() === 'home/static';
+  const portalStaticKind = resolvePortalStaticHomeKind(moduleNameWatch, urlWatch);
+  const isPortalStaticHome = isPortalStaticHomeResource(moduleNameWatch, urlWatch);
 
   const renderContent = () => {
     return (
@@ -93,7 +100,7 @@ const UpdateForm = (props) => {
             ]}
           >
             <Input
-              placeholder="静态门户填 home/static；外链填完整 http(s)://..."
+              placeholder="商业站 home/static；开源站 home/static-org；外链填完整 http(s)://..."
               onChange={(e) => setUrlWatch(e.target.value)}
             />
           </FormItem>
@@ -102,14 +109,18 @@ const UpdateForm = (props) => {
           name="extraProps"
           label={isPortalStaticHome ? '门户首页版块（分区块 HTML）' : '扩展配置(JSON)'}
           tooltip={
-            isPortalStaticHome
-              ? '仅当动态模板=绑定组件且指定 url=home/static 时启用分区块多行文本编辑原始 HTML；存库仍为 portalStatic JSON。'
-              : '可选。JSON 扩展；门户静态首页见 docs/CMS官网静态首页可配置方案.md'
+            portalStaticKind === 'org'
+              ? '绑定组件 + home/static-org：开源门户 portalStaticOrg JSON。'
+              : portalStaticKind === 'com'
+                ? '绑定组件 + home/static：商业门户 portalStatic JSON。'
+                : '可选。JSON 扩展；门户静态首页见 docs/CMS官网静态首页可配置方案.md'
           }
           labelCol={isPortalStaticHome ? { span: 24 } : undefined}
           wrapperCol={isPortalStaticHome ? { span: 24 } : undefined}
         >
-          {isPortalStaticHome ? (
+          {portalStaticKind === 'org' ? (
+            <PortalStaticOrgExtraPropsEditor />
+          ) : portalStaticKind === 'com' ? (
             <PortalStaticExtraPropsEditor />
           ) : (
             <Input.TextArea
@@ -120,8 +131,8 @@ const UpdateForm = (props) => {
         </FormItem>
         {!isPortalStaticHome ? (
           <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-            若使用门户静态首页：模板选「绑定组件」、指定 url 填 <Typography.Text code>home/static</Typography.Text>
-            ，将切换为分区块 HTML 文本编辑。其它模板仍可在此填原始 JSON。
+            门户首页：绑定组件 + <Typography.Text code>{PORTAL_STATIC_HOME_URL_COM}</Typography.Text>（商业）或{' '}
+            <Typography.Text code>{PORTAL_STATIC_HOME_URL_ORG}</Typography.Text>（开源），将切换为分区块 HTML 编辑。
           </Typography.Paragraph>
         ) : null}
       </>

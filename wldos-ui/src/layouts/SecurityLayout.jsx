@@ -11,10 +11,12 @@ import ProLayout, { PageLoading } from '@ant-design/pro-layout';
 import { Redirect, connect } from 'umi';
 import { stringify } from 'querystring';
 import {wldosHeader} from "@/utils/utils";
+import { isDesktopEmbedded, mergeDesktopShellSite, resolveDesktopProLayoutBrand } from '@/utils/desktopEmbeddedBridge';
 
 class SecurityLayout extends React.Component {
   state = {
     isReady: false,
+    brandingRev: 0,
   };
 
   componentDidMount() {
@@ -32,11 +34,29 @@ class SecurityLayout extends React.Component {
         type: 'user/fetchSite',
       });
     }
+
+    this.onBrandingReady = () => {
+      this.setState((s) => ({ brandingRev: s.brandingRev + 1 }));
+    };
+    window.addEventListener('wldos:desktop-branding-ready', this.onBrandingReady);
+  }
+
+  componentWillUnmount() {
+    if (this.onBrandingReady) {
+      window.removeEventListener('wldos:desktop-branding-ready', this.onBrandingReady);
+    }
   }
 
   render() {
-    const { isReady } = this.state;
+    const { isReady, brandingRev } = this.state;
     const { children, loading, site, settings, currentUser } = this.props;
+    void brandingRev;
+    const displaySite = isDesktopEmbedded() ? mergeDesktopShellSite(site) : site;
+    const proBrand = resolveDesktopProLayoutBrand(site);
+    const layoutTitle = isDesktopEmbedded()
+      ? proBrand.title
+      : (`${site.siteTitle}_${site.siteDescription || ''}` || '');
+    const layoutLogo = isDesktopEmbedded() ? (proBrand.logo || false) : displaySite?.siteLogo;
     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
     const isLogin = currentUser && currentUser.id;
     const queryString = stringify({
@@ -51,11 +71,22 @@ class SecurityLayout extends React.Component {
       return <Redirect to={`/user/login?${queryString}`} />;
     }
 
+    const isHeadless = new URLSearchParams(window.location.search || '').get('shellChrome') === 'none';
+    if (isHeadless) {
+      return (
+        <>
+          {wldosHeader(displaySite)}
+          {children}
+        </>
+      );
+    }
+
     return (
       <>
-        {wldosHeader(site)}
+        {wldosHeader(displaySite)}
         <ProLayout
-          title={`${site.siteTitle}_${site.siteDescription || ''}` || ''}
+          title={layoutTitle}
+          logo={layoutLogo || false}
           {...settings}
           pure={true}
         >

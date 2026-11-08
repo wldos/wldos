@@ -12,6 +12,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -31,7 +34,9 @@ public class Register {
 	@ApiModelProperty(value = "用户ID", hidden = true)
 	private long id;
 
-	@ApiModelProperty(value = "登录名（默认邮箱）", required = true, example = "user@example.com")
+	@ApiModelProperty(value = "登录名（未填时管理员接口可回退邮箱）", required = true, example = "tenant_admin")
+	@JsonProperty("loginName")
+	@JsonAlias("login_name")
 	private String loginName;
 
 	@ApiModelProperty(value = "昵称（平台上显示名称）", required = true, example = "张三")
@@ -65,6 +70,21 @@ public class Register {
 
 	@ApiModelProperty(value = "前缀", hidden = true)
 	private String prefix;
+
+	@ApiModelProperty(value = "绑定组织ID（管理员建用户可选）", hidden = true)
+	private Long orgId;
+
+	@ApiModelProperty(value = "绑定体系ID（管理员建用户可选）", hidden = true)
+	private Long archId;
+
+	@ApiModelProperty(value = "绑定租户公司ID（管理员建用户可选）", hidden = true)
+	private Long comId;
+
+	@ApiModelProperty(value = "目标站点 ID（组织节点建用户时锚定注册域，与当前登录域无关）", hidden = true)
+	private Long domainId;
+
+	@ApiModelProperty(value = "用户状态（管理员建用户可选，取值见 UserStatusEnum）", example = "normal")
+	private String status;
 
 	public Register() {
 	}

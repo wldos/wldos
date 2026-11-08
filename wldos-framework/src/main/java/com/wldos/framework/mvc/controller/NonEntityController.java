@@ -15,8 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.github.wldos.framework.common.CommonOperation;
 import io.github.wldos.framework.support.internal.Base;
+import io.github.wldos.common.Constants;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.ResultJson;
+import io.github.wldos.common.exception.BaseException;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
+import io.github.wldos.platform.support.rbac.DataScopeQueryHelper;
+import io.github.wldos.platform.support.rbac.EffectiveScope;
+import io.github.wldos.platform.support.rbac.WriteScopeTarget;
+import io.github.wldos.platform.support.rbac.DataScopeEntityAssert;
 
 import com.wldos.framework.mvc.service.NonEntityService;
 import com.wldos.framework.support.storage.StoredFileDownloadSupport;
@@ -104,6 +111,11 @@ public abstract class NonEntityController<S extends NonEntityService> extends Ba
 		return this.commonOperate.getTenantId();
 	}
 
+	/** 管理 2级 工作租户 id（workComId）。 */
+	protected Long getWorkComId() {
+		return this.commonOperate.getWorkComId();
+	}
+
 	/**
 	 * 获取平台根域名
 	 */
@@ -146,6 +158,171 @@ public abstract class NonEntityController<S extends NonEntityService> extends Ba
 	 */
 	protected void applyTenantFilter(PageQuery pageQuery) {
 		this.commonOperate.applyTenantFilter(pageQuery);
+	}
+
+	/** 门户/用户端 CMS：仅请求站点 domainId。 */
+	protected void applyPortalDomainScope(PageQuery pageQuery) {
+		this.commonOperate.applyPortalDomainScope(pageQuery);
+	}
+
+	/**
+	 * 按 API Profile 注入数据范围。
+	 *
+	 * @param pageQuery 分页查询
+	 * @param profile 数据范围配置
+	 * @param entityClass 实体类
+	 */
+	protected void applyScope(PageQuery pageQuery, DataScopeProfile profile,
+			Class<?> entityClass) {
+		this.commonOperate.applyScope(pageQuery, profile, entityClass);
+	}
+
+	/**
+	 * 审计日志分页：超管按请求 {@code comId}/{@code domainId} lens；其它管理员 {@link DataScopeProfile#AUDIT_DOMAIN}，
+	 * 租户管理员可选 {@code domainId} 收窄站点；站点管理员仅当前登录站点。
+	 */
+	protected void applyAuditLogListScope(PageQuery pageQuery, Class<?> entityClass) {
+		if (pageQuery == null) {
+			return;
+		}
+		Long comId = pullQueryLong(pageQuery, "comId");
+		Long domainId = pullQueryLong(pageQuery, "domainId");
+		Long userId = this.getUserId();
+		if (this.isAdmin(userId)) {
+			DataScopeQueryHelper.applyAuditAdminLens(pageQuery, comId, domainId);
+			return;
+		}
+		this.applyScope(pageQuery, DataScopeProfile.AUDIT_DOMAIN, entityClass);
+		if (this.commonOperate.isTenantAdmin(userId) && domainId != null && domainId > 0) {
+			pageQuery.pushParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
+		}
+	}
+
+	/**
+	 * 租户管理员系统日志：替换 AUDIT_DOMAIN 的精确 {@code com_id} 为租户并集 lens（网关事件常 {@code com_id=0}）。
+	 */
+	protected void applySysLogTenantAdminUnionScope(PageQuery pageQuery, Long optionalDomainId) {
+		if (pageQuery == null) {
+			return;
+		}
+		Long userId = this.getUserId();
+		if (userId == null || this.isAdmin(userId) || !this.commonOperate.isTenantAdmin(userId)) {
+			return;
+		}
+		EffectiveScope effective = this.commonOperate.getEffectiveScope(userId);
+		Long tenantCom = effective != null && effective.getComId() != null && effective.getComId() > 0
+				? effective.getComId()
+				: this.getTenantId();
+		if (tenantCom == null || tenantCom <= 0) {
+			return;
+		}
+		DataScopeQueryHelper.applySysLogTenantAdminRead(pageQuery, tenantCom);
+		if (optionalDomainId != null && optionalDomainId > 0) {
+			pageQuery.removeParam(Constants.COMMON_KEY_DOMAIN_COLUMN);
+			pageQuery.pushParam(Constants.COMMON_KEY_DOMAIN_COLUMN, optionalDomainId);
+		}
+	}
+
+	private static Long pullQueryLong(PageQuery pageQuery, String key) {
+		if (pageQuery == null || key == null) {
+			return null;
+		}
+		Object raw = pageQuery.getCondition().remove(key);
+		if (raw == null || raw.toString().trim().isEmpty()) {
+			return null;
+		}
+		try {
+			return Long.parseLong(raw.toString().trim());
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	/** 保存前按操作者层级补默认 com/domain。 */
+	protected void applyWriteScope(Object entity, WriteScopeTarget target) {
+		this.commonOperate.applyWriteScope(entity, target);
+	}
+
+	/**
+	 * 站点管理员不得访问租户级组织 API（基座定案）。
+	 */
+	protected void assertNotSiteAdminForTenantOrg() {
+		this.assertNotSiteAdminForTenantScope("组织管理");
+	}
+
+	/**
+	 * 站点管理员不得访问体系结构管理 API（基座定案，与组织管理同档）。
+	 */
+	protected void assertNotSiteAdminForArch() {
+		this.assertNotSiteAdminForTenantScope("体系结构管理");
+	}
+
+	/**
+	 * 站点管理员不得访问租户级应用定义写路径（应用为 TENANT_SCOPED，站点只读挂载，不可管理定义本体）。
+	 */
+	protected void assertNotSiteAdminForApp() {
+		this.assertNotSiteAdminForTenantScope("应用定义管理");
+	}
+
+	/**
+	 * 站点管理员不得访问的租户级管理场景（组织/体系/应用等）的统一拒绝入口。
+	 */
+	private void assertNotSiteAdminForTenantScope(String featureName) {
+		Long userId = this.getUserId();
+		if (userId == null || this.isAdmin(userId)) {
+			return;
+		}
+		if (this.commonOperate.isDomainAdmin(userId) && !this.commonOperate.isTenantAdmin(userId)) {
+			throw new BaseException("站点管理员无权访问" + featureName);
+		}
+	}
+
+	/**
+	 * 断言访问域名是否在用户所属域名范围内。
+	 *
+	 * @param domainId 域id
+	 */	
+	protected void assertBoundDomainAccess(Long domainId) {
+		this.commonOperate.assertBoundDomainAccess(this.getUserId(), domainId);
+	}
+
+	/**
+	 * 断言实体行级数据权限。
+	 *
+	 * @param entity 实体
+	 */
+	protected void assertEntityRowScope(Object entity) {
+		if (entity == null || this.isAdmin(this.getUserId())) {
+			return;
+		}
+		Long userId = this.getUserId();
+		java.util.List<Long> orgRoots = this.commonOperate.getEffectiveOrgScopeRoots(userId);
+		EffectiveScope effective =
+				this.commonOperate.getEffectiveScope(userId);
+		// 租户级操作者不按「当前访问域」卡 domain 轴：其范围覆盖租户全部站点，由 com/mainCom 轴兜底
+		boolean skipDomainAxis = this.commonOperate.isTenantAdmin(userId);
+		Long scopeComId = this.getWorkComId();
+		if (scopeComId == null) {
+			scopeComId = this.getTenantId();
+		}
+		DataScopeEntityAssert.assertRow(
+				entity,
+				userId,
+				false,
+				scopeComId,
+				this.getDomainId(),
+				this.commonOperate.listBoundDomainIds(userId),
+				this.isMultiTenancy(),
+				orgRoots,
+				this.commonOperate::isOrgWithinSubtree,
+				skipDomainAxis);
+		if (effective != null) {
+			DataScopeEntityAssert.assertEffectiveDimensions(
+					entity,
+					effective,
+					this.commonOperate::isOrgWithinSubtree);
+		}
 	}
 
 	/**

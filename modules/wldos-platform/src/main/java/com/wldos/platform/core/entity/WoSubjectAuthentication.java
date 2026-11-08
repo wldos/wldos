@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ import java.sql.Timestamp;
 @Table
 @Getter
 @Setter
+@RbacRowScope(comId = true, userId = true)
 public class WoSubjectAuthentication {
 	@Id
 	private Long id;
@@ -31,6 +33,14 @@ public class WoSubjectAuthentication {
 	private String subjectName;
 
 	private Long userId;
+
+	/** 归属租户（null/0=平台共享主体） */
+	private Long comId;
+
+	/** 归属站点（null/0=租户级主体） */
+	private Long domainId;
+
+	private String isValid;
 
 	private Long createBy;
 

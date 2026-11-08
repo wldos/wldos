@@ -39,6 +39,9 @@ public class Org extends TreeNode<Org> {
 	@ApiModelProperty(value = "公司ID", example = "1")
 	private Long comId;
 
+	@ApiModelProperty(value = "站点域ID", example = "1")
+	private Long domainId;
+
 	@ApiModelProperty(value = "显示顺序", example = "1")
 	private Long displayOrder;
 
@@ -65,6 +68,15 @@ public class Org extends TreeNode<Org> {
 
 	@ApiModelProperty(value = "删除标志", hidden = true)
 	private String deleteFlag;
+
+	@ApiModelProperty(value = "是否系统内置会员分群/角色实例", example = "false")
+	private Boolean systemBuiltIn;
+
+	@ApiModelProperty(value = "平台模板行（com_id=0 且 domain_id 为空）", example = "false")
+	private Boolean kindTemplate;
+
+	@ApiModelProperty(value = "是否允许物理删除", example = "true")
+	private Boolean deletable;
 
 	@ApiModelProperty(value = "版本号", hidden = true)
 	private Integer versions;

@@ -57,8 +57,11 @@ const Chapters = (props) => { // isBook=product表示是作品列表，否则是
 
   // 稳定化 hasMore 计算
   const hasMoreData = useMemo(() => {
+    if (!fetchMore) {
+      return false;
+    }
     return total > (cur - 1) * pageSize;
-  }, [total, cur, pageSize]);
+  }, [total, cur, pageSize, fetchMore]);
 
   return (
     <InfiniteScroll

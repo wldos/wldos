@@ -21,6 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wldos.framework.mvc.service.EntityService;
 import com.wldos.platform.core.enums.SysOptionEnum;
 import com.wldos.platform.core.vo.AccountCenterTabDef;
+import com.wldos.platform.core.vo.AdminHeaderHelpConfig;
+import com.wldos.platform.core.vo.AdminHomeConfigVO;
+import com.wldos.platform.core.vo.PortalFooterBlock;
+import com.wldos.platform.core.entity.WoDomain;
 import io.github.wldos.common.utils.ObjectUtils;
 import com.wldos.platform.core.dao.OptionsDao;
 import io.github.wldos.platform.support.system.entity.WoOptions;
@@ -47,6 +51,15 @@ public class OptionsService extends EntityService<OptionsDao, WoOptions, Long> {
 
 	@Autowired
 	private DomainOptionService domainOptionService;
+
+	@Autowired
+	private DomainService domainService;
+
+	/** 管理端首页 source 常量 */
+	public static final String ADMIN_HOME_SOURCE_DOMAIN = "domain";
+	public static final String ADMIN_HOME_SOURCE_ROOT = "rootDomain";
+	public static final String ADMIN_HOME_SOURCE_GLOBAL = "global";
+	public static final String ADMIN_HOME_SOURCE_BUILTIN = "builtin";
 
 	/** 个人中心页签 type 白名单（与门户前端约定一致） */
 	private static final Set<String> ACCOUNT_CENTER_TAB_TYPES;
@@ -150,6 +163,138 @@ public class OptionsService extends EntityService<OptionsDao, WoOptions, Long> {
 		return parseAccountCenterTabs(raw.trim());
 	}
 
+	/**
+	 * 管理端顶栏「使用文档」：优先域级 {@code admin_header_help_*}，再回退全局 {@code wo_options}。
+	 */
+	public AdminHeaderHelpConfig findAdminHeaderHelp(Long domainId) {
+		AdminHeaderHelpConfig cfg = new AdminHeaderHelpConfig();
+		String enabledRaw = resolveOptionValue(domainId, SysOptionEnum.ADMIN_HEADER_HELP_ENABLED.getKey(), "true");
+		cfg.setEnabled(!"false".equalsIgnoreCase(enabledRaw.trim()));
+		String url = resolveOptionValue(domainId, SysOptionEnum.ADMIN_HEADER_HELP_URL.getKey(), "").trim();
+		cfg.setUrl(url);
+		if (!cfg.isEnabled() || url.isEmpty()) {
+			cfg.setEnabled(false);
+		}
+		return cfg;
+	}
+
+	/**
+	 * 管理端首页：本域 wo_domain 列 → 根域名主站列 → builtin（sys/monitor）。
+	 */
+	public AdminHomeConfigVO findAdminHomeConfig(Long domainId) {
+		AdminHomeConfigVO vo = new AdminHomeConfigVO();
+		vo.setRequestDomainId(domainId);
+
+		AdminHomeParsed parsed = parseAdminHomeFromDomainRow(domainId);
+		if (parsed != null) {
+			fillAdminHomeVo(vo, parsed, ADMIN_HOME_SOURCE_DOMAIN, domainId);
+			return vo;
+		}
+
+		Long rootDomainId = resolvePlatformRootDomainId();
+		if (domainId != null && rootDomainId != null && !domainId.equals(rootDomainId)) {
+			parsed = parseAdminHomeFromDomainRow(rootDomainId);
+			if (parsed != null) {
+				fillAdminHomeVo(vo, parsed, ADMIN_HOME_SOURCE_ROOT, rootDomainId);
+				return vo;
+			}
+		}
+
+		vo.setModule("builtin");
+		vo.setUrl("sys/monitor");
+		vo.setExtraProps("");
+		vo.setTitle("");
+		vo.setSource(ADMIN_HOME_SOURCE_BUILTIN);
+		vo.setResolvedDomainId(null);
+		return vo;
+	}
+
+	private Long resolvePlatformRootDomainId() {
+		String plat = getPlatDomain();
+		if (ObjectUtils.isBlank(plat)) {
+			return null;
+		}
+		WoDomain root = this.domainService.queryDomainByName(plat.trim(), true);
+		return root != null ? root.getId() : null;
+	}
+
+	private AdminHomeParsed parseAdminHomeFromDomainRow(Long domainId) {
+		if (domainId == null) {
+			return null;
+		}
+		WoDomain domain = this.domainService.findById(domainId);
+		if (domain == null) {
+			return null;
+		}
+		return parseAdminHomeJson(domain.getAdminHomeConfig());
+	}
+
+	private AdminHomeParsed parseAdminHomeJson(String raw) {
+		if (ObjectUtils.isBlank(raw)) {
+			return null;
+		}
+		try {
+			Map<String, Object> m = JSON.readValue(raw.trim(), new TypeReference<Map<String, Object>>() {});
+			if (m == null || m.isEmpty()) {
+				return null;
+			}
+			String module = stringProp(m.get("module"));
+			if ("builtin".equalsIgnoreCase(module)) {
+				return null;
+			}
+			AdminHomeParsed p = new AdminHomeParsed();
+			p.module = module.isEmpty() ? "component" : module;
+			p.url = stringProp(m.get("url"));
+			p.extraProps = m.get("extraProps") == null ? "" : m.get("extraProps").toString();
+			p.title = stringProp(m.get("title"));
+			if ("component".equalsIgnoreCase(p.module) && p.url.isEmpty()) {
+				return null;
+			}
+			if ("redirect".equalsIgnoreCase(p.module) && p.url.isEmpty()) {
+				return null;
+			}
+			return p;
+		}
+		catch (Exception e) {
+			log.warn("admin_home_config JSON 解析失败: {}", e.getMessage());
+			return null;
+		}
+	}
+
+	private static String stringProp(Object o) {
+		return o == null ? "" : o.toString().trim();
+	}
+
+	private static void fillAdminHomeVo(AdminHomeConfigVO vo, AdminHomeParsed parsed, String source, Long resolvedDomainId) {
+		vo.setModule(parsed.module);
+		vo.setUrl(parsed.url);
+		vo.setExtraProps(parsed.extraProps == null ? "" : parsed.extraProps);
+		vo.setTitle(parsed.title);
+		vo.setSource(source);
+		vo.setResolvedDomainId(resolvedDomainId);
+	}
+
+	private static final class AdminHomeParsed {
+		String module;
+		String url;
+		String extraProps;
+		String title;
+	}
+
+	private String resolveOptionValue(Long domainId, String key, String defaultValue) {
+		if (domainId != null) {
+			String domainVal = this.domainOptionService.findOptionValue(domainId, key);
+			if (!ObjectUtils.isBlank(domainVal)) {
+				return domainVal.trim();
+			}
+		}
+		String global = findSettingsByKey(key);
+		if (ObjectUtils.isBlank(global)) {
+			return defaultValue == null ? "" : defaultValue;
+		}
+		return global.trim();
+	}
+
 	private List<AccountCenterTabDef> parseAccountCenterTabs(String raw) {
 		if (ObjectUtils.isBlank(raw)) {
 			return Collections.emptyList();
@@ -238,5 +383,49 @@ public class OptionsService extends EntityService<OptionsDao, WoOptions, Long> {
 			}
 		}
 		return out;
+	}
+
+	/**
+	 * 解析门户页脚 i18n 与 QR URL，写入 {@link Domain}（保留 wo_domain 存量 foot/flink/copy 作回退）。
+	 */
+	public void applyPortalFooter(com.wldos.platform.core.vo.Domain seo, Long domainId) {
+		if (seo == null || domainId == null) {
+			return;
+		}
+		WoDomain domain = this.domainService.findById(domainId);
+		if (domain == null) {
+			return;
+		}
+		String qr = domain.getPortalQrUrl();
+		if (qr != null && !qr.trim().isEmpty()) {
+			seo.setPortalQrUrl(qr.trim());
+		}
+		String i18nRaw = domain.getPortalFooterI18n();
+		if (ObjectUtils.isBlank(i18nRaw)) {
+			return;
+		}
+		try {
+			Map<String, PortalFooterBlock> map = JSON.readValue(i18nRaw.trim(),
+					new TypeReference<Map<String, PortalFooterBlock>>() {});
+			if (map == null || map.isEmpty()) {
+				return;
+			}
+			seo.setPortalFooterI18n(i18nRaw.trim());
+		}
+		catch (Exception e) {
+			log.warn("portal_footer_i18n 解析失败: {}", e.getMessage());
+		}
+	}
+
+	/** 开源默认页脚 i18n 模板（写入 wo_domain_option 时使用） */
+	public static String defaultOpenSourceFooterI18nJson() {
+		return "{"
+				+ "\"zh-CN\":{\"foot\":\"<p>由 WLDOS 社区驱动 · 共建开放站点</p>\","
+				+ "\"flink\":\"<a href=\\\"https://gitee.com/wldos/wldos\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">WLDOS 开源仓库</a>\","
+				+ "\"copy\":\"<span>© WLDOS Community</span>\"},"
+				+ "\"en-US\":{\"foot\":\"<p>Powered by WLDOS Community</p>\","
+				+ "\"flink\":\"<a href=\\\"https://gitee.com/wldos/wldos\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">WLDOS on Gitee</a>\","
+				+ "\"copy\":\"<span>© WLDOS Community</span>\"}"
+				+ "}";
 	}
 }

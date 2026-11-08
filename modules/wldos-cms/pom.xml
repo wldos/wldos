@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>wldos-parent</artifactId>
 		<groupId>com.wldos</groupId>
-		<version>3.0.0.0</version>
+		<version>3.0.3.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>wldos-cms</artifactId>
@@ -27,6 +27,11 @@
 		<dependency>
 			<groupId>com.wldos</groupId>
 			<artifactId>wldos-platform</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.wldos</groupId>
+			<artifactId>wldos-sdk-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>

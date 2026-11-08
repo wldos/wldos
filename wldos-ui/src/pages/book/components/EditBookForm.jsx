@@ -8,7 +8,6 @@ import {
 import {EditOutlined, PictureOutlined, SettingOutlined, UploadOutlined, DeleteOutlined} from '@ant-design/icons';
 import FullscreenModal from '@/components/FullscreenModal';
 import styles from "@/pages/book/create/components/Step2/index.less";
-import {fetchEnumMap} from "@/pages/book/create/service";
 import {
   AvatarView,
   formContent,
@@ -17,6 +16,10 @@ import {
 import ImageConfig from "./ImageConfig";
 import {fetchEnumPubType} from "@/services/enum";
 import {upParams} from "@/components/FileUpload";
+import {connect} from 'umi';
+import {canManageVisibilityScope} from '@/utils/userPrivilege';
+import {useBookFormPrivacyExtra} from '@/hooks/usePubVisibilityScopeEnum';
+import ContentAccessPolicyPanel from '@/pages/commercial/cms-access/components/ContentAccessPolicyPanel';
 
 const { SHOW_PARENT } = TreeSelect;
 const {Title, Text} = Typography;
@@ -88,6 +91,7 @@ const UpdateForm = (props) => {
     values,
     categories,
     tagData,
+    showVisibilityScope = false,
   } = props;
   const [coverUrl, setCoverUrl] = useState(undefined);
   const [pic1Url, setPic1Url] = useState(undefined);
@@ -96,22 +100,17 @@ const UpdateForm = (props) => {
   const [pic4Url, setPic4Url] = useState(undefined);
   const [previewUrl, setPreviewUrl] = useState(undefined);
   const [aspect, setAspect] = useState(1);
-  const [rewardStatus, setReward] = useState(false);
+  const privacyExtra = useBookFormPrivacyExtra(showVisibilityScope);
+  const policyRef = useRef(null);
   const cropRef = useRef(null);
   const [cropVisible, setCropVisible] = useState(false);
   const [cropSrc, setCropSrc] = useState('');
   const [type, setFileType] = useState(undefined);
   const [pubTypeOptions, setPubType] = useState([]);
-  const [privacyEnum, setPrivacy] = useState({});
   const [termValue, setTermValue] = useState([]);
   const [tagValue, setTagValue] = useState([]);
 
   useEffect(async () => {
-    const resData = await fetchEnumMap();
-    if (resData?.data) {
-      setPrivacy(resData.data);
-    }
-
     const res = await fetchEnumPubType();
     if (res?.data) {
       setPubType(res.data);
@@ -140,11 +139,6 @@ const UpdateForm = (props) => {
       undefined;
     setPreviewUrl(firstAvailable);
   }, []);
-
-  useEffect(() => {
-    if (values?.privacyLevel === 'reward') setReward(true);
-    else setReward(false);
-  }, [values?.id, values?.privacyLevel]);
 
   const { validateFields } = form;
 
@@ -244,6 +238,12 @@ const UpdateForm = (props) => {
       ...otherValues
     }
     const value = {...values, ...fieldsValue};
+    if (policyRef.current?.save) {
+      const policyOk = await policyRef.current.save();
+      if (policyOk === false) {
+        return;
+      }
+    }
     updateBook(value);
   };
 
@@ -341,13 +341,14 @@ const UpdateForm = (props) => {
                     >
                     </Select>
                   </Form.Item>
-                  {formContent(privacyEnum, typeProps, tagProps, undefined, {
-                    rewardStatus,
-                    onPrivacyChange: (e) => {
-                      if (e?.target?.value === 'reward') setReward(true);
-                      else setReward(false);
-                    },
-                  })}
+                  {formContent(typeProps, tagProps, undefined, privacyExtra)}
+                  <ContentAccessPolicyPanel
+                    ref={policyRef}
+                    pubId={values?.id}
+                    rootPubId={values?.id}
+                    parentPubId={values?.parentId}
+                    showSaveButton={false}
+                  />
                   <Form.Item
                     label="别名"
                     name="pubName"
@@ -418,4 +419,6 @@ const UpdateForm = (props) => {
   );
 };
 
-export default UpdateForm;
+export default connect(({ user }) => ({
+  showVisibilityScope: canManageVisibilityScope(user),
+}))(UpdateForm);

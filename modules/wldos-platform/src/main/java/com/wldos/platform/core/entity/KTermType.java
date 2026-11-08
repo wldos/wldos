@@ -12,12 +12,14 @@ package com.wldos.platform.core.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 import lombok.Getter;
 import lombok.Setter;
 
 @Table
 @Getter
 @Setter
+@RbacRowScope(domainId = true, comId = true, domainSharedRead = true)
 public class KTermType {
 	@Id
 	private Long id;
@@ -25,6 +27,10 @@ public class KTermType {
 	private Long termId;
 
 	private String classType;
+
+	private Long domainId;
+
+	private Long comId;
 
 	private String description;
 

@@ -87,9 +87,8 @@ public class MailService extends EntityService<MailDao, WoMail, Long> {
 
 			this.sendMail(to, content, message, cUid, cUip);
 		}
-		catch (Exception ignored) {
-			this.getLog().warn("发送html邮件时异常！请检查邮箱配置");
-			// throw new RuntimeException("发送html邮件时异常！", e);
+		catch (Exception e) {
+			this.getLog().warn("发送html邮件时异常！请检查邮箱配置：{}", e.getMessage());
 		}
 	}
 

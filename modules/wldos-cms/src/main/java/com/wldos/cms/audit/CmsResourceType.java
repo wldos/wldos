@@ -26,7 +26,7 @@ import io.github.wldos.framework.support.audit.ResourceTypeDict;
  * 通过 {@code k_pubs.pub_type} 列区分；{@code comment} 单独的 {@code k_comments} 表。
  *
  * @author Yuanxi Universe
- * @date 2026/05/05
+ * @date 2025/05/05
  * @version 1.0
  */
 public enum CmsResourceType {

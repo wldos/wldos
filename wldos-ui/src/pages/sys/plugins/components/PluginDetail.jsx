@@ -51,15 +51,6 @@ const PluginDetail = ({ visible, onCancel, plugin }) => {
       }}
     >
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="插件信息"
-          description={`查看插件 "${plugin.pluginName}" 的详细信息和运行状态。`}
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={

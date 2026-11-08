@@ -11,7 +11,6 @@ import {
   TreeSelect,
   Divider,
   Space,
-  Alert,
   Tooltip,
 } from 'antd';
 import {
@@ -37,7 +36,6 @@ const SysOptions = () => {
   })();
   const [tenantStatus, setTenantStatus] = useState(false);
   const [domainStatus, setDomainStatus] = useState(false);
-  const [commentStatus, setCommentStatus] = useState(false);
   const [emailStatus, setEmailStatus] = useState(false);
   const [treeData, setTreeData] = useState([]);
 
@@ -55,6 +53,32 @@ const SysOptions = () => {
         values.wldos_file_pic_srcset_enabled = true;
       } else if (typeof picSrcsetEn === 'string') {
         values.wldos_file_pic_srcset_enabled = picSrcsetEn === 'true';
+      }
+      const probeEn = values['wldos.gateway.probe.enabled'];
+      if (probeEn === undefined || probeEn === null || probeEn === '') {
+        values['wldos.gateway.probe.enabled'] = false;
+      } else if (typeof probeEn === 'string') {
+        values['wldos.gateway.probe.enabled'] = probeEn === 'true' || probeEn === '1';
+      }
+      const commentEnabled = values.wldos_cms_comment_enabled;
+      if (commentEnabled === undefined || commentEnabled === null || commentEnabled === '') {
+        values.wldos_cms_comment_enabled = true;
+      } else if (typeof commentEnabled === 'string') {
+        values.wldos_cms_comment_enabled = commentEnabled === 'true' || commentEnabled === '1';
+      }
+      const commentAudit = values.wldos_cms_comment_audit;
+      if (commentAudit === undefined || commentAudit === null || commentAudit === '') {
+        values.wldos_cms_comment_audit = false;
+      } else if (typeof commentAudit === 'string') {
+        values.wldos_cms_comment_audit = commentAudit === 'true' || commentAudit === '1';
+      }
+      if (values.spring_mail_port != null && values.spring_mail_port !== '') {
+        values.spring_mail_port = Number(values.spring_mail_port);
+      } else {
+        delete values.spring_mail_port;
+      }
+      if (!values.spring_mail_encryption) {
+        values.spring_mail_encryption = 'ssl';
       }
       form.setFieldsValue(values);
       // eslint-disable-next-line camelcase
@@ -129,14 +153,6 @@ const SysOptions = () => {
 
   return (
     <div style={{ padding: '24px' }}>
-      <Alert
-        message="系统参数配置"
-        description="配置系统的基础参数，包括平台设置、邮件配置和内容管理参数。修改后请及时保存配置。"
-        type="info"
-        showIcon
-        style={{ marginBottom: '24px' }}
-      />
-
       <Form
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 16 }}
@@ -198,7 +214,7 @@ const SysOptions = () => {
             label={
               <Space>
                 多租户模式
-                <Tooltip title="开启后支持多租户隔离，适合SaaS平台">
+                <Tooltip title="开启后支持多租户隔离。关闭后跳过 com_id 轴 SQL；若库内已有多个租户数据，非 admin 列表可能跨租户可见，生产环境不建议从 ON 切 OFF。">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -217,7 +233,7 @@ const SysOptions = () => {
             label={
               <Space>
                 多站点模式
-                <Tooltip title="开启后支持多域名站点管理">
+                <Tooltip title="开启后支持多域名站点管理。关闭后部分按站点过滤的 SQL 不生效；若已有按站独立的会员角色/分群，列表可能混在一起，跨站批量功能不可用。">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -411,6 +427,19 @@ const SysOptions = () => {
           </Form.Item>
 
           <Form.Item
+            name="wldos_cms_comment_enabled"
+            label={
+              <Space>
+                站点评论
+              </Space>
+            }
+            valuePropName="checked"
+            extra="与系统参数键 wldos_cms_comment_enabled 对应；默认开启，关闭即全站隐藏列表与发表"
+          >
+            <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+          </Form.Item>
+
+          <Form.Item
             name="wldos_cms_comment_audit"
             label={
               <Space>
@@ -420,13 +449,10 @@ const SysOptions = () => {
                 </Tooltip>
               </Space>
             }
+            valuePropName="checked"
+            extra="与系统参数键 wldos_cms_comment_audit 对应；CommentService 读取 true/false"
           >
-            <Switch
-              checkedChildren="开启"
-              unCheckedChildren="关闭"
-              checked={commentStatus}
-              onChange={(e) => setCommentStatus(e)}
-            />
+            <Switch checkedChildren="开启" unCheckedChildren="关闭" />
           </Form.Item>
 
           <Form.Item
@@ -499,12 +525,36 @@ const SysOptions = () => {
                     max: 60,
                   },
                 ]}
-                extra="例如：smtp.qq.com、smtp.163.com"
+                extra="填写邮件服务商提供的 SMTP 主机名"
               >
                 <Input
                   placeholder="请输入SMTP服务器地址"
                   prefix="🔗"
                 />
+              </Form.Item>
+
+              <Form.Item
+                name="spring_mail_encryption"
+                label="SMTP加密"
+                initialValue="ssl"
+                rules={[{ required: true, message: '请选择 SMTP 加密方式' }]}
+                extra="SSL 与 STARTTLS 互斥：465 常用 SSL；25/587 常用 STARTTLS；以服务商文档为准"
+              >
+                <Select
+                  options={[
+                    { label: 'SSL（隐式加密，如 465）', value: 'ssl' },
+                    { label: 'STARTTLS（先连后升级，如 25/587）', value: 'starttls' },
+                    { label: '无加密（不推荐，仅内网或测试）', value: 'none' },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="spring_mail_port"
+                label="SMTP端口"
+                extra="可选；留空时按加密方式使用常用端口（SSL→465，STARTTLS→587，无加密→25）"
+              >
+                <InputNumber min={1} max={65535} style={{ width: '100%' }} placeholder="留空则自动" />
               </Form.Item>
 
               <Form.Item
@@ -535,7 +585,7 @@ const SysOptions = () => {
                     max: 120,
                   },
                 ]}
-                extra="QQ邮箱需要使用授权码，不是登录密码"
+                extra="多为 SMTP 授权码或独立密码，以服务商说明为准"
               >
                 <Input.Password
                   placeholder="请输入SMTP认证密码"
@@ -564,16 +614,68 @@ const SysOptions = () => {
                   prefix="📧"
                 />
               </Form.Item>
-
-              <Alert
-                message="邮件配置说明"
-                description="请确保SMTP服务器支持您使用的邮箱服务商。QQ邮箱需要开启SMTP服务并获取授权码。"
-                type="info"
-                showIcon
-                style={{ marginTop: '16px' }}
-              />
             </>
           )}
+        </Card>
+        <Card
+          title={
+            <Space>
+              <SettingOutlined />
+              网关探针路径
+            </Space>
+          }
+          style={{ marginTop: 24 }}
+        >
+          <Form.Item
+            name="wldos.gateway.probe.enabled"
+            label={
+              <Space>
+                启用探针拦截
+                <Tooltip title="命中下方路径前缀时直接 404 空响应，不写入系统日志">
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </Space>
+            }
+            valuePropName="checked"
+            getValueFromEvent={(checked) => (checked ? 'true' : 'false')}
+            getValueProps={(value) => ({
+              checked: value === true || value === 'true' || value === '1',
+            })}
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="wldos.gateway.probe.paths"
+            label={
+              <Space>
+                路径前缀列表
+                <Tooltip title="逗号分隔，与 gateway.ignore.path 相同的前缀匹配规则；从系统日志看到新扫描 URI 时可追加">
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </Space>
+            }
+            extra="示例：/.env,/.git,/wp-admin；保存后立即生效（auto_reload）"
+          >
+            <Input.TextArea rows={3} placeholder="/.env,/.git,/wp-admin" />
+          </Form.Item>
+          <Form.Item
+            name="wldos.gateway.probe.audit-enabled"
+            label={
+              <Space>
+                探针命中写系统日志
+                <Tooltip title="开启后对 probe.paths 命中记录 PROBE_HIT（仍 404 响应，建议配合聚合）">
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </Space>
+            }
+            valuePropName="checked"
+            getValueFromEvent={(checked) => (checked ? 'true' : 'false')}
+            getValueProps={(value) => ({
+              checked: value === true || value === 'true' || value === '1',
+            })}
+          >
+            <Switch />
+          </Form.Item>
         </Card>
         {/* 支付配置分组 */}
         <Card title="支付配置" style={{ marginTop: 24 }}>

@@ -13,6 +13,7 @@ import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.Result;
 import com.wldos.framework.mvc.controller.NonEntityController;
+import com.wldos.platform.audit.entity.WoOpLog;
 import com.wldos.platform.audit.service.OpLogService;
 import com.wldos.platform.audit.vo.OpLogItem;
 
@@ -40,7 +41,7 @@ import io.swagger.annotations.ApiOperation;
  * {@code EntityController}，避免自动暴露 add / update / delete 通用端点，违反"一次写入不可改"的合规要求。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Api(tags = "操作日志（后台）")
@@ -58,7 +59,10 @@ public class OpLogAdminController extends NonEntityController<OpLogService> {
 			@ApiImplicitParam(name = "action", value = "操作动作", dataTypeClass = String.class, paramType = "query"),
 			@ApiImplicitParam(name = "resourceType", value = "资源类型", dataTypeClass = String.class, paramType = "query"),
 			@ApiImplicitParam(name = "userId", value = "操作者用户ID", dataTypeClass = Long.class, paramType = "query"),
-			@ApiImplicitParam(name = "ip", value = "客户端 IP", dataTypeClass = String.class, paramType = "query")
+			@ApiImplicitParam(name = "targetComId", value = "目标租户 ID（操作对象归属）", dataTypeClass = Long.class, paramType = "query"),
+			@ApiImplicitParam(name = "ip", value = "客户端 IP", dataTypeClass = String.class, paramType = "query"),
+			@ApiImplicitParam(name = "comId", value = "目标租户 ID（超管 lens）", dataTypeClass = Long.class, paramType = "query"),
+			@ApiImplicitParam(name = "domainId", value = "目标站点 ID（按站点收窄）", dataTypeClass = Long.class, paramType = "query")
 	})
 	@GetMapping("")
 	public PageData<OpLogItem> list(@RequestParam Map<String, Object> params) {
@@ -66,10 +70,7 @@ public class OpLogAdminController extends NonEntityController<OpLogService> {
 		// 权限分层：
 		// - 超级管理员：可查看全量操作日志（不做租户/域隔离）
 		// - 业务管理员（含租户管理员/域管理员）：按租户+域双隔离
-		if (!this.isAdmin(this.getUserId())) {
-			this.applyTenantFilter(pageQuery);
-			this.applyDomainFilter(pageQuery);
-		}
+		this.applyAuditLogListScope(pageQuery, WoOpLog.class);
 		return this.service.queryList(pageQuery);
 	}
 

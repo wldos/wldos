@@ -57,4 +57,7 @@ public class LoginAuthParams implements Serializable {
 
 	@ApiModelProperty(value = "勾选的协议ID列表（LOGIN类型），用于合规追溯", example = "[1]")
 	private List<Long> agreementIds;
+
+	@ApiModelProperty(value = "体验沙箱 id（门户 Host 登录链接 query 参数 trialSandboxId）", example = "2050123456789012345")
+	private Long trialSandboxId;
 }

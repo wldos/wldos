@@ -1,11 +1,10 @@
 import React from 'react';
-import {Button, Form, Input, Card, Space, Tooltip, Alert, Select} from 'antd';
+import {Button, Form, Input, Card, Space, Tooltip} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
-import {TagOutlined, KeyOutlined, SettingOutlined, InfoCircleOutlined, EditOutlined} from '@ant-design/icons';
+import {TagOutlined, KeyOutlined, InfoCircleOutlined, EditOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const {TextArea} = Input;
-const {Option} = Select;
 
 const formLayout = {
   labelCol: {
@@ -34,15 +33,6 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="标签配置"
-          description="编辑标签信息，修改标签的基本信息和发布状态。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -129,42 +119,6 @@ const UpdateForm = (props) => {
               placeholder="请输入标签描述，最多200个字符"
               style={{ resize: 'vertical' }}
             />
-          </FormItem>
-        </Card>
-
-        {/* 标签配置 */}
-        <Card
-          title={
-            <Space>
-              <SettingOutlined style={{ color: '#52c41a' }} />
-              标签配置
-            </Space>
-          }
-          size="small"
-          extra={
-            <Tooltip title="标签的状态配置">
-              <InfoCircleOutlined />
-            </Tooltip>
-          }
-        >
-          <FormItem
-            name="infoFlag"
-            label={
-              <Space>
-                信息发布状态
-                <Tooltip title="控制标签下的内容是否可以发布">
-                  <InfoCircleOutlined style={{ color: '#999' }} />
-                </Tooltip>
-              </Space>
-            }
-          >
-            <Select
-              placeholder="请选择信息发布状态"
-              style={{ width: '100%' }}
-            >
-              <Option value="1">开启</Option>
-              <Option value="0">关闭</Option>
-            </Select>
           </FormItem>
         </Card>
       </div>

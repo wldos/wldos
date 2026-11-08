@@ -65,7 +65,7 @@ public class DocController extends NonEntityController<DocService> {
 		pageQuery.pushParam("pubStatus", PubStatusEnum.PUBLISH.toString());
 		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
 		pageQuery.pushParam("pubType", PubTypeEnum.DOC.getName());
-		this.applyDomainFilter(pageQuery);
+		this.applyPortalDomainScope(pageQuery);
 
 		return this.service.queryDocList(pageQuery);
 	}

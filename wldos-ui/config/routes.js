@@ -88,11 +88,11 @@ const routes = [
         routes: [
           {
             path: '/doc',
-            redirect: '/doc/book'
+            component: './doc',
           },
           {
             path: '/doc/',
-            redirect: '/doc/book'
+            component: './doc',
           },
           {
             path: '/doc/book',
@@ -117,11 +117,11 @@ const routes = [
         routes: [
           {
             path: '/admin',
-            component: './sys/monitor',
+            component: './admin/home',
           },
           {
             path: '/admin/sys',
-            component: './sys/monitor',
+            component: './admin/home',
           },
           {
             path: '/admin/sys',
@@ -139,6 +139,16 @@ const routes = [
                 path: '/admin/sys/domainOption',
                 component: './sys/domain-option',
                 name: '域级系统参数',
+              },
+              {
+                path: '/admin/sys/scopeDimension',
+                component: './sys/scope-dimension',
+                name: '业务字段',
+              },
+              {
+                path: '/admin/sys/objectScopeBind',
+                component: './sys/object-scope-bind',
+                name: '实体字段绑定',
               },
               {
                 path: '/admin/sys/reg',
@@ -169,10 +179,12 @@ const routes = [
               {
                 path: '/admin/res/app',
                 component: './sys/app',
+                name: '应用管理',
               },
               {
                 path: '/admin/res/res',
                 component: './sys/res',
+                name: '资源管理',
               },
               {
                 path: '/admin/res/front',
@@ -187,6 +199,7 @@ const routes = [
               {
                 path: '/admin/auth/role',
                 component: './sys/role',
+                name: '角色管理',
               },
               { path: '/*', component: './admindynamicrouter', hideInMenu: true },
             ]
@@ -195,8 +208,13 @@ const routes = [
             path: '/admin/organ',
             routes: [
               {
-                path: '/admin/organ/architecture',
-                component: './sys/organ/architecture',
+                path: '/admin/organ/platform',
+                component: './sys/platform-operator',
+                name: '平台运营',
+              },
+              {
+                path: '/admin/organ/provision',
+                component: './sys/organ/provision',
               },
               {
                 path: '/admin/organ/com',
@@ -207,12 +225,23 @@ const routes = [
                 component: './sys/arch',
               },
               {
+                path: '/admin/organ/architecture',
+                component: './sys/organ/architecture',
+              },
+              {
                 path: '/admin/organ/org',
                 component: './sys/org',
+                name: '组织管理',
+              },
+              {
+                path: '/admin/organ/segment',
+                component: './sys/organ/segment',
+                name: '会员分群',
               },
               {
                 path: '/admin/organ/user',
                 component: './sys/user',
+                name: '用户管理',
               },
               { path: '/*', component: './admindynamicrouter', hideInMenu: true },
             ]
@@ -231,6 +260,7 @@ const routes = [
               {
                 path: '/admin/dom/domain',
                 component: './sys/domain',
+                name: '域管理',
               },
               { path: '/*', component: './admindynamicrouter', hideInMenu: true },
             ],
@@ -382,22 +412,6 @@ const routes = [
             component: './home',
           },
           {
-            path: '/category',
-            component: './home/category',
-          },
-          {
-            path: '/content',
-            component: './home/productCategory',
-          },
-          { // 因umi框架前后两端的路由支持不够理想，采用小类的模式确定分类路由，slug为小类；content 表示内容付费（原 product 合集）
-            path: '/content/category/:slugCategory',
-            component: './home/productCategory',
-          },
-          {
-            path: '/content/tag/:slugTag',
-            component: './home/productTag',
-          },
-          {
             path: '/archives',
             component: './home/archivesCategory',
           },
@@ -423,7 +437,51 @@ const routes = [
           },
           {
             path: '/archives-author/:userId.html',
-            component: './account/center/components/Articles'
+            component: './account/center/components/ArchivesAuthorRoute',
+          },
+          {
+            path: '/archives-author/:userId/page/:page',
+            component: './account/center/components/ArchivesAuthorRoute',
+          },
+          {
+            path: '/archives-like/:userId.html',
+            component: './account/center/components/Articles',
+          },
+          {
+            path: '/archives-like/:userId/page/:page',
+            component: './account/center/components/Articles',
+          },
+          {
+            path: '/archives-star/:userId.html',
+            component: './account/center/components/Articles',
+          },
+          {
+            path: '/archives-star/:userId/page/:page',
+            component: './account/center/components/Articles',
+          },
+          {
+            path: '/archives-:id.html',
+            component: './book/article',
+          },
+          {
+            path: '/archives-:id/:preview',
+            component: './book/article',
+          },
+          {
+            path: '/category',
+            component: './home/category',
+          },
+          {
+            path: '/content',
+            component: './home/productCategory',
+          },
+          { // 因umi框架前后两端的路由支持不够理想，采用小类的模式确定分类路由，slug为小类；content 表示内容付费（原 product 合集）
+            path: '/content/category/:slugCategory',
+            component: './home/productCategory',
+          },
+          {
+            path: '/content/tag/:slugTag',
+            component: './home/productTag',
           },
           {
             path: '/info',
@@ -451,7 +509,11 @@ const routes = [
           },
           {
             path: '/info-author/:userId.html',
-            component: './account/center/components/InfoAuthor'
+            component: './account/center/components/InfoAuthorRoute',
+          },
+          {
+            path: '/info-author/:userId/page/:page',
+            component: './account/center/components/InfoAuthorRoute',
           },
           {
             path: '/search',
@@ -482,20 +544,12 @@ const routes = [
             component: './book/detail/info',
           },
           {
-            path: '/archives-:id.html',
-            component: './book/article',
-          },
-          {
             path: '/content-:bookId/:preview',
             component: './book/detail',
           },
           {
             path: '/info-:infoId/:preview',
             component: './book/detail/info',
-          },
-          {
-            path: '/archives-:id/:preview',
-            component: './book/article',
           },
           {
             path: '/element-:id/:preview',
@@ -516,12 +570,11 @@ const routes = [
                 path: '/account/settings',
                 component: './account/settings',
               },
-              {
-                path: '/account/referral',
-                component: './commercial/referral',
-                name: '个人推荐中心',
-              },
             ],
+          },
+          {
+            path: '/404',
+            component: '404',
           },
           {
             path: '/:slug',

@@ -10,6 +10,8 @@ package com.wldos.platform.auth.vo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.github.wldos.framework.support.auth.vo.Token;
 
 import io.swagger.annotations.ApiModel;
@@ -43,4 +45,8 @@ public class Login {
 
 	@ApiModelProperty(value = "登录类型：account=账号密码, mobile=手机验证码", example = "account")
 	private String type;
+
+	/** 登录审计专用失败原因，不序列化到 API 响应。 */
+	@JsonIgnore
+	private String auditFailReason;
 }

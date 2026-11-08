@@ -32,8 +32,10 @@ export async function updateEntity(params) {
     data: params,
   });
 }
-export async function queryLayerCategory() {
-  return request(`${prefix}/category/treeSelect`);
+export async function queryLayerCategory(params) {
+  return request(`${prefix}/category/treeSelect`, {
+    params: params || {},
+  });
 }
 export async function queryFlatCategory() {
   return request(`${prefix}/category/flatTree`);
@@ -54,9 +56,9 @@ export async function queryTopCategory() {
 export async function queryPluginCategory() {
   return request(`${prefix}/plugin/category/treeSelect`);
 }
-export async function queryCategoryTreeByType(classType) {
+export async function queryCategoryTreeByType(classType, scopeParams) {
   return request(`${prefix}/term/category/treeSelect`, {
-    params: { classType },
+    params: { classType, ...(scopeParams || {}) },
   });
 }
 export async function infoFlag(params) {

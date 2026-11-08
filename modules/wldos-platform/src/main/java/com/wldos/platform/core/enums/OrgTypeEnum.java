@@ -18,6 +18,7 @@ import io.github.wldos.common.Constants;
 public enum OrgTypeEnum {
 
 	PLATFORM("系统用户组", Constants.ENUM_TYPE_ORG_PLAT),
+	SEGMENT("会员分群", Constants.ENUM_TYPE_ORG_SEGMENT),
 	ORG("组织机构", "org"),
 	ROLE_ORG("角色组", "role_org"),
 	TEAM("团队", "team"),

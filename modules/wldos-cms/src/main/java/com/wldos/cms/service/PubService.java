@@ -10,11 +10,18 @@ package com.wldos.cms.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import com.wldos.cms.dao.PubAssociationPickerDao;
 import com.wldos.cms.dao.PubDao;
 import com.wldos.cms.entity.KPubs;
 import com.wldos.cms.entity.KStars;
@@ -28,8 +35,12 @@ import com.wldos.cms.vo.PubMember;
 import com.wldos.cms.vo.PubType;
 import com.wldos.cms.vo.PubUnit;
 import com.wldos.cms.vo.SPub;
+import com.wldos.cms.vo.WorkbenchListScope;
 import com.wldos.framework.mvc.service.EntityService;
 import io.github.wldos.common.Constants;
+import io.github.wldos.common.enums.DeleteFlagEnum;
+import io.github.wldos.common.exception.BaseException;
+import io.github.wldos.common.res.ResultCode;
 import io.github.wldos.common.dto.SQLTable;
 import io.github.wldos.common.res.PageQuery;
 import io.github.wldos.common.res.PageData;
@@ -39,10 +50,13 @@ import com.wldos.platform.core.dto.TermObject;
 import com.wldos.platform.core.entity.KTermObject;
 import com.wldos.platform.core.service.TermService;
 import io.github.wldos.platform.support.cms.PubOpener;
+import io.github.wldos.platform.asset.CmsTemplateOfflineCallback;
+import io.github.wldos.platform.asset.CmsTemplatePublishedCallback;
 import io.github.wldos.platform.support.cms.dto.ContModelDto;
 import io.github.wldos.platform.support.cms.entity.KPubmeta;
 import io.github.wldos.platform.support.cms.model.KModelMetaKey;
 import com.wldos.cms.query.CmsKpubsDiscoverySql;
+import com.wldos.cms.search.CmsSearchIndexSyncService;
 import io.github.wldos.platform.support.region.vo.City;
 import io.github.wldos.platform.support.term.dto.Term;
 import io.github.wldos.platform.support.term.enums.TermTypeEnum;
@@ -51,7 +65,9 @@ import com.wldos.platform.core.service.RegionService;
 import com.wldos.platform.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,13 +92,44 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 
 	private final RegionService regionService;
 
+	private final ObjectProvider<CmsTemplatePublishedCallback> cmsTemplatePublishedCallback;
+
+	private final ObjectProvider<CmsTemplateOfflineCallback> cmsTemplateOfflineCallback;
+
+	private final ObjectProvider<CmsSearchIndexSyncService> cmsSearchIndexSyncService;
+
+    private final PubDraftService pubDraftService;
+
+	private final PubAssociationPickerDao pubAssociationPickerDao;
+
+	@Value("${wldos.cms.workbench.reorder-max-siblings:3000}")
+	private int workbenchReorderMaxSiblings;
+
 	@Autowired
 	public PubService(UserService userService, TermService termService, PubmetaService pubmetaService,
-			RegionService regionService) {
+			RegionService regionService,
+			ObjectProvider<CmsTemplatePublishedCallback> cmsTemplatePublishedCallback,
+			ObjectProvider<CmsTemplateOfflineCallback> cmsTemplateOfflineCallback,
+			ObjectProvider<CmsSearchIndexSyncService> cmsSearchIndexSyncService,
+                      PubDraftService pubDraftService,
+                      PubAssociationPickerDao pubAssociationPickerDao) {
 		this.userService = userService;
 		this.termService = termService;
 		this.pubmetaService = pubmetaService;
 		this.regionService = regionService;
+		this.cmsTemplatePublishedCallback = cmsTemplatePublishedCallback;
+		this.cmsTemplateOfflineCallback = cmsTemplateOfflineCallback;
+		this.cmsSearchIndexSyncService = cmsSearchIndexSyncService;
+        this.pubDraftService = pubDraftService;
+		this.pubAssociationPickerDao = pubAssociationPickerDao;
+	}
+
+	/**
+	 * 产品/协议等「关联 CMS 文档」选择器列表（专用 Dao，不经过 {@link #queryAdminPubs}）。
+	 */
+	public PageData<AuditPub> queryAssociationPickerPubs(PageQuery pageQuery) {
+		PageQuery query = pageQuery != null ? pageQuery : new PageQuery();
+		return this.pubAssociationPickerDao.pagePublishedForAssociation(query);
 	}
 
 	/**
@@ -106,6 +153,34 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	public ContModelDto queryContModel(Long pid, Long domainId) {
 
 		return this.entityRepo.queryContModel(pid, domainId);
+	}
+
+	public ContModelDto queryWorkingContModel(Long canonicalPubId) {
+		return this.pubDraftService.queryWorkingContModel(canonicalPubId);
+	}
+
+	public ContModelDto queryWorkingContModel(Long canonicalPubId, Long domainId) {
+		return this.pubDraftService.queryWorkingContModel(canonicalPubId, domainId);
+	}
+
+	public void assertPublished(Long pubId) {
+		if (pubId == null) {
+			throw new IllegalArgumentException("pubId 不能为空");
+		}
+		Long canonicalId = this.resolveCanonicalId(pubId);
+		if (canonicalId == null) {
+			throw new IllegalArgumentException("关联的 CMS 正式内容不存在: " + pubId);
+		}
+		KPubs pub = this.findById(canonicalId);
+		if (pub == null || pub.getOriginPubId() != null) {
+			throw new IllegalArgumentException("关联的 CMS 正式内容不存在: " + pubId);
+		}
+		if (!DeleteFlagEnum.NORMAL.toString().equals(pub.getDeleteFlag())) {
+			throw new IllegalArgumentException("关联的 CMS 内容未发布: " + pubId);
+		}
+		if (!this.isPublishedCanonical(pub)) {
+			throw new IllegalArgumentException("关联的 CMS 内容未发布: " + pubId);
+		}
 	}
 
 	/**
@@ -382,14 +457,12 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @param pageQuery 查询参数
 	 * @return 业务对象列表，仅关注概要信息：id、title、createBy、termTypeIds、tags、updateTime、**count等
 	 */
-	public PageData<AuditPub> queryAdminPubs(Long domainId, PageQuery pageQuery) {
+	public PageData<AuditPub> queryAdminPubs(PageQuery pageQuery) {
 
-		// 域隔离
-		pageQuery.appendParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
 		// 管理端列表：不过滤 UNLISTED / INTERNAL_ONLY
 		pageQuery.pushParam(CmsKpubsDiscoverySql.CONDITION_INCLUDE_UNLISTED, Boolean.TRUE);
 
-		PageData<AuditPub> pubUnitPage = this.execQueryForPage(AuditPub.class, KPubs.class, KTermObject.class, "k_pubs", "k_term_object", "object_id", pageQuery);
+		PageData<AuditPub> pubUnitPage = this.execQueryAdminCanonicalPubs(pageQuery);
 
 		List<AuditPub> pubUnits = pubUnitPage.getRows();
 
@@ -420,6 +493,7 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 			pub.setTerms(termTypeList.get(id));
 
 			pub.setViews(viewsMap.get(id));
+			pub.setHasPendingDraft(this.pubDraftService.hasActiveDraft(id));
 		}).collect(Collectors.toList());
 
 		pubUnitPage.setRows(pubUnits);
@@ -435,13 +509,36 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 * @return 检索结果集
 	 */
 	public PageData<SPub> searchPubs(Long domainId, PageQuery pageQuery, String keywords) {
+		return searchPubsByVisibility(domainId, pageQuery, keywords, false);
+	}
 
-		String sql = "select s.id, s.pub_title, s.pub_type from k_pubs s where s.delete_flag = 'normal' and s.pub_status in ('publish', 'inherit') "
-				+ "and (COALESCE(NULLIF(TRIM(s.visibility_scope), ''), '" + CmsKpubsDiscoverySql.SCOPE_PUBLIC_LISTED + "') NOT IN ('"
-				+ CmsKpubsDiscoverySql.SCOPE_UNLISTED + "', '" + CmsKpubsDiscoverySql.SCOPE_INTERNAL_ONLY + "')) "
+	/**
+	 * 内部资料全文检索：含 {@code INTERNAL_ONLY}，仍排除 {@code UNLISTED}；须登录且域内鉴权由网关/调用方保证。
+	 */
+	public PageData<SPub> searchInternalPubs(Long domainId, PageQuery pageQuery, String keywords) {
+		return searchPubsByVisibility(domainId, pageQuery, keywords, true);
+	}
+
+	private PageData<SPub> searchPubsByVisibility(Long domainId, PageQuery pageQuery, String keywords,
+			boolean includeInternal) {
+		String visibilityClause;
+		if (includeInternal) {
+			visibilityClause = "and (COALESCE(NULLIF(TRIM(s.visibility_scope), ''), '"
+					+ CmsKpubsDiscoverySql.SCOPE_PUBLIC_LISTED + "') NOT IN ('"
+					+ CmsKpubsDiscoverySql.SCOPE_UNLISTED + "')) ";
+		}
+		else {
+			visibilityClause = "and (COALESCE(NULLIF(TRIM(s.visibility_scope), ''), '"
+					+ CmsKpubsDiscoverySql.SCOPE_PUBLIC_LISTED + "') NOT IN ('"
+					+ CmsKpubsDiscoverySql.SCOPE_UNLISTED + "', '"
+					+ CmsKpubsDiscoverySql.SCOPE_INTERNAL_ONLY + "')) ";
+		}
+		String sql = "select s.id, s.pub_title, s.pub_type from k_pubs s where s.delete_flag = 'normal' and s.origin_pub_id is null and s.pub_status in ('publish', 'inherit') "
+				+ visibilityClause
 				+ "and (instr(s.pub_title, ?)>0 or instr(s.pub_content, ?) >0) and domain_id=?";
 
-		return this.commonOperate.execQueryForPageNoOrder(SPub.class, sql, pageQuery.getCurrent(), pageQuery.getPageSize(), keywords, keywords, domainId);
+		return this.commonOperate.execQueryForPageNoOrder(SPub.class, sql, pageQuery.getCurrent(), pageQuery.getPageSize(),
+				keywords, keywords, domainId);
 	}
 
 	/**
@@ -631,6 +728,223 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 		return this.entityRepo.queryNextChapter(pid, parentId);
 	}
 
+	/** 同级末尾序号：未传 displayOrder 的新增内容用 MAX+1，与 {@link #reorderDisplayOrder} 的 1..n 一致。 */
+	public int allocateNextDisplayOrder(Long parentId) {
+		Long pid = parentId != null ? parentId : Constants.TOP_PUB_ID;
+		Integer max = this.entityRepo.maxDisplayOrderByParent(pid);
+		return (max == null ? 0 : max) + 1;
+	}
+
+	public long countPolicyWorkbenchWorks(Long userId, String pubType) {
+		Long count = this.entityRepo.countCanonicalByAuthorParentAndType(userId, Constants.TOP_PUB_ID, pubType);
+		return count != null ? count.longValue() : 0L;
+	}
+
+	public long countPolicyWorkbenchChapters(Long userId, Long bookId) {
+		Long count = this.entityRepo.countCanonicalByAuthorParentAndType(userId, bookId, PubTypeEnum.CHAPTER.getName());
+		return count != null ? count.longValue() : 0L;
+	}
+
+	public void shiftSiblingOrder(Long id, int step, Long userId, Long domainId, WorkbenchListScope scope) {
+		if (step == 0 || id == null) {
+			return;
+		}
+		KPubs row = this.findById(id);
+		if (row == null) {
+			throw new BaseException("内容不存在", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		List<Long> orderedIds;
+		if (PubTypeEnum.CHAPTER.getName().equals(row.getPubType())) {
+			orderedIds = this.listChapterIdsForWorkbench(row.getParentId(), scope);
+		} else {
+			orderedIds = this.listMainWorkIdsForWorkbench(userId, domainId, scope);
+		}
+		if (orderedIds == null || orderedIds.size() < 2) {
+			return;
+		}
+		this.assertWorkbenchReorderSiblingLimit(orderedIds.size());
+		int index = orderedIds.indexOf(id);
+		if (index < 0) {
+			throw new BaseException("内容不在可排序列表中", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		int target = index + step;
+		if (target < 0 || target >= orderedIds.size()) {
+			return;
+		}
+		Collections.swap(orderedIds, index, target);
+		this.reorderDisplayOrder(orderedIds, row.getParentId(), userId);
+	}
+
+	/**
+	 * 在当前页 id 集合内重排：在全量 sibling 序中定位其连续区间并替换，再一次性写 display_order。
+	 *
+	 * @param pageOrderedIds 当前页按目标顺序排列的 id（须为全量序中的连续一段）
+	 * @param userId 作者
+	 * @param chapterBookId 非空则按该作品下章节 sibling 加载全量序，否则按作者作品列表
+	 */
+	public void reorderSiblingPageSegment(List<Long> pageOrderedIds, Long userId, Long chapterBookId, Long domainId,
+			WorkbenchListScope scope) {
+		if (pageOrderedIds == null || pageOrderedIds.isEmpty()) {
+			return;
+		}
+		Set<Long> pageSet = new HashSet<>(pageOrderedIds);
+		if (pageSet.size() != pageOrderedIds.size()) {
+			throw new BaseException("排序列表存在重复 id", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		List<Long> full;
+		Long expectedParent;
+		if (chapterBookId != null) {
+			full = this.listChapterIdsForWorkbench(chapterBookId, scope);
+			expectedParent = chapterBookId;
+		} else {
+			full = this.listMainWorkIdsForWorkbench(userId, domainId, scope);
+			expectedParent = Constants.TOP_PUB_ID;
+		}
+		if (full == null || full.isEmpty()) {
+			throw new BaseException("内容不在可排序列表中", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		this.assertWorkbenchReorderSiblingLimit(full.size());
+		int first = -1;
+		int last = -1;
+		for (int i = 0; i < full.size(); i += 1) {
+			if (pageSet.contains(full.get(i))) {
+				if (first < 0) {
+					first = i;
+				}
+				last = i;
+			}
+		}
+		if (first < 0) {
+			throw new BaseException("内容不在可排序列表中", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		int span = last - first + 1;
+		if (span != pageOrderedIds.size()) {
+			throw new BaseException("仅支持当前页连续条目排序", ResultCode.VALIDATION_ERROR.getCode());
+		}
+		for (int i = first; i <= last; i += 1) {
+			if (!pageSet.contains(full.get(i))) {
+				throw new BaseException("仅支持当前页连续条目排序", ResultCode.VALIDATION_ERROR.getCode());
+			}
+		}
+		List<Long> merged = new ArrayList<>(full.subList(0, first));
+		merged.addAll(pageOrderedIds);
+		merged.addAll(full.subList(last + 1, full.size()));
+		this.reorderDisplayOrder(merged, expectedParent, userId);
+	}
+
+	private void assertWorkbenchReorderSiblingLimit(int siblingCount) {
+		if (siblingCount > this.workbenchReorderMaxSiblings) {
+			throw new BaseException(
+					"同级内容过多（" + siblingCount + " 条），超过创作工作台排序上限 "
+							+ this.workbenchReorderMaxSiblings + " 条，请拆分作品或减少章节后再试",
+					ResultCode.VALIDATION_ERROR.getCode());
+		}
+	}
+
+	private List<String> scopePubTypes(WorkbenchListScope scope) {
+		return scope != null ? scope.getPubTypes() : null;
+	}
+
+	private String scopeKeyword(WorkbenchListScope scope) {
+		return scope != null ? scope.getKeyword() : null;
+	}
+
+	/** 与 {@code GET /space/book} 列表 SQL 范围一致（域、类型、keyword）。 */
+	private List<Long> listMainWorkIdsForWorkbench(Long userId, Long domainId, WorkbenchListScope scope) {
+		PageQuery pageQuery = this.buildWorkbenchWorkListQuery(userId, domainId, scopePubTypes(scope),
+				scopeKeyword(scope));
+		return this.queryOrderedPubIds(pageQuery, KTermObject.class, "k_term_object", "object_id");
+	}
+
+	private List<Long> listChapterIdsForWorkbench(Long bookId, WorkbenchListScope scope) {
+		PageQuery pageQuery = new PageQuery();
+		pageQuery.pushParam("parentId", bookId);
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		String keyword = scopeKeyword(scope);
+		if (!ObjectUtils.isBlank(keyword)) {
+			pageQuery.pushParam("keyword", keyword);
+		}
+		pageQuery.setSorter(Sort.by(Sort.Order.asc("displayOrder"), Sort.Order.asc("id")));
+		return this.queryOrderedPubIds(pageQuery, KTermObject.class, "k_term_object", "object_id");
+	}
+
+	private PageQuery buildWorkbenchWorkListQuery(Long userId, Long domainId, List<String> pubTypes, String keyword) {
+		PageQuery pageQuery = new PageQuery();
+		pageQuery.pushParam("createBy", userId);
+		pageQuery.pushParam("deleteFlag", DeleteFlagEnum.NORMAL.toString());
+		pageQuery.pushParam(CmsKpubsDiscoverySql.CONDITION_INCLUDE_UNLISTED, Boolean.TRUE);
+		if (domainId != null) {
+			pageQuery.pushParam(Constants.COMMON_KEY_DOMAIN_COLUMN, domainId);
+		}
+		pageQuery.pushFilter("parentId", Constants.TOP_PUB_ID);
+		if (pubTypes != null && !pubTypes.isEmpty()) {
+			pageQuery.pushFilter("pubType", pubTypes);
+		}
+		if (!ObjectUtils.isBlank(keyword)) {
+			pageQuery.pushParam("keyword", keyword);
+		}
+		pageQuery.setSorter(Sort.by(Sort.Order.asc("displayOrder"), Sort.Order.asc("id")));
+		return pageQuery;
+	}
+
+	private List<Long> queryOrderedPubIds(PageQuery pageQuery, Class<?> childClass, String childTable, String parentKey) {
+		Sort sort = pageQuery.getSorter();
+		Map<String, List<Object>> filter = pageQuery.getFilter();
+		Map<String, Object> condition = pageQuery.getCondition() == null ? new LinkedHashMap<>()
+				: new LinkedHashMap<>(pageQuery.getCondition());
+		String keyword = extractAndRemoveKeyword(condition);
+		List<Object> params = new ArrayList<>();
+		StringBuilder sql = this.commonOperate.querySqlByTable("k_pubs", KPubs.class, params, condition, filter);
+		replaceSelectWithIdOnly(sql);
+		CmsKpubsDiscoverySql.appendCanonicalPubsOnly(sql, "a");
+		CmsKpubsDiscoverySql.appendFrontDiscoveryWhere(sql, "a", condition);
+		appendAdminKeywordFilter(sql, params, keyword);
+		sql.append(this.commonOperate.existsSql("b", childClass,
+				this.commonOperate.makeBaseExistsSql(childTable, "b", "a", parentKey), params, condition, filter));
+		this.commonOperate.orderSql(sort, sql);
+		return this.commonOperate.getJdbcOperations().query(sql.toString(), (rs, rowNum) -> rs.getLong("id"),
+				params.toArray());
+	}
+
+	private static void replaceSelectWithIdOnly(StringBuilder sql) {
+		int from = sql.indexOf("select a.*");
+		if (from >= 0) {
+			sql.replace(from, from + "select a.*".length(), "select a.id");
+		}
+	}
+
+	public void reorderDisplayOrder(List<Long> orderedIds, Long parentId, Long userId) {
+		if (orderedIds == null || orderedIds.isEmpty()) {
+			return;
+		}
+		this.assertWorkbenchReorderSiblingLimit(orderedIds.size());
+		Long expectedParent = parentId != null ? parentId : Constants.TOP_PUB_ID;
+		Map<Long, KPubs> loaded = new HashMap<>();
+		for (KPubs row : this.entityRepo.findAllById(orderedIds)) {
+			if (row != null && row.getId() != null) {
+				loaded.put(row.getId(), row);
+			}
+		}
+		for (int i = 0; i < orderedIds.size(); i++) {
+			Long id = orderedIds.get(i);
+			int desiredOrder = i + 1;
+			KPubs row = loaded.get(id);
+			if (row == null || !DeleteFlagEnum.NORMAL.toString().equals(row.getDeleteFlag())) {
+				throw new BaseException("内容不存在或已删除", ResultCode.VALIDATION_ERROR.getCode());
+			}
+			if (userId != null && !userId.equals(row.getCreateBy())) {
+				throw new BaseException("无权调整该内容顺序", ResultCode.FORBIDDEN.getCode());
+			}
+			if (!expectedParent.equals(row.getParentId())) {
+				throw new BaseException("内容不属于同一层级", ResultCode.VALIDATION_ERROR.getCode());
+			}
+			if (!Objects.equals(row.getDisplayOrder(), desiredOrder)) {
+				row.setDisplayOrder(desiredOrder);
+				this.saveOrUpdate(row);
+			}
+		}
+	}
+
 	/**
 	 * 在指定标签或分类范围内查询相关发布内容
 	 *
@@ -668,6 +982,110 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 */
 	public void publishPub(Long pId, String pubType) {
 		this.entityRepo.changePubStatus(pId, PubTypeEnum.isSub(pubType) ? PubStatusEnum.INHERIT.toString() : PubStatusEnum.PUBLISH.toString());
+		if (!PubTypeEnum.isSub(pubType)) {
+			notifyCmsTemplatePublished(pId, pubType);
+			syncSearchIndex(pId);
+		}
+	}
+
+	private void syncSearchIndex(Long pubId) {
+		CmsSearchIndexSyncService sync = cmsSearchIndexSyncService.getIfAvailable();
+		if (sync == null || pubId == null) {
+			return;
+		}
+		KPubs pub = this.findById(pubId);
+		if (pub != null) {
+			sync.syncCanonical(pub);
+		}
+	}
+
+	private void removeSearchIndex(Long pubId) {
+		CmsSearchIndexSyncService sync = cmsSearchIndexSyncService.getIfAvailable();
+		if (sync != null && pubId != null) {
+			sync.removeCanonical(pubId);
+		}
+	}
+
+	private void notifyCmsTemplatePublished(Long pId, String pubType) {
+		CmsTemplatePublishedCallback callback = cmsTemplatePublishedCallback.getIfAvailable();
+		if (callback == null) {
+			return;
+		}
+		KPubs pub = this.findById(pId);
+		String title = pub != null && pub.getPubTitle() != null ? pub.getPubTitle() : String.valueOf(pId);
+		String version = pub != null && pub.getUpdateTime() != null
+				? String.valueOf(pub.getUpdateTime().getTime())
+				: "1.0.0";
+		String payloadJson = "{\"pubId\":" + pId + ",\"pubType\":\"" + pubType + "\"}";
+		callback.onPublished(String.valueOf(pId), title, version, payloadJson);
+	}
+
+	/**
+	 * 发布：首次发布正式行；草稿提交审核；管理员合并待审草稿。
+	 */
+	public void publishOrMergeDraft(Long pubId, String pubType, Long operatorUserId, String operatorIp) {
+		KPubs row = this.findById(pubId);
+		if (row == null) {
+			throw new IllegalArgumentException("内容不存在");
+		}
+		if (row.getOriginPubId() != null) {
+			if (PubStatusEnum.DRAFT.getValue().equals(row.getPubStatus())) {
+				this.pubDraftService.submitDraftForReview(pubId);
+				return;
+			}
+			if (PubStatusEnum.IN_REVIEW.getValue().equals(row.getPubStatus())) {
+				if (!this.isCanTrust(operatorUserId)) {
+					throw new IllegalStateException("待审草稿须由管理员审核发布");
+				}
+				this.pubDraftService.mergeDraft(row.getOriginPubId(), pubId, operatorUserId, operatorIp);
+				return;
+			}
+			throw new IllegalStateException("当前草稿状态不可发布");
+		}
+		if (this.pubDraftService.isPublishedCanonical(row)) {
+			KPubs activeDraft = this.pubDraftService.findActiveDraft(pubId);
+			if (activeDraft != null && PubStatusEnum.DRAFT.getValue().equals(activeDraft.getPubStatus())) {
+				this.pubDraftService.submitDraftForReview(activeDraft.getId());
+				return;
+			}
+			if (activeDraft != null && PubStatusEnum.IN_REVIEW.getValue().equals(activeDraft.getPubStatus())) {
+				if (!this.isCanTrust(operatorUserId)) {
+					throw new IllegalStateException("待审改稿须由管理员审核");
+				}
+				this.pubDraftService.mergeDraft(pubId, activeDraft.getId(), operatorUserId, operatorIp);
+				return;
+			}
+			throw new IllegalStateException("内容已发布");
+		}
+		this.publishPub(pubId, pubType);
+	}
+
+	public void rejectDraft(Long draftId) {
+		this.pubDraftService.rejectDraft(draftId);
+	}
+
+	public boolean isDraftEligibleCanonical(KPubs canonical) {
+		return this.pubDraftService.isDraftEligibleCanonical(canonical);
+	}
+
+	public boolean isPublishedCanonical(KPubs canonical) {
+		return this.pubDraftService.isPublishedCanonical(canonical);
+	}
+
+	public Long upsertActiveDraft(KPubs canonical, com.wldos.cms.vo.Pub pub, Long userId, String userIp) {
+		return this.pubDraftService.upsertActiveDraft(canonical, pub, userId, userIp);
+	}
+
+	public void mergeTrustedEdit(KPubs canonical, com.wldos.cms.vo.Pub pub, Long userId, String userIp) {
+		this.pubDraftService.mergeTrustedEdit(canonical, pub, userId, userIp);
+	}
+
+	public boolean hasActiveDraft(Long canonicalId) {
+		return this.pubDraftService.hasActiveDraft(canonicalId);
+	}
+
+	public Long resolveCanonicalId(Long pubId) {
+		return this.pubDraftService.resolveCanonicalId(pubId);
 	}
 
 	/**
@@ -677,6 +1095,18 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 */
 	public void offlinePub(AuditPub pub) {
 		this.entityRepo.changePubStatus(pub.getId(), PubStatusEnum.OFFLINE.toString());
+		if (pub != null && pub.getId() != null) {
+			notifyCmsTemplateOffline(pub.getId());
+			removeSearchIndex(pub.getId());
+		}
+	}
+
+	private void notifyCmsTemplateOffline(Long pId) {
+		CmsTemplateOfflineCallback callback = cmsTemplateOfflineCallback.getIfAvailable();
+		if (callback == null) {
+			return;
+		}
+		callback.onOffline(String.valueOf(pId));
 	}
 
 	/**
@@ -686,6 +1116,9 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 	 */
 	public void trashPub(AuditPub pub) {
 		this.entityRepo.changePubStatus(pub.getId(), PubStatusEnum.TRASH.toString());
+		if (pub != null && pub.getId() != null) {
+			removeSearchIndex(pub.getId());
+		}
 	}
 
 	/**
@@ -729,6 +1162,9 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 
 	/** 更新可发现性（主表 {@code k_pubs.visibility_scope}）。 */
 	public void updateVisibilityScope(Long id, String visibilityScope, Long domainId, Long userId, String userIp) {
+		if (!this.isAdmin(userId) && !this.isCanTrust(userId)) {
+			throw new IllegalStateException("无权限修改发现范围");
+		}
 		KPubs pub = this.findById(id);
 		if (pub == null) {
 			throw new IllegalArgumentException("内容不存在");
@@ -740,18 +1176,69 @@ public class PubService extends EntityService<PubDao, KPubs, Long> implements Pu
 		pub.setUpdateBy(userId);
 		pub.setUpdateIp(userIp);
 		this.entityRepo.saveOrUpdate(pub);
+		if (PubStatusEnum.PUBLISH.getValue().equals(pub.getPubStatus())
+				|| PubStatusEnum.INHERIT.getValue().equals(pub.getPubStatus())) {
+			syncSearchIndex(id);
+		}
 	}
 
 	/**
 	 * k_pubs 父子分页：父表动态条件 + 前台可发现性（{@link CmsKpubsDiscoverySql#appendFrontDiscoveryWhere}）+ 子表 EXISTS。
 	 */
+	private PageData<AuditPub> execQueryAdminCanonicalPubs(PageQuery pageQuery) {
+		Sort sort = pageQuery.getSorter();
+		Map<String, List<Object>> filter = pageQuery.getFilter();
+		Map<String, Object> condition = pageQuery.getCondition();
+		String keyword = extractAndRemoveKeyword(condition);
+		List<Object> params = new ArrayList<>();
+		StringBuilder sql = this.commonOperate.querySqlByTable("k_pubs", KPubs.class, params, condition, filter);
+		CmsKpubsDiscoverySql.appendCanonicalPubsOnly(sql, "a");
+		appendAdminKeywordFilter(sql, params, keyword);
+		sql.append(this.commonOperate.existsSql("b", KTermObject.class,
+				this.commonOperate.makeBaseExistsSql("k_term_object", "b", "a", "object_id"), params, condition, filter));
+		String countSql = "select count(1) as total from ( " + sql + " ) w";
+		List<Map<String, Object>> all = this.commonOperate.getJdbcOperations().queryForList(countSql, params.toArray());
+		int total = Integer.parseInt(ObjectUtils.string(all.get(0).get("total")));
+		this.commonOperate.orderSql(sort, sql);
+		int currentPage = pageQuery.getCurrent();
+		int pageSize = pageQuery.getPageSize();
+		int totalPageNum = total == 0 ? 1 : (total - 1) / pageSize + 1;
+		currentPage = Math.min(currentPage, totalPageNum);
+		List<AuditPub> list = this.commonOperate.execQueryForPage(AuditPub.class, sql.toString(), currentPage, pageSize, params.toArray());
+		return new PageData<>(total, currentPage, pageSize, list);
+	}
+
+	private static String extractAndRemoveKeyword(Map<String, Object> condition) {
+		if (condition == null) {
+			return null;
+		}
+		Object raw = condition.remove("keyword");
+		if (raw == null) {
+			return null;
+		}
+		String keyword = ObjectUtils.string(raw).trim();
+		return keyword.isEmpty() ? null : keyword;
+	}
+
+	private static void appendAdminKeywordFilter(StringBuilder sql, List<Object> params, String keyword) {
+		if (keyword == null) {
+			return;
+		}
+		sql.append(" and (instr(a.pub_title, ?) > 0 or instr(a.pub_content, ?) > 0) ");
+		params.add(keyword);
+		params.add(keyword);
+	}
+
 	private <V, C> PageData<V> execQueryForPageKpubsParentWithChild(Class<V> vo, Class<C> cClass, String cTable, String pIdKey, PageQuery pageQuery) {
 		Sort sort = pageQuery.getSorter();
 		Map<String, List<Object>> filter = pageQuery.getFilter();
 		Map<String, Object> condition = pageQuery.getCondition();
+		String keyword = extractAndRemoveKeyword(condition);
 		List<Object> params = new ArrayList<>();
 		StringBuilder sql = this.commonOperate.querySqlByTable("k_pubs", KPubs.class, params, condition, filter);
+		CmsKpubsDiscoverySql.appendCanonicalPubsOnly(sql, "a");
 		CmsKpubsDiscoverySql.appendFrontDiscoveryWhere(sql, "a", condition);
+		appendAdminKeywordFilter(sql, params, keyword);
 		sql.append(this.commonOperate.existsSql("b", cClass, this.commonOperate.makeBaseExistsSql(cTable, "b", "a", pIdKey), params, condition, filter));
 		String countSql = "select count(1) as total from ( " + sql + " ) w";
 		List<Map<String, Object>> all = this.commonOperate.getJdbcOperations().queryForList(countSql, params.toArray());

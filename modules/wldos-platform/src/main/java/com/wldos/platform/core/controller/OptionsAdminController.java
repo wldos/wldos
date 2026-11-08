@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.wldos.framework.mvc.controller.EntityController;
 import com.wldos.platform.config.PropertiesReader;
+import io.github.wldos.platform.support.rbac.DataScopeProfile;
 import com.wldos.platform.core.service.OptionsService;
 import io.github.wldos.common.res.PageData;
 import io.github.wldos.common.res.PageQuery;
@@ -40,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p>系统配置变更属于"运维事件"语义——除了由基类 {@code @OpLog} 自动落操作日志（"谁改的"），
  * 还要再落一条 {@link SystemEvent}（"系统的什么配置发生了变化"），便于运维筛 wo_sys_log
- * 一处看到所有配置漂移历史，无需在 wo_op_log 海量记录中翻找。
+ * 一处看到所有配置变更历史，无需在 wo_op_log 海量记录中翻找。
  *
  * @author Yuanxi Universe
  * @date 2021/5/2
@@ -108,6 +109,7 @@ public class OptionsAdminController extends EntityController<OptionsService, WoO
 	@GetMapping("query")
 	public PageData<WoOptions> queryPage(@RequestParam Map<String, Object> params) {
 		PageQuery pageQuery = new PageQuery(params);
+		this.applyScope(pageQuery, DataScopeProfile.ADMIN_PLATFORM, WoOptions.class);
 		return this.service.execQueryForPage(new WoOptions(), new WoOptions(), pageQuery);
 	}
 

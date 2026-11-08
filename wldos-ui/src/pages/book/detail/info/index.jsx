@@ -19,44 +19,60 @@ import ReactMarkdown from "react-markdown";
 import MarkdownImage from "@/components/MarkdownImage";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ContentAccessFooter from '@/pages/commercial/cms-access/components/ContentAccessFooter';
+import ContentAccessPubBody from '@/pages/commercial/cms-access/components/ContentAccessPubBody';
+import ContentTipBlock from '@/pages/commercial/cms-access/components/ContentTipBlock';
+import useCmsCommentEnabled from '@/pages/book/detail/useCmsCommentEnabled';
 
 const getKey = (id, index) => `${id}-${index}`;
 
-const operTabList = (cNum) => [
-  {
-    key: 'info',
-    tab: (
-      <span> 详情{' '}
-        <span style={{ fontSize: 14, }} > </span>
-      </span>
-    ),
-  },
-  {
-    key: 'comments',
-    tab: (
-      <span> 评论{' '}
-        <span
-          style={{
-            fontSize: 14,
-            fontStyle: 'italic',
-            color: 'red',
-          }}
-        >
-          {cNum === '0' ? '抢沙发!' : cNum}
+const operTabList = (cNum, commentEnabled) => {
+  const tabs = [
+    {
+      key: 'info',
+      tab: (
+        <span> 详情{' '}
+          <span style={{ fontSize: 14, }} > </span>
         </span>
-      </span>
-    ),
-  },
-];
+      ),
+    },
+  ];
+  if (commentEnabled) {
+    tabs.push({
+      key: 'comments',
+      tab: (
+        <span> 评论{' '}
+          <span
+            style={{
+              fontSize: 14,
+              fontStyle: 'italic',
+              color: 'red',
+            }}
+          >
+            {cNum === '0' ? '抢沙发!' : cNum}
+          </span>
+        </span>
+      ),
+    });
+  }
+  return tabs;
+};
 
 const Info = (props) => {
-  const {match: {params={}, url}, dispatch} = props;
+  const { match: { params = {}, url }, dispatch, currentUser } = props;
+  const commentEnabled = useCmsCommentEnabled();
   const [product, setProduct] = useState({});
   const [mainPic, setMainPic] = useState(undefined);
   const [list, setList] = useState(undefined);
   const [listRight, setListRight] = useState(undefined);
   const [tabKey, setTabKey] = useState('info');
   const [listRel, setListRel] = useState(undefined);
+
+  useEffect(() => {
+    if (!commentEnabled && tabKey === 'comments') {
+      setTabKey('info');
+    }
+  }, [commentEnabled, tabKey]);
   const [visible, setVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -376,75 +392,96 @@ const Info = (props) => {
           <Col xs={24} sm={24} md={24} lg={24} xl={24}>
             <Card className={styles.tabsCard}
                   bordered={true}
-                  tabList={operTabList(product?.commentCount)}
+                  tabList={operTabList(product?.commentCount, commentEnabled)}
                   activeTabKey={tabKey}
                   onTabChange={(a) => setTabKey(a)}
             >
-              {tabKey === 'info' ? (
+              {tabKey !== 'comments' ? (
                 <>
                   {product?.pubContent ? (
-                    product?.pubMimeType === 'text/markdown' ? (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeRaw]}
-                        className={"markdown-body"}
-                        components={{
-                          img({src, alt, title, ...props}) {
-                            return (
-                              <MarkdownImage
-                                src={src}
-                                alt={alt}
-                                title={title}
-                                content={product?.pubContent}
-                                {...props}
-                              />
-                            );
-                          },
-                          code({node, inline, className, children, ...props}) {
-                            const match = /language-(\w+)/.exec(className || '');
-                            return !inline && match ? (
-                              <div style={{
-                                backgroundColor: '#f6f8fa',
-                                borderRadius: '6px',
-                                padding: '16px',
-                                margin: '16px 0',
-                                overflow: 'auto',
-                              }}>
-                                <SyntaxHighlighter
-                                  style={vs}
-                                  language={match[1]}
-                                  PreTag="div"
-                                  showLineNumbers={false}
-                                  wrapLines={true}
-                                  wrapLongLines={true}
-                                  customStyle={{
-                                    background: 'transparent',
-                                    margin: 0,
-                                    padding: 0,
-                                    border: 'none',
-                                    borderRadius: 0,
-                                  }}
-                                  {...props}
-                                >
-                                  {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                              </div>
-                            ) : (
-                              <code className={className} {...props}>
-                                {children}
-                              </code>
-                            );
-                          },
-                        }}
-                      >
-                        {product?.pubContent}
-                      </ReactMarkdown>
-                    ) : (
-                      bodyContent(product?.pubContent)
-                    )
+                    <>
+                      <ContentAccessPubBody
+                        pubId={product.id}
+                        pubContent={product.pubContent}
+                        pubMimeType={product.pubMimeType}
+                        contentAccess={product.contentAccess}
+                        currentUser={currentUser}
+                        renderMarkdown={(text, key) => (
+                          <ReactMarkdown
+                            key={key}
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeRaw]}
+                            className="markdown-body"
+                            components={{
+                              img({ src, alt, title, ...props }) {
+                                return (
+                                  <MarkdownImage
+                                    src={src}
+                                    alt={alt}
+                                    title={title}
+                                    content={product?.pubContent}
+                                    {...props}
+                                  />
+                                );
+                              },
+                              code({ node, inline, className, children, ...props }) {
+                                const match = /language-(\w+)/.exec(className || '');
+                                return !inline && match ? (
+                                  <div
+                                    style={{
+                                      backgroundColor: '#f6f8fa',
+                                      borderRadius: '6px',
+                                      padding: '16px',
+                                      margin: '16px 0',
+                                      overflow: 'auto',
+                                    }}
+                                  >
+                                    <SyntaxHighlighter
+                                      style={vs}
+                                      language={match[1]}
+                                      PreTag="div"
+                                      showLineNumbers={false}
+                                      wrapLines
+                                      wrapLongLines
+                                      customStyle={{
+                                        background: 'transparent',
+                                        margin: 0,
+                                        padding: 0,
+                                        border: 'none',
+                                        borderRadius: 0,
+                                      }}
+                                      {...props}
+                                    >
+                                      {String(children).replace(/\n$/, '')}
+                                    </SyntaxHighlighter>
+                                  </div>
+                                ) : (
+                                  <code className={className} {...props}>
+                                    {children}
+                                  </code>
+                                );
+                              },
+                            }}
+                          >
+                            {text}
+                          </ReactMarkdown>
+                        )}
+                        renderHtml={(html, key) => (
+                          <React.Fragment key={key}>{bodyContent(html)}</React.Fragment>
+                        )}
+                      />
+                      <ContentAccessFooter
+                        pubId={product.id}
+                        contentAccess={product.contentAccess}
+                        currentUser={currentUser}
+                        pubContent={product.pubContent}
+                        pubMimeType={product.pubMimeType}
+                      />
+                    </>
                   ) : (
                     '没有内容'
                   )}
+                  <ContentTipBlock pubId={product.id} contentAccess={product.contentAccess} currentUser={currentUser} />
                   <Divider style={{ margin: '40px 0 24px', }} />
                 </>
               ) : (
@@ -475,6 +512,7 @@ const Info = (props) => {
   );
 };
 
-export default connect(({user}) => ({
+export default connect(({ user }) => ({
   tdk: user.tdk,
+  currentUser: user.currentUser,
 }))(Info);

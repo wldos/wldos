@@ -1,12 +1,15 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
+import {Button, Divider, Drawer, message, Popconfirm, Select, Space, Tag, Tooltip} from 'antd';
 import React, {useCallback, useRef, useState, useEffect, useMemo} from 'react';
 import {useIntl} from 'umi';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
+import {connect} from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
 import CreateForm from './components/CreateForm';
 import CreateFormContent from './components/CreateFormContent';
 import UpdateForm from './components/UpdateForm';
@@ -18,14 +21,67 @@ import {
   removeEntities,
   removeOrgStaff,
   updateEntity,
-  updatePasswd4admin
+  updatePasswd4admin,
+  setUserPrimaryOrg,
+  setUserPrimaryCompany
 } from './service';
 import AddUserList from "@/pages/sys/user/components/add";
 import Passwd from "@/pages/account/settings/components/Passwd";
+import UserPermissionView from '@/components/UserPermissionView';
+import { parseLoginActionResult } from '@/utils/loginResult';
+import OrgTreeSelect from "@/components/TreeSelects/OrgTreeSelect";
+import useOperationalScope from '@/hooks/useOperationalScope';
+import usePlatformOperatorMode from '@/hooks/usePlatformOperatorMode';
+import {
+  comLabelText,
+  isPlatformScopeComId,
+  isToolbarScopeComId,
+  isValidScopeComId,
+  mergeToolbarWriteScope,
+} from '@/utils/orgCreateUserDomain';
+import { fetchEnumUserStatus } from '@/services/enum';
+import { selectToEnum } from '@/utils/utils';
 
 const UserList = (props) => {
   const intl = useIntl();
-  const {orgId = '', archId = '', comId = '', addUser} = props;
+  const {orgId = '', archId = '', comId = '', addUser, hasAuthority, isAdmin, currentUser, listDomainId, listComId} = props;
+
+  const scopeToolbarEnabled = isAdmin && orgId === '';
+  const { lock: platformOperatorLock, ready: platformOpsReady } = usePlatformOperatorMode();
+
+  const {
+    onTargetComChange,
+    targetDomainId,
+    setTargetDomainId,
+    effectiveComId,
+    comListArray,
+    comLabelEnum,
+    domainOptions,
+    domainLabelMap,
+    showDomainSelectInToolbar,
+    listScopeReady,
+  } = useOperationalScope({
+    isAdmin,
+    currentUser,
+    intl,
+    adminDefaultAxis: 'platform',
+    allowPlatformScopeInToolbar: isAdmin,
+    toolbarEnabled: scopeToolbarEnabled,
+    platformOperatorLock,
+  });
+
+  const memberCreateScopeReady = useMemo(() => {
+    if (!scopeToolbarEnabled) {
+      return true;
+    }
+    if (platformOperatorLock) {
+      return platformOpsReady && targetDomainId != null && targetDomainId !== '';
+    }
+    if (isPlatformScopeComId(effectiveComId)) {
+      return true;
+    }
+    return isValidScopeComId(effectiveComId) && targetDomainId != null && targetDomainId !== '';
+  }, [scopeToolbarEnabled, effectiveComId, targetDomainId, platformOperatorLock, platformOpsReady]);
 
   const createFormRef = useRef();
 
@@ -33,7 +89,27 @@ const UserList = (props) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.add', defaultMessage: '正在添加' }));
 
     try {
-      const res = await addEntity({...fields});
+      if (scopeToolbarEnabled && !isToolbarScopeComId(effectiveComId)) {
+        message.error(intl.formatMessage({
+          id: 'sys.user.msg.platformNoMemberCreate',
+          defaultMessage: '请先选择目标租户及站点',
+        }));
+        return false;
+      }
+      if (scopeToolbarEnabled && isValidScopeComId(effectiveComId) && !targetDomainId) {
+        message.error(intl.formatMessage({
+          id: 'sys.user.msg.targetDomainRequired',
+          defaultMessage: '请先选择目标站点',
+        }));
+        return false;
+      }
+      // 顶层用户管理的「新增」不带组织选择器，新用户落在哪个站点由工具栏「目标站点」决定，
+      // 否则后端会退回管理员自己登录时所在的站点，与工具栏选择的目标租户/站点无关。
+      const payload = { ...fields };
+      if (scopeToolbarEnabled && targetDomainId) {
+        payload.domainId = targetDomainId;
+      }
+      const res = await addEntity(payload);
       if (res && res.data) {
         const {status, news} = res.data;
         if (status === 'error'){
@@ -53,7 +129,7 @@ const UserList = (props) => {
       }
       return false;
     }
-  }, [intl]);
+  }, [intl, scopeToolbarEnabled, targetDomainId, effectiveComId]);
 
   const handleUpdate = useCallback(async (fields) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.config', defaultMessage: '正在配置' }));
@@ -63,10 +139,18 @@ const UserList = (props) => {
         nickname: fields.nickname,
         remark: fields.remark,
         loginName: fields.loginName,
+        email: fields.email,
+        mobile: fields.mobile,
         passwd: fields.passwd,
         status: fields.status,
         id: fields.id,
       });
+      if (orgId === '' && fields.orgId != null && fields.orgId !== stepFormValues.orgId) {
+        await setUserPrimaryOrg({ userId: fields.id, orgId: fields.orgId });
+      }
+      if (orgId === '' && fields.comId != null && fields.comId !== stepFormValues.comId) {
+        await setUserPrimaryCompany({ userId: fields.id, comId: fields.comId });
+      }
       hide();
       message.success(intl.formatMessage({ id: 'sys.user.msg.configSuccess', defaultMessage: '配置成功' }));
       return true;
@@ -75,7 +159,7 @@ const UserList = (props) => {
       message.error(intl.formatMessage({ id: 'sys.user.msg.configFail', defaultMessage: '配置失败请重试！' }));
       return false;
     }
-  }, [intl]);
+  }, [intl, orgId, stepFormValues]);
 
   const handleRemove = useCallback(async (selectedRows) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.delete', defaultMessage: '正在删除' }));
@@ -100,7 +184,9 @@ const UserList = (props) => {
     try {
       await removeOrgStaff({
         ids: selectedRows.map((row) => row.id),
-        orgId: orgIdParam
+        orgId: orgIdParam,
+        ...(listDomainId ? { domainId: listDomainId } : {}),
+        ...(listComId && String(listComId) !== '0' ? { comId: listComId } : {}),
       });
       hide();
       message.success(intl.formatMessage({ id: 'sys.user.msg.deleteSuccess', defaultMessage: '删除成功，即将刷新' }));
@@ -110,7 +196,7 @@ const UserList = (props) => {
       message.error(intl.formatMessage({ id: 'sys.user.msg.deleteFail', defaultMessage: '删除失败，请重试' }));
       return false;
     }
-  }, [intl]);
+  }, [intl, listDomainId, listComId]);
 
   const handleRemoveOne = useCallback(async (fields) => {
     const hide = message.loading(intl.formatMessage({ id: 'sys.user.msg.loading.delete', defaultMessage: '正在删除' }));
@@ -134,14 +220,13 @@ const UserList = (props) => {
     const {nickname, id, password, confirm} = values;
 
     try {
-      const res = await updatePasswd4admin({id, password, confirm});
-
-      if (res && res.data) {
-        const {status, news} = res.data;
-        if (status === 'error'){
-          message.error(news);
-          return false;
+      const res = await updatePasswd4admin({ id, password, confirm });
+      const outcome = parseLoginActionResult(res);
+      if (!outcome.ok) {
+        if (outcome.news) {
+          message.error(outcome.news);
         }
+        return false;
       }
       message.info(intl.formatMessage(
         { id: 'sys.user.msg.passwdSuccess', defaultMessage: '修改用户{nickname}密码成功！' },
@@ -163,6 +248,9 @@ const UserList = (props) => {
   const [addModalVisible, handleAddModalVisible] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
+  const [statusEnum, setStatusEnum] = useState({});
+  const [permissionModalVisible, setPermissionModalVisible] = useState(false);
+  const [permissionUser, setPermissionUser] = useState(null);
 
   const mobile = isMobile();
 
@@ -170,6 +258,21 @@ const UserList = (props) => {
   const containerRef = useRef();
 
   useDesktopSticky(actionRef);
+
+  useEffect(() => {
+    if (!listScopeReady || orgId !== '') {
+      return;
+    }
+    actionRef.current?.reload?.();
+  }, [listScopeReady, targetDomainId, effectiveComId, orgId]);
+
+  useEffect(() => {
+    fetchEnumUserStatus().then((res) => {
+      if (res?.data) {
+        setStatusEnum(selectToEnum(res.data));
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -189,6 +292,16 @@ const UserList = (props) => {
 
   const totalColsWidth = 1000;
   const scrollX = totalColsWidth > containerWidth ? totalColsWidth : undefined;
+
+  const domainFilterEnum = useMemo(() => {
+    const enumMap = {};
+    Object.entries(domainLabelMap || {}).forEach(([value, label]) => {
+      if (value != null && value !== '') {
+        enumMap[String(value)] = { text: label || value };
+      }
+    });
+    return enumMap;
+  }, [domainLabelMap]);
 
   const columns = useMemo(() => [
     {
@@ -270,17 +383,7 @@ const UserList = (props) => {
       hideInForm: true,
       filters: true,
       onFilter: false,
-      valueEnum: {
-        locked: {
-          text: intl.formatMessage({ id: 'sys.user.status.locked', defaultMessage: '已锁定' }),
-        },
-        cancelled: {
-          text: intl.formatMessage({ id: 'sys.user.status.cancelled', defaultMessage: '已注销' }),
-        },
-        normal: {
-          text: intl.formatMessage({ id: 'sys.user.status.normal', defaultMessage: '正常' }),
-        }
-      },
+      valueEnum: statusEnum,
     },
     {
       title: intl.formatMessage({ id: 'sys.user.col.remark', defaultMessage: '简介' }),
@@ -288,6 +391,76 @@ const UserList = (props) => {
       hideInForm: true,
       valueType: 'textarea',
       width: '16%'
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.user.col.domain', defaultMessage: '站点' }),
+      dataIndex: 'domainId',
+      hideInForm: true,
+      hideInSearch: true,
+      hideInTable: orgId !== '' || !showDomainSelectInToolbar,
+      filters: orgId === '' && showDomainSelectInToolbar,
+      onFilter: false,
+      valueEnum: domainFilterEnum,
+      render: (_, record) => {
+        const id = record.domainId;
+        if (id == null || id === '') {
+          return '-';
+        }
+        const mapped = domainLabelMap[String(id)];
+        if (mapped) {
+          return mapped;
+        }
+        const name = record.domainName && String(record.domainName).trim();
+        return name ? `${name} (${id})` : `站点 ID ${id}`;
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.user.col.comName', defaultMessage: '公司' }),
+      dataIndex: 'mainComId',
+      hideInForm: true,
+      hideInSearch: true,
+      hideInTable: orgId !== '',
+      filters: orgId === '',
+      onFilter: false,
+      valueEnum: comLabelEnum,
+      render: (_, record) => {
+        const cid = record.mainComId ?? record.comId;
+        const label = comLabelText(comLabelEnum, cid);
+        if (label) {
+          return label;
+        }
+        if (record.comName) {
+          return record.comName;
+        }
+        if (cid === 0 || cid === '0') {
+          return intl.formatMessage({ id: 'sys.scope.platform', defaultMessage: '平台' });
+        }
+        if (cid != null && cid !== '') {
+          return `公司 ID ${cid}`;
+        }
+        return '-';
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'sys.user.col.orgName', defaultMessage: '组织' }),
+      dataIndex: 'orgName',
+      hideInForm: true,
+      hideInTable: orgId !== '',
+      renderFormItem: () => <OrgTreeSelect allowClear placeholder="按组织筛选" />,
+      render: (_, record) => {
+        const names = (record.orgNames || record.orgName || '').split('、').filter(Boolean);
+        if (names.length <= 1) {
+          return record.orgName || '-';
+        }
+        return (
+          <>
+            {names[0]}
+            <Tooltip title={names.join('、')}>
+              <Tag style={{ marginLeft: 4 }}>+{names.length - 1}</Tag>
+            </Tooltip>
+          </>
+        );
+      },
     },
     {
       title: intl.formatMessage({ id: 'sys.user.col.createTime', defaultMessage: '创建时间' }),
@@ -310,26 +483,50 @@ const UserList = (props) => {
       valueType: 'option',
       hideInTable: orgId !== '',
       fixed: mobile ? undefined : 'right',
-      render: (_, record) => (
+      render: (_, record) => {
+        const writable = record.writable !== false;
+        return (
         <>
+          {hasAuthority('user:update') && (
+          <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              setPermissionUser(record);
+              setPermissionModalVisible(true);
             }}
           >
-            {intl.formatMessage({ id: 'sys.user.action.config', defaultMessage: '配置' })}
+            {intl.formatMessage({ id: 'sys.user.action.viewAuth', defaultMessage: '权限查看' })}
           </a>
           <Divider type="vertical"/>
-          <a
-            onClick={() => {
-              setModalVisible(true);
-              setFormValues(record);
-            }}
-          >
-            {intl.formatMessage({ id: 'sys.user.action.updatePasswd', defaultMessage: '更新密码' })}
-          </a>
-          <Divider type="vertical"/>
+          </>
+          )}
+          {hasAuthority('user:update') && writable && (
+            <>
+              <a
+                onClick={() => {
+                  handleUpdateModalVisible(true);
+                  setStepFormValues(record);
+                }}
+              >
+                {intl.formatMessage({ id: 'sys.user.action.config', defaultMessage: '配置' })}
+              </a>
+              <Divider type="vertical"/>
+            </>
+          )}
+          {hasAuthority('user:passwd') && writable && (
+            <>
+              <a
+                onClick={() => {
+                  setModalVisible(true);
+                  setFormValues(record);
+                }}
+              >
+                {intl.formatMessage({ id: 'sys.user.action.updatePasswd', defaultMessage: '更新密码' })}
+              </a>
+              <Divider type="vertical"/>
+            </>
+          )}
+          {hasAuthority('user:delete') && writable && (
           <Popconfirm title={intl.formatMessage({ id: 'sys.user.popconfirm.delete', defaultMessage: '您确定要删除？' })} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                       onConfirm={async () => {
                         await handleRemoveOne(record);
@@ -337,48 +534,105 @@ const UserList = (props) => {
                       }}>
             <a>{intl.formatMessage({ id: 'sys.user.action.delete', defaultMessage: '删除' })}</a>
           </Popconfirm>
+          )}
+          {!writable && (
+            <Tooltip title={intl.formatMessage({ id: 'sys.user.action.notWritable.tip', defaultMessage: '平级管理员账号，仅可查看' })}>
+              <span style={{color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed'}}>
+                {intl.formatMessage({ id: 'sys.user.action.readonly', defaultMessage: '仅查看' })}
+              </span>
+            </Tooltip>
+          )}
         </>
-      ),
+        );
+      },
     },
-  ], [intl, mobile, orgId, handleRemoveOne]);
+  ], [intl, mobile, orgId, handleRemoveOne, hasAuthority, statusEnum, comLabelEnum, domainFilterEnum, domainLabelMap, showDomainSelectInToolbar]);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle={intl.formatMessage({ id: 'sys.user.headerTitle', defaultMessage: '用户清单' })}
           actionRef={actionRef}
+          manualRequest={scopeToolbarEnabled && !listScopeReady}
           rowKey="id"
           search={{
             labelWidth: 120,
           }}
           toolBarRender={() => [
+            isAdmin && orgId === '' && comListArray.length > 0 ? (
+              <Space key="com-select" size={8}>
+                <span>目标租户</span>
+                <Select
+                  style={{ minWidth: 180 }}
+                  allowClear
+                  placeholder="选择租户"
+                  options={comListArray}
+                  value={effectiveComId}
+                  onChange={onTargetComChange}
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Space>
+            ) : null,
+            scopeToolbarEnabled && showDomainSelectInToolbar ? (
+              <Space key="domain-select" size={8}>
+                <span>{intl.formatMessage({ id: 'sys.role.domain.targetSite', defaultMessage: '目标站点' })}</span>
+                <Select
+                  style={{ minWidth: 200 }}
+                  allowClear
+                  placeholder="选择站点"
+                  options={domainOptions}
+                  value={targetDomainId}
+                  onChange={(value) => setTargetDomainId(value || undefined)}
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Space>
+            ) : null,
+            hasAuthority('user:create') ? (
             <Button key={1} type="primary" hidden={orgId === ''}  onClick={() => handleAddModalVisible(true)}>
               <PlusOutlined/> {intl.formatMessage({ id: 'sys.user.toolbar.add', defaultMessage: '添加' })}
-            </Button>,
-            <Button key={0} type="primary" hidden={orgId !== ''} onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> {intl.formatMessage({ id: 'sys.user.toolbar.new', defaultMessage: '新增' })}
-            </Button>,
+            </Button>
+            ) : null,
+            hasAuthority('user:create') ? (
+            <Tooltip
+              title={
+                scopeToolbarEnabled && !memberCreateScopeReady
+                  ? intl.formatMessage({
+                    id: 'sys.user.toolbar.new.disabledHint',
+                    defaultMessage: '请先在工具栏选择目标租户及站点',
+                  })
+                  : undefined
+              }
+            >
+              <Button
+                key={0}
+                type="primary"
+                hidden={orgId !== ''}
+                disabled={scopeToolbarEnabled && !memberCreateScopeReady}
+                onClick={() => handleModalVisible(true)}
+              >
+                <PlusOutlined/> {intl.formatMessage({ id: 'sys.user.toolbar.new', defaultMessage: '新增' })}
+              </Button>
+            </Tooltip>
+            ) : null,
           ]}
           request={async (params, sorter, filter) => {
-            const res = (orgId && archId && comId) ? await queryOrgPage({
+            const res = orgId ? await queryOrgPage({
               ...params,
-              orgId, archId, comId,
+              orgId,
               sorter,
-              filter
+              filter,
+              ...(listDomainId ? { domainId: listDomainId } : {}),
+              ...(listComId && String(listComId) !== '0' ? { comId: listComId } : {}),
             }) : await queryPage({
               ...params,
               sorter,
-              filter
+              filter,
+              filterOrgId: params.orgName || undefined,
+              ...(isAdmin && isToolbarScopeComId(effectiveComId) ? { comId: effectiveComId } : {}),
+              ...(isAdmin && targetDomainId ? { domainId: targetDomainId } : {}),
             });
             return Promise.resolve({
               total: res?.data?.total || 0,
@@ -444,7 +698,7 @@ const UserList = (props) => {
         <CreateFormContent
           ref={createFormRef}
           onSubmit={async (value) => {
-            const success = await handleAdd(value);
+            const success = await handleAdd(mergeToolbarWriteScope(value, { effectiveComId, targetDomainId }));
 
             if (success) {
               handleModalVisible(false);
@@ -477,6 +731,7 @@ const UserList = (props) => {
           }}
           updateModalVisible={updateModalVisible}
           values={stepFormValues}
+          comList={comListArray}
         />
       ) : null}
       {formValues && Object.keys(formValues).length ? (
@@ -516,10 +771,23 @@ const UserList = (props) => {
                 actionRef.current.reload();
               }
             }
+            return success;
           }}
           addModalVisible={addModalVisible}
-          values={{orgId, archId, comId}}
-        />) : null}
+          values={{orgId, archId, comId, domainId: listDomainId}}
+        />
+      ) : null}
+
+      <UserPermissionView
+        visible={permissionModalVisible}
+        onCancel={() => {
+          setPermissionModalVisible(false);
+          setPermissionUser(null);
+        }}
+        userId={permissionUser?.id}
+        userName={permissionUser?.nickname || permissionUser?.loginName || permissionUser?.login_name}
+        writable={permissionUser?.writable !== false}
+      />
 
       <Drawer
         width={600}
@@ -547,4 +815,11 @@ const UserList = (props) => {
   );
 };
 
-export default UserList;
+export default connect(({ user, loading }) => {
+  const auth = buildAuthorityHelper(user, '/admin');
+  return {
+    ...auth,
+    currentUser: user.currentUser,
+    loading: loading.effects['user/fetchAdminAuthorities'],
+  };
+})(UserList);

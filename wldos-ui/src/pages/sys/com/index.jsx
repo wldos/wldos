@@ -1,7 +1,12 @@
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Popconfirm} from 'antd';
+import {Button, Divider, Drawer, message, Popconfirm, Tooltip} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
+import {Link, connect} from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
+import useRouteAccessible, { ORGAN_ARCHITECTURE_ROUTE } from '@/hooks/useRouteAccessible';
+import { canProvisionCompany } from '@/utils/orgCreateUserDomain';
 import {FooterToolbar, PageContainer} from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
@@ -20,6 +25,7 @@ import {
 } from './service';
 import AddAdminForm from "@/pages/sys/com/components/AddAdminForm";
 import {selectToEnum} from "@/utils/utils";
+import { canDeleteCompanyRecord, companyDeleteBlockReason } from './companyDeleteGuard';
 
 /**
  * 添加节点
@@ -91,24 +97,26 @@ const handleRemove = async (selectedRows) => {
  *  删除节点
  * @param selectedRows
  */
-const handleRemoveOne = async (fields) => {
+  const handleRemoveOne = async (fields) => {
   if (!fields) return true;
 
-  if (fields.children) {
-    message.info("存在子节点，请先删除子节点");
-    return true;
+  if (!canDeleteCompanyRecord(fields)) {
+    message.info(companyDeleteBlockReason(fields) || '当前公司不可删除');
+    return false;
   }
   const hide = message.loading('正在删除');
   try {
-    await removeEntity({
+    const res = await removeEntity({
       id: fields.id,
     });
     hide();
+    if (res?.code !== 200) {
+      return false;
+    }
     message.success('删除成功，即将刷新');
     return true;
   } catch (error) {
     hide();
-    message.error('删除失败，请重试');
     return false;
   }
 };
@@ -140,26 +148,28 @@ const addTAdmin = async (value={ids: [], userComId: ''}) => {
 
 };
 
-const ComList = () => {
+const ComList = ({ isAdmin, isTenantAdmin }) => {
+  const canManageCompanyStructure = canProvisionCompany(isAdmin, isTenantAdmin);
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
-  const [parentId, setParentId] = useState('0'); 
+  const [parentId, setParentId] = useState('0');
   const [roleList, setRoleList] = useState({});
   const [roles, setRoles] = useState([]);
   const [addAdminModalVisible, handleAddAdminModalVisible] = useState(false);
   const [addAdminValues, setAddAdminValues] = useState({});
-  
+
   // 移动端检测
   const mobile = isMobile();
-  
+  const canOpenArchitecture = useRouteAccessible(ORGAN_ARCHITECTURE_ROUTE);
+
   // 容器宽度监听
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef();
-  
+
   // 使用桌面端粘性布局 - 使用原版
   useDesktopSticky(actionRef);
 
@@ -175,17 +185,17 @@ const ComList = () => {
   // 监听容器宽度变化
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateWidth = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
-    
+
     updateWidth();
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -272,20 +282,24 @@ const ComList = () => {
       fixed: mobile ? undefined : 'right',
       render: (_, record) => (
         <>
-          <a
-            onClick={() => {
-              handleModalVisible(true);
-              setParentId(record.id);
-            }}
-          >
-            子级
-          </a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            handleModalVisible(true);
-            setParentId(record.parentId);
-          }}>同级</a>
-          <Divider type="vertical"/>
+          {canManageCompanyStructure ? (
+            <>
+              <a
+                onClick={() => {
+                  handleModalVisible(true);
+                  setParentId(record.id);
+                }}
+              >
+                子级
+              </a>
+              <Divider type="vertical"/>
+              <a onClick={() => {
+                handleModalVisible(true);
+                setParentId(record.parentId);
+              }}>同级</a>
+              <Divider type="vertical"/>
+            </>
+          ) : null}
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
@@ -294,6 +308,14 @@ const ComList = () => {
           >
             配置
           </a>
+          {canOpenArchitecture ? (
+            <>
+              <Divider type="vertical"/>
+              <Link to={`${ORGAN_ARCHITECTURE_ROUTE}?focusType=company&focusId=${record.id}`}>
+                在架构中打开
+              </Link>
+            </>
+          ) : null}
           <Divider type="vertical"/>
           <a
             onClick={() => {
@@ -303,14 +325,26 @@ const ComList = () => {
           >
             设置管理员
           </a>
-          <Divider type="vertical"/>
-          <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                      onConfirm={async () => {
-                        await handleRemoveOne(record);
-                        actionRef.current?.reloadAndRest?.();
-                      }}>
-            <a>删除</a>
-          </Popconfirm>
+          {canManageCompanyStructure ? (
+            <>
+              <Divider type="vertical"/>
+              {canDeleteCompanyRecord(record) ? (
+                <Popconfirm title="您确定要删除？" icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                            onConfirm={async () => {
+                              const ok = await handleRemoveOne(record);
+                              if (ok) {
+                                actionRef.current?.reloadAndRest?.();
+                              }
+                            }}>
+                  <a>删除</a>
+                </Popconfirm>
+              ) : (
+                <Tooltip title={companyDeleteBlockReason(record)}>
+                  <span style={{ color: 'rgba(0,0,0,0.25)', cursor: 'not-allowed' }}>删除</span>
+                </Tooltip>
+              )}
+            </>
+          ) : null}
         </>
       ),
     },
@@ -321,16 +355,7 @@ const ComList = () => {
   const scrollX = mobile ? undefined : (totalColsWidth > (containerWidth || 0) ? totalColsWidth : undefined);
 
   return (
-    <PageContainer
-      style={{
-        padding: '0',
-        margin: '0'
-      }}
-      bodyStyle={{
-        padding: '24px',
-        margin: '0'
-      }}
-    >
+    <PageContainer {...adminListPageContainerProps}>
       <div ref={containerRef}>
         <ProTableX
           headerTitle="公司清单"
@@ -340,9 +365,11 @@ const ComList = () => {
             labelWidth: 120,
           }}
           toolBarRender={() => [
-            <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
-            </Button>,
+            canManageCompanyStructure ? (
+              <Button key={0} type="primary" onClick={() => handleModalVisible(true)}>
+                <PlusOutlined/> 新建
+              </Button>
+            ) : null,
           ]}
           request={async (params, sorter, filter) => {
             const res = await queryPage({
@@ -350,18 +377,19 @@ const ComList = () => {
               sorter: {...sorter, 'displayOrder': 'ascend',},
               filter
             });
+            const rows = res?.data?.rows || [];
 
             return Promise.resolve({
               total: res?.data?.total || 0,
-              data: res?.data?.rows || [],
+              data: rows,
               success: true,
             });
           }
           }
           columns={columns}
-          rowSelection={{
+          rowSelection={canManageCompanyStructure ? {
             onChange: (_, selectedRows) => setSelectedRows(selectedRows),
-          }}
+          } : false}
           pagination={{
             defaultPageSize: 15,
             pageSizeOptions: ['10', '15', '20', '30', '50'],
@@ -373,7 +401,7 @@ const ComList = () => {
           scroll={mobile ? undefined : { x: scrollX }}
         />
       </div>
-      {selectedRowsState?.length > 0 && (
+      {canManageCompanyStructure && selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
             <div>
@@ -481,4 +509,4 @@ const ComList = () => {
   );
 };
 
-export default ComList;
+export default connect(({ user }) => buildAuthorityHelper(user, '/admin'))(ComList);

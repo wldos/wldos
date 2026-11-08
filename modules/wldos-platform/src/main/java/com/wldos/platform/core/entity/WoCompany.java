@@ -14,12 +14,14 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 import java.sql.Timestamp;
 
 @Table
 @Getter
 @Setter
+@RbacRowScope(primaryKeyAsComId = true)
 public class WoCompany {
 	@Id
 	private Long id;

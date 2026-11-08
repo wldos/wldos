@@ -1,6 +1,7 @@
-import React from 'react';
-import {Button, Form, Input, Select, Card, Space, Tooltip, Alert} from 'antd';
+import React, { useEffect, useState } from 'react';
+import {Button, Form, Input, Select, Card, Space, Tooltip} from 'antd';
 import FullscreenModal from '@/components/FullscreenModal';
+import { fetchEnumUserStatus } from '@/services/enum';
 import {
   UserOutlined,
   KeyOutlined,
@@ -11,12 +12,13 @@ import {
   InfoCircleOutlined,
   CheckCircleOutlined,
   EditOutlined,
-  LockOutlined
+  LockOutlined,
+  ApartmentOutlined
 } from '@ant-design/icons';
+import OrgTreeSelect from '@/components/TreeSelects/OrgTreeSelect';
 
 const FormItem = Form.Item;
 const {TextArea} = Input;
-const {Option} = Select;
 
 const formLayout = {
   labelCol: {
@@ -34,7 +36,35 @@ const UpdateForm = (props) => {
     onCancel: handleUpdateModalVisible,
     updateModalVisible,
     values,
+    comList = [],
   } = props;
+
+  const [statusOptions, setStatusOptions] = useState([]);
+  const comId = Form.useWatch('comId', form);
+
+  useEffect(() => {
+    fetchEnumUserStatus().then((res) => {
+      if (res?.data) {
+        setStatusOptions(res.data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!updateModalVisible) {
+      return;
+    }
+    form.setFieldsValue({
+      nickname: values?.nickname,
+      remark: values?.remark,
+      loginName: values?.loginName || values?.login_name || values?.account,
+      email: values?.email,
+      mobile: values?.mobile,
+      status: values?.status,
+      orgId: values?.orgId,
+      comId: values?.comId,
+    });
+  }, [updateModalVisible, values, form]);
 
   const handleNext = async () => {
     try {
@@ -49,15 +79,6 @@ const UpdateForm = (props) => {
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="用户配置"
-          description="修改用户的基本信息、登录凭证和状态设置。用户是系统的主要使用者。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -87,14 +108,14 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入昵称，不能为空，最多60个字！',
-                max: 60,
+                message: '请输入昵称，不能为空，最多50个字！',
+                max: 50,
               },
             ]}
           >
             <Input
               prefix={<UserOutlined />}
-              placeholder="请输入昵称，最多60个字"
+              placeholder="请输入昵称，最多50个字"
             />
           </FormItem>
 
@@ -111,14 +132,68 @@ const UpdateForm = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入登录账号，最多60位！',
-                max: 60,
+                message: '请输入登录账号，不能为空，最多30个字符！',
+                max: 30,
               },
             ]}
           >
             <Input
               prefix={<KeyOutlined />}
-              placeholder="请输入登录账号，最多60位"
+              placeholder="请输入登录账号，最多30个字符"
+            />
+          </FormItem>
+
+          <FormItem
+            name="email"
+            label={
+              <Space>
+                邮箱地址
+                <Tooltip title="用户的邮箱地址，用于接收通知">
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            rules={[
+              {
+                required: true,
+                message: '邮箱不能为空',
+              },
+              {
+                type: 'email',
+                message: '邮箱格式不正确',
+              },
+            ]}
+          >
+            <Input
+              prefix={<MailOutlined />}
+              placeholder="请输入邮箱地址"
+            />
+          </FormItem>
+
+          <FormItem
+            name="mobile"
+            label={
+              <Space>
+                手机号码
+                <Tooltip title="用户的手机号码，用于接收短信通知（选填，须 11 位）">
+                  <InfoCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </Space>
+            }
+            rules={[
+              {
+                validator(_, value) {
+                  const v = value == null ? '' : String(value).trim();
+                  if (!v) return Promise.resolve();
+                  if (/^1[3-9]\d{9}$/.test(v)) return Promise.resolve();
+                  return Promise.reject(new Error('手机号必须是11位数字'));
+                },
+              },
+            ]}
+          >
+            <Input
+              prefix={<PhoneOutlined />}
+              placeholder="请输入手机号码"
             />
           </FormItem>
         </Card>
@@ -176,13 +251,86 @@ const UpdateForm = (props) => {
             <Select
               placeholder="请选择用户状态"
               style={{ width: '100%' }}
-            >
-              <Option value="normal">正常</Option>
-              <Option value="locked">已锁定</Option>
-              <Option value="cancelled">已注销</Option>
-            </Select>
+              options={statusOptions}
+            />
           </FormItem>
         </Card>
+
+        {/* 组织归属，仅用户管理全局列表可见（组织成员子列表配置不涉及归属调整） */}
+        {values.orgId !== undefined && (
+          <Card
+            title={
+              <Space>
+                <ApartmentOutlined style={{ color: '#722ed1' }} />
+                组织归属
+              </Space>
+            }
+            size="small"
+            style={{ marginTop: '16px' }}
+            extra={
+              <Tooltip title="用户所属的公司与组织">
+                <InfoCircleOutlined />
+              </Tooltip>
+            }
+          >
+            <FormItem
+              name="comId"
+              label={
+                <Space>
+                  公司
+                  <Tooltip title="用户的主企业归属，调整后只迁移该用户主企业这一条关联记录，其它兼职企业不受影响">
+                    <InfoCircleOutlined style={{ color: '#999' }} />
+                  </Tooltip>
+                </Space>
+              }
+            >
+              <Select
+                showSearch
+                optionFilterProp="label"
+                placeholder="请选择公司"
+                options={comList}
+                onChange={() => {
+                  form.setFieldsValue({ orgId: undefined });
+                  form.validateFields(['orgId']);
+                }}
+              />
+            </FormItem>
+
+            <FormItem
+              name="orgId"
+              label={
+                <Space>
+                  组织
+                  <Tooltip title="随公司级联，只能选择该公司下的组织；调整后只迁移该用户主组织记录，其它兼职组织不受影响">
+                    <InfoCircleOutlined style={{ color: '#999' }} />
+                  </Tooltip>
+                </Space>
+              }
+              dependencies={['comId']}
+              rules={[
+                {
+                  validator(_, value) {
+                    if (!comId || value !== undefined) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('公司不为空时，组织不允许为空'));
+                  },
+                },
+              ]}
+            >
+              <OrgTreeSelect
+                comId={comId}
+                domainId={values.domainId}
+                seedOption={
+                  values.orgId != null && values.orgName
+                    ? { value: values.orgId, label: values.orgName }
+                    : undefined
+                }
+                placeholder={comId ? '请选择组织' : '请先选择公司'}
+              />
+            </FormItem>
+          </Card>
+        )}
       </div>
     );
   };
@@ -217,10 +365,14 @@ const UpdateForm = (props) => {
         {...formLayout}
         form={form}
         initialValues={{
-          nickname: props.values.nickname,
-          remark: props.values.remark,
-          loginName: props.values.loginName,
-          status: props.values.status,
+          nickname: values?.nickname,
+          remark: values?.remark,
+          loginName: values?.loginName || values?.login_name || values?.account,
+          email: values?.email,
+          mobile: values?.mobile,
+          status: values?.status,
+          orgId: values?.orgId,
+          comId: values?.comId,
         }}
       >
         {renderContent()}

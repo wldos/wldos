@@ -85,7 +85,7 @@
       }
     }
   }
-  
+
   .ant-pro-global-header-logo a img {
     @media screen and (max-width: @screen-sm) {
       content: var(--mobile-logo);
@@ -111,7 +111,11 @@
       }
     }
 
-    /* 顶部通栏：logo 区与导航区完全融合为一条白带，无中间分隔、高度一致、共用一个底边 */
+    /* 顶部通栏：logo 区与导航区完全融合为一条白带，无中间竖线分隔 */
+    .ant-pro-sider.ant-layout-sider {
+      border-right: none !important;
+      box-shadow: none !important;
+    }
     .ant-pro-sider .ant-pro-sider-logo,
     .ant-pro-sider .ant-layout-sider-children > div:first-child {
       background: #fff !important;
@@ -169,6 +173,58 @@
     .ant-pro-table .ant-pro-table-header h3 {
       font-weight: 500 !important;
     }
+
+    /* 列表页 compact：无 PageContainer 标题时去掉顶距与空 header 占位 */
+    .adminPageContainerCompact.ant-pro-page-container {
+      .ant-pro-page-container-warp-page-header {
+        display: none;
+      }
+      .ant-pro-page-container-children-content {
+        padding-top: 0;
+      }
+    }
+
+    /* ProTable compact：查询区与工具栏左对齐 */
+    .adminListProTable.ant-pro-table {
+      .ant-pro-table-search {
+        padding: 12px 0 0;
+        margin: 0 0 12px;
+        background: transparent;
+      }
+      .ant-pro-table-search .ant-form {
+        padding: 0;
+      }
+    }
+  }
+
+  :global(:root) {
+    --wldos-admin-chrome-top: 88px;
+  }
+
+  :global {
+    .wldos-pro-table-x-wrap .ant-table-body {
+      overscroll-behavior-y: auto;
+    }
+
+    .wldos-pro-table-x-wrap .ant-table-sticky-holder {
+      z-index: 8;
+      background: #fff;
+    }
+
+    /* 查询收起/展开与 sticky 重算同步，避免高度动画期间留白 */
+    .wldos-pro-table-x-wrap .ant-pro-table-search .ant-pro-form-query-filter {
+      transition: none !important;
+    }
+
+    /* 横向滚动时的 ping 阴影（书脊/曲面感），管理端列表改为平面 */
+    .wldos-pro-table-x-wrap .ant-table-container::before,
+    .wldos-pro-table-x-wrap .ant-table-container::after,
+    .wldos-pro-table-x-wrap .ant-table-ping-left .ant-table-cell-fix-left-last::after,
+    .wldos-pro-table-x-wrap .ant-table-ping-right .ant-table-cell-fix-right-first::after,
+    .wldos-pro-table-x-wrap .ant-table-cell-fix-left-last::after,
+    .wldos-pro-table-x-wrap .ant-table-cell-fix-right-first::after {
+      box-shadow: none !important;
+    }
   }
 
   /* 内容区白色 div：左、右、下 1px 实线边框，灰色 #f0f2f5，边界清晰 */
@@ -178,6 +234,14 @@
     border-bottom: 1px solid #f0f2f5;
   }
 }
+.docRouteLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #fff;
+}
+
 .docLayout {
   // 通过完整的DOM路径定位到main元素
   :global(.ant-layout .ant-layout main.ant-layout-content.ant-pro-basicLayout-content) {
@@ -188,7 +252,7 @@
     .ant-layout {
       overflow-x: hidden;
     }
-    
+
     .ant-layout-content {
       overflow-x: hidden;
     }

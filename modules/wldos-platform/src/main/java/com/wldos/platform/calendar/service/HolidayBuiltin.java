@@ -29,7 +29,7 @@ import com.wldos.platform.calendar.vo.HolidayItem;
  * 兜底常量仅在首发 / 离线落地时保险用，不替代日常维护。
  *
  * @author Yuanxi Universe
- * @date 2026/04/30
+ * @date 2025/04/30
  * @version 1.0
  */
 public final class HolidayBuiltin {

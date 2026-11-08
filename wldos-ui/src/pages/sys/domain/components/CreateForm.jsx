@@ -4,13 +4,11 @@ import { PlusOutlined } from '@ant-design/icons';
 import FullscreenModal from '@/components/FullscreenModal';
 
 const CreateForm = (props) => {
-  const { modalVisible, onCancel, onSubmit } = props;
+  const { modalVisible, onCancel, children } = props;
   const formRef = useRef();
   
   const handleSubmit = () => {
-    if (formRef.current && formRef.current.submit) {
-      formRef.current.submit();
-    }
+    formRef.current?.submit?.();
   };
   
   const renderFooter = () => (
@@ -39,7 +37,7 @@ const CreateForm = (props) => {
       onCancel={() => onCancel()}
       footer={renderFooter()}
     >
-      {React.cloneElement(props.children, { ref: formRef, onSubmit: onSubmit })}
+      {React.cloneElement(children, { ref: formRef })}
     </FullscreenModal>
   );
 };

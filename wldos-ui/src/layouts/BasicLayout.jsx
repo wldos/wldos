@@ -16,6 +16,8 @@ import styles from '@/wldos.less';
 import { renderIcon } from '@/utils/iconLibrary';
 import { setPortalMenuTree } from '@/utils/portalMenuVisit';
 import {getHome, wldosHeader} from "@/utils/utils";
+import { isDesktopEmbedded, mergeDesktopShellSite, resolveDesktopLayoutTitle, resolveDesktopProLayoutBrand } from '@/utils/desktopEmbeddedBridge';
+import { stripHiddenNavMenus } from '@/pages/sys/res/menuFormRules';
 
 
 const BasicLayout = (props) => {
@@ -35,21 +37,23 @@ const BasicLayout = (props) => {
   const [seo, setSeo] = useState({title: '', keywords: '', description: '', logo: '', favicon: '', crumbs: []});
   const [collapsed, setCollapsed] = useState(false);
   const [isHome, setHome] = useState(false);
+  const [brandingRev, setBrandingRev] = useState(0);
   const closeBread = true;
   /**
    * 菜单和路由的区别在于：路由表示请求资源的路径，菜单表示功能的路径，路由包括前端路由(组件)和后端路由(api)，先有路由后有菜单，控制路由权限包括前后端两个方面，所有路由权限和菜单权限都统一在后端定制
    * 因为权限已经在后端过滤，返回的都是有权限菜单，不必检查权限。（要求：除动态路由外，静态路由应该和菜单url相同，操作权限在API侧判断，主要包括数据权限和角色权限，数据权限发生在域、业务类型、租户、组织的边界）
    */
 
-  /** 过滤掉 menuRegion===nav_avatar 的项，仅主导航显示 nav_main 或未配置的菜单 */
+  /** 过滤头像/桌面槽位与「页面菜单」(route) — 后者仅路由与页内链，不进顶栏 */
   const filterMainNavMenu = (menus) => {
     if (!menus || !Array.isArray(menus)) return [];
-    return menus
-      .filter((item) => item.menuRegion !== 'nav_avatar')
+    const regionFiltered = menus
+      .filter((item) => item.menuRegion !== 'nav_avatar' && item.menuRegion !== 'desktop_home')
       .map((item) => ({
         ...item,
         children: item.children && item.children.length ? filterMainNavMenu(item.children) : item.children,
       }));
+    return stripHiddenNavMenus(regionFiltered);
   };
 
   // 菜单 name 由后台 wo_resource.resource_name 直出（已是站点语言文案，如中文/英文），
@@ -81,15 +85,25 @@ const BasicLayout = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    const onBranding = () => setBrandingRev((v) => v + 1);
+    window.addEventListener('wldos:desktop-branding-ready', onBranding);
+    return () => window.removeEventListener('wldos:desktop-branding-ready', onBranding);
+  }, []);
+
   useEffect(() => { // 获取域信息，依赖 site/tdk/location 以便 site 异步加载后更新 keywords 等
     const homeFlag = location.pathname === getHome();
-    if (site) {
-      const {siteName, siteTitle, siteKeyword, siteDescription, siteLogo, favicon} = site;
+    const sourceSite = isDesktopEmbedded() ? mergeDesktopShellSite(site) : site;
+    if (sourceSite) {
+      const {siteName, siteTitle, siteKeyword, siteDescription, siteLogo, favicon} = sourceSite;
       const pageDesc = siteTitle ? ` - ${siteName}` : '';
+      const pageTitle = homeFlag ? (siteTitle ?? '') : (tdk.title ? `${tdk.title}${pageDesc}` : '');
       // 定义seo标签，首页取默认配置，内容页需要传递
       setSeo({
         // eslint-disable-next-line no-nested-ternary
-        title: homeFlag ? (siteTitle?? '') : (tdk.title ? `${tdk.title}${pageDesc}` : ''),
+        title: isDesktopEmbedded()
+          ? resolveDesktopLayoutTitle(sourceSite, pageTitle)
+          : pageTitle,
         keywords: homeFlag ? (siteKeyword ?? '') : (tdk?.keywords ?? siteKeyword ?? ''),
         description: homeFlag ? (siteDescription ?? '') : (tdk?.description ?? siteDescription ?? ''),
         logo: siteLogo,
@@ -100,7 +114,7 @@ const BasicLayout = (props) => {
     }
     // 自动回到顶部
     document?.getElementById('root').scrollIntoView(true);
-  }, [tdk, site, location.pathname]);
+  }, [tdk, site, location.pathname, brandingRev]);
 
   /**
    * init variables
@@ -112,12 +126,33 @@ const BasicLayout = (props) => {
   const {formatMessage} = useIntl();
 
   const isHomePage = location.pathname === getHome();
+  const desktopEmbedded = isDesktopEmbedded();
+  const displaySite = desktopEmbedded ? mergeDesktopShellSite(site) : site;
+  const proBrand = resolveDesktopProLayoutBrand(site);
+  const layoutLogo = desktopEmbedded ? (proBrand.logo || false) : seo.logo;
+  const layoutTitle = desktopEmbedded ? proBrand.title : seo.title;
+
+  // B2「数字管家桌面壳 headless 路由」：内容叠层/侧滑面板以 `?shellChrome=none` 挂载 wldos-ui 页面时，
+  // 页面本身不需要门户的顶部导航/页脚——那一整条 chrome（汉堡菜单、搜索、通知、头像下拉、分享、
+  // 主题切换）是给独立浏览门户用的，桌面壳自己已经有原生顶栏承担这些职责，两套 chrome 叠在一起
+  // 就是账号管理侧滑面板里出现的那条多余导航条。只跳过 ProLayout 外壳，children（业务页面本身）
+  // 照常渲染。
+  const isHeadless = new URLSearchParams(location.search || '').get('shellChrome') === 'none';
+  if (isHeadless) {
+    return (
+      <>
+        {wldosHeader(seo)}
+        {children}
+      </>
+    );
+  }
+
   return (
     <>
       {wldosHeader(seo)}
       <ProLayout
         className={`${styles.topNavWldos} ${closeBread ? styles.topNavContentNoBread : styles.topNavContent} ${isHomePage ? styles.homeLayout : ''}`}
-        logo={seo.logo}
+        logo={layoutLogo || false}
         formatMessage={formatMessage} // 关掉国际化输出防止未作国际化处理时报错，不从menu改是因为top布局时menu设置menu={{loading, locale: false}}会导致刷新时多个齿轮效果
         menuDataRender={(md) => menuHandle(filterMainNavMenu(md && md.length > 0 ? menuData.pushAll(md) : menuData))}
         {...settings}
@@ -125,7 +160,7 @@ const BasicLayout = (props) => {
         collapsed={collapsed}
         onCollapse={handleMenuCollapse}
         onMenuHeaderClick={() => history.push('/')}
-        title={seo.title}
+        title={layoutTitle}
         pageTitleRender = {(titleProps) => { // 完全自定义标题,冗余设置title属性是为了压制antd的默认标题
           return titleProps.title;
         }}
@@ -150,8 +185,17 @@ const BasicLayout = (props) => {
           return defaultDom;
         }}
         menuHeaderRender={(lgo/* , title */) => {
-          if (!seo.logo) { return ''; }
-          return lgo;
+          if (layoutLogo) {
+            return lgo;
+          }
+          if (desktopEmbedded && layoutTitle) {
+            return (
+              <span style={{ fontSize: 18, fontWeight: 600 }}>
+                {String(layoutTitle).split(' - ')[0]}
+              </span>
+            );
+          }
+          return '';
         }}
         // pageTitleRender={(siteSettings) => siteSettings.site}
         footerRender={() => (isHome || tdk?.pubType === 'page') && <WldosFooterDom/>} // 如果组件内使用了connect，这里需要返回react组件(首字母大写)，否则直接返回组件变量

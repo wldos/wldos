@@ -16,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import io.github.wldos.platform.support.rbac.RbacRowScope;
 
 /**
  * 用户
@@ -23,9 +24,12 @@ import lombok.Setter;
 @Table
 @Getter
 @Setter
+@RbacRowScope(domainId = true, comId = false, mainComId = true)
 public class WoUser {
 	@Id
 	private Long id;
+
+	private Long mainComId;
 
 	private String loginName;
 

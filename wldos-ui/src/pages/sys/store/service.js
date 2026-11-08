@@ -88,78 +88,9 @@ export async function getStorePlugin(id) {
 
 // 获取应用商店插件列表
 export async function queryAppStorePlugins(params) {
-  try {
-    const response = await request(`${prefix}/appstore/plugins`, {
-      params,
-    });
-
-    // 添加模拟插件数据用于测试配置功能
-    const mockPlugin = {
-      id: 'mock-store-plugin-001',
-      pluginCode: 'test-config-plugin',
-      name: '测试配置插件',
-      version: '1.0.0',
-      author: 'WLDOS团队',
-      mainClass: 'com.wldos.plugin.TestConfigPlugin',
-      category: '测试工具',
-      tags: JSON.stringify(['配置', '测试', '开发']),
-      downloadCount: 1250,
-      starCount: 89,
-      likeCount: 156,
-      reviewStatus: 'APPROVED',
-      description: '这是一个用于测试插件配置功能的模拟插件，包含各种配置项类型。',
-      icon: '/store/logo-wldos.svg',
-      downloadUrl: 'https://github.com/wldos/test-config-plugin/releases/latest',
-      createTime: '2024-01-15 10:30:00',
-      updateTime: '2024-01-20 14:25:00',
-      createBy: 'admin',
-      updateBy: 'admin'
-    };
-
-    // 将模拟插件添加到响应数据中
-    if (response?.data?.rows) {
-      response.data.rows = [mockPlugin, ...response.data.rows];
-      response.data.total = (response.data.total || 0) + 1;
-    } else {
-      response.data = {
-        rows: [mockPlugin],
-        total: 1
-      };
-    }
-
-    return response;
-  } catch (error) {
-    // 如果API调用失败，返回模拟数据
-    const mockPlugin = {
-      id: 'mock-store-plugin-001',
-      pluginCode: 'test-config-plugin',
-      name: '测试配置插件',
-      version: '1.0.0',
-      author: 'WLDOS团队',
-      mainClass: 'com.wldos.plugin.TestConfigPlugin',
-      category: '测试工具',
-      tags: JSON.stringify(['配置', '测试', '开发']),
-      downloadCount: 1250,
-      starCount: 89,
-      likeCount: 156,
-      reviewStatus: 'APPROVED',
-      description: '这是一个用于测试插件配置功能的模拟插件，包含各种配置项类型。',
-      icon: '/store/logo-wldos.svg',
-      downloadUrl: 'https://github.com/wldos/test-config-plugin/releases/latest',
-      createTime: '2024-01-15 10:30:00',
-      updateTime: '2024-01-20 14:25:00',
-      createBy: 'admin',
-      updateBy: 'admin'
-    };
-
-    return {
-      data: {
-        rows: [mockPlugin],
-        total: 1
-      },
-      success: true
-    };
-  }
+  return request(`${prefix}/appstore/plugins/list`, {
+    params,
+  });
 }
 
 // 新增插件
@@ -238,6 +169,20 @@ export async function uploadPluginFile(file) {
   formData.append('file', file);
 
   return request(`${prefix}/appstore/plugins/upload`, {
+    method: 'POST',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+}
+
+/** 编辑已有插件时替换本地安装包（manifest code 须与 pluginCode 一致） */
+export async function uploadPluginPackage(pluginCode, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return request(`${prefix}/appstore/plugins/${encodeURIComponent(pluginCode)}/upload-package`, {
     method: 'POST',
     data: formData,
     headers: {

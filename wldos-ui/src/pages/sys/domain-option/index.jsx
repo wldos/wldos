@@ -10,6 +10,7 @@ import {
 import { Alert, Button, Card, Divider, Form, Input, message, Popconfirm, Select, Spin, Space } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FooterToolbar, PageContainer } from '@ant-design/pro-layout';
+import { adminListPageContainerProps } from '@/pages/commercial/_shared/pageContainerStyle';
 import ProTableX from '@/components/ProTableX';
 import useDesktopSticky from '@/components/ProTableX/useDesktopSticky';
 import isMobile from '@/hooks/isMobile';
@@ -18,11 +19,7 @@ import { fetchEnumWoOptionAppCode, fetchEnumWoOptionType } from '@/services/enum
 import { queryPage as queryDomainPage } from '@/pages/sys/domain/service';
 import { addEntity, fetchGlobalOptionByKey, queryPage, removeEntities, removeEntity, updateEntity } from './service';
 
-const PORTAL_TABS_KEY = 'portal_account_center_tabs';
-
 const DOMAIN_OPTION_FORM_LAYOUT = { labelCol: { span: 6 }, wrapperCol: { span: 16 } };
-
-/** 表单分组与标题样式对齐应用管理等页；文案为中文直出，后续可抽 locale。 */
 
 const DomainOptionAdmin = () => {
   const actionRef = useRef();
@@ -133,10 +130,9 @@ const DomainOptionAdmin = () => {
     form.setFieldsValue({
       optionType: 'auto_reload',
       appCode: 'sys_option',
-      optionKey: PORTAL_TABS_KEY,
     });
     setModalVisible(true);
-    loadGlobalForKey(PORTAL_TABS_KEY);
+    setGlobalBaseline(null);
   };
 
   const openEdit = (record) => {
@@ -162,15 +158,15 @@ const DomainOptionAdmin = () => {
     loadGlobalForKey(record.optionKey);
   };
 
-  const validateOptionValueJson = (key, value) => {
+  const validateOptionValueJson = (value) => {
     const v = (value || '').trim();
     if (!v) return true;
-    if (key === PORTAL_TABS_KEY || v.startsWith('[') || v.startsWith('{')) {
+    if (v.startsWith('[') || v.startsWith('{')) {
       try {
         JSON.parse(v);
         return true;
       } catch {
-        message.error('填写内容须为合法格式（个人中心页签等为列表/对象，可按示例书写）');
+        message.error('参数值须为合法 JSON');
         return false;
       }
     }
@@ -180,7 +176,7 @@ const DomainOptionAdmin = () => {
   const submitModal = async () => {
     try {
       const values = await form.validateFields();
-      if (!validateOptionValueJson(values.optionKey, values.optionValue)) return;
+      if (!validateOptionValueJson(values.optionValue)) return;
       const payload = { ...values };
       if (payload.appCode === '' || payload.appCode === undefined) {
         payload.appCode = null;
@@ -255,6 +251,8 @@ const DomainOptionAdmin = () => {
       valueType: 'select',
       valueEnum: domainValueEnum,
       width: 220,
+      hideInTable: domainOptions.length <= 1,
+      hideInSearch: domainOptions.length <= 1,
       render: (_, row) => domainLabelMap[row.domainId] || row.domainId,
     },
     {
@@ -306,26 +304,7 @@ const DomainOptionAdmin = () => {
   ];
 
   return (
-    <PageContainer
-      style={{ padding: 0, margin: 0 }}
-      bodyStyle={{ padding: '24px', margin: 0 }}
-    >
-      <Alert
-        type="info"
-        showIcon
-        style={{ marginBottom: 16 }}
-        message="站点配置与全平台默认的关系"
-        description={
-          <>
-            <div style={{ marginBottom: 8 }}>
-              <strong>分工：</strong>「全局系统选项」里维护的是<strong>全平台通用默认值</strong>；本页用于为<strong>某个站点</strong>单独填写覆盖值。系统使用时，会<strong>优先采用本站点上的设置</strong>；若本站点未配置，则自动回落到全平台默认。
-            </div>
-            <div>
-              <strong>仅本站生效：</strong>即便全平台暂时没有同名项，您仍可在本站点先行保存，只对该站生效。若希望先定全平台统一基线，请先到「全局系统选项」新增同名配置，再回到此处按需覆盖。
-            </div>
-          </>
-        }
-      />
+    <PageContainer {...adminListPageContainerProps}>
       <ProTableX
         headerTitle="域级系统参数"
         actionRef={actionRef}
@@ -405,17 +384,17 @@ const DomainOptionAdmin = () => {
                 showSearch
                 optionFilterProp="label"
                 disabled={!!editing}
-                placeholder="选择要覆盖配置的站点"
+                placeholder="选择站点"
                 options={domainOptions}
               />
             </Form.Item>
             <Form.Item
               name="optionKey"
               label="配置标识"
-              extra="须与「全局系统选项」中为同一配置项保留的标识完全一致。"
+              extra="配置项唯一标识。若全局已有同名项，本站优先生效；若无，则为本站独有配置。"
               rules={[{ required: true, message: '请填写配置标识' }]}
             >
-              <Input disabled={!!editing} placeholder={`示例：${PORTAL_TABS_KEY}`} />
+              <Input disabled={!!editing} placeholder="配置标识" />
             </Form.Item>
           </Card>
           <Card
@@ -424,7 +403,7 @@ const DomainOptionAdmin = () => {
             title={
               <Space>
                 <CloudOutlined style={{ color: '#1890ff' }} />
-                全平台默认对照
+                全局同名项对照
               </Space>
             }
           >
@@ -436,7 +415,7 @@ const DomainOptionAdmin = () => {
               <Alert
                 type="info"
                 showIcon
-                message="全平台默认（只读对照）"
+                message="全局同名配置（只读对照）"
                 description={
                   <div>
                     <div style={{ marginBottom: 8, color: 'rgba(0,0,0,0.65)' }}>
@@ -444,7 +423,7 @@ const DomainOptionAdmin = () => {
                       ；所属应用：{labelForAppCode(globalBaseline.appCode)}
                     </div>
                     <div style={{ fontSize: 12, marginBottom: 4, color: 'rgba(0,0,0,0.45)' }}>
-                      全平台默认内容
+                      全局参数值
                     </div>
                     <Input.TextArea
                       readOnly
@@ -457,10 +436,10 @@ const DomainOptionAdmin = () => {
               />
             ) : (
               <Alert
-                type="warning"
+                type="info"
                 showIcon
-                message="全平台尚无可对照的同名配置"
-                description="保存后仅在本站点生效。若希望先定统一基线，请先到「全局系统选项」新增同名配置，再回到此处填写本站点覆盖值。"
+                message="全局尚无同名配置"
+                description="保存后仅在本站生效，可作为本站独有参数使用。"
               />
             )}
           </Card>
@@ -475,14 +454,14 @@ const DomainOptionAdmin = () => {
             }
           >
             <Form.Item name="optionName" label="显示名称" tooltip="可选">
-              <Input placeholder="如：门户个人中心页签" />
+              <Input placeholder="可选" />
             </Form.Item>
             <Form.Item
               name="optionValue"
               label="参数值"
               rules={[{ required: true, message: '请填写参数值' }]}
             >
-              <Input.TextArea rows={10} placeholder='个人中心页签示例：[{"type":"info","title":"资料"}]' />
+              <Input.TextArea rows={10} placeholder="参数值（JSON 或纯文本）" />
             </Form.Item>
             <Form.Item name="description" label="说明" tooltip="可选">
               <Input.TextArea rows={2} />

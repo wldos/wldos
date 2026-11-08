@@ -91,7 +91,6 @@ class AvatarDropdown extends React.Component {
         const menuHeaderDropdown = (
             <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
                 {hasAvatarItems && avatarMenu.map((item) => renderAvatarMenuItem(item))}
-                {/* 个人中心、个人设置始终保留（原写死项） */}
                 <Menu.Item key="center">
                     <UserOutlined/>
                     {(intl && intl.formatMessage({ id: 'component.globalHeader.menu.center' })) || '个人中心'}

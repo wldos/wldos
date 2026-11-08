@@ -1,30 +1,341 @@
-import React, { useState } from 'react';
-import { Row, Col, Card, Button, Space, message } from 'antd';
-import { ApartmentOutlined, ReloadOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { Row, Col, Card, Button, Space, message, AutoComplete } from 'antd';
+import { ApartmentOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons';
+import { connect, useIntl, useLocation, history } from 'umi';
+import { buildAuthorityHelper } from '@/hooks/useAuthority';
 import OrganizationTree from '@/components/OrganizationTree/OrganizationTree';
 import OrganizationDetail from '@/components/OrganizationTree/OrganizationDetail';
+import ComCreateForm from '@/pages/sys/com/components/CreateForm';
+import ComCreateFormContent from '@/pages/sys/com/components/CreateFormContent';
+import { getComSelectOption } from '@/pages/sys/com/service';
+import { getArchList } from '@/pages/sys/arch/service';
+import { getOrgList, fetchOrgType } from '@/pages/sys/org/service';
+import { queryPage as queryDomainPage } from '@/pages/sys/domain/service';
 import {
   updateCompany,
+  addCompany,
   addSystem,
   deleteCompany,
   updateSystem,
   addOrganization,
   deleteSystem,
   updateOrganization,
-  addUserToOrganization,
-  updateOrganizationPermissions,
   deleteOrganization,
-  getOrganizationArchitecture,
   getCompanyById,
 } from '@/services/organization';
+import { canProvisionCompany, filterDomainOptionsForCom } from '@/utils/orgCreateUserDomain';
 
-const OrganizationArchitecture = () => {
+const SEARCH_RESULT_LIMIT = 20;
+
+const PLATFORM_COM_ID = '0';
+const PLATFORM_COM_NAME = '平台';
+
+function buildOrganizationSearchIndex(comOptions, archMetaList, orgMetaList, treeData, typeLabels) {
+  const comNameById = new Map();
+  comNameById.set(PLATFORM_COM_ID, PLATFORM_COM_NAME);
+
+  (treeData || []).forEach((node) => {
+    if (node?.type === 'company' && node.id != null) {
+      comNameById.set(String(node.id), node.comName || node.name || comNameById.get(String(node.id)) || '');
+    }
+  });
+
+  (comOptions || []).forEach((item) => {
+    if (item?.value != null) {
+      comNameById.set(String(item.value), item.label || comNameById.get(String(item.value)) || '');
+    }
+  });
+
+  (archMetaList || []).forEach((arch) => {
+    if (arch?.comId != null && !comNameById.has(String(arch.comId))) {
+      comNameById.set(String(arch.comId), String(arch.comId) === PLATFORM_COM_ID ? PLATFORM_COM_NAME : '');
+    }
+  });
+
+  const archNameById = new Map();
+  (archMetaList || []).forEach((arch) => {
+    if (arch?.id != null) {
+      archNameById.set(String(arch.id), arch.archName || '');
+    }
+  });
+
+  const items = [];
+
+  const companyIds = new Set();
+  const addCompanyItem = (id, label) => {
+    if (id == null || companyIds.has(String(id))) {
+      return;
+    }
+    companyIds.add(String(id));
+    const name = label || comNameById.get(String(id)) || '';
+    items.push({
+      key: `company-${id}`,
+      type: 'company',
+      id,
+      label: name,
+      path: name,
+      typeLabel: typeLabels.company,
+    });
+  };
+
+  (treeData || []).forEach((node) => {
+    if (node?.type === 'company') {
+      addCompanyItem(node.id, node.comName || node.name);
+    }
+  });
+
+  (comOptions || []).forEach((com) => {
+    addCompanyItem(com.value, com.label);
+  });
+
+  (archMetaList || []).forEach((arch) => {
+    if (arch?.id == null || arch.comId == null) {
+      return;
+    }
+    const comName = comNameById.get(String(arch.comId)) || '';
+    const label = arch.archName || '';
+    const path = comName ? `${comName} / ${label}` : label;
+    items.push({
+      key: `system-${arch.id}`,
+      type: 'system',
+      id: arch.id,
+      comId: arch.comId,
+      label,
+      path,
+      typeLabel: typeLabels.system,
+    });
+  });
+
+  (orgMetaList || []).forEach((org) => {
+    if (org?.id == null || org.comId == null || org.archId == null) {
+      return;
+    }
+    const comName = comNameById.get(String(org.comId)) || '';
+    const archName = archNameById.get(String(org.archId)) || '';
+    const label = org.orgName || '';
+    const path = [comName, archName, label].filter(Boolean).join(' / ');
+    items.push({
+      key: `organization-${org.id}`,
+      type: 'organization',
+      id: org.id,
+      comId: org.comId,
+      archId: org.archId,
+      label,
+      path,
+      typeLabel: typeLabels.organization,
+    });
+  });
+
+  return items;
+}
+
+function filterSearchIndex(index, keyword) {
+  const q = (keyword || '').trim().toLowerCase();
+  if (!q) {
+    return [];
+  }
+  return index
+    .filter((item) => `${item.typeLabel} ${item.label} ${item.path}`.toLowerCase().includes(q))
+    .slice(0, SEARCH_RESULT_LIMIT);
+}
+
+function findTreeNode(nodes, type, id) {
+  if (!Array.isArray(nodes) || !nodes.length) {
+    return null;
+  }
+  for (const node of nodes) {
+    if (node.type === type && String(node.id) === String(id)) {
+      return node;
+    }
+    const found = findTreeNode(node.children, type, id);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
+}
+
+const OrganizationArchitecture = ({ hasAuthority, isAdmin, isTenantAdmin }) => {
+  const canManageCompanyStructure = canProvisionCompany(isAdmin, isTenantAdmin);
+  const intl = useIntl();
+  const location = useLocation();
+  const pendingFocusRef = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedKey, setSelectedKey] = useState(null);
   const [showUsers, setShowUsers] = useState(false);
   const [treeData, setTreeData] = useState([]);
+  const [createComVisible, setCreateComVisible] = useState(false);
+  const [reloadToken, setReloadToken] = useState(0);
+  const triggerReload = () => setReloadToken((t) => t + 1);
 
-  // 统一判断本系统 API 成功规则（兼容历史字段）
+  const [comOptions, setComOptions] = useState([]);
+  const [orgTypeOptions, setOrgTypeOptions] = useState([]);
+  const [archOptionsForOrg, setArchOptionsForOrg] = useState([]);
+  const [orgOptionsForParent, setOrgOptionsForParent] = useState([]);
+  const [orgMetaList, setOrgMetaList] = useState([]);
+  const [archMetaList, setArchMetaList] = useState([]);
+  const [focusTarget, setFocusTarget] = useState(null);
+  const [allDomainRows, setAllDomainRows] = useState([]);
+  const [archTargetDomainId, setArchTargetDomainId] = useState(undefined);
+  const [archDomainOptions, setArchDomainOptions] = useState([]);
+  const [archShowDomainSelect, setArchShowDomainSelect] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const typeLabels = useMemo(() => ({
+    company: intl.formatMessage({ id: 'component.organizationTree.nodeType.company' }),
+    system: intl.formatMessage({ id: 'component.organizationTree.nodeType.system' }),
+    organization: intl.formatMessage({ id: 'component.organizationTree.nodeType.organization' }),
+  }), [intl]);
+
+  const searchIndex = useMemo(
+    () => buildOrganizationSearchIndex(comOptions, archMetaList, orgMetaList, treeData, typeLabels),
+    [comOptions, archMetaList, orgMetaList, treeData, typeLabels],
+  );
+
+  const searchOptions = useMemo(
+    () => filterSearchIndex(searchIndex, searchKeyword).map((item) => ({
+      value: item.key,
+      label: (
+        <div>
+          <span style={{ color: '#888', marginRight: 6 }}>{item.typeLabel}</span>
+          {item.label}
+          {item.path !== item.label ? (
+            <div style={{ fontSize: 12, color: '#aaa' }}>{item.path}</div>
+          ) : null}
+        </div>
+      ),
+    })),
+    [searchIndex, searchKeyword],
+  );
+
+  const handleSearchSelect = useCallback((key) => {
+    const item = searchIndex.find((entry) => entry.key === key);
+    if (!item) {
+      return;
+    }
+    if (item.type === 'company') {
+      setFocusTarget({ type: 'company', id: item.id });
+    } else if (item.type === 'system') {
+      setFocusTarget({ type: 'system', id: item.id, comId: item.comId });
+    } else if (item.type === 'organization') {
+      setFocusTarget({
+        type: 'organization',
+        id: item.id,
+        comId: item.comId,
+        archId: item.archId,
+      });
+    }
+    setSearchKeyword('');
+  }, [searchIndex]);
+
+  const refreshOrgParentOptions = async () => {
+    const orgRes = await getOrgList();
+    const orgArr = orgRes?.data || [];
+    setOrgMetaList(orgArr);
+    setOrgOptionsForParent(orgArr.map((item) => ({
+      label: item.orgName,
+      value: item.id,
+      archId: item.archId,
+      comId: item.comId,
+    })));
+  };
+
+  const resolvePendingFocus = () => {
+    const pending = pendingFocusRef.current;
+    if (!pending) {
+      return;
+    }
+    if (pending.focusType === 'organization') {
+      const org = orgMetaList.find((item) => String(item.id) === String(pending.focusId));
+      if (org?.comId != null && org?.archId != null) {
+        setFocusTarget({
+          type: 'organization',
+          id: org.id,
+          comId: org.comId,
+          archId: org.archId,
+        });
+        pendingFocusRef.current = null;
+      }
+      return;
+    }
+    if (pending.focusType === 'company') {
+      setFocusTarget({ type: 'company', id: pending.focusId });
+      pendingFocusRef.current = null;
+      return;
+    }
+    if (pending.focusType === 'system') {
+      const arch = archMetaList.find((item) => String(item.id) === String(pending.focusId));
+      if (arch?.comId != null) {
+        setFocusTarget({
+          type: 'system',
+          id: arch.id,
+          comId: arch.comId,
+        });
+        pendingFocusRef.current = null;
+      }
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const focusType = params.get('focusType');
+    const focusId = params.get('focusId');
+    if (focusType && focusId) {
+      pendingFocusRef.current = { focusType, focusId };
+      history.replace(location.pathname);
+      resolvePendingFocus();
+    }
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    (async () => {
+      const comRes = await getComSelectOption();
+      setComOptions(comRes?.data || []);
+
+      const orgTypeRes = await fetchOrgType();
+      setOrgTypeOptions(orgTypeRes?.data || []);
+
+      const archRes = await getArchList();
+      const archArr = archRes?.data || [];
+      setArchMetaList(archArr);
+      setArchOptionsForOrg(archArr.map((item) => ({ label: item.archName, value: item.id })));
+
+      await refreshOrgParentOptions();
+
+      const domainRes = await queryDomainPage({ current: 1, pageSize: 500, sorter: { displayOrder: 'ascend' } });
+      setAllDomainRows(domainRes?.data?.rows ?? []);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedNode || selectedNode.type !== 'organization') {
+      setArchDomainOptions([]);
+      setArchShowDomainSelect(false);
+      setArchTargetDomainId(undefined);
+      return;
+    }
+    const orgDomain = selectedNode.domainId;
+    if (orgDomain != null && orgDomain !== '' && Number(orgDomain) > 0) {
+      setArchDomainOptions([]);
+      setArchShowDomainSelect(false);
+      setArchTargetDomainId(String(orgDomain));
+      return;
+    }
+    const options = filterDomainOptionsForCom(allDomainRows, selectedNode.comId);
+    setArchDomainOptions(options);
+    setArchShowDomainSelect(options.length > 1);
+    if (options.length === 1) {
+      setArchTargetDomainId(options[0].value);
+    } else {
+      setArchTargetDomainId(undefined);
+    }
+  }, [selectedNode, allDomainRows]);
+
+  useEffect(() => {
+    resolvePendingFocus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgMetaList, archMetaList]);
+
   const isOk = (resp) => !!(resp && (
     resp.success || resp.code === 200
   ));
@@ -37,25 +348,31 @@ const OrganizationArchitecture = () => {
   const handleRefresh = () => {
     setSelectedNode(null);
     setSelectedKey(null);
-    // 触发树形组件重新加载数据，避免全页面刷新
-    setTreeData([]); // 清空数据触发重新加载
+    triggerReload();
   };
 
   const handleTreeDataChange = (data) => {
     setTreeData(data);
+    const pending = pendingFocusRef.current;
+    if (!pending) {
+      return;
+    }
+    const node = findTreeNode(data, pending.focusType, pending.focusId);
+    if (node) {
+      pendingFocusRef.current = null;
+      setSelectedKey(`${node.type}-${node.id}`);
+      setSelectedNode(node);
+    }
   };
 
-  // 公司管理回调函数
-  // 参照“首页为容器、子页面处理交互”的约定：父级负责数据更新，交互消息与异常在子组件内处理
   const handleCompanyUpdate = async (payload) => {
     try {
       const response = await updateCompany(payload);
       if (!isOk(response)) {
-        message.error((response && (response.message || response.msg)) || '公司信息更新失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.company.msg.updateFail' }));
         return;
       }
 
-      // 1) 回查公司详情，刷新右侧详情
       const latest = await getCompanyById(payload.id);
       if (latest) {
         setSelectedNode((prev) => {
@@ -65,17 +382,11 @@ const OrganizationArchitecture = () => {
         });
       }
 
-      // 2) 回查组织架构数据，刷新左侧树（保持一致性）
-      const arch = await getOrganizationArchitecture();
-      if (arch && arch.data) {
-        setTreeData(arch.data);
-      }
-
-      // 统一在此处提示一次（事务闭环执行完毕后提示）
-      message.success('公司信息更新成功');
+      triggerReload();
+      message.success(intl.formatMessage({ id: 'component.organizationTree.company.msg.updateOk' }));
     } catch (error) {
       console.error('更新公司失败:', error);
-      message.error('公司信息更新失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.updateFail' }));
     }
   };
 
@@ -83,19 +394,17 @@ const OrganizationArchitecture = () => {
     try {
       const response = await addSystem({
         comId: companyId,
-        ...values
+        ...values,
       });
       if (isOk(response)) {
-        message.success('体系添加成功');
-
-        // 清空数据触发树形组件重新加载
-        setTreeData([]);
+        message.success(intl.formatMessage({ id: 'component.organizationTree.system.msg.addOk' }));
+        triggerReload();
       } else {
-        message.error((response && (response.message || response.msg)) || '体系添加失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.system.msg.addFail' }));
       }
     } catch (error) {
       console.error('添加体系失败:', error);
-      message.error('体系添加失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.addFail' }));
     }
   };
 
@@ -103,43 +412,38 @@ const OrganizationArchitecture = () => {
     try {
       const response = await deleteCompany({ id: companyId });
       if (isOk(response)) {
-        message.success('公司删除成功');
-        // 刷新树形数据
-        setTreeData([]); // 清空数据触发重新加载
+        message.success(intl.formatMessage({ id: 'component.organizationTree.company.msg.deleteOk' }));
+        setSelectedNode(null);
+        setSelectedKey(null);
+        triggerReload();
       } else {
-        message.error((response && (response.message || response.msg)) || '公司删除失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.company.msg.deleteFail' }));
       }
     } catch (error) {
       console.error('删除公司失败:', error);
-      message.error('公司删除失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.deleteFail' }));
     }
   };
 
-  // 体系管理回调函数
   const handleSystemUpdate = async (systemId, values) => {
     try {
       const response = await updateSystem({
         id: systemId,
-        ...values
+        ...values,
       });
       if (isOk(response)) {
-        // 1) 更新当前选中的节点详情
         setSelectedNode((prev) => {
           if (!prev || prev.id !== systemId) return prev;
           return { ...prev, ...values };
         });
-
-        // 2) 刷新树形数据
-        setTreeData([]); // 清空数据触发重新加载
-
-        // 统一在此处提示一次
-        message.success('体系信息更新成功');
+        triggerReload();
+        message.success(intl.formatMessage({ id: 'component.organizationTree.system.msg.updateOk' }));
       } else {
-        message.error((response && (response.message || response.msg)) || '体系信息更新失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.system.msg.updateFail' }));
       }
     } catch (error) {
       console.error('更新体系失败:', error);
-      message.error('体系信息更新失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.updateFail' }));
     }
   };
 
@@ -147,18 +451,18 @@ const OrganizationArchitecture = () => {
     try {
       const response = await addOrganization({
         archId: systemId,
-        ...values
+        ...values,
       });
       if (isOk(response)) {
-        message.success('机构添加成功');
-        // 刷新树形数据
-        setTreeData([]); // 清空数据触发重新加载
+        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.addOk' }));
+        await refreshOrgParentOptions();
+        triggerReload();
       } else {
-        message.error((response && (response.message || response.msg)) || '机构添加失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.org.msg.addFail' }));
       }
     } catch (error) {
       console.error('添加机构失败:', error);
-      message.error('机构添加失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.addFail' }));
     }
   };
 
@@ -166,69 +470,57 @@ const OrganizationArchitecture = () => {
     try {
       const response = await deleteSystem({ id: systemId });
       if (isOk(response)) {
-        message.success('体系删除成功');
-        // 刷新树形数据
-        setTreeData([]); // 清空数据触发重新加载
+        message.success(intl.formatMessage({ id: 'component.organizationTree.system.msg.deleteOk' }));
+        setSelectedNode(null);
+        setSelectedKey(null);
+        triggerReload();
       } else {
-        message.error((response && (response.message || response.msg)) || '体系删除失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.system.msg.deleteFail' }));
       }
     } catch (error) {
       console.error('删除体系失败:', error);
-      message.error('体系删除失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.system.msg.deleteFail' }));
     }
   };
 
-  // 机构管理回调函数
   const handleOrganizationUpdate = async (orgId, values) => {
     try {
       const response = await updateOrganization({
         id: orgId,
-        ...values
+        ...values,
       });
       if (isOk(response)) {
-        message.success('机构信息更新成功');
-        // 刷新树形数据
-        setTreeData([]); // 清空数据触发重新加载
+        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.updateOk' }));
+        await refreshOrgParentOptions();
+        triggerReload();
       } else {
-        message.error((response && (response.message || response.msg)) || '机构信息更新失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.org.msg.updateFail' }));
       }
     } catch (error) {
       console.error('更新机构失败:', error);
-      message.error('机构信息更新失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.updateFail' }));
     }
   };
 
-  const handleUserAdd = async (orgId, values) => {
-    try {
-      const response = await addUserToOrganization({
-        organizationId: orgId,
-        ...values
-      });
-      if (isOk(response)) {
-        message.success('用户添加成功');
-        // 刷新用户列表
-        setShowUsers(false);
-        setShowUsers(true);
-      } else {
-        message.error((response && (response.message || response.msg)) || '用户添加失败');
-      }
-    } catch (error) {
-      console.error('添加用户失败:', error);
-      message.error('用户添加失败');
-    }
+  const handleMembersChanged = () => {
+    setShowUsers(false);
+    setShowUsers(true);
   };
 
-  const handlePermissionSettings = async (permissionData) => {
+  const handleCompanyAdd = async (values) => {
     try {
-      const response = await updateOrganizationPermissions(permissionData);
+      const response = await addCompany(values);
       if (isOk(response)) {
-        message.success('权限设置保存成功');
-      } else {
-        message.error((response && (response.message || response.msg)) || '权限设置保存失败');
+        message.success(intl.formatMessage({ id: 'component.organizationTree.company.msg.addOk' }));
+        triggerReload();
+        return true;
       }
+      message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.company.msg.addFail' }));
+      return false;
     } catch (error) {
-      console.error('权限设置失败:', error);
-      message.error('权限设置保存失败');
+      console.error('添加公司失败:', error);
+      message.error(intl.formatMessage({ id: 'component.organizationTree.company.msg.addFail' }));
+      return false;
     }
   };
 
@@ -236,15 +528,17 @@ const OrganizationArchitecture = () => {
     try {
       const response = await deleteOrganization({ id: orgId });
       if (isOk(response)) {
-        message.success('机构删除成功');
-        // 刷新树形数据
-        setTreeData([]); // 清空数据触发重新加载
+        message.success(intl.formatMessage({ id: 'component.organizationTree.org.msg.deleteOk' }));
+        setSelectedNode(null);
+        setSelectedKey(null);
+        await refreshOrgParentOptions();
+        triggerReload();
       } else {
-        message.error((response && (response.message || response.msg)) || '机构删除失败');
+        message.error((response && (response.message || response.msg)) || intl.formatMessage({ id: 'component.organizationTree.org.msg.deleteFail' }));
       }
     } catch (error) {
       console.error('删除机构失败:', error);
-      message.error('机构删除失败');
+      message.error(intl.formatMessage({ id: 'component.organizationTree.org.msg.deleteFail' }));
     }
   };
 
@@ -254,16 +548,25 @@ const OrganizationArchitecture = () => {
         title={
           <Space>
             <ApartmentOutlined />
-            组织架构管理
+            {intl.formatMessage({ id: 'component.organizationTree.page.title' })}
           </Space>
         }
         extra={
           <Space>
+            {canManageCompanyStructure ? (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setCreateComVisible(true)}
+              >
+                {intl.formatMessage({ id: 'component.organizationTree.page.addCompany' })}
+              </Button>
+            ) : null}
             <Button
               icon={<ReloadOutlined />}
               onClick={handleRefresh}
             >
-              刷新
+              {intl.formatMessage({ id: 'component.organizationTree.page.refresh' })}
             </Button>
           </Space>
         }
@@ -273,47 +576,86 @@ const OrganizationArchitecture = () => {
         <Row gutter={16} style={{ height: '100%' }}>
           <Col span={8} style={{ height: '100%' }}>
             <Card
-              title="组织架构"
+              title={intl.formatMessage({ id: 'component.organizationTree.page.treeTitle' })}
               size="small"
               style={{ height: '100%' }}
-              bodyStyle={{ height: 'calc(100% - 40px)', overflow: 'auto' }}
+              bodyStyle={{ height: 'calc(100% - 40px)', overflow: 'auto', padding: '8px 12px' }}
             >
+              <AutoComplete
+                style={{ width: '100%', marginBottom: 8 }}
+                value={searchKeyword}
+                options={searchOptions}
+                onSearch={setSearchKeyword}
+                onSelect={handleSearchSelect}
+                placeholder={intl.formatMessage({ id: 'component.organizationTree.search.placeholder' })}
+                notFoundContent={
+                  searchKeyword.trim()
+                    ? intl.formatMessage({ id: 'component.organizationTree.search.empty' })
+                    : null
+                }
+                allowClear
+              />
               <OrganizationTree
                 onSelect={handleSelect}
                 selectedKey={selectedKey}
                 showUsers={showUsers}
                 onTreeDataChange={handleTreeDataChange}
-                externalTreeData={treeData}
+                reloadToken={reloadToken}
+                focusTarget={focusTarget}
+                onFocusApplied={() => setFocusTarget(null)}
               />
             </Card>
           </Col>
           <Col span={16} style={{ height: '100%' }}>
             <Card
-              title="详情管理"
+              title={intl.formatMessage({ id: 'component.organizationTree.detail.manage' })}
               size="small"
               style={{ height: '100%' }}
-              bodyStyle={{ height: 'calc(100% - 40px)', overflow: 'auto' }}
+              bodyStyle={{ height: 'calc(100% - 40px)', overflow: 'auto', padding: 16 }}
             >
               <OrganizationDetail
                 selectedNode={selectedNode}
                 treeData={treeData}
                 onCompanyUpdate={handleCompanyUpdate}
+                onCompanyAdd={handleCompanyAdd}
                 onSystemAdd={handleSystemAdd}
                 onCompanyDelete={handleCompanyDelete}
                 onSystemUpdate={handleSystemUpdate}
                 onOrganizationAdd={handleOrganizationAdd}
                 onSystemDelete={handleSystemDelete}
                 onOrganizationUpdate={handleOrganizationUpdate}
-                onUserAdd={handleUserAdd}
-                onPermissionSettings={handlePermissionSettings}
+                onMembersChanged={handleMembersChanged}
                 onOrganizationDelete={handleOrganizationDelete}
+                comOptions={comOptions}
+                orgTypeOptions={orgTypeOptions}
+                archOptionsForOrg={archOptionsForOrg}
+                orgOptionsForParent={orgOptionsForParent}
+                hasAuthority={hasAuthority}
+                targetDomainId={archTargetDomainId}
+                domainOptions={archDomainOptions}
+                showDomainSelect={archShowDomainSelect}
+                onTargetDomainChange={setArchTargetDomainId}
               />
             </Card>
           </Col>
         </Row>
       </Card>
+
+      <ComCreateForm
+        modalVisible={createComVisible}
+        onCancel={() => setCreateComVisible(false)}
+      >
+        <ComCreateFormContent
+          onSubmit={async (values) => {
+            const ok = await handleCompanyAdd(values);
+            if (ok) setCreateComVisible(false);
+          }}
+          onCancel={() => setCreateComVisible(false)}
+          roles={comOptions}
+        />
+      </ComCreateForm>
     </div>
   );
 };
 
-export default OrganizationArchitecture;
+export default connect(({ user }) => buildAuthorityHelper(user, '/admin'))(OrganizationArchitecture);

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Form, Input, Select, Button, Card, Space, Tooltip, Alert, InputNumber } from 'antd';
+import React, { forwardRef, useImperativeHandle } from 'react';
+import { Form, Input, Select, Button, Card, Space, Tooltip, InputNumber } from 'antd';
 import {
   TeamOutlined,
   KeyOutlined,
@@ -26,17 +26,27 @@ const formLayout = {
   },
 };
 
-const CreateFormContent = (props) => {
+const CreateFormContent = forwardRef((props, ref) => {
   const [form] = Form.useForm();
   const {
     onSubmit: handleAdd,
     onCancel: handleCancel,
     roles = [],
-    archs = [],
     orgTypes = [],
     comList = [],
-    currentRecord = null // 接收当前记录信息
+    currentRecord = null,
+    defaultComId,
+    segmentMode = false,
   } = props;
+
+  // 分群页固定按分群类型创建；编制树页不提供分群类型，避免新建后只出现在分群列表
+  const effectiveOrgTypes = segmentMode ? orgTypes : orgTypes.filter((t) => t.value !== 'segment');
+  // 收窄后可选类型只剩「组织机构」一项时（租户/站点管理员均如此，仅平台超管额外可见「系统用户组」），
+  // 下拉本身不再传达任何选择意义，直接隐藏并落默认值，避免用户误以为还需要做选择
+  const showOrgTypeSelect = !segmentMode && effectiveOrgTypes.length > 1;
+  const singleOrgType = effectiveOrgTypes.length === 1 ? effectiveOrgTypes[0].value : 'org';
+  const nameLabel = segmentMode ? '分群名称' : '组织名称';
+  const codeLabel = segmentMode ? '分群编码' : '组织编码';
 
   const handleNext = async () => {
     try {
@@ -47,18 +57,14 @@ const CreateFormContent = (props) => {
     }
   };
 
+  // 暴露submit方法给父组件（CreateForm 的弹窗底部按钮通过 ref 触发校验+提交）
+  useImperativeHandle(ref, () => ({
+    submit: handleNext
+  }));
+
   const renderContent = () => {
     return (
       <div>
-        {/* 页面说明 */}
-        <Alert
-          message="新建组织"
-          description="创建新的组织机构，配置组织的基本信息、层级关系和状态设置。组织是业务域运营的人员管理单位。"
-          type="info"
-          showIcon
-          style={{ marginBottom: '24px' }}
-        />
-
         {/* 基础信息 */}
         <Card
           title={
@@ -79,7 +85,7 @@ const CreateFormContent = (props) => {
             name="orgName"
             label={
               <Space>
-                组织名称
+                {nameLabel}
                 <Tooltip title="组织的显示名称，用于界面展示">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
@@ -88,14 +94,14 @@ const CreateFormContent = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入组织名称，不能为空，最多60个字！',
+                message: `请输入${nameLabel}，不能为空，最多60个字！`,
                 max: 60,
               },
             ]}
           >
             <Input
               prefix={<TeamOutlined />}
-              placeholder="请输入组织名称，最多60个字"
+              placeholder={`请输入${nameLabel}，最多60个字`}
             />
           </FormItem>
 
@@ -103,7 +109,7 @@ const CreateFormContent = (props) => {
             name="orgCode"
             label={
               <Space>
-                组织编码
+                {codeLabel}
                 <Tooltip title="组织的唯一标识，用于系统识别">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
@@ -112,17 +118,26 @@ const CreateFormContent = (props) => {
             rules={[
               {
                 required: true,
-                message: '请输入组织编码，不能为空，最多32位！',
+                message: `请输入${codeLabel}，不能为空，最多32位！`,
                 max: 32,
               },
             ]}
           >
             <Input
               prefix={<KeyOutlined />}
-              placeholder="请输入组织编码，最多32位"
+              placeholder={`请输入${codeLabel}，最多32位`}
             />
           </FormItem>
 
+          {segmentMode ? (
+            <FormItem name="orgType" hidden initialValue="segment">
+              <Input />
+            </FormItem>
+          ) : !showOrgTypeSelect ? (
+            <FormItem name="orgType" hidden initialValue={singleOrgType}>
+              <Input />
+            </FormItem>
+          ) : (
           <FormItem
             name="orgType"
             label={
@@ -143,14 +158,19 @@ const CreateFormContent = (props) => {
             <Select
               placeholder="请选择组织类型"
               style={{ width: '100%' }}
+              showSearch
+              filterOption={(input, option) =>
+                String(option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+              }
             >
-              {orgTypes.map(type => (
+              {effectiveOrgTypes.map(type => (
                 <Option key={type.value} value={type.value}>
                   {type.label}
                 </Option>
               ))}
             </Select>
           </FormItem>
+          )}
         </Card>
 
         {/* 组织配置 */}
@@ -168,6 +188,7 @@ const CreateFormContent = (props) => {
             </Tooltip>
           }
         >
+          {!segmentMode && comList.length > 1 && (
           <FormItem
             name="comId"
             label={
@@ -188,40 +209,16 @@ const CreateFormContent = (props) => {
             <Select
               placeholder="请选择归属公司"
               style={{ width: '100%' }}
+              showSearch
               filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                String(option?.label ?? option?.children ?? '').toLowerCase().includes(input.toLowerCase())
               }
               options={comList}
             />
           </FormItem>
+          )}
 
-          <FormItem
-            name="archId"
-            label={
-              <Space>
-                归属体系
-                <Tooltip title="组织所属的体系，用于体系层级管理">
-                  <InfoCircleOutlined style={{ color: '#999' }} />
-                </Tooltip>
-              </Space>
-            }
-            rules={[
-              {
-                required: true,
-                message: '请选择归属体系！',
-              },
-            ]}
-          >
-            <Select
-              placeholder="请选择归属体系"
-              style={{ width: '100%' }}
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              options={archs}
-            />
-          </FormItem>
-
+          {!segmentMode && (
           <FormItem
             name="parentId"
             label={
@@ -236,8 +233,9 @@ const CreateFormContent = (props) => {
             <Select
               placeholder="请选择上级组织"
               style={{ width: '100%' }}
+              showSearch
               filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                String(option?.label ?? option?.children ?? '').toLowerCase().includes(input.toLowerCase())
               }
             >
               {roles && Array.isArray(roles) ? roles.map(item => (
@@ -251,13 +249,14 @@ const CreateFormContent = (props) => {
               ))}
             </Select>
           </FormItem>
+          )}
 
           <FormItem
             name="displayOrder"
             label={
               <Space>
                 展示顺序
-                <Tooltip title="组织在列表中的显示顺序，1-100">
+                <Tooltip title="组织在列表中的显示顺序，1-9999">
                   <InfoCircleOutlined style={{ color: '#999' }} />
                 </Tooltip>
               </Space>
@@ -271,9 +270,9 @@ const CreateFormContent = (props) => {
           >
             <InputNumber
               prefix={<NumberOutlined />}
-              placeholder="请输入数字，1-100"
+              placeholder="请输入数字，1-9999"
               min={1}
-              max={100}
+              max={9999}
               style={{ width: '100%' }}
             />
           </FormItem>
@@ -309,16 +308,14 @@ const CreateFormContent = (props) => {
       initialValues={{
         isValid: '1',
         displayOrder: 1,
-        // 根据当前记录设置初始值
         parentId: currentRecord?.parentId || '0',
-        orgType: currentRecord?.orgType || undefined,
-        comId: currentRecord?.comId || undefined,
-        archId: currentRecord?.archId || undefined
+        orgType: segmentMode ? 'segment' : (currentRecord?.orgType || (effectiveOrgTypes.find((t) => t.value === 'org') ? 'org' : undefined)),
+        comId: currentRecord?.comId ?? defaultComId,
       }}
     >
       {renderContent()}
     </Form>
   );
-};
+});
 
 export default CreateFormContent;

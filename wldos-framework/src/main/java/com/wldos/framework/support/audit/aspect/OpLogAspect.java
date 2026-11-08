@@ -75,7 +75,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>{@code @Order(LOWEST_PRECEDENCE)}：让其它业务切面（事务、权限等）先执行，本切面在最外层观测最终结果。
  *
  * @author Yuanxi Universe
- * @date 2026/05/04
+ * @date 2025/05/04
  * @version 1.0
  */
 @Slf4j
@@ -168,6 +168,9 @@ public class OpLogAspect {
 		if (notBlank(opLog.resourceId())) {
 			ev.setResourceId(parseSpel(opLog.resourceId(), method, args));
 		}
+		if (notBlank(opLog.targetComId())) {
+			ev.setTargetComId(parseSpelAsLong(opLog.targetComId(), method, args));
+		}
 		// 资源人性化名称：注解里显式给 SpEL 才在切面侧填；否则留给异步消费侧反查
 		if (notBlank(opLog.resourceName())) {
 			ev.setResourceName(parseSpel(opLog.resourceName(), method, args));
@@ -185,7 +188,8 @@ public class OpLogAspect {
 			try {
 				ev.setUserId(commonOperation.getUserId());
 				ev.setDomainId(commonOperation.getDomainId());
-				ev.setComId(commonOperation.getTenantId());
+				Long workComId = commonOperation.getWorkComId();
+				ev.setComId(workComId != null ? workComId : commonOperation.getTenantId());
 				ev.setIp(commonOperation.getUserIp());
 			} catch (Exception ignored) {
 				// 回退到 header 解析，不影响业务
@@ -209,7 +213,8 @@ public class OpLogAspect {
 				ev.setDomainId(parseLongHeader(request, Constants.CONTEXT_KEY_USER_DOMAIN));
 			}
 			if (ev.getComId() == null) {
-				ev.setComId(parseLongHeader(request, Constants.CONTEXT_KEY_USER_TENANT));
+				Long workComId = parseLongHeader(request, Constants.CONTEXT_KEY_USER_WORK_COM);
+				ev.setComId(workComId != null ? workComId : parseLongHeader(request, Constants.CONTEXT_KEY_USER_TENANT));
 			}
 		} else {
 			// 仅在无请求上下文（非 HTTP 场景）兜底为游客默认值。
@@ -347,6 +352,37 @@ public class OpLogAspect {
 			Expression expr = SPEL_PARSER.parseExpression(expression);
 			Object value = expr.getValue(ctx);
 			return value == null ? null : value.toString();
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
+	/** 与 {@link #parseSpel} 同样的解析与容错口径，仅将结果收敛为 Long（非 Long 时按字符串再转一次）。 */
+	private static Long parseSpelAsLong(String expression, Method method, Object[] args) {
+		try {
+			String[] paramNames = PARAM_NAME_DISCOVERER.getParameterNames(method);
+			if (paramNames == null || paramNames.length == 0) {
+				return null;
+			}
+			EvaluationContext ctx = new StandardEvaluationContext();
+			for (int i = 0; i < paramNames.length && i < args.length; i++) {
+				ctx.setVariable(paramNames[i], args[i]);
+			}
+			Expression expr = SPEL_PARSER.parseExpression(expression);
+			Object value = expr.getValue(ctx);
+			if (value == null) {
+				return null;
+			}
+			if (value instanceof Long) {
+				return (Long) value;
+			}
+			try {
+				return Long.valueOf(String.valueOf(value));
+			}
+			catch (NumberFormatException e) {
+				return null;
+			}
 		}
 		catch (Exception e) {
 			return null;

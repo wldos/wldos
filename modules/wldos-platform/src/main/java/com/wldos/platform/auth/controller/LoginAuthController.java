@@ -86,10 +86,22 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 				&& "ok".equalsIgnoreCase(user.getStatus());
 	}
 
+	/** 审计失败原因：优先 {@code auditFailReason}（不对用户展示），否则 {@code news}。 */
+	private static String resolveAuditFailReason(Login result) {
+		if (result == null) {
+			return null;
+		}
+		String audit = result.getAuditFailReason();
+		if (audit != null && !audit.isEmpty()) {
+			return audit;
+		}
+		return result.getNews();
+	}
+
 	/**
 	 * 记录一条登录类事件。
 	 *
-	 * <p>{@code userId} 由 {@link LoginAuthService#queryUserIdForAudit(String)} 按 {@code account}
+	 * <p>{@code userId} 由 {@link LoginAuthService#queryUserIdForAudit(String, Long)} 按 {@code account}
 	 * 反查（一次主键/唯一索引 lookup，旁路调用，查不到返回 {@code null} 不抛错）：
 	 * <ul>
 	 *   <li>登录成功：{@code account} 一定存在，user_id 可定位；</li>
@@ -104,17 +116,29 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 		}
 		String ip = this.getUserIp();
 		String ua = this.request == null ? null : this.request.getHeader("User-Agent");
-		Long userId = this.service.queryUserIdForAudit(account);
+		Long userId = this.service.queryUserIdForAudit(account, this.getDomainId());
 		LoginEvent ev;
 		if (isOk(result)) {
 			ev = LoginEvent.success(userId, account, type, ip, ua);
 		}
 		else {
-			String reason = result == null ? null : result.getNews();
+			String reason = resolveAuditFailReason(result);
 			ev = LoginEvent.fail(userId, account, type, reason, ip, ua);
 		}
-		ev.withTenant(this.getDomainId(), this.getTenantId());
+		ev.withTenant(this.getDomainId(), this.resolveAuditComId(userId));
 		this.loginLogger.recordAsync(ev);
+	}
+
+	private Long resolveAuditComId(Long userId) {
+		Long domainId = this.getDomainId();
+		if (userId != null && domainId != null) {
+			Long workComId = this.commonOperate.resolveWorkComId(userId, domainId);
+			if (workComId != null) {
+				return workComId;
+			}
+		}
+		Long workComId = this.getWorkComId();
+		return workComId != null ? workComId : this.getTenantId();
 	}
 
 	@ApiOperation(value = "获取加密公钥", notes = "获取RSA公钥用于前端加密密码")
@@ -169,7 +193,7 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 		final String ip = this.getUserIp();
 		final String ua = this.request == null ? null : this.request.getHeader("User-Agent");
 		final Long domainId = this.getDomainId();
-		final Long tenantId = this.getTenantId();
+		final Long auditComId = this.resolveAuditComId(userId);
 
 		try {
 			return this.service.logout(token, domainId);
@@ -180,7 +204,7 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 			if (this.loginLogger != null) {
 				try {
 					LoginEvent ev = LoginEvent.success(userId, account, LoginEventType.LOGOUT, ip, ua);
-					ev.withTenant(domainId, tenantId);
+					ev.withTenant(domainId, auditComId);
 					this.loginLogger.recordAsync(ev);
 				}
 				catch (Exception ex) {
@@ -214,7 +238,7 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 		register.setRegisterIp(this.getUserIp());
 		register.setLoginName(register.getEmail());
 		getLog().info("register= {} ", register.getLoginName());
-		Login user = this.service.register(this.getDomain(), this.getDomainId(), register, this.request);
+		Login user = this.service.register(this.getDomain(), this.getDomainId(), this.getTenantId(), register, this.request);
 		audit(LoginEventType.REGISTER, register.getLoginName(), user);
 		return user;
 	}
@@ -235,10 +259,13 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 
 	@ApiOperation(value = "重置密码", notes = "通过邮箱验证码重置用户密码")
 	@PostMapping("reset")
-	public Login resetPasswd(@ApiParam(value = "重置密码参数", required = true) @Valid @RequestBody PasswdResetParams resetParams) {
+	public Login resetPasswd(
+			@ApiParam(value = "重置密码参数", required = true) @Valid @RequestBody PasswdResetParams resetParams) {
 
 		getLog().info("用户登录名: {} 密码重置 ", resetParams.getLoginName());
-		Login user = this.service.resetPasswd(resetParams);
+		Long domainId = this.getDomainId();
+		Long siteDomainId = domainId != null && domainId > 0 ? domainId : null;
+		Login user = this.service.resetPasswd(resetParams, siteDomainId, this.getTenantId());
 		if (user == null) {
 			getLog().warn("{} 密码重置失败", resetParams.getLoginName());
 			user = new Login();
@@ -325,4 +352,5 @@ public class LoginAuthController extends NonEntityController<LoginAuthService> {
 		}
 		return user;
 	}
+
 }

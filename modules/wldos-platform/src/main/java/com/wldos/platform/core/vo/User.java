@@ -16,6 +16,8 @@ import io.github.wldos.platform.support.auth.vo.UserInfo;
 import io.github.wldos.platform.support.resource.vo.Menu;
 import io.github.wldos.platform.support.resource.vo.Route;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -53,4 +55,21 @@ public class User {
 
 	@ApiModelProperty(value = "用户端/管理端语境占位：0=用户端向，1=管理端向；由 wldos-ui 前端区分，服务端当前默认不计算", example = "0")
 	private int isManageSide = 0;
+
+	@ApiModelProperty(value = "是否平台超管（org_code=admin 用户组）")
+	@JsonProperty("isAdmin")
+	private boolean isAdmin;
+
+	@ApiModelProperty(value = "是否可信者用户组")
+	private boolean canTrust;
+
+	@ApiModelProperty(value = "是否租户管理员")
+	private boolean tenantAdmin;
+
+	@ApiModelProperty(value = "操作者工作租户 id（workComId，管理 2级 轴）")
+	private Long workComId;
+
+	@ApiModelProperty(value = "操作者受托租户 id（wo_org_user.user_com_id，与登录 Host JWT 解耦）")
+	private Long operatorComId;
+
 }

@@ -17,7 +17,7 @@ import {
   queryMyShortcuts,
   updateMyShortcut,
   deleteMyShortcut,
-  queryUserAdminMenu,
+  queryMenu,
 } from '@/services/user';
 import { normalizePath } from '@/utils/portalMenuVisit';
 import styles from '../Center.less';
@@ -198,7 +198,7 @@ export function AccountPermissionsPanel({ userId }) {
     (async () => {
       setLoading(true);
       try {
-        const adminRes = await queryUserAdminMenu(userId).catch(() => ({ data: [] }));
+        const adminRes = await queryMenu().catch(() => ({ data: [] }));
         if (cancelled) return;
         const rawAdmin = adminRes?.data?.data ?? adminRes?.data;
         setAdminMenu(Array.isArray(rawAdmin) ? rawAdmin : []);
@@ -304,7 +304,7 @@ export function AccountShortcutsPanel({ userId }) {
     try {
       const [shortRes, adminRes] = await Promise.all([
         queryMyShortcuts(),
-        queryUserAdminMenu(userId).catch(() => ({ data: [] })),
+        queryMenu().catch(() => ({ data: [] })),
       ]);
       let rows = shortRes?.data?.data ?? shortRes?.data;
       if (!Array.isArray(rows)) rows = [];
@@ -399,7 +399,12 @@ export function AccountLoginLogsPanel() {
         current: page.current,
         pageSize: page.pageSize,
       });
-      const body = res?.data?.data ?? res?.data;
+      if (res?.code !== 200) {
+        setRows([]);
+        setTotal(0);
+        return;
+      }
+      const body = res?.data;
       setRows(body?.rows || []);
       setTotal(Number(body?.total) || 0);
     } finally {
@@ -453,7 +458,12 @@ export function AccountOpLogsPanel() {
         current: page.current,
         pageSize: page.pageSize,
       });
-      const body = res?.data?.data ?? res?.data;
+      if (res?.code !== 200) {
+        setRows([]);
+        setTotal(0);
+        return;
+      }
+      const body = res?.data;
       setRows(body?.rows || []);
       setTotal(Number(body?.total) || 0);
     } finally {

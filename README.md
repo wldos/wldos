@@ -1,7 +1,7 @@
 <div align="center">
   <img alt="WLDOS" src="http://gitee.com/wldos/wldos/raw/master/modules/wldos-platform/src/main/resources/resources/store/logo.png" width="100" height="100">
   <h1>WLDOS 云应用支撑平台</h1>
-  <p><strong>5分钟构建企业级多租户 SaaS 应用</strong></p>
+  <p><strong>5分钟构建企业级多租户 SaaS 应用</strong> · 上层产品：<strong>个人数字管家</strong>（桌面客户端）</p>
   <p>
     <a href="http://www.wldos.com">🎬 在线演示</a> •
     <a href="#-快速开始">🚀 快速开始</a> •
@@ -9,7 +9,7 @@
     <a href="README.EN.md">English</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/WLDOS-V3.0.0.0-deepskyblue.svg" alt="version">
+    <img src="https://img.shields.io/badge/WLDOS-V3.0.3.0-deepskyblue.svg" alt="version">
     <img src="https://img.shields.io/badge/SpringBoot-2.7-green.svg" alt="springboot">
     <img src="https://img.shields.io/badge/React-17-blue.svg" alt="react">
     <a href="https://gitee.com/wldos/wldos/stargazers"><img src="https://gitee.com/wldos/wldos/badge/star.svg?theme=dark" alt="star"></a>
@@ -57,16 +57,16 @@ cd wldos
 mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev"
 mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev"
 
-# 5. 启动前端（与 wldos-ui/pom.xml 一致：frontend-maven-plugin 使用 Yarn，锁文件为 yarn.lock）
+# 5. 启动前端（商业版 / 数字管家）
 cd wldos-ui
-yarn install && yarn start
+yarn install && npm start
 
 # 6. 访问 http://localhost:8000  账号：admin / admin
 ```
 
 ### 方式二：桌面版安装（Windows）
 
-下载桌面安装包，双击运行，开箱即用。[下载地址](http://www.wldos.com)
+下载桌面安装包，双击运行，开箱即用。[下载地址](http://www.wldos.org)
 
 ## 📸 功能截图
 
@@ -150,7 +150,7 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 3. 设置文件存储位置。  <br/>
    默认:${project-root}\\wldos-web\\Temp，如要修改，在wldos-platform下找properties中相应选项配置  <br/><br/>
-4. 项目更新maven库。服务器端口号默认8080。<br/><br/>
+4. 项目更新maven库。开发环境服务器端口默认 **8088**（见 `application-dev.properties`）。<br/><br/>
 5. 安装项目；  <br/>
    mvn clean install -pl com.wldos:wldos-web -am -DskipTests "-Dspring.profiles.active=dev" -P dev <br/><br/>
    启动项目：    
@@ -160,8 +160,21 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 
 #### 启动前端： <br/>
 1. 下载前端代码到本地，进入 `wldos-ui`，执行 `yarn install`（与 `wldos-ui/pom.xml` 一致）。本地 Node 若为 21+，项目内 `.yarnrc` 已设 `ignore-engines`。<br/>
-2. 执行 `yarn start`。访问地址与端口以终端输出为准（常见为 http://localhost:8000）。<br/>
+2. **社区版**：`yarn start` 或 `yarn start:community:dev`。<br/>
+   **商业版 / 数字管家桌面联调**：`npm start`（`APP_FLAVOR` 默认 commercial，含 `pages/commercial` 与 `commercial/desktop-app`）。社区分支用 `npm run start:community:dev`。<br/>
+   访问地址与端口以终端输出为准（常见为 http://localhost:8000）。<br/>
 3. 登录：超级管理员 admin，密码与用户名相同。<br/>
+
+#### 数字管家桌面壳联调（Electron，三进程）<br/>
+演进地图：[`docs/wldos-living/README.md`](docs/wldos-living/README.md)。构建细节：[`桌面壳Electron构建与开发指南.md`](docs/wldos3.0/内容发布-自媒体助手/桌面壳Electron构建与开发指南.md)。<br/>
+
+| 进程 | 命令 |
+|------|------|
+| 后端 | `mvn -pl com.wldos:wldos-web spring-boot:run "-Dspring.profiles.active=dev" -P dev`（端口 8088） |
+| 前端 | `cd wldos-ui && npm start`（端口 8000，默认商业路由，代理 `/api` → 8088） |
+| Electron | `cd commercial/wldos-commercial/wldos-desktop-electron && npm run dev` |
+
+**量产（按需，非每次启动）**：改 `auth-core/wldos-agent` → `mvn -pl auth-core/wldos-license exec:java@release-batch`；仅改 `commercial/` 下 Java → `exec:java@commercial-release-batch`（须先跑过 agent 量产）。**只改 Electron / wldos-ui 不需要量产。** 说明见 `auth-core/wldos-license/readme.txt` 第二、四节。<br/>
 
 #### 部署到服务器: <br/>
     1.在服务器上安装好mysql5.7、tomcat9、apache2.4，数据库配置好DBA权限的用户，更新配置到platform/application*.properties中；  
@@ -178,31 +191,30 @@ wldos-web：项目入口模块，资源配置，打war包或可执行jar从这�
 #### 开源部分（Apache 2.0）
 
 - ✅ 源代码已开放，可商用（无需魔改）
-- ✅ 与商业版代码一致
+- ✅ 基础框架和sdk与商业版一致
 - ✅ 功能不受限
 
 **许可证**：Apache License 2.0
 
-#### 非开源部分（商业许可证）
+#### 非开源部分
 
 - ⚠️ wldos-platform 模块中的非开源部分
-- ⚠️ 其他商业组件
 
-**许可证**：WLDOS® 商业授权协议
+**许可**：WLDOS®商业授权协议
 
-**说明**：不论主体，可以免费用，分发需授权。
+**说明**：不论主体，可免费用，分发需授权。
 
 #### 版本说明
 
 **社区开源版**：
-- ✅ 功能完整（目前功能不受限，和商业版一样）
-- ✅ 包含非纯开源模块
-- ⚠️ 缺乏商业支持（仅提供社区支持）
+- ✅ 功能完整
+- ✅ 契约一致的扩展能力
+- ✅ 提供社区技术支持
 
 **商业版**：
-- ✅ 功能完整（与社区开源版相同）
-- ✅ 包含完整的非纯开源模块
-- ✅ 商业支持（提供商业技术支持、定制开发）
+- ✅ 功能完整
+- ✅ 包含商业能力
+- ✅ 提供线上技术支持
 
 #### 如何选择许可证
 
@@ -325,9 +337,7 @@ wldos根目录
 ````
 
 ### 版本协议说明
-- wldos 2.4.1.0+ 版本：已彻底移除所有GPL/AGPL协议依赖，主协议为 Apache License 2.0，可自由分发、闭源商用（无需开源）；
-- wldos 2.3.7及以下版本：包含GPL协议依赖，使用/分发该版本需遵守GPL条款（建议升级至2.4.1.0+）。
-
+- wldos 3.0.3.0 版本：开源协议为 Apache License 2.0，可自由分发、闭源商用；
 </details>
 
 ---
